@@ -111,13 +111,13 @@ uint32_t ScriptC::run(Context *rsc) {
     uint32_t ret = 0;
 
     if (rsc->props.mLogScripts) {
-        ALOGV("%p ScriptC::run invoking root,  ptr %p", rsc, mHal.info.root);
+        LOGV("%p ScriptC::run invoking root,  ptr %p", rsc, mHal.info.root);
     }
 
     ret = rsc->mHal.funcs.script.invokeRoot(rsc, this);
 
     if (rsc->props.mLogScripts) {
-        ALOGV("%p ScriptC::run invoking complete, ret=%i", rsc, ret);
+        LOGV("%p ScriptC::run invoking complete, ret=%i", rsc, ret);
     }
 
     return ret;
@@ -146,7 +146,7 @@ void ScriptC::Invoke(Context *rsc, uint32_t slot, const void *data, size_t len) 
     setupScript(rsc);
 
     if (rsc->props.mLogScripts) {
-        ALOGV("%p ScriptC::Invoke invoking slot %i,  ptr %p", rsc, slot, this);
+        LOGV("%p ScriptC::Invoke invoking slot %i,  ptr %p", rsc, slot, this);
     }
     rsc->mHal.funcs.script.invokeFunction(rsc, this, slot, data, len);
 }

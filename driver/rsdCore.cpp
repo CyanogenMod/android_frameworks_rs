@@ -139,7 +139,7 @@ static void * HelperThreadProc(void *vrsc) {
 
     uint32_t idx = (uint32_t)android_atomic_inc(&dc->mWorkers.mLaunchCount);
 
-    //ALOGV("RS helperThread starting %p idx=%i", rsc, idx);
+    //LOGV("RS helperThread starting %p idx=%i", rsc, idx);
 
     dc->mWorkers.mLaunchSignals[idx].init();
     dc->mWorkers.mNativeThreadId[idx] = gettid();
@@ -168,7 +168,7 @@ static void * HelperThreadProc(void *vrsc) {
         dc->mWorkers.mCompleteSignal.set();
     }
 
-    //ALOGV("RS helperThread exited %p idx=%i", rsc, idx);
+    //LOGV("RS helperThread exited %p idx=%i", rsc, idx);
     return NULL;
 }
 
@@ -219,7 +219,7 @@ bool rsdHalInit(Context *rsc, uint32_t version_major, uint32_t version_minor) {
 
 
     int cpu = sysconf(_SC_NPROCESSORS_ONLN);
-    ALOGV("%p Launching thread(s), CPUs %i", rsc, cpu);
+    LOGV("%p Launching thread(s), CPUs %i", rsc, cpu);
     if (cpu < 2) cpu = 0;
 
     dc->mWorkers.mCount = (uint32_t)cpu;

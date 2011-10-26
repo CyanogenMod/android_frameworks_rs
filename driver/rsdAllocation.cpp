@@ -256,7 +256,7 @@ void rsdAllocationDestroy(const Context *rsc, Allocation *alloc) {
 
     if (drv->bufferID) {
         // Causes a SW crash....
-        //ALOGV(" mBufferID %i", mBufferID);
+        //LOGV(" mBufferID %i", mBufferID);
         //glDeleteBuffers(1, &mBufferID);
         //mBufferID = 0;
     }
