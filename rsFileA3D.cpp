@@ -22,6 +22,10 @@
 #include "rsAnimation.h"
 #include "rs.h"
 
+#if !defined(__RS_PDK__)
+    #include <androidfw/Asset.h>
+#endif
+
 using namespace android;
 using namespace android::renderscript;
 
@@ -54,7 +58,9 @@ FileA3D::~FileA3D() {
         free(mAlloc);
     }
     if (mAsset) {
+#if !defined(__RS_PDK__)
         delete mAsset;
+#endif
     }
 }
 
@@ -83,8 +89,12 @@ void FileA3D::parseHeader(IStream *headerStream) {
 }
 
 bool FileA3D::load(Asset *asset) {
+#if !defined(__RS_PDK__)
     mAsset = asset;
     return load(asset->getBuffer(false), asset->getLength());
+#else
+    return false;
+#endif
 }
 
 bool FileA3D::load(const void *data, size_t length) {
@@ -421,6 +431,7 @@ RsFile rsaFileA3DCreateFromMemory(RsContext con, const void *data, uint32_t len)
 }
 
 RsFile rsaFileA3DCreateFromAsset(RsContext con, void *_asset) {
+#if !defined(__RS_PDK__)
     Context *rsc = static_cast<Context *>(con);
     Asset *asset = static_cast<Asset *>(_asset);
     FileA3D *fa3d = new FileA3D(rsc);
@@ -428,6 +439,9 @@ RsFile rsaFileA3DCreateFromAsset(RsContext con, void *_asset) {
 
     fa3d->load(asset);
     return fa3d;
+#else
+    return NULL;
+#endif
 }
 
 RsFile rsaFileA3DCreateFromFile(RsContext con, const char *path) {

@@ -25,9 +25,6 @@
 
 #include "utils/Timers.h"
 #include "utils/StopWatch.h"
-extern "C" {
-#include "libdex/ZipArchive.h"
-}
 
 using namespace android;
 using namespace android::renderscript;

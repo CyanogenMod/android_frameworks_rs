@@ -27,10 +27,14 @@ LOCAL_SRC_FILES:= \
 LOCAL_SHARED_LIBRARIES += libz libcutils libutils libEGL libGLESv1_CM libGLESv2
 LOCAL_SHARED_LIBRARIES += libbcc libbcinfo libgui
 
-LOCAL_C_INCLUDES += external/zlib dalvik
+LOCAL_C_INCLUDES += external/zlib
 LOCAL_C_INCLUDES += frameworks/compile/libbcc/include
 
 LOCAL_CFLAGS += -Werror -Wall -Wno-unused-parameter -Wno-unused-variable
+
+ifeq "true" "$(TARGET_BUILD_PDK)"
+  LOCAL_CFLAGS += -D__RS_PDK__
+endif
 
 LOCAL_LDLIBS := -lpthread -ldl
 LOCAL_MODULE_TAGS := optional
@@ -145,7 +149,7 @@ LOCAL_SHARED_LIBRARIES += libui libbcinfo libgui
 
 LOCAL_STATIC_LIBRARIES := libdex libft2 libRSDriver
 
-LOCAL_C_INCLUDES += external/freetype/include external/zlib dalvik
+LOCAL_C_INCLUDES += external/freetype/include external/zlib
 LOCAL_C_INCLUDES += frameworks/compile/libbcc/include
 
 LOCAL_CFLAGS += -Werror -Wall -Wno-unused-parameter -Wno-unused-variable
@@ -196,6 +200,9 @@ LOCAL_GENERATED_SOURCES += $(GEN)
 LOCAL_CFLAGS += -Werror -Wall -Wno-unused-parameter -Wno-unused-variable
 LOCAL_CFLAGS += -DANDROID_RS_SERIALIZE
 LOCAL_CFLAGS += -fPIC
+ifeq "true" "$(TARGET_BUILD_PDK)"
+  LOCAL_CFLAGS += -D__RS_PDK__
+endif
 
 LOCAL_SRC_FILES:= \
 	rsAdapter.cpp \

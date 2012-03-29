@@ -19,7 +19,6 @@
 
 #include "rsMesh.h"
 
-#include <androidfw/Asset.h>
 #include <utils/String8.h>
 #include "rsStream.h"
 #include <stdio.h>
@@ -28,6 +27,7 @@
 
 // ---------------------------------------------------------------------------
 namespace android {
+    class Asset;
 
 namespace renderscript {
 
