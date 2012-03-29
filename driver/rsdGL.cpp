@@ -329,7 +329,7 @@ bool rsdGLInit(const Context *rsc) {
 
     // Create a BufferQueue with a fake consumer
     sp<BufferQueue> bq = new BufferQueue();
-    sp<DummyConsumer> dummy = new DummyConsumer(bq);
+    bq->consumerConnect(new DummyConsumer());
     sp<SurfaceTextureClient> stc(new SurfaceTextureClient(static_cast<sp<ISurfaceTexture> >(bq)));
 
     dc->gl.egl.surfaceDefault = eglCreateWindowSurface(dc->gl.egl.display, dc->gl.egl.config,
