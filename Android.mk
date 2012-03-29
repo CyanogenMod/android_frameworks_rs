@@ -32,7 +32,7 @@ LOCAL_C_INCLUDES += frameworks/compile/libbcc/include
 
 LOCAL_CFLAGS += -Werror -Wall -Wno-unused-parameter -Wno-unused-variable
 
-ifeq "true" "$(TARGET_BUILD_PDK)"
+ifeq ($(TARGET_BUILD_PDK), true)
   LOCAL_CFLAGS += -D__RS_PDK__
 endif
 
@@ -200,7 +200,7 @@ LOCAL_GENERATED_SOURCES += $(GEN)
 LOCAL_CFLAGS += -Werror -Wall -Wno-unused-parameter -Wno-unused-variable
 LOCAL_CFLAGS += -DANDROID_RS_SERIALIZE
 LOCAL_CFLAGS += -fPIC
-ifeq "true" "$(TARGET_BUILD_PDK)"
+ifeq ($(TARGET_BUILD_PDK), true)
   LOCAL_CFLAGS += -D__RS_PDK__
 endif
 
