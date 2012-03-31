@@ -501,7 +501,7 @@ FN_FUNC_FN_FN_FN(mad)
 extern float __attribute__((overloadable)) modf(float x, float *iret);
 FN_FUNC_FN_PFN(modf);
 
-//extern float __attribute__((overloadable)) nan(uint);
+extern float __attribute__((overloadable)) nan(uint);
 
 /**
  * Return the next floating point number from x towards y.
