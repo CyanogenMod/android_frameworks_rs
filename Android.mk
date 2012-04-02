@@ -131,14 +131,7 @@ LOCAL_SRC_FILES:= \
 	rsSignal.cpp \
 	rsStream.cpp \
 	rsThreadIO.cpp \
-	rsType.cpp \
-	RenderScript.cpp \
-	BaseObj.cpp \
-	Element.cpp \
-	Type.cpp \
-	Allocation.cpp \
-	Script.cpp \
-	ScriptC.cpp
+	rsType.cpp
 
 LOCAL_SHARED_LIBRARIES += libz libcutils libutils libEGL libGLESv1_CM libGLESv2 libbcc
 LOCAL_SHARED_LIBRARIES += libui libbcinfo libgui

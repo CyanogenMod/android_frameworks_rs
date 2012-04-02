@@ -2,26 +2,23 @@ LOCAL_PATH:= $(call my-dir)
 include $(CLEAR_VARS)
 
 LOCAL_SRC_FILES:= \
-	compute.cpp \
-	ScriptC_mono.cpp
+	RenderScript.cpp \
+	BaseObj.cpp \
+	Element.cpp \
+	Type.cpp \
+	Allocation.cpp \
+	Script.cpp \
+	ScriptC.cpp
 
 LOCAL_SHARED_LIBRARIES := \
 	libRS \
-	libRScpp \
 	libz \
 	libcutils \
-	libutils \
-	libEGL \
-	libGLESv1_CM \
-	libGLESv2 \
-	libui \
-	libbcc \
-	libbcinfo \
-	libgui
+	libutils
 
-LOCAL_MODULE:= rstest-compute
+LOCAL_MODULE:= libRScpp
 
-LOCAL_MODULE_TAGS := tests
+LOCAL_MODULE_TAGS := optional
 
 intermediates := $(call intermediates-dir-for,STATIC_LIBRARIES,libRS,TARGET,)
 librs_generated_headers := \
@@ -29,10 +26,9 @@ librs_generated_headers := \
     $(intermediates)/rsgApiFuncDecl.h
 LOCAL_GENERATED_SOURCES := $(librs_generated_headers)
 
-LOCAL_C_INCLUDES += frameworks/rs/cpp
 LOCAL_C_INCLUDES += frameworks/rs
 LOCAL_C_INCLUDES += $(intermediates)
 
 
-include $(BUILD_EXECUTABLE)
+include $(BUILD_SHARED_LIBRARY)
 
