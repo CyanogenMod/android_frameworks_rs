@@ -40,6 +40,8 @@ struct DrvAllocation {
     uint32_t renderTargetID;
 
     uint8_t * mallocPtr;
+    uint32_t width;
+    uint32_t height;
 
     GLenum glTarget;
     GLenum glType;
@@ -48,6 +50,7 @@ struct DrvAllocation {
     bool uploadDeferred;
 
     RsdFrameBufferObj * readBackFBO;
+    ANativeWindow *wnd;
     ANativeWindowBuffer *wndBuffer;
 };
 

@@ -424,13 +424,11 @@ bool rsdGLInit(const Context *rsc) {
 }
 
 
-bool rsdGLSetSurface(const Context *rsc, uint32_t w, uint32_t h, RsNativeWindow sur) {
+bool rsdGLSetInternalSurface(const Context *rsc, RsNativeWindow sur) {
     RsdHal *dc = (RsdHal *)rsc->mHal.drv;
 
     EGLBoolean ret;
-    // WAR: Some drivers fail to handle 0 size surfaces correcntly.
-    // Use the pbuffer to avoid this pitfall.
-    if ((dc->gl.egl.surface != NULL) || (w == 0) || (h == 0)) {
+    if (dc->gl.egl.surface != NULL) {
         rsc->setWatchdogGL("eglMakeCurrent", __LINE__, __FILE__);
         ret = eglMakeCurrent(dc->gl.egl.display, dc->gl.egl.surfaceDefault,
                              dc->gl.egl.surfaceDefault, dc->gl.egl.context);
@@ -441,23 +439,19 @@ bool rsdGLSetSurface(const Context *rsc, uint32_t w, uint32_t h, RsNativeWindow 
         checkEglError("eglDestroySurface", ret);
 
         dc->gl.egl.surface = NULL;
-        dc->gl.width = 1;
-        dc->gl.height = 1;
     }
 
-    if (dc->gl.wndSurface != NULL) {
-        dc->gl.wndSurface->decStrong(NULL);
+    if (dc->gl.currentWndSurface != NULL) {
+        dc->gl.currentWndSurface->decStrong(NULL);
     }
 
-    dc->gl.wndSurface = (ANativeWindow *)sur;
-    if (dc->gl.wndSurface != NULL) {
-        dc->gl.wndSurface->incStrong(NULL);
-        dc->gl.width = w;
-        dc->gl.height = h;
+    dc->gl.currentWndSurface = (ANativeWindow *)sur;
+    if (dc->gl.currentWndSurface != NULL) {
+        dc->gl.currentWndSurface->incStrong(NULL);
 
         rsc->setWatchdogGL("eglCreateWindowSurface", __LINE__, __FILE__);
         dc->gl.egl.surface = eglCreateWindowSurface(dc->gl.egl.display, dc->gl.egl.config,
-                                                    dc->gl.wndSurface, NULL);
+                                                    dc->gl.currentWndSurface, NULL);
         checkEglError("eglCreateWindowSurface");
         if (dc->gl.egl.surface == EGL_NO_SURFACE) {
             ALOGE("eglCreateWindowSurface returned EGL_NO_SURFACE");
@@ -470,6 +464,25 @@ bool rsdGLSetSurface(const Context *rsc, uint32_t w, uint32_t h, RsNativeWindow 
     }
     rsc->setWatchdogGL(NULL, 0, NULL);
     return true;
+}
+
+bool rsdGLSetSurface(const Context *rsc, uint32_t w, uint32_t h, RsNativeWindow sur) {
+    RsdHal *dc = (RsdHal *)rsc->mHal.drv;
+
+    if (dc->gl.wndSurface != NULL) {
+        dc->gl.wndSurface->decStrong(NULL);
+        dc->gl.wndSurface = NULL;
+    }
+    if(w && h) {
+        // WAR: Some drivers fail to handle 0 size surfaces correctly. Use the
+        // pbuffer to avoid this pitfall.
+        dc->gl.wndSurface = (ANativeWindow *)sur;
+        if (dc->gl.wndSurface != NULL) {
+            dc->gl.wndSurface->incStrong(NULL);
+        }
+    }
+
+    return rsdGLSetInternalSurface(rsc, sur);
 }
 
 void rsdGLSwap(const android::renderscript::Context *rsc) {

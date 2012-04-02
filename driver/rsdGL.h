@@ -67,14 +67,15 @@ typedef struct RsdGLRec {
     } gl;
 
     ANativeWindow *wndSurface;
-    uint32_t width;
-    uint32_t height;
+    ANativeWindow *currentWndSurface;
+
     RsdShaderCache *shaderCache;
     RsdVertexArrayState *vertexArrayState;
     RsdFrameBufferObj *currentFrameBuffer;
 } RsdGL;
 
-
+bool rsdGLSetInternalSurface(const android::renderscript::Context *rsc,
+                             RsNativeWindow sur);
 bool rsdGLInit(const android::renderscript::Context *rsc);
 void rsdGLShutdown(const android::renderscript::Context *rsc);
 bool rsdGLSetSurface(const android::renderscript::Context *rsc,

@@ -50,7 +50,7 @@ void FBOCache::bindColorTarget(Context *rsc, Allocation *a, uint32_t slot) {
         return;
     }
     if (a != NULL) {
-        if (!a->getIsTexture()) {
+        if (!(a->getIsTexture() || (a->mHal.state.usageFlags & RS_ALLOCATION_USAGE_IO_OUTPUT))) {
             ALOGE("Invalid Color Target");
             return;
         }

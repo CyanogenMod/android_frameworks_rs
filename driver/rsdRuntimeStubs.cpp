@@ -26,6 +26,7 @@
 
 #include "rsdRuntime.h"
 #include "rsdPath.h"
+#include "rsdAllocation.h"
 
 #include <time.h>
 
@@ -79,6 +80,18 @@ static void SC_AllocationCopy2DRange(Allocation *dstAlloc,
                              srcAlloc,
                              srcXoff, srcYoff, srcMip, srcFace);
 }
+
+static void SC_AllocationIoSend(Allocation *alloc) {
+    GET_TLS();
+    rsdAllocationIoSend(rsc, alloc);
+}
+
+
+static void SC_AllocationIoReceive(Allocation *alloc) {
+    GET_TLS();
+    rsdAllocationIoReceive(rsc, alloc);
+}
+
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -586,7 +599,8 @@ static RsdSymbolTable gSyms[] = {
     { "_Z20rsgAllocationSyncAll13rs_allocationj", (void *)&SC_AllocationSyncAll2, false },
     { "_Z20rsgAllocationSyncAll13rs_allocation24rs_allocation_usage_type", (void *)&SC_AllocationSyncAll2, false },
     { "_Z15rsGetAllocationPKv", (void *)&SC_GetAllocation, true },
-
+    { "_Z18rsAllocationIoSend13rs_allocation", (void *)&SC_AllocationIoSend, false },
+    { "_Z21rsAllocationIoReceive13rs_allocation", (void *)&SC_AllocationIoReceive, false },
     { "_Z23rsAllocationCopy1DRange13rs_allocationjjjS_jj", (void *)&SC_AllocationCopy1DRange, false },
     { "_Z23rsAllocationCopy2DRange13rs_allocationjjj26rs_allocation_cubemap_facejjS_jjjS0_", (void *)&SC_AllocationCopy2DRange, false },
 

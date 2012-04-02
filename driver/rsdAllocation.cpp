@@ -263,6 +263,9 @@ bool rsdAllocationInit(const Context *rsc, Allocation *alloc, bool forceZero) {
         drv->uploadDeferred = true;
     }
 
+    drv->width = alloc->getType()->getDimX();
+    drv->height = alloc->getType()->getDimY();
+
     drv->readBackFBO = NULL;
 
     return true;
@@ -371,7 +374,8 @@ void rsdAllocationSyncAll(const Context *rsc, const Allocation *alloc,
     if (alloc->mHal.state.usageFlags & RS_ALLOCATION_USAGE_GRAPHICS_TEXTURE) {
         UploadToTexture(rsc, alloc);
     } else {
-        if (alloc->mHal.state.usageFlags & RS_ALLOCATION_USAGE_GRAPHICS_RENDER_TARGET) {
+        if ((alloc->mHal.state.usageFlags & RS_ALLOCATION_USAGE_GRAPHICS_RENDER_TARGET) &&
+                ~(alloc->mHal.state.usageFlags & RS_ALLOCATION_USAGE_IO_OUTPUT)) {
             AllocateRenderTarget(rsc, alloc);
         }
     }
@@ -418,6 +422,7 @@ static bool IoGetBuffer(const Context *rsc, Allocation *alloc, ANativeWindow *nw
             GRALLOC_USAGE_SW_READ_NEVER | GRALLOC_USAGE_SW_WRITE_OFTEN,
             bounds, &dst);
     alloc->mHal.drvState.mallocPtr = dst;
+
     return true;
 }
 
@@ -425,6 +430,13 @@ void rsdAllocationSetSurfaceTexture(const Context *rsc, Allocation *alloc, ANati
     DrvAllocation *drv = (DrvAllocation *)alloc->mHal.drv;
 
     //ALOGE("rsdAllocationSetSurfaceTexture %p  %p", alloc, nw);
+
+    if (alloc->mHal.state.usageFlags & RS_ALLOCATION_USAGE_GRAPHICS_RENDER_TARGET) {
+        //TODO finish support for render target + script
+        drv->wnd = nw;
+        return;
+    }
+
 
     // Cleanup old surface if there is one.
     if (alloc->mHal.state.wndSurface) {
@@ -436,8 +448,15 @@ void rsdAllocationSetSurfaceTexture(const Context *rsc, Allocation *alloc, ANati
 
     if (nw != NULL) {
         int32_t r;
-        r = native_window_set_usage(nw, GRALLOC_USAGE_SW_READ_RARELY |
-                                        GRALLOC_USAGE_SW_WRITE_OFTEN);
+        uint32_t flags = 0;
+        if (alloc->mHal.state.usageFlags & RS_ALLOCATION_USAGE_SCRIPT) {
+            flags |= GRALLOC_USAGE_SW_READ_RARELY | GRALLOC_USAGE_SW_WRITE_OFTEN;
+        }
+        if (alloc->mHal.state.usageFlags & RS_ALLOCATION_USAGE_GRAPHICS_RENDER_TARGET) {
+            flags |= GRALLOC_USAGE_HW_RENDER;
+        }
+
+        r = native_window_set_usage(nw, flags);
         if (r) {
             rsc->setError(RS_ERROR_DRIVER, "Error setting IO output buffer usage.");
             return;
@@ -464,15 +483,23 @@ void rsdAllocationIoSend(const Context *rsc, Allocation *alloc) {
     DrvAllocation *drv = (DrvAllocation *)alloc->mHal.drv;
     ANativeWindow *nw = alloc->mHal.state.wndSurface;
 
-    GraphicBufferMapper &mapper = GraphicBufferMapper::get();
-    mapper.unlock(drv->wndBuffer->handle);
-    int32_t r = nw->queueBuffer(nw, drv->wndBuffer);
-    if (r) {
-        rsc->setError(RS_ERROR_DRIVER, "Error sending IO output buffer.");
+    if (alloc->mHal.state.usageFlags & RS_ALLOCATION_USAGE_GRAPHICS_RENDER_TARGET) {
+        RsdHal *dc = (RsdHal *)rsc->mHal.drv;
+        RSD_CALL_GL(eglSwapBuffers, dc->gl.egl.display, dc->gl.egl.surface);
         return;
     }
 
-    IoGetBuffer(rsc, alloc, nw);
+    if (alloc->mHal.state.usageFlags & RS_ALLOCATION_USAGE_SCRIPT) {
+        GraphicBufferMapper &mapper = GraphicBufferMapper::get();
+        mapper.unlock(drv->wndBuffer->handle);
+        int32_t r = nw->queueBuffer(nw, drv->wndBuffer);
+        if (r) {
+            rsc->setError(RS_ERROR_DRIVER, "Error sending IO output buffer.");
+            return;
+        }
+
+        IoGetBuffer(rsc, alloc, nw);
+    }
 }
 
 void rsdAllocationIoReceive(const Context *rsc, Allocation *alloc) {

@@ -146,6 +146,19 @@ extern const void * __attribute__((overloadable))
 #if (defined(RS_VERSION) && (RS_VERSION >= 16))
 
 /**
+ * Send the contents of the Allocation to the queue.
+ */
+extern const void __attribute__((overloadable))
+    rsAllocationIoSend(rs_allocation);
+
+/**
+ * Receive a new set of contents from the queue.
+ */
+extern const void __attribute__((overloadable))
+    rsAllocationIoReceive(rs_allocation);
+
+
+/**
  * @param a allocation to get data from
  * @return element describing allocation layout
  */

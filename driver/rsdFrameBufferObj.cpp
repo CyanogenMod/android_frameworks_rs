@@ -18,6 +18,7 @@
 #include "rsdFrameBufferObj.h"
 #include "rsdAllocation.h"
 #include "rsdGL.h"
+#include "rsdCore.h"
 
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
@@ -122,23 +123,33 @@ bool RsdFrameBufferObj::renderToFramebuffer() {
 }
 
 void RsdFrameBufferObj::setActive(const Context *rsc) {
+    RsdHal *dc = (RsdHal *)rsc->mHal.drv;
     bool framebuffer = renderToFramebuffer();
-    if (!framebuffer) {
-        if(mFBOId == 0) {
-            RSD_CALL_GL(glGenFramebuffers, 1, &mFBOId);
-        }
-        RSD_CALL_GL(glBindFramebuffer, GL_FRAMEBUFFER, mFBOId);
 
-        if (mDirty) {
-            setDepthAttachment();
-            setColorAttachment();
-            mDirty = false;
-        }
-
-        RSD_CALL_GL(glViewport, 0, 0, mWidth, mHeight);
-        checkError(rsc);
+    if(mColorTargets[0] && mColorTargets[0]->wnd) {
+        rsdGLSetInternalSurface(rsc, mColorTargets[0]->wnd);
     } else {
-        RSD_CALL_GL(glBindFramebuffer, GL_FRAMEBUFFER, 0);
-        RSD_CALL_GL(glViewport, 0, 0, rsc->getWidth(), rsc->getHeight());
+        if (!framebuffer) {
+            if(mFBOId == 0) {
+                RSD_CALL_GL(glGenFramebuffers, 1, &mFBOId);
+            }
+            RSD_CALL_GL(glBindFramebuffer, GL_FRAMEBUFFER, mFBOId);
+
+            if (mDirty) {
+                setDepthAttachment();
+                setColorAttachment();
+                mDirty = false;
+            }
+
+            RSD_CALL_GL(glViewport, 0, 0, mWidth, mHeight);
+            checkError(rsc);
+        } else {
+            if(dc->gl.wndSurface != dc->gl.currentWndSurface) {
+                rsdGLSetInternalSurface(rsc, dc->gl.wndSurface);
+            } else {
+                RSD_CALL_GL(glBindFramebuffer, GL_FRAMEBUFFER, 0);
+            }
+            RSD_CALL_GL(glViewport, 0, 0, rsc->getWidth(), rsc->getHeight());
+        }
     }
 }

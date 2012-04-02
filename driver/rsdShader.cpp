@@ -480,23 +480,28 @@ void RsdShader::setupTextures(const Context *rsc, RsdShaderCache *sc) {
         }
 
         DrvAllocation *drvTex = (DrvAllocation *)mRSProgram->mHal.state.textures[ct]->mHal.drv;
-        if (drvTex->glTarget != GL_TEXTURE_2D &&
-            drvTex->glTarget != GL_TEXTURE_CUBE_MAP &&
-            drvTex->glTarget != GL_TEXTURE_EXTERNAL_OES) {
+
+        if (mCurrentState->mTextureTargets[ct] != GL_TEXTURE_2D &&
+            mCurrentState->mTextureTargets[ct] != GL_TEXTURE_CUBE_MAP &&
+            mCurrentState->mTextureTargets[ct] != GL_TEXTURE_EXTERNAL_OES) {
             ALOGE("Attempting to bind unknown texture to shader id %u, texture unit %u",
                   (uint)this, ct);
             rsc->setError(RS_ERROR_BAD_SHADER, "Non-texture allocation bound to a shader");
         }
-        RSD_CALL_GL(glBindTexture, drvTex->glTarget, drvTex->textureID);
+        RSD_CALL_GL(glBindTexture, mCurrentState->mTextureTargets[ct], drvTex->textureID);
         rsdGLCheckError(rsc, "ProgramFragment::setup tex bind");
         if (mRSProgram->mHal.state.samplers[ct]) {
             setupSampler(rsc, mRSProgram->mHal.state.samplers[ct],
                          mRSProgram->mHal.state.textures[ct]);
         } else {
-            RSD_CALL_GL(glTexParameteri, drvTex->glTarget, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-            RSD_CALL_GL(glTexParameteri, drvTex->glTarget, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-            RSD_CALL_GL(glTexParameteri, drvTex->glTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-            RSD_CALL_GL(glTexParameteri, drvTex->glTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+            RSD_CALL_GL(glTexParameteri, mCurrentState->mTextureTargets[ct],
+                GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+            RSD_CALL_GL(glTexParameteri, mCurrentState->mTextureTargets[ct],
+                GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+            RSD_CALL_GL(glTexParameteri, mCurrentState->mTextureTargets[ct],
+                GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+            RSD_CALL_GL(glTexParameteri, mCurrentState->mTextureTargets[ct],
+                GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
             rsdGLCheckError(rsc, "ProgramFragment::setup tex env");
         }
         rsdGLCheckError(rsc, "ProgramFragment::setup uniforms");
