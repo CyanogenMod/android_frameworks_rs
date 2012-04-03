@@ -268,6 +268,37 @@ ObjectBaseRef<Type> Type::cloneAndResize2D(Context *rsc,
 }
 
 
+void Type::incRefs(const void *ptr, size_t ct, size_t startOff) const {
+    const uint8_t *p = static_cast<const uint8_t *>(ptr);
+    const Element *e = mHal.state.element;
+    uint32_t stride = e->getSizeBytes();
+
+    p += stride * startOff;
+    while (ct > 0) {
+        e->incRefs(p);
+        ct--;
+        p += stride;
+    }
+}
+
+
+void Type::decRefs(const void *ptr, size_t ct, size_t startOff) const {
+    if (!mHal.state.element->getHasReferences()) {
+        return;
+    }
+    const uint8_t *p = static_cast<const uint8_t *>(ptr);
+    const Element *e = mHal.state.element;
+    uint32_t stride = e->getSizeBytes();
+
+    p += stride * startOff;
+    while (ct > 0) {
+        e->decRefs(p);
+        ct--;
+        p += stride;
+    }
+}
+
+
 //////////////////////////////////////////////////
 //
 namespace android {

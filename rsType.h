@@ -118,6 +118,9 @@ public:
         return type.get();
     }
 
+    void incRefs(const void *ptr, size_t ct, size_t startOff = 0) const;
+    void decRefs(const void *ptr, size_t ct, size_t startOff = 0) const;
+
 protected:
     void makeLODTable();
     bool mDimLOD;

@@ -357,32 +357,14 @@ void Allocation::sendDirty(const Context *rsc) const {
 }
 
 void Allocation::incRefs(const void *ptr, size_t ct, size_t startOff) const {
-    const uint8_t *p = static_cast<const uint8_t *>(ptr);
-    const Element *e = mHal.state.type->getElement();
-    uint32_t stride = e->getSizeBytes();
-
-    p += stride * startOff;
-    while (ct > 0) {
-        e->incRefs(p);
-        ct --;
-        p += stride;
-    }
+    mHal.state.type->incRefs(ptr, ct, startOff);
 }
 
 void Allocation::decRefs(const void *ptr, size_t ct, size_t startOff) const {
     if (!mHal.state.hasReferences || !getIsScript()) {
         return;
     }
-    const uint8_t *p = static_cast<const uint8_t *>(ptr);
-    const Element *e = mHal.state.type->getElement();
-    uint32_t stride = e->getSizeBytes();
-
-    p += stride * startOff;
-    while (ct > 0) {
-        e->decRefs(p);
-        ct --;
-        p += stride;
-    }
+    mHal.state.type->decRefs(ptr, ct, startOff);
 }
 
 void Allocation::freeChildrenUnlocked () {
