@@ -24,6 +24,8 @@
 #include "Type.h"
 #include "Allocation.h"
 
+using namespace android;
+using namespace renderscriptCpp;
 
 void * Allocation::getIDSafe() const {
     //if (mAdaptedAllocation != NULL) {
@@ -32,7 +34,7 @@ void * Allocation::getIDSafe() const {
     return getID();
 }
 
-void Allocation::updateCacheInfo(const Type *t) {
+void Allocation::updateCacheInfo(sp<const Type> t) {
     mCurrentDimX = t->getX();
     mCurrentDimY = t->getY();
     mCurrentDimZ = t->getZ();
@@ -45,7 +47,9 @@ void Allocation::updateCacheInfo(const Type *t) {
     }
 }
 
-Allocation::Allocation(void *id, RenderScript *rs, const Type *t, uint32_t usage) : BaseObj(id, rs) {
+Allocation::Allocation(void *id, RenderScript *rs, sp<const Type> t, uint32_t usage) :
+        BaseObj(id, rs) {
+
     if ((usage & ~(RS_ALLOCATION_USAGE_SCRIPT |
                    RS_ALLOCATION_USAGE_GRAPHICS_TEXTURE |
                    RS_ALLOCATION_USAGE_GRAPHICS_VERTEX |
@@ -68,7 +72,7 @@ Allocation::Allocation(void *id, RenderScript *rs, const Type *t, uint32_t usage
     mType = t;
     mUsage = usage;
 
-    if (t != NULL) {
+    if (t.get() != NULL) {
         updateCacheInfo(t);
     }
 }
@@ -127,12 +131,11 @@ void Allocation::updateFromNative() {
 
     const void *typeID = rsaAllocationGetType(mRS->mContext, getID());
     if(typeID != NULL) {
-        const Type *old = mType;
-        Type *t = new Type((void *)typeID, mRS);
+        sp<const Type> old = mType;
+        sp<Type> t = new Type((void *)typeID, mRS);
         t->updateFromNative();
         updateCacheInfo(t);
         mType = t;
-        delete old;
     }
 }
 
@@ -221,7 +224,9 @@ void Allocation::generateMipmaps() {
     rsAllocationGenerateMipmaps(mRS->mContext, getID());
 }
 
-void Allocation::copy1DRangeFromUnchecked(uint32_t off, size_t count, const void *data, size_t dataLen) {
+void Allocation::copy1DRangeFromUnchecked(uint32_t off, size_t count, const void *data,
+        size_t dataLen) {
+
     if(count < 1) {
         ALOGE("Count must be >= 1.");
         return;
@@ -258,7 +263,9 @@ void Allocation::copy1DRangeFrom(uint32_t off, size_t count, const float *d, siz
     copy1DRangeFromUnchecked(off, count, d, dataLen);
 }
 
-void Allocation::copy1DRangeFrom(uint32_t off, size_t count, const Allocation *data, uint32_t dataOff) {
+void Allocation::copy1DRangeFrom(uint32_t off, size_t count, const Allocation *data,
+        uint32_t dataOff) {
+
     rsAllocationCopy2DRange(mRS->mContext, getIDSafe(), off, 0,
                             mSelectedLOD, mSelectedFace,
                             count, 1, data->getIDSafe(), dataOff, 0,
@@ -371,7 +378,7 @@ void resize(int dimX, int dimY) {
 */
 
 
-Allocation *Allocation::createTyped(RenderScript *rs, const Type *type,
+android::sp<Allocation> Allocation::createTyped(RenderScript *rs, sp<const Type> type,
                         RsAllocationMipmapControl mips, uint32_t usage) {
     void *id = rsAllocationCreateTyped(rs->mContext, type->getID(), mips, usage, 0);
     if (id == 0) {
@@ -381,7 +388,7 @@ Allocation *Allocation::createTyped(RenderScript *rs, const Type *type,
     return new Allocation(id, rs, type, usage);
 }
 
-Allocation *Allocation::createTyped(RenderScript *rs, const Type *type,
+android::sp<Allocation> Allocation::createTyped(RenderScript *rs, sp<const Type> type,
                                     RsAllocationMipmapControl mips, uint32_t usage, void *pointer) {
     void *id = rsAllocationCreateTyped(rs->mContext, type->getID(), mips, usage, (uint32_t)pointer);
     if (id == 0) {
@@ -390,16 +397,20 @@ Allocation *Allocation::createTyped(RenderScript *rs, const Type *type,
     return new Allocation(id, rs, type, usage);
 }
 
-Allocation *Allocation::createTyped(RenderScript *rs, const Type *type, uint32_t usage) {
+android::sp<Allocation> Allocation::createTyped(RenderScript *rs, sp<const Type> type,
+        uint32_t usage) {
     return createTyped(rs, type, RS_ALLOCATION_MIPMAP_NONE, usage);
 }
 
-Allocation *Allocation::createSized(RenderScript *rs, const Element *e, size_t count, uint32_t usage) {
+android::sp<Allocation> Allocation::createSized(RenderScript *rs, sp<const Element> e,
+        size_t count, uint32_t usage) {
+
     Type::Builder b(rs, e);
     b.setX(count);
-    const Type *t = b.create();
+    sp<const Type> t = b.create();
 
-    void *id = rsAllocationCreateTyped(rs->mContext, t->getID(), RS_ALLOCATION_MIPMAP_NONE, usage, 0);
+    void *id = rsAllocationCreateTyped(rs->mContext, t->getID(),
+        RS_ALLOCATION_MIPMAP_NONE, usage, 0);
     if (id == 0) {
         ALOGE("Allocation creation failed.");
     }

@@ -23,17 +23,24 @@
 #include "RenderScript.h"
 #include "Allocation.h"
 
+namespace android {
+namespace renderscriptCpp {
+
+
 class Type;
 class Element;
 class Allocation;
 
 class Script : public BaseObj {
+private:
+
 protected:
     Script(void *id, RenderScript *rs);
-    void forEach(uint32_t slot, const Allocation *in, const Allocation *out, const void *v, size_t) const;
-    void bindAllocation(const Allocation *va, uint32_t slot) const;
+    void forEach(uint32_t slot, sp<const Allocation> in, sp<const Allocation> out,
+            const void *v, size_t) const;
+    void bindAllocation(sp<Allocation> va, uint32_t slot) const;
     void setVar(uint32_t index, const void *, size_t len) const;
-    void setVar(uint32_t index, const BaseObj *o) const;
+    void setVar(uint32_t index, sp<const BaseObj> o) const;
     void invoke(uint32_t slot, const void *v, size_t len) const;
 
 
@@ -59,21 +66,21 @@ protected:
 public:
     class FieldBase {
     protected:
-        const Element *mElement;
-        Allocation *mAllocation;
+        sp<const Element> mElement;
+        sp<Allocation> mAllocation;
 
         void init(RenderScript *rs, uint32_t dimx, uint32_t usages = 0);
 
     public:
-        const Element *getElement() {
+        sp<const Element> getElement() {
             return mElement;
         }
 
-        const Type *getType() {
+        sp<const Type> getType() {
             return mAllocation->getType();
         }
 
-        const Allocation *getAllocation() {
+        sp<const Allocation> getAllocation() {
             return mAllocation;
         }
 
@@ -81,4 +88,6 @@ public:
     };
 };
 
+}
+}
 #endif

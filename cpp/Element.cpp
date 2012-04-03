@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2012 The Android Open Source Project
+ * Copyright (C) 2012 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,8 +23,10 @@
 #include "RenderScript.h"
 #include "Element.h"
 
+using namespace android;
+using namespace renderscriptCpp;
 
-const Element * Element::getSubElement(uint32_t index) {
+sp<const Element> Element::getSubElement(uint32_t index) {
     if (!mVisibleElementMap.size()) {
         mRS->throwError("Element contains no sub-elements");
     }
@@ -65,7 +67,7 @@ uint32_t Element::getSubElementOffsetBytes(uint32_t index) {
 }
 
 
-#define CREATE_USER(N, T) const Element * Element::N(RenderScript *rs) { \
+#define CREATE_USER(N, T) sp<const Element> Element::N(RenderScript *rs) { \
     return createUser(rs, RS_TYPE_##T); \
 }
 CREATE_USER(BOOLEAN, BOOLEAN);
@@ -93,7 +95,7 @@ CREATE_USER(MATRIX_4X4, MATRIX_4X4);
 CREATE_USER(MATRIX_3X3, MATRIX_3X3);
 CREATE_USER(MATRIX_2X2, MATRIX_2X2);
 
-#define CREATE_PIXEL(N, T, K) const Element * Element::N(RenderScript *rs) { \
+#define CREATE_PIXEL(N, T, K) sp<const Element> Element::N(RenderScript *rs) { \
     return createPixel(rs, RS_TYPE_##T, RS_KIND_##K); \
 }
 CREATE_PIXEL(A_8, UNSIGNED_8, PIXEL_A);
@@ -102,13 +104,13 @@ CREATE_PIXEL(RGB_888, UNSIGNED_8, PIXEL_RGB);
 CREATE_PIXEL(RGBA_4444, UNSIGNED_4_4_4_4, PIXEL_RGBA);
 CREATE_PIXEL(RGBA_8888, UNSIGNED_8, PIXEL_RGBA);
 
-#define CREATE_VECTOR(N, T) const Element * Element::N##_2(RenderScript *rs) { \
+#define CREATE_VECTOR(N, T) sp<const Element> Element::N##_2(RenderScript *rs) { \
     return createVector(rs, RS_TYPE_##T, 2); \
 } \
-const Element * Element::N##_3(RenderScript *rs) { \
+sp<const Element> Element::N##_3(RenderScript *rs) { \
     return createVector(rs, RS_TYPE_##T, 3); \
 } \
-const Element * Element::N##_4(RenderScript *rs) { \
+sp<const Element> Element::N##_4(RenderScript *rs) { \
     return createVector(rs, RS_TYPE_##T, 4); \
 }
 CREATE_VECTOR(U8, UNSIGNED_8);
@@ -147,7 +149,7 @@ void Element::updateVisibleSubElements() {
 }
 
 Element::Element(void *id, RenderScript *rs,
-                 android::Vector<const Element *> &elements,
+                 android::Vector<sp</*const*/ Element> > &elements,
                  android::Vector<android::String8> &elementNames,
                  android::Vector<uint32_t> &arraySizes) : BaseObj(id, rs) {
     mSizeBytes = 0;
@@ -293,12 +295,12 @@ void Element::updateFromNative() {
     updateVisibleSubElements();
 }
 
-const Element * Element::createUser(RenderScript *rs, RsDataType dt) {
+sp<const Element> Element::createUser(RenderScript *rs, RsDataType dt) {
     void * id = rsElementCreate(rs->mContext, dt, RS_KIND_USER, false, 1);
     return new Element(id, rs, dt, RS_KIND_USER, false, 1);
 }
 
-const Element * Element::createVector(RenderScript *rs, RsDataType dt, uint32_t size) {
+sp<const Element> Element::createVector(RenderScript *rs, RsDataType dt, uint32_t size) {
     if (size < 2 || size > 4) {
         rs->throwError("Vector size out of range 2-4.");
     }
@@ -306,7 +308,7 @@ const Element * Element::createVector(RenderScript *rs, RsDataType dt, uint32_t 
     return new Element(id, rs, dt, RS_KIND_USER, false, size);
 }
 
-const Element * Element::createPixel(RenderScript *rs, RsDataType dt, RsDataKind dk) {
+sp<const Element> Element::createPixel(RenderScript *rs, RsDataType dt, RsDataKind dk) {
     if (!(dk == RS_KIND_PIXEL_L ||
           dk == RS_KIND_PIXEL_A ||
           dk == RS_KIND_PIXEL_LA ||
@@ -357,9 +359,9 @@ const Element * Element::createPixel(RenderScript *rs, RsDataType dt, RsDataKind
     return new Element(id, rs, dt, dk, true, size);
 }
 
-bool Element::isCompatible(const Element *e) {
+bool Element::isCompatible(sp<const Element>e) {
     // Try strict BaseObj equality to start with.
-    if (this == e) {
+    if (this == e.get()) {
         return true;
     }
 
@@ -368,7 +370,7 @@ bool Element::isCompatible(const Element *e) {
     // field must be non-null since we require name equivalence for
     // user-created Elements.
     return ((mSizeBytes == e->mSizeBytes) &&
-            (mType != NULL) &&
+            (mType != RS_TYPE_NONE) &&
             (mType == e->mType) &&
             (mVectorSize == e->mVectorSize));
 }
@@ -378,7 +380,7 @@ Element::Builder::Builder(RenderScript *rs) {
     mSkipPadding = false;
 }
 
-void Element::Builder::add(const Element *e, android::String8 &name, uint32_t arraySize) {
+void Element::Builder::add(sp</*const*/ Element>e, android::String8 &name, uint32_t arraySize) {
     // Skip padding fields after a vector 3 type.
     if (mSkipPadding) {
         const char *s1 = "#padding_";
@@ -403,26 +405,27 @@ void Element::Builder::add(const Element *e, android::String8 &name, uint32_t ar
     mArraySizes.add(arraySize);
 }
 
-const Element * Element::Builder::create() {
+sp<const Element> Element::Builder::create() {
     size_t fieldCount = mElements.size();
     const char ** nameArray = (const char **)calloc(fieldCount, sizeof(char *));
+    const Element ** elementArray = (const Element **)calloc(fieldCount, sizeof(Element *));
     size_t* sizeArray = (size_t*)calloc(fieldCount, sizeof(size_t));
 
     for (size_t ct = 0; ct < fieldCount; ct++) {
         nameArray[ct] = mElementNames[ct].string();
+        elementArray[ct] = mElements[ct].get();
         sizeArray[ct] = mElementNames[ct].length();
     }
 
     void *id = rsElementCreate2(mRS->mContext,
-                                (RsElement *)mElements.array(), fieldCount,
+                                (RsElement *)elementArray, fieldCount,
                                 nameArray, fieldCount * sizeof(size_t),  sizeArray,
                                 (const uint32_t *)mArraySizes.array(), fieldCount);
 
 
     free(nameArray);
     free(sizeArray);
-
-    Element *e = new Element(id, mRS, mElements, mElementNames, mArraySizes);
-    return e;
+    free(elementArray);
+    return new Element(id, mRS, mElements, mElementNames, mArraySizes);
 }
 

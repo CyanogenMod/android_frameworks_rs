@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2012 The Android Open Source Project
+ * Copyright (C) 2012 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,11 +24,14 @@
 #include "Type.h"
 #include "Element.h"
 
+namespace android {
+namespace renderscriptCpp {
+
 class Allocation : public BaseObj {
 protected:
-    const Type *mType;
+    android::sp<const Type> mType;
     uint32_t mUsage;
-    Allocation *mAdaptedAllocation;
+    android::sp<Allocation> mAdaptedAllocation;
 
     bool mConstrainedLOD;
     bool mConstrainedFace;
@@ -48,9 +51,9 @@ protected:
 
 
     void * getIDSafe() const;
-    void updateCacheInfo(const Type *t);
+    void updateCacheInfo(sp<const Type> t);
 
-    Allocation(void *id, RenderScript *rs, const Type *t, uint32_t usage);
+    Allocation(void *id, RenderScript *rs, sp<const Type> t, uint32_t usage);
 
     void validateIsInt32();
     void validateIsInt16();
@@ -63,7 +66,7 @@ protected:
     void validate2DRange(uint32_t xoff, uint32_t yoff, uint32_t w, uint32_t h);
 
 public:
-    const Type * getType() {
+    android::sp<const Type> getType() {
         return mType;
     }
 
@@ -109,18 +112,21 @@ public:
     void resize(int dimX);
     void resize(int dimX, int dimY);
 
-    static Allocation *createTyped(RenderScript *rs, const Type *type,
+    static sp<Allocation> createTyped(RenderScript *rs, sp<const Type> type,
                                    RsAllocationMipmapControl mips, uint32_t usage);
-    static Allocation *createTyped(RenderScript *rs, const Type *type,
+    static sp<Allocation> createTyped(RenderScript *rs, sp<const Type> type,
                                    RsAllocationMipmapControl mips, uint32_t usage, void * pointer);
 
-    static Allocation *createTyped(RenderScript *rs, const Type *type,
+    static sp<Allocation> createTyped(RenderScript *rs, sp<const Type> type,
                                    uint32_t usage = RS_ALLOCATION_USAGE_SCRIPT);
-    static Allocation *createSized(RenderScript *rs, const Element *e, size_t count,
+    static sp<Allocation> createSized(RenderScript *rs, sp<const Element> e, size_t count,
                                    uint32_t usage = RS_ALLOCATION_USAGE_SCRIPT);
     //SurfaceTexture *getSurfaceTexture();
     //void setSurfaceTexture(SurfaceTexture *sur);
 
 };
+
+}
+}
 
 #endif

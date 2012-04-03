@@ -22,6 +22,9 @@
 
 #include "Script.h"
 
+namespace android {
+namespace renderscriptCpp {
+
 class ScriptC : public Script {
 protected:
     ScriptC(RenderScript *rs,
@@ -31,4 +34,7 @@ protected:
 
 };
 
+
+}
+}
 #endif

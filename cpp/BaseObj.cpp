@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2012 The Android Open Source Project
+ * Copyright (C) 2012 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,9 @@
 #include "RenderScript.h"
 #include "BaseObj.h"
 
+using namespace android;
+using namespace renderscriptCpp;
+
 void * BaseObj::getID() const {
     if (mID == NULL) {
         ALOGE("Internal error: Object id 0.");
@@ -28,8 +31,8 @@ void * BaseObj::getID() const {
     return mID;
 }
 
-void * BaseObj::getObjID(const BaseObj *o) {
-    return o == NULL ? NULL : o->getID();
+void * BaseObj::getObjID(sp<const BaseObj> o) {
+    return o.get() == NULL ? NULL : o->getID();
 }
 
 

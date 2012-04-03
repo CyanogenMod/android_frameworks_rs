@@ -21,6 +21,9 @@
 
 #include "ScriptC.h"
 
+using namespace android;
+using namespace renderscriptCpp;
+
 ScriptC::ScriptC(RenderScript *rs,
                  const void *codeTxt, size_t codeLength,
                  const char *cachedName, size_t cachedNameLength,

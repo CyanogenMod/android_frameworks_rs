@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2012 The Android Open Source Project
+ * Copyright (C) 2012 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,9 @@
 #include <rs.h>
 #include "RenderScript.h"
 #include "BaseObj.h"
+
+namespace android {
+namespace renderscriptCpp {
 
 class Element : public BaseObj {
 public:
@@ -44,7 +47,7 @@ public:
     * @param index index of the sub-element to return
     * @return sub-element in this element at given index
     */
-    const Element * getSubElement(uint32_t index);
+    sp<const Element> getSubElement(uint32_t index);
 
     /**
     * @hide
@@ -88,71 +91,71 @@ public:
     }
 
 
-    static const Element * BOOLEAN(RenderScript *rs);
-    static const Element * U8(RenderScript *rs);
-    static const Element * I8(RenderScript *rs);
-    static const Element * U16(RenderScript *rs);
-    static const Element * I16(RenderScript *rs);
-    static const Element * U32(RenderScript *rs);
-    static const Element * I32(RenderScript *rs);
-    static const Element * U64(RenderScript *rs);
-    static const Element * I64(RenderScript *rs);
-    static const Element * F32(RenderScript *rs);
-    static const Element * F64(RenderScript *rs);
-    static const Element * ELEMENT(RenderScript *rs);
-    static const Element * TYPE(RenderScript *rs);
-    static const Element * ALLOCATION(RenderScript *rs);
-    static const Element * SAMPLER(RenderScript *rs);
-    static const Element * SCRIPT(RenderScript *rs);
-    static const Element * MESH(RenderScript *rs);
-    static const Element * PROGRAM_FRAGMENT(RenderScript *rs);
-    static const Element * PROGRAM_VERTEX(RenderScript *rs);
-    static const Element * PROGRAM_RASTER(RenderScript *rs);
-    static const Element * PROGRAM_STORE(RenderScript *rs);
+    static sp<const Element> BOOLEAN(RenderScript *rs);
+    static sp<const Element> U8(RenderScript *rs);
+    static sp<const Element> I8(RenderScript *rs);
+    static sp<const Element> U16(RenderScript *rs);
+    static sp<const Element> I16(RenderScript *rs);
+    static sp<const Element> U32(RenderScript *rs);
+    static sp<const Element> I32(RenderScript *rs);
+    static sp<const Element> U64(RenderScript *rs);
+    static sp<const Element> I64(RenderScript *rs);
+    static sp<const Element> F32(RenderScript *rs);
+    static sp<const Element> F64(RenderScript *rs);
+    static sp<const Element> ELEMENT(RenderScript *rs);
+    static sp<const Element> TYPE(RenderScript *rs);
+    static sp<const Element> ALLOCATION(RenderScript *rs);
+    static sp<const Element> SAMPLER(RenderScript *rs);
+    static sp<const Element> SCRIPT(RenderScript *rs);
+    static sp<const Element> MESH(RenderScript *rs);
+    static sp<const Element> PROGRAM_FRAGMENT(RenderScript *rs);
+    static sp<const Element> PROGRAM_VERTEX(RenderScript *rs);
+    static sp<const Element> PROGRAM_RASTER(RenderScript *rs);
+    static sp<const Element> PROGRAM_STORE(RenderScript *rs);
 
-    static const Element * A_8(RenderScript *rs);
-    static const Element * RGB_565(RenderScript *rs);
-    static const Element * RGB_888(RenderScript *rs);
-    static const Element * RGBA_5551(RenderScript *rs);
-    static const Element * RGBA_4444(RenderScript *rs);
-    static const Element * RGBA_8888(RenderScript *rs);
+    static sp<const Element> A_8(RenderScript *rs);
+    static sp<const Element> RGB_565(RenderScript *rs);
+    static sp<const Element> RGB_888(RenderScript *rs);
+    static sp<const Element> RGBA_5551(RenderScript *rs);
+    static sp<const Element> RGBA_4444(RenderScript *rs);
+    static sp<const Element> RGBA_8888(RenderScript *rs);
 
-    static const Element * F32_2(RenderScript *rs);
-    static const Element * F32_3(RenderScript *rs);
-    static const Element * F32_4(RenderScript *rs);
-    static const Element * F64_2(RenderScript *rs);
-    static const Element * F64_3(RenderScript *rs);
-    static const Element * F64_4(RenderScript *rs);
-    static const Element * U8_2(RenderScript *rs);
-    static const Element * U8_3(RenderScript *rs);
-    static const Element * U8_4(RenderScript *rs);
-    static const Element * I8_2(RenderScript *rs);
-    static const Element * I8_3(RenderScript *rs);
-    static const Element * I8_4(RenderScript *rs);
-    static const Element * U16_2(RenderScript *rs);
-    static const Element * U16_3(RenderScript *rs);
-    static const Element * U16_4(RenderScript *rs);
-    static const Element * I16_2(RenderScript *rs);
-    static const Element * I16_3(RenderScript *rs);
-    static const Element * I16_4(RenderScript *rs);
-    static const Element * U32_2(RenderScript *rs);
-    static const Element * U32_3(RenderScript *rs);
-    static const Element * U32_4(RenderScript *rs);
-    static const Element * I32_2(RenderScript *rs);
-    static const Element * I32_3(RenderScript *rs);
-    static const Element * I32_4(RenderScript *rs);
-    static const Element * U64_2(RenderScript *rs);
-    static const Element * U64_3(RenderScript *rs);
-    static const Element * U64_4(RenderScript *rs);
-    static const Element * I64_2(RenderScript *rs);
-    static const Element * I64_3(RenderScript *rs);
-    static const Element * I64_4(RenderScript *rs);
-    static const Element * MATRIX_4X4(RenderScript *rs);
-    static const Element * MATRIX_3X3(RenderScript *rs);
-    static const Element * MATRIX_2X2(RenderScript *rs);
+    static sp<const Element> F32_2(RenderScript *rs);
+    static sp<const Element> F32_3(RenderScript *rs);
+    static sp<const Element> F32_4(RenderScript *rs);
+    static sp<const Element> F64_2(RenderScript *rs);
+    static sp<const Element> F64_3(RenderScript *rs);
+    static sp<const Element> F64_4(RenderScript *rs);
+    static sp<const Element> U8_2(RenderScript *rs);
+    static sp<const Element> U8_3(RenderScript *rs);
+    static sp<const Element> U8_4(RenderScript *rs);
+    static sp<const Element> I8_2(RenderScript *rs);
+    static sp<const Element> I8_3(RenderScript *rs);
+    static sp<const Element> I8_4(RenderScript *rs);
+    static sp<const Element> U16_2(RenderScript *rs);
+    static sp<const Element> U16_3(RenderScript *rs);
+    static sp<const Element> U16_4(RenderScript *rs);
+    static sp<const Element> I16_2(RenderScript *rs);
+    static sp<const Element> I16_3(RenderScript *rs);
+    static sp<const Element> I16_4(RenderScript *rs);
+    static sp<const Element> U32_2(RenderScript *rs);
+    static sp<const Element> U32_3(RenderScript *rs);
+    static sp<const Element> U32_4(RenderScript *rs);
+    static sp<const Element> I32_2(RenderScript *rs);
+    static sp<const Element> I32_3(RenderScript *rs);
+    static sp<const Element> I32_4(RenderScript *rs);
+    static sp<const Element> U64_2(RenderScript *rs);
+    static sp<const Element> U64_3(RenderScript *rs);
+    static sp<const Element> U64_4(RenderScript *rs);
+    static sp<const Element> I64_2(RenderScript *rs);
+    static sp<const Element> I64_3(RenderScript *rs);
+    static sp<const Element> I64_4(RenderScript *rs);
+    static sp<const Element> MATRIX_4X4(RenderScript *rs);
+    static sp<const Element> MATRIX_3X3(RenderScript *rs);
+    static sp<const Element> MATRIX_2X2(RenderScript *rs);
 
     Element(void *id, RenderScript *rs,
-            android::Vector<const Element *> &elements,
+            android::Vector<sp</*const*/ Element> > &elements,
             android::Vector<android::String8> &elementNames,
             android::Vector<uint32_t> &arraySizes);
     Element(void *id, RenderScript *rs, RsDataType dt, RsDataKind dk, bool norm, uint32_t size);
@@ -160,15 +163,15 @@ public:
     virtual ~Element();
 
     void updateFromNative();
-    static const Element * createUser(RenderScript *rs, RsDataType dt);
-    static const Element * createVector(RenderScript *rs, RsDataType dt, uint32_t size);
-    static const Element * createPixel(RenderScript *rs, RsDataType dt, RsDataKind dk);
-    bool isCompatible(const Element *e);
+    static sp<const Element> createUser(RenderScript *rs, RsDataType dt);
+    static sp<const Element> createVector(RenderScript *rs, RsDataType dt, uint32_t size);
+    static sp<const Element> createPixel(RenderScript *rs, RsDataType dt, RsDataKind dk);
+    bool isCompatible(sp<const Element>e);
 
     class Builder {
     private:
         RenderScript *mRS;
-        android::Vector<const Element *> mElements;
+        android::Vector<sp</*const*/ Element> > mElements;
         android::Vector<android::String8> mElementNames;
         android::Vector<uint32_t> mArraySizes;
         bool mSkipPadding;
@@ -176,14 +179,14 @@ public:
     public:
         Builder(RenderScript *rs);
         ~Builder();
-        void add(const Element *, android::String8 &name, uint32_t arraySize = 1);
-        const Element * create();
+        void add(sp</*const*/ Element>, android::String8 &name, uint32_t arraySize = 1);
+        sp<const Element> create();
     };
 
 private:
     void updateVisibleSubElements();
 
-    android::Vector<const Element *> mElements;
+    android::Vector<sp</*const*/ Element> > mElements;
     android::Vector<android::String8> mElementNames;
     android::Vector<uint32_t> mArraySizes;
     android::Vector<uint32_t> mVisibleElementMap;
@@ -196,4 +199,6 @@ private:
     size_t mVectorSize;
 };
 
+}
+}
 #endif

@@ -6,6 +6,9 @@
 
 #include "ScriptC_mono.h"
 
+using namespace android;
+using namespace renderscriptCpp;
+
 int main(int argc, char** argv)
 {
 
@@ -15,24 +18,24 @@ int main(int argc, char** argv)
     bool r = rs->init(16);
     printf("Init returned %i\n", r);
 
-    const Element *e = Element::RGBA_8888(rs);
-    printf("Element %p\n", e);
+    sp<const Element> e = Element::RGBA_8888(rs);
+    printf("Element %p\n", e.get());
 
     Type::Builder tb(rs, e);
     tb.setX(128);
     tb.setY(128);
-    const Type *t = tb.create();
-    printf("Type %p\n", t);
+    sp<const Type> t = tb.create();
+    printf("Type %p\n", t.get());
 
 
-    Allocation *a1 = Allocation::createSized(rs, e, 1000);
-    printf("Allocation %p\n", a1);
+    sp<Allocation> a1 = Allocation::createSized(rs, e, 1000);
+    printf("Allocation %p\n", a1.get());
 
-    Allocation *ain = Allocation::createTyped(rs, t);
-    Allocation *aout = Allocation::createTyped(rs, t);
-    printf("Allocation %p %p\n", ain, aout);
+    sp<Allocation> ain = Allocation::createTyped(rs, t);
+    sp<Allocation> aout = Allocation::createTyped(rs, t);
+    printf("Allocation %p %p\n", ain.get(), aout.get());
 
-    ScriptC_mono * sc = new ScriptC_mono(rs, NULL, 0);
+    sp<ScriptC_mono> sc = new ScriptC_mono(rs, NULL, 0);
     printf("new script\n");
 
     uint32_t *buf = new uint32_t[t->getCount()];
@@ -49,10 +52,10 @@ int main(int argc, char** argv)
 
 
     printf("Deleting stuff\n");
-    delete sc;
-    delete t;
-    delete a1;
-    delete e;
+    sc.clear();
+    t.clear();
+    a1.clear();
+    e.clear();
     delete rs;
     printf("Delete OK\n");
 }

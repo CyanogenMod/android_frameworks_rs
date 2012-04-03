@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 The Android Open Source Project
+ * Copyright (C) 2012 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,9 @@
 #include "RenderScript.h"
 #include "Element.h"
 
+namespace android {
+namespace renderscriptCpp {
+
 class Type : public BaseObj {
 protected:
     friend class Allocation;
@@ -31,14 +34,14 @@ protected:
     bool mDimMipmaps;
     bool mDimFaces;
     size_t mElementCount;
-    const Element *mElement;
+    sp<const Element> mElement;
 
     void calcElementCount();
     virtual void updateFromNative();
 
 public:
 
-    const Element* getElement() const {
+    sp<const Element> getElement() const {
         return mElement;
     }
 
@@ -82,18 +85,20 @@ public:
         uint32_t mDimZ;
         bool mDimMipmaps;
         bool mDimFaces;
-        const Element *mElement;
+        sp<const Element> mElement;
 
     public:
-        Builder(RenderScript *rs, const Element *e);
+        Builder(RenderScript *rs, sp<const Element> e);
 
         void setX(uint32_t value);
         void setY(int value);
         void setMipmaps(bool value);
         void setFaces(bool value);
-        const Type * create();
+        sp<const Type> create();
     };
 
 };
 
+}
+}
 #endif

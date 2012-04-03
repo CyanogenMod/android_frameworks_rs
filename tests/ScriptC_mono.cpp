@@ -23,6 +23,10 @@
 
 #include "ScriptC_mono.h"
 
+using namespace android;
+using namespace renderscriptCpp;
+
+
 static const unsigned char __txt[] = {
     0xde,0xc0,0x17,0x0b,0x00,0x00,0x00,0x00,0x18,0x00,0x00,0x00,0xd0,0x04,0x00,0x00,
     0x00,0x00,0x00,0x00,0x10,0x00,0x00,0x00,0x42,0x43,0xc0,0xde,0x21,0x0c,0x00,0x00,
@@ -112,7 +116,7 @@ ScriptC_mono::ScriptC_mono(RenderScript *rs, const char *cacheDir, size_t cacheD
 ScriptC_mono::~ScriptC_mono() {
 }
 
-void ScriptC_mono::forEach_root(const Allocation *ain, const Allocation *aout) const {
+void ScriptC_mono::forEach_root(sp<const Allocation> ain, sp<const Allocation> aout) const {
     forEach(0, ain, aout, NULL, 0);
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 The Android Open Source Project
+ * Copyright (C) 2012 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,9 @@
 #include "RenderScript.h"
 #include "Element.h"
 #include "Type.h"
+
+using namespace android;
+using namespace renderscriptCpp;
 
 void Type::calcElementCount() {
     bool hasLod = hasMipmaps();
@@ -93,7 +96,7 @@ void Type::updateFromNative() {
     */
 }
 
-Type::Builder::Builder(RenderScript *rs, const Element *e) {
+Type::Builder::Builder(RenderScript *rs, sp<const Element> e) {
     mRS = rs;
     mElement = e;
     mDimX = 0;
@@ -125,7 +128,7 @@ void Type::Builder::setFaces(bool value) {
     mDimFaces = value;
 }
 
-const Type * Type::Builder::create() {
+sp<const Type> Type::Builder::create() {
     if (mDimZ > 0) {
         if ((mDimX < 1) || (mDimY < 1)) {
             ALOGE("Both X and Y dimension required when Z is present.");
@@ -145,7 +148,8 @@ const Type * Type::Builder::create() {
         }
     }
 
-    void * id = rsTypeCreate(mRS->mContext, mElement->getID(), mDimX, mDimY, mDimZ, mDimMipmaps, mDimFaces);
+    void * id = rsTypeCreate(mRS->mContext, mElement->getID(), mDimX, mDimY, mDimZ,
+            mDimMipmaps, mDimFaces);
     Type *t = new Type(id, mRS);
     t->mElement = mElement;
     t->mDimX = mDimX;

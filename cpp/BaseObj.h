@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2012 The Android Open Source Project
+ * Copyright (C) 2012 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,12 +18,17 @@
 #define __ANDROID_BASE_OBJ_H__
 
 
+#include "utils/RefBase.h"
 #include <pthread.h>
 #include <rs.h>
 
 #include "RenderScript.h"
 
-class BaseObj {
+namespace android {
+namespace renderscriptCpp {
+
+
+class BaseObj : public android::LightRefBase<BaseObj> {
 protected:
     friend class Element;
     friend class Type;
@@ -40,7 +45,7 @@ protected:
     BaseObj(void *id, RenderScript *rs);
     void checkValid();
 
-    static void * getObjID(const BaseObj *o);
+    static void * getObjID(sp<const BaseObj> o);
 
 public:
 
@@ -49,4 +54,6 @@ public:
     virtual bool equals(const BaseObj *obj);
 };
 
+}
+}
 #endif
