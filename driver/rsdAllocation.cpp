@@ -253,6 +253,7 @@ bool rsdAllocationInit(const Context *rsc, Allocation *alloc, bool forceZero) {
 
 
     alloc->mHal.drvState.mallocPtr = ptr;
+    alloc->mHal.drvState.stride = alloc->mHal.state.dimensionX * alloc->mHal.state.elementSizeBytes;
     drv->mallocPtr = (uint8_t *)ptr;
     alloc->mHal.drv = drv;
     if (forceZero && ptr) {
@@ -422,6 +423,7 @@ static bool IoGetBuffer(const Context *rsc, Allocation *alloc, ANativeWindow *nw
             GRALLOC_USAGE_SW_READ_NEVER | GRALLOC_USAGE_SW_WRITE_OFTEN,
             bounds, &dst);
     alloc->mHal.drvState.mallocPtr = dst;
+    alloc->mHal.drvState.stride = drv->wndBuffer->stride * alloc->mHal.state.elementSizeBytes;
 
     return true;
 }
@@ -534,7 +536,6 @@ void rsdAllocationData2D(const Context *rsc, const Allocation *alloc,
 
     uint32_t eSize = alloc->mHal.state.elementSizeBytes;
     uint32_t lineSize = eSize * w;
-    uint32_t destW = alloc->mHal.state.dimensionX;
 
     if (drv->mallocPtr) {
         const uint8_t *src = static_cast<const uint8_t *>(data);
@@ -548,7 +549,7 @@ void rsdAllocationData2D(const Context *rsc, const Allocation *alloc,
             }
             memcpy(dst, src, lineSize);
             src += lineSize;
-            dst += destW * eSize;
+            dst += alloc->mHal.drvState.stride;
         }
         drv->uploadDeferred = true;
     } else {
@@ -658,7 +659,7 @@ void rsdAllocationElementData2D(const Context *rsc, const Allocation *alloc,
 
     uint32_t eSize = alloc->mHal.state.elementSizeBytes;
     uint8_t * ptr = drv->mallocPtr;
-    ptr += eSize * (x + y * alloc->mHal.state.dimensionX);
+    ptr += (eSize * x) + (y * alloc->mHal.drvState.stride);
 
     const Element * e = alloc->mHal.state.type->getElement()->getField(cIdx);
     ptr += alloc->mHal.state.type->getElement()->getFieldOffsetBytes(cIdx);

@@ -215,6 +215,9 @@ typedef struct {
     uint8_t *ptrOut;
     uint32_t eStrideOut;
 
+    uint32_t yStrideIn;
+    uint32_t yStrideOut;
+
     uint32_t xStart;
     uint32_t xEnd;
     uint32_t yStart;
@@ -253,9 +256,8 @@ static void wc_xy(void *usr, uint32_t idx) {
         //ALOGE("usr idx %i, x %i,%i  y %i,%i", idx, mtls->xStart, mtls->xEnd, yStart, yEnd);
         //ALOGE("usr ptr in %p,  out %p", mtls->ptrIn, mtls->ptrOut);
         for (p.y = yStart; p.y < yEnd; p.y++) {
-            uint32_t offset = mtls->dimX * p.y;
-            p.out = mtls->ptrOut + (mtls->eStrideOut * offset);
-            p.in = mtls->ptrIn + (mtls->eStrideIn * offset);
+            p.out = mtls->ptrOut + (mtls->yStrideOut * p.y);
+            p.in = mtls->ptrIn + (mtls->yStrideIn * p.y);
             fn(&p, mtls->xStart, mtls->xEnd, mtls->eStrideIn, mtls->eStrideOut);
         }
     }
@@ -371,6 +373,7 @@ void rsdScriptInvokeForEach(const Context *rsc,
     if (ain) {
         mtls.ptrIn = (const uint8_t *)ain->getPtr();
         mtls.eStrideIn = ain->getType()->getElementSizeBytes();
+        mtls.yStrideIn = ain->mHal.drvState.stride;
     }
 
     mtls.ptrOut = NULL;
@@ -378,6 +381,7 @@ void rsdScriptInvokeForEach(const Context *rsc,
     if (aout) {
         mtls.ptrOut = (uint8_t *)aout->getPtr();
         mtls.eStrideOut = aout->getType()->getElementSizeBytes();
+        mtls.yStrideOut = aout->mHal.drvState.stride;
     }
 
     if ((dc->mWorkers.mCount > 1) && s->mHal.info.isThreadable) {

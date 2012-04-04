@@ -68,6 +68,7 @@ public:
 
         struct DrvState {
             void * mallocPtr;
+            uint32_t stride;
         } drvState;
 
     };
