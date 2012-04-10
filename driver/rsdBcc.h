@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 The Android Open Source Project
+ * Copyright (C) 2011-2012 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,6 +49,13 @@ void rsdScriptInvokeFreeChildren(const android::renderscript::Context *dc,
 void rsdScriptSetGlobalVar(const android::renderscript::Context *,
                            const android::renderscript::Script *,
                            uint32_t slot, void *data, size_t dataLen);
+void rsdScriptSetGlobalVarWithElemDims(const android::renderscript::Context *,
+                                       const android::renderscript::Script *,
+                                       uint32_t slot, void *data,
+                                       size_t dataLength,
+                                       const android::renderscript::Element *,
+                                       const size_t *dims,
+                                       size_t dimLength);
 void rsdScriptSetGlobalBind(const android::renderscript::Context *,
                             const android::renderscript::Script *,
                             uint32_t slot, void *data);

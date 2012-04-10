@@ -330,6 +330,14 @@ ScriptSetVarV {
     param const void * data
     }
 
+ScriptSetVarVE {
+    param RsScript s
+    param uint32_t slot
+    param const void * data
+    param RsElement e
+    param const size_t * dims
+    }
+
 
 ScriptCCreate {
         param const char * resName

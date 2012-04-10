@@ -24,6 +24,7 @@
 #include <bcc/RenderScript/RSInfo.h>
 
 #include "rsContext.h"
+#include "rsElement.h"
 #include "rsScriptC.h"
 
 #include "utils/Vector.h"
@@ -427,6 +428,47 @@ void rsdScriptSetGlobalVar(const Context *dc, const Script *script,
     if (!destPtr) {
         //ALOGV("Calling setVar on slot = %i which is null", slot);
         return;
+    }
+
+    memcpy(destPtr, data, dataLength);
+}
+
+void rsdScriptSetGlobalVarWithElemDims(
+        const android::renderscript::Context *dc,
+        const android::renderscript::Script *script,
+        uint32_t slot, void *data, size_t dataLength,
+        const android::renderscript::Element *elem,
+        const size_t *dims, size_t dimLength) {
+    DrvScript *drv = (DrvScript *)script->mHal.drv;
+
+    int32_t *destPtr = reinterpret_cast<int32_t *>(
+                          drv->mExecutable->getExportVarAddrs()[slot]);
+    if (!destPtr) {
+        //ALOGV("Calling setVar on slot = %i which is null", slot);
+        return;
+    }
+
+    // We want to look at dimension in terms of integer components,
+    // but dimLength is given in terms of bytes.
+    dimLength /= sizeof(int);
+
+    // Only a single dimension is currently supported.
+    rsAssert(dimLength == 1);
+    if (dimLength == 1) {
+        // First do the increment loop.
+        size_t stride = elem->getSizeBytes();
+        char *cVal = reinterpret_cast<char *>(data);
+        for (size_t i = 0; i < dims[0]; i++) {
+            elem->incRefs(cVal);
+            cVal += stride;
+        }
+
+        // Decrement loop comes after (to prevent race conditions).
+        char *oldVal = reinterpret_cast<char *>(destPtr);
+        for (size_t i = 0; i < dims[0]; i++) {
+            elem->decRefs(oldVal);
+            oldVal += stride;
+        }
     }
 
     memcpy(destPtr, data, dataLength);
