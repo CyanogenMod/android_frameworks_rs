@@ -24,10 +24,9 @@ LOCAL_SRC_FILES:= \
 	driver/rsdShaderCache.cpp \
 	driver/rsdVertexArray.cpp
 
-LOCAL_SHARED_LIBRARIES += libz libcutils libutils libEGL libGLESv1_CM libGLESv2
+LOCAL_SHARED_LIBRARIES += libcutils libutils libEGL libGLESv1_CM libGLESv2
 LOCAL_SHARED_LIBRARIES += libbcc libbcinfo libgui
 
-LOCAL_C_INCLUDES += external/zlib
 LOCAL_C_INCLUDES += frameworks/compile/libbcc/include
 
 LOCAL_CFLAGS += -Werror -Wall -Wno-unused-parameter -Wno-unused-variable
@@ -133,12 +132,12 @@ LOCAL_SRC_FILES:= \
 	rsThreadIO.cpp \
 	rsType.cpp
 
-LOCAL_SHARED_LIBRARIES += libz libcutils libutils libEGL libGLESv1_CM libGLESv2 libbcc
+LOCAL_SHARED_LIBRARIES += libcutils libutils libEGL libGLESv1_CM libGLESv2 libbcc
 LOCAL_SHARED_LIBRARIES += libui libbcinfo libgui
 
 LOCAL_STATIC_LIBRARIES := libft2 libRSDriver
 
-LOCAL_C_INCLUDES += external/freetype/include external/zlib
+LOCAL_C_INCLUDES += external/freetype/include
 LOCAL_C_INCLUDES += frameworks/compile/libbcc/include
 
 LOCAL_CFLAGS += -Werror -Wall -Wno-unused-parameter -Wno-unused-variable
@@ -191,7 +190,7 @@ LOCAL_GENERATED_SOURCES += $(GEN)
 
 LOCAL_CFLAGS += -Werror -Wall -Wno-unused-parameter -Wno-unused-variable
 LOCAL_CFLAGS += -DANDROID_RS_SERIALIZE
-LOCAL_CFLAGS += -fPIC 
+LOCAL_CFLAGS += -fPIC
 ifeq ($(TARGET_BUILD_PDK), true)
   LOCAL_CFLAGS += -D__RS_PDK__
 endif
