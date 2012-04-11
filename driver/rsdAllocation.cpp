@@ -376,7 +376,7 @@ void rsdAllocationSyncAll(const Context *rsc, const Allocation *alloc,
         UploadToTexture(rsc, alloc);
     } else {
         if ((alloc->mHal.state.usageFlags & RS_ALLOCATION_USAGE_GRAPHICS_RENDER_TARGET) &&
-                ~(alloc->mHal.state.usageFlags & RS_ALLOCATION_USAGE_IO_OUTPUT)) {
+            !(alloc->mHal.state.usageFlags & RS_ALLOCATION_USAGE_IO_OUTPUT)) {
             AllocateRenderTarget(rsc, alloc);
         }
     }
