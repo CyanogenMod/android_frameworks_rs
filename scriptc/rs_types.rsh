@@ -471,6 +471,7 @@ typedef enum {
     RS_TYPE_PROGRAM_VERTEX   = 1007,
     RS_TYPE_PROGRAM_RASTER   = 1008,
     RS_TYPE_PROGRAM_STORE    = 1009,
+    RS_TYPE_FONT             = 1010,
 
     RS_TYPE_INVALID          = 10000,
 } rs_data_type;
