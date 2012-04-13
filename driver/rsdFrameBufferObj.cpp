@@ -128,6 +128,10 @@ void RsdFrameBufferObj::setActive(const Context *rsc) {
 
     if(mColorTargets[0] && mColorTargets[0]->wnd) {
         rsdGLSetInternalSurface(rsc, mColorTargets[0]->wnd);
+        EGLint width, height;
+        eglQuerySurface(dc->gl.egl.display, dc->gl.egl.surface, EGL_WIDTH, &width);
+        eglQuerySurface(dc->gl.egl.display, dc->gl.egl.surface, EGL_HEIGHT, &height);
+        RSD_CALL_GL(glViewport, 0, 0, width, height);
     } else {
         if (!framebuffer) {
             if(mFBOId == 0) {
