@@ -402,6 +402,7 @@ typedef enum {
 
 #endif //defined(RS_VERSION) && (RS_VERSION >= 14)
 
+// New API's
 #if (defined(RS_VERSION) && (RS_VERSION >= 16))
 
 /**
@@ -409,13 +410,37 @@ typedef enum {
  *
  **/
 typedef enum {
+    /**
+    * Vertex data will be rendered as a series of points
+    */
     RS_PRIMITIVE_POINT              = 0,
+    /**
+    * Vertex pairs will be rendered as lines
+    */
     RS_PRIMITIVE_LINE               = 1,
+    /**
+    * Vertex data will be rendered as a connected line strip
+    */
     RS_PRIMITIVE_LINE_STRIP         = 2,
+    /**
+    * Vertices will be rendered as individual triangles
+    */
     RS_PRIMITIVE_TRIANGLE           = 3,
+    /**
+    * Vertices will be rendered as a connected triangle strip
+    * defined by the first three vertices with each additional
+    * triangle defined by a new vertex
+    */
     RS_PRIMITIVE_TRIANGLE_STRIP     = 4,
+    /**
+    * Vertices will be rendered as a sequence of triangles that all
+    * share first vertex as the origin
+    */
     RS_PRIMITIVE_TRIANGLE_FAN       = 5,
 
+    /**
+    * Invalid primitive
+    */
     RS_PRIMITIVE_INVALID            = 100,
 } rs_primitive;
 
@@ -439,7 +464,6 @@ typedef enum {
  */
 typedef enum {
     RS_TYPE_NONE             = 0,
-    //RS_TYPE_FLOAT_16,
     RS_TYPE_FLOAT_32         = 2,
     RS_TYPE_FLOAT_64         = 3,
     RS_TYPE_SIGNED_8         = 4,
@@ -498,14 +522,43 @@ typedef enum {
 } rs_data_kind;
 
 typedef enum {
+    /**
+    * Always drawn
+    */
     RS_DEPTH_FUNC_ALWAYS        = 0,
+    /**
+    * Drawn if the incoming depth value is less than that in the
+    * depth buffer
+    */
     RS_DEPTH_FUNC_LESS          = 1,
+    /**
+    * Drawn if the incoming depth value is less or equal to that in
+    * the depth buffer
+    */
     RS_DEPTH_FUNC_LEQUAL        = 2,
+    /**
+    * Drawn if the incoming depth value is greater than that in the
+    * depth buffer
+    */
     RS_DEPTH_FUNC_GREATER       = 3,
+    /**
+    * Drawn if the incoming depth value is greater or equal to that
+    * in the depth buffer
+    */
     RS_DEPTH_FUNC_GEQUAL        = 4,
+    /**
+    * Drawn if the incoming depth value is equal to that in the
+    * depth buffer
+    */
     RS_DEPTH_FUNC_EQUAL         = 5,
+    /**
+    * Drawn if the incoming depth value is not equal to that in the
+    * depth buffer
+    */
     RS_DEPTH_FUNC_NOTEQUAL      = 6,
-
+    /**
+    * Invalid depth function
+    */
     RS_DEPTH_FUNC_INVALID       = 100,
 } rs_depth_func;
 

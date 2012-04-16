@@ -23,49 +23,50 @@
 #ifndef __RS_SAMPLER_RSH__
 #define __RS_SAMPLER_RSH__
 
+// New API's
 #if (defined(RS_VERSION) && (RS_VERSION >= 16))
 
 /**
- * @hide
  * Get sampler minification value
  *
- * @param pr
+ * @param s sampler to query
+ * @return minification value
  */
 extern rs_sampler_value __attribute__((overloadable))
     rsSamplerGetMinification(rs_sampler s);
 
 /**
- * @hide
  * Get sampler magnification value
  *
- * @param pr
+ * @param s sampler to query
+ * @return magnification value
  */
 extern rs_sampler_value __attribute__((overloadable))
     rsSamplerGetMagnification(rs_sampler s);
 
 /**
- * @hide
  * Get sampler wrap S value
  *
- * @param pr
+ * @param s sampler to query
+ * @return wrap S value
  */
 extern rs_sampler_value __attribute__((overloadable))
     rsSamplerGetWrapS(rs_sampler s);
 
 /**
- * @hide
  * Get sampler wrap T value
  *
- * @param pr
+ * @param s sampler to query
+ * @return wrap T value
  */
 extern rs_sampler_value __attribute__((overloadable))
     rsSamplerGetWrapT(rs_sampler s);
 
 /**
- * @hide
- * Get sampler anisotropy
+  Get sampler anisotropy
  *
- * @param pr
+ * @param s sampler to query
+ * @return anisotropy
  */
 extern float __attribute__((overloadable))
     rsSamplerGetAnisotropy(rs_sampler s);
