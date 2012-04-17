@@ -39,7 +39,6 @@ struct DrvAllocation {
     // Is this a legal structure to be used as an FBO render target
     uint32_t renderTargetID;
 
-    uint8_t * mallocPtr;
     uint32_t width;
     uint32_t height;
 

@@ -109,7 +109,7 @@ static void Upload2DTexture(const Context *rsc, const Allocation *alloc, bool is
     rsdGLCheckError(rsc, "Upload2DTexture 1 ");
     for (uint32_t face = 0; face < faceCount; face ++) {
         for (uint32_t lod = 0; lod < alloc->mHal.state.type->getLODCount(); lod++) {
-            const uint8_t *p = (const uint8_t *)drv->mallocPtr;
+            const uint8_t *p = (const uint8_t *)alloc->mHal.drvState.mallocPtr;
             p += alloc->mHal.state.type->getLODFaceOffset(lod, (RsAllocationCubemapFace)face, 0, 0);
 
             GLenum t = GL_TEXTURE_2D;
@@ -165,9 +165,9 @@ static void UploadToTexture(const Context *rsc, const Allocation *alloc) {
     Upload2DTexture(rsc, alloc, isFirstUpload);
 
     if (!(alloc->mHal.state.usageFlags & RS_ALLOCATION_USAGE_SCRIPT)) {
-        if (drv->mallocPtr) {
-            free(drv->mallocPtr);
-            drv->mallocPtr = NULL;
+        if (alloc->mHal.drvState.mallocPtr) {
+            free(alloc->mHal.drvState.mallocPtr);
+            alloc->mHal.drvState.mallocPtr = NULL;
         }
     }
     rsdGLCheckError(rsc, "UploadToTexture");
@@ -214,7 +214,7 @@ static void UploadToBufferObject(const Context *rsc, const Allocation *alloc) {
     }
     RSD_CALL_GL(glBindBuffer, drv->glTarget, drv->bufferID);
     RSD_CALL_GL(glBufferData, drv->glTarget, alloc->mHal.state.type->getSizeBytes(),
-                 drv->mallocPtr, GL_DYNAMIC_DRAW);
+                 alloc->mHal.drvState.mallocPtr, GL_DYNAMIC_DRAW);
     RSD_CALL_GL(glBindBuffer, drv->glTarget, 0);
     rsdGLCheckError(rsc, "UploadToBufferObject");
 }
@@ -225,7 +225,7 @@ bool rsdAllocationInit(const Context *rsc, Allocation *alloc, bool forceZero) {
         return false;
     }
 
-    void * ptr = alloc->mHal.state.usrPtr;
+    void * ptr = NULL;
     if (alloc->mHal.state.usageFlags & RS_ALLOCATION_USAGE_IO_OUTPUT) {
     } else {
         ptr = malloc(alloc->mHal.state.type->getSizeBytes());
@@ -254,7 +254,6 @@ bool rsdAllocationInit(const Context *rsc, Allocation *alloc, bool forceZero) {
 
     alloc->mHal.drvState.mallocPtr = ptr;
     alloc->mHal.drvState.stride = alloc->mHal.state.dimensionX * alloc->mHal.state.elementSizeBytes;
-    drv->mallocPtr = (uint8_t *)ptr;
     alloc->mHal.drv = drv;
     if (forceZero && ptr) {
         memset(ptr, 0, alloc->mHal.state.type->getSizeBytes());
@@ -290,9 +289,9 @@ void rsdAllocationDestroy(const Context *rsc, Allocation *alloc) {
         drv->renderTargetID = 0;
     }
 
-    if (drv->mallocPtr && !alloc->mHal.state.usrPtr) {
-        free(drv->mallocPtr);
-        drv->mallocPtr = NULL;
+    if (alloc->mHal.drvState.mallocPtr) {
+        free(alloc->mHal.drvState.mallocPtr);
+        alloc->mHal.drvState.mallocPtr = NULL;
     }
     if (drv->readBackFBO != NULL) {
         delete drv->readBackFBO;
@@ -306,10 +305,8 @@ void rsdAllocationResize(const Context *rsc, const Allocation *alloc,
                          const Type *newType, bool zeroNew) {
     DrvAllocation *drv = (DrvAllocation *)alloc->mHal.drv;
 
-    drv->mallocPtr = (uint8_t *)realloc(drv->mallocPtr, newType->getSizeBytes());
-
-    // fixme
-    ((Allocation *)alloc)->mHal.drvState.mallocPtr = drv->mallocPtr;
+    alloc->mHal.drvState.mallocPtr = (uint8_t *)realloc(
+            alloc->mHal.drvState.mallocPtr, newType->getSizeBytes());
 
     const uint32_t oldDimX = alloc->mHal.state.dimensionX;
     const uint32_t dimX = newType->getDimX();
@@ -317,7 +314,8 @@ void rsdAllocationResize(const Context *rsc, const Allocation *alloc,
     if (dimX > oldDimX) {
         const Element *e = alloc->mHal.state.type->getElement();
         uint32_t stride = e->getSizeBytes();
-        memset(((uint8_t *)drv->mallocPtr) + stride * oldDimX, 0, stride * (dimX - oldDimX));
+        memset(((uint8_t *)alloc->mHal.drvState.mallocPtr) + stride * oldDimX,
+                 0, stride * (dimX - oldDimX));
     }
 }
 
@@ -516,7 +514,7 @@ void rsdAllocationData1D(const Context *rsc, const Allocation *alloc,
     DrvAllocation *drv = (DrvAllocation *)alloc->mHal.drv;
 
     const uint32_t eSize = alloc->mHal.state.type->getElementSizeBytes();
-    uint8_t * ptr = drv->mallocPtr;
+    uint8_t * ptr = (uint8_t *)alloc->mHal.drvState.mallocPtr;
     ptr += eSize * xoff;
     uint32_t size = count * eSize;
 
@@ -537,9 +535,9 @@ void rsdAllocationData2D(const Context *rsc, const Allocation *alloc,
     uint32_t eSize = alloc->mHal.state.elementSizeBytes;
     uint32_t lineSize = eSize * w;
 
-    if (drv->mallocPtr) {
+    if (alloc->mHal.drvState.mallocPtr) {
         const uint8_t *src = static_cast<const uint8_t *>(data);
-        uint8_t *dst = drv->mallocPtr;
+        uint8_t *dst = (uint8_t *)alloc->mHal.drvState.mallocPtr;
         dst += alloc->mHal.state.type->getLODFaceOffset(lod, face, xoff, yoff);
 
         for (uint32_t line=yoff; line < (yoff+h); line++) {
@@ -637,7 +635,7 @@ void rsdAllocationElementData1D(const Context *rsc, const Allocation *alloc,
     DrvAllocation *drv = (DrvAllocation *)alloc->mHal.drv;
 
     uint32_t eSize = alloc->mHal.state.elementSizeBytes;
-    uint8_t * ptr = drv->mallocPtr;
+    uint8_t * ptr = (uint8_t *)alloc->mHal.drvState.mallocPtr;
     ptr += eSize * x;
 
     const Element * e = alloc->mHal.state.type->getElement()->getField(cIdx);
@@ -658,7 +656,7 @@ void rsdAllocationElementData2D(const Context *rsc, const Allocation *alloc,
     DrvAllocation *drv = (DrvAllocation *)alloc->mHal.drv;
 
     uint32_t eSize = alloc->mHal.state.elementSizeBytes;
-    uint8_t * ptr = drv->mallocPtr;
+    uint8_t * ptr = (uint8_t *)alloc->mHal.drvState.mallocPtr;
     ptr += (eSize * x) + (y * alloc->mHal.drvState.stride);
 
     const Element * e = alloc->mHal.state.type->getElement()->getField(cIdx);

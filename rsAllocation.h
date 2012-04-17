@@ -59,7 +59,7 @@ public:
             bool hasMipmaps;
             bool hasFaces;
             bool hasReferences;
-            void * usrPtr;
+            void * unused_01;
             int32_t surfaceTextureID;
             ANativeWindow *wndSurface;
             SurfaceTexture *surfaceTexture;
@@ -67,8 +67,8 @@ public:
         State state;
 
         struct DrvState {
-            void * mallocPtr;
-            uint32_t stride;
+            mutable void * mallocPtr;
+            mutable uint32_t stride;
         } drvState;
 
     };

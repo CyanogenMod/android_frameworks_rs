@@ -151,7 +151,7 @@ void RsdMeshObj::renderPrimitiveRange(const Context *rsc, uint32_t primIndex,
             mAttribs[ct].ptr = NULL;
         } else {
             mAttribs[ct].buffer = 0;
-            mAttribs[ct].ptr = (const uint8_t*)drvAlloc->mallocPtr;
+            mAttribs[ct].ptr = (const uint8_t*)alloc->mHal.drvState.mallocPtr;
         }
     }
 
@@ -172,7 +172,7 @@ void RsdMeshObj::renderPrimitiveRange(const Context *rsc, uint32_t primIndex,
         } else {
             RSD_CALL_GL(glBindBuffer, GL_ELEMENT_ARRAY_BUFFER, 0);
             RSD_CALL_GL(glDrawElements, mGLPrimitives[primIndex], len, GL_UNSIGNED_SHORT,
-                        drvAlloc->mallocPtr);
+                        idxAlloc->mHal.drvState.mallocPtr);
         }
     } else {
         RSD_CALL_GL(glDrawArrays, mGLPrimitives[primIndex], start, len);
