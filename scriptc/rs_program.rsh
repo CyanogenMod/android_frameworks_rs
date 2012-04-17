@@ -26,99 +26,88 @@
 #if (defined(RS_VERSION) && (RS_VERSION >= 16))
 
 /**
- * @hide
  * Get program store depth function
  *
- * @param ps
+ * @param ps program store to query
  */
 extern rs_depth_func __attribute__((overloadable))
     rsgProgramStoreGetDepthFunc(rs_program_store ps);
 
 /**
- * @hide
  * Get program store depth mask
  *
- * @param ps
+ * @param ps program store to query
  */
 extern bool __attribute__((overloadable))
-    rsgProgramStoreGetDepthMask(rs_program_store ps);
+    rsgProgramStoreIsDepthMaskEnabled(rs_program_store ps);
 /**
- * @hide
  * Get program store red component color mask
  *
- * @param ps
+ * @param ps program store to query
  */
 extern bool __attribute__((overloadable))
-    rsgProgramStoreGetColorMaskR(rs_program_store ps);
+    rsgProgramStoreIsColorMaskRedEnabled(rs_program_store ps);
 
 /**
- * @hide
  * Get program store green component color mask
  *
- * @param ps
+ * @param ps program store to query
  */
 extern bool __attribute__((overloadable))
-    rsgProgramStoreGetColorMaskG(rs_program_store ps);
+    rsgProgramStoreIsColorMaskGreenEnabled(rs_program_store ps);
 
 /**
- * @hide
  * Get program store blur component color mask
  *
- * @param ps
+ * @param ps program store to query
  */
 extern bool __attribute__((overloadable))
-    rsgProgramStoreGetColorMaskB(rs_program_store ps);
+    rsgProgramStoreIsColorMaskBlueEnabled(rs_program_store ps);
 
 /**
- * @hide
  * Get program store alpha component color mask
  *
- * @param ps
+ * @param ps program store to query
  */
 extern bool __attribute__((overloadable))
-    rsgProgramStoreGetColorMaskA(rs_program_store ps);
+    rsgProgramStoreIsColorMaskAlphaEnabled(rs_program_store ps);
 
 /**
- * @hide
  * Get program store blend source function
  *
- * @param ps
+ * @param ps program store to query
  */
 extern rs_blend_src_func __attribute__((overloadable))
         rsgProgramStoreGetBlendSrcFunc(rs_program_store ps);
 
 /**
- * @hide
  * Get program store blend destination function
  *
- * @param ps
+ * @param ps program store to query
  */
 extern rs_blend_dst_func __attribute__((overloadable))
     rsgProgramStoreGetBlendDstFunc(rs_program_store ps);
 
 /**
- * @hide
  * Get program store dither state
  *
- * @param ps
+ * @param ps program store to query
  */
 extern bool __attribute__((overloadable))
-    rsgProgramStoreGetDitherEnabled(rs_program_store ps);
+    rsgProgramStoreIsDitherEnabled(rs_program_store ps);
 
 /**
- * @hide
  * Get program raster point sprite state
  *
- * @param pr
+ * @param pr program raster to query
  */
 extern bool __attribute__((overloadable))
-    rsgProgramRasterGetPointSpriteEnabled(rs_program_raster pr);
+    rsgProgramRasterIsPointSpriteEnabled(rs_program_raster pr);
 
 /**
- * @hide
  * Get program raster cull mode
  *
- * @param pr
+ * @param pr program raster to query
  */
 extern rs_cull_mode __attribute__((overloadable))
     rsgProgramRasterGetCullMode(rs_program_raster pr);

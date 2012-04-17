@@ -23,9 +23,13 @@
 #ifndef __RS_MESH_RSH__
 #define __RS_MESH_RSH__
 
+// New API's
 #if (defined(RS_VERSION) && (RS_VERSION >= 16))
 
 /**
+ * Returns the number of allocations in the mesh that contain
+ * vertex data
+ *
  * @param m mesh to get data from
  * @return number of allocations in the mesh that contain vertex
  *         data
@@ -34,6 +38,9 @@ extern uint32_t __attribute__((overloadable))
     rsgMeshGetVertexAllocationCount(rs_mesh m);
 
 /**
+ * Meshes could have multiple index sets, this function returns
+ * the number.
+ *
  * @param m mesh to get data from
  * @return number of primitive groups in the mesh. This would
  *         include simple primitives as well as allocations
@@ -43,6 +50,9 @@ extern uint32_t __attribute__((overloadable))
     rsgMeshGetPrimitiveCount(rs_mesh m);
 
 /**
+ * Returns an allocation that is part of the mesh and contains
+ * vertex data, e.g. positions, normals, texcoords
+ *
  * @param m mesh to get data from
  * @param index index of the vertex allocation
  * @return allocation containing vertex data
@@ -51,6 +61,9 @@ extern rs_allocation __attribute__((overloadable))
     rsgMeshGetVertexAllocation(rs_mesh m, uint32_t index);
 
 /**
+ * Returns an allocation containing index data or a null
+ * allocation if only the primitive is specified
+ *
  * @param m mesh to get data from
  * @param index index of the index allocation
  * @return allocation containing index data
@@ -59,6 +72,9 @@ extern rs_allocation __attribute__((overloadable))
     rsgMeshGetIndexAllocation(rs_mesh m, uint32_t index);
 
 /**
+ * Returns the primitive describing how a part of the mesh is
+ * rendered
+ *
  * @param m mesh to get data from
  * @param index index of the primitive
  * @return primitive describing how the mesh is rendered
