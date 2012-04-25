@@ -18,11 +18,15 @@
 #include "rsdBcc.h"
 #include "rsdRuntime.h"
 
-#include <bcinfo/MetadataExtractor.h>
+#include <bcc/BCCContext.h>
+#include <bcc/RenderScript/RSCompilerDriver.h>
+#include <bcc/RenderScript/RSExecutable.h>
+#include <bcc/RenderScript/RSInfo.h>
 
 #include "rsContext.h"
 #include "rsScriptC.h"
 
+#include "utils/Vector.h"
 #include "utils/Timers.h"
 #include "utils/StopWatch.h"
 
@@ -35,18 +39,9 @@ struct DrvScript {
     void (*mInit)();
     void (*mFreeChildren)();
 
-    BCCScriptRef mBccScript;
-
-    bcinfo::MetadataExtractor *ME;
-
-    InvokeFunc_t *mInvokeFunctions;
-    ForEachFunc_t *mForEachFunctions;
-    void ** mFieldAddress;
-    bool * mFieldIsObject;
-    const uint32_t *mExportForEachSignatureList;
-
-    const uint8_t * mScriptText;
-    uint32_t mScriptTextLength;
+    bcc::BCCContext *mCompilerContext;
+    bcc::RSCompilerDriver *mCompilerDriver;
+    bcc::RSExecutable *mExecutable;
 };
 
 typedef void (*outer_foreach_t)(
@@ -74,112 +69,72 @@ bool rsdScriptInit(const Context *rsc,
 
     pthread_mutex_lock(&rsdgInitMutex);
 
-    size_t exportFuncCount = 0;
-    size_t exportVarCount = 0;
-    size_t objectSlotCount = 0;
-    size_t exportForEachSignatureCount = 0;
-
+    bcc::RSExecutable *exec;
+    const bcc::RSInfo *info;
     DrvScript *drv = (DrvScript *)calloc(1, sizeof(DrvScript));
     if (drv == NULL) {
         goto error;
     }
     script->mHal.drv = drv;
 
-    drv->mBccScript = bccCreateScript();
+    drv->mCompilerContext = NULL;
+    drv->mCompilerDriver = NULL;
+    drv->mExecutable = NULL;
+
+    drv->mCompilerContext = new bcc::BCCContext();
+    if (drv->mCompilerContext == NULL) {
+        ALOGE("bcc: FAILS to create compiler context (out of memory)");
+        goto error;
+    }
+
+    drv->mCompilerDriver = new bcc::RSCompilerDriver();
+    if (drv->mCompilerDriver == NULL) {
+        ALOGE("bcc: FAILS to create compiler driver (out of memory)");
+        goto error;
+    }
+
     script->mHal.info.isThreadable = true;
-    drv->mScriptText = bitcode;
-    drv->mScriptTextLength = bitcodeSize;
 
+    drv->mCompilerDriver->setRSRuntimeLookupFunction(rsdLookupRuntimeStub);
+    drv->mCompilerDriver->setRSRuntimeLookupContext(script);
 
-    drv->ME = new bcinfo::MetadataExtractor((const char*)drv->mScriptText,
-                                            drv->mScriptTextLength);
-    if (!drv->ME->extract()) {
-      ALOGE("bcinfo: failed to read script metadata");
-      goto error;
-    }
+    exec = drv->mCompilerDriver->build(*drv->mCompilerContext,
+                                       cacheDir, resName,
+                                       (const char *)bitcode, bitcodeSize);
 
-    //ALOGE("mBccScript %p", script->mBccScript);
-
-    if (bccRegisterSymbolCallback(drv->mBccScript, &rsdLookupRuntimeStub, script) != 0) {
-        ALOGE("bcc: FAILS to register symbol callback");
+    if (exec == NULL) {
+        ALOGE("bcc: FAILS to prepare executable for '%s'", resName);
         goto error;
     }
 
-    if (bccReadBC(drv->mBccScript,
-                  resName,
-                  (char const *)drv->mScriptText,
-                  drv->mScriptTextLength, 0) != 0) {
-        ALOGE("bcc: FAILS to read bitcode");
-        goto error;
+    drv->mExecutable = exec;
+
+    exec->setThreadable(script->mHal.info.isThreadable);
+    if (!exec->syncInfo()) {
+        ALOGW("bcc: FAILS to synchronize the RS info file to the disk");
     }
 
-    if (bccLinkFile(drv->mBccScript, "/system/lib/libclcore.bc", 0) != 0) {
-        ALOGE("bcc: FAILS to link bitcode");
-        goto error;
-    }
+    drv->mRoot = reinterpret_cast<int (*)()>(exec->getSymbolAddress("root"));
+    drv->mRootExpand =
+        reinterpret_cast<int (*)()>(exec->getSymbolAddress("root.expand"));
+    drv->mInit = reinterpret_cast<void (*)()>(exec->getSymbolAddress("init"));
+    drv->mFreeChildren =
+        reinterpret_cast<void (*)()>(exec->getSymbolAddress(".rs.dtor"));
 
-    if (bccPrepareExecutable(drv->mBccScript, cacheDir, resName, 0) != 0) {
-        ALOGE("bcc: FAILS to prepare executable");
-        goto error;
-    }
-
-    drv->mRoot = reinterpret_cast<int (*)()>(bccGetFuncAddr(drv->mBccScript, "root"));
-    drv->mRootExpand = reinterpret_cast<int (*)()>(bccGetFuncAddr(drv->mBccScript, "root.expand"));
-    drv->mInit = reinterpret_cast<void (*)()>(bccGetFuncAddr(drv->mBccScript, "init"));
-    drv->mFreeChildren = reinterpret_cast<void (*)()>(bccGetFuncAddr(drv->mBccScript, ".rs.dtor"));
-
-    exportFuncCount = drv->ME->getExportFuncCount();
-    if (exportFuncCount > 0) {
-        drv->mInvokeFunctions = (InvokeFunc_t*) calloc(exportFuncCount,
-                                                       sizeof(InvokeFunc_t));
-        bccGetExportFuncList(drv->mBccScript, exportFuncCount,
-                             (void **) drv->mInvokeFunctions);
-    } else {
-        drv->mInvokeFunctions = NULL;
-    }
-
-    exportVarCount = drv->ME->getExportVarCount();
-    if (exportVarCount > 0) {
-        drv->mFieldAddress = (void **) calloc(exportVarCount, sizeof(void*));
-        drv->mFieldIsObject = (bool *) calloc(exportVarCount, sizeof(bool));
-        bccGetExportVarList(drv->mBccScript, exportVarCount,
-                            (void **) drv->mFieldAddress);
-    } else {
-        drv->mFieldAddress = NULL;
-        drv->mFieldIsObject = NULL;
-    }
-
-    objectSlotCount = drv->ME->getObjectSlotCount();
-    if (objectSlotCount > 0) {
-        const uint32_t *objectSlotList = drv->ME->getObjectSlotList();
-        for (uint32_t ct=0; ct < objectSlotCount; ct++) {
-            drv->mFieldIsObject[objectSlotList[ct]] = true;
-        }
-    }
-
-    exportForEachSignatureCount = drv->ME->getExportForEachSignatureCount();
-    drv->mExportForEachSignatureList = drv->ME->getExportForEachSignatureList();
-    if (exportForEachSignatureCount > 0) {
-        drv->mForEachFunctions =
-            (ForEachFunc_t*) calloc(exportForEachSignatureCount,
-                                    sizeof(ForEachFunc_t));
-        bccGetExportForEachList(drv->mBccScript, exportForEachSignatureCount,
-                                (void **) drv->mForEachFunctions);
-    } else {
-        drv->mForEachFunctions = NULL;
-    }
-
+    info = &drv->mExecutable->getInfo();
     // Copy info over to runtime
-    script->mHal.info.exportedFunctionCount = drv->ME->getExportFuncCount();
-    script->mHal.info.exportedVariableCount = drv->ME->getExportVarCount();
-    script->mHal.info.exportedPragmaCount = drv->ME->getPragmaCount();
-    script->mHal.info.exportedPragmaKeyList = drv->ME->getPragmaKeyList();
-    script->mHal.info.exportedPragmaValueList = drv->ME->getPragmaValueList();
+    script->mHal.info.exportedFunctionCount = info->getExportFuncNames().size();
+    script->mHal.info.exportedVariableCount = info->getExportVarNames().size();
+    script->mHal.info.exportedPragmaCount = info->getPragmas().size();
+    script->mHal.info.exportedPragmaKeyList =
+        const_cast<const char**>(exec->getPragmaKeys().array());
+    script->mHal.info.exportedPragmaValueList =
+        const_cast<const char**>(exec->getPragmaValues().array());
 
     if (drv->mRootExpand) {
-      script->mHal.info.root = drv->mRootExpand;
+        script->mHal.info.root = drv->mRootExpand;
     } else {
-      script->mHal.info.root = drv->mRoot;
+        script->mHal.info.root = drv->mRoot;
     }
 
     pthread_mutex_unlock(&rsdgInitMutex);
@@ -188,11 +143,13 @@ bool rsdScriptInit(const Context *rsc,
 error:
 
     pthread_mutex_unlock(&rsdgInitMutex);
-    if (drv->ME) {
-        delete drv->ME;
-        drv->ME = NULL;
+    if (drv) {
+        delete drv->mCompilerContext;
+        delete drv->mCompilerDriver;
+        delete drv->mExecutable;
+        free(drv);
     }
-    free(drv);
+    script->mHal.drv = NULL;
     return false;
 
 }
@@ -306,12 +263,12 @@ void rsdScriptInvokeForEach(const Context *rsc,
     memset(&mtls, 0, sizeof(mtls));
 
     DrvScript *drv = (DrvScript *)s->mHal.drv;
-    mtls.kernel = drv->mForEachFunctions[slot];
+    rsAssert(slot < drv->mExecutable->getExportForeachFuncAddrs().size());
+    mtls.kernel = reinterpret_cast<ForEachFunc_t>(
+                      drv->mExecutable->getExportForeachFuncAddrs()[slot]);
     rsAssert(mtls.kernel != NULL);
-    mtls.sig = 0x1f;  // temp fix for old apps, full table in slang_rs_export_foreach.cpp
-    if (drv->mExportForEachSignatureList) {
-        mtls.sig = drv->mExportForEachSignatureList[slot];
-    }
+    mtls.sig = drv->mExecutable->getInfo().getExportForeachFuncs()[slot].second;
+
     if (ain) {
         mtls.dimX = ain->getType()->getDimX();
         mtls.dimY = ain->getType()->getDimY();
@@ -454,8 +411,8 @@ void rsdScriptInvokeFunction(const Context *dc, Script *script,
     //ALOGE("invoke %p %p %i %p %i", dc, script, slot, params, paramLength);
 
     Script * oldTLS = setTLS(script);
-    ((void (*)(const void *, uint32_t))
-        drv->mInvokeFunctions[slot])(params, paramLength);
+    reinterpret_cast<void (*)(const void *, uint32_t)>(
+        drv->mExecutable->getExportFuncAddrs()[slot])(params, paramLength);
     setTLS(oldTLS);
 }
 
@@ -465,7 +422,8 @@ void rsdScriptSetGlobalVar(const Context *dc, const Script *script,
     //rsAssert(!script->mFieldIsObject[slot]);
     //ALOGE("setGlobalVar %p %p %i %p %i", dc, script, slot, data, dataLength);
 
-    int32_t *destPtr = ((int32_t **)drv->mFieldAddress)[slot];
+    int32_t *destPtr = reinterpret_cast<int32_t *>(
+                          drv->mExecutable->getExportVarAddrs()[slot]);
     if (!destPtr) {
         //ALOGV("Calling setVar on slot = %i which is null", slot);
         return;
@@ -479,7 +437,8 @@ void rsdScriptSetGlobalBind(const Context *dc, const Script *script, uint32_t sl
     //rsAssert(!script->mFieldIsObject[slot]);
     //ALOGE("setGlobalBind %p %p %i %p", dc, script, slot, data);
 
-    int32_t *destPtr = ((int32_t **)drv->mFieldAddress)[slot];
+    int32_t *destPtr = reinterpret_cast<int32_t *>(
+                          drv->mExecutable->getExportVarAddrs()[slot]);
     if (!destPtr) {
         //ALOGV("Calling setVar on slot = %i which is null", slot);
         return;
@@ -493,7 +452,8 @@ void rsdScriptSetGlobalObj(const Context *dc, const Script *script, uint32_t slo
     //rsAssert(script->mFieldIsObject[slot]);
     //ALOGE("setGlobalObj %p %p %i %p", dc, script, slot, data);
 
-    int32_t *destPtr = ((int32_t **)drv->mFieldAddress)[slot];
+    int32_t *destPtr = reinterpret_cast<int32_t *>(
+                          drv->mExecutable->getExportVarAddrs()[slot]);
     if (!destPtr) {
         //ALOGV("Calling setVar on slot = %i which is null", slot);
         return;
@@ -505,38 +465,43 @@ void rsdScriptSetGlobalObj(const Context *dc, const Script *script, uint32_t slo
 void rsdScriptDestroy(const Context *dc, Script *script) {
     DrvScript *drv = (DrvScript *)script->mHal.drv;
 
-    if (drv->mFieldAddress) {
-        size_t exportVarCount = drv->ME->getExportVarCount();
-        for (size_t ct = 0; ct < exportVarCount; ct++) {
-            if (drv->mFieldIsObject[ct]) {
-                // The field address can be NULL if the script-side has
-                // optimized the corresponding global variable away.
-                if (drv->mFieldAddress[ct]) {
-                    rsrClearObject(dc, script, (ObjectBase **)drv->mFieldAddress[ct]);
+    if (drv == NULL) {
+        return;
+    }
+
+    if (drv->mExecutable) {
+        Vector<void *>::const_iterator var_addr_iter =
+            drv->mExecutable->getExportVarAddrs().begin();
+        Vector<void *>::const_iterator var_addr_end =
+            drv->mExecutable->getExportVarAddrs().end();
+
+        bcc::RSInfo::ObjectSlotListTy::const_iterator is_object_iter =
+            drv->mExecutable->getInfo().getObjectSlots().begin();
+        bcc::RSInfo::ObjectSlotListTy::const_iterator is_object_end =
+            drv->mExecutable->getInfo().getObjectSlots().end();
+
+        while ((var_addr_iter != var_addr_end) &&
+               (is_object_iter != is_object_end)) {
+            // The field address can be NULL if the script-side has optimized
+            // the corresponding global variable away.
+            ObjectBase **obj_addr =
+                reinterpret_cast<ObjectBase **>(*var_addr_iter);
+            if (*is_object_iter) {
+                if (*var_addr_iter != NULL) {
+                    rsrClearObject(dc, script, obj_addr);
                 }
             }
+            var_addr_iter++;
+            is_object_iter++;
         }
-        free(drv->mFieldAddress);
-        drv->mFieldAddress = NULL;
-        free(drv->mFieldIsObject);
-        drv->mFieldIsObject = NULL;    }
-
-    if (drv->mInvokeFunctions) {
-        free(drv->mInvokeFunctions);
-        drv->mInvokeFunctions = NULL;
     }
 
-    if (drv->mForEachFunctions) {
-        free(drv->mForEachFunctions);
-        drv->mForEachFunctions = NULL;
-    }
-
-    delete drv->ME;
-    drv->ME = NULL;
+    delete drv->mCompilerContext;
+    delete drv->mCompilerDriver;
+    delete drv->mExecutable;
 
     free(drv);
     script->mHal.drv = NULL;
-
 }
 
 

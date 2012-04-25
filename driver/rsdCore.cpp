@@ -36,7 +36,6 @@
 #include <cutils/properties.h>
 #include <sys/syscall.h>
 #include <string.h>
-#include <bcc/bcc.h>
 
 using namespace android;
 using namespace android::renderscript;
