@@ -704,6 +704,13 @@ static RsdSymbolTable gSyms[] = {
 
 void* rsdLookupRuntimeStub(void* pContext, char const* name) {
     ScriptC *s = (ScriptC *)pContext;
+    if (!strcmp(name, "__isThreadable")) {
+      return (void*) s->mHal.info.isThreadable;
+    } else if (!strcmp(name, "__clearThreadable")) {
+      s->mHal.info.isThreadable = false;
+      return NULL;
+    }
+
     RsdSymbolTable *syms = gSyms;
     const RsdSymbolTable *sym = rsdLookupSymbolMath(name);
 
