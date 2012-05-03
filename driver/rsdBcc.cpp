@@ -483,8 +483,7 @@ void rsdScriptSetGlobalVarWithElemDims(
         const size_t *dims, size_t dimLength) {
     DrvScript *drv = (DrvScript *)script->mHal.drv;
 
-    int32_t *destPtr = reinterpret_cast<int32_t *>(
-                          drv->mExecutable->getExportVarAddrs()[slot]);
+    int32_t *destPtr = ((int32_t **)drv->mFieldAddress)[slot];
     if (!destPtr) {
         //ALOGV("Calling setVar on slot = %i which is null", slot);
         return;
