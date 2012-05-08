@@ -154,6 +154,7 @@ static void DumpDebug(RsdHal *dc) {
 void rsdGLShutdown(const Context *rsc) {
     RsdHal *dc = (RsdHal *)rsc->mHal.drv;
 
+    rsdGLSetSurface(rsc, 0, 0, NULL);
     dc->gl.shaderCache->cleanupAll();
     delete dc->gl.shaderCache;
     delete dc->gl.vertexArrayState;
