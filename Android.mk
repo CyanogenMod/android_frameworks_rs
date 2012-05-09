@@ -1,6 +1,14 @@
 
 LOCAL_PATH:=$(call my-dir)
 
+rs_base_CFLAGS := -Werror -Wall -Wno-unused-parameter -Wno-unused-variable
+ifeq ($(ARCH_ARM_HAVE_NEON), true)
+  rs_base_CFLAGS += -DARCH_ARM_HAVE_NEON
+endif
+ifeq ($(TARGET_BUILD_PDK), true)
+  rs_base_CFLAGS += -D__RS_PDK__
+endif
+
 include $(CLEAR_VARS)
 LOCAL_MODULE := libRSDriver
 
@@ -29,7 +37,7 @@ LOCAL_SHARED_LIBRARIES += libbcc libbcinfo libgui
 
 LOCAL_C_INCLUDES += frameworks/compile/libbcc/include
 
-LOCAL_CFLAGS += -Werror -Wall -Wno-unused-parameter -Wno-unused-variable
+LOCAL_CFLAGS += $(rs_base_CFLAGS)
 
 LOCAL_LDLIBS := -lpthread -ldl
 LOCAL_MODULE_TAGS := optional
@@ -140,10 +148,7 @@ LOCAL_STATIC_LIBRARIES := libft2 libRSDriver
 LOCAL_C_INCLUDES += external/freetype/include
 LOCAL_C_INCLUDES += frameworks/compile/libbcc/include
 
-LOCAL_CFLAGS += -Werror -Wall -Wno-unused-parameter -Wno-unused-variable
-ifeq ($(TARGET_BUILD_PDK), true)
-  LOCAL_CFLAGS += -D__RS_PDK__
-endif
+LOCAL_CFLAGS += $(rs_base_CFLAGS)
 
 LOCAL_LDLIBS := -lpthread -ldl
 LOCAL_MODULE:= libRS
@@ -188,12 +193,9 @@ $(GEN): $(intermediates)/%.cpp : $(LOCAL_PATH)/%.cpp.rsg
 
 LOCAL_GENERATED_SOURCES += $(GEN)
 
-LOCAL_CFLAGS += -Werror -Wall -Wno-unused-parameter -Wno-unused-variable
+LOCAL_CFLAGS += $(rs_base_CFLAGS)
 LOCAL_CFLAGS += -DANDROID_RS_SERIALIZE
 LOCAL_CFLAGS += -fPIC
-ifeq ($(TARGET_BUILD_PDK), true)
-  LOCAL_CFLAGS += -D__RS_PDK__
-endif
 
 LOCAL_SRC_FILES:= \
 	rsAdapter.cpp \

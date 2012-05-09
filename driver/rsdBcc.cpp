@@ -80,6 +80,9 @@ bool rsdScriptInit(const Context *rsc,
     size_t objectSlotCount = 0;
     size_t exportForEachSignatureCount = 0;
 
+    const char* coreLib = "/system/lib/libclcore.bc";
+    bcinfo::RSFloatPrecision prec;
+
     DrvScript *drv = (DrvScript *)calloc(1, sizeof(DrvScript));
     if (drv == NULL) {
         goto error;
@@ -114,7 +117,16 @@ bool rsdScriptInit(const Context *rsc,
         goto error;
     }
 
-    if (bccLinkFile(drv->mBccScript, "/system/lib/libclcore.bc", 0) != 0) {
+    // NEON-capable devices can use an accelerated math library for all
+    // reduced precision scripts.
+#if defined(ARCH_ARM_HAVE_NEON)
+    prec = drv->ME->getRSFloatPrecision();
+    if (prec != bcinfo::RS_FP_Full) {
+        coreLib = "/system/lib/libclcore_neon.bc";
+    }
+#endif
+
+    if (bccLinkFile(drv->mBccScript, coreLib, 0) != 0) {
         ALOGE("bcc: FAILS to link bitcode");
         goto error;
     }
