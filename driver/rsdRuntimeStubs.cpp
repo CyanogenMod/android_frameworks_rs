@@ -482,6 +482,18 @@ static void SC_debugFv3(const char *s, float f1, float f2, float f3) {
 static void SC_debugFv4(const char *s, float f1, float f2, float f3, float f4) {
     ALOGD("%s {%f, %f, %f, %f}", s, f1, f2, f3, f4);
 }
+typedef float float2 __attribute__((ext_vector_type(2)));
+typedef float float3 __attribute__((ext_vector_type(3)));
+typedef float float4 __attribute__((ext_vector_type(4)));
+static void SC_debugF2(const char *s, float2 f) {
+    ALOGD("%s {%f, %f}", s, f.x, f.y);
+}
+static void SC_debugF3(const char *s, float3 f) {
+    ALOGD("%s {%f, %f, %f}", s, f.x, f.y, f.z);
+}
+static void SC_debugF4(const char *s, float4 f) {
+    ALOGD("%s {%f, %f, %f, %f}", s, f.x, f.y, f.z, f.w);
+}
 static void SC_debugD(const char *s, double d) {
     ALOGD("%s %f, 0x%08llx", s, d, *((long long *) (&d)));
 }
@@ -683,6 +695,9 @@ static RsdSymbolTable gSyms[] = {
     { "_Z7rsDebugPKcff", (void *)&SC_debugFv2, true },
     { "_Z7rsDebugPKcfff", (void *)&SC_debugFv3, true },
     { "_Z7rsDebugPKcffff", (void *)&SC_debugFv4, true },
+    { "_Z7rsDebugPKcDv2_f", (void *)&SC_debugF2, true },
+    { "_Z7rsDebugPKcDv3_f", (void *)&SC_debugF3, true },
+    { "_Z7rsDebugPKcDv4_f", (void *)&SC_debugF4, true },
     { "_Z7rsDebugPKcd", (void *)&SC_debugD, true },
     { "_Z7rsDebugPKcPK12rs_matrix4x4", (void *)&SC_debugFM4v4, true },
     { "_Z7rsDebugPKcPK12rs_matrix3x3", (void *)&SC_debugFM3v3, true },

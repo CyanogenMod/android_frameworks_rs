@@ -27,7 +27,6 @@
 #define __RS_DEBUG_RSH__
 
 
-
 /**
  * Debug function.  Prints a string and value to the log.
  */
@@ -48,6 +47,21 @@ extern void __attribute__((overloadable))
  */
 extern void __attribute__((overloadable))
     rsDebug(const char *, float, float, float, float);
+/**
+ * Debug function.  Prints a string and value to the log.
+ */
+extern void __attribute__((overloadable))
+    rsDebug(const char *, float2);
+/**
+ * Debug function.  Prints a string and value to the log.
+ */
+extern void __attribute__((overloadable))
+    rsDebug(const char *, float3);
+/**
+ * Debug function.  Prints a string and value to the log.
+ */
+extern void __attribute__((overloadable))
+    rsDebug(const char *, float4);
 /**
  * Debug function.  Prints a string and value to the log.
  */
@@ -105,19 +119,5 @@ extern void __attribute__((overloadable))
     rsDebug(const char *, const void *);
 #define RS_DEBUG(a) rsDebug(#a, a)
 #define RS_DEBUG_MARKER rsDebug(__FILE__, __LINE__)
-
-
-/**
- * Debug function.  Prints a string and value to the log.
- */
-_RS_RUNTIME void __attribute__((overloadable)) rsDebug(const char *s, float2 v);
-/**
- * Debug function.  Prints a string and value to the log.
- */
-_RS_RUNTIME void __attribute__((overloadable)) rsDebug(const char *s, float3 v);
-/**
- * Debug function.  Prints a string and value to the log.
- */
-_RS_RUNTIME void __attribute__((overloadable)) rsDebug(const char *s, float4 v);
 
 #endif
