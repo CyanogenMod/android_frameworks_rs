@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 The Android Open Source Project
+ * Copyright (C) 2011-2012 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,11 +25,11 @@
 
 // Conversions
 #define CVT_FUNC_2(typeout, typein)                             \
-_RS_RUNTIME typeout##2 __attribute__((overloadable))             \
+_RS_RUNTIME typeout##2 __attribute__((overloadable))            \
         convert_##typeout##2(typein##2 v);                      \
-_RS_RUNTIME typeout##3 __attribute__((overloadable))             \
+_RS_RUNTIME typeout##3 __attribute__((overloadable))            \
         convert_##typeout##3(typein##3 v);                      \
-_RS_RUNTIME typeout##4 __attribute__((overloadable))             \
+_RS_RUNTIME typeout##4 __attribute__((overloadable))            \
         convert_##typeout##4(typein##4 v);
 
 
@@ -41,73 +41,114 @@ _RS_RUNTIME typeout##4 __attribute__((overloadable))             \
                         CVT_FUNC_2(type, int)       \
                         CVT_FUNC_2(type, float)
 
+/**
+ * Convert to char.
+ *
+ * Supports 2,3,4 components of uchar, char, ushort, short, uint, int, float.
+ */
 CVT_FUNC(char)
+
+/**
+ * Convert to unsigned char.
+ *
+ * Supports 2,3,4 components of uchar, char, ushort, short, uint, int, float.
+ */
 CVT_FUNC(uchar)
+
+/**
+ * Convert to short.
+ *
+ * Supports 2,3,4 components of uchar, char, ushort, short, uint, int, float.
+ */
 CVT_FUNC(short)
+
+/**
+ * Convert to unsigned short.
+ *
+ * Supports 2,3,4 components of uchar, char, ushort, short, uint, int, float.
+ */
 CVT_FUNC(ushort)
+
+/**
+ * Convert to int.
+ *
+ * Supports 2,3,4 components of uchar, char, ushort, short, uint, int, float.
+ */
 CVT_FUNC(int)
+
+/**
+ * Convert to unsigned int.
+ *
+ * Supports 2,3,4 components of uchar, char, ushort, short, uint, int, float.
+ */
 CVT_FUNC(uint)
+
+/**
+ * Convert to float.
+ *
+ * Supports 2,3,4 components of uchar, char, ushort, short, uint, int, float.
+ */
 CVT_FUNC(float)
 
 // Float ops, 6.11.2
 
 #define FN_FUNC_FN(fnc)                                         \
-_RS_RUNTIME float2 __attribute__((overloadable)) fnc(float2 v);  \
-_RS_RUNTIME float3 __attribute__((overloadable)) fnc(float3 v);  \
+_RS_RUNTIME float2 __attribute__((overloadable)) fnc(float2 v); \
+_RS_RUNTIME float3 __attribute__((overloadable)) fnc(float3 v); \
 _RS_RUNTIME float4 __attribute__((overloadable)) fnc(float4 v);
 
 #define IN_FUNC_FN(fnc)                                         \
-_RS_RUNTIME int2 __attribute__((overloadable)) fnc(float2 v);    \
-_RS_RUNTIME int3 __attribute__((overloadable)) fnc(float3 v);    \
+_RS_RUNTIME int2 __attribute__((overloadable)) fnc(float2 v);   \
+_RS_RUNTIME int3 __attribute__((overloadable)) fnc(float3 v);   \
 _RS_RUNTIME int4 __attribute__((overloadable)) fnc(float4 v);
 
 #define FN_FUNC_FN_FN(fnc)                                                  \
-_RS_RUNTIME float2 __attribute__((overloadable)) fnc(float2 v1, float2 v2);  \
-_RS_RUNTIME float3 __attribute__((overloadable)) fnc(float3 v1, float3 v2);  \
+_RS_RUNTIME float2 __attribute__((overloadable)) fnc(float2 v1, float2 v2); \
+_RS_RUNTIME float3 __attribute__((overloadable)) fnc(float3 v1, float3 v2); \
 _RS_RUNTIME float4 __attribute__((overloadable)) fnc(float4 v1, float4 v2);
 
 #define FN_FUNC_FN_F(fnc)                                                   \
-_RS_RUNTIME float2 __attribute__((overloadable)) fnc(float2 v1, float v2);   \
-_RS_RUNTIME float3 __attribute__((overloadable)) fnc(float3 v1, float v2);   \
+_RS_RUNTIME float2 __attribute__((overloadable)) fnc(float2 v1, float v2);  \
+_RS_RUNTIME float3 __attribute__((overloadable)) fnc(float3 v1, float v2);  \
 _RS_RUNTIME float4 __attribute__((overloadable)) fnc(float4 v1, float v2);
 
 #define FN_FUNC_FN_IN(fnc)                                                  \
-_RS_RUNTIME float2 __attribute__((overloadable)) fnc(float2 v1, int2 v2);    \
-_RS_RUNTIME float3 __attribute__((overloadable)) fnc(float3 v1, int3 v2);    \
-_RS_RUNTIME float4 __attribute__((overloadable)) fnc(float4 v1, int4 v2);    \
+_RS_RUNTIME float2 __attribute__((overloadable)) fnc(float2 v1, int2 v2);   \
+_RS_RUNTIME float3 __attribute__((overloadable)) fnc(float3 v1, int3 v2);   \
+_RS_RUNTIME float4 __attribute__((overloadable)) fnc(float4 v1, int4 v2);   \
 
 #define FN_FUNC_FN_I(fnc)                                                   \
-_RS_RUNTIME float2 __attribute__((overloadable)) fnc(float2 v1, int v2);     \
-_RS_RUNTIME float3 __attribute__((overloadable)) fnc(float3 v1, int v2);     \
+_RS_RUNTIME float2 __attribute__((overloadable)) fnc(float2 v1, int v2);    \
+_RS_RUNTIME float3 __attribute__((overloadable)) fnc(float3 v1, int v2);    \
 _RS_RUNTIME float4 __attribute__((overloadable)) fnc(float4 v1, int v2);
 
-#define FN_FUNC_FN_PFN(fnc)                     \
-_RS_RUNTIME float2 __attribute__((overloadable)) \
-        fnc(float2 v1, float2 *v2);             \
-_RS_RUNTIME float3 __attribute__((overloadable)) \
-        fnc(float3 v1, float3 *v2);             \
-_RS_RUNTIME float4 __attribute__((overloadable)) \
+#define FN_FUNC_FN_PFN(fnc)                         \
+_RS_RUNTIME float2 __attribute__((overloadable))    \
+        fnc(float2 v1, float2 *v2);                 \
+_RS_RUNTIME float3 __attribute__((overloadable))    \
+        fnc(float3 v1, float3 *v2);                 \
+_RS_RUNTIME float4 __attribute__((overloadable))    \
         fnc(float4 v1, float4 *v2);
 
 #define FN_FUNC_FN_PIN(fnc)                                                 \
-_RS_RUNTIME float2 __attribute__((overloadable)) fnc(float2 v1, int2 *v2);   \
-_RS_RUNTIME float3 __attribute__((overloadable)) fnc(float3 v1, int3 *v2);   \
+_RS_RUNTIME float2 __attribute__((overloadable)) fnc(float2 v1, int2 *v2);  \
+_RS_RUNTIME float3 __attribute__((overloadable)) fnc(float3 v1, int3 *v2);  \
 _RS_RUNTIME float4 __attribute__((overloadable)) fnc(float4 v1, int4 *v2);
 
-#define FN_FUNC_FN_FN_FN(fnc)                   \
-_RS_RUNTIME float2 __attribute__((overloadable)) \
-        fnc(float2 v1, float2 v2, float2 v3);   \
-_RS_RUNTIME float3 __attribute__((overloadable)) \
-        fnc(float3 v1, float3 v2, float3 v3);   \
-_RS_RUNTIME float4 __attribute__((overloadable)) \
+#define FN_FUNC_FN_FN_FN(fnc)                       \
+_RS_RUNTIME float2 __attribute__((overloadable))    \
+        fnc(float2 v1, float2 v2, float2 v3);       \
+_RS_RUNTIME float3 __attribute__((overloadable))    \
+        fnc(float3 v1, float3 v2, float3 v3);       \
+_RS_RUNTIME float4 __attribute__((overloadable))    \
         fnc(float4 v1, float4 v2, float4 v3);
 
-#define FN_FUNC_FN_FN_PIN(fnc)                  \
-_RS_RUNTIME float2 __attribute__((overloadable)) \
-        fnc(float2 v1, float2 v2, int2 *v3);    \
-_RS_RUNTIME float3 __attribute__((overloadable)) \
-        fnc(float3 v1, float3 v2, int3 *v3);    \
-_RS_RUNTIME float4 __attribute__((overloadable)) \
+#define FN_FUNC_FN_FN_PIN(fnc)                      \
+_RS_RUNTIME float2 __attribute__((overloadable))    \
+        fnc(float2 v1, float2 v2, int2 *v3);        \
+_RS_RUNTIME float3 __attribute__((overloadable))    \
+        fnc(float3 v1, float3 v2, int3 *v3);        \
+_RS_RUNTIME float4 __attribute__((overloadable))    \
         fnc(float4 v1, float4 v2, int4 *v3);
 
 
@@ -491,7 +532,7 @@ extern float __attribute__((overloadable)) mad(float a, float b, float c);
 FN_FUNC_FN_FN_FN(mad)
 
 /**
- * Return the integral and fractional components of a number
+ * Return the integral and fractional components of a number.
  * Supports 1,2,3,4 components
  *
  * @param x Source value
@@ -663,8 +704,8 @@ FN_FUNC_FN(trunc)
 
 #define XN_FUNC_YN(typeout, fnc, typein)                                \
 extern typeout __attribute__((overloadable)) fnc(typein);               \
-_RS_RUNTIME typeout##2 __attribute__((overloadable)) fnc(typein##2 v);   \
-_RS_RUNTIME typeout##3 __attribute__((overloadable)) fnc(typein##3 v);   \
+_RS_RUNTIME typeout##2 __attribute__((overloadable)) fnc(typein##2 v);  \
+_RS_RUNTIME typeout##3 __attribute__((overloadable)) fnc(typein##3 v);  \
 _RS_RUNTIME typeout##4 __attribute__((overloadable)) fnc(typein##4 v);
 
 #define UIN_FUNC_IN(fnc)          \
@@ -682,25 +723,36 @@ XN_FUNC_YN(int, fnc, int)
 
 
 #define XN_FUNC_XN_XN_BODY(type, fnc, body)         \
-_RS_RUNTIME type __attribute__((overloadable))       \
+_RS_RUNTIME type __attribute__((overloadable))      \
         fnc(type v1, type v2);                      \
-_RS_RUNTIME type##2 __attribute__((overloadable))    \
+_RS_RUNTIME type##2 __attribute__((overloadable))   \
         fnc(type##2 v1, type##2 v2);                \
-_RS_RUNTIME type##3 __attribute__((overloadable))    \
+_RS_RUNTIME type##3 __attribute__((overloadable))   \
         fnc(type##3 v1, type##3 v2);                \
-_RS_RUNTIME type##4 __attribute__((overloadable))    \
+_RS_RUNTIME type##4 __attribute__((overloadable))   \
         fnc(type##4 v1, type##4 v2);
 
-#define IN_FUNC_IN_IN_BODY(fnc, body) \
-XN_FUNC_XN_XN_BODY(uchar, fnc, body)  \
-XN_FUNC_XN_XN_BODY(char, fnc, body)   \
-XN_FUNC_XN_XN_BODY(ushort, fnc, body) \
-XN_FUNC_XN_XN_BODY(short, fnc, body)  \
-XN_FUNC_XN_XN_BODY(uint, fnc, body)   \
-XN_FUNC_XN_XN_BODY(int, fnc, body)    \
+#define IN_FUNC_IN_IN_BODY(fnc, body)   \
+XN_FUNC_XN_XN_BODY(uchar, fnc, body)    \
+XN_FUNC_XN_XN_BODY(char, fnc, body)     \
+XN_FUNC_XN_XN_BODY(ushort, fnc, body)   \
+XN_FUNC_XN_XN_BODY(short, fnc, body)    \
+XN_FUNC_XN_XN_BODY(uint, fnc, body)     \
+XN_FUNC_XN_XN_BODY(int, fnc, body)      \
 XN_FUNC_XN_XN_BODY(float, fnc, body)
 
+/**
+ * Return the absolute value of a value.
+ *
+ * Supports 1,2,3,4 components of char, short, int.
+ */
 UIN_FUNC_IN(abs)
+
+/**
+ * Return the number of leading 0-bits in a value.
+ *
+ * Supports 1,2,3,4 components of uchar, char, ushort, short, uint, int.
+ */
 IN_FUNC_IN(clz)
 
 /**
@@ -789,6 +841,8 @@ extern float3 __attribute__((overloadable)) smoothstep(float, float, float3);
 extern float4 __attribute__((overloadable)) smoothstep(float, float, float4);
 
 /**
+ * Return the sign of a value.
+ *
  * if (v < 0) return -1.f;
  * else if (v > 0) return 1.f;
  * else return 0.f;
