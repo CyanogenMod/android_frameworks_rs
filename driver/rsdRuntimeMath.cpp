@@ -44,10 +44,6 @@ static float SC_log2(float v) {
     return log10(v) / log10(2.f);
 }
 
-static float SC_mad(float v1, float v2, float v3) {
-    return v1 * v2 + v3;
-}
-
 #if 0
 static float SC_pown(float v, int p) {
     return powf(v, (float)p);
@@ -109,25 +105,12 @@ static float SC_clamp_f32(float amount, float low, float high) {
     return amount < low ? low : (amount > high ? high : amount);
 }
 
-static float SC_degrees(float radians) {
-    return radians * (180.f / M_PI);
-}
-
 static float SC_max_f32(float v, float v2) {
     return rsMax(v, v2);
 }
 
 static float SC_min_f32(float v, float v2) {
     return rsMin(v, v2);
-}
-
-static float SC_mix_f32(float start, float stop, float amount) {
-    //ALOGE("lerpf %f  %f  %f", start, stop, amount);
-    return start + (stop - start) * amount;
-}
-
-static float SC_radians(float degrees) {
-    return degrees * (M_PI / 180.f);
 }
 
 static float SC_step_f32(float edge, float v) {
@@ -430,7 +413,6 @@ static RsdSymbolTable gSyms[] = {
     { "_Z5log10f", (void *)&log10f, true },
     { "_Z5log1pf", (void *)&log1pf, true },
     { "_Z4logbf", (void *)&logbf, true },
-    { "_Z3madfff", (void *)&SC_mad, true },
     { "_Z4modffPf", (void *)&modff, true },
     //{ "_Z3nanj", (void *)&SC_nan, true },
     { "_Z9nextafterff", (void *)&nextafterf, true },
@@ -473,11 +455,8 @@ static RsdSymbolTable gSyms[] = {
     { "_Z3mincc", (void *)&SC_min_i8, true },
 
     { "_Z5clampfff", (void *)&SC_clamp_f32, true },
-    { "_Z7degreesf", (void *)&SC_degrees, true },
     { "_Z3maxff", (void *)&SC_max_f32, true },
     { "_Z3minff", (void *)&SC_min_f32, true },
-    { "_Z3mixfff", (void *)&SC_mix_f32, true },
-    { "_Z7radiansf", (void *)&SC_radians, true },
     { "_Z4stepff", (void *)&SC_step_f32, true },
     //{ "smoothstep", (void *)&, true },
     { "_Z4signf", (void *)&SC_sign_f32, true },
