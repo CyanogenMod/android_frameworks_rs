@@ -399,16 +399,9 @@ int32_t rsdAllocationInitSurfaceTexture(const Context *rsc, const Allocation *al
 static bool IoGetBuffer(const Context *rsc, Allocation *alloc, ANativeWindow *nw) {
     DrvAllocation *drv = (DrvAllocation *)alloc->mHal.drv;
 
-    int32_t r = nw->dequeueBuffer(nw, &drv->wndBuffer);
+    int32_t r = native_window_dequeue_buffer_and_wait(nw, &drv->wndBuffer);
     if (r) {
         rsc->setError(RS_ERROR_DRIVER, "Error getting next IO output buffer.");
-        return false;
-    }
-
-    // This lock is implicitly released by the queue buffer in IoSend
-    r = nw->lockBuffer(nw, drv->wndBuffer);
-    if (r) {
-        rsc->setError(RS_ERROR_DRIVER, "Error locking next IO output buffer.");
         return false;
     }
 
@@ -443,7 +436,7 @@ void rsdAllocationSetSurfaceTexture(const Context *rsc, Allocation *alloc, ANati
         ANativeWindow *old = alloc->mHal.state.wndSurface;
         GraphicBufferMapper &mapper = GraphicBufferMapper::get();
         mapper.unlock(drv->wndBuffer->handle);
-        old->queueBuffer(old, drv->wndBuffer);
+        old->queueBuffer(old, drv->wndBuffer, -1);
     }
 
     if (nw != NULL) {
@@ -492,7 +485,7 @@ void rsdAllocationIoSend(const Context *rsc, Allocation *alloc) {
     if (alloc->mHal.state.usageFlags & RS_ALLOCATION_USAGE_SCRIPT) {
         GraphicBufferMapper &mapper = GraphicBufferMapper::get();
         mapper.unlock(drv->wndBuffer->handle);
-        int32_t r = nw->queueBuffer(nw, drv->wndBuffer);
+        int32_t r = nw->queueBuffer(nw, drv->wndBuffer, -1);
         if (r) {
             rsc->setError(RS_ERROR_DRIVER, "Error sending IO output buffer.");
             return;
