@@ -244,5 +244,8 @@ _RS_RUNTIME uchar4 __attribute__((overloadable)) rsPackColorTo8888(float4 color)
  */
 _RS_RUNTIME float4 rsUnpackColor8888(uchar4 c);
 
+_RS_RUNTIME uchar4 __attribute__((overloadable)) rsYuvToRGBA_uchar4(uchar y, uchar u, uchar v);
+_RS_RUNTIME float4 __attribute__((overloadable)) rsYuvToRGBA_float4(uchar y, uchar u, uchar v);
+
 
 #endif
