@@ -397,12 +397,14 @@ void rsdScriptInvokeForEach(const Context *rsc,
         mtls.yStrideOut = aout->mHal.drvState.stride;
     }
 
-    if ((dc->mWorkers.mCount > 1) && s->mHal.info.isThreadable) {
+    if ((dc->mWorkers.mCount > 1) && s->mHal.info.isThreadable && !dc->mInForEach) {
+        dc->mInForEach = true;
         if (mtls.dimY > 1) {
             rsdLaunchThreads(mrsc, wc_xy, &mtls);
         } else {
             rsdLaunchThreads(mrsc, wc_x, &mtls);
         }
+        dc->mInForEach = false;
 
         //ALOGE("launch 1");
     } else {

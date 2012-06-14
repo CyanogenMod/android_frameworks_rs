@@ -43,6 +43,7 @@ typedef struct RsdHalRec {
     uint32_t version_major;
     uint32_t version_minor;
     bool mHasGraphics;
+    bool mInForEach;
 
     struct Workers {
         volatile int mRunningCount;
