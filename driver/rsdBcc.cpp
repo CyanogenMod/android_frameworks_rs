@@ -72,6 +72,7 @@ bool rsdScriptInit(const Context *rsc,
                      size_t bitcodeSize,
                      uint32_t flags) {
     //ALOGE("rsdScriptCreate %p %p %p %p %i %i %p", rsc, resName, cacheDir, bitcode, bitcodeSize, flags, lookupFunc);
+    //ALOGE("rsdScriptInit %p %p", rsc, script);
 
     pthread_mutex_lock(&rsdgInitMutex);
 
@@ -318,6 +319,8 @@ void rsdScriptInvokeForEach(const Context *rsc,
     MTLaunchStruct mtls;
     memset(&mtls, 0, sizeof(mtls));
 
+    //ALOGE("for each script %p  in %p   out %p", s, ain, aout);
+
     DrvScript *drv = (DrvScript *)s->mHal.drv;
     mtls.kernel = drv->mForEachFunctions[slot];
     rsAssert(mtls.kernel != NULL);
@@ -400,8 +403,18 @@ void rsdScriptInvokeForEach(const Context *rsc,
     if ((dc->mWorkers.mCount > 1) && s->mHal.info.isThreadable && !dc->mInForEach) {
         dc->mInForEach = true;
         if (mtls.dimY > 1) {
+            mtls.mSliceSize = mtls.dimY / (dc->mWorkers.mCount * 4);
+            if(mtls.mSliceSize < 1) {
+                mtls.mSliceSize = 1;
+            }
+
             rsdLaunchThreads(mrsc, wc_xy, &mtls);
         } else {
+            mtls.mSliceSize = mtls.dimX / (dc->mWorkers.mCount * 4);
+            if(mtls.mSliceSize < 1) {
+                mtls.mSliceSize = 1;
+            }
+
             rsdLaunchThreads(mrsc, wc_x, &mtls);
         }
         dc->mInForEach = false;
