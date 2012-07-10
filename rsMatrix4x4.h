@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 The Android Open Source Project
+ * Copyright (C) 2009-2012 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,12 +25,12 @@ namespace android {
 namespace renderscript {
 
 struct Matrix4x4 : public rs_matrix4x4 {
-    float get(uint32_t row, uint32_t col) const {
-        return m[row*4 + col];
+    float get(uint32_t x, uint32_t y) const {
+        return m[x*4 + y];
     }
 
-    void set(uint32_t row, uint32_t col, float v) {
-        m[row*4 + col] = v;
+    void set(uint32_t x, uint32_t y, float v) {
+        m[x*4 + y] = v;
     }
 
     void loadIdentity();
@@ -82,11 +82,4 @@ struct Matrix4x4 : public rs_matrix4x4 {
 }
 }
 
-
-
-
-#endif
-
-
-
-
+#endif  // ANDROID_RS_MATRIX_4x4_H
