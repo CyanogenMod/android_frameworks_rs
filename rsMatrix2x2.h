@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 The Android Open Source Project
+ * Copyright (C) 2011-2012 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,12 +25,12 @@ namespace android {
 namespace renderscript {
 
 struct Matrix2x2 : public rs_matrix2x2 {
-    inline float get(uint32_t row, uint32_t col) const {
-        return m[row*2 + col];
+    inline float get(uint32_t x, uint32_t y) const {
+        return m[x*2 + y];
     }
 
-    inline void set(uint32_t row, uint32_t col, float v) {
-        m[row*2 + col] = v;
+    inline void set(uint32_t x, uint32_t y, float v) {
+        m[x*2 + y] = v;
     }
 
     void loadIdentity();
@@ -51,12 +51,4 @@ struct Matrix2x2 : public rs_matrix2x2 {
 }
 }
 
-
-
-
-#endif
-
-
-
-
-
+#endif  // ANDROID_RS_MATRIX_2x2_H
