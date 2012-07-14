@@ -101,7 +101,7 @@ bool rsdScriptInit(const Context *rsc,
     // reduced precision scripts.
 #if defined(ARCH_ARM_HAVE_NEON)
     prec = drv->mExecutable->getInfo().getFloatPrecisionRequirement();
-    if (prec != bcc::RSInfo::Full) {
+    if (prec != bcc::RSInfo::FP_Full) {
         coreLib = "/system/lib/libclcore_neon.bc";
     }
 #endif
