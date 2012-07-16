@@ -97,15 +97,6 @@ bool rsdScriptInit(const Context *rsc,
         goto error;
     }
 
-    // NEON-capable devices can use an accelerated math library for all
-    // reduced precision scripts.
-#if defined(ARCH_ARM_HAVE_NEON)
-    prec = drv->mExecutable->getInfo().getFloatPrecisionRequirement();
-    if (prec != bcc::RSInfo::FP_Full) {
-        coreLib = "/system/lib/libclcore_neon.bc";
-    }
-#endif
-
     script->mHal.info.isThreadable = true;
 
     drv->mCompilerDriver->setRSRuntimeLookupFunction(rsdLookupRuntimeStub);
