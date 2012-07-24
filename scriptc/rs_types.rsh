@@ -41,6 +41,8 @@
 #ifndef __RS_TYPES_RSH__
 #define __RS_TYPES_RSH__
 
+#define M_PI        3.14159265358979323846264338327950288f   /* pi */
+
 #include "stdbool.h"
 /**
  * 8 bit integer type
