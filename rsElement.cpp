@@ -92,7 +92,7 @@ void Element::dumpLOGV(const char *prefix) const {
     }
 }
 
-void Element::serialize(OStream *stream) const {
+void Element::serialize(Context *rsc, OStream *stream) const {
     // Need to identify ourselves
     stream->addU32((uint32_t)getClassId());
 
@@ -106,7 +106,7 @@ void Element::serialize(OStream *stream) const {
     for (uint32_t ct = 0; ct < mFieldCount; ct++) {
         stream->addString(&mFields[ct].name);
         stream->addU32(mFields[ct].arraySize);
-        mFields[ct].e->serialize(stream);
+        mFields[ct].e->serialize(rsc, stream);
     }
 }
 

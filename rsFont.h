@@ -67,7 +67,7 @@ public:
 
     // Currently files do not get serialized,
     // but we need to inherit from ObjectBase for ref tracking
-    virtual void serialize(OStream *stream) const {
+    virtual void serialize(Context *rsc, OStream *stream) const {
     }
     virtual RsA3DClassID getClassId() const {
         return RS_A3D_CLASS_ID_UNKNOWN;

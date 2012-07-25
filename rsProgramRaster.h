@@ -46,7 +46,7 @@ public:
     Hal mHal;
 
     virtual void setup(const Context *, ProgramRasterState *);
-    virtual void serialize(OStream *stream) const;
+    virtual void serialize(Context *rsc, OStream *stream) const;
     virtual RsA3DClassID getClassId() const { return RS_A3D_CLASS_ID_PROGRAM_RASTER; }
     static ProgramRaster *createFromStream(Context *rsc, IStream *stream);
 

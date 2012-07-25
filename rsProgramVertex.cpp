@@ -136,7 +136,7 @@ void ProgramVertex::transformToScreen(Context *rsc, float *v4out, const float *v
     mvp.vectorMultiply(v4out, v3in);
 }
 
-void ProgramVertex::serialize(OStream *stream) const {
+void ProgramVertex::serialize(Context *rsc, OStream *stream) const {
 }
 
 ProgramVertex *ProgramVertex::createFromStream(Context *rsc, IStream *stream) {

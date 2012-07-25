@@ -61,7 +61,7 @@ public:
     void bindToContext(SamplerState *, uint32_t slot);
     void unbindFromContext(SamplerState *);
 
-    virtual void serialize(OStream *stream) const;
+    virtual void serialize(Context *rsc, OStream *stream) const;
     virtual RsA3DClassID getClassId() const { return RS_A3D_CLASS_ID_SAMPLER; }
     static Sampler *createFromStream(Context *rsc, IStream *stream);
 

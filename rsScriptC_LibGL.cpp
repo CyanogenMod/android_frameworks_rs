@@ -251,7 +251,7 @@ void rsrMeshComputeBoundingBox(Context *rsc, Script *sc, Mesh *sm,
                                float *minX, float *minY, float *minZ,
                                float *maxX, float *maxY, float *maxZ) {
     CHECK_OBJ(sm);
-    sm->computeBBox();
+    sm->computeBBox(rsc);
     *minX = sm->mBBoxMin[0];
     *minY = sm->mBBoxMin[1];
     *minZ = sm->mBBoxMin[2];

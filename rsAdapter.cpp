@@ -60,7 +60,7 @@ void Adapter1D::data(const void *data) {
            mAllocation.get()->getType()->getSizeBytes());
 }
 
-void Adapter1D::serialize(OStream *stream) const {
+void Adapter1D::serialize(Context *rsc, OStream *stream) const {
 }
 
 Adapter1D *Adapter1D::createFromStream(Context *rsc, IStream *stream) {
@@ -177,7 +177,7 @@ void Adapter2D::data(const void *data) {
            mAllocation.get()->getType()->getSizeBytes());
 }
 
-void Adapter2D::serialize(OStream *stream) const {
+void Adapter2D::serialize(Context *rsc, OStream *stream) const {
 }
 
 Adapter2D *Adapter2D::createFromStream(Context *rsc, IStream *stream) {

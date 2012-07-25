@@ -74,7 +74,7 @@ void ProgramFragment::setup(Context *rsc, ProgramFragmentState *state) {
     rsc->mHal.funcs.fragment.setActive(rsc, this);
 }
 
-void ProgramFragment::serialize(OStream *stream) const {
+void ProgramFragment::serialize(Context *rsc, OStream *stream) const {
 }
 
 ProgramFragment *ProgramFragment::createFromStream(Context *rsc, IStream *stream) {

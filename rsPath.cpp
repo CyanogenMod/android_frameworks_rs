@@ -59,7 +59,7 @@ void Path::rasterize(const BezierSegment_t *s, uint32_t num, Allocation *alloc) 
 void Path::render(Context *rsc) {
 }
 
-void Path::serialize(OStream *stream) const {
+void Path::serialize(Context *rsc, OStream *stream) const {
 
 }
 

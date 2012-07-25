@@ -63,7 +63,7 @@ void ProgramStore::setup(const Context *rsc, ProgramStoreState *state) {
     rsc->mHal.funcs.store.setActive(rsc, this);
 }
 
-void ProgramStore::serialize(OStream *stream) const {
+void ProgramStore::serialize(Context *rsc, OStream *stream) const {
 }
 
 ProgramStore *ProgramStore::createFromStream(Context *rsc, IStream *stream) {

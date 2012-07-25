@@ -68,7 +68,7 @@ void Sampler::unbindFromContext(SamplerState *ss) {
     ss->mSamplers[slot].clear();
 }
 
-void Sampler::serialize(OStream *stream) const {
+void Sampler::serialize(Context *rsc, OStream *stream) const {
 }
 
 Sampler *Sampler::createFromStream(Context *rsc, IStream *stream) {

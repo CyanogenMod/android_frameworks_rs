@@ -54,7 +54,7 @@ public:
                             size_t usrBytes,
                             const RsScriptCall *sc = NULL);
 
-    virtual void serialize(OStream *stream) const {    }
+    virtual void serialize(Context *rsc, OStream *stream) const {    }
     virtual RsA3DClassID getClassId() const { return RS_A3D_CLASS_ID_SCRIPT_C; }
     static Type *createFromStream(Context *rsc, IStream *stream) { return NULL; }
 
