@@ -34,7 +34,7 @@ public:
 
     virtual void setup(Context *, ProgramFragmentState *);
 
-    virtual void serialize(OStream *stream) const;
+    virtual void serialize(Context *rsc, OStream *stream) const;
     virtual RsA3DClassID getClassId() const { return RS_A3D_CLASS_ID_PROGRAM_FRAGMENT; }
     static ProgramFragment *createFromStream(Context *rsc, IStream *stream);
 

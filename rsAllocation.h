@@ -107,7 +107,7 @@ public:
     void removeProgramToDirty(const Program *);
 
     virtual void dumpLOGV(const char *prefix) const;
-    virtual void serialize(OStream *stream) const;
+    virtual void serialize(Context *rsc, OStream *stream) const;
     virtual RsA3DClassID getClassId() const { return RS_A3D_CLASS_ID_ALLOCATION; }
     static Allocation *createFromStream(Context *rsc, IStream *stream);
 
@@ -152,9 +152,9 @@ private:
     Allocation(Context *rsc, const Type *, uint32_t usages, RsAllocationMipmapControl mc, void *ptr);
 
     uint32_t getPackedSize() const;
-    static void writePackedData(const Type *type, uint8_t *dst, const uint8_t *src, bool dstPadded);
-    void unpackVec3Allocation(const void *data, size_t dataSize);
-    void packVec3Allocation(OStream *stream) const;
+    static void writePackedData(Context *rsc, const Type *type, uint8_t *dst, const uint8_t *src, bool dstPadded);
+    void unpackVec3Allocation(Context *rsc, const void *data, size_t dataSize);
+    void packVec3Allocation(Context *rsc, OStream *stream) const;
 };
 
 }

@@ -58,7 +58,7 @@ public:
     static void dumpAll(Context *rsc);
 
     virtual void dumpLOGV(const char *prefix) const;
-    virtual void serialize(OStream *stream) const = 0;
+    virtual void serialize(Context *rsc, OStream *stream) const = 0;
     virtual RsA3DClassID getClassId() const = 0;
 
     static bool isValid(const Context *rsc, const ObjectBase *obj);

@@ -78,7 +78,7 @@ void Mesh::init() {
 #endif
 }
 
-void Mesh::serialize(OStream *stream) const {
+void Mesh::serialize(Context *rsc, OStream *stream) const {
     // Need to identify ourselves
     stream->addU32((uint32_t)getClassId());
 
@@ -88,7 +88,7 @@ void Mesh::serialize(OStream *stream) const {
     // Store number of vertex streams
     stream->addU32(mHal.state.vertexBuffersCount);
     for (uint32_t vCount = 0; vCount < mHal.state.vertexBuffersCount; vCount ++) {
-        mHal.state.vertexBuffers[vCount]->serialize(stream);
+        mHal.state.vertexBuffers[vCount]->serialize(rsc, stream);
     }
 
     stream->addU32(mHal.state.primitivesCount);
@@ -98,7 +98,7 @@ void Mesh::serialize(OStream *stream) const {
 
         if (mHal.state.indexBuffers[pCount]) {
             stream->addU32(1);
-            mHal.state.indexBuffers[pCount]->serialize(stream);
+            mHal.state.indexBuffers[pCount]->serialize(rsc, stream);
         } else {
             stream->addU32(0);
         }
@@ -215,7 +215,7 @@ void Mesh::uploadAll(Context *rsc) {
     }
 }
 
-void Mesh::computeBBox() {
+void Mesh::computeBBox(Context *rsc) {
     float *posPtr = NULL;
     uint32_t vectorSize = 0;
     uint32_t stride = 0;

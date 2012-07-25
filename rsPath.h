@@ -43,7 +43,7 @@ public:
     ~Path();
 
     void render(Context *);
-    virtual void serialize(OStream *stream) const;
+    virtual void serialize(Context *rsc, OStream *stream) const;
     virtual RsA3DClassID getClassId() const;
 
 private:

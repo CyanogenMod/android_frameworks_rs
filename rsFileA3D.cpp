@@ -352,7 +352,7 @@ bool FileA3D::writeFile(const char *filename) {
     return true;
 }
 
-void FileA3D::appendToFile(ObjectBase *obj) {
+void FileA3D::appendToFile(Context *con, ObjectBase *obj) {
     if (!obj) {
         return;
     }
@@ -366,7 +366,7 @@ void FileA3D::appendToFile(ObjectBase *obj) {
     indexEntry->mOffset = mWriteStream->getPos();
     indexEntry->mRsObj = obj;
     mWriteIndex.push(indexEntry);
-    obj->serialize(mWriteStream);
+    obj->serialize(con, mWriteStream);
     indexEntry->mLength = mWriteStream->getPos() - indexEntry->mOffset;
     mWriteStream->align(4);
 }
