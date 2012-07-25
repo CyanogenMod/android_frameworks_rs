@@ -105,7 +105,7 @@ public:
     uint32_t getBitsUnpadded() const {return mBitsUnpadded;}
 
     void dumpLOGV(const char *prefix) const;
-    virtual void serialize(OStream *stream) const;
+    virtual void serialize(Context *rsc, OStream *stream) const;
     virtual RsA3DClassID getClassId() const { return RS_A3D_CLASS_ID_ELEMENT; }
     static Element *createFromStream(Context *rsc, IStream *stream);
 

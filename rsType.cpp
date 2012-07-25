@@ -155,14 +155,14 @@ void Type::dumpLOGV(const char *prefix) const {
     mElement->dumpLOGV(buf);
 }
 
-void Type::serialize(OStream *stream) const {
+void Type::serialize(Context *rsc, OStream *stream) const {
     // Need to identify ourselves
     stream->addU32((uint32_t)getClassId());
 
     String8 name(getName());
     stream->addString(&name);
 
-    mElement->serialize(stream);
+    mElement->serialize(rsc, stream);
 
     stream->addU32(mHal.state.dimX);
     stream->addU32(mHal.state.dimY);

@@ -207,7 +207,7 @@ uint32_t Allocation::getPackedSize() const {
     return numItems * mHal.state.type->getElement()->getSizeBytesUnpadded();
 }
 
-void Allocation::writePackedData(const Type *type,
+void Allocation::writePackedData(Context *rsc, const Type *type,
                                  uint8_t *dst, const uint8_t *src, bool dstPadded) {
     const Element *elem = type->getElement();
     uint32_t unpaddedBytes = elem->getSizeBytesUnpadded();
@@ -256,14 +256,14 @@ void Allocation::writePackedData(const Type *type,
     delete[] sizeUnpadded;
 }
 
-void Allocation::unpackVec3Allocation(const void *data, size_t dataSize) {
+void Allocation::unpackVec3Allocation(Context *rsc, const void *data, size_t dataSize) {
     const uint8_t *src = (const uint8_t*)data;
     uint8_t *dst = (uint8_t*)getPtr();
 
-    writePackedData(getType(), dst, src, true);
+    writePackedData(rsc, getType(), dst, src, true);
 }
 
-void Allocation::packVec3Allocation(OStream *stream) const {
+void Allocation::packVec3Allocation(Context *rsc, OStream *stream) const {
     uint32_t paddedBytes = getType()->getElement()->getSizeBytes();
     uint32_t unpaddedBytes = getType()->getElement()->getSizeBytesUnpadded();
     uint32_t numItems = mHal.state.type->getSizeBytes() / paddedBytes;
@@ -271,13 +271,13 @@ void Allocation::packVec3Allocation(OStream *stream) const {
     const uint8_t *src = (const uint8_t*)getPtr();
     uint8_t *dst = new uint8_t[numItems * unpaddedBytes];
 
-    writePackedData(getType(), dst, src, false);
+    writePackedData(rsc, getType(), dst, src, false);
     stream->addByteArray(dst, getPackedSize());
 
     delete[] dst;
 }
 
-void Allocation::serialize(OStream *stream) const {
+void Allocation::serialize(Context *rsc, OStream *stream) const {
     // Need to identify ourselves
     stream->addU32((uint32_t)getClassId());
 
@@ -286,7 +286,7 @@ void Allocation::serialize(OStream *stream) const {
 
     // First thing we need to serialize is the type object since it will be needed
     // to initialize the class
-    mHal.state.type->serialize(stream);
+    mHal.state.type->serialize(rsc, stream);
 
     uint32_t dataSize = mHal.state.type->getSizeBytes();
     // 3 element vectors are padded to 4 in memory, but padding isn't serialized
@@ -298,7 +298,7 @@ void Allocation::serialize(OStream *stream) const {
         stream->addByteArray(getPtr(), dataSize);
     } else {
         // Now write the data
-        packVec3Allocation(stream);
+        packVec3Allocation(rsc, stream);
     }
 }
 
@@ -341,7 +341,7 @@ Allocation *Allocation::createFromStream(Context *rsc, IStream *stream) {
         // Read in all of our allocation data
         alloc->data(rsc, 0, 0, count, stream->getPtr() + stream->getPos(), dataSize);
     } else {
-        alloc->unpackVec3Allocation(stream->getPtr() + stream->getPos(), dataSize);
+        alloc->unpackVec3Allocation(rsc, stream->getPtr() + stream->getPos(), dataSize);
     }
     stream->reset(stream->getPos() + dataSize);
 

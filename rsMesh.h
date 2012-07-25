@@ -59,7 +59,7 @@ public:
     Mesh(Context *, uint32_t vertexBuffersCount, uint32_t primitivesCount);
     ~Mesh();
 
-    virtual void serialize(OStream *stream) const;
+    virtual void serialize(Context *rsc, OStream *stream) const;
     virtual RsA3DClassID getClassId() const { return RS_A3D_CLASS_ID_MESH; }
     static Mesh *createFromStream(Context *rsc, IStream *stream);
     void init();
@@ -83,7 +83,7 @@ public:
     // Bounding volumes
     float mBBoxMin[3];
     float mBBoxMax[3];
-    void computeBBox();
+    void computeBBox(Context *rsc);
 protected:
     ObjectBaseRef<Allocation> *mVertexBuffers;
     ObjectBaseRef<Allocation> *mIndexBuffers;

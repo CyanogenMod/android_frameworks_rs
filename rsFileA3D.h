@@ -66,12 +66,12 @@ public:
     const A3DIndexEntry* getIndexEntry(size_t index) const;
     ObjectBase *initializeFromEntry(size_t index);
 
-    void appendToFile(ObjectBase *obj);
+    void appendToFile(Context *rsc, ObjectBase *obj);
     bool writeFile(const char *filename);
 
     // Currently files do not get serialized,
     // but we need to inherit from ObjectBase for ref tracking
-    virtual void serialize(OStream *stream) const {
+    virtual void serialize(Context *rsc, OStream *stream) const {
     }
     virtual RsA3DClassID getClassId() const {
         return RS_A3D_CLASS_ID_UNKNOWN;

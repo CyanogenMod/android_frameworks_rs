@@ -41,7 +41,7 @@ public:
 
     void transformToScreen(Context *, float *v4out, const float *v3in) const;
 
-    virtual void serialize(OStream *stream) const;
+    virtual void serialize(Context *rsc, OStream *stream) const;
     virtual RsA3DClassID getClassId() const { return RS_A3D_CLASS_ID_PROGRAM_VERTEX; }
     static ProgramVertex *createFromStream(Context *rsc, IStream *stream);
 };
