@@ -118,7 +118,7 @@ void Font::drawCachedGlyph(CachedGlyphInfo* glyph, int32_t x, int32_t y,
 
     FontState *state = &mRSC->mStateFont;
     uint32_t cacheWidth = state->getCacheTextureType()->getDimX();
-    const uint8_t* cacheBuffer = state->getTextTextureData();
+    const uint8_t* cacheBuffer = state->mCacheBuffer;
 
     uint32_t cacheX = 0, cacheY = 0;
     int32_t bX = 0, bY = 0;
@@ -453,7 +453,7 @@ bool FontState::cacheBitmap(FT_Bitmap *bitmap, uint32_t *retOriginX, uint32_t *r
 
     uint32_t cacheWidth = getCacheTextureType()->getDimX();
 
-    uint8_t *cacheBuffer = (uint8_t*)mTextTexture->getPtr();
+    uint8_t *cacheBuffer = mCacheBuffer;
     uint8_t *bitmapBuffer = bitmap->buffer;
 
     uint32_t cacheX = 0, bX = 0, cacheY = 0, bY = 0;
@@ -467,7 +467,10 @@ bool FontState::cacheBitmap(FT_Bitmap *bitmap, uint32_t *retOriginX, uint32_t *r
     // This will dirty the texture and the shader so next time
     // we draw it will upload the data
 
-    mTextTexture->sendDirty(mRSC);
+    mRSC->mHal.funcs.allocation.data2D(mRSC, mTextTexture.get(), 0, 0, 0,
+        RS_ALLOCATION_CUBEMAP_FACE_POSITIVE_X, mCacheWidth, mCacheHeight,
+        mCacheBuffer, mCacheWidth*mCacheHeight);
+
     mFontShaderF->bindTexture(mRSC, 0, mTextTexture.get());
 
     // Some debug code
@@ -539,13 +542,16 @@ void FontState::initTextTexture() {
                                                                 RS_KIND_PIXEL_A, true, 1);
 
     // We will allocate a texture to initially hold 32 character bitmaps
+    mCacheHeight = 256;
+    mCacheWidth = 1024;
     ObjectBaseRef<Type> texType = Type::getTypeRef(mRSC, alphaElem.get(),
-                                                   1024, 256, 0, false, false);
+                                                   mCacheWidth, mCacheHeight, 0, false, false);
+    mCacheBuffer = new uint8_t[mCacheWidth * mCacheHeight];
+
 
     Allocation *cacheAlloc = Allocation::createAllocation(mRSC, texType.get(),
-                                RS_ALLOCATION_USAGE_SCRIPT | RS_ALLOCATION_USAGE_GRAPHICS_TEXTURE);
+                                RS_ALLOCATION_USAGE_GRAPHICS_TEXTURE);
     mTextTexture.set(cacheAlloc);
-    mTextTexture->syncAll(mRSC, RS_ALLOCATION_USAGE_SCRIPT);
 
     // Split up our cache texture into lines of certain widths
     int32_t nextLine = 0;
@@ -574,7 +580,7 @@ void FontState::initVertexArrayBuffers() {
     Allocation *indexAlloc = Allocation::createAllocation(mRSC, indexType.get(),
                                                           RS_ALLOCATION_USAGE_SCRIPT |
                                                           RS_ALLOCATION_USAGE_GRAPHICS_VERTEX);
-    uint16_t *indexPtr = (uint16_t*)indexAlloc->getPtr();
+    uint16_t *indexPtr = (uint16_t*)mRSC->mHal.funcs.allocation.lock1D(mRSC, indexAlloc);
 
     // Four verts, two triangles , six indices per quad
     for (uint32_t i = 0; i < mMaxNumberOfQuads; i ++) {
@@ -606,12 +612,14 @@ void FontState::initVertexArrayBuffers() {
 
     Allocation *vertexAlloc = Allocation::createAllocation(mRSC, vertexDataType.get(),
                                                            RS_ALLOCATION_USAGE_SCRIPT);
-    mTextMeshPtr = (float*)vertexAlloc->getPtr();
+    mTextMeshPtr = (float*)mRSC->mHal.funcs.allocation.lock1D(mRSC, vertexAlloc);
 
     mMesh.set(new Mesh(mRSC, 1, 1));
     mMesh->setVertexBuffer(vertexAlloc, 0);
     mMesh->setPrimitive(indexAlloc, RS_PRIMITIVE_TRIANGLE, 0);
     mMesh->init();
+    mRSC->mHal.funcs.allocation.unlock1D(mRSC, indexAlloc);
+    mRSC->mHal.funcs.allocation.unlock1D(mRSC, vertexAlloc);
 }
 
 // We don't want to allocate anything unless we actually draw text

@@ -34,30 +34,11 @@ void Adapter1D::reset() {
     mY = 0;
     mZ = 0;
     mLOD = 0;
-    mFace = 0;
+    mFace = RS_ALLOCATION_CUBEMAP_FACE_POSITIVE_X;
 }
 
-void * Adapter1D::getElement(uint32_t x) {
-    rsAssert(mAllocation.get());
-    rsAssert(mAllocation->getPtr());
-    rsAssert(mAllocation->getType());
-    uint8_t * ptr = static_cast<uint8_t *>(mAllocation->getPtr());
-    ptr += mAllocation->getType()->getLODOffset(mLOD, x, mY);
-    return ptr;
-}
-
-void Adapter1D::subData(uint32_t xoff, uint32_t count, const void *data) {
-    if (mAllocation.get() && mAllocation.get()->getType()) {
-        void *ptr = getElement(xoff);
-        count *= mAllocation.get()->getType()->getElementSizeBytes();
-        memcpy(ptr, data, count);
-    }
-}
-
-void Adapter1D::data(const void *data) {
-    memcpy(getElement(0),
-           data,
-           mAllocation.get()->getType()->getSizeBytes());
+void Adapter1D::data(Context *rsc, uint32_t x, uint32_t count, const void *data, size_t sizeBytes) {
+    mAllocation->data(rsc, x, mY, mLOD, mFace, count, 1, data, sizeBytes);
 }
 
 void Adapter1D::serialize(Context *rsc, OStream *stream) const {
@@ -98,22 +79,12 @@ void rsi_Adapter1DSetConstraint(Context *rsc, RsAdapter1D va, RsDimension dim, u
         a->setLOD(value);
         break;
     case RS_DIMENSION_FACE:
-        a->setFace(value);
+        a->setFace((RsAllocationCubemapFace)value);
         break;
     default:
         rsAssert(!"Unimplemented constraint");
         return;
     }
-}
-
-void rsi_Adapter1DSubData(Context *rsc, RsAdapter1D va, uint32_t xoff, uint32_t count, const void *data) {
-    Adapter1D * a = static_cast<Adapter1D *>(va);
-    a->subData(xoff, count, data);
-}
-
-void rsi_Adapter1DData(Context *rsc, RsAdapter1D va, const void *data) {
-    Adapter1D * a = static_cast<Adapter1D *>(va);
-    a->data(data);
 }
 
 }
@@ -133,49 +104,15 @@ Adapter2D::Adapter2D(Context *rsc, Allocation *a) : ObjectBase(rsc) {
 void Adapter2D::reset() {
     mZ = 0;
     mLOD = 0;
-    mFace = 0;
+    mFace = RS_ALLOCATION_CUBEMAP_FACE_POSITIVE_X;
 }
 
-void * Adapter2D::getElement(uint32_t x, uint32_t y) const {
-    rsAssert(mAllocation.get());
-    rsAssert(mAllocation->getPtr());
-    rsAssert(mAllocation->getType());
-    if (mFace != 0 && !mAllocation->getType()->getDimFaces()) {
-        ALOGE("Adapter wants cubemap face, but allocation has none");
-        return NULL;
-    }
 
-    uint8_t * ptr = static_cast<uint8_t *>(mAllocation->getPtr());
-    ptr += mAllocation->getType()->getLODOffset(mLOD, x, y);
-
-    if (mFace != 0) {
-        uint32_t totalSizeBytes = mAllocation->getType()->getSizeBytes();
-        uint32_t faceOffset = totalSizeBytes / 6;
-        ptr += faceOffset * mFace;
-    }
-    return ptr;
+void Adapter2D::data(Context *rsc, uint32_t x, uint32_t y, uint32_t w, uint32_t h,
+                     const void *data, size_t sizeBytes) {
+    mAllocation->data(rsc, x, y, mLOD, mFace, w, h, data, sizeBytes);
 }
 
-void Adapter2D::subData(uint32_t xoff, uint32_t yoff, uint32_t w, uint32_t h, const void *data) {
-    rsAssert(mAllocation.get());
-    rsAssert(mAllocation->getPtr());
-    rsAssert(mAllocation->getType());
-
-    uint32_t eSize = mAllocation.get()->getType()->getElementSizeBytes();
-    uint32_t lineSize = eSize * w;
-
-    const uint8_t *src = static_cast<const uint8_t *>(data);
-    for (uint32_t line=yoff; line < (yoff+h); line++) {
-        memcpy(getElement(xoff, line), src, lineSize);
-        src += lineSize;
-    }
-}
-
-void Adapter2D::data(const void *data) {
-    memcpy(getElement(0,0),
-           data,
-           mAllocation.get()->getType()->getSizeBytes());
-}
 
 void Adapter2D::serialize(Context *rsc, OStream *stream) const {
 }
@@ -216,7 +153,7 @@ void rsi_Adapter2DSetConstraint(Context *rsc, RsAdapter2D va, RsDimension dim, u
         a->setLOD(value);
         break;
     case RS_DIMENSION_FACE:
-        a->setFace(value);
+        a->setFace((RsAllocationCubemapFace)value);
         break;
     default:
         rsAssert(!"Unimplemented constraint");
@@ -224,15 +161,6 @@ void rsi_Adapter2DSetConstraint(Context *rsc, RsAdapter2D va, RsDimension dim, u
     }
 }
 
-void rsi_Adapter2DData(Context *rsc, RsAdapter2D va, const void *data) {
-    Adapter2D * a = static_cast<Adapter2D *>(va);
-    a->data(data);
-}
-
-void rsi_Adapter2DSubData(Context *rsc, RsAdapter2D va, uint32_t xoff, uint32_t yoff, uint32_t w, uint32_t h, const void *data) {
-    Adapter2D * a = static_cast<Adapter2D *>(va);
-    a->subData(xoff, yoff, w, h, data);
-}
 
 }
 }
