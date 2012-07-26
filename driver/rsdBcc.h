@@ -58,7 +58,7 @@ void rsdScriptSetGlobalVarWithElemDims(const android::renderscript::Context *,
                                        size_t dimLength);
 void rsdScriptSetGlobalBind(const android::renderscript::Context *,
                             const android::renderscript::Script *,
-                            uint32_t slot, void *data);
+                            uint32_t slot, android::renderscript::Allocation *data);
 void rsdScriptSetGlobalObj(const android::renderscript::Context *,
                            const android::renderscript::Script *,
                            uint32_t slot, android::renderscript::ObjectBase *data);
@@ -76,5 +76,9 @@ void rsdScriptGetGlobal(const android::renderscript::Context *dc,
 void rsdScriptDestroy(const android::renderscript::Context *dc,
                       android::renderscript::Script *script);
 
+android::renderscript::Allocation * rsdScriptGetAllocationForPointer(
+                        const android::renderscript::Context *dc,
+                        const android::renderscript::Script *script,
+                        const void *);
 
 #endif

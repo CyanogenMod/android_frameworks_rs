@@ -38,10 +38,6 @@ public:
     ScriptC(Context *);
     virtual ~ScriptC();
 
-
-    const Allocation *ptrToAllocation(const void *) const;
-
-
     virtual void Invoke(Context *rsc, uint32_t slot, const void *data, size_t len);
 
     virtual uint32_t run(Context *);

@@ -53,8 +53,10 @@ void ProgramFragment::setConstantColor(Context *rsc, float r, float g, float b, 
     mConstantColor[1] = g;
     mConstantColor[2] = b;
     mConstantColor[3] = a;
-    memcpy(mHal.state.constants[0]->getPtr(), mConstantColor, 4*sizeof(float));
+    void *p = rsc->mHal.funcs.allocation.lock1D(rsc, mHal.state.constants[0]);
+    memcpy(p, mConstantColor, 4*sizeof(float));
     mDirty = true;
+    rsc->mHal.funcs.allocation.unlock1D(rsc, mHal.state.constants[0]);
 }
 
 void ProgramFragment::setup(Context *rsc, ProgramFragmentState *state) {

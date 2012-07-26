@@ -149,7 +149,6 @@ void rsrAllocationDecRefs(const Context *, const Allocation *, void *ptr,
 
 uint32_t rsrToClient(Context *, Script *, int cmdID, void *data, int len);
 uint32_t rsrToClientBlocking(Context *, Script *, int cmdID, void *data, int len);
-const Allocation * rsrGetAllocation(Context *, Script *, const void *ptr);
 
 void rsrAllocationMarkDirty(Context *, Script *, RsAllocation a);
 void rsrAllocationSyncAll(Context *, Script *, Allocation *a, RsAllocationUsageType source);
