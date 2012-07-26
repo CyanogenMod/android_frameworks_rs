@@ -32,7 +32,6 @@ public:
     Adapter1D(Context *);
     Adapter1D(Context *, Allocation *);
     void reset();
-    void * getElement(uint32_t x);
 
     void setAllocation(Allocation *a) {mAllocation.set(a);}
 
@@ -43,11 +42,9 @@ public:
     inline void setY(uint32_t y) {mY = y;}
     inline void setZ(uint32_t z) {mZ = z;}
     inline void setLOD(uint32_t lod) {mLOD = lod;}
-    inline void setFace(uint32_t face) {mFace = face;}
-    //void setArray(uint32_t num, uint32_t value);
+    inline void setFace(RsAllocationCubemapFace face) {mFace = face;}
 
-    void subData(uint32_t xoff, uint32_t count, const void *data);
-    void data(const void *data);
+    void data(Context *rsc, uint32_t xoff, uint32_t count, const void *data, size_t sizeBytes);
 
     virtual void serialize(Context *rsc, OStream *stream) const;
     virtual RsA3DClassID getClassId() const { return RS_A3D_CLASS_ID_ADAPTER_1D; }
@@ -58,7 +55,7 @@ protected:
     uint32_t mY;
     uint32_t mZ;
     uint32_t mLOD;
-    uint32_t mFace;
+    RsAllocationCubemapFace mFace;
 };
 
 class Adapter2D : public ObjectBase {
@@ -69,7 +66,6 @@ public:
     Adapter2D(Context *);
     Adapter2D(Context *, Allocation *);
     void reset();
-    void * getElement(uint32_t x, uint32_t y) const;
 
     uint32_t getDimX() const {return mAllocation->getType()->getLODDimX(mLOD);}
     uint32_t getDimY() const {return mAllocation->getType()->getLODDimY(mLOD);}
@@ -78,11 +74,10 @@ public:
     void setAllocation(Allocation *a) {mAllocation.set(a);}
     inline void setZ(uint32_t z) {mZ = z;}
     inline void setLOD(uint32_t lod) {mLOD = lod;}
-    inline void setFace(uint32_t face) {mFace = face;}
-    //void setArray(uint32_t num, uint32_t value);
+    inline void setFace(RsAllocationCubemapFace face) {mFace = face;}
 
-    void data(const void *data);
-    void subData(uint32_t xoff, uint32_t yoff, uint32_t w, uint32_t h, const void *data);
+    void data(Context *rsc, uint32_t xoff, uint32_t yoff, uint32_t w, uint32_t h,
+              const void *data, size_t sizeBytes);
 
     virtual void serialize(Context *rsc, OStream *stream) const;
     virtual RsA3DClassID getClassId() const { return RS_A3D_CLASS_ID_ADAPTER_2D; }
@@ -92,7 +87,7 @@ protected:
     ObjectBaseRef<Allocation> mAllocation;
     uint32_t mZ;
     uint32_t mLOD;
-    uint32_t mFace;
+    RsAllocationCubemapFace mFace;
 };
 
 }

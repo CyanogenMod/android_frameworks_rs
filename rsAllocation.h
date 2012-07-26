@@ -82,7 +82,6 @@ public:
     virtual ~Allocation();
     void updateCache();
 
-    void * getPtr() const {return mHal.drvState.mallocPtrLOD0;}
     const Type * getType() const {return mHal.state.type;}
 
     void syncAll(Context *rsc, RsAllocationUsageType src);
