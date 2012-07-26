@@ -19,6 +19,7 @@
 
 #include <rs_hal.h>
 #include <rsRuntime.h>
+#include <rsAllocation.h>
 
 #include <GLES/gl.h>
 #include <GLES2/gl2.h>
@@ -39,9 +40,6 @@ struct DrvAllocation {
     // Is this a legal structure to be used as an FBO render target
     uint32_t renderTargetID;
 
-    uint32_t width;
-    uint32_t height;
-
     GLenum glTarget;
     GLenum glType;
     GLenum glFormat;
@@ -51,6 +49,19 @@ struct DrvAllocation {
     RsdFrameBufferObj * readBackFBO;
     ANativeWindow *wnd;
     ANativeWindowBuffer *wndBuffer;
+
+    struct LodState {
+        void * mallocPtr;
+        size_t stride;
+        uint32_t dimX;
+        uint32_t dimY;
+        uint32_t dimZ;
+    } lod[android::renderscript::Allocation::MAX_LOD];
+    size_t faceOffset;
+    uint32_t lodCount;
+    uint32_t faceCount;
+
+
 };
 
 GLenum rsdTypeToGLType(RsDataType t);
@@ -94,6 +105,27 @@ void rsdAllocationData3D(const android::renderscript::Context *rsc,
                          uint32_t xoff, uint32_t yoff, uint32_t zoff,
                          uint32_t lod, RsAllocationCubemapFace face,
                          uint32_t w, uint32_t h, uint32_t d, const void *data, uint32_t sizeBytes);
+
+void rsdAllocationRead1D(const android::renderscript::Context *rsc,
+                         const android::renderscript::Allocation *alloc,
+                         uint32_t xoff, uint32_t lod, uint32_t count,
+                         void *data, uint32_t sizeBytes);
+void rsdAllocationRead2D(const android::renderscript::Context *rsc,
+                         const android::renderscript::Allocation *alloc,
+                         uint32_t xoff, uint32_t yoff, uint32_t lod, RsAllocationCubemapFace face,
+                         uint32_t w, uint32_t h,
+                         void *data, uint32_t sizeBytes);
+void rsdAllocationRead3D(const android::renderscript::Context *rsc,
+                         const android::renderscript::Allocation *alloc,
+                         uint32_t xoff, uint32_t yoff, uint32_t zoff,
+                         uint32_t lod, RsAllocationCubemapFace face,
+                         uint32_t w, uint32_t h, uint32_t d, void *data, uint32_t sizeBytes);
+
+void * rsdAllocationLock1D(const android::renderscript::Context *rsc,
+                          const android::renderscript::Allocation *alloc);
+void rsdAllocationUnlock1D(const android::renderscript::Context *rsc,
+                          const android::renderscript::Allocation *alloc);
+
 
 void rsdAllocationData1D_alloc(const android::renderscript::Context *rsc,
                                const android::renderscript::Allocation *dstAlloc,

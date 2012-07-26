@@ -41,6 +41,8 @@ class Allocation : public ObjectBase {
     // The graphics equivalent of malloc.  The allocation contains a structure of elements.
 
 public:
+    const static int MAX_LOD = 16;
+
     struct Hal {
         void * drv;
 
@@ -67,8 +69,8 @@ public:
         State state;
 
         struct DrvState {
-            mutable void * mallocPtr;
-            mutable uint32_t stride;
+            mutable void * mallocPtrLOD0;
+            mutable uint32_t strideLOD0;
         } drvState;
 
     };
@@ -80,7 +82,7 @@ public:
     virtual ~Allocation();
     void updateCache();
 
-    void * getPtr() const {return mHal.drvState.mallocPtr;}
+    void * getPtr() const {return mHal.drvState.mallocPtrLOD0;}
     const Type * getType() const {return mHal.state.type;}
 
     void syncAll(Context *rsc, RsAllocationUsageType src);
@@ -96,12 +98,16 @@ public:
     void data(Context *rsc, uint32_t xoff, uint32_t yoff, uint32_t zoff, uint32_t lod, RsAllocationCubemapFace face,
                  uint32_t w, uint32_t h, uint32_t d, const void *data, size_t sizeBytes);
 
+    void read(Context *rsc, uint32_t xoff, uint32_t lod, uint32_t count, void *data, size_t sizeBytes);
+    void read(Context *rsc, uint32_t xoff, uint32_t yoff, uint32_t lod, RsAllocationCubemapFace face,
+                 uint32_t w, uint32_t h, void *data, size_t sizeBytes);
+    void read(Context *rsc, uint32_t xoff, uint32_t yoff, uint32_t zoff, uint32_t lod, RsAllocationCubemapFace face,
+                 uint32_t w, uint32_t h, uint32_t d, void *data, size_t sizeBytes);
+
     void elementData(Context *rsc, uint32_t x,
                      const void *data, uint32_t elementOff, size_t sizeBytes);
     void elementData(Context *rsc, uint32_t x, uint32_t y,
                      const void *data, uint32_t elementOff, size_t sizeBytes);
-
-    void read(void *data);
 
     void addProgramToDirty(const Program *);
     void removeProgramToDirty(const Program *);
@@ -152,7 +158,8 @@ private:
     Allocation(Context *rsc, const Type *, uint32_t usages, RsAllocationMipmapControl mc, void *ptr);
 
     uint32_t getPackedSize() const;
-    static void writePackedData(Context *rsc, const Type *type, uint8_t *dst, const uint8_t *src, bool dstPadded);
+    static void writePackedData(Context *rsc, const Type *type, uint8_t *dst,
+                                const uint8_t *src, bool dstPadded);
     void unpackVec3Allocation(Context *rsc, const void *data, size_t dataSize);
     void packVec3Allocation(Context *rsc, OStream *stream) const;
 };

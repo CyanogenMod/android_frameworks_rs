@@ -130,7 +130,7 @@ Element *Element::createFromStream(Context *rsc, IStream *stream) {
                                           component.getType(),
                                           component.getKind(),
                                           component.getIsNormalized(),
-                                          component.getVectorSize());;
+                                          component.getVectorSize());
     }
 
     const Element **subElems = new const Element *[fieldCount];
