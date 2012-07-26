@@ -62,29 +62,8 @@ void ScriptC::setupScript(Context *rsc) {
 
         if (!mTypes[ct].get())
             continue;
-        void *ptr = NULL;
-        if (mSlots[ct].get()) {
-            ptr = mSlots[ct]->getPtr();
-        }
-
-        rsc->mHal.funcs.script.setGlobalBind(rsc, this, ct, ptr);
+        rsc->mHal.funcs.script.setGlobalBind(rsc, this, ct, mSlots[ct].get());
     }
-}
-
-const Allocation *ScriptC::ptrToAllocation(const void *ptr) const {
-    //ALOGE("ptr to alloc %p", ptr);
-    if (!ptr) {
-        return NULL;
-    }
-    for (uint32_t ct=0; ct < mHal.info.exportedVariableCount; ct++) {
-        if (!mSlots[ct].get())
-            continue;
-        if (mSlots[ct]->getPtr() == ptr) {
-            return mSlots[ct].get();
-        }
-    }
-    ALOGE("ScriptC::ptrToAllocation, failed to find %p", ptr);
-    return NULL;
 }
 
 void ScriptC::setupGLState(Context *rsc) {

@@ -108,7 +108,7 @@ typedef struct {
                                          size_t dimLength);
         void (*setGlobalBind)(const Context *rsc, const Script *s,
                               uint32_t slot,
-                              void *data);
+                              Allocation *data);
         void (*setGlobalObj)(const Context *rsc, const Script *s,
                              uint32_t slot,
                              ObjectBase *data);
@@ -141,6 +141,24 @@ typedef struct {
                        uint32_t xoff, uint32_t yoff, uint32_t zoff,
                        uint32_t lod, RsAllocationCubemapFace face,
                        uint32_t w, uint32_t h, uint32_t d, const void *data, size_t sizeBytes);
+
+        void (*read1D)(const Context *rsc, const Allocation *alloc,
+                       uint32_t xoff, uint32_t lod, uint32_t count,
+                       void *data, size_t sizeBytes);
+        void (*read2D)(const Context *rsc, const Allocation *alloc,
+                       uint32_t xoff, uint32_t yoff, uint32_t lod,
+                       RsAllocationCubemapFace face, uint32_t w, uint32_t h,
+                       void *data, size_t sizeBytes);
+        void (*read3D)(const Context *rsc, const Allocation *alloc,
+                       uint32_t xoff, uint32_t yoff, uint32_t zoff,
+                       uint32_t lod, RsAllocationCubemapFace face,
+                       uint32_t w, uint32_t h, uint32_t d, void *data, size_t sizeBytes);
+
+        // Lock and unlock make a 1D region of memory available to the CPU
+        // for direct access by pointer.  Once unlock is called control is
+        // returned to the SOC driver.
+        void * (*lock1D)(const Context *rsc, const Allocation *alloc);
+        void (*unlock1D)(const Context *rsc, const Allocation *alloc);
 
         // Allocation to allocation copies
         void (*allocData1D)(const Context *rsc,

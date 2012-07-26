@@ -188,10 +188,6 @@ void rsrAllocationCopy2DRange(Context *rsc, Allocation *dstAlloc,
                               srcAlloc, srcXoff, srcYoff, srcMip, srcFace);
 }
 
-const Allocation * rsrGetAllocation(Context *rsc, Script *s, const void *ptr) {
-    ScriptC *sc = (ScriptC *)s;
-    return sc->ptrToAllocation(ptr);
-}
 
 }
 }
