@@ -161,7 +161,7 @@ static void UploadToTexture(const Context *rsc, const Allocation *alloc) {
         return;
     }
 
-    if (!alloc->getPtr()) {
+    if (!drv->lod[0].mallocPtr) {
         return;
     }
 
@@ -388,8 +388,8 @@ static void rsdAllocationSyncFromFBO(const Context *rsc, const Allocation *alloc
     drv->readBackFBO->setActive(rsc);
 
     // Do the readback
-    RSD_CALL_GL(glReadPixels, 0, 0, alloc->getType()->getDimX(), alloc->getType()->getDimY(),
-                 drv->glFormat, drv->glType, alloc->getPtr());
+    RSD_CALL_GL(glReadPixels, 0, 0, drv->lod[0].dimX, drv->lod[0].dimY,
+                drv->glFormat, drv->glType, drv->lod[0].mallocPtr);
 
     // Revert framebuffer to its original
     lastFbo->setActive(rsc);
@@ -741,6 +741,86 @@ void rsdAllocationElementData2D(const Context *rsc, const Allocation *alloc,
 
     memcpy(ptr, data, sizeBytes);
     drv->uploadDeferred = true;
+}
+
+static void mip565(const Allocation *alloc, int lod, RsAllocationCubemapFace face) {
+    DrvAllocation *drv = (DrvAllocation *)alloc->mHal.drv;
+    uint32_t w = drv->lod[lod + 1].dimX;
+    uint32_t h = drv->lod[lod + 1].dimY;
+
+    for (uint32_t y=0; y < h; y++) {
+        uint16_t *oPtr = (uint16_t *)GetOffsetPtr(alloc, 0, y, lod + 1, face);
+        const uint16_t *i1 = (uint16_t *)GetOffsetPtr(alloc, 0, y*2, lod, face);
+        const uint16_t *i2 = (uint16_t *)GetOffsetPtr(alloc, 0, y*2+1, lod, face);
+
+        for (uint32_t x=0; x < w; x++) {
+            *oPtr = rsBoxFilter565(i1[0], i1[1], i2[0], i2[1]);
+            oPtr ++;
+            i1 += 2;
+            i2 += 2;
+        }
+    }
+}
+
+static void mip8888(const Allocation *alloc, int lod, RsAllocationCubemapFace face) {
+    DrvAllocation *drv = (DrvAllocation *)alloc->mHal.drv;
+    uint32_t w = drv->lod[lod + 1].dimX;
+    uint32_t h = drv->lod[lod + 1].dimY;
+
+    for (uint32_t y=0; y < h; y++) {
+        uint32_t *oPtr = (uint32_t *)GetOffsetPtr(alloc, 0, y, lod + 1, face);
+        const uint32_t *i1 = (uint32_t *)GetOffsetPtr(alloc, 0, y*2, lod, face);
+        const uint32_t *i2 = (uint32_t *)GetOffsetPtr(alloc, 0, y*2+1, lod, face);
+
+        for (uint32_t x=0; x < w; x++) {
+            *oPtr = rsBoxFilter8888(i1[0], i1[1], i2[0], i2[1]);
+            oPtr ++;
+            i1 += 2;
+            i2 += 2;
+        }
+    }
+}
+
+static void mip8(const Allocation *alloc, int lod, RsAllocationCubemapFace face) {
+    DrvAllocation *drv = (DrvAllocation *)alloc->mHal.drv;
+    uint32_t w = drv->lod[lod + 1].dimX;
+    uint32_t h = drv->lod[lod + 1].dimY;
+
+    for (uint32_t y=0; y < h; y++) {
+        uint8_t *oPtr = GetOffsetPtr(alloc, 0, y, lod + 1, face);
+        const uint8_t *i1 = GetOffsetPtr(alloc, 0, y*2, lod, face);
+        const uint8_t *i2 = GetOffsetPtr(alloc, 0, y*2+1, lod, face);
+
+        for (uint32_t x=0; x < w; x++) {
+            *oPtr = (uint8_t)(((uint32_t)i1[0] + i1[1] + i2[0] + i2[1]) * 0.25f);
+            oPtr ++;
+            i1 += 2;
+            i2 += 2;
+        }
+    }
+}
+
+void rsdAllocationGenerateMipmaps(const Context *rsc, const Allocation *alloc) {
+    DrvAllocation *drv = (DrvAllocation *)alloc->mHal.drv;
+    if(!drv->lod[0].mallocPtr) {
+        return;
+    }
+    uint32_t numFaces = alloc->getType()->getDimFaces() ? 6 : 1;
+    for (uint32_t face = 0; face < numFaces; face ++) {
+        for (uint32_t lod=0; lod < (alloc->getType()->getLODCount() -1); lod++) {
+            switch (alloc->getType()->getElement()->getSizeBits()) {
+            case 32:
+                mip8888(alloc, lod, (RsAllocationCubemapFace)face);
+                break;
+            case 16:
+                mip565(alloc, lod, (RsAllocationCubemapFace)face);
+                break;
+            case 8:
+                mip8(alloc, lod, (RsAllocationCubemapFace)face);
+                break;
+            }
+        }
+    }
 }
 
 

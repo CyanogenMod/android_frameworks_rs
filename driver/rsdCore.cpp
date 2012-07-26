@@ -88,7 +88,8 @@ static RsdHalFunctions FunctionTable = {
         rsdAllocationData2D_alloc,
         rsdAllocationData3D_alloc,
         rsdAllocationElementData1D,
-        rsdAllocationElementData2D
+        rsdAllocationElementData2D,
+        rsdAllocationGenerateMipmaps
     },
 
 
