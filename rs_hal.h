@@ -186,7 +186,7 @@ typedef struct {
         void (*elementData2D)(const Context *rsc, const Allocation *alloc, uint32_t x, uint32_t y,
                               const void *data, uint32_t elementOff, size_t sizeBytes);
 
-
+        void (*generateMipmaps)(const Context *rsc, const Allocation *alloc);
     } allocation;
 
     struct {

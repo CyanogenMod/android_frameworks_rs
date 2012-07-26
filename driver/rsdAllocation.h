@@ -157,6 +157,8 @@ void rsdAllocationElementData2D(const android::renderscript::Context *rsc,
                                 uint32_t x, uint32_t y,
                                 const void *data, uint32_t elementOff, uint32_t sizeBytes);
 
+void rsdAllocationGenerateMipmaps(const android::renderscript::Context *rsc,
+                                  const android::renderscript::Allocation *alloc);
 
 
 
