@@ -23,6 +23,7 @@
 
 #include "utils/Timers.h"
 #include "rsdCore.h"
+#include "rsdBcc.h"
 
 #include "rsdRuntime.h"
 #include "rsdPath.h"
@@ -380,7 +381,7 @@ static bool SC_IsObject(const ObjectBase *src) {
 
 static const Allocation * SC_GetAllocation(const void *ptr) {
     GET_TLS();
-    return rsrGetAllocation(rsc, sc, ptr);
+    return rsdScriptGetAllocationForPointer(rsc, sc, ptr);
 }
 
 static void SC_ForEach_SAA(Script *target,

@@ -17,6 +17,7 @@
 #include "rsdCore.h"
 #include "rsdBcc.h"
 #include "rsdRuntime.h"
+#include "rsdAllocation.h"
 
 #include <bcc/BCCContext.h>
 #include <bcc/RenderScript/RSCompilerDriver.h>
@@ -43,6 +44,8 @@ struct DrvScript {
     bcc::BCCContext *mCompilerContext;
     bcc::RSCompilerDriver *mCompilerDriver;
     bcc::RSExecutable *mExecutable;
+
+    Allocation **mBoundAllocs;
 };
 
 typedef void (*outer_foreach_t)(
@@ -141,6 +144,11 @@ bool rsdScriptInit(const Context *rsc,
         script->mHal.info.root = drv->mRoot;
     }
 
+    if (script->mHal.info.exportedVariableCount) {
+        drv->mBoundAllocs = new Allocation *[script->mHal.info.exportedVariableCount];
+        memset(drv->mBoundAllocs, 0, sizeof(void *) * script->mHal.info.exportedVariableCount);
+    }
+
     pthread_mutex_unlock(&rsdgInitMutex);
     return true;
 
@@ -151,6 +159,7 @@ error:
         delete drv->mCompilerContext;
         delete drv->mCompilerDriver;
         delete drv->mExecutable;
+        delete[] drv->mBoundAllocs;
         free(drv);
     }
     script->mHal.drv = NULL;
@@ -334,17 +343,19 @@ void rsdScriptInvokeForEach(const Context *rsc,
     mtls.ptrIn = NULL;
     mtls.eStrideIn = 0;
     if (ain) {
+        DrvAllocation *aindrv = (DrvAllocation *)ain->mHal.drv;
         mtls.ptrIn = (const uint8_t *)ain->getPtr();
         mtls.eStrideIn = ain->getType()->getElementSizeBytes();
-        mtls.yStrideIn = ain->mHal.drvState.stride;
+        mtls.yStrideIn = aindrv->lod[0].stride;
     }
 
     mtls.ptrOut = NULL;
     mtls.eStrideOut = 0;
     if (aout) {
+        DrvAllocation *aoutdrv = (DrvAllocation *)aout->mHal.drv;
         mtls.ptrOut = (uint8_t *)aout->getPtr();
         mtls.eStrideOut = aout->getType()->getElementSizeBytes();
-        mtls.yStrideOut = aout->mHal.drvState.stride;
+        mtls.yStrideOut = aoutdrv->lod[0].stride;
     }
 
     if ((dc->mWorkers.mCount > 1) && s->mHal.info.isThreadable && !dc->mInForEach) {
@@ -491,8 +502,9 @@ void rsdScriptSetGlobalVarWithElemDims(
     memcpy(destPtr, data, dataLength);
 }
 
-void rsdScriptSetGlobalBind(const Context *dc, const Script *script, uint32_t slot, void *data) {
+void rsdScriptSetGlobalBind(const Context *dc, const Script *script, uint32_t slot, Allocation *data) {
     DrvScript *drv = (DrvScript *)script->mHal.drv;
+
     //rsAssert(!script->mFieldIsObject[slot]);
     //ALOGE("setGlobalBind %p %p %i %p", dc, script, slot, data);
 
@@ -503,7 +515,13 @@ void rsdScriptSetGlobalBind(const Context *dc, const Script *script, uint32_t sl
         return;
     }
 
-    memcpy(destPtr, &data, sizeof(void *));
+    void *ptr = NULL;
+    drv->mBoundAllocs[slot] = data;
+    if(data) {
+        DrvAllocation *allocDrv = (DrvAllocation *)data->mHal.drv;
+        ptr = allocDrv->lod[0].mallocPtr;
+    }
+    memcpy(destPtr, &ptr, sizeof(void *));
 }
 
 void rsdScriptSetGlobalObj(const Context *dc, const Script *script, uint32_t slot, ObjectBase *data) {
@@ -558,7 +576,28 @@ void rsdScriptDestroy(const Context *dc, Script *script) {
     delete drv->mCompilerContext;
     delete drv->mCompilerDriver;
     delete drv->mExecutable;
-
+    delete[] drv->mBoundAllocs;
     free(drv);
     script->mHal.drv = NULL;
 }
+
+Allocation * rsdScriptGetAllocationForPointer(const android::renderscript::Context *dc,
+                                              const android::renderscript::Script *sc,
+                                              const void *ptr) {
+    DrvScript *drv = (DrvScript *)sc->mHal.drv;
+    if (!ptr) {
+        return NULL;
+    }
+
+    for (uint32_t ct=0; ct < sc->mHal.info.exportedVariableCount; ct++) {
+        Allocation *a = drv->mBoundAllocs[ct];
+        if (!a) continue;
+        DrvAllocation *adrv = (DrvAllocation *)a->mHal.drv;
+        if (adrv->lod[0].mallocPtr == ptr) {
+            return a;
+        }
+    }
+    ALOGE("rsGetAllocation, failed to find %p", ptr);
+    return NULL;
+}
+

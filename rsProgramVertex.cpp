@@ -46,7 +46,8 @@ void ProgramVertex::setup(Context *rsc, ProgramVertexState *state) {
                           "Unable to set fixed function emulation matrices because allocation is missing");
             return;
         }
-        float *f = static_cast<float *>(mHal.state.constants[0]->getPtr());
+        float *f = static_cast<float *>(rsc->mHal.funcs.allocation.lock1D(
+                rsc, mHal.state.constants[0]));
         Matrix4x4 mvp;
         mvp.load(&f[RS_PROGRAM_VERTEX_PROJECTION_OFFSET]);
         Matrix4x4 t;
@@ -55,6 +56,7 @@ void ProgramVertex::setup(Context *rsc, ProgramVertexState *state) {
         for (uint32_t i = 0; i < 16; i ++) {
             f[RS_PROGRAM_VERTEX_MVP_OFFSET + i] = mvp.m[i];
         }
+        rsc->mHal.funcs.allocation.unlock1D(rsc, mHal.state.constants[0]);
     }
 
     state->mLast.set(this);
@@ -73,9 +75,11 @@ void ProgramVertex::setProjectionMatrix(Context *rsc, const rsc_Matrix *m) const
                       "Unable to set fixed function emulation matrix projection because allocation is missing");
         return;
     }
-    float *f = static_cast<float *>(mHal.state.constants[0]->getPtr());
+    float *f = static_cast<float *>(rsc->mHal.funcs.allocation.lock1D(
+                rsc, mHal.state.constants[0]));
     memcpy(&f[RS_PROGRAM_VERTEX_PROJECTION_OFFSET], m, sizeof(rsc_Matrix));
     mDirty = true;
+    rsc->mHal.funcs.allocation.unlock1D(rsc, mHal.state.constants[0]);
 }
 
 void ProgramVertex::setModelviewMatrix(Context *rsc, const rsc_Matrix *m) const {
@@ -89,9 +93,11 @@ void ProgramVertex::setModelviewMatrix(Context *rsc, const rsc_Matrix *m) const 
                       "Unable to set fixed function emulation matrix modelview because allocation is missing");
         return;
     }
-    float *f = static_cast<float *>(mHal.state.constants[0]->getPtr());
+    float *f = static_cast<float *>(rsc->mHal.funcs.allocation.lock1D(
+                rsc, mHal.state.constants[0]));
     memcpy(&f[RS_PROGRAM_VERTEX_MODELVIEW_OFFSET], m, sizeof(rsc_Matrix));
     mDirty = true;
+    rsc->mHal.funcs.allocation.unlock1D(rsc, mHal.state.constants[0]);
 }
 
 void ProgramVertex::setTextureMatrix(Context *rsc, const rsc_Matrix *m) const {
@@ -105,9 +111,11 @@ void ProgramVertex::setTextureMatrix(Context *rsc, const rsc_Matrix *m) const {
                       "Unable to set fixed function emulation matrix texture because allocation is missing");
         return;
     }
-    float *f = static_cast<float *>(mHal.state.constants[0]->getPtr());
+    float *f = static_cast<float *>(rsc->mHal.funcs.allocation.lock1D(
+            rsc, mHal.state.constants[0]));
     memcpy(&f[RS_PROGRAM_VERTEX_TEXTURE_OFFSET], m, sizeof(rsc_Matrix));
     mDirty = true;
+    rsc->mHal.funcs.allocation.unlock1D(rsc, mHal.state.constants[0]);
 }
 
 void ProgramVertex::getProjectionMatrix(Context *rsc, rsc_Matrix *m) const {
@@ -121,19 +129,23 @@ void ProgramVertex::getProjectionMatrix(Context *rsc, rsc_Matrix *m) const {
                       "Unable to get fixed function emulation matrix projection because allocation is missing");
         return;
     }
-    float *f = static_cast<float *>(mHal.state.constants[0]->getPtr());
+    float *f = static_cast<float *>(
+            rsc->mHal.funcs.allocation.lock1D(rsc, mHal.state.constants[0]));
     memcpy(m, &f[RS_PROGRAM_VERTEX_PROJECTION_OFFSET], sizeof(rsc_Matrix));
+    rsc->mHal.funcs.allocation.unlock1D(rsc, mHal.state.constants[0]);
 }
 
 void ProgramVertex::transformToScreen(Context *rsc, float *v4out, const float *v3in) const {
     if (isUserProgram()) {
         return;
     }
-    float *f = static_cast<float *>(mHal.state.constants[0]->getPtr());
+    float *f = static_cast<float *>(
+            rsc->mHal.funcs.allocation.lock1D(rsc, mHal.state.constants[0]));
     Matrix4x4 mvp;
     mvp.loadMultiply((Matrix4x4 *)&f[RS_PROGRAM_VERTEX_MODELVIEW_OFFSET],
                      (Matrix4x4 *)&f[RS_PROGRAM_VERTEX_PROJECTION_OFFSET]);
     mvp.vectorMultiply(v4out, v3in);
+    rsc->mHal.funcs.allocation.unlock1D(rsc, mHal.state.constants[0]);
 }
 
 void ProgramVertex::serialize(Context *rsc, OStream *stream) const {
@@ -207,7 +219,7 @@ void ProgramVertexState::init(Context *rsc) {
 }
 
 void ProgramVertexState::updateSize(Context *rsc) {
-    float *f = static_cast<float *>(mDefaultAlloc->getPtr());
+    float *f = static_cast<float *>(rsc->mHal.funcs.allocation.lock1D(rsc, mDefaultAlloc.get()));
 
     float surfaceWidth = (float)rsc->getCurrentSurfaceWidth();
     float surfaceHeight = (float)rsc->getCurrentSurfaceHeight();
@@ -220,6 +232,7 @@ void ProgramVertexState::updateSize(Context *rsc) {
     m.loadIdentity();
     memcpy(&f[RS_PROGRAM_VERTEX_MODELVIEW_OFFSET], m.m, sizeof(m));
     memcpy(&f[RS_PROGRAM_VERTEX_TEXTURE_OFFSET], m.m, sizeof(m));
+    rsc->mHal.funcs.allocation.unlock1D(rsc, mDefaultAlloc.get());
 }
 
 void ProgramVertexState::deinit(Context *rsc) {
