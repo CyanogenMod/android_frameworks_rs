@@ -20,9 +20,9 @@
 #include "rsdAllocation.h"
 
 #include <bcc/BCCContext.h>
-#include <bcc/RenderScript/RSCompilerDriver.h>
-#include <bcc/RenderScript/RSExecutable.h>
-#include <bcc/RenderScript/RSInfo.h>
+#include <bcc/Renderscript/RSCompilerDriver.h>
+#include <bcc/Renderscript/RSExecutable.h>
+#include <bcc/Renderscript/RSInfo.h>
 
 #include "rsContext.h"
 #include "rsElement.h"
