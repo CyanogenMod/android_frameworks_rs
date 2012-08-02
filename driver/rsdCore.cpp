@@ -233,7 +233,7 @@ bool rsdHalInit(Context *rsc, uint32_t version_major, uint32_t version_minor) {
 
 
     int cpu = sysconf(_SC_NPROCESSORS_ONLN);
-    if(rsc->props.mDebugMaxThreads && (cpu > (int)rsc->props.mDebugMaxThreads)) {
+    if(rsc->props.mDebugMaxThreads) {
         cpu = rsc->props.mDebugMaxThreads;
     }
     if (cpu < 2) {
