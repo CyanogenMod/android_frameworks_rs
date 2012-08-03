@@ -29,7 +29,6 @@
 #include <cutils/properties.h>
 
 #include <sys/syscall.h>
-#include <string.h>
 
 using namespace android;
 using namespace android::renderscript;
@@ -77,7 +76,7 @@ Context::PushState::~PushState() {
 
 
 uint32_t Context::runScript(Script *s) {
-    PushState(this);
+    PushState ps(this);
 
     uint32_t ret = s->run(this);
     return ret;
