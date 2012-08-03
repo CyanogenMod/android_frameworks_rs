@@ -30,6 +30,7 @@
 #include "rsProgramRaster.h"
 #include "rsProgramVertex.h"
 #include "rsFBOCache.h"
+#include <string.h>
 
 // ---------------------------------------------------------------------------
 namespace android {
