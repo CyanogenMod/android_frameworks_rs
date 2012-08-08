@@ -34,9 +34,9 @@ static float SC_exp10(float v) {
     return pow(10.f, v);
 }
 
-static float SC_fract(float v, int *iptr) {
+static float SC_fract(float v, float *iptr) {
     int i = (int)floor(v);
-    iptr[0] = i;
+    iptr[0] = (float)i;
     return fmin(v - i, 0x1.fffffep-1f);
 }
 
