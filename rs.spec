@@ -346,6 +346,11 @@ ScriptCCreate {
     ret RsScript
     }
 
+ScriptIntrinsicCreate {
+    param uint32_t id
+    param RsElement eid
+    ret RsScript
+    }
 
 ProgramStoreCreate {
     direct

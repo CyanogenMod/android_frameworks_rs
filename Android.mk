@@ -17,6 +17,7 @@ LOCAL_SRC_FILES:= \
 	driver/rsdFrameBuffer.cpp \
 	driver/rsdFrameBufferObj.cpp \
 	driver/rsdGL.cpp \
+	driver/rsdIntrinsics.cpp \
 	driver/rsdMesh.cpp \
 	driver/rsdMeshObj.cpp \
 	driver/rsdPath.cpp \
@@ -134,6 +135,7 @@ LOCAL_SRC_FILES:= \
 	rsScriptC.cpp \
 	rsScriptC_Lib.cpp \
 	rsScriptC_LibGL.cpp \
+	rsScriptIntrinsic.cpp \
 	rsSignal.cpp \
 	rsStream.cpp \
 	rsThreadIO.cpp \
@@ -225,6 +227,7 @@ LOCAL_SRC_FILES:= \
 	rsScriptC.cpp \
 	rsScriptC_Lib.cpp \
 	rsScriptC_LibGL.cpp \
+	rsScriptIntrinsic.cpp \
 	rsSignal.cpp \
 	rsStream.cpp \
 	rsThreadIO.cpp \
