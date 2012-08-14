@@ -18,6 +18,7 @@
 #include "rsdBcc.h"
 #include "rsdRuntime.h"
 #include "rsdAllocation.h"
+#include "rsdIntrinsics.h"
 
 #include <bcc/BCCContext.h>
 #include <bcc/Renderscript/RSCompilerDriver.h>
@@ -36,6 +37,7 @@ using namespace android;
 using namespace android::renderscript;
 
 struct DrvScript {
+    RsScriptIntrisicID mIntrinsicID;
     int (*mRoot)();
     int (*mRootExpand)();
     void (*mInit)();
@@ -167,26 +169,41 @@ error:
 
 }
 
+bool rsdInitIntrinsic(const Context *rsc, Script *s, RsScriptIntrisicID iid, Element *e) {
+    pthread_mutex_lock(&rsdgInitMutex);
+
+    DrvScript *drv = (DrvScript *)calloc(1, sizeof(DrvScript));
+    if (drv == NULL) {
+        goto error;
+    }
+    s->mHal.drv = drv;
+    drv->mIntrinsicID = iid;
+
+    s->mHal.info.exportedVariableCount = 1;
+
+
+
+
+    pthread_mutex_unlock(&rsdgInitMutex);
+    return true;
+
+error:
+    pthread_mutex_unlock(&rsdgInitMutex);
+    return false;
+}
+
 typedef struct {
+    RsForEachStubParamStruct fep;
+
     Context *rsc;
     Script *script;
     ForEachFunc_t kernel;
     uint32_t sig;
     const Allocation * ain;
     Allocation * aout;
-    const void * usr;
-    size_t usrLen;
 
     uint32_t mSliceSize;
     volatile int mSliceNum;
-
-    const uint8_t *ptrIn;
-    uint32_t eStrideIn;
-    uint8_t *ptrOut;
-    uint32_t eStrideOut;
-
-    uint32_t yStrideIn;
-    uint32_t yStrideOut;
 
     uint32_t xStart;
     uint32_t xEnd;
@@ -196,20 +213,13 @@ typedef struct {
     uint32_t zEnd;
     uint32_t arrayStart;
     uint32_t arrayEnd;
-
-    uint32_t dimX;
-    uint32_t dimY;
-    uint32_t dimZ;
-    uint32_t dimArray;
 } MTLaunchStruct;
 typedef void (*rs_t)(const void *, void *, const void *, uint32_t, uint32_t, uint32_t, uint32_t);
 
 static void wc_xy(void *usr, uint32_t idx) {
     MTLaunchStruct *mtls = (MTLaunchStruct *)usr;
     RsForEachStubParamStruct p;
-    memset(&p, 0, sizeof(p));
-    p.usr = mtls->usr;
-    p.usr_len = mtls->usrLen;
+    memcpy(&p, &mtls->fep, sizeof(p));
     RsdHal * dc = (RsdHal *)mtls->rsc->mHal.drv;
     uint32_t sig = mtls->sig;
 
@@ -226,9 +236,9 @@ static void wc_xy(void *usr, uint32_t idx) {
         //ALOGE("usr idx %i, x %i,%i  y %i,%i", idx, mtls->xStart, mtls->xEnd, yStart, yEnd);
         //ALOGE("usr ptr in %p,  out %p", mtls->ptrIn, mtls->ptrOut);
         for (p.y = yStart; p.y < yEnd; p.y++) {
-            p.out = mtls->ptrOut + (mtls->yStrideOut * p.y);
-            p.in = mtls->ptrIn + (mtls->yStrideIn * p.y);
-            fn(&p, mtls->xStart, mtls->xEnd, mtls->eStrideIn, mtls->eStrideOut);
+            p.out = mtls->fep.ptrOut + (mtls->fep.yStrideOut * p.y);
+            p.in = mtls->fep.ptrIn + (mtls->fep.yStrideIn * p.y);
+            fn(&p, mtls->xStart, mtls->xEnd, mtls->fep.eStrideIn, mtls->fep.eStrideOut);
         }
     }
 }
@@ -236,9 +246,7 @@ static void wc_xy(void *usr, uint32_t idx) {
 static void wc_x(void *usr, uint32_t idx) {
     MTLaunchStruct *mtls = (MTLaunchStruct *)usr;
     RsForEachStubParamStruct p;
-    memset(&p, 0, sizeof(p));
-    p.usr = mtls->usr;
-    p.usr_len = mtls->usrLen;
+    memcpy(&p, &mtls->fep, sizeof(p));
     RsdHal * dc = (RsdHal *)mtls->rsc->mHal.drv;
     uint32_t sig = mtls->sig;
 
@@ -255,9 +263,9 @@ static void wc_x(void *usr, uint32_t idx) {
         //ALOGE("usr slice %i idx %i, x %i,%i", slice, idx, xStart, xEnd);
         //ALOGE("usr ptr in %p,  out %p", mtls->ptrIn, mtls->ptrOut);
 
-        p.out = mtls->ptrOut + (mtls->eStrideOut * xStart);
-        p.in = mtls->ptrIn + (mtls->eStrideIn * xStart);
-        fn(&p, xStart, xEnd, mtls->eStrideIn, mtls->eStrideOut);
+        p.out = mtls->fep.ptrOut + (mtls->fep.eStrideOut * xStart);
+        p.in = mtls->fep.ptrIn + (mtls->fep.eStrideIn * xStart);
+        fn(&p, xStart, xEnd, mtls->fep.eStrideIn, mtls->fep.eStrideOut);
     }
 }
 
@@ -275,24 +283,29 @@ void rsdScriptInvokeForEach(const Context *rsc,
     MTLaunchStruct mtls;
     memset(&mtls, 0, sizeof(mtls));
 
-    //ALOGE("for each script %p  in %p   out %p", s, ain, aout);
+    ALOGE("for each script %p  in %p   out %p", s, ain, aout);
 
     DrvScript *drv = (DrvScript *)s->mHal.drv;
-    rsAssert(slot < drv->mExecutable->getExportForeachFuncAddrs().size());
-    mtls.kernel = reinterpret_cast<ForEachFunc_t>(
-                      drv->mExecutable->getExportForeachFuncAddrs()[slot]);
-    rsAssert(mtls.kernel != NULL);
-    mtls.sig = drv->mExecutable->getInfo().getExportForeachFuncs()[slot].second;
+
+    if (drv->mIntrinsicID) {
+        mtls.kernel = (void (*)())&rsdIntrinsic_Convolve3x3_uchar4;
+    } else {
+        rsAssert(slot < drv->mExecutable->getExportForeachFuncAddrs().size());
+        mtls.kernel = reinterpret_cast<ForEachFunc_t>(
+                          drv->mExecutable->getExportForeachFuncAddrs()[slot]);
+        rsAssert(mtls.kernel != NULL);
+        mtls.sig = drv->mExecutable->getInfo().getExportForeachFuncs()[slot].second;
+    }
 
     if (ain) {
-        mtls.dimX = ain->getType()->getDimX();
-        mtls.dimY = ain->getType()->getDimY();
-        mtls.dimZ = ain->getType()->getDimZ();
+        mtls.fep.dimX = ain->getType()->getDimX();
+        mtls.fep.dimY = ain->getType()->getDimY();
+        mtls.fep.dimZ = ain->getType()->getDimZ();
         //mtls.dimArray = ain->getType()->getDimArray();
     } else if (aout) {
-        mtls.dimX = aout->getType()->getDimX();
-        mtls.dimY = aout->getType()->getDimY();
-        mtls.dimZ = aout->getType()->getDimZ();
+        mtls.fep.dimX = aout->getType()->getDimX();
+        mtls.fep.dimY = aout->getType()->getDimY();
+        mtls.fep.dimZ = aout->getType()->getDimZ();
         //mtls.dimArray = aout->getType()->getDimArray();
     } else {
         rsc->setError(RS_ERROR_BAD_SCRIPT, "rsForEach called with null allocations");
@@ -300,24 +313,24 @@ void rsdScriptInvokeForEach(const Context *rsc,
     }
 
     if (!sc || (sc->xEnd == 0)) {
-        mtls.xEnd = mtls.dimX;
+        mtls.xEnd = mtls.fep.dimX;
     } else {
-        rsAssert(sc->xStart < mtls.dimX);
-        rsAssert(sc->xEnd <= mtls.dimX);
+        rsAssert(sc->xStart < mtls.fep.dimX);
+        rsAssert(sc->xEnd <= mtls.fep.dimX);
         rsAssert(sc->xStart < sc->xEnd);
-        mtls.xStart = rsMin(mtls.dimX, sc->xStart);
-        mtls.xEnd = rsMin(mtls.dimX, sc->xEnd);
+        mtls.xStart = rsMin(mtls.fep.dimX, sc->xStart);
+        mtls.xEnd = rsMin(mtls.fep.dimX, sc->xEnd);
         if (mtls.xStart >= mtls.xEnd) return;
     }
 
     if (!sc || (sc->yEnd == 0)) {
-        mtls.yEnd = mtls.dimY;
+        mtls.yEnd = mtls.fep.dimY;
     } else {
-        rsAssert(sc->yStart < mtls.dimY);
-        rsAssert(sc->yEnd <= mtls.dimY);
+        rsAssert(sc->yStart < mtls.fep.dimY);
+        rsAssert(sc->yEnd <= mtls.fep.dimY);
         rsAssert(sc->yStart < sc->yEnd);
-        mtls.yStart = rsMin(mtls.dimY, sc->yStart);
-        mtls.yEnd = rsMin(mtls.dimY, sc->yEnd);
+        mtls.yStart = rsMin(mtls.fep.dimY, sc->yStart);
+        mtls.yEnd = rsMin(mtls.fep.dimY, sc->yEnd);
         if (mtls.yStart >= mtls.yEnd) return;
     }
 
@@ -335,40 +348,41 @@ void rsdScriptInvokeForEach(const Context *rsc,
     mtls.ain = ain;
     mtls.aout = aout;
     mtls.script = s;
-    mtls.usr = usr;
-    mtls.usrLen = usrLen;
+    mtls.fep.usr = usr;
+    mtls.fep.usrLen = usrLen;
     mtls.mSliceSize = 10;
     mtls.mSliceNum = 0;
 
-    mtls.ptrIn = NULL;
-    mtls.eStrideIn = 0;
+    mtls.fep.ptrIn = NULL;
+    mtls.fep.eStrideIn = 0;
     if (ain) {
         DrvAllocation *aindrv = (DrvAllocation *)ain->mHal.drv;
-        mtls.ptrIn = (const uint8_t *)aindrv->lod[0].mallocPtr;
-        mtls.eStrideIn = ain->getType()->getElementSizeBytes();
-        mtls.yStrideIn = aindrv->lod[0].stride;
+        mtls.fep.ptrIn = (const uint8_t *)aindrv->lod[0].mallocPtr;
+        mtls.fep.eStrideIn = ain->getType()->getElementSizeBytes();
+        mtls.fep.yStrideIn = aindrv->lod[0].stride;
     }
 
-    mtls.ptrOut = NULL;
-    mtls.eStrideOut = 0;
+    mtls.fep.ptrOut = NULL;
+    mtls.fep.eStrideOut = 0;
     if (aout) {
         DrvAllocation *aoutdrv = (DrvAllocation *)aout->mHal.drv;
-        mtls.ptrOut = (uint8_t *)aoutdrv->lod[0].mallocPtr;
-        mtls.eStrideOut = aout->getType()->getElementSizeBytes();
-        mtls.yStrideOut = aoutdrv->lod[0].stride;
+        mtls.fep.ptrOut = (uint8_t *)aoutdrv->lod[0].mallocPtr;
+        mtls.fep.eStrideOut = aout->getType()->getElementSizeBytes();
+        mtls.fep.yStrideOut = aoutdrv->lod[0].stride;
     }
+
 
     if ((dc->mWorkers.mCount > 1) && s->mHal.info.isThreadable && !dc->mInForEach) {
         dc->mInForEach = true;
-        if (mtls.dimY > 1) {
-            mtls.mSliceSize = mtls.dimY / (dc->mWorkers.mCount * 4);
+        if (mtls.fep.dimY > 1) {
+            mtls.mSliceSize = mtls.fep.dimY / (dc->mWorkers.mCount * 4);
             if(mtls.mSliceSize < 1) {
                 mtls.mSliceSize = 1;
             }
 
             rsdLaunchThreads(mrsc, wc_xy, &mtls);
         } else {
-            mtls.mSliceSize = mtls.dimX / (dc->mWorkers.mCount * 4);
+            mtls.mSliceSize = mtls.fep.dimX / (dc->mWorkers.mCount * 4);
             if(mtls.mSliceSize < 1) {
                 mtls.mSliceSize = 1;
             }
@@ -380,9 +394,7 @@ void rsdScriptInvokeForEach(const Context *rsc,
         //ALOGE("launch 1");
     } else {
         RsForEachStubParamStruct p;
-        memset(&p, 0, sizeof(p));
-        p.usr = mtls.usr;
-        p.usr_len = mtls.usrLen;
+        memcpy(&p, &mtls.fep, sizeof(p));
         uint32_t sig = mtls.sig;
 
         //ALOGE("launch 3");
@@ -390,13 +402,11 @@ void rsdScriptInvokeForEach(const Context *rsc,
         for (p.ar[0] = mtls.arrayStart; p.ar[0] < mtls.arrayEnd; p.ar[0]++) {
             for (p.z = mtls.zStart; p.z < mtls.zEnd; p.z++) {
                 for (p.y = mtls.yStart; p.y < mtls.yEnd; p.y++) {
-                    uint32_t offset = mtls.dimX * mtls.dimY * mtls.dimZ * p.ar[0] +
-                                      mtls.dimX * mtls.dimY * p.z +
-                                      mtls.dimX * p.y;
-                    p.out = mtls.ptrOut + (mtls.eStrideOut * offset);
-                    p.in = mtls.ptrIn + (mtls.eStrideIn * offset);
-                    fn(&p, mtls.xStart, mtls.xEnd, mtls.eStrideIn,
-                       mtls.eStrideOut);
+                    uint32_t offset = mtls.fep.dimY * mtls.fep.dimZ * p.ar[0] +
+                                      mtls.fep.dimY * p.z + p.y;
+                    p.out = mtls.fep.ptrOut + (mtls.fep.yStrideOut * offset);
+                    p.in = mtls.fep.ptrIn + (mtls.fep.yStrideIn * offset);
+                    fn(&p, mtls.xStart, mtls.xEnd, mtls.fep.eStrideIn, mtls.fep.eStrideOut);
                 }
             }
         }
@@ -450,6 +460,11 @@ void rsdScriptSetGlobalVar(const Context *dc, const Script *script,
     DrvScript *drv = (DrvScript *)script->mHal.drv;
     //rsAssert(!script->mFieldIsObject[slot]);
     //ALOGE("setGlobalVar %p %p %i %p %i", dc, script, slot, data, dataLength);
+
+    if (drv->mIntrinsicID) {
+        rsdIntrinsic_Convolve3x3_SetVar(dc, script, slot, data, dataLength);
+        return;
+    }
 
     int32_t *destPtr = reinterpret_cast<int32_t *>(
                           drv->mExecutable->getExportVarAddrs()[slot]);
