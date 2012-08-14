@@ -24,6 +24,11 @@
 bool rsdScriptInit(const android::renderscript::Context *, android::renderscript::ScriptC *,
                    char const *resName, char const *cacheDir,
                    uint8_t const *bitcode, size_t bitcodeSize, uint32_t flags);
+bool rsdInitIntrinsic(const android::renderscript::Context *rsc,
+                      android::renderscript::Script *s,
+                      RsScriptIntrisicID iid,
+                      android::renderscript::Element *e);
+
 void rsdScriptInvokeFunction(const android::renderscript::Context *dc,
                              android::renderscript::Script *script,
                              uint32_t slot,

@@ -47,13 +47,25 @@ typedef struct {
     const void *in;
     void *out;
     const void *usr;
-    size_t usr_len;
+    size_t usrLen;
     uint32_t x;
     uint32_t y;
     uint32_t z;
     uint32_t lod;
     RsAllocationCubemapFace face;
     uint32_t ar[16];
+
+    uint32_t dimX;
+    uint32_t dimY;
+    uint32_t dimZ;
+    uint32_t dimArray;
+
+    const uint8_t *ptrIn;
+    uint8_t *ptrOut;
+    uint32_t eStrideIn;
+    uint32_t eStrideOut;
+    uint32_t yStrideIn;
+    uint32_t yStrideOut;
 } RsForEachStubParamStruct;
 
 /**
@@ -78,6 +90,9 @@ typedef struct {
                      uint8_t const *bitcode,
                      size_t bitcodeSize,
                      uint32_t flags);
+        bool (*initIntrinsic)(const Context *rsc, Script *s,
+                              RsScriptIntrisicID iid,
+                              Element *e);
 
         void (*invokeFunction)(const Context *rsc, Script *s,
                                uint32_t slot,

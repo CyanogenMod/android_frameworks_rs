@@ -54,6 +54,7 @@ static RsdHalFunctions FunctionTable = {
     SetPriority,
     {
         rsdScriptInit,
+        rsdInitIntrinsic,
         rsdScriptInvokeFunction,
         rsdScriptInvokeRoot,
         rsdScriptInvokeForEach,
