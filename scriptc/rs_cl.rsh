@@ -905,6 +905,10 @@ F_FUNC_FN_FN(distance)
 _RS_RUNTIME float __attribute__((overloadable)) normalize(float v);
 FN_FUNC_FN(normalize)
 
+
+// New approx API functions
+#if (defined(RS_VERSION) && (RS_VERSION >= 17))
+
 /**
  * Return the approximate reciprocal of a value.
  *
@@ -952,6 +956,17 @@ F_FUNC_FN_FN(approx_distance)
  */
 _RS_RUNTIME float __attribute__((overloadable)) approx_normalize(float v);
 F_FUNC_FN(approx_normalize)
+
+/**
+ * Compute the approximate arctangent of a value.
+ *
+ * Supports 1,2,3,4 components
+ */
+_RS_RUNTIME float __attribute__((overloadable)) approx_atan(float v);
+FN_FUNC_FN(approx_atan)
+
+#endif  // (defined(RS_VERSION) && (RS_VERSION >= 17))
+
 
 #undef CVT_FUNC
 #undef CVT_FUNC_2
