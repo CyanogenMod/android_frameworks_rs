@@ -59,7 +59,7 @@ public:
 
     virtual void setup(const Context *, ProgramStoreState *);
 
-    virtual void serialize(OStream *stream) const;
+    virtual void serialize(Context *rsc, OStream *stream) const;
     virtual RsA3DClassID getClassId() const { return RS_A3D_CLASS_ID_PROGRAM_STORE; }
     static ProgramStore *createFromStream(Context *rsc, IStream *stream);
     static ObjectBaseRef<ProgramStore> getProgramStore(Context *,

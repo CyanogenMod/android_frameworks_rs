@@ -53,7 +53,7 @@ void ProgramRaster::setup(const Context *rsc, ProgramRasterState *state) {
     rsc->mHal.funcs.raster.setActive(rsc, this);
 }
 
-void ProgramRaster::serialize(OStream *stream) const {
+void ProgramRaster::serialize(Context *rsc, OStream *stream) const {
 }
 
 ProgramRaster *ProgramRaster::createFromStream(Context *rsc, IStream *stream) {

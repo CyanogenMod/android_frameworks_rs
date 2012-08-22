@@ -99,7 +99,7 @@ public:
     void compute();
 
     void dumpLOGV(const char *prefix) const;
-    virtual void serialize(OStream *stream) const;
+    virtual void serialize(Context *rsc, OStream *stream) const;
     virtual RsA3DClassID getClassId() const { return RS_A3D_CLASS_ID_TYPE; }
     static Type *createFromStream(Context *rsc, IStream *stream);
 

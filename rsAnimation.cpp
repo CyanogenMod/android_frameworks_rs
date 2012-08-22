@@ -21,7 +21,7 @@
 using namespace android;
 using namespace android::renderscript;
 
-void Animation::serialize(OStream *stream) const {
+void Animation::serialize(Context *rsc, OStream *stream) const {
 }
 
 Animation *Animation::createFromStream(Context *rsc, IStream *stream) {
