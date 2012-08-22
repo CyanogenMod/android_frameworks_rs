@@ -333,7 +333,7 @@ enum RsCullMode {
     RS_CULL_INVALID = 100,
 };
 
-enum RsScriptIntrisicID {
+enum RsScriptIntrinsicID {
     RS_SCRIPT_INTRINSIC_ID_UNDEFINED = 0,
     RS_SCRIPT_INTRINSIC_ID_CONVOLVE_3x3 = 1,
     RS_SCRIPT_INTRINSIC_ID_CONVOLVE_5x5 = 2

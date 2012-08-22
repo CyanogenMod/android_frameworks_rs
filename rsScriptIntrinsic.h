@@ -33,7 +33,7 @@ public:
     ScriptIntrinsic(Context *);
     virtual ~ScriptIntrinsic();
 
-    bool init(Context *rsc, RsScriptIntrisicID iid, Element *e);
+    bool init(Context *rsc, RsScriptIntrinsicID iid, Element *e);
 
 
     virtual void serialize(Context *rsc, OStream *stream) const;
