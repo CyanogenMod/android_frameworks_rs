@@ -48,6 +48,7 @@ struct DrvScript {
     bcc::RSExecutable *mExecutable;
 
     Allocation **mBoundAllocs;
+    RsdIntriniscFuncs_t mIntrinsicFuncs;
 };
 
 typedef void (*outer_foreach_t)(
@@ -176,11 +177,7 @@ bool rsdInitIntrinsic(const Context *rsc, Script *s, RsScriptIntrinsicID iid, El
     }
     s->mHal.drv = drv;
     drv->mIntrinsicID = iid;
-
-    s->mHal.info.exportedVariableCount = 1;
-
-
-
+    rsdIntrinsic_Init(rsc, s, iid, &drv->mIntrinsicFuncs);
 
     pthread_mutex_unlock(&rsdgInitMutex);
     return true;
@@ -286,7 +283,7 @@ void rsdScriptInvokeForEach(const Context *rsc,
     DrvScript *drv = (DrvScript *)s->mHal.drv;
 
     if (drv->mIntrinsicID) {
-        mtls.kernel = (void (*)())&rsdIntrinsic_Convolve3x3_uchar4;
+        mtls.kernel = (void (*)())drv->mIntrinsicFuncs.root;
     } else {
         rsAssert(slot < drv->mExecutable->getExportForeachFuncAddrs().size());
         mtls.kernel = reinterpret_cast<ForEachFunc_t>(
@@ -460,7 +457,7 @@ void rsdScriptSetGlobalVar(const Context *dc, const Script *script,
     //ALOGE("setGlobalVar %p %p %i %p %i", dc, script, slot, data, dataLength);
 
     if (drv->mIntrinsicID) {
-        rsdIntrinsic_Convolve3x3_SetVar(dc, script, slot, data, dataLength);
+        drv->mIntrinsicFuncs.setVar(dc, script, slot, data, dataLength);
         return;
     }
 
@@ -520,6 +517,11 @@ void rsdScriptSetGlobalBind(const Context *dc, const Script *script, uint32_t sl
 
     //rsAssert(!script->mFieldIsObject[slot]);
     //ALOGE("setGlobalBind %p %p %i %p", dc, script, slot, data);
+
+    if (drv->mIntrinsicID) {
+        drv->mIntrinsicFuncs.bind(dc, script, slot, data);
+        return;
+    }
 
     int32_t *destPtr = reinterpret_cast<int32_t *>(
                           drv->mExecutable->getExportVarAddrs()[slot]);

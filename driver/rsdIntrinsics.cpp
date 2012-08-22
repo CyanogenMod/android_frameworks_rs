@@ -17,7 +17,7 @@
 
 #include "rsdCore.h"
 #include "rsdIntrinsics.h"
-
+#include "rsdAllocation.h"
 
 typedef uint8_t uchar;
 typedef uint16_t ushort;
@@ -98,21 +98,35 @@ static float params[9] = { 0.f,  -1.f,  0.f,
                           -1.f,   5.f, -1.f,
                            0.f,  -1.f,  0.f };
 
-void rsdIntrinsic_Convolve3x3_SetVar(const Context *dc, const Script *script,
-                           uint32_t slot, void *data, size_t dataLength) {
+ObjectBaseRef<Allocation> gAlloc;
+
+static void Convolve3x3_Bind(const Context *dc, const Script *script,
+                             uint32_t slot, Allocation *data) {
+
+    ALOGE("bind %p", data);
+    rsAssert(slot == 1);
+    gAlloc.set(data);
+}
+
+static void Convolve3x3_SetVar(const Context *dc, const Script *script,
+                               uint32_t slot, void *data, size_t dataLength) {
+
+    rsAssert(slot == 0);
     memcpy (params, data, dataLength);
 }
 
-void rsdIntrinsic_Convolve3x3_uchar4(const RsForEachStubParamStruct *p,
-                                     uint32_t xstart, uint32_t xend,
-                                     uint32_t instep, uint32_t outstep) {
+static void Convolve3x3_uchar4(const RsForEachStubParamStruct *p,
+                                    uint32_t xstart, uint32_t xend,
+                                    uint32_t instep, uint32_t outstep) {
+
+    DrvAllocation *din = (DrvAllocation *)gAlloc->mHal.drv;
+    const uchar *pin = (const uchar *)din->lod[0].mallocPtr;
 
     uint32_t y1 = rsMin((int32_t)p->y + 1, (int32_t)p->dimY);
     uint32_t y2 = rsMax((int32_t)p->y - 1, 0);
-    const uint8_t *bp = (const uint8_t *)p->ptrIn;
-    const uchar4 *py0 = (const uchar4 *)(bp + p->yStrideIn * y2);
-    const uchar4 *py1 = (const uchar4 *)(bp + p->yStrideIn * p->y);
-    const uchar4 *py2 = (const uchar4 *)(bp + p->yStrideIn * y1);
+    const uchar4 *py0 = (const uchar4 *)(pin + din->lod[0].stride * y2);
+    const uchar4 *py1 = (const uchar4 *)(pin + din->lod[0].stride * p->y);
+    const uchar4 *py2 = (const uchar4 *)(pin + din->lod[0].stride * y1);
 
     uchar4 *out = (uchar4 *)p->out;
 
@@ -147,4 +161,23 @@ void rsdIntrinsic_Convolve3x3_uchar4(const RsForEachStubParamStruct *p,
     }
 
 }
+
+
+
+
+
+bool rsdIntrinsic_Init(const android::renderscript::Context *dc,
+                       android::renderscript::Script *script,
+                       RsScriptIntrinsicID iid,
+                       RsdIntriniscFuncs_t *funcs) {
+
+    script->mHal.info.exportedVariableCount = 2;
+
+    funcs->bind = Convolve3x3_Bind;
+    funcs->setVar = Convolve3x3_SetVar;
+    funcs->root = Convolve3x3_uchar4;
+    return true;
+}
+
+
 
