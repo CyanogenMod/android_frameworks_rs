@@ -48,11 +48,7 @@ void Script::setSlot(uint32_t slot, Allocation *a) {
     }
 
     mSlots[slot].set(a);
-    if (a != NULL) {
-        mRSC->mHal.funcs.script.setGlobalBind(mRSC, this, slot, a->getPtr());
-    } else {
-        mRSC->mHal.funcs.script.setGlobalBind(mRSC, this, slot, NULL);
-    }
+    mRSC->mHal.funcs.script.setGlobalBind(mRSC, this, slot, a);
 }
 
 void Script::setVar(uint32_t slot, const void *val, size_t len) {

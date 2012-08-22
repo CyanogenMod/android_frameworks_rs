@@ -72,10 +72,6 @@ void Allocation::syncAll(Context *rsc, RsAllocationUsageType src) {
     rsc->mHal.funcs.allocation.syncAll(rsc, this, src);
 }
 
-void Allocation::read(void *data) {
-    memcpy(data, getPtr(), mHal.state.type->getSizeBytes());
-}
-
 void Allocation::data(Context *rsc, uint32_t xoff, uint32_t lod,
                          uint32_t count, const void *data, size_t sizeBytes) {
     const size_t eSize = mHal.state.type->getElementSizeBytes();
@@ -111,6 +107,39 @@ void Allocation::data(Context *rsc, uint32_t xoff, uint32_t yoff, uint32_t lod, 
 void Allocation::data(Context *rsc, uint32_t xoff, uint32_t yoff, uint32_t zoff,
                       uint32_t lod, RsAllocationCubemapFace face,
                       uint32_t w, uint32_t h, uint32_t d, const void *data, size_t sizeBytes) {
+}
+
+void Allocation::read(Context *rsc, uint32_t xoff, uint32_t lod,
+                         uint32_t count, void *data, size_t sizeBytes) {
+    const size_t eSize = mHal.state.type->getElementSizeBytes();
+
+    if ((count * eSize) != sizeBytes) {
+        ALOGE("Allocation::read called with mismatched size expected %zu, got %zu",
+             (count * eSize), sizeBytes);
+        mHal.state.type->dumpLOGV("type info");
+        return;
+    }
+
+    rsc->mHal.funcs.allocation.read1D(rsc, this, xoff, lod, count, data, sizeBytes);
+}
+
+void Allocation::read(Context *rsc, uint32_t xoff, uint32_t yoff, uint32_t lod, RsAllocationCubemapFace face,
+             uint32_t w, uint32_t h, void *data, size_t sizeBytes) {
+    const size_t eSize = mHal.state.elementSizeBytes;
+    const size_t lineSize = eSize * w;
+
+    if ((lineSize * h) != sizeBytes) {
+        ALOGE("Allocation size mismatch, expected %zu, got %zu", (lineSize * h), sizeBytes);
+        rsAssert(!"Allocation::read called with mismatched size");
+        return;
+    }
+
+    rsc->mHal.funcs.allocation.read2D(rsc, this, xoff, yoff, lod, face, w, h, data, sizeBytes);
+}
+
+void Allocation::read(Context *rsc, uint32_t xoff, uint32_t yoff, uint32_t zoff,
+                      uint32_t lod, RsAllocationCubemapFace face,
+                      uint32_t w, uint32_t h, uint32_t d, void *data, size_t sizeBytes) {
 }
 
 void Allocation::elementData(Context *rsc, uint32_t x, const void *data,
@@ -528,17 +557,11 @@ void rsi_AllocationGenerateMipmaps(Context *rsc, RsAllocation va) {
     AllocationGenerateScriptMips(rsc, texAlloc);
 }
 
-void rsi_AllocationCopyToBitmap(Context *rsc, RsAllocation va, void *data, size_t dataLen) {
-    Allocation *texAlloc = static_cast<Allocation *>(va);
-    const Type * t = texAlloc->getType();
-
-    size_t s = t->getDimX() * t->getDimY() * t->getElementSizeBytes();
-    if (s != dataLen) {
-        rsc->setError(RS_ERROR_BAD_VALUE, "Bitmap size didn't match allocation size");
-        return;
-    }
-
-    memcpy(data, texAlloc->getPtr(), s);
+void rsi_AllocationCopyToBitmap(Context *rsc, RsAllocation va, void *data, size_t sizeBytes) {
+    Allocation *a = static_cast<Allocation *>(va);
+    const Type * t = a->getType();
+    a->read(rsc, 0, 0, 0, RS_ALLOCATION_CUBEMAP_FACE_POSITIVE_X,
+            t->getDimX(), t->getDimY(), data, sizeBytes);
 }
 
 void rsi_Allocation1DData(Context *rsc, RsAllocation va, uint32_t xoff, uint32_t lod,
@@ -565,9 +588,16 @@ void rsi_Allocation2DData(Context *rsc, RsAllocation va, uint32_t xoff, uint32_t
     a->data(rsc, xoff, yoff, lod, face, w, h, data, sizeBytes);
 }
 
-void rsi_AllocationRead(Context *rsc, RsAllocation va, void *data, size_t data_length) {
+void rsi_AllocationRead(Context *rsc, RsAllocation va, void *data, size_t sizeBytes) {
     Allocation *a = static_cast<Allocation *>(va);
-    a->read(data);
+    const Type * t = a->getType();
+    if(t->getDimY()) {
+        a->read(rsc, 0, 0, 0, RS_ALLOCATION_CUBEMAP_FACE_POSITIVE_X,
+                t->getDimX(), t->getDimY(), data, sizeBytes);
+    } else {
+        a->read(rsc, 0, 0, t->getDimX(), data, sizeBytes);
+    }
+
 }
 
 void rsi_AllocationResize1D(Context *rsc, RsAllocation va, uint32_t dimX) {
@@ -610,7 +640,7 @@ RsAllocation rsi_AllocationCreateTyped(Context *rsc, RsType vtype,
 
 RsAllocation rsi_AllocationCreateFromBitmap(Context *rsc, RsType vtype,
                                             RsAllocationMipmapControl mips,
-                                            const void *data, size_t data_length, uint32_t usages) {
+                                            const void *data, size_t sizeBytes, uint32_t usages) {
     Type *t = static_cast<Type *>(vtype);
 
     RsAllocation vTexAlloc = rsi_AllocationCreateTyped(rsc, vtype, mips, usages, 0);
@@ -620,7 +650,8 @@ RsAllocation rsi_AllocationCreateFromBitmap(Context *rsc, RsType vtype,
         return NULL;
     }
 
-    memcpy(texAlloc->getPtr(), data, t->getDimX() * t->getDimY() * t->getElementSizeBytes());
+    texAlloc->data(rsc, 0, 0, 0, RS_ALLOCATION_CUBEMAP_FACE_POSITIVE_X,
+                   t->getDimX(), t->getDimY(), data, sizeBytes);
     if (mips == RS_ALLOCATION_MIPMAP_FULL) {
         AllocationGenerateScriptMips(rsc, texAlloc);
     }
@@ -631,7 +662,7 @@ RsAllocation rsi_AllocationCreateFromBitmap(Context *rsc, RsType vtype,
 
 RsAllocation rsi_AllocationCubeCreateFromBitmap(Context *rsc, RsType vtype,
                                                 RsAllocationMipmapControl mips,
-                                                const void *data, size_t data_length, uint32_t usages) {
+                                                const void *data, size_t sizeBytes, uint32_t usages) {
     Type *t = static_cast<Type *>(vtype);
 
     // Cubemap allocation's faces should be Width by Width each.
@@ -650,11 +681,9 @@ RsAllocation rsi_AllocationCubeCreateFromBitmap(Context *rsc, RsType vtype,
 
     uint8_t *sourcePtr = (uint8_t*)data;
     for (uint32_t face = 0; face < 6; face ++) {
-        Adapter2D faceAdapter(rsc, texAlloc);
-        faceAdapter.setFace(face);
-
         for (uint32_t dI = 0; dI < faceSize; dI ++) {
-            memcpy(faceAdapter.getElement(0, dI), sourcePtr + strideBytes * dI, copySize);
+            texAlloc->data(rsc, 0, dI, 0, (RsAllocationCubemapFace)face,
+                           t->getDimX(), 1, sourcePtr + strideBytes * dI, copySize);
         }
 
         // Move the data pointer to the next cube face
