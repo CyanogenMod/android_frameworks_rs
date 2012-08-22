@@ -112,7 +112,7 @@ DrvPath::~DrvPath() {
 DrvPathStatic::DrvPathStatic(const Allocation *vtx, const Allocation *loops) {
     mSegmentCount = vtx->getType()->getDimX() / 3;
     mSegments = new segment_t[mSegmentCount];
-
+/*
     const float *fin = (const float *)vtx->getPtr();
     for (uint32_t ct=0; ct < mSegmentCount; ct++) {
         segment_t *s = &mSegments[ct];
@@ -126,6 +126,7 @@ DrvPathStatic::DrvPathStatic(const Allocation *vtx, const Allocation *loops) {
         s->y2 = fin[5];
         fin += 6;
     }
+    */
 }
 
 DrvPathStatic::~DrvPathStatic() {

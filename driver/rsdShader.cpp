@@ -516,6 +516,7 @@ void RsdShader::setupUserConstants(const Context *rsc, RsdShaderCache *sc, bool 
     uint32_t uidx = 0;
     for (uint32_t ct=0; ct < mRSProgram->mHal.state.constantsCount; ct++) {
         Allocation *alloc = mRSProgram->mHal.state.constants[ct];
+
         if (!alloc) {
             ALOGE("Attempting to set constants on shader id %u, but alloc at slot %u is not set",
                  (uint32_t)this, ct);
@@ -523,7 +524,8 @@ void RsdShader::setupUserConstants(const Context *rsc, RsdShaderCache *sc, bool 
             continue;
         }
 
-        const uint8_t *data = static_cast<const uint8_t *>(alloc->getPtr());
+        DrvAllocation *adrv = (DrvAllocation *)alloc->mHal.drv;
+        const uint8_t *data = static_cast<const uint8_t *>(adrv->lod[0].mallocPtr);
         const Element *e = mRSProgram->mHal.state.constantTypes[ct]->getElement();
         for (uint32_t field=0; field < e->mHal.state.fieldsCount; field++) {
             const Element *f = e->mHal.state.fields[field];

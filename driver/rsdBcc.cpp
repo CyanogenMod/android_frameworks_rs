@@ -395,7 +395,7 @@ void rsdScriptInvokeForEach(const Context *rsc,
     mtls.eStrideIn = 0;
     if (ain) {
         DrvAllocation *aindrv = (DrvAllocation *)ain->mHal.drv;
-        mtls.ptrIn = (const uint8_t *)ain->getPtr();
+        mtls.ptrIn = (const uint8_t *)aindrv->lod[0].mallocPtr;
         mtls.eStrideIn = ain->getType()->getElementSizeBytes();
         mtls.yStrideIn = aindrv->lod[0].stride;
     }
@@ -404,7 +404,7 @@ void rsdScriptInvokeForEach(const Context *rsc,
     mtls.eStrideOut = 0;
     if (aout) {
         DrvAllocation *aoutdrv = (DrvAllocation *)aout->mHal.drv;
-        mtls.ptrOut = (uint8_t *)aout->getPtr();
+        mtls.ptrOut = (uint8_t *)aoutdrv->lod[0].mallocPtr;
         mtls.eStrideOut = aout->getType()->getElementSizeBytes();
         mtls.yStrideOut = aoutdrv->lod[0].stride;
     }

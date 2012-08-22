@@ -93,7 +93,6 @@ void rsi_ScriptBindAllocation(Context * rsc, RsScript vs, RsAllocation va, uint3
     Script *s = static_cast<Script *>(vs);
     Allocation *a = static_cast<Allocation *>(va);
     s->setSlot(slot, a);
-    //ALOGE("rsi_ScriptBindAllocation %i  %p  %p", slot, a, a->getPtr());
 }
 
 void rsi_ScriptSetTimeZone(Context * rsc, RsScript vs, const char * timeZone, size_t length) {
