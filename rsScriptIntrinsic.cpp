@@ -27,7 +27,7 @@ ScriptIntrinsic::ScriptIntrinsic(Context *rsc) : Script(rsc) {
 ScriptIntrinsic::~ScriptIntrinsic() {
 }
 
-bool ScriptIntrinsic::init(Context *rsc, RsScriptIntrisicID iid, Element *e) {
+bool ScriptIntrinsic::init(Context *rsc, RsScriptIntrinsicID iid, Element *e) {
     mIntrinsicID = iid;
     mElement.set(e);
     rsc->mHal.funcs.script.initIntrinsic(rsc, this, iid, e);
@@ -78,7 +78,7 @@ namespace renderscript {
 RsScript rsi_ScriptIntrinsicCreate(Context *rsc, uint32_t id, RsElement ve) {
     ScriptIntrinsic *si = new ScriptIntrinsic(rsc);
     ALOGE("rsi_ScriptIntrinsicCreate %i", id);
-    if (!si->init(rsc, (RsScriptIntrisicID)id, (Element *)ve)) {
+    if (!si->init(rsc, (RsScriptIntrinsicID)id, (Element *)ve)) {
         delete si;
         return NULL;
     }

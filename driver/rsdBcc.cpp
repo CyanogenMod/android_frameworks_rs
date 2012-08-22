@@ -37,7 +37,7 @@ using namespace android;
 using namespace android::renderscript;
 
 struct DrvScript {
-    RsScriptIntrisicID mIntrinsicID;
+    RsScriptIntrinsicID mIntrinsicID;
     int (*mRoot)();
     int (*mRootExpand)();
     void (*mInit)();
@@ -76,8 +76,6 @@ bool rsdScriptInit(const Context *rsc,
 
     pthread_mutex_lock(&rsdgInitMutex);
 
-    const char* coreLib = "/system/lib/libclcore.bc";
-    bcc::RSInfo::FloatPrecision prec;
     bcc::RSExecutable *exec;
     const bcc::RSInfo *info;
     DrvScript *drv = (DrvScript *)calloc(1, sizeof(DrvScript));
@@ -169,7 +167,7 @@ error:
 
 }
 
-bool rsdInitIntrinsic(const Context *rsc, Script *s, RsScriptIntrisicID iid, Element *e) {
+bool rsdInitIntrinsic(const Context *rsc, Script *s, RsScriptIntrinsicID iid, Element *e) {
     pthread_mutex_lock(&rsdgInitMutex);
 
     DrvScript *drv = (DrvScript *)calloc(1, sizeof(DrvScript));
@@ -283,7 +281,7 @@ void rsdScriptInvokeForEach(const Context *rsc,
     MTLaunchStruct mtls;
     memset(&mtls, 0, sizeof(mtls));
 
-    ALOGE("for each script %p  in %p   out %p", s, ain, aout);
+    //ALOGE("for each script %p  in %p   out %p", s, ain, aout);
 
     DrvScript *drv = (DrvScript *)s->mHal.drv;
 

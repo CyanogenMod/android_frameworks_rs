@@ -91,7 +91,7 @@ typedef struct {
                      size_t bitcodeSize,
                      uint32_t flags);
         bool (*initIntrinsic)(const Context *rsc, Script *s,
-                              RsScriptIntrisicID iid,
+                              RsScriptIntrinsicID iid,
                               Element *e);
 
         void (*invokeFunction)(const Context *rsc, Script *s,
