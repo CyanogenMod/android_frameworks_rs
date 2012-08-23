@@ -19,7 +19,7 @@
 
 #include <rsContext.h>
 
-class DrvAllocation;
+struct DrvAllocation;
 
 class RsdFrameBufferObj {
 public:
