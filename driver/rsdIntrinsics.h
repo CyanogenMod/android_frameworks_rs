@@ -19,12 +19,22 @@
 
 #include <rs_hal.h>
 
-void rsdIntrinsic_Convolve3x3_SetVar(const android::renderscript::Context *dc,
-                                     const android::renderscript::Script *script,
-                                     uint32_t slot, void *data, size_t dataLength);
-void rsdIntrinsic_Convolve3x3_uchar4(const android::renderscript::RsForEachStubParamStruct *,
-                                     uint32_t x1, uint32_t x2,
-                                     uint32_t instep, uint32_t outstep);
+typedef struct RsdIntriniscFuncs_rec {
+
+    void (*bind)(const android::renderscript::Context *dc,
+                 const android::renderscript::Script *script,
+                 uint32_t slot, android::renderscript::Allocation *data);
+    void (*setVar)(const android::renderscript::Context *dc,
+                   const android::renderscript::Script *script,
+                   uint32_t slot, void *data, size_t dataLength);
+    void (*root)(const android::renderscript::RsForEachStubParamStruct *,
+                 uint32_t x1, uint32_t x2, uint32_t instep, uint32_t outstep);
+
+} RsdIntriniscFuncs_t;
+
+bool rsdIntrinsic_Init(const android::renderscript::Context *dc,
+                       android::renderscript::Script *script,
+                       RsScriptIntrinsicID id, RsdIntriniscFuncs_t *funcs);
 
 
 
