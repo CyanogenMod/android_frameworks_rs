@@ -30,7 +30,11 @@ ScriptIntrinsic::~ScriptIntrinsic() {
 bool ScriptIntrinsic::init(Context *rsc, RsScriptIntrinsicID iid, Element *e) {
     mIntrinsicID = iid;
     mElement.set(e);
+    mSlots = new ObjectBaseRef<Allocation>[2];
+    mTypes = new ObjectBaseRef<const Type>[2];
+
     rsc->mHal.funcs.script.initIntrinsic(rsc, this, iid, e);
+
 
     return true;
 }
