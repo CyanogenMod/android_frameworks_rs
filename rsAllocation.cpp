@@ -60,6 +60,7 @@ void Allocation::updateCache() {
     mHal.state.hasMipmaps = type->getDimLOD();
     mHal.state.elementSizeBytes = type->getElementSizeBytes();
     mHal.state.hasReferences = mHal.state.type->getElement()->getHasReferences();
+    mHal.state.eType = mHal.state.type->getElement()->getType();
 }
 
 Allocation::~Allocation() {
