@@ -65,6 +65,7 @@ public:
             int32_t surfaceTextureID;
             ANativeWindow *wndSurface;
             SurfaceTexture *surfaceTexture;
+            RsDataType eType;
         };
         State state;
 
