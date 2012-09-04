@@ -29,8 +29,7 @@ LOCAL_SRC_FILES:= \
 	driver/rsdSampler.cpp \
 	driver/rsdShader.cpp \
 	driver/rsdShaderCache.cpp \
-	driver/rsdVertexArray.cpp \
-	driver/rsdIntrinsics_Convolve.S
+	driver/rsdVertexArray.cpp
 
 LOCAL_SHARED_LIBRARIES += libcutils libutils libEGL libGLESv1_CM libGLESv2
 LOCAL_SHARED_LIBRARIES += libbcc libbcinfo libgui libsync
