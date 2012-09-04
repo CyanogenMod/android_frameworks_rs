@@ -18,6 +18,7 @@ LOCAL_SRC_FILES:= \
 	driver/rsdFrameBufferObj.cpp \
 	driver/rsdGL.cpp \
 	driver/rsdIntrinsics.cpp \
+	driver/rsdIntrinsicConvolve3x3.cpp \
 	driver/rsdMesh.cpp \
 	driver/rsdMeshObj.cpp \
 	driver/rsdPath.cpp \
@@ -30,6 +31,12 @@ LOCAL_SRC_FILES:= \
 	driver/rsdShader.cpp \
 	driver/rsdShaderCache.cpp \
 	driver/rsdVertexArray.cpp
+
+ifeq ($(ARCH_ARM_HAVE_NEON),true)
+    LOCAL_CFLAGS += -DARCH_ARM_HAVE_NEON
+    LOCAL_SRC_FILES+= \
+        driver/rsdIntrinsics_Convolve.S
+endif
 
 LOCAL_SHARED_LIBRARIES += libcutils libutils libEGL libGLESv1_CM libGLESv2
 LOCAL_SHARED_LIBRARIES += libbcc libbcinfo libgui libsync
