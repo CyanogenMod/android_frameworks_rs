@@ -49,6 +49,7 @@ struct DrvScript {
 
     Allocation **mBoundAllocs;
     RsdIntriniscFuncs_t mIntrinsicFuncs;
+    void * mIntrinsicData;
 };
 
 typedef void (*outer_foreach_t)(
@@ -177,7 +178,7 @@ bool rsdInitIntrinsic(const Context *rsc, Script *s, RsScriptIntrinsicID iid, El
     }
     s->mHal.drv = drv;
     drv->mIntrinsicID = iid;
-    rsdIntrinsic_Init(rsc, s, iid, &drv->mIntrinsicFuncs);
+    drv->mIntrinsicData = rsdIntrinsic_Init(rsc, s, iid, &drv->mIntrinsicFuncs);
 
     pthread_mutex_unlock(&rsdgInitMutex);
     return true;
@@ -284,6 +285,7 @@ void rsdScriptInvokeForEach(const Context *rsc,
 
     if (drv->mIntrinsicID) {
         mtls.kernel = (void (*)())drv->mIntrinsicFuncs.root;
+        usr = drv->mIntrinsicData;
     } else {
         rsAssert(slot < drv->mExecutable->getExportForeachFuncAddrs().size());
         mtls.kernel = reinterpret_cast<ForEachFunc_t>(
@@ -457,7 +459,7 @@ void rsdScriptSetGlobalVar(const Context *dc, const Script *script,
     //ALOGE("setGlobalVar %p %p %i %p %i", dc, script, slot, data, dataLength);
 
     if (drv->mIntrinsicID) {
-        drv->mIntrinsicFuncs.setVar(dc, script, slot, data, dataLength);
+        drv->mIntrinsicFuncs.setVar(dc, script, drv->mIntrinsicData, slot, data, dataLength);
         return;
     }
 
@@ -519,7 +521,7 @@ void rsdScriptSetGlobalBind(const Context *dc, const Script *script, uint32_t sl
     //ALOGE("setGlobalBind %p %p %i %p", dc, script, slot, data);
 
     if (drv->mIntrinsicID) {
-        drv->mIntrinsicFuncs.bind(dc, script, slot, data);
+        drv->mIntrinsicFuncs.bind(dc, script, drv->mIntrinsicData, slot, data);
         return;
     }
 
