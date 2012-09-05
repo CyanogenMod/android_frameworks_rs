@@ -19,6 +19,7 @@ LOCAL_SRC_FILES:= \
 	driver/rsdGL.cpp \
 	driver/rsdIntrinsics.cpp \
 	driver/rsdIntrinsicConvolve3x3.cpp \
+	driver/rsdIntrinsicColorMatrix.cpp \
 	driver/rsdMesh.cpp \
 	driver/rsdMeshObj.cpp \
 	driver/rsdPath.cpp \

@@ -24,58 +24,15 @@
 using namespace android;
 using namespace android::renderscript;
 
-
-/*
-typedef struct {
-    const void *in;
-    void *out;
-    const void *usr;
-    size_t usr_len;
-    uint32_t x;
-    uint32_t y;
-    uint32_t z;
-    uint32_t lod;
-    RsAllocationCubemapFace face;
-    uint32_t ar[16];
-    uint32_t dimX;
-    uint32_t dimY;
-    uint32_t dimZ;
-    size_t strideIn;
-    size_t strideOut;
-    const void *baseIn;
-    void *baseOut;
-} RsForEachStubParamStruct;
-*/
-
-
 struct ConvolveParams {
     float fp[16];
     short ip[16];
     ObjectBaseRef<Allocation> alloc;
 };
 
-
-//static float params[9] = { 0.f,  -1.f,  0.f,
-                          //-1.f,   5.f, -1.f,
-                           //0.f,  -1.f,  0.f };
-//static short iparams[16] = { 0,      -255,   0,
-                          //-255,   1275,   -255,
-                          //0,     -255,    0 };
-
-static short imatrix[16] = { 255,    0,   50,    0,
-                               0,  200,   50,    0,
-                               0,    0,  255,    0,
-                               0,    0,    0,  255 };
-
-
-//ObjectBaseRef<Allocation> gAlloc;
-
-
 static void Convolve3x3_Bind(const Context *dc, const Script *script,
                              void * intrinsicData, uint32_t slot, Allocation *data) {
     ConvolveParams *cp = (ConvolveParams *)intrinsicData;
-
-    //ALOGE("bind %p", data);
     rsAssert(slot == 1);
     cp->alloc.set(data);
 }
@@ -92,8 +49,6 @@ static void Convolve3x3_SetVar(const Context *dc, const Script *script, void * i
 }
 
 extern "C" void rsdIntrinsicConvolve3x3_K(void *dst, const void *y0, const void *y1, const void *y2, const short *coef, uint32_t count);
-extern "C" void rsdIntrinsicColorMatrix4x4K(void *dst, const void *src, const short *coef, uint32_t count);
-extern "C" void rsdIntrinsicColorMatrix3x3K(void *dst, const void *src, const short *coef, uint32_t count);
 
 
 static void ConvolveOne(const RsForEachStubParamStruct *p, uint32_t x, uchar4 *out,
@@ -161,17 +116,7 @@ static void Convolve3x3_uchar4(const RsForEachStubParamStruct *p,
             x1++;
         }
     }
-
-    //rsdIntrinsicColorMatrix4x4K((uchar4 *)p->out, (uchar4 *)p->out, &imatrix[0], (xend - xstart)>>2);
-
 }
-
-
-
-static void Convolve3x3_Destroy(const Context *dc, const Script *script, void * intrinsicData) {
-    free(intrinsicData);
-}
-
 
 void * rsdIntrinsic_InitConvolve3x3(const android::renderscript::Context *dc,
                                     android::renderscript::Script *script,
@@ -181,7 +126,6 @@ void * rsdIntrinsic_InitConvolve3x3(const android::renderscript::Context *dc,
     funcs->bind = Convolve3x3_Bind;
     funcs->setVar = Convolve3x3_SetVar;
     funcs->root = Convolve3x3_uchar4;
-    funcs->destroy = Convolve3x3_Destroy;
 
     ConvolveParams *cp = (ConvolveParams *)calloc(1, sizeof(ConvolveParams));
     for(int ct=0; ct < 9; ct++) {
@@ -190,7 +134,5 @@ void * rsdIntrinsic_InitConvolve3x3(const android::renderscript::Context *dc,
     }
     return cp;
 }
-
-
 
 
