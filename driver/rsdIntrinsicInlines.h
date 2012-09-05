@@ -72,6 +72,11 @@ static inline uchar4 convert_uchar4(int4 i) {
     return f4;
 }
 
+static inline uchar4 convert_uchar4(float4 i) {
+    uchar4 f4 = {(uchar)i.x, (uchar)i.y, (uchar)i.z, (uchar)i.w};
+    return f4;
+}
+
 
 static inline int4 clamp(int4 amount, int low, int high) {
     int4 r;
