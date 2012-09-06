@@ -264,8 +264,15 @@ typedef struct {
 }
 }
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-bool rsdHalInit(android::renderscript::Context *, uint32_t version_major, uint32_t version_minor);
+bool rsdHalInit(RsContext, uint32_t version_major, uint32_t version_minor);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
 
