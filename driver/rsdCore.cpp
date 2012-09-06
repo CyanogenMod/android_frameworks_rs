@@ -203,7 +203,9 @@ void rsdLaunchThreads(Context *rsc, WorkerCallback_t cbk, void *data) {
     }
 }
 
-bool rsdHalInit(Context *rsc, uint32_t version_major, uint32_t version_minor) {
+extern "C" bool rsdHalInit(RsContext c, uint32_t version_major,
+                           uint32_t version_minor) {
+    Context *rsc = (Context*) c;
     rsc->mHal.funcs = FunctionTable;
 
     RsdHal *dc = (RsdHal *)calloc(1, sizeof(RsdHal));
