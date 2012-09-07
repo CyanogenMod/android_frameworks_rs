@@ -104,7 +104,7 @@ static void Convolve3x3_uchar4(const RsForEachStubParamStruct *p,
 #if defined(ARCH_ARM_HAVE_NEON)
         int32_t len = (x2 - x1 - 1) >> 1;
         if(len > 0) {
-            rsdIntrinsicConvolve3x3_K(out, &py0[x1], &py1[x1], &py2[x1], cp->ip, len);
+            rsdIntrinsicConvolve3x3_K(out, &py0[x1-1], &py1[x1-1], &py2[x1-1], cp->ip, len);
             x1 += len << 1;
             out += len << 1;
         }
