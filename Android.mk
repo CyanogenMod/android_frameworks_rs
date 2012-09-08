@@ -6,6 +6,10 @@ ifeq ($(TARGET_BUILD_PDK), true)
   rs_base_CFLAGS += -D__RS_PDK__
 endif
 
+ifneq ($(OVERRIDE_RS_DRIVER),)
+  rs_base_CFLAGS += -DOVERRIDE_RS_DRIVER=$(OVERRIDE_RS_DRIVER)
+endif
+
 include $(CLEAR_VARS)
 LOCAL_CLANG := true
 LOCAL_MODULE := libRSDriver
@@ -164,7 +168,6 @@ LOCAL_C_INCLUDES += frameworks/compile/libbcc/include
 LOCAL_CFLAGS += $(rs_base_CFLAGS)
 
 LOCAL_LDLIBS := -lpthread -ldl
-LOCAL_MODULE:= libRS
 LOCAL_MODULE_TAGS := optional
 
 include $(BUILD_SHARED_LIBRARY)
