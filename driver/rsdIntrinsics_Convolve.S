@@ -109,7 +109,7 @@ END(TestConvolveK)
 /*
         r0 = dst
         r1 = src
-        r2 = matrx
+        r2 = matrix
         r3 = length
 */
 ENTRY(rsdIntrinsicColorMatrix4x4_K)
@@ -126,29 +126,29 @@ ENTRY(rsdIntrinsicColorMatrix4x4_K)
         vld4.8 {d0[2],d1[2],d2[2],d3[2]}, [r1]!
         vld4.8 {d0[3],d1[3],d2[3],d3[3]}, [r1]!
 
-        vmovl.u8 q12, d0
-        vmovl.u8 q13, d1
-        vmovl.u8 q14, d2
-        vmovl.u8 q15, d3
+        vmovl.u8 q12, d0  /* R */
+        vmovl.u8 q13, d1  /* G */
+        vmovl.u8 q14, d2  /* B */
+        vmovl.u8 q15, d3  /* A */
 
         vmull.s16 q8,  d24, d4[0]
-        vmull.s16 q9,  d26, d4[1]
-        vmull.s16 q10, d28, d4[2]
-        vmull.s16 q11, d30, d4[3]
+        vmull.s16 q9,  d24, d4[1]
+        vmull.s16 q10, d24, d4[2]
+        vmull.s16 q11, d24, d4[3]
 
-        vmlal.s16 q8,  d24, d5[0]
+        vmlal.s16 q8,  d26, d5[0]
         vmlal.s16 q9,  d26, d5[1]
-        vmlal.s16 q10, d28, d5[2]
-        vmlal.s16 q11, d30, d5[3]
+        vmlal.s16 q10, d26, d5[2]
+        vmlal.s16 q11, d26, d5[3]
 
-        vmlal.s16 q8,  d24, d6[0]
-        vmlal.s16 q9,  d26, d6[1]
+        vmlal.s16 q8,  d28, d6[0]
+        vmlal.s16 q9,  d28, d6[1]
         vmlal.s16 q10, d28, d6[2]
-        vmlal.s16 q11, d30, d6[3]
+        vmlal.s16 q11, d28, d6[3]
 
-        vmlal.s16 q8,  d24, d7[0]
-        vmlal.s16 q9,  d26, d7[1]
-        vmlal.s16 q10, d28, d7[2]
+        vmlal.s16 q8,  d30, d7[0]
+        vmlal.s16 q9,  d30, d7[1]
+        vmlal.s16 q10, d30, d7[2]
         vmlal.s16 q11, d30, d7[3]
 
         vshrn.i32 d24, q8, #8
@@ -172,15 +172,15 @@ ENTRY(rsdIntrinsicColorMatrix4x4_K)
         vpop            {q4-q7}
         ldmfd           sp!, {r4, lr}
         bx              lr
-END(rsdIntrinsicColorMatrix4x4K)
+END(rsdIntrinsicColorMatrix4x4_K)
 
 /*
         r0 = dst
         r1 = src
-        r2 = matrx
+        r2 = matrix
         r3 = length
 */
-ENTRY(rsdIntrinsicColorMatrix3x3K)
+ENTRY(rsdIntrinsicColorMatrix3x3_K)
         .save           {r4, lr}
         stmfd           sp!, {r4, lr}
         vpush           {q4-q7}
@@ -199,15 +199,15 @@ ENTRY(rsdIntrinsicColorMatrix3x3K)
         vmovl.u8 q14, d2
 
         vmull.s16 q8,  d24, d4[0]
-        vmull.s16 q9,  d26, d4[1]
-        vmull.s16 q10, d28, d4[2]
+        vmull.s16 q9,  d24, d4[1]
+        vmull.s16 q10, d24, d4[2]
 
-        vmlal.s16 q8,  d24, d5[0]
+        vmlal.s16 q8,  d26, d5[0]
         vmlal.s16 q9,  d26, d5[1]
-        vmlal.s16 q10, d28, d5[2]
+        vmlal.s16 q10, d26, d5[2]
 
-        vmlal.s16 q8,  d24, d6[0]
-        vmlal.s16 q9,  d26, d6[1]
+        vmlal.s16 q8,  d28, d6[0]
+        vmlal.s16 q9,  d28, d6[1]
         vmlal.s16 q10, d28, d6[2]
 
         vshrn.i32 d24, q8, #8
@@ -229,5 +229,50 @@ ENTRY(rsdIntrinsicColorMatrix3x3K)
         vpop            {q4-q7}
         ldmfd           sp!, {r4, lr}
         bx              lr
-END(rsdIntrinsicColorMatrix3x3K)
+END(rsdIntrinsicColorMatrix3x3_K)
+
+/*
+        r0 = dst
+        r1 = src
+        r2 = matrix
+        r3 = length
+*/
+ENTRY(rsdIntrinsicColorMatrixDot_K)
+        .save           {r4, lr}
+        stmfd           sp!, {r4, lr}
+        vpush           {q4-q7}
+
+        vld1.16 {q2}, [r2]!
+        vld1.16 {q3}, [r2]!
+
+1:
+        vld4.8 {d0[0],d1[0],d2[0],d3[0]}, [r1]!
+        vld4.8 {d0[1],d1[1],d2[1],d3[1]}, [r1]!
+        vld4.8 {d0[2],d1[2],d2[2],d3[2]}, [r1]!
+        vld4.8 {d0[3],d1[3],d2[3],d3[3]}, [r1]!
+
+        vmovl.u8 q12, d0
+        vmovl.u8 q13, d1
+        vmovl.u8 q14, d2
+
+        vmull.s16 q8,  d24, d4[0]
+        vmlal.s16 q8,  d26, d5[0]
+        vmlal.s16 q8,  d28, d6[0]
+        vshrn.i32 d24, q8, #8
+        vqmovun.s16 d0, q12
+        vmov.u8 d1, d0
+        vmov.u8 d2, d0
+
+        vst4.8 {d0[0],d1[0],d2[0],d3[0]}, [r0]!
+        vst4.8 {d0[1],d1[1],d2[1],d3[1]}, [r0]!
+        vst4.8 {d0[2],d1[2],d2[2],d3[2]}, [r0]!
+        vst4.8 {d0[3],d1[3],d2[3],d3[3]}, [r0]!
+
+        subs r3, r3, #1
+        bne 1b
+
+        vpop            {q4-q7}
+        ldmfd           sp!, {r4, lr}
+        bx              lr
+END(rsdIntrinsicColorMatrixDot_K)
 

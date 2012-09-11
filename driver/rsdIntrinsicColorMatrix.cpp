@@ -27,6 +27,8 @@ using namespace android::renderscript;
 struct ConvolveParams {
     float fp[16];
     short ip[16];
+    bool use3x3;
+    bool useDot;
 };
 
 static void ColorMatrix_SetVar(const Context *dc, const Script *script, void * intrinsicData,
@@ -38,10 +40,23 @@ static void ColorMatrix_SetVar(const Context *dc, const Script *script, void * i
     for(int ct=0; ct < 16; ct++) {
         cp->ip[ct] = (short)(cp->fp[ct] * 255.f + 0.5f);
     }
+
+    if ((cp->ip[3] == 0) && (cp->ip[7] == 0) && (cp->ip[11] == 0) &&
+        (cp->ip[12] == 0) && (cp->ip[13] == 0) && (cp->ip[14] == 0) &&
+        (cp->ip[15] == 255)) {
+        cp->use3x3 = true;
+
+        if ((cp->ip[0] == cp->ip[1]) && (cp->ip[0] == cp->ip[2]) &&
+            (cp->ip[4] == cp->ip[5]) && (cp->ip[4] == cp->ip[6]) &&
+            (cp->ip[8] == cp->ip[9]) && (cp->ip[8] == cp->ip[10])) {
+            cp->useDot = true;
+        }
+    }
 }
 
 extern "C" void rsdIntrinsicColorMatrix4x4_K(void *dst, const void *src, const short *coef, uint32_t count);
 extern "C" void rsdIntrinsicColorMatrix3x3_K(void *dst, const void *src, const short *coef, uint32_t count);
+extern "C" void rsdIntrinsicColorMatrixDot_K(void *dst, const void *src, const short *coef, uint32_t count);
 
 static void One(const RsForEachStubParamStruct *p, uchar4 *out,
                 const uchar4 *py, const float* coeff) {
@@ -89,7 +104,15 @@ static void ColorMatrix_uchar4(const RsForEachStubParamStruct *p,
 #if defined(ARCH_ARM_HAVE_NEON)
         int32_t len = (x2 - x1) >> 2;
         if(len > 0) {
-            rsdIntrinsicColorMatrix4x4_K(out, in, cp->ip, len);
+            if (cp->use3x3) {
+                if (cp->useDot) {
+                    rsdIntrinsicColorMatrixDot_K(out, in, cp->ip, len);
+                } else {
+                    rsdIntrinsicColorMatrix3x3_K(out, in, cp->ip, len);
+                }
+            } else {
+                rsdIntrinsicColorMatrix4x4_K(out, in, cp->ip, len);
+            }
             x1 += len << 2;
             out += len << 2;
             in += len << 2;
