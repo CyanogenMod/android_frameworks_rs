@@ -221,11 +221,30 @@ void * Context::threadProc(void *vrsc) {
     rsc->props.mLogVisual = getProp("debug.rs.visual") != 0;
     rsc->props.mDebugMaxThreads = getProp("debug.rs.max-threads");
 
-    void *driverSO = dlopen("libRSDriver.so", RTLD_LAZY);
+    void *driverSO = NULL;
+
+    // Provide a mechanism for dropping in a different RS driver.
+#ifdef OVERRIDE_RS_DRIVER
+#define XSTR(S) #S
+#define STR(S) XSTR(S)
+#define OVERRIDE_RS_DRIVER_STRING STR(OVERRIDE_RS_DRIVER)
+    driverSO = dlopen(OVERRIDE_RS_DRIVER_STRING, RTLD_LAZY);
     if (driverSO == NULL) {
-        rsc->setError(RS_ERROR_FATAL_DRIVER, "Failed loading RS driver");
-        ALOGE("Failed loading RS driver: %s", dlerror());
-        return NULL;
+        ALOGE("Failed loading %s: %s", OVERRIDE_RS_DRIVER_STRING, dlerror());
+        // Continue to attempt loading fallback driver
+    }
+#undef XSTR
+#undef STR
+#endif  // OVERRIDE_RS_DRIVER
+
+    // Attempt to load the reference RS driver (if necessary).
+    if (driverSO == NULL) {
+        driverSO = dlopen("libRSDriver.so", RTLD_LAZY);
+        if (driverSO == NULL) {
+            rsc->setError(RS_ERROR_FATAL_DRIVER, "Failed loading RS driver");
+            ALOGE("Failed loading RS driver: %s", dlerror());
+            return NULL;
+        }
     }
 
     // Need to call dlerror() to clear buffer before using it for dlsym().
