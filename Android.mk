@@ -22,7 +22,10 @@ LOCAL_SRC_FILES:= \
 	driver/rsdFrameBufferObj.cpp \
 	driver/rsdGL.cpp \
 	driver/rsdIntrinsics.cpp \
+	driver/rsdIntrinsicBlur.cpp \
 	driver/rsdIntrinsicConvolve3x3.cpp \
+	driver/rsdIntrinsicConvolve5x5.cpp \
+	driver/rsdIntrinsicLUT.cpp \
 	driver/rsdIntrinsicColorMatrix.cpp \
 	driver/rsdMesh.cpp \
 	driver/rsdMeshObj.cpp \

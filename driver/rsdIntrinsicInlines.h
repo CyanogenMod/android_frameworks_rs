@@ -87,3 +87,13 @@ static inline int4 clamp(int4 amount, int low, int high) {
     return r;
 }
 
+static inline float4 clamp(float4 amount, float low, float high) {
+    float4 r;
+    r.x = amount.x < low ? low : (amount.x > high ? high : amount.x);
+    r.y = amount.y < low ? low : (amount.y > high ? high : amount.y);
+    r.z = amount.z < low ? low : (amount.z > high ? high : amount.z);
+    r.w = amount.w < low ? low : (amount.w > high ? high : amount.w);
+    return r;
+}
+
+
