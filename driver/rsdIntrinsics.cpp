@@ -22,16 +22,12 @@
 using namespace android;
 using namespace android::renderscript;
 
-enum IntrinsicEnums {
-    INTRINSIC_UNDEFINED,
-    INTRINSIC_CONVOLVE_3x3,
-    INTRINXIC_COLORMATRIX
 
-};
-
-
+void * rsdIntrinsic_InitBlur(const Context *, Script *, RsdIntriniscFuncs_t *);
 void * rsdIntrinsic_InitConvolve3x3(const Context *, Script *, RsdIntriniscFuncs_t *);
+void * rsdIntrinsic_InitConvolve5x5(const Context *, Script *, RsdIntriniscFuncs_t *);
 void * rsdIntrinsic_InitColorMatrix(const Context *, Script *, RsdIntriniscFuncs_t *);
+void * rsdIntrinsic_InitLUT(const Context *, Script *, RsdIntriniscFuncs_t *);
 
 
 static void Bind(const Context *, const Script *, void *, uint32_t, Allocation *) {
@@ -56,10 +52,16 @@ void * rsdIntrinsic_Init(const android::renderscript::Context *dc,
     funcs->destroy = Destroy;
 
     switch(iid) {
-    case INTRINSIC_CONVOLVE_3x3:
+    case RS_SCRIPT_INTRINSIC_ID_CONVOLVE_3x3:
         return rsdIntrinsic_InitConvolve3x3(dc, script, funcs);
-    case INTRINXIC_COLORMATRIX:
+    case RS_SCRIPT_INTRINSIC_ID_CONVOLVE_5x5:
+        return rsdIntrinsic_InitConvolve5x5(dc, script, funcs);
+    case RS_SCRIPT_INTRINSIC_ID_COLOR_MATRIX:
         return rsdIntrinsic_InitColorMatrix(dc, script, funcs);
+    case RS_SCRIPT_INTRINSIC_ID_LUT:
+        return rsdIntrinsic_InitLUT(dc, script, funcs);
+    case RS_SCRIPT_INTRINSIC_ID_BLUR:
+        return rsdIntrinsic_InitBlur(dc, script, funcs);
 
     default:
         return NULL;
