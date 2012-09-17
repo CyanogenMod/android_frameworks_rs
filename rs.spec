@@ -352,6 +352,49 @@ ScriptIntrinsicCreate {
     ret RsScript
     }
 
+ScriptKernelIDCreate {
+    direct
+    param RsScript sid
+    param int slot
+    param int sig
+    ret RsScriptKernelID
+    }
+
+ScriptFieldIDCreate {
+    direct
+    param RsScript sid
+    param int slot
+    ret RsScriptFieldID
+    }
+
+ScriptGroupCreate {
+    direct
+    param RsScriptKernelID * kernels
+    param RsScriptKernelID * src
+    param RsScriptKernelID * dstK
+    param RsScriptFieldID * dstF
+    param const RsType * type
+    ret RsScriptGroup
+}
+
+ScriptGroupSetOutput {
+    param RsScriptGroup group
+    param RsScriptKernelID kernel
+    param RsAllocation alloc
+}
+
+ScriptGroupSetInput {
+    param RsScriptGroup group
+    param RsScriptKernelID kernel
+    param RsAllocation alloc
+}
+
+ScriptGroupExecute {
+    param RsScriptGroup group
+}
+
+
+
 ProgramStoreCreate {
     direct
     param bool colorMaskR

@@ -18,24 +18,7 @@
 #define RSD_INTRINSICS_H
 
 #include <rs_hal.h>
-
-typedef struct RsdIntriniscFuncs_rec {
-
-    void (*bind)(const android::renderscript::Context *dc,
-                 const android::renderscript::Script *script,
-                 void * intrinsicData,
-                 uint32_t slot, android::renderscript::Allocation *data);
-    void (*setVar)(const android::renderscript::Context *dc,
-                   const android::renderscript::Script *script,
-                   void * intrinsicData,
-                   uint32_t slot, void *data, size_t dataLength);
-    void (*root)(const android::renderscript::RsForEachStubParamStruct *,
-                 uint32_t x1, uint32_t x2, uint32_t instep, uint32_t outstep);
-
-    void (*destroy)(const android::renderscript::Context *dc,
-                    const android::renderscript::Script *script,
-                    void * intrinsicData);
-} RsdIntriniscFuncs_t;
+#include "rsdBcc.h"
 
 void * rsdIntrinsic_Init(const android::renderscript::Context *dc,
                          android::renderscript::Script *script,

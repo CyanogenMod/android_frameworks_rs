@@ -30,7 +30,11 @@ class Element;
 class Type;
 class Allocation;
 class Script;
+class ScriptKernelID;
+class ScriptFieldID;
+class ScriptMethodID;
 class ScriptC;
+class ScriptGroup;
 class Path;
 class Program;
 class ProgramStore;
@@ -257,6 +261,16 @@ typedef struct {
         void (*setActive)(const Context *rsc, const FBOCache *fb);
         void (*destroy)(const Context *rsc, const FBOCache *fb);
     } framebuffer;
+
+    struct {
+        bool (*init)(const Context *rsc, const ScriptGroup *sg);
+        void (*setInput)(const Context *rsc, const ScriptGroup *sg,
+                         const ScriptKernelID *kid, Allocation *);
+        void (*setOutput)(const Context *rsc, const ScriptGroup *sg,
+                          const ScriptKernelID *kid, Allocation *);
+        void (*execute)(const Context *rsc, const ScriptGroup *sg);
+        void (*destroy)(const Context *rsc, const ScriptGroup *sg);
+    } scriptgroup;
 
 } RsdHalFunctions;
 

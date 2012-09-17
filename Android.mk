@@ -36,6 +36,7 @@ LOCAL_SRC_FILES:= \
 	driver/rsdRuntimeMath.cpp \
 	driver/rsdRuntimeStubs.cpp \
 	driver/rsdSampler.cpp \
+	driver/rsdScriptGroup.cpp \
 	driver/rsdShader.cpp \
 	driver/rsdShaderCache.cpp \
 	driver/rsdVertexArray.cpp
@@ -151,6 +152,7 @@ LOCAL_SRC_FILES:= \
 	rsScriptC.cpp \
 	rsScriptC_Lib.cpp \
 	rsScriptC_LibGL.cpp \
+	rsScriptGroup.cpp \
 	rsScriptIntrinsic.cpp \
 	rsSignal.cpp \
 	rsStream.cpp \
@@ -242,6 +244,7 @@ LOCAL_SRC_FILES:= \
 	rsScriptC.cpp \
 	rsScriptC_Lib.cpp \
 	rsScriptC_LibGL.cpp \
+	rsScriptGroup.cpp \
 	rsScriptIntrinsic.cpp \
 	rsSignal.cpp \
 	rsStream.cpp \

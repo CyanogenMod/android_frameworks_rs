@@ -16,7 +16,6 @@
 
 
 #include "rsdCore.h"
-#include "rsdBcc.h"
 #include "rsdRuntime.h"
 #include "rsdAllocation.h"
 #include "rsdFrameBufferObj.h"
