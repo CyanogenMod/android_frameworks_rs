@@ -15,15 +15,16 @@
  */
 
 #include "rsdCore.h"
-#include "rsdBcc.h"
-#include "rsdRuntime.h"
-#include "rsdAllocation.h"
-#include "rsdIntrinsics.h"
 
 #include <bcc/BCCContext.h>
 #include <bcc/Renderscript/RSCompilerDriver.h>
 #include <bcc/Renderscript/RSExecutable.h>
 #include <bcc/Renderscript/RSInfo.h>
+
+#include "rsdBcc.h"
+#include "rsdRuntime.h"
+#include "rsdAllocation.h"
+#include "rsdIntrinsics.h"
 
 #include "rsContext.h"
 #include "rsElement.h"
@@ -36,26 +37,6 @@
 using namespace android;
 using namespace android::renderscript;
 
-struct DrvScript {
-    RsScriptIntrinsicID mIntrinsicID;
-    int (*mRoot)();
-    int (*mRootExpand)();
-    void (*mInit)();
-    void (*mFreeChildren)();
-
-    bcc::BCCContext *mCompilerContext;
-    bcc::RSCompilerDriver *mCompilerDriver;
-    bcc::RSExecutable *mExecutable;
-
-    Allocation **mBoundAllocs;
-    RsdIntriniscFuncs_t mIntrinsicFuncs;
-    void * mIntrinsicData;
-};
-
-typedef void (*outer_foreach_t)(
-    const android::renderscript::RsForEachStubParamStruct *,
-    uint32_t x1, uint32_t x2,
-    uint32_t instep, uint32_t outstep);
 
 static Script * setTLS(Script *sc) {
     ScriptTLSStruct * tls = (ScriptTLSStruct *)pthread_getspecific(rsdgThreadTLSKey);
@@ -188,28 +169,6 @@ error:
     return false;
 }
 
-typedef struct {
-    RsForEachStubParamStruct fep;
-
-    Context *rsc;
-    Script *script;
-    ForEachFunc_t kernel;
-    uint32_t sig;
-    const Allocation * ain;
-    Allocation * aout;
-
-    uint32_t mSliceSize;
-    volatile int mSliceNum;
-
-    uint32_t xStart;
-    uint32_t xEnd;
-    uint32_t yStart;
-    uint32_t yEnd;
-    uint32_t zStart;
-    uint32_t zEnd;
-    uint32_t arrayStart;
-    uint32_t arrayEnd;
-} MTLaunchStruct;
 typedef void (*rs_t)(const void *, void *, const void *, uint32_t, uint32_t, uint32_t, uint32_t);
 
 static void wc_xy(void *usr, uint32_t idx) {
@@ -265,6 +224,145 @@ static void wc_x(void *usr, uint32_t idx) {
     }
 }
 
+void rsdScriptInvokeForEachMtlsSetup(const Context *rsc,
+                                     const Allocation * ain,
+                                     Allocation * aout,
+                                     const void * usr,
+                                     uint32_t usrLen,
+                                     const RsScriptCall *sc,
+                                     MTLaunchStruct *mtls) {
+
+    memset(mtls, 0, sizeof(MTLaunchStruct));
+
+    if (ain) {
+        mtls->fep.dimX = ain->getType()->getDimX();
+        mtls->fep.dimY = ain->getType()->getDimY();
+        mtls->fep.dimZ = ain->getType()->getDimZ();
+        //mtls->dimArray = ain->getType()->getDimArray();
+    } else if (aout) {
+        mtls->fep.dimX = aout->getType()->getDimX();
+        mtls->fep.dimY = aout->getType()->getDimY();
+        mtls->fep.dimZ = aout->getType()->getDimZ();
+        //mtls->dimArray = aout->getType()->getDimArray();
+    } else {
+        rsc->setError(RS_ERROR_BAD_SCRIPT, "rsForEach called with null allocations");
+        return;
+    }
+
+    if (!sc || (sc->xEnd == 0)) {
+        mtls->xEnd = mtls->fep.dimX;
+    } else {
+        rsAssert(sc->xStart < mtls->fep.dimX);
+        rsAssert(sc->xEnd <= mtls->fep.dimX);
+        rsAssert(sc->xStart < sc->xEnd);
+        mtls->xStart = rsMin(mtls->fep.dimX, sc->xStart);
+        mtls->xEnd = rsMin(mtls->fep.dimX, sc->xEnd);
+        if (mtls->xStart >= mtls->xEnd) return;
+    }
+
+    if (!sc || (sc->yEnd == 0)) {
+        mtls->yEnd = mtls->fep.dimY;
+    } else {
+        rsAssert(sc->yStart < mtls->fep.dimY);
+        rsAssert(sc->yEnd <= mtls->fep.dimY);
+        rsAssert(sc->yStart < sc->yEnd);
+        mtls->yStart = rsMin(mtls->fep.dimY, sc->yStart);
+        mtls->yEnd = rsMin(mtls->fep.dimY, sc->yEnd);
+        if (mtls->yStart >= mtls->yEnd) return;
+    }
+
+    mtls->xEnd = rsMax((uint32_t)1, mtls->xEnd);
+    mtls->yEnd = rsMax((uint32_t)1, mtls->yEnd);
+    mtls->zEnd = rsMax((uint32_t)1, mtls->zEnd);
+    mtls->arrayEnd = rsMax((uint32_t)1, mtls->arrayEnd);
+
+    rsAssert(!ain || (ain->getType()->getDimZ() == 0));
+
+    Context *mrsc = (Context *)rsc;
+    mtls->rsc = mrsc;
+    mtls->ain = ain;
+    mtls->aout = aout;
+    mtls->fep.usr = usr;
+    mtls->fep.usrLen = usrLen;
+    mtls->mSliceSize = 10;
+    mtls->mSliceNum = 0;
+
+    mtls->fep.ptrIn = NULL;
+    mtls->fep.eStrideIn = 0;
+    if (ain) {
+        DrvAllocation *aindrv = (DrvAllocation *)ain->mHal.drv;
+        mtls->fep.ptrIn = (const uint8_t *)aindrv->lod[0].mallocPtr;
+        mtls->fep.eStrideIn = ain->getType()->getElementSizeBytes();
+        mtls->fep.yStrideIn = aindrv->lod[0].stride;
+    }
+
+    mtls->fep.ptrOut = NULL;
+    mtls->fep.eStrideOut = 0;
+    if (aout) {
+        DrvAllocation *aoutdrv = (DrvAllocation *)aout->mHal.drv;
+        mtls->fep.ptrOut = (uint8_t *)aoutdrv->lod[0].mallocPtr;
+        mtls->fep.eStrideOut = aout->getType()->getElementSizeBytes();
+        mtls->fep.yStrideOut = aoutdrv->lod[0].stride;
+    }
+}
+
+void rsdScriptLaunchThreads(const Context *rsc,
+                            Script *s,
+                            uint32_t slot,
+                            const Allocation * ain,
+                            Allocation * aout,
+                            const void * usr,
+                            uint32_t usrLen,
+                            const RsScriptCall *sc,
+                            MTLaunchStruct *mtls) {
+
+    Script * oldTLS = setTLS(s);
+    Context *mrsc = (Context *)rsc;
+    RsdHal * dc = (RsdHal *)mtls->rsc->mHal.drv;
+
+    if ((dc->mWorkers.mCount > 1) && s->mHal.info.isThreadable && !dc->mInForEach) {
+        dc->mInForEach = true;
+        if (mtls->fep.dimY > 1) {
+            mtls->mSliceSize = mtls->fep.dimY / (dc->mWorkers.mCount * 4);
+            if(mtls->mSliceSize < 1) {
+                mtls->mSliceSize = 1;
+            }
+
+            rsdLaunchThreads(mrsc, wc_xy, mtls);
+        } else {
+            mtls->mSliceSize = mtls->fep.dimX / (dc->mWorkers.mCount * 4);
+            if(mtls->mSliceSize < 1) {
+                mtls->mSliceSize = 1;
+            }
+
+            rsdLaunchThreads(mrsc, wc_x, mtls);
+        }
+        dc->mInForEach = false;
+
+        //ALOGE("launch 1");
+    } else {
+        RsForEachStubParamStruct p;
+        memcpy(&p, &mtls->fep, sizeof(p));
+        uint32_t sig = mtls->sig;
+
+        //ALOGE("launch 3");
+        outer_foreach_t fn = (outer_foreach_t) mtls->kernel;
+        for (p.ar[0] = mtls->arrayStart; p.ar[0] < mtls->arrayEnd; p.ar[0]++) {
+            for (p.z = mtls->zStart; p.z < mtls->zEnd; p.z++) {
+                for (p.y = mtls->yStart; p.y < mtls->yEnd; p.y++) {
+                    uint32_t offset = mtls->fep.dimY * mtls->fep.dimZ * p.ar[0] +
+                                      mtls->fep.dimY * p.z + p.y;
+                    p.out = mtls->fep.ptrOut + (mtls->fep.yStrideOut * offset);
+                    p.in = mtls->fep.ptrIn + (mtls->fep.yStrideIn * offset);
+                    fn(&p, mtls->xStart, mtls->xEnd, mtls->fep.eStrideIn, mtls->fep.eStrideOut);
+                }
+            }
+        }
+    }
+
+    setTLS(oldTLS);
+}
+
 void rsdScriptInvokeForEach(const Context *rsc,
                             Script *s,
                             uint32_t slot,
@@ -277,15 +375,13 @@ void rsdScriptInvokeForEach(const Context *rsc,
     RsdHal * dc = (RsdHal *)rsc->mHal.drv;
 
     MTLaunchStruct mtls;
-    memset(&mtls, 0, sizeof(mtls));
-
-    //ALOGE("for each script %p  in %p   out %p", s, ain, aout);
+    rsdScriptInvokeForEachMtlsSetup(rsc, ain, aout, usr, usrLen, sc, &mtls);
+    mtls.script = s;
 
     DrvScript *drv = (DrvScript *)s->mHal.drv;
-
     if (drv->mIntrinsicID) {
         mtls.kernel = (void (*)())drv->mIntrinsicFuncs.root;
-        usr = drv->mIntrinsicData;
+        mtls.fep.usr = drv->mIntrinsicData;
     } else {
         rsAssert(slot < drv->mExecutable->getExportForeachFuncAddrs().size());
         mtls.kernel = reinterpret_cast<ForEachFunc_t>(
@@ -294,122 +390,8 @@ void rsdScriptInvokeForEach(const Context *rsc,
         mtls.sig = drv->mExecutable->getInfo().getExportForeachFuncs()[slot].second;
     }
 
-    if (ain) {
-        mtls.fep.dimX = ain->getType()->getDimX();
-        mtls.fep.dimY = ain->getType()->getDimY();
-        mtls.fep.dimZ = ain->getType()->getDimZ();
-        //mtls.dimArray = ain->getType()->getDimArray();
-    } else if (aout) {
-        mtls.fep.dimX = aout->getType()->getDimX();
-        mtls.fep.dimY = aout->getType()->getDimY();
-        mtls.fep.dimZ = aout->getType()->getDimZ();
-        //mtls.dimArray = aout->getType()->getDimArray();
-    } else {
-        rsc->setError(RS_ERROR_BAD_SCRIPT, "rsForEach called with null allocations");
-        return;
-    }
 
-    if (!sc || (sc->xEnd == 0)) {
-        mtls.xEnd = mtls.fep.dimX;
-    } else {
-        rsAssert(sc->xStart < mtls.fep.dimX);
-        rsAssert(sc->xEnd <= mtls.fep.dimX);
-        rsAssert(sc->xStart < sc->xEnd);
-        mtls.xStart = rsMin(mtls.fep.dimX, sc->xStart);
-        mtls.xEnd = rsMin(mtls.fep.dimX, sc->xEnd);
-        if (mtls.xStart >= mtls.xEnd) return;
-    }
-
-    if (!sc || (sc->yEnd == 0)) {
-        mtls.yEnd = mtls.fep.dimY;
-    } else {
-        rsAssert(sc->yStart < mtls.fep.dimY);
-        rsAssert(sc->yEnd <= mtls.fep.dimY);
-        rsAssert(sc->yStart < sc->yEnd);
-        mtls.yStart = rsMin(mtls.fep.dimY, sc->yStart);
-        mtls.yEnd = rsMin(mtls.fep.dimY, sc->yEnd);
-        if (mtls.yStart >= mtls.yEnd) return;
-    }
-
-    mtls.xEnd = rsMax((uint32_t)1, mtls.xEnd);
-    mtls.yEnd = rsMax((uint32_t)1, mtls.yEnd);
-    mtls.zEnd = rsMax((uint32_t)1, mtls.zEnd);
-    mtls.arrayEnd = rsMax((uint32_t)1, mtls.arrayEnd);
-
-    rsAssert(!ain || (ain->getType()->getDimZ() == 0));
-
-    Context *mrsc = (Context *)rsc;
-    Script * oldTLS = setTLS(s);
-
-    mtls.rsc = mrsc;
-    mtls.ain = ain;
-    mtls.aout = aout;
-    mtls.script = s;
-    mtls.fep.usr = usr;
-    mtls.fep.usrLen = usrLen;
-    mtls.mSliceSize = 10;
-    mtls.mSliceNum = 0;
-
-    mtls.fep.ptrIn = NULL;
-    mtls.fep.eStrideIn = 0;
-    if (ain) {
-        DrvAllocation *aindrv = (DrvAllocation *)ain->mHal.drv;
-        mtls.fep.ptrIn = (const uint8_t *)aindrv->lod[0].mallocPtr;
-        mtls.fep.eStrideIn = ain->getType()->getElementSizeBytes();
-        mtls.fep.yStrideIn = aindrv->lod[0].stride;
-    }
-
-    mtls.fep.ptrOut = NULL;
-    mtls.fep.eStrideOut = 0;
-    if (aout) {
-        DrvAllocation *aoutdrv = (DrvAllocation *)aout->mHal.drv;
-        mtls.fep.ptrOut = (uint8_t *)aoutdrv->lod[0].mallocPtr;
-        mtls.fep.eStrideOut = aout->getType()->getElementSizeBytes();
-        mtls.fep.yStrideOut = aoutdrv->lod[0].stride;
-    }
-
-
-    if ((dc->mWorkers.mCount > 1) && s->mHal.info.isThreadable && !dc->mInForEach) {
-        dc->mInForEach = true;
-        if (mtls.fep.dimY > 1) {
-            mtls.mSliceSize = mtls.fep.dimY / (dc->mWorkers.mCount * 4);
-            if(mtls.mSliceSize < 1) {
-                mtls.mSliceSize = 1;
-            }
-
-            rsdLaunchThreads(mrsc, wc_xy, &mtls);
-        } else {
-            mtls.mSliceSize = mtls.fep.dimX / (dc->mWorkers.mCount * 4);
-            if(mtls.mSliceSize < 1) {
-                mtls.mSliceSize = 1;
-            }
-
-            rsdLaunchThreads(mrsc, wc_x, &mtls);
-        }
-        dc->mInForEach = false;
-
-        //ALOGE("launch 1");
-    } else {
-        RsForEachStubParamStruct p;
-        memcpy(&p, &mtls.fep, sizeof(p));
-        uint32_t sig = mtls.sig;
-
-        //ALOGE("launch 3");
-        outer_foreach_t fn = (outer_foreach_t) mtls.kernel;
-        for (p.ar[0] = mtls.arrayStart; p.ar[0] < mtls.arrayEnd; p.ar[0]++) {
-            for (p.z = mtls.zStart; p.z < mtls.zEnd; p.z++) {
-                for (p.y = mtls.yStart; p.y < mtls.yEnd; p.y++) {
-                    uint32_t offset = mtls.fep.dimY * mtls.fep.dimZ * p.ar[0] +
-                                      mtls.fep.dimY * p.z + p.y;
-                    p.out = mtls.fep.ptrOut + (mtls.fep.yStrideOut * offset);
-                    p.in = mtls.fep.ptrIn + (mtls.fep.yStrideIn * offset);
-                    fn(&p, mtls.xStart, mtls.xEnd, mtls.fep.eStrideIn, mtls.fep.eStrideOut);
-                }
-            }
-        }
-    }
-
-    setTLS(oldTLS);
+    rsdScriptLaunchThreads(rsc, s, slot, ain, aout, usr, usrLen, sc, &mtls);
 }
 
 
