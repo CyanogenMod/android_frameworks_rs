@@ -160,6 +160,7 @@ bool rsdInitIntrinsic(const Context *rsc, Script *s, RsScriptIntrinsicID iid, El
     s->mHal.drv = drv;
     drv->mIntrinsicID = iid;
     drv->mIntrinsicData = rsdIntrinsic_Init(rsc, s, iid, &drv->mIntrinsicFuncs);
+    s->mHal.info.isThreadable = true;
 
     pthread_mutex_unlock(&rsdgInitMutex);
     return true;
