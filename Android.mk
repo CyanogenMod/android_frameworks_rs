@@ -87,9 +87,6 @@ LOCAL_MODULE := libRS
 LOCAL_MODULE_CLASS := SHARED_LIBRARIES
 intermediates:= $(local-intermediates-dir)
 
-# We depend directly on doing dlopen(libRSDriver.so).
-LOCAL_REQUIRED_MODULES := libRSDriver
-
 # Generate custom headers
 
 GEN := $(addprefix $(intermediates)/, \
