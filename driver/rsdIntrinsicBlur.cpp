@@ -115,8 +115,14 @@ static void OneVF(float4 *out,
                   int x1, int x2) {
 
 #if defined(ARCH_ARM_HAVE_NEON)
-    rsdIntrinsicBlurVF_K(out, ptrIn, iStride, gPtr, ct, x1, x2);
-    return;
+    {
+        int t = (x2 - x1);
+        t &= ~1;
+        if(t) {
+            rsdIntrinsicBlurVF_K(out, ptrIn, iStride, gPtr, ct, x1, x1 + t);
+        }
+        x1 += t;
+    }
 #endif
 
     while(x2 > x1) {
