@@ -32,7 +32,7 @@ ENTRY(rsdIntrinsicConvolve3x3_K)
         push            {r4-r8, r10, r11, lr}
         vpush           {q4-q7}
 
-        /* Get the coeffs pointer from the stack and load the 
+        /* Get the coeffs pointer from the stack and load the
            coefficients in the q0, q1 NEON registers */
         ldr r4, [sp, #32+64]
         vld1.16 {q0, q1}, [r4]
@@ -273,4 +273,99 @@ ENTRY(rsdIntrinsicColorMatrixDot_K)
         ldmfd           sp!, {r4, lr}
         bx              lr
 END(rsdIntrinsicColorMatrixDot_K)
+
+
+/*
+static void OneVF(float4 *out, const uchar *ptrIn, int iStride,
+                  const float* gPtr, int iradius, int x1, int x2)
+
+    r0 = out
+    r1 = pin
+    r2 = stride
+    r3 = gptr
+    r4 = sp, ct
+    r5 = sp+4, x1
+    r6 = sp+8, x2
+*/
+ENTRY(rsdIntrinsicBlurVF_K)
+        push            {r4-r8, r10, r11, lr}
+        vpush           {q4-q7}
+
+        ldr r4, [sp, #32+64]
+        ldr r5, [sp, #32+64 + 4]
+        ldr r6, [sp, #32+64 + 8]
+
+1:
+        veor q0, q0, q0         /* float4 blurredPixel = 0; */
+        add r7, r1, r5, lsl #2  /* const uchar *pi = ptrIn + x1 * 4; */
+        mov r10, r3
+
+        mov r11, r4
+
+2:
+        vld1.32 {d2[0]}, [r7]
+        vmovl.u8 q1, d2
+        vmovl.u16 q1, d2
+        vcvt.f32.s32 q1, q1
+        vld1.32 {d6[0]}, [r10]!
+        add r7, r7, r2
+        vmla.f32 q0, q1, d6[0]
+        subs r11, r11, #1
+        bne 2b
+
+        vst1.32 {q0}, [r0]!
+        add r5, r5, #1
+        cmp r5, r6
+        bne 1b
+
+
+        vpop            {q4-q7}
+        pop             {r4-r8, r10, r11, lr}
+        bx              lr
+END(rsdIntrinsicBlurVF_K)
+
+/*
+static void OneVF(float4 *out, const uchar *ptrIn, int iStride,
+                  const float* gPtr, int iradius, int x1, int x2)
+
+    r0 = out
+    r1 = pin
+    r2 = gptr
+    r3 = ct
+    r4 = sp, x1
+    r5 = sp+4, x2
+*/
+ENTRY(rsdIntrinsicBlurHF_K)
+        push            {r4-r8, r10, r11, lr}
+        vpush           {q4-q7}
+
+        ldr r4, [sp, #32+64]
+        ldr r5, [sp, #32+64 + 4]
+
+1:
+        veor q0, q0, q0         /* float4 blurredPixel = 0; */
+        add r7, r1, r4, lsl #4  /* const uchar *pi = ptrIn + x1 * 4; */
+        mov r10, r2
+        mov r11, r3
+
+2:
+        vld1.32 {q1}, [r7]!
+        vld1.32 {d6[0]}, [r10]!
+        vmla.f32 q0, q1, d6[0]
+        subs r11, r11, #1
+        bne 2b
+
+        vcvt.s32.f32 q0, q0
+        vmovn.u32 d0, q0
+        vmovn.u16 d0, q0
+
+        vst1.32 {d0[0]}, [r0]!
+        add r4, r4, #1
+        cmp r4, r5
+        bne 1b
+
+        vpop            {q4-q7}
+        pop             {r4-r8, r10, r11, lr}
+        bx              lr
+END(rsdIntrinsicBlurHF_K)
 
