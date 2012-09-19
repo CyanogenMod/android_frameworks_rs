@@ -29,25 +29,30 @@
 */
 
 ENTRY(rsdIntrinsicConvolve3x3_K)
-        .save           {r4, lr}
-        stmfd           sp!, {r4, lr}
+        push            {r4-r8, r10, r11, lr}
         vpush           {q4-q7}
 
-        ldr r4, [sp, #8+64]
-        vld1.16 {q0}, [r4]!
-        vld1.16 {q1}, [r4]
-        ldr r4, [sp, #12+64]
+        /* Get the coeffs pointer from the stack and load the 
+           coefficients in the q0, q1 NEON registers */
+        ldr r4, [sp, #32+64]
+        vld1.16 {q0, q1}, [r4]
+
+        /* Get count from the stack */
+        ldr r4, [sp, #36+64]
+
+        /* Load the frequently used immediate in a register */
+        mov r5, #8
 
 1:
-        vld1.8 {q13}, [r1]
-        vld1.8 {q14}, [r2]
-        vld1.8 {q15}, [r3]
-        add r1, r1, #8
-        add r2, r2, #8
-        add r3, r3, #8
-        PLD         (r1, #8)
-        PLD         (r2, #8)
-        PLD         (r3, #8)
+        /* Load and post-increase the address by r5=#8 */
+        vld1.8 {q13}, [r1], r5
+        vld1.8 {q14}, [r2], r5
+        vld1.8 {q15}, [r3], r5
+
+        /* Signal memory for data that will be used in the loop after the next */
+        PLD         (r1, r5)
+        PLD         (r2, r5)
+        PLD         (r3, r5)
 
         vmovl.u8 q2, d26
         vmovl.u8 q3, d27
@@ -64,30 +69,23 @@ ENTRY(rsdIntrinsicConvolve3x3_K)
 */
 
         vmull.s16 q8, d4, d0[0]
-        vmull.s16 q9, d5, d0[0]
-
-        vmlal.s16 q8, d5, d0[1]
-        vmlal.s16 q9, d6, d0[1]
-
-        vmlal.s16 q8, d6, d0[2]
-        vmlal.s16 q9, d7, d0[2]
-
         vmlal.s16 q8, d4, d0[3]
-        vmlal.s16 q9, d9, d0[3]
-
+        vmlal.s16 q8, d5, d0[1]
+        vmlal.s16 q8, d6, d0[2]
         vmlal.s16 q8, d9, d1[0]
-        vmlal.s16 q9, d10, d1[0]
-
         vmlal.s16 q8, d10, d1[1]
-        vmlal.s16 q9, d11, d1[1]
-
         vmlal.s16 q8, d12, d1[2]
-        vmlal.s16 q9, d13, d1[2]
-
         vmlal.s16 q8, d13, d1[3]
-        vmlal.s16 q9, d14, d1[3]
-
         vmlal.s16 q8, d14, d2[0]
+
+        vmull.s16 q9, d5, d0[0]
+        vmlal.s16 q9, d6, d0[1]
+        vmlal.s16 q9, d7, d0[2]
+        vmlal.s16 q9, d9, d0[3]
+        vmlal.s16 q9, d10, d1[0]
+        vmlal.s16 q9, d11, d1[1]
+        vmlal.s16 q9, d13, d1[2]
+        vmlal.s16 q9, d14, d1[3]
         vmlal.s16 q9, d15, d2[0]
 
         vshrn.i32 d16, q8, #8
@@ -96,15 +94,15 @@ ENTRY(rsdIntrinsicConvolve3x3_K)
         vqmovun.s16 d16, q8
         vst1.8 d16, [r0]!
 
+        /* Are we done yet? */
         subs r4, r4, #1
         bne 1b
 
-
+        /* We're done, bye! */
         vpop            {q4-q7}
-        ldmfd           sp!, {r4, lr}
+        pop             {r4-r8, r10, r11, lr}
         bx              lr
 END(TestConvolveK)
-
 
 /*
         r0 = dst
