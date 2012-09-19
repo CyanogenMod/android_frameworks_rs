@@ -87,7 +87,6 @@ static void Blur_SetVar(const Context *dc, const Script *script, void * intrinsi
     ComputeGaussianWeights(cp);
 }
 
-extern "C" void rsdIntrinsicConvolve3x3_K(void *dst, const void *y0, const void *y1, const void *y2, const short *coef, uint32_t count);
 
 
 static void OneV(const RsForEachStubParamStruct *p, float4 *out, int32_t x, int32_t y,
@@ -106,6 +105,35 @@ static void OneV(const RsForEachStubParamStruct *p, float4 *out, int32_t x, int3
     }
 
     out->xyzw = blurredPixel;
+}
+
+extern "C" void rsdIntrinsicBlurVF_K(void *dst, const void *pin, int stride, const void *gptr, int rct, int x1, int x2);
+extern "C" void rsdIntrinsicBlurHF_K(void *dst, const void *pin, const void *gptr, int rct, int x1, int x2);
+
+static void OneVF(float4 *out,
+                  const uchar *ptrIn, int iStride, const float* gPtr, int ct,
+                  int x1, int x2) {
+
+#if defined(ARCH_ARM_HAVE_NEON)
+    rsdIntrinsicBlurVF_K(out, ptrIn, iStride, gPtr, ct, x1, x2);
+    return;
+#endif
+
+    while(x2 > x1) {
+        const uchar *pi = ptrIn + x1 * 4;
+        float4 blurredPixel = 0;
+        const float* gp = gPtr;
+
+        for (int r = 0; r < ct; r++) {
+            float4 pf = convert_float4(((const uchar4 *)pi)[0]);
+            blurredPixel += pf * gp[0];
+            pi += iStride;
+            gp++;
+        }
+        out->xyzw = blurredPixel;
+        x1++;
+        out++;
+    }
 }
 
 static void OneH(const RsForEachStubParamStruct *p, uchar4 *out, int32_t x,
@@ -137,13 +165,31 @@ static void Blur_uchar4(const RsForEachStubParamStruct *p,
     uint32_t x2 = xend;
 
     float4 *fout = (float4 *)buf;
-    while(x2 > x1) {
-        OneV(p, fout, x1, p->y, pin, din->lod[0].stride, cp->fp, cp->iradius);
-        fout++;
-        x1++;
+    int y = p->y;
+    if ((y > cp->iradius) && (y < ((int)p->dimY - cp->iradius))) {
+        const uchar *pi = pin + (y - cp->iradius) * din->lod[0].stride;
+        OneVF(fout, pi, din->lod[0].stride, cp->fp, cp->iradius * 2 + 1, x1, x2);
+    } else {
+        while(x2 > x1) {
+            OneV(p, fout, x1, y, pin, din->lod[0].stride, cp->fp, cp->iradius);
+            fout++;
+            x1++;
+        }
     }
 
     x1 = xstart;
+    while ((x1 < (uint32_t)cp->iradius) && (x1 < x2)) {
+        OneH(p, out, x1, (float4 *)buf, cp->fp, cp->iradius);
+        out++;
+        x1++;
+    }
+#if defined(ARCH_ARM_HAVE_NEON)
+    if ((x1 + cp->iradius) < x2) {
+        rsdIntrinsicBlurHF_K(out, ((float4 *)buf) - cp->iradius, cp->fp, cp->iradius * 2 + 1, x1, x2 - cp->iradius);
+        out += (x2 - cp->iradius) - x1;
+        x1 = x2 - cp->iradius;
+    }
+#endif
     while(x2 > x1) {
         OneH(p, out, x1, (float4 *)buf, cp->fp, cp->iradius);
         out++;
