@@ -69,9 +69,9 @@ ENTRY(rsdIntrinsicConvolve3x3_K)
 */
 
         vmull.s16 q8, d4, d0[0]
-        vmlal.s16 q8, d4, d0[3]
         vmlal.s16 q8, d5, d0[1]
         vmlal.s16 q8, d6, d0[2]
+        vmlal.s16 q8, d8, d0[3]
         vmlal.s16 q8, d9, d1[0]
         vmlal.s16 q8, d10, d1[1]
         vmlal.s16 q8, d12, d1[2]
@@ -296,25 +296,30 @@ ENTRY(rsdIntrinsicBlurVF_K)
         ldr r6, [sp, #32+64 + 8]
 
 1:
-        veor q0, q0, q0         /* float4 blurredPixel = 0; */
+        veor q10, q10, q10         /* float4 blurredPixel = 0; */
+        veor q11, q11, q11         /* float4 blurredPixel = 0; */
         add r7, r1, r5, lsl #2  /* const uchar *pi = ptrIn + x1 * 4; */
         mov r10, r3
 
         mov r11, r4
 
 2:
-        vld1.32 {d2[0]}, [r7]
+        vld1.32 {d2}, [r7]
         vmovl.u8 q1, d2
-        vmovl.u16 q1, d2
-        vcvt.f32.s32 q1, q1
-        vld1.32 {d6[0]}, [r10]!
+        vmovl.u16 q3, d2
+        vmovl.u16 q4, d3
+        vcvt.f32.s32 q3, q3
+        vcvt.f32.s32 q4, q4
+        vld1.32 {d0[0]}, [r10]!
         add r7, r7, r2
-        vmla.f32 q0, q1, d6[0]
+        vmla.f32 q10, q3, d0[0]
+        vmla.f32 q11, q4, d0[0]
         subs r11, r11, #1
         bne 2b
 
-        vst1.32 {q0}, [r0]!
-        add r5, r5, #1
+        vst1.32 {q10}, [r0]!
+        vst1.32 {q11}, [r0]!
+        add r5, r5, #2
         cmp r5, r6
         bne 1b
 
@@ -343,16 +348,23 @@ ENTRY(rsdIntrinsicBlurHF_K)
         ldr r5, [sp, #32+64 + 4]
 
 1:
-        veor q0, q0, q0         /* float4 blurredPixel = 0; */
         add r7, r1, r4, lsl #4  /* const uchar *pi = ptrIn + x1 * 4; */
         mov r10, r2
         mov r11, r3
 
-2:
         vld1.32 {q1}, [r7]!
         vld1.32 {d6[0]}, [r10]!
+        vmul.f32 q0, q1, d6[0]
+        sub r11, r11, #1
+
+2:
+        vld1.32 {q1}, [r7]!
+        vld1.32 {q2}, [r7]!
+        vld1.32 {d6[0]}, [r10]!
+        vld1.32 {d6[1]}, [r10]!
         vmla.f32 q0, q1, d6[0]
-        subs r11, r11, #1
+        vmla.f32 q0, q2, d6[1]
+        subs r11, r11, #2
         bne 2b
 
         vcvt.s32.f32 q0, q0
