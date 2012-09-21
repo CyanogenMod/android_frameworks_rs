@@ -69,7 +69,18 @@ static uchar4 rsYuvToRGBA_uchar4(uchar y, uchar u, uchar v) {
     return (uchar4){p.r, p.g, p.b, p.a};
 }
 
-//extern "C" void rsdIntrinsicYuvToRGB_K(void *dst, const uchar *Y, const uchar *uv, uint32_t count);
+
+static short YuvCoeff[] = {
+    298, 409, -100, 516,   -208, 255, 0, 0,
+    16, 16, 16, 16,        16, 16, 16, 16,
+    128, 128, 128, 128, 128, 128, 128, 128,
+    298, 298, 298, 298, 298, 298, 298, 298,
+    255, 255, 255, 255, 255, 255, 255, 255
+
+
+};
+
+extern "C" void rsdIntrinsicYuv_K(void *dst, const uchar *Y, const uchar *uv, uint32_t count, const short *param);
 
 static void YuvToRGB_uchar4(const RsForEachStubParamStruct *p,
                                     uint32_t xstart, uint32_t xend,
@@ -87,12 +98,12 @@ static void YuvToRGB_uchar4(const RsForEachStubParamStruct *p,
     uint32_t x2 = xend;
 
     if(x2 > x1) {
-#if 0//defined(ARCH_ARM_HAVE_NEON)
-        int32_t len = (x2 - x1 - 1) >> 1;
+#if defined(ARCH_ARM_HAVE_NEON)
+        int32_t len = (x2 - x1 - 1) >> 3;
         if(len > 0) {
-            rsdIntrinsicYuvToRGB_K(out, Y, uv, len);
-            x1 += len << 1;
-            out += len << 1;
+            rsdIntrinsicYuv_K(out, Y, uv, len, YuvCoeff);
+            x1 += len << 3;
+            out += len << 3;
         }
 #endif
 
