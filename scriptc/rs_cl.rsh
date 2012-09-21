@@ -914,56 +914,48 @@ FN_FUNC_FN(normalize)
  *
  * Supports 1,2,3,4 components
  */
-_RS_RUNTIME float __attribute__((overloadable)) approx_recip(float);
-FN_FUNC_FN(approx_recip)
+_RS_RUNTIME float __attribute__((overloadable)) half_recip(float);
+FN_FUNC_FN(half_recip)
 
 /**
  * Return the approximate square root of a value.
  *
  * Supports 1,2,3,4 components
  */
-_RS_RUNTIME float __attribute__((overloadable)) approx_sqrt(float);
-FN_FUNC_FN(approx_sqrt)
+_RS_RUNTIME float __attribute__((overloadable)) half_sqrt(float);
+FN_FUNC_FN(half_sqrt)
 
 /**
  * Return the approximate value of (1 / sqrt(value)).
  *
  * Supports 1,2,3,4 components
  */
-_RS_RUNTIME float __attribute__((overloadable)) approx_rsqrt(float v);
-FN_FUNC_FN(approx_rsqrt)
+_RS_RUNTIME float __attribute__((overloadable)) half_rsqrt(float v);
+FN_FUNC_FN(half_rsqrt)
 
 /**
  * Compute the approximate length of a vector.
  *
  * Supports 1,2,3,4 components
  */
-_RS_RUNTIME float __attribute__((overloadable)) approx_length(float v);
-F_FUNC_FN(approx_length)
+_RS_RUNTIME float __attribute__((overloadable)) fast_length(float v);
+F_FUNC_FN(fast_length)
 
 /**
  * Compute the approximate distance between two points.
  *
  * Supports 1,2,3,4 components
  */
-_RS_RUNTIME float __attribute__((overloadable)) approx_distance(float lhs, float rhs);
-F_FUNC_FN_FN(approx_distance)
+_RS_RUNTIME float __attribute__((overloadable)) fast_distance(float lhs, float rhs);
+F_FUNC_FN_FN(fast_distance)
 
 /**
  * Approximately normalize a vector.
  *
  * Supports 1,2,3,4 components
  */
-_RS_RUNTIME float __attribute__((overloadable)) approx_normalize(float v);
-F_FUNC_FN(approx_normalize)
-
-/**
- * Compute the approximate arctangent of a value.
- *
- * Supports 1,2,3,4 components
- */
-_RS_RUNTIME float __attribute__((overloadable)) approx_atan(float v);
-FN_FUNC_FN(approx_atan)
+_RS_RUNTIME float __attribute__((overloadable)) fast_normalize(float v);
+F_FUNC_FN(fast_normalize)
 
 #endif  // (defined(RS_VERSION) && (RS_VERSION >= 17))
 
