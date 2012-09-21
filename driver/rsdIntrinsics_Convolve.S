@@ -381,3 +381,85 @@ ENTRY(rsdIntrinsicBlurHF_K)
         bx              lr
 END(rsdIntrinsicBlurHF_K)
 
+/*
+        r0 = dst
+        r1 = Y
+        r2 = VU
+        r3 = length (pixels / 8)
+        r4 = sp, params
+
+        This function converts 8 pixels per iteration
+*/
+ENTRY(rsdIntrinsicYuv_K)
+        push            {r4-r8, r10, r11, lr}
+        vpush           {q4-q7}
+
+        ldr r4, [sp, #32+64]
+        vld1.16 {q2}, [r4]!  // mults
+        vld1.16 {q3}, [r4]!  // y offset
+        vld1.16 {q4}, [r4]!  // 128
+        vdup.8 d3, d5[1]
+
+1:
+        vld1.8 {d10}, [r1]!
+        vld1.8 {d12}, [r2]!
+        vmovl.u8 q5, d10 // Y at .16
+        vmovl.u8 q6, d12 // vu at .16
+
+        vsub.i16 q5, q5, q3
+        vsub.i16 q6, q6, q4
+        vtrn.16 d12, d13  // d12 = u, d13 = v
+        vmov q7, q6
+        vtrn.16 d12, d14
+        vtrn.32 d12, d14
+        vtrn.16 d13, d15
+        vtrn.32 d13, d15
+
+        vmull.s16 q8, d10, d4[0]
+        vmull.s16 q11, d11, d4[0]
+        vmov q9, q8
+        vmov q10, q8
+        vmov q12, q11
+        vmov q13, q11
+
+        vmlal.s16 q8,  d12, d4[1]
+        vmlal.s16 q9,  d12, d5[0]
+        vmlal.s16 q10, d13, d4[3]
+        vmlal.s16 q9,  d13, d4[2]
+
+        vmlal.s16 q11, d14, d4[1]
+        vmlal.s16 q12, d14, d5[0]
+        vmlal.s16 q13, d15, d4[3]
+        vmlal.s16 q12, d15, d4[2]
+
+
+        vshrn.i32 d16, q8, #8
+        vshrn.i32 d18, q9, #8
+        vshrn.i32 d20, q10, #8
+        vqmovun.s16 d0, q8
+        vqmovun.s16 d1, q9
+        vqmovun.s16 d2, q10
+        vst4.8 {d0[0],d1[0],d2[0],d3[0]}, [r0]!
+        vst4.8 {d0[1],d1[1],d2[1],d3[1]}, [r0]!
+        vst4.8 {d0[2],d1[2],d2[2],d3[2]}, [r0]!
+        vst4.8 {d0[3],d1[3],d2[3],d3[3]}, [r0]!
+
+        vshrn.i32 d16, q11, #8
+        vshrn.i32 d18, q12, #8
+        vshrn.i32 d20, q13, #8
+        vqmovun.s16 d0, q8
+        vqmovun.s16 d1, q9
+        vqmovun.s16 d2, q10
+        vst4.8 {d0[0],d1[0],d2[0],d3[0]}, [r0]!
+        vst4.8 {d0[1],d1[1],d2[1],d3[1]}, [r0]!
+        vst4.8 {d0[2],d1[2],d2[2],d3[2]}, [r0]!
+        vst4.8 {d0[3],d1[3],d2[3],d3[3]}, [r0]!
+
+        subs r3, r3, #1
+        bne 1b
+
+        vpop            {q4-q7}
+        pop             {r4-r8, r10, r11, lr}
+        bx              lr
+END(rsdIntrinsicYuv_K)
+
