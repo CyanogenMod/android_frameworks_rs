@@ -27,6 +27,9 @@
  * Returns the Allocation for a given pointer.  The pointer should point within
  * a valid allocation.  The results are undefined if the pointer is not from a
  * valid allocation.
+ *
+ * This function is deprecated and will be removed in the SDK from a future
+ * release.
  */
 extern rs_allocation __attribute__((overloadable))
     rsGetAllocation(const void *);
