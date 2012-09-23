@@ -48,7 +48,6 @@ static void Convolve5x5_SetVar(const Context *dc, const Script *script, void * i
     }
 }
 
-//extern "C" void rsdIntrinsicConvolve3x3_K(void *dst, const void *y0, const void *y1, const void *y2, const short *coef, uint32_t count);
 
 static void One(const RsForEachStubParamStruct *p, uint32_t x, uchar4 *out,
                 const uchar4 *py0, const uchar4 *py1, const uchar4 *py2, const uchar4 *py3, const uchar4 *py4,
@@ -95,6 +94,10 @@ static void One(const RsForEachStubParamStruct *p, uint32_t x, uchar4 *out,
     *out = o;
 }
 
+extern "C" void rsdIntrinsicConvolve5x5_K(void *dst, const void *y0, const void *y1,
+                                          const void *y2, const void *y3, const void *y4,
+                                          const short *coef, uint32_t count);
+
 static void Convolve5x5_uchar4(const RsForEachStubParamStruct *p,
                                     uint32_t xstart, uint32_t xend,
                                     uint32_t instep, uint32_t outstep) {
@@ -117,6 +120,21 @@ static void Convolve5x5_uchar4(const RsForEachStubParamStruct *p,
     uchar4 *out = (uchar4 *)p->out;
     uint32_t x1 = xstart;
     uint32_t x2 = xend;
+
+    while((x1 < x2) && (x1 < 2)) {
+        One(p, x1, out, py0, py1, py2, py3, py4, cp->fp);
+        out++;
+        x1++;
+    }
+
+#if defined(ARCH_ARM_HAVE_NEON)
+    if((x1 + 3) < x2) {
+        uint32_t len = (x2 - x1 - 3) >> 1;
+        rsdIntrinsicConvolve5x5_K(out, py0, py1, py2, py3, py4, cp->ip, len);
+        out += len << 1;
+        x1 += len << 1;
+    }
+#endif
 
     while(x1 < x2) {
         One(p, x1, out, py0, py1, py2, py3, py4, cp->fp);
