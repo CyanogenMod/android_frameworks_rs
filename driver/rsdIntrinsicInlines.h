@@ -67,6 +67,11 @@ static inline float4 convert_float4(uchar4 i) {
     return f4;
 }
 
+static inline uchar4 convert_uchar4(short4 i) {
+    uchar4 f4 = {(uchar)i.x, (uchar)i.y, (uchar)i.z, (uchar)i.w};
+    return f4;
+}
+
 static inline uchar4 convert_uchar4(int4 i) {
     uchar4 f4 = {(uchar)i.x, (uchar)i.y, (uchar)i.z, (uchar)i.w};
     return f4;
