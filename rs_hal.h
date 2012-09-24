@@ -70,6 +70,7 @@ typedef struct {
     uint32_t eStrideOut;
     uint32_t yStrideIn;
     uint32_t yStrideOut;
+    uint32_t slot;
 } RsForEachStubParamStruct;
 
 /**

@@ -290,6 +290,7 @@ void rsdScriptInvokeForEachMtlsSetup(const Context *rsc,
 
     mtls->fep.ptrIn = NULL;
     mtls->fep.eStrideIn = 0;
+
     if (ain) {
         DrvAllocation *aindrv = (DrvAllocation *)ain->mHal.drv;
         mtls->fep.ptrIn = (const uint8_t *)aindrv->lod[0].mallocPtr;
@@ -378,6 +379,7 @@ void rsdScriptInvokeForEach(const Context *rsc,
     MTLaunchStruct mtls;
     rsdScriptInvokeForEachMtlsSetup(rsc, ain, aout, usr, usrLen, sc, &mtls);
     mtls.script = s;
+    mtls.fep.slot = slot;
 
     DrvScript *drv = (DrvScript *)s->mHal.drv;
     if (drv->mIntrinsicID) {

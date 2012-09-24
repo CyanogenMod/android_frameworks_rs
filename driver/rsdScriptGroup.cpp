@@ -106,6 +106,7 @@ void rsdScriptGroupExecute(const android::renderscript::Context *rsc,
 
         rsdScriptInvokeForEachMtlsSetup(rsc, ins[ct], outs[ct], NULL, 0, NULL, &mtls);
         mtls.script = s;
+        mtls.fep.slot = slot;
 
         if (drv->mIntrinsicID) {
             mtls.kernel = (void (*)())drv->mIntrinsicFuncs.root;
