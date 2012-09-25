@@ -179,6 +179,10 @@ static void wc_xy(void *usr, uint32_t idx) {
     RsdHal * dc = (RsdHal *)mtls->rsc->mHal.drv;
     uint32_t sig = mtls->sig;
 
+#if defined(ARCH_ARM_RS_USE_CACHED_SCANLINE_WRITE)
+    unsigned char buf[1024 * 8];
+#endif
+
     outer_foreach_t fn = (outer_foreach_t) mtls->kernel;
     while (1) {
         uint32_t slice = (uint32_t)android_atomic_inc(&mtls->mSliceNum);
@@ -191,10 +195,23 @@ static void wc_xy(void *usr, uint32_t idx) {
 
         //ALOGE("usr idx %i, x %i,%i  y %i,%i", idx, mtls->xStart, mtls->xEnd, yStart, yEnd);
         //ALOGE("usr ptr in %p,  out %p", mtls->ptrIn, mtls->ptrOut);
-        for (p.y = yStart; p.y < yEnd; p.y++) {
-            p.out = mtls->fep.ptrOut + (mtls->fep.yStrideOut * p.y);
-            p.in = mtls->fep.ptrIn + (mtls->fep.yStrideIn * p.y);
-            fn(&p, mtls->xStart, mtls->xEnd, mtls->fep.eStrideIn, mtls->fep.eStrideOut);
+
+#if defined(ARCH_ARM_RS_USE_CACHED_SCANLINE_WRITE)
+        if (mtls->fep.yStrideOut < sizeof(buf)) {
+            p.out = buf;
+            for (p.y = yStart; p.y < yEnd; p.y++) {
+                p.in = mtls->fep.ptrIn + (mtls->fep.yStrideIn * p.y);
+                fn(&p, mtls->xStart, mtls->xEnd, mtls->fep.eStrideIn, mtls->fep.eStrideOut);
+                memcpy(mtls->fep.ptrOut + (mtls->fep.yStrideOut * p.y), buf, mtls->fep.yStrideOut);
+            }
+        } else
+#endif
+            {
+            for (p.y = yStart; p.y < yEnd; p.y++) {
+                p.out = mtls->fep.ptrOut + (mtls->fep.yStrideOut * p.y);
+                p.in = mtls->fep.ptrIn + (mtls->fep.yStrideIn * p.y);
+                fn(&p, mtls->xStart, mtls->xEnd, mtls->fep.eStrideIn, mtls->fep.eStrideOut);
+            }
         }
     }
 }
