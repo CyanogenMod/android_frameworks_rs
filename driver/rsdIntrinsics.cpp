@@ -22,13 +22,13 @@
 using namespace android;
 using namespace android::renderscript;
 
-
 void * rsdIntrinsic_InitBlur(const Context *, Script *, RsdIntriniscFuncs_t *);
 void * rsdIntrinsic_InitConvolve3x3(const Context *, Script *, RsdIntriniscFuncs_t *);
 void * rsdIntrinsic_InitConvolve5x5(const Context *, Script *, RsdIntriniscFuncs_t *);
 void * rsdIntrinsic_InitColorMatrix(const Context *, Script *, RsdIntriniscFuncs_t *);
 void * rsdIntrinsic_InitLUT(const Context *, Script *, RsdIntriniscFuncs_t *);
 void * rsdIntrinsic_InitYuvToRGB(const Context *, Script *, RsdIntriniscFuncs_t *);
+void * rsdIntrinsic_InitBlend(const Context *, Script *, RsdIntriniscFuncs_t *);
 
 static void Bind(const Context *, const Script *, void *, uint32_t, Allocation *) {
     rsAssert(!"Intrinsic_Bind unexpectedly called");
@@ -62,8 +62,10 @@ void * rsdIntrinsic_Init(const android::renderscript::Context *dc,
         return rsdIntrinsic_InitLUT(dc, script, funcs);
     case RS_SCRIPT_INTRINSIC_ID_BLUR:
         return rsdIntrinsic_InitBlur(dc, script, funcs);
-    case RS_SCRIPT_INTRINSIC_YUV_TO_RGB:
+    case RS_SCRIPT_INTRINSIC_ID_YUV_TO_RGB:
         return rsdIntrinsic_InitYuvToRGB(dc, script, funcs);
+    case RS_SCRIPT_INTRINSIC_ID_BLEND:
+        return rsdIntrinsic_InitBlend(dc, script, funcs);
 
     default:
         return NULL;

@@ -24,7 +24,5 @@ void * rsdIntrinsic_Init(const android::renderscript::Context *dc,
                          android::renderscript::Script *script,
                          RsScriptIntrinsicID id, RsdIntriniscFuncs_t *funcs);
 
-
-
 #endif // RSD_INTRINSICS_H
 

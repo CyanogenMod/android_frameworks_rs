@@ -111,6 +111,8 @@ static void ColorMatrix_uchar4(const RsForEachStubParamStruct *p,
                                uint32_t xstart, uint32_t xend,
                                uint32_t instep, uint32_t outstep) {
     ConvolveParams *cp = (ConvolveParams *)p->usr;
+
+    // instep/outstep can be ignored--sizeof(uchar4) known at compile time
     uchar4 *out = (uchar4 *)p->out;
     uchar4 *in = (uchar4 *)p->in;
     uint32_t x1 = xstart;
@@ -127,21 +129,225 @@ static void ColorMatrix_uchar4(const RsForEachStubParamStruct *p,
         break;
     case BLEND_SRC:
         for (;x1 < x2; x1++, out++, in++) {
-            uchar4 t = *in;
-            t.rgb = (t.rgb * t.a) >> 8;
-            *out = t;
+          *out = *in;
         }
         break;
+    //BLEND_DST is a NOP
     case BLEND_DST:
+        break;
+    case BLEND_SRC_OVER:
         for (;x1 < x2; x1++, out++, in++) {
-            uchar4 t = *in;
-            t.rgb = (t.rgb * t.a) >> 8;
-            *out = t;
+            short4 in_s = convert_short4(*in);
+            short4 out_s = convert_short4(*out);
+            in_s = in_s + ((out_s * (short4)(255 - in_s.a)) >> (short4)8);
+            *out = convert_uchar4(in_s);
         }
         break;
+    case BLEND_DST_OVER:
+        for (;x1 < x2; x1++, out++, in++) {
+            short4 in_s = convert_short4(*in);
+            short4 out_s = convert_short4(*out);
+            in_s = out_s + ((in_s * (short4)(255 - out_s.a)) >> (short4)8);
+            *out = convert_uchar4(in_s);
+        }
+        break;
+    case BLEND_SRC_IN:
+        for (;x1 < x2; x1++, out++, in++) {
+            short4 in_s = convert_short4(*in);
+            in_s = (in_s * out->a) >> (short4)8;
+            *out = convert_uchar4(in_s);
+        }
+        break;
+    case BLEND_DST_IN:
+        for (;x1 < x2; x1++, out++, in++) {
+            short4 out_s = convert_short4(*out);
+            out_s = (out_s * in->a) >> (short4)8;
+            *out = convert_uchar4(out_s);
+        }
+        break;
+    case BLEND_SRC_OUT:
+        for (;x1 < x2; x1++, out++, in++) {
+            short4 in_s = convert_short4(*in);
+            in_s = (in_s * (short4)(255 - out->a)) >> (short4)8;
+            *out = convert_uchar4(in_s);
+        }
+        break;
+    case BLEND_DST_OUT:
+        for (;x1 < x2; x1++, out++, in++) {
+            short4 out_s = convert_short4(*out);
+            out_s = (out_s * (short4)(255 - in->a)) >> (short4)8;
+            *out = convert_uchar4(out_s);
+        }
+        break;
+    case BLEND_SRC_ATOP:
+        for (;x1 < x2; x1++, out++, in++) {
+            short4 in_s = convert_short4(*in);
+            short4 out_s = convert_short4(*out);
+            out_s.rgb = ((in_s.rgb * out_s.a) >> (short3)8) +
+              ((out_s.rgb * ((short3)255 - (short3)in_s.a)) >> (short3)8);
+            *out = convert_uchar4(out_s);
+        }
+        break;
+    case BLEND_DST_ATOP:
+        for (;x1 < x2; x1++, out++, in++) {
+            short4 in_s = convert_short4(*in);
+            short4 out_s = convert_short4(*out);
+            out_s.rgb = ((out_s.rgb * in_s.a) >> (short3)8) +
+              ((in_s.rgb * ((short3)255 - (short3)out_s.a)) >> (short3)8);
+            *out = convert_uchar4(out_s);
+        }
+        break;
+    case BLEND_XOR:
+        for (;x1 < x2; x1++, out++, in++) {
+            *out = *in ^ *out;
+        }
+        break;
+    case BLEND_NORMAL:
+        ALOGE("Called unimplemented blend intrinsic BLEND_NORMAL");
+        rsAssert(false);
+        break;
+    case BLEND_AVERAGE:
+        ALOGE("Called unimplemented blend intrinsic BLEND_AVERAGE");
+        rsAssert(false);
+        break;
+    case BLEND_MULTIPLY:
+        for (;x1 < x2; x1++, out++, in++) {
+          *out = convert_uchar4((convert_short4(*in) * convert_short4(*out))
+                                >> (short4)8);
+        }
+        break;
+    case BLEND_SCREEN:
+        ALOGE("Called unimplemented blend intrinsic BLEND_SCREEN");
+        rsAssert(false);
+        break;
+    case BLEND_DARKEN:
+        ALOGE("Called unimplemented blend intrinsic BLEND_DARKEN");
+        rsAssert(false);
+        break;
+    case BLEND_LIGHTEN:
+        ALOGE("Called unimplemented blend intrinsic BLEND_LIGHTEN");
+        rsAssert(false);
+        break;
+    case BLEND_OVERLAY:
+        ALOGE("Called unimplemented blend intrinsic BLEND_OVERLAY");
+        rsAssert(false);
+        break;
+    case BLEND_HARDLIGHT:
+        ALOGE("Called unimplemented blend intrinsic BLEND_HARDLIGHT");
+        rsAssert(false);
+        break;
+    case BLEND_SOFTLIGHT:
+        ALOGE("Called unimplemented blend intrinsic BLEND_SOFTLIGHT");
+        rsAssert(false);
+        break;
+    case BLEND_DIFFERENCE:
+        ALOGE("Called unimplemented blend intrinsic BLEND_DIFFERENCE");
+        rsAssert(false);
+        break;
+    case BLEND_NEGATION:
+        ALOGE("Called unimplemented blend intrinsic BLEND_NEGATION");
+        rsAssert(false);
+        break;
+    case BLEND_EXCLUSION:
+        ALOGE("Called unimplemented blend intrinsic BLEND_EXCLUSION");
+        rsAssert(false);
+        break;
+    case BLEND_COLOR_DODGE:
+        ALOGE("Called unimplemented blend intrinsic BLEND_COLOR_DODGE");
+        rsAssert(false);
+        break;
+    case BLEND_INVERSE_COLOR_DODGE:
+        ALOGE("Called unimplemented blend intrinsic BLEND_INVERSE_COLOR_DODGE");
+        rsAssert(false);
+        break;
+    case BLEND_SOFT_DODGE:
+        ALOGE("Called unimplemented blend intrinsic BLEND_SOFT_DODGE");
+        rsAssert(false);
+        break;
+    case BLEND_COLOR_BURN:
+        ALOGE("Called unimplemented blend intrinsic BLEND_COLOR_BURN");
+        rsAssert(false);
+        break;
+    case BLEND_INVERSE_COLOR_BURN:
+        ALOGE("Called unimplemented blend intrinsic BLEND_INVERSE_COLOR_BURN");
+        rsAssert(false);
+        break;
+    case BLEND_SOFT_BURN:
+        ALOGE("Called unimplemented blend intrinsic BLEND_SOFT_BURN");
+        rsAssert(false);
+        break;
+    case BLEND_REFLECT:
+        ALOGE("Called unimplemented blend intrinsic BLEND_REFLECT");
+        rsAssert(false);
+        break;
+    case BLEND_GLOW:
+        ALOGE("Called unimplemented blend intrinsic BLEND_GLOW");
+        rsAssert(false);
+        break;
+    case BLEND_FREEZE:
+        ALOGE("Called unimplemented blend intrinsic BLEND_FREEZE");
+        rsAssert(false);
+        break;
+    case BLEND_HEAT:
+        ALOGE("Called unimplemented blend intrinsic BLEND_HEAT");
+        rsAssert(false);
+        break;
+    case BLEND_ADD:
+        for (;x1 < x2; x1++, out++, in++) {
+            uint32_t iR = in->r, iG = in->g, iB = in->b, iA = in->a,
+                oR = out->r, oG = out->g, oB = out->b, oA = out->a;
+            out->r = (oR + iR) > 255 ? 255 : oR + iR;
+            out->g = (oG + iG) > 255 ? 255 : oG + iG;
+            out->b = (oB + iB) > 255 ? 255 : oB + iB;
+            out->a = (oA + iA) > 255 ? 255 : oA + iA;
+        }
+        break;
+    case BLEND_SUBTRACT:
+        for (;x1 < x2; x1++, out++, in++) {
+            int32_t iR = in->r, iG = in->g, iB = in->b, iA = in->a,
+                oR = out->r, oG = out->g, oB = out->b, oA = out->a;
+            out->r = (oR - iR) < 0 ? 0 : oR - iR;
+            out->g = (oG - iG) < 0 ? 0 : oG - iG;
+            out->b = (oB - iB) < 0 ? 0 : oB - iB;
+            out->a = (oA - iA) < 0 ? 0 : oA - iA;
+        }
+        break;
+    case BLEND_STAMP:
+        ALOGE("Called unimplemented blend intrinsic BLEND_STAMP");
+        rsAssert(false);
+        break;
+    case BLEND_RED:
+        ALOGE("Called unimplemented blend intrinsic BLEND_RED");
+        rsAssert(false);
+        break;
+    case BLEND_GREEN:
+        ALOGE("Called unimplemented blend intrinsic BLEND_GREEN");
+        rsAssert(false);
+        break;
+    case BLEND_BLUE:
+        ALOGE("Called unimplemented blend intrinsic BLEND_BLUE");
+        rsAssert(false);
+        break;
+    case BLEND_HUE:
+        ALOGE("Called unimplemented blend intrinsic BLEND_HUE");
+        rsAssert(false);
+        break;
+    case BLEND_SATURATION:
+        ALOGE("Called unimplemented blend intrinsic BLEND_SATURATION");
+        rsAssert(false);
+        break;
+    case BLEND_COLOR:
+        ALOGE("Called unimplemented blend intrinsic BLEND_COLOR");
+        rsAssert(false);
+        break;
+    case BLEND_LUMINOSITY:
+        ALOGE("Called unimplemented blend intrinsic BLEND_LUMINOSITY");
+        rsAssert(false);
+        break;
 
-
-
+    default:
+        ALOGE("Called unimplemented value %d", p->slot);
+        rsAssert(false);
 
     }
 
