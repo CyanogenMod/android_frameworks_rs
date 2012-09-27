@@ -29,36 +29,6 @@ struct ConvolveParams {
 };
 
 
-static void One(const RsForEachStubParamStruct *p, uchar4 *out,
-                const uchar4 *py, const float* coeff) {
-    float4 i = convert_float4(py[0]);
-
-    float4 sum;
-    sum.x = i.x * coeff[0] +
-            i.y * coeff[4] +
-            i.z * coeff[8] +
-            i.w * coeff[12];
-    sum.y = i.x * coeff[1] +
-            i.y * coeff[5] +
-            i.z * coeff[9] +
-            i.w * coeff[13];
-    sum.z = i.x * coeff[2] +
-            i.y * coeff[6] +
-            i.z * coeff[10] +
-            i.w * coeff[14];
-    sum.w = i.x * coeff[3] +
-            i.y * coeff[7] +
-            i.z * coeff[11] +
-            i.w * coeff[15];
-
-    sum.x = sum.x < 0 ? 0 : (sum.x > 255 ? 255 : sum.x);
-    sum.y = sum.y < 0 ? 0 : (sum.y > 255 ? 255 : sum.y);
-    sum.z = sum.z < 0 ? 0 : (sum.z > 255 ? 255 : sum.z);
-    sum.w = sum.w < 0 ? 0 : (sum.w > 255 ? 255 : sum.w);
-
-    *out = convert_uchar4(sum);
-}
-
 enum {
     BLEND_CLEAR = 0,
     BLEND_SRC = 1,
@@ -107,6 +77,21 @@ enum {
     BLEND_LUMINOSITY = 43
 };
 
+extern "C" void rsdIntrinsicBlendSrcOver_K(void *dst, const void *src, uint32_t count8);
+extern "C" void rsdIntrinsicBlendDstOver_K(void *dst, const void *src, uint32_t count8);
+extern "C" void rsdIntrinsicBlendSrcIn_K(void *dst, const void *src, uint32_t count8);
+extern "C" void rsdIntrinsicBlendDstIn_K(void *dst, const void *src, uint32_t count8);
+extern "C" void rsdIntrinsicBlendSrcOut_K(void *dst, const void *src, uint32_t count8);
+extern "C" void rsdIntrinsicBlendDstOut_K(void *dst, const void *src, uint32_t count8);
+extern "C" void rsdIntrinsicBlendSrcAtop_K(void *dst, const void *src, uint32_t count8);
+extern "C" void rsdIntrinsicBlendDstAtop_K(void *dst, const void *src, uint32_t count8);
+extern "C" void rsdIntrinsicBlendXor_K(void *dst, const void *src, uint32_t count8);
+extern "C" void rsdIntrinsicBlendMultiply_K(void *dst, const void *src, uint32_t count8);
+extern "C" void rsdIntrinsicBlendAdd_K(void *dst, const void *src, uint32_t count8);
+extern "C" void rsdIntrinsicBlendSub_K(void *dst, const void *src, uint32_t count8);
+
+//#undef ARCH_ARM_HAVE_NEON
+
 static void ColorMatrix_uchar4(const RsForEachStubParamStruct *p,
                                uint32_t xstart, uint32_t xend,
                                uint32_t instep, uint32_t outstep) {
@@ -136,6 +121,15 @@ static void ColorMatrix_uchar4(const RsForEachStubParamStruct *p,
     case BLEND_DST:
         break;
     case BLEND_SRC_OVER:
+#if defined(ARCH_ARM_HAVE_NEON)
+        if((x1 + 8) < x2) {
+            uint32_t len = (x2 - x1) >> 3;
+            rsdIntrinsicBlendSrcOver_K(out, in, len);
+            x1 += len << 3;
+            out += len << 3;
+            in += len << 3;
+        }
+#endif
         for (;x1 < x2; x1++, out++, in++) {
             short4 in_s = convert_short4(*in);
             short4 out_s = convert_short4(*out);
@@ -144,6 +138,15 @@ static void ColorMatrix_uchar4(const RsForEachStubParamStruct *p,
         }
         break;
     case BLEND_DST_OVER:
+#if defined(ARCH_ARM_HAVE_NEON)
+        if((x1 + 8) < x2) {
+            uint32_t len = (x2 - x1) >> 3;
+            rsdIntrinsicBlendDstOver_K(out, in, len);
+            x1 += len << 3;
+            out += len << 3;
+            in += len << 3;
+        }
+#endif
         for (;x1 < x2; x1++, out++, in++) {
             short4 in_s = convert_short4(*in);
             short4 out_s = convert_short4(*out);
@@ -152,6 +155,15 @@ static void ColorMatrix_uchar4(const RsForEachStubParamStruct *p,
         }
         break;
     case BLEND_SRC_IN:
+#if defined(ARCH_ARM_HAVE_NEON)
+        if((x1 + 8) < x2) {
+            uint32_t len = (x2 - x1) >> 3;
+            rsdIntrinsicBlendSrcIn_K(out, in, len);
+            x1 += len << 3;
+            out += len << 3;
+            in += len << 3;
+        }
+#endif
         for (;x1 < x2; x1++, out++, in++) {
             short4 in_s = convert_short4(*in);
             in_s = (in_s * out->a) >> (short4)8;
@@ -159,6 +171,15 @@ static void ColorMatrix_uchar4(const RsForEachStubParamStruct *p,
         }
         break;
     case BLEND_DST_IN:
+#if defined(ARCH_ARM_HAVE_NEON)
+        if((x1 + 8) < x2) {
+            uint32_t len = (x2 - x1) >> 3;
+            rsdIntrinsicBlendDstIn_K(out, in, len);
+            x1 += len << 3;
+            out += len << 3;
+            in += len << 3;
+        }
+#endif
         for (;x1 < x2; x1++, out++, in++) {
             short4 out_s = convert_short4(*out);
             out_s = (out_s * in->a) >> (short4)8;
@@ -166,6 +187,15 @@ static void ColorMatrix_uchar4(const RsForEachStubParamStruct *p,
         }
         break;
     case BLEND_SRC_OUT:
+#if defined(ARCH_ARM_HAVE_NEON)
+        if((x1 + 8) < x2) {
+            uint32_t len = (x2 - x1) >> 3;
+            rsdIntrinsicBlendSrcOut_K(out, in, len);
+            x1 += len << 3;
+            out += len << 3;
+            in += len << 3;
+        }
+#endif
         for (;x1 < x2; x1++, out++, in++) {
             short4 in_s = convert_short4(*in);
             in_s = (in_s * (short4)(255 - out->a)) >> (short4)8;
@@ -173,6 +203,15 @@ static void ColorMatrix_uchar4(const RsForEachStubParamStruct *p,
         }
         break;
     case BLEND_DST_OUT:
+#if defined(ARCH_ARM_HAVE_NEON)
+        if((x1 + 8) < x2) {
+            uint32_t len = (x2 - x1) >> 3;
+            rsdIntrinsicBlendDstOut_K(out, in, len);
+            x1 += len << 3;
+            out += len << 3;
+            in += len << 3;
+        }
+#endif
         for (;x1 < x2; x1++, out++, in++) {
             short4 out_s = convert_short4(*out);
             out_s = (out_s * (short4)(255 - in->a)) >> (short4)8;
@@ -180,24 +219,51 @@ static void ColorMatrix_uchar4(const RsForEachStubParamStruct *p,
         }
         break;
     case BLEND_SRC_ATOP:
+#if defined(ARCH_ARM_HAVE_NEON)
+        if((x1 + 8) < x2) {
+            uint32_t len = (x2 - x1) >> 3;
+            rsdIntrinsicBlendSrcAtop_K(out, in, len);
+            x1 += len << 3;
+            out += len << 3;
+            in += len << 3;
+        }
+#endif
         for (;x1 < x2; x1++, out++, in++) {
             short4 in_s = convert_short4(*in);
             short4 out_s = convert_short4(*out);
-            out_s.rgb = ((in_s.rgb * out_s.a) >> (short3)8) +
-              ((out_s.rgb * ((short3)255 - (short3)in_s.a)) >> (short3)8);
+            out_s.rgb = ((in_s.rgb * out_s.a) +
+              (out_s.rgb * ((short3)255 - (short3)in_s.a))) >> (short3)8;
             *out = convert_uchar4(out_s);
         }
         break;
     case BLEND_DST_ATOP:
+#if defined(ARCH_ARM_HAVE_NEON)
+        if((x1 + 8) < x2) {
+            uint32_t len = (x2 - x1) >> 3;
+            rsdIntrinsicBlendDstAtop_K(out, in, len);
+            x1 += len << 3;
+            out += len << 3;
+            in += len << 3;
+        }
+#endif
         for (;x1 < x2; x1++, out++, in++) {
             short4 in_s = convert_short4(*in);
             short4 out_s = convert_short4(*out);
-            out_s.rgb = ((out_s.rgb * in_s.a) >> (short3)8) +
-              ((in_s.rgb * ((short3)255 - (short3)out_s.a)) >> (short3)8);
+            out_s.rgb = ((out_s.rgb * in_s.a) +
+              (in_s.rgb * ((short3)255 - (short3)out_s.a))) >> (short3)8;
             *out = convert_uchar4(out_s);
         }
         break;
     case BLEND_XOR:
+#if defined(ARCH_ARM_HAVE_NEON)
+        if((x1 + 8) < x2) {
+            uint32_t len = (x2 - x1) >> 3;
+            rsdIntrinsicBlendXor_K(out, in, len);
+            x1 += len << 3;
+            out += len << 3;
+            in += len << 3;
+        }
+#endif
         for (;x1 < x2; x1++, out++, in++) {
             *out = *in ^ *out;
         }
@@ -211,6 +277,15 @@ static void ColorMatrix_uchar4(const RsForEachStubParamStruct *p,
         rsAssert(false);
         break;
     case BLEND_MULTIPLY:
+#if defined(ARCH_ARM_HAVE_NEON)
+        if((x1 + 8) < x2) {
+            uint32_t len = (x2 - x1) >> 3;
+            rsdIntrinsicBlendMultiply_K(out, in, len);
+            x1 += len << 3;
+            out += len << 3;
+            in += len << 3;
+        }
+#endif
         for (;x1 < x2; x1++, out++, in++) {
           *out = convert_uchar4((convert_short4(*in) * convert_short4(*out))
                                 >> (short4)8);
@@ -293,6 +368,15 @@ static void ColorMatrix_uchar4(const RsForEachStubParamStruct *p,
         rsAssert(false);
         break;
     case BLEND_ADD:
+#if defined(ARCH_ARM_HAVE_NEON)
+        if((x1 + 8) < x2) {
+            uint32_t len = (x2 - x1) >> 3;
+            rsdIntrinsicBlendAdd_K(out, in, len);
+            x1 += len << 3;
+            out += len << 3;
+            in += len << 3;
+        }
+#endif
         for (;x1 < x2; x1++, out++, in++) {
             uint32_t iR = in->r, iG = in->g, iB = in->b, iA = in->a,
                 oR = out->r, oG = out->g, oB = out->b, oA = out->a;
@@ -303,6 +387,15 @@ static void ColorMatrix_uchar4(const RsForEachStubParamStruct *p,
         }
         break;
     case BLEND_SUBTRACT:
+#if defined(ARCH_ARM_HAVE_NEON)
+        if((x1 + 8) < x2) {
+            uint32_t len = (x2 - x1) >> 3;
+            rsdIntrinsicBlendSub_K(out, in, len);
+            x1 += len << 3;
+            out += len << 3;
+            in += len << 3;
+        }
+#endif
         for (;x1 < x2; x1++, out++, in++) {
             int32_t iR = in->r, iG = in->g, iB = in->b, iA = in->a,
                 oR = out->r, oG = out->g, oB = out->b, oA = out->a;
@@ -349,13 +442,6 @@ static void ColorMatrix_uchar4(const RsForEachStubParamStruct *p,
         ALOGE("Called unimplemented value %d", p->slot);
         rsAssert(false);
 
-    }
-
-    if(x2 > x1) {
-        while(x1 != x2) {
-            One(p, out++, in++, cp->f);
-            x1++;
-        }
     }
 }
 
