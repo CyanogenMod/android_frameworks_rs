@@ -640,3 +640,888 @@ ENTRY(rsdIntrinsicConvolve5x5_K)
         bx          lr
 
 END(rsdIntrinsicConvolve5x5_K)
+
+
+
+
+/*
+        dst = src + dst * (1.0 - src.a)
+
+        r0 = dst
+        r1 = src
+        r2 = length
+*/
+ENTRY(rsdIntrinsicBlendSrcOver_K)
+        .save           {r4, lr}
+        stmfd           sp!, {r4, lr}
+        vpush           {q4-q7}
+
+        mov r4, #255
+        vdup.16 q7, r4
+
+        mov r4, r0
+1:
+
+        /* src */
+        vld4.8 {d0[0],d1[0],d2[0],d3[0]}, [r1]!
+        vld4.8 {d0[1],d1[1],d2[1],d3[1]}, [r1]!
+        vld4.8 {d0[2],d1[2],d2[2],d3[2]}, [r1]!
+        vld4.8 {d0[3],d1[3],d2[3],d3[3]}, [r1]!
+        vld4.8 {d0[4],d1[4],d2[4],d3[4]}, [r1]!
+        vld4.8 {d0[5],d1[5],d2[5],d3[5]}, [r1]!
+        vld4.8 {d0[6],d1[6],d2[6],d3[6]}, [r1]!
+        vld4.8 {d0[7],d1[7],d2[7],d3[7]}, [r1]!
+        vshll.u8 q12, d0, #8
+        vshll.u8 q13, d1, #8
+        vshll.u8 q14, d2, #8
+        vmovl.u8 q6, d3
+        vsub.i16 q6, q7, q6        // q6 = 1 - src.a
+        vshll.u8 q15, d3, #8
+
+        /* dst */
+        vld4.8 {d0[0],d1[0],d2[0],d3[0]}, [r0]!
+        vld4.8 {d0[1],d1[1],d2[1],d3[1]}, [r0]!
+        vld4.8 {d0[2],d1[2],d2[2],d3[2]}, [r0]!
+        vld4.8 {d0[3],d1[3],d2[3],d3[3]}, [r0]!
+        vld4.8 {d0[4],d1[4],d2[4],d3[4]}, [r0]!
+        vld4.8 {d0[5],d1[5],d2[5],d3[5]}, [r0]!
+        vld4.8 {d0[6],d1[6],d2[6],d3[6]}, [r0]!
+        vld4.8 {d0[7],d1[7],d2[7],d3[7]}, [r0]!
+        vmovl.u8 q8, d0
+        vmovl.u8 q9, d1
+        vmovl.u8 q10, d2
+        vmovl.u8 q11, d3
+
+        vmla.i16 q12, q8, q6
+        vmla.i16 q13, q9, q6
+        vmla.i16 q14, q10, q6
+        vmla.i16 q15, q11, q6
+
+        vshrn.i16 d0, q12, #8
+        vshrn.i16 d1, q13, #8
+        vshrn.i16 d2, q14, #8
+        vshrn.i16 d3, q15, #8
+        vst4.8 {d0[0],d1[0],d2[0],d3[0]}, [r4]!
+        vst4.8 {d0[1],d1[1],d2[1],d3[1]}, [r4]!
+        vst4.8 {d0[2],d1[2],d2[2],d3[2]}, [r4]!
+        vst4.8 {d0[3],d1[3],d2[3],d3[3]}, [r4]!
+        vst4.8 {d0[4],d1[4],d2[4],d3[4]}, [r4]!
+        vst4.8 {d0[5],d1[5],d2[5],d3[5]}, [r4]!
+        vst4.8 {d0[6],d1[6],d2[6],d3[6]}, [r4]!
+        vst4.8 {d0[7],d1[7],d2[7],d3[7]}, [r4]!
+
+        subs r2, r2, #1
+        bne 1b
+
+        vpop            {q4-q7}
+        ldmfd           sp!, {r4, lr}
+        bx              lr
+END(rsdIntrinsicBlendSrcOver_K)
+
+/*
+        dst = dst + src * (1.0 - dst.a)
+
+        r0 = dst
+        r1 = src
+        r2 = length
+*/
+ENTRY(rsdIntrinsicBlendDstOver_K)
+        .save           {r4, lr}
+        stmfd           sp!, {r4, lr}
+        vpush           {q4-q7}
+
+        mov r4, #255
+        vdup.16 q7, r4
+
+        mov r4, r0
+1:
+
+        /* src */
+        vld4.8 {d0[0],d1[0],d2[0],d3[0]}, [r1]!
+        vld4.8 {d0[1],d1[1],d2[1],d3[1]}, [r1]!
+        vld4.8 {d0[2],d1[2],d2[2],d3[2]}, [r1]!
+        vld4.8 {d0[3],d1[3],d2[3],d3[3]}, [r1]!
+        vld4.8 {d0[4],d1[4],d2[4],d3[4]}, [r1]!
+        vld4.8 {d0[5],d1[5],d2[5],d3[5]}, [r1]!
+        vld4.8 {d0[6],d1[6],d2[6],d3[6]}, [r1]!
+        vld4.8 {d0[7],d1[7],d2[7],d3[7]}, [r1]!
+        vmovl.u8 q12, d0
+        vmovl.u8 q13, d1
+        vmovl.u8 q14, d2
+        vmovl.u8 q15, d3
+
+        /* dst */
+        vld4.8 {d0[0],d1[0],d2[0],d3[0]}, [r0]!
+        vld4.8 {d0[1],d1[1],d2[1],d3[1]}, [r0]!
+        vld4.8 {d0[2],d1[2],d2[2],d3[2]}, [r0]!
+        vld4.8 {d0[3],d1[3],d2[3],d3[3]}, [r0]!
+        vld4.8 {d0[4],d1[4],d2[4],d3[4]}, [r0]!
+        vld4.8 {d0[5],d1[5],d2[5],d3[5]}, [r0]!
+        vld4.8 {d0[6],d1[6],d2[6],d3[6]}, [r0]!
+        vld4.8 {d0[7],d1[7],d2[7],d3[7]}, [r0]!
+        vshll.u8 q8, d0, #8
+        vshll.u8 q9, d1, #8
+        vshll.u8 q10, d2, #8
+        vmovl.u8 q6, d3
+        vsub.i16 q6, q7, q6        // q6 = 1 - dst.a
+        vshll.u8 q11, d3, #8
+
+
+        vmla.i16 q8, q12, q6
+        vmla.i16 q9, q13, q6
+        vmla.i16 q10, q14, q6
+        vmla.i16 q11, q15, q6
+
+        vshrn.i16 d0, q8, #8
+        vshrn.i16 d1, q9, #8
+        vshrn.i16 d2, q10, #8
+        vshrn.i16 d3, q11, #8
+        vst4.8 {d0[0],d1[0],d2[0],d3[0]}, [r4]!
+        vst4.8 {d0[1],d1[1],d2[1],d3[1]}, [r4]!
+        vst4.8 {d0[2],d1[2],d2[2],d3[2]}, [r4]!
+        vst4.8 {d0[3],d1[3],d2[3],d3[3]}, [r4]!
+        vst4.8 {d0[4],d1[4],d2[4],d3[4]}, [r4]!
+        vst4.8 {d0[5],d1[5],d2[5],d3[5]}, [r4]!
+        vst4.8 {d0[6],d1[6],d2[6],d3[6]}, [r4]!
+        vst4.8 {d0[7],d1[7],d2[7],d3[7]}, [r4]!
+
+        subs r2, r2, #1
+        bne 1b
+
+        vpop            {q4-q7}
+        ldmfd           sp!, {r4, lr}
+        bx              lr
+END(rsdIntrinsicBlendDstOver_K)
+
+/*
+        dst = src * dst.a
+
+        r0 = dst
+        r1 = src
+        r2 = length
+*/
+ENTRY(rsdIntrinsicBlendSrcIn_K)
+        .save           {r4, lr}
+        stmfd           sp!, {r4, lr}
+        vpush           {q4-q7}
+
+        mov r4, r0
+1:
+
+        /* src */
+        vld4.8 {d0[0],d1[0],d2[0],d3[0]}, [r1]!
+        vld4.8 {d0[1],d1[1],d2[1],d3[1]}, [r1]!
+        vld4.8 {d0[2],d1[2],d2[2],d3[2]}, [r1]!
+        vld4.8 {d0[3],d1[3],d2[3],d3[3]}, [r1]!
+        vld4.8 {d0[4],d1[4],d2[4],d3[4]}, [r1]!
+        vld4.8 {d0[5],d1[5],d2[5],d3[5]}, [r1]!
+        vld4.8 {d0[6],d1[6],d2[6],d3[6]}, [r1]!
+        vld4.8 {d0[7],d1[7],d2[7],d3[7]}, [r1]!
+        vmovl.u8 q12, d0
+        vmovl.u8 q13, d1
+        vmovl.u8 q14, d2
+        vmovl.u8 q15, d3
+
+        /* dst */
+        vld4.8 {d0[0],d1[0],d2[0],d3[0]}, [r0]!
+        vld4.8 {d0[1],d1[1],d2[1],d3[1]}, [r0]!
+        vld4.8 {d0[2],d1[2],d2[2],d3[2]}, [r0]!
+        vld4.8 {d0[3],d1[3],d2[3],d3[3]}, [r0]!
+        vld4.8 {d0[4],d1[4],d2[4],d3[4]}, [r0]!
+        vld4.8 {d0[5],d1[5],d2[5],d3[5]}, [r0]!
+        vld4.8 {d0[6],d1[6],d2[6],d3[6]}, [r0]!
+        vld4.8 {d0[7],d1[7],d2[7],d3[7]}, [r0]!
+        //vmovl.u8 q8, d0
+        //vmovl.u8 q9, d1
+        //vmovl.u8 q10, d2
+        vmovl.u8 q11, d3
+
+        vmul.i16 q12, q12, q11
+        vmul.i16 q13, q13, q11
+        vmul.i16 q14, q14, q11
+        vmul.i16 q15, q15, q11
+
+        vshrn.i16 d0, q12, #8
+        vshrn.i16 d1, q13, #8
+        vshrn.i16 d2, q14, #8
+        vshrn.i16 d3, q15, #8
+        vst4.8 {d0[0],d1[0],d2[0],d3[0]}, [r4]!
+        vst4.8 {d0[1],d1[1],d2[1],d3[1]}, [r4]!
+        vst4.8 {d0[2],d1[2],d2[2],d3[2]}, [r4]!
+        vst4.8 {d0[3],d1[3],d2[3],d3[3]}, [r4]!
+        vst4.8 {d0[4],d1[4],d2[4],d3[4]}, [r4]!
+        vst4.8 {d0[5],d1[5],d2[5],d3[5]}, [r4]!
+        vst4.8 {d0[6],d1[6],d2[6],d3[6]}, [r4]!
+        vst4.8 {d0[7],d1[7],d2[7],d3[7]}, [r4]!
+
+        subs r2, r2, #1
+        bne 1b
+
+        vpop            {q4-q7}
+        ldmfd           sp!, {r4, lr}
+        bx              lr
+END(rsdIntrinsicBlendSrcIn_K)
+
+/*
+        dst = dst * src.a
+
+        r0 = dst
+        r1 = src
+        r2 = length
+*/
+ENTRY(rsdIntrinsicBlendDstIn_K)
+        .save           {r4, lr}
+        stmfd           sp!, {r4, lr}
+        vpush           {q4-q7}
+
+        mov r4, r0
+1:
+
+        /* src */
+        vld4.8 {d0[0],d1[0],d2[0],d3[0]}, [r1]!
+        vld4.8 {d0[1],d1[1],d2[1],d3[1]}, [r1]!
+        vld4.8 {d0[2],d1[2],d2[2],d3[2]}, [r1]!
+        vld4.8 {d0[3],d1[3],d2[3],d3[3]}, [r1]!
+        vld4.8 {d0[4],d1[4],d2[4],d3[4]}, [r1]!
+        vld4.8 {d0[5],d1[5],d2[5],d3[5]}, [r1]!
+        vld4.8 {d0[6],d1[6],d2[6],d3[6]}, [r1]!
+        vld4.8 {d0[7],d1[7],d2[7],d3[7]}, [r1]!
+        //vmovl.u8 q12, d0
+        //vmovl.u8 q13, d1
+        //vmovl.u8 q14, d2
+        vmovl.u8 q15, d3
+
+        /* dst */
+        vld4.8 {d0[0],d1[0],d2[0],d3[0]}, [r0]!
+        vld4.8 {d0[1],d1[1],d2[1],d3[1]}, [r0]!
+        vld4.8 {d0[2],d1[2],d2[2],d3[2]}, [r0]!
+        vld4.8 {d0[3],d1[3],d2[3],d3[3]}, [r0]!
+        vld4.8 {d0[4],d1[4],d2[4],d3[4]}, [r0]!
+        vld4.8 {d0[5],d1[5],d2[5],d3[5]}, [r0]!
+        vld4.8 {d0[6],d1[6],d2[6],d3[6]}, [r0]!
+        vld4.8 {d0[7],d1[7],d2[7],d3[7]}, [r0]!
+        vmovl.u8 q8, d0
+        vmovl.u8 q9, d1
+        vmovl.u8 q10, d2
+        vmovl.u8 q11, d3
+
+        vmul.i16 q8, q8, q15
+        vmul.i16 q9, q9, q15
+        vmul.i16 q10, q10, q15
+        vmul.i16 q11, q11, q15
+
+        vshrn.i16 d0, q8, #8
+        vshrn.i16 d1, q9, #8
+        vshrn.i16 d2, q10, #8
+        vshrn.i16 d3, q11, #8
+        vst4.8 {d0[0],d1[0],d2[0],d3[0]}, [r4]!
+        vst4.8 {d0[1],d1[1],d2[1],d3[1]}, [r4]!
+        vst4.8 {d0[2],d1[2],d2[2],d3[2]}, [r4]!
+        vst4.8 {d0[3],d1[3],d2[3],d3[3]}, [r4]!
+        vst4.8 {d0[4],d1[4],d2[4],d3[4]}, [r4]!
+        vst4.8 {d0[5],d1[5],d2[5],d3[5]}, [r4]!
+        vst4.8 {d0[6],d1[6],d2[6],d3[6]}, [r4]!
+        vst4.8 {d0[7],d1[7],d2[7],d3[7]}, [r4]!
+
+        subs r2, r2, #1
+        bne 1b
+
+        vpop            {q4-q7}
+        ldmfd           sp!, {r4, lr}
+        bx              lr
+END(rsdIntrinsicBlendDstIn_K)
+
+
+
+/*
+        dst = src * (1.0 - dst.a)
+
+        r0 = dst
+        r1 = src
+        r2 = length
+*/
+ENTRY(rsdIntrinsicBlendSrcOut_K)
+        .save           {r4, lr}
+        stmfd           sp!, {r4, lr}
+        vpush           {q4-q7}
+
+        mov r4, #255
+        vdup.16 q7, r4
+
+        mov r4, r0
+1:
+
+        /* src */
+        vld4.8 {d0[0],d1[0],d2[0],d3[0]}, [r1]!
+        vld4.8 {d0[1],d1[1],d2[1],d3[1]}, [r1]!
+        vld4.8 {d0[2],d1[2],d2[2],d3[2]}, [r1]!
+        vld4.8 {d0[3],d1[3],d2[3],d3[3]}, [r1]!
+        vld4.8 {d0[4],d1[4],d2[4],d3[4]}, [r1]!
+        vld4.8 {d0[5],d1[5],d2[5],d3[5]}, [r1]!
+        vld4.8 {d0[6],d1[6],d2[6],d3[6]}, [r1]!
+        vld4.8 {d0[7],d1[7],d2[7],d3[7]}, [r1]!
+        vmovl.u8 q12, d0
+        vmovl.u8 q13, d1
+        vmovl.u8 q14, d2
+        vmovl.u8 q15, d3
+
+        /* dst */
+        vld4.8 {d0[0],d1[0],d2[0],d3[0]}, [r0]!
+        vld4.8 {d0[1],d1[1],d2[1],d3[1]}, [r0]!
+        vld4.8 {d0[2],d1[2],d2[2],d3[2]}, [r0]!
+        vld4.8 {d0[3],d1[3],d2[3],d3[3]}, [r0]!
+        vld4.8 {d0[4],d1[4],d2[4],d3[4]}, [r0]!
+        vld4.8 {d0[5],d1[5],d2[5],d3[5]}, [r0]!
+        vld4.8 {d0[6],d1[6],d2[6],d3[6]}, [r0]!
+        vld4.8 {d0[7],d1[7],d2[7],d3[7]}, [r0]!
+        //vmovl.u8 q8, d0
+        //vmovl.u8 q9, d1
+        //vmovl.u8 q10, d2
+        vmovl.u8 q11, d3
+
+
+        vsub.i16 q6, q7, q11        // q6 = 1 - dst.a
+        vmul.i16 q12, q12, q6
+        vmul.i16 q13, q13, q6
+        vmul.i16 q14, q14, q6
+        vmul.i16 q15, q15, q6
+
+        vshrn.i16 d0, q12, #8
+        vshrn.i16 d1, q13, #8
+        vshrn.i16 d2, q14, #8
+        vshrn.i16 d3, q15, #8
+        vst4.8 {d0[0],d1[0],d2[0],d3[0]}, [r4]!
+        vst4.8 {d0[1],d1[1],d2[1],d3[1]}, [r4]!
+        vst4.8 {d0[2],d1[2],d2[2],d3[2]}, [r4]!
+        vst4.8 {d0[3],d1[3],d2[3],d3[3]}, [r4]!
+        vst4.8 {d0[4],d1[4],d2[4],d3[4]}, [r4]!
+        vst4.8 {d0[5],d1[5],d2[5],d3[5]}, [r4]!
+        vst4.8 {d0[6],d1[6],d2[6],d3[6]}, [r4]!
+        vst4.8 {d0[7],d1[7],d2[7],d3[7]}, [r4]!
+
+        subs r2, r2, #1
+        bne 1b
+
+        vpop            {q4-q7}
+        ldmfd           sp!, {r4, lr}
+        bx              lr
+END(rsdIntrinsicBlendSrcOut_K)
+
+
+/*
+        dst = dst * (1.0 - src.a)
+
+        r0 = dst
+        r1 = src
+        r2 = length
+*/
+ENTRY(rsdIntrinsicBlendDstOut_K)
+        .save           {r4, lr}
+        stmfd           sp!, {r4, lr}
+        vpush           {q4-q7}
+
+        mov r4, #255
+        vdup.16 q7, r4
+
+        mov r4, r0
+1:
+
+        /* src */
+        vld4.8 {d0[0],d1[0],d2[0],d3[0]}, [r1]!
+        vld4.8 {d0[1],d1[1],d2[1],d3[1]}, [r1]!
+        vld4.8 {d0[2],d1[2],d2[2],d3[2]}, [r1]!
+        vld4.8 {d0[3],d1[3],d2[3],d3[3]}, [r1]!
+        vld4.8 {d0[4],d1[4],d2[4],d3[4]}, [r1]!
+        vld4.8 {d0[5],d1[5],d2[5],d3[5]}, [r1]!
+        vld4.8 {d0[6],d1[6],d2[6],d3[6]}, [r1]!
+        vld4.8 {d0[7],d1[7],d2[7],d3[7]}, [r1]!
+        //vmovl.u8 q12, d0
+        //vmovl.u8 q13, d1
+        //vmovl.u8 q14, d2
+        vmovl.u8 q15, d3
+
+        /* dst */
+        vld4.8 {d0[0],d1[0],d2[0],d3[0]}, [r0]!
+        vld4.8 {d0[1],d1[1],d2[1],d3[1]}, [r0]!
+        vld4.8 {d0[2],d1[2],d2[2],d3[2]}, [r0]!
+        vld4.8 {d0[3],d1[3],d2[3],d3[3]}, [r0]!
+        vld4.8 {d0[4],d1[4],d2[4],d3[4]}, [r0]!
+        vld4.8 {d0[5],d1[5],d2[5],d3[5]}, [r0]!
+        vld4.8 {d0[6],d1[6],d2[6],d3[6]}, [r0]!
+        vld4.8 {d0[7],d1[7],d2[7],d3[7]}, [r0]!
+        vmovl.u8 q8, d0
+        vmovl.u8 q9, d1
+        vmovl.u8 q10, d2
+        vmovl.u8 q11, d3
+
+
+        vsub.i16 q6, q7, q15        // q6 = 1 - src.a
+        vmul.i16 q12, q8, q6
+        vmul.i16 q13, q9, q6
+        vmul.i16 q14, q10, q6
+        vmul.i16 q15, q11, q6
+
+        vshrn.i16 d0, q12, #8
+        vshrn.i16 d1, q13, #8
+        vshrn.i16 d2, q14, #8
+        vshrn.i16 d3, q15, #8
+        vst4.8 {d0[0],d1[0],d2[0],d3[0]}, [r4]!
+        vst4.8 {d0[1],d1[1],d2[1],d3[1]}, [r4]!
+        vst4.8 {d0[2],d1[2],d2[2],d3[2]}, [r4]!
+        vst4.8 {d0[3],d1[3],d2[3],d3[3]}, [r4]!
+        vst4.8 {d0[4],d1[4],d2[4],d3[4]}, [r4]!
+        vst4.8 {d0[5],d1[5],d2[5],d3[5]}, [r4]!
+        vst4.8 {d0[6],d1[6],d2[6],d3[6]}, [r4]!
+        vst4.8 {d0[7],d1[7],d2[7],d3[7]}, [r4]!
+
+        subs r2, r2, #1
+        bne 1b
+
+        vpop            {q4-q7}
+        ldmfd           sp!, {r4, lr}
+        bx              lr
+END(rsdIntrinsicBlendDstOut_K)
+
+
+/*
+        dst.rgb = src.rgb * dst.a + (1.0 - src.a) * dst.rgb
+        dst.a = dst.a
+
+        r0 = dst
+        r1 = src
+        r2 = length
+*/
+ENTRY(rsdIntrinsicBlendSrcAtop_K)
+        .save           {r4, lr}
+        stmfd           sp!, {r4, lr}
+        vpush           {q4-q7}
+
+        mov r4, #255
+        vdup.16 q7, r4
+
+        mov r4, r0
+1:
+
+        /* src */
+        vld4.8 {d0[0],d1[0],d2[0],d3[0]}, [r1]!
+        vld4.8 {d0[1],d1[1],d2[1],d3[1]}, [r1]!
+        vld4.8 {d0[2],d1[2],d2[2],d3[2]}, [r1]!
+        vld4.8 {d0[3],d1[3],d2[3],d3[3]}, [r1]!
+        vld4.8 {d0[4],d1[4],d2[4],d3[4]}, [r1]!
+        vld4.8 {d0[5],d1[5],d2[5],d3[5]}, [r1]!
+        vld4.8 {d0[6],d1[6],d2[6],d3[6]}, [r1]!
+        vld4.8 {d0[7],d1[7],d2[7],d3[7]}, [r1]!
+        vmovl.u8 q12, d0
+        vmovl.u8 q13, d1
+        vmovl.u8 q14, d2
+        vmovl.u8 q15, d3
+
+        /* dst */
+        vld4.8 {d0[0],d1[0],d2[0],d3[0]}, [r0]!
+        vld4.8 {d0[1],d1[1],d2[1],d3[1]}, [r0]!
+        vld4.8 {d0[2],d1[2],d2[2],d3[2]}, [r0]!
+        vld4.8 {d0[3],d1[3],d2[3],d3[3]}, [r0]!
+        vld4.8 {d0[4],d1[4],d2[4],d3[4]}, [r0]!
+        vld4.8 {d0[5],d1[5],d2[5],d3[5]}, [r0]!
+        vld4.8 {d0[6],d1[6],d2[6],d3[6]}, [r0]!
+        vld4.8 {d0[7],d1[7],d2[7],d3[7]}, [r0]!
+        vmovl.u8 q8, d0
+        vmovl.u8 q9, d1
+        vmovl.u8 q10, d2
+        vmovl.u8 q11, d3
+
+
+        vsub.i16 q6, q7, q15        // q6 = 1 - src.a
+        vmul.i16 q8, q8, q6
+        vmul.i16 q9, q9, q6
+        vmul.i16 q10, q10, q6
+
+        vmla.i16 q8, q12, q11
+        vmla.i16 q9, q13, q11
+        vmla.i16 q10, q14, q11
+
+
+        vshrn.i16 d0, q8, #8
+        vshrn.i16 d1, q9, #8
+        vshrn.i16 d2, q10, #8
+        //vshrn.i16 d3, q15, #8
+        vst4.8 {d0[0],d1[0],d2[0],d3[0]}, [r4]!
+        vst4.8 {d0[1],d1[1],d2[1],d3[1]}, [r4]!
+        vst4.8 {d0[2],d1[2],d2[2],d3[2]}, [r4]!
+        vst4.8 {d0[3],d1[3],d2[3],d3[3]}, [r4]!
+        vst4.8 {d0[4],d1[4],d2[4],d3[4]}, [r4]!
+        vst4.8 {d0[5],d1[5],d2[5],d3[5]}, [r4]!
+        vst4.8 {d0[6],d1[6],d2[6],d3[6]}, [r4]!
+        vst4.8 {d0[7],d1[7],d2[7],d3[7]}, [r4]!
+
+        subs r2, r2, #1
+        bne 1b
+
+        vpop            {q4-q7}
+        ldmfd           sp!, {r4, lr}
+        bx              lr
+END(rsdIntrinsicBlendSrcAtop_K)
+
+/*
+        dst = dst.rgb * src.a + (1.0 - dst.a) * src.rgb
+        dst.a = src.a
+
+        r0 = dst
+        r1 = src
+        r2 = length
+*/
+ENTRY(rsdIntrinsicBlendDstAtop_K)
+        .save           {r4, lr}
+        stmfd           sp!, {r4, lr}
+        vpush           {q4-q7}
+
+        mov r4, #255
+        vdup.16 q7, r4
+
+        mov r4, r0
+1:
+
+        /* src */
+        vld4.8 {d0[0],d1[0],d2[0],d3[0]}, [r1]!
+        vld4.8 {d0[1],d1[1],d2[1],d3[1]}, [r1]!
+        vld4.8 {d0[2],d1[2],d2[2],d3[2]}, [r1]!
+        vld4.8 {d0[3],d1[3],d2[3],d3[3]}, [r1]!
+        vld4.8 {d0[4],d1[4],d2[4],d3[4]}, [r1]!
+        vld4.8 {d0[5],d1[5],d2[5],d3[5]}, [r1]!
+        vld4.8 {d0[6],d1[6],d2[6],d3[6]}, [r1]!
+        vld4.8 {d0[7],d1[7],d2[7],d3[7]}, [r1]!
+        vmovl.u8 q12, d0
+        vmovl.u8 q13, d1
+        vmovl.u8 q14, d2
+        vmovl.u8 q15, d3
+
+        /* dst */
+        vld4.8 {d0[0],d1[0],d2[0],d3[0]}, [r0]!
+        vld4.8 {d0[1],d1[1],d2[1],d3[1]}, [r0]!
+        vld4.8 {d0[2],d1[2],d2[2],d3[2]}, [r0]!
+        vld4.8 {d0[3],d1[3],d2[3],d3[3]}, [r0]!
+        vld4.8 {d0[4],d1[4],d2[4],d3[4]}, [r0]!
+        vld4.8 {d0[5],d1[5],d2[5],d3[5]}, [r0]!
+        vld4.8 {d0[6],d1[6],d2[6],d3[6]}, [r0]!
+        vld4.8 {d0[7],d1[7],d2[7],d3[7]}, [r0]!
+        vmovl.u8 q8, d0
+        vmovl.u8 q9, d1
+        vmovl.u8 q10, d2
+        vmovl.u8 q11, d3
+
+
+        vsub.i16 q6, q7, q11        // q6 = 1 - dst.a
+        vmul.i16 q12, q12, q6
+        vmul.i16 q13, q13, q6
+        vmul.i16 q14, q14, q6
+
+        vmla.i16 q12, q8, q15
+        vmla.i16 q13, q9, q15
+        vmla.i16 q14, q10, q15
+
+
+        vshrn.i16 d0, q12, #8
+        vshrn.i16 d1, q13, #8
+        vshrn.i16 d2, q14, #8
+        //vshrn.i16 d3, q15, #8
+        vst4.8 {d0[0],d1[0],d2[0],d3[0]}, [r4]!
+        vst4.8 {d0[1],d1[1],d2[1],d3[1]}, [r4]!
+        vst4.8 {d0[2],d1[2],d2[2],d3[2]}, [r4]!
+        vst4.8 {d0[3],d1[3],d2[3],d3[3]}, [r4]!
+        vst4.8 {d0[4],d1[4],d2[4],d3[4]}, [r4]!
+        vst4.8 {d0[5],d1[5],d2[5],d3[5]}, [r4]!
+        vst4.8 {d0[6],d1[6],d2[6],d3[6]}, [r4]!
+        vst4.8 {d0[7],d1[7],d2[7],d3[7]}, [r4]!
+
+        subs r2, r2, #1
+        bne 1b
+
+        vpop            {q4-q7}
+        ldmfd           sp!, {r4, lr}
+        bx              lr
+END(rsdIntrinsicBlendDstAtop_K)
+
+/*
+        dst = dst ^ src
+
+        r0 = dst
+        r1 = src
+        r2 = length
+*/
+ENTRY(rsdIntrinsicBlendXor_K)
+        .save           {r4, lr}
+        stmfd           sp!, {r4, lr}
+        vpush           {q4-q7}
+
+        mov r4, #255
+        vdup.16 q7, r4
+
+        mov r4, r0
+1:
+
+        /* src */
+        vld4.8 {d0[0],d1[0],d2[0],d3[0]}, [r1]!
+        vld4.8 {d0[1],d1[1],d2[1],d3[1]}, [r1]!
+        vld4.8 {d0[2],d1[2],d2[2],d3[2]}, [r1]!
+        vld4.8 {d0[3],d1[3],d2[3],d3[3]}, [r1]!
+        vld4.8 {d0[4],d1[4],d2[4],d3[4]}, [r1]!
+        vld4.8 {d0[5],d1[5],d2[5],d3[5]}, [r1]!
+        vld4.8 {d0[6],d1[6],d2[6],d3[6]}, [r1]!
+        vld4.8 {d0[7],d1[7],d2[7],d3[7]}, [r1]!
+        vmov.u8 d4, d0
+        vmov.u8 d5, d1
+        vmov.u8 d6, d2
+        vmov.u8 d7, d3
+
+        /* dst */
+        vld4.8 {d0[0],d1[0],d2[0],d3[0]}, [r0]!
+        vld4.8 {d0[1],d1[1],d2[1],d3[1]}, [r0]!
+        vld4.8 {d0[2],d1[2],d2[2],d3[2]}, [r0]!
+        vld4.8 {d0[3],d1[3],d2[3],d3[3]}, [r0]!
+        vld4.8 {d0[4],d1[4],d2[4],d3[4]}, [r0]!
+        vld4.8 {d0[5],d1[5],d2[5],d3[5]}, [r0]!
+        vld4.8 {d0[6],d1[6],d2[6],d3[6]}, [r0]!
+        vld4.8 {d0[7],d1[7],d2[7],d3[7]}, [r0]!
+
+        veor d0, d0, d4
+        veor d1, d1, d5
+        veor d2, d2, d6
+        veor d3, d3, d7
+
+        vst4.8 {d0[0],d1[0],d2[0],d3[0]}, [r4]!
+        vst4.8 {d0[1],d1[1],d2[1],d3[1]}, [r4]!
+        vst4.8 {d0[2],d1[2],d2[2],d3[2]}, [r4]!
+        vst4.8 {d0[3],d1[3],d2[3],d3[3]}, [r4]!
+        vst4.8 {d0[4],d1[4],d2[4],d3[4]}, [r4]!
+        vst4.8 {d0[5],d1[5],d2[5],d3[5]}, [r4]!
+        vst4.8 {d0[6],d1[6],d2[6],d3[6]}, [r4]!
+        vst4.8 {d0[7],d1[7],d2[7],d3[7]}, [r4]!
+
+        subs r2, r2, #1
+        bne 1b
+
+        vpop            {q4-q7}
+        ldmfd           sp!, {r4, lr}
+        bx              lr
+END(rsdIntrinsicBlendXor_K)
+
+/*
+        dst = dst * src
+
+        r0 = dst
+        r1 = src
+        r2 = length
+*/
+ENTRY(rsdIntrinsicBlendMultiply_K)
+        .save           {r4, lr}
+        stmfd           sp!, {r4, lr}
+        vpush           {q4-q7}
+
+        mov r4, #255
+        vdup.16 q7, r4
+
+        mov r4, r0
+1:
+
+        /* src */
+        vld4.8 {d0[0],d1[0],d2[0],d3[0]}, [r1]!
+        vld4.8 {d0[1],d1[1],d2[1],d3[1]}, [r1]!
+        vld4.8 {d0[2],d1[2],d2[2],d3[2]}, [r1]!
+        vld4.8 {d0[3],d1[3],d2[3],d3[3]}, [r1]!
+        vld4.8 {d0[4],d1[4],d2[4],d3[4]}, [r1]!
+        vld4.8 {d0[5],d1[5],d2[5],d3[5]}, [r1]!
+        vld4.8 {d0[6],d1[6],d2[6],d3[6]}, [r1]!
+        vld4.8 {d0[7],d1[7],d2[7],d3[7]}, [r1]!
+        vmovl.u8 q12, d0
+        vmovl.u8 q13, d1
+        vmovl.u8 q14, d2
+        vmovl.u8 q15, d3
+
+        /* dst */
+        vld4.8 {d0[0],d1[0],d2[0],d3[0]}, [r0]!
+        vld4.8 {d0[1],d1[1],d2[1],d3[1]}, [r0]!
+        vld4.8 {d0[2],d1[2],d2[2],d3[2]}, [r0]!
+        vld4.8 {d0[3],d1[3],d2[3],d3[3]}, [r0]!
+        vld4.8 {d0[4],d1[4],d2[4],d3[4]}, [r0]!
+        vld4.8 {d0[5],d1[5],d2[5],d3[5]}, [r0]!
+        vld4.8 {d0[6],d1[6],d2[6],d3[6]}, [r0]!
+        vld4.8 {d0[7],d1[7],d2[7],d3[7]}, [r0]!
+        vmovl.u8 q8, d0
+        vmovl.u8 q9, d1
+        vmovl.u8 q10, d2
+        vmovl.u8 q11, d3
+
+
+        vmul.i16 q8, q8, q12
+        vmul.i16 q9, q9, q13
+        vmul.i16 q10, q10, q14
+        vmul.i16 q11, q11, q15
+
+        vshrn.i16 d0, q8, #8
+        vshrn.i16 d1, q9, #8
+        vshrn.i16 d2, q10, #8
+        vshrn.i16 d3, q11, #8
+        vst4.8 {d0[0],d1[0],d2[0],d3[0]}, [r4]!
+        vst4.8 {d0[1],d1[1],d2[1],d3[1]}, [r4]!
+        vst4.8 {d0[2],d1[2],d2[2],d3[2]}, [r4]!
+        vst4.8 {d0[3],d1[3],d2[3],d3[3]}, [r4]!
+        vst4.8 {d0[4],d1[4],d2[4],d3[4]}, [r4]!
+        vst4.8 {d0[5],d1[5],d2[5],d3[5]}, [r4]!
+        vst4.8 {d0[6],d1[6],d2[6],d3[6]}, [r4]!
+        vst4.8 {d0[7],d1[7],d2[7],d3[7]}, [r4]!
+
+        subs r2, r2, #1
+        bne 1b
+
+        vpop            {q4-q7}
+        ldmfd           sp!, {r4, lr}
+        bx              lr
+END(rsdIntrinsicBlendMultiply_K)
+
+/*
+        dst = min(src + dst, 1.0)
+
+        r0 = dst
+        r1 = src
+        r2 = length
+*/
+ENTRY(rsdIntrinsicBlendAdd_K)
+        .save           {r4, lr}
+        stmfd           sp!, {r4, lr}
+        vpush           {q4-q7}
+
+        mov r4, #255
+        vdup.16 q7, r4
+
+        mov r4, r0
+1:
+
+        /* src */
+        vld4.8 {d0[0],d1[0],d2[0],d3[0]}, [r1]!
+        vld4.8 {d0[1],d1[1],d2[1],d3[1]}, [r1]!
+        vld4.8 {d0[2],d1[2],d2[2],d3[2]}, [r1]!
+        vld4.8 {d0[3],d1[3],d2[3],d3[3]}, [r1]!
+        vld4.8 {d0[4],d1[4],d2[4],d3[4]}, [r1]!
+        vld4.8 {d0[5],d1[5],d2[5],d3[5]}, [r1]!
+        vld4.8 {d0[6],d1[6],d2[6],d3[6]}, [r1]!
+        vld4.8 {d0[7],d1[7],d2[7],d3[7]}, [r1]!
+        vmovl.u8 q12, d0
+        vmovl.u8 q13, d1
+        vmovl.u8 q14, d2
+        vmovl.u8 q15, d3
+
+        /* dst */
+        vld4.8 {d0[0],d1[0],d2[0],d3[0]}, [r0]!
+        vld4.8 {d0[1],d1[1],d2[1],d3[1]}, [r0]!
+        vld4.8 {d0[2],d1[2],d2[2],d3[2]}, [r0]!
+        vld4.8 {d0[3],d1[3],d2[3],d3[3]}, [r0]!
+        vld4.8 {d0[4],d1[4],d2[4],d3[4]}, [r0]!
+        vld4.8 {d0[5],d1[5],d2[5],d3[5]}, [r0]!
+        vld4.8 {d0[6],d1[6],d2[6],d3[6]}, [r0]!
+        vld4.8 {d0[7],d1[7],d2[7],d3[7]}, [r0]!
+        vmovl.u8 q8, d0
+        vmovl.u8 q9, d1
+        vmovl.u8 q10, d2
+        vmovl.u8 q11, d3
+
+
+        vadd.i16 q8, q8, q12
+        vadd.i16 q9, q9, q13
+        vadd.i16 q10, q10, q14
+        vadd.i16 q11, q11, q15
+
+        vqmovun.s16 d0, q8
+        vqmovun.s16 d1, q9
+        vqmovun.s16 d2, q10
+        vqmovun.s16 d3, q11
+        vst4.8 {d0[0],d1[0],d2[0],d3[0]}, [r4]!
+        vst4.8 {d0[1],d1[1],d2[1],d3[1]}, [r4]!
+        vst4.8 {d0[2],d1[2],d2[2],d3[2]}, [r4]!
+        vst4.8 {d0[3],d1[3],d2[3],d3[3]}, [r4]!
+        vst4.8 {d0[4],d1[4],d2[4],d3[4]}, [r4]!
+        vst4.8 {d0[5],d1[5],d2[5],d3[5]}, [r4]!
+        vst4.8 {d0[6],d1[6],d2[6],d3[6]}, [r4]!
+        vst4.8 {d0[7],d1[7],d2[7],d3[7]}, [r4]!
+
+        subs r2, r2, #1
+        bne 1b
+
+        vpop            {q4-q7}
+        ldmfd           sp!, {r4, lr}
+        bx              lr
+END(rsdIntrinsicBlendAdd_K)
+
+
+/*
+        dst = max(dst - src, 0.0)
+
+        r0 = dst
+        r1 = src
+        r2 = length
+*/
+ENTRY(rsdIntrinsicBlendSub_K)
+        .save           {r4, lr}
+        stmfd           sp!, {r4, lr}
+        vpush           {q4-q7}
+
+        mov r4, #255
+        vdup.16 q7, r4
+
+        mov r4, r0
+1:
+
+        /* src */
+        vld4.8 {d0[0],d1[0],d2[0],d3[0]}, [r1]!
+        vld4.8 {d0[1],d1[1],d2[1],d3[1]}, [r1]!
+        vld4.8 {d0[2],d1[2],d2[2],d3[2]}, [r1]!
+        vld4.8 {d0[3],d1[3],d2[3],d3[3]}, [r1]!
+        vld4.8 {d0[4],d1[4],d2[4],d3[4]}, [r1]!
+        vld4.8 {d0[5],d1[5],d2[5],d3[5]}, [r1]!
+        vld4.8 {d0[6],d1[6],d2[6],d3[6]}, [r1]!
+        vld4.8 {d0[7],d1[7],d2[7],d3[7]}, [r1]!
+        vmovl.u8 q12, d0
+        vmovl.u8 q13, d1
+        vmovl.u8 q14, d2
+        vmovl.u8 q15, d3
+
+        /* dst */
+        vld4.8 {d0[0],d1[0],d2[0],d3[0]}, [r0]!
+        vld4.8 {d0[1],d1[1],d2[1],d3[1]}, [r0]!
+        vld4.8 {d0[2],d1[2],d2[2],d3[2]}, [r0]!
+        vld4.8 {d0[3],d1[3],d2[3],d3[3]}, [r0]!
+        vld4.8 {d0[4],d1[4],d2[4],d3[4]}, [r0]!
+        vld4.8 {d0[5],d1[5],d2[5],d3[5]}, [r0]!
+        vld4.8 {d0[6],d1[6],d2[6],d3[6]}, [r0]!
+        vld4.8 {d0[7],d1[7],d2[7],d3[7]}, [r0]!
+        vmovl.u8 q8, d0
+        vmovl.u8 q9, d1
+        vmovl.u8 q10, d2
+        vmovl.u8 q11, d3
+
+
+        vsub.i16 q8, q8, q12
+        vsub.i16 q9, q9, q13
+        vsub.i16 q10, q10, q14
+        vsub.i16 q11, q11, q15
+
+        vqmovun.s16 d0, q8
+        vqmovun.s16 d1, q9
+        vqmovun.s16 d2, q10
+        vqmovun.s16 d3, q11
+        vst4.8 {d0[0],d1[0],d2[0],d3[0]}, [r4]!
+        vst4.8 {d0[1],d1[1],d2[1],d3[1]}, [r4]!
+        vst4.8 {d0[2],d1[2],d2[2],d3[2]}, [r4]!
+        vst4.8 {d0[3],d1[3],d2[3],d3[3]}, [r4]!
+        vst4.8 {d0[4],d1[4],d2[4],d3[4]}, [r4]!
+        vst4.8 {d0[5],d1[5],d2[5],d3[5]}, [r4]!
+        vst4.8 {d0[6],d1[6],d2[6],d3[6]}, [r4]!
+        vst4.8 {d0[7],d1[7],d2[7],d3[7]}, [r4]!
+
+        subs r2, r2, #1
+        bne 1b
+
+        vpop            {q4-q7}
+        ldmfd           sp!, {r4, lr}
+        bx              lr
+END(rsdIntrinsicBlendSub_K)
+
