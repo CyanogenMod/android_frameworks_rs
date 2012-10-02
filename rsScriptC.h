@@ -65,6 +65,7 @@ public:
 #ifndef ANDROID_RS_SERIALIZE
     bcinfo::BitcodeTranslator *BT;
 #endif
+    bool createCacheDir(const char *cacheDir);
 };
 
 class ScriptCState {
