@@ -24,6 +24,8 @@
 #include <bcinfo/BitcodeWrapper.h>
 #endif
 
+#include <sys/stat.h>
+
 using namespace android;
 using namespace android::renderscript;
 
@@ -49,6 +51,43 @@ ScriptC::~ScriptC() {
         mRSC->mHal.funcs.script.invokeFreeChildren(mRSC, this);
         mRSC->mHal.funcs.script.destroy(mRSC, this);
     }
+}
+
+bool ScriptC::createCacheDir(const char *cacheDir) {
+    String8 cacheDirString, currentDir;
+    struct stat statBuf;
+    int statReturn = stat(cacheDir, &statBuf);
+    if (!statReturn) {
+        return true;
+    }
+
+    // String8 path functions strip leading /'s
+    // insert if necessary
+    if (cacheDir[0] == '/') {
+        currentDir += "/";
+    }
+
+    cacheDirString.setPathName(cacheDir);
+
+    while (cacheDirString.length()) {
+        currentDir += (cacheDirString.walkPath(&cacheDirString));
+        statReturn = stat(currentDir.string(), &statBuf);
+        if (statReturn) {
+            if (errno == ENOENT) {
+                if (mkdir(currentDir.string(), S_IRUSR | S_IWUSR | S_IXUSR)) {
+                    ALOGE("Couldn't create cache directory: %s",
+                          currentDir.string());
+                    ALOGE("Error: %s", strerror(errno));
+                    return false;
+                }
+            } else {
+                ALOGE("Stat error: %s", strerror(errno));
+                return false;
+            }
+        }
+        currentDir += "/";
+    }
+    return true;
 }
 
 void ScriptC::setupScript(Context *rsc) {
@@ -210,6 +249,11 @@ bool ScriptC::runCompiler(Context *rsc,
     bitcode = (const uint8_t *) BT->getTranslatedBitcode();
     bitcodeLen = BT->getTranslatedBitcodeSize();
 #endif
+
+    // ensure that cache dir exists
+    if (!createCacheDir(cacheDir)) {
+      return false;
+    }
 
     if (!rsc->mHal.funcs.script.init(rsc, this, resName, cacheDir, bitcode, bitcodeLen, 0)) {
         return false;
