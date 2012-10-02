@@ -228,11 +228,17 @@ void * Context::threadProc(void *vrsc) {
 #define XSTR(S) #S
 #define STR(S) XSTR(S)
 #define OVERRIDE_RS_DRIVER_STRING STR(OVERRIDE_RS_DRIVER)
-    driverSO = dlopen(OVERRIDE_RS_DRIVER_STRING, RTLD_LAZY);
-    if (driverSO == NULL) {
-        ALOGE("Failed loading %s: %s", OVERRIDE_RS_DRIVER_STRING, dlerror());
-        // Continue to attempt loading fallback driver
+    if (getProp("debug.rs.default-CPU-driver") != 0) {
+        ALOGE("Skipping override driver and loading default CPU driver");
+    } else {
+        driverSO = dlopen(OVERRIDE_RS_DRIVER_STRING, RTLD_LAZY);
+        if (driverSO == NULL) {
+            ALOGE("Failed loading %s: %s", OVERRIDE_RS_DRIVER_STRING,
+                  dlerror());
+            // Continue to attempt loading fallback driver
+        }
     }
+
 #undef XSTR
 #undef STR
 #endif  // OVERRIDE_RS_DRIVER
