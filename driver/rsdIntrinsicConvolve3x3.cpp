@@ -77,6 +77,11 @@ static void Convolve3x3_uchar4(const RsForEachStubParamStruct *p,
                                     uint32_t xstart, uint32_t xend,
                                     uint32_t instep, uint32_t outstep) {
     ConvolveParams *cp = (ConvolveParams *)p->usr;
+
+    if (!cp->alloc.get()) {
+        ALOGE("Convolve3x3 executed without input, skipping");
+        return;
+    }
     DrvAllocation *din = (DrvAllocation *)cp->alloc->mHal.drv;
     const uchar *pin = (const uchar *)din->lod[0].mallocPtr;
 
