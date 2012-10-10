@@ -86,6 +86,10 @@ static void YuvToRGB_uchar4(const RsForEachStubParamStruct *p,
                                     uint32_t xstart, uint32_t xend,
                                     uint32_t instep, uint32_t outstep) {
     YuvParams *cp = (YuvParams *)p->usr;
+    if (!cp->alloc.get()) {
+        ALOGE("YuvToRGB executed without input, skipping");
+        return;
+    }
     DrvAllocation *din = (DrvAllocation *)cp->alloc->mHal.drv;
     const uchar *pin = (const uchar *)din->lod[0].mallocPtr;
 

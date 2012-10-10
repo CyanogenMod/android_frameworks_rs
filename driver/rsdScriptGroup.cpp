@@ -98,9 +98,12 @@ void rsdScriptGroupExecute(const android::renderscript::Context *rsc,
                 }
             }
 
-            ins.add(ain);
-            outs.add(aout);
-            kernels.add(k);
+            if ((k->mHasKernelOutput == (aout != NULL)) &&
+                (k->mHasKernelInput == (ain != NULL))) {
+                ins.add(ain);
+                outs.add(aout);
+                kernels.add(k);
+            }
         }
 
     }
