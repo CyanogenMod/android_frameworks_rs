@@ -56,7 +56,16 @@ void rsdScriptGroupExecute(const android::renderscript::Context *rsc,
 
     for (size_t ct=0; ct < sg->mNodes.size(); ct++) {
         ScriptGroup::Node *n = sg->mNodes[ct];
+        Script *s = n->mKernels[0]->mScript;
+
         //ALOGE("node %i, order %i, in %i out %i", (int)ct, n->mOrder, (int)n->mInputs.size(), (int)n->mOutputs.size());
+
+        for (size_t ct2=0; ct2 < n->mInputs.size(); ct2++) {
+            if (n->mInputs[ct2]->mDstField->mScript) {
+                //ALOGE("field %p %zu", n->mInputs[ct2]->mDstField->mScript, n->mInputs[ct2]->mDstField->mSlot);
+                s->setSlot(n->mInputs[ct2]->mDstField->mSlot, n->mInputs[ct2]->mAlloc.get());
+            }
+        }
 
         for (size_t ct2=0; ct2 < n->mKernels.size(); ct2++) {
             const ScriptKernelID *k = n->mKernels[ct2];
