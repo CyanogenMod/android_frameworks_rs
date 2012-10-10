@@ -163,6 +163,10 @@ static void Blur_uchar4(const RsForEachStubParamStruct *p,
                                     uint32_t instep, uint32_t outstep) {
     float buf[4 * 2048];
     ConvolveParams *cp = (ConvolveParams *)p->usr;
+    if (!cp->alloc.get()) {
+        ALOGE("Blur executed without input, skipping");
+        return;
+    }
     DrvAllocation *din = (DrvAllocation *)cp->alloc->mHal.drv;
     const uchar *pin = (const uchar *)din->lod[0].mallocPtr;
 
