@@ -522,10 +522,7 @@ void rsdScriptSetGlobalBind(const Context *dc, const Script *script, uint32_t sl
     //rsAssert(!script->mFieldIsObject[slot]);
     //ALOGE("setGlobalBind %p %p %i %p", dc, script, slot, data);
 
-    if (drv->mIntrinsicID) {
-        drv->mIntrinsicFuncs.bind(dc, script, drv->mIntrinsicData, slot, data);
-        return;
-    }
+    rsAssert(!drv->mIntrinsicID);
 
     int32_t *destPtr = reinterpret_cast<int32_t *>(
                           drv->mExecutable->getExportVarAddrs()[slot]);
@@ -547,6 +544,12 @@ void rsdScriptSetGlobalObj(const Context *dc, const Script *script, uint32_t slo
     DrvScript *drv = (DrvScript *)script->mHal.drv;
     //rsAssert(script->mFieldIsObject[slot]);
     //ALOGE("setGlobalObj %p %p %i %p", dc, script, slot, data);
+
+    if (drv->mIntrinsicID) {
+        drv->mIntrinsicFuncs.setVarObj(dc, script, drv->mIntrinsicData, slot,
+                                       static_cast<Allocation *>(data));
+        return;
+    }
 
     int32_t *destPtr = reinterpret_cast<int32_t *>(
                           drv->mExecutable->getExportVarAddrs()[slot]);

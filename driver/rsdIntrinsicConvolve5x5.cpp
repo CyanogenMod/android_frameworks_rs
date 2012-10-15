@@ -152,7 +152,7 @@ void * rsdIntrinsic_InitConvolve5x5(const android::renderscript::Context *dc,
                                     RsdIntriniscFuncs_t *funcs) {
 
     script->mHal.info.exportedVariableCount = 2;
-    funcs->bind = Convolve5x5_Bind;
+    funcs->setVarObj = Convolve5x5_Bind;
     funcs->setVar = Convolve5x5_SetVar;
     funcs->root = Convolve5x5_uchar4;
 

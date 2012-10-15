@@ -68,7 +68,7 @@ void * rsdIntrinsic_InitLUT(const android::renderscript::Context *dc,
                                     RsdIntriniscFuncs_t *funcs) {
 
     script->mHal.info.exportedVariableCount = 1;
-    funcs->bind = LUT_Bind;
+    funcs->setVarObj = LUT_Bind;
     funcs->root = LUT_uchar4;
     ConvolveParams *cp = (ConvolveParams *)calloc(1, sizeof(ConvolveParams));
     return cp;
