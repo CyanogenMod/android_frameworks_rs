@@ -130,7 +130,7 @@ void * rsdIntrinsic_InitYuvToRGB(const android::renderscript::Context *dc,
                                  RsdIntriniscFuncs_t *funcs) {
 
     script->mHal.info.exportedVariableCount = 1;
-    funcs->bind = YuvToRGB_Bind;
+    funcs->setVarObj = YuvToRGB_Bind;
     funcs->root = YuvToRGB_uchar4;
     YuvParams *cp = (YuvParams *)calloc(1, sizeof(YuvParams));
     return cp;

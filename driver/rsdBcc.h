@@ -99,10 +99,10 @@ typedef void (*outer_foreach_t)(
 
 typedef struct RsdIntriniscFuncs_rec {
 
-    void (*bind)(const android::renderscript::Context *dc,
-                 const android::renderscript::Script *script,
-                 void * intrinsicData,
-                 uint32_t slot, android::renderscript::Allocation *data);
+    void (*setVarObj)(const android::renderscript::Context *dc,
+                      const android::renderscript::Script *script,
+                      void * intrinsicData,
+                      uint32_t slot, android::renderscript::Allocation *data);
     void (*setVar)(const android::renderscript::Context *dc,
                    const android::renderscript::Script *script,
                    void * intrinsicData,
