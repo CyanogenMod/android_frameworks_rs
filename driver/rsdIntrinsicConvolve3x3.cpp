@@ -123,7 +123,7 @@ void * rsdIntrinsic_InitConvolve3x3(const android::renderscript::Context *dc,
                                     RsdIntriniscFuncs_t *funcs) {
 
     script->mHal.info.exportedVariableCount = 2;
-    funcs->bind = Convolve3x3_Bind;
+    funcs->setVarObj = Convolve3x3_Bind;
     funcs->setVar = Convolve3x3_SetVar;
     funcs->root = Convolve3x3_uchar4;
 

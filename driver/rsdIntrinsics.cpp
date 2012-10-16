@@ -30,8 +30,8 @@ void * rsdIntrinsic_InitLUT(const Context *, Script *, RsdIntriniscFuncs_t *);
 void * rsdIntrinsic_InitYuvToRGB(const Context *, Script *, RsdIntriniscFuncs_t *);
 void * rsdIntrinsic_InitBlend(const Context *, Script *, RsdIntriniscFuncs_t *);
 
-static void Bind(const Context *, const Script *, void *, uint32_t, Allocation *) {
-    rsAssert(!"Intrinsic_Bind unexpectedly called");
+static void SetVarObj(const Context *, const Script *, void *, uint32_t, Allocation *) {
+    rsAssert(!"Intrinsic_SetVarObj unexpectedly called");
 }
 
 static void SetVar(const Context *, const Script *, void *, uint32_t, void *, size_t) {
@@ -47,7 +47,7 @@ void * rsdIntrinsic_Init(const android::renderscript::Context *dc,
                        RsScriptIntrinsicID iid,
                        RsdIntriniscFuncs_t *funcs) {
 
-    funcs->bind = Bind;
+    funcs->setVarObj = SetVarObj;
     funcs->setVar = SetVar;
     funcs->destroy = Destroy;
 

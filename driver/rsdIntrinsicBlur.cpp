@@ -213,7 +213,7 @@ void * rsdIntrinsic_InitBlur(const android::renderscript::Context *dc,
                                     RsdIntriniscFuncs_t *funcs) {
 
     script->mHal.info.exportedVariableCount = 2;
-    funcs->bind = Blur_Bind;
+    funcs->setVarObj = Blur_Bind;
     funcs->setVar = Blur_SetVar;
     funcs->root = Blur_uchar4;
 
