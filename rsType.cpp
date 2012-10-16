@@ -42,7 +42,6 @@ void Type::clear() {
         delete [] mHal.state.lodDimX;
         delete [] mHal.state.lodDimY;
         delete [] mHal.state.lodDimZ;
-        delete [] mHal.state.lodOffset;
     }
     mElement.clear();
     memset(&mHal, 0, sizeof(mHal));
@@ -53,11 +52,6 @@ TypeState::TypeState() {
 
 TypeState::~TypeState() {
     rsAssert(!mTypes.size());
-}
-
-size_t Type::getOffsetForFace(uint32_t face) const {
-    rsAssert(mHal.state.faces);
-    return 0;
 }
 
 void Type::compute() {
@@ -77,69 +71,34 @@ void Type::compute() {
             delete [] mHal.state.lodDimX;
             delete [] mHal.state.lodDimY;
             delete [] mHal.state.lodDimZ;
-            delete [] mHal.state.lodOffset;
         }
         mHal.state.lodDimX = new uint32_t[mHal.state.lodCount];
         mHal.state.lodDimY = new uint32_t[mHal.state.lodCount];
         mHal.state.lodDimZ = new uint32_t[mHal.state.lodCount];
-        mHal.state.lodOffset = new uint32_t[mHal.state.lodCount];
     }
 
     uint32_t tx = mHal.state.dimX;
     uint32_t ty = mHal.state.dimY;
     uint32_t tz = mHal.state.dimZ;
-    size_t offset = 0;
+    size_t packedSize = 0;
     for (uint32_t lod=0; lod < mHal.state.lodCount; lod++) {
         mHal.state.lodDimX[lod] = tx;
         mHal.state.lodDimY[lod] = ty;
         mHal.state.lodDimZ[lod]  = tz;
-        mHal.state.lodOffset[lod] = offset;
-        offset += tx * rsMax(ty, 1u) * rsMax(tz, 1u) * mElement->getSizeBytes();
+        packedSize += tx * rsMax(ty, 1u) * rsMax(tz, 1u) * mElement->getSizeBytes();
         if (tx > 1) tx >>= 1;
         if (ty > 1) ty >>= 1;
         if (tz > 1) tz >>= 1;
     }
 
     // At this point the offset is the size of a mipmap chain;
-    mMipChainSizeBytes = offset;
+    mMipChainSizeBytes = packedSize;
 
     if (mHal.state.faces) {
-        offset *= 6;
+        packedSize *= 6;
     }
-    mTotalSizeBytes = offset;
+    mTotalSizeBytes = packedSize;
     mHal.state.element = mElement.get();
-}
-
-uint32_t Type::getLODOffset(uint32_t lod, uint32_t x) const {
-    uint32_t offset = mHal.state.lodOffset[lod];
-    offset += x * mElement->getSizeBytes();
-    return offset;
-}
-
-uint32_t Type::getLODOffset(uint32_t lod, uint32_t x, uint32_t y) const {
-    uint32_t offset = mHal.state.lodOffset[lod];
-    offset += (x + y * mHal.state.lodDimX[lod]) * mElement->getSizeBytes();
-    return offset;
-}
-
-uint32_t Type::getLODOffset(uint32_t lod, uint32_t x, uint32_t y, uint32_t z) const {
-    uint32_t offset = mHal.state.lodOffset[lod];
-    offset += (x +
-               y * mHal.state.lodDimX[lod] +
-               z * mHal.state.lodDimX[lod] * mHal.state.lodDimY[lod]) * mElement->getSizeBytes();
-    return offset;
-}
-
-uint32_t Type::getLODFaceOffset(uint32_t lod, RsAllocationCubemapFace face,
-                                uint32_t x, uint32_t y) const {
-    uint32_t offset = mHal.state.lodOffset[lod];
-    offset += (x + y * mHal.state.lodDimX[lod]) * mElement->getSizeBytes();
-
-    if (face != 0) {
-        uint32_t faceOffset = getSizeBytes() / 6;
-        offset += faceOffset * face;
-    }
-    return offset;
 }
 
 void Type::dumpLOGV(const char *prefix) const {
