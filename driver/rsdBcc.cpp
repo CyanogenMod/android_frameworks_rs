@@ -194,7 +194,7 @@ static void wc_xy(void *usr, uint32_t idx) {
         }
 
         //ALOGE("usr idx %i, x %i,%i  y %i,%i", idx, mtls->xStart, mtls->xEnd, yStart, yEnd);
-        //ALOGE("usr ptr in %p,  out %p", mtls->ptrIn, mtls->ptrOut);
+        //ALOGE("usr ptr in %p,  out %p", mtls->fep.ptrIn, mtls->fep.ptrOut);
 
 #if defined(ARCH_ARM_RS_USE_CACHED_SCANLINE_WRITE)
         if (mtls->fep.yStrideOut < sizeof(buf)) {
@@ -208,8 +208,10 @@ static void wc_xy(void *usr, uint32_t idx) {
 #endif
             {
             for (p.y = yStart; p.y < yEnd; p.y++) {
-                p.out = mtls->fep.ptrOut + (mtls->fep.yStrideOut * p.y);
-                p.in = mtls->fep.ptrIn + (mtls->fep.yStrideIn * p.y);
+                p.out = mtls->fep.ptrOut + (mtls->fep.yStrideOut * p.y) +
+                        (mtls->fep.eStrideOut * mtls->xStart);
+                p.in = mtls->fep.ptrIn + (mtls->fep.yStrideIn * p.y) +
+                       (mtls->fep.eStrideIn * mtls->xStart);
                 fn(&p, mtls->xStart, mtls->xEnd, mtls->fep.eStrideIn, mtls->fep.eStrideOut);
             }
         }
@@ -234,7 +236,7 @@ static void wc_x(void *usr, uint32_t idx) {
         }
 
         //ALOGE("usr slice %i idx %i, x %i,%i", slice, idx, xStart, xEnd);
-        //ALOGE("usr ptr in %p,  out %p", mtls->ptrIn, mtls->ptrOut);
+        //ALOGE("usr ptr in %p,  out %p", mtls->fep.ptrIn, mtls->fep.ptrOut);
 
         p.out = mtls->fep.ptrOut + (mtls->fep.eStrideOut * xStart);
         p.in = mtls->fep.ptrIn + (mtls->fep.eStrideIn * xStart);
@@ -371,8 +373,10 @@ void rsdScriptLaunchThreads(const Context *rsc,
                 for (p.y = mtls->yStart; p.y < mtls->yEnd; p.y++) {
                     uint32_t offset = mtls->fep.dimY * mtls->fep.dimZ * p.ar[0] +
                                       mtls->fep.dimY * p.z + p.y;
-                    p.out = mtls->fep.ptrOut + (mtls->fep.yStrideOut * offset);
-                    p.in = mtls->fep.ptrIn + (mtls->fep.yStrideIn * offset);
+                    p.out = mtls->fep.ptrOut + (mtls->fep.yStrideOut * offset) +
+                            (mtls->fep.eStrideOut * mtls->xStart);
+                    p.in = mtls->fep.ptrIn + (mtls->fep.yStrideIn * offset) +
+                           (mtls->fep.eStrideIn * mtls->xStart);
                     fn(&p, mtls->xStart, mtls->xEnd, mtls->fep.eStrideIn, mtls->fep.eStrideOut);
                 }
             }
