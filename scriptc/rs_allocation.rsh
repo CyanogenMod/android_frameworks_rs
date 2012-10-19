@@ -204,7 +204,7 @@ GET_ELEMENT_AT(double4)
 
 #undef GET_ELEMENT_AT
 
-// New API's
+// Jelly Bean
 #if (defined(RS_VERSION) && (RS_VERSION >= 16))
 
 /**
@@ -272,6 +272,21 @@ extern const float4 __attribute__((overloadable))
     rsSample(rs_allocation a, rs_sampler s, float2 location, float lod);
 
 #endif // (defined(RS_VERSION) && (RS_VERSION >= 16))
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 18))
+
+/**
+ * Set single element of an allocation.
+ */
+extern void __attribute__((overloadable))
+    rsSetElementAt(rs_allocation a, void* ptr, uint32_t x);
+
+/**
+ * \overload
+ */
+extern void __attribute__((overloadable))
+    rsSetElementAt(rs_allocation a, void* ptr, uint32_t x, uint32_t y);
+#endif // (defined(RS_VERSION) && (RS_VERSION >= 18))
 
 #endif
 
