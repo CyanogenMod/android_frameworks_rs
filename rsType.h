@@ -47,6 +47,7 @@ public:
             uint32_t *lodDimX;
             uint32_t *lodDimY;
             uint32_t *lodDimZ;
+            uint32_t *lodOffset;
             uint32_t lodCount;
             bool faces;
         };
@@ -55,6 +56,8 @@ public:
     Hal mHal;
 
     Type * createTex2D(const Element *, size_t w, size_t h, bool mip);
+
+    size_t getOffsetForFace(uint32_t face) const;
 
     size_t getSizeBytes() const {return mTotalSizeBytes;}
     size_t getElementSizeBytes() const {return mElement->getSizeBytes();}
@@ -78,6 +81,16 @@ public:
         rsAssert(lod < mHal.state.lodCount);
         return mHal.state.lodDimZ[lod];
     }
+    uint32_t getLODOffset(uint32_t lod) const {
+        rsAssert(lod < mHal.state.lodCount);
+        return mHal.state.lodOffset[lod];
+    }
+    uint32_t getLODOffset(uint32_t lod, uint32_t x) const;
+    uint32_t getLODOffset(uint32_t lod, uint32_t x, uint32_t y) const;
+    uint32_t getLODOffset(uint32_t lod, uint32_t x, uint32_t y, uint32_t z) const;
+
+    uint32_t getLODFaceOffset(uint32_t lod, RsAllocationCubemapFace face,
+                              uint32_t x, uint32_t y) const;
 
     uint32_t getLODCount() const {return mHal.state.lodCount;}
     bool getIsNp2() const;
@@ -122,8 +135,6 @@ protected:
 
     // count of mipmap levels, 0 indicates no mipmapping
 
-    // Sizes are packed size, not including any padding.
-    // i.e. cell counts.
     size_t mMipChainSizeBytes;
     size_t mTotalSizeBytes;
 protected:
