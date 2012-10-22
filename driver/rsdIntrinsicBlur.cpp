@@ -126,7 +126,7 @@ static void OneVF(float4 *out,
 #endif
 
     while(x2 > x1) {
-        const uchar *pi = ptrIn + x1 * 4;
+        const uchar *pi = ptrIn;
         float4 blurredPixel = 0;
         const float* gp = gPtr;
 
