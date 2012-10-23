@@ -250,6 +250,7 @@ private:
 
     uint32_t runRootScript();
 
+    static bool loadRuntime(const char* filename, Context* rsc);
     static void * threadProc(void *);
     static void * helperThreadProc(void *);
 
