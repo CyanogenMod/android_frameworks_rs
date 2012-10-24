@@ -205,52 +205,16 @@ void Context::displayDebugStats() {
     mStateFont.setFontColor(oldR, oldG, oldB, oldA);
 }
 
-void * Context::threadProc(void *vrsc) {
-    Context *rsc = static_cast<Context *>(vrsc);
-#ifndef ANDROID_RS_SERIALIZE
-    rsc->mNativeThreadId = gettid();
-    setpriority(PRIO_PROCESS, rsc->mNativeThreadId, ANDROID_PRIORITY_DISPLAY);
-    rsc->mThreadPriority = ANDROID_PRIORITY_DISPLAY;
-#endif //ANDROID_RS_SERIALIZE
-    rsc->props.mLogTimes = getProp("debug.rs.profile") != 0;
-    rsc->props.mLogScripts = getProp("debug.rs.script") != 0;
-    rsc->props.mLogObjects = getProp("debug.rs.object") != 0;
-    rsc->props.mLogShaders = getProp("debug.rs.shader") != 0;
-    rsc->props.mLogShadersAttr = getProp("debug.rs.shader.attributes") != 0;
-    rsc->props.mLogShadersUniforms = getProp("debug.rs.shader.uniforms") != 0;
-    rsc->props.mLogVisual = getProp("debug.rs.visual") != 0;
-    rsc->props.mDebugMaxThreads = getProp("debug.rs.max-threads");
+bool Context::loadRuntime(const char* filename, Context* rsc) {
 
+    // TODO: store the driverSO somewhere so we can dlclose later
     void *driverSO = NULL;
 
-    // Provide a mechanism for dropping in a different RS driver.
-#ifdef OVERRIDE_RS_DRIVER
-#define XSTR(S) #S
-#define STR(S) XSTR(S)
-#define OVERRIDE_RS_DRIVER_STRING STR(OVERRIDE_RS_DRIVER)
-    if (getProp("debug.rs.default-CPU-driver") != 0) {
-        ALOGE("Skipping override driver and loading default CPU driver");
-    } else {
-        driverSO = dlopen(OVERRIDE_RS_DRIVER_STRING, RTLD_LAZY);
-        if (driverSO == NULL) {
-            ALOGE("Failed loading %s: %s", OVERRIDE_RS_DRIVER_STRING,
-                  dlerror());
-            // Continue to attempt loading fallback driver
-        }
-    }
-
-#undef XSTR
-#undef STR
-#endif  // OVERRIDE_RS_DRIVER
-
-    // Attempt to load the reference RS driver (if necessary).
+    driverSO = dlopen(filename, RTLD_LAZY);
     if (driverSO == NULL) {
-        driverSO = dlopen("libRSDriver.so", RTLD_LAZY);
-        if (driverSO == NULL) {
-            rsc->setError(RS_ERROR_FATAL_DRIVER, "Failed loading RS driver");
-            ALOGE("Failed loading RS driver: %s", dlerror());
-            return NULL;
-        }
+        rsc->setError(RS_ERROR_FATAL_DRIVER, "Failed loading RS driver");
+        ALOGE("Failed loading RS driver: %s", dlerror());
+        return false;
     }
 
     // Need to call dlerror() to clear buffer before using it for dlsym().
@@ -269,15 +233,68 @@ void * Context::threadProc(void *vrsc) {
         rsc->setError(RS_ERROR_FATAL_DRIVER, "Failed to find rsdHalInit");
         dlclose(driverSO);
         ALOGE("Failed to find rsdHalInit: %s", dlerror());
-        return NULL;
+        return false;
     }
 
     if (!(*halInit)(rsc, 0, 0)) {
         rsc->setError(RS_ERROR_FATAL_DRIVER, "Failed initializing RS Driver");
         dlclose(driverSO);
         ALOGE("Hal init failed");
-        return NULL;
+        return false;
     }
+
+    //validate HAL struct
+
+
+    return true;
+}
+
+void * Context::threadProc(void *vrsc) {
+    Context *rsc = static_cast<Context *>(vrsc);
+#ifndef ANDROID_RS_SERIALIZE
+    rsc->mNativeThreadId = gettid();
+    setpriority(PRIO_PROCESS, rsc->mNativeThreadId, ANDROID_PRIORITY_DISPLAY);
+    rsc->mThreadPriority = ANDROID_PRIORITY_DISPLAY;
+#endif //ANDROID_RS_SERIALIZE
+    rsc->props.mLogTimes = getProp("debug.rs.profile") != 0;
+    rsc->props.mLogScripts = getProp("debug.rs.script") != 0;
+    rsc->props.mLogObjects = getProp("debug.rs.object") != 0;
+    rsc->props.mLogShaders = getProp("debug.rs.shader") != 0;
+    rsc->props.mLogShadersAttr = getProp("debug.rs.shader.attributes") != 0;
+    rsc->props.mLogShadersUniforms = getProp("debug.rs.shader.uniforms") != 0;
+    rsc->props.mLogVisual = getProp("debug.rs.visual") != 0;
+    rsc->props.mDebugMaxThreads = getProp("debug.rs.max-threads");
+
+    bool loadDefault = true;
+
+    // Provide a mechanism for dropping in a different RS driver.
+#ifdef OVERRIDE_RS_DRIVER
+#define XSTR(S) #S
+#define STR(S) XSTR(S)
+#define OVERRIDE_RS_DRIVER_STRING STR(OVERRIDE_RS_DRIVER)
+
+    if (getProp("debug.rs.default-CPU-driver") != 0) {
+        ALOGE("Skipping override driver and loading default CPU driver");
+    } else {
+        if (loadRuntime(OVERRIDE_RS_DRIVER_STRING, rsc)) {
+            ALOGE("Successfully loaded runtime: %s", OVERRIDE_RS_DRIVER_STRING);
+            loadDefault = false;
+        } else {
+            ALOGE("Failed to load runtime %s, loading default", OVERRIDE_RS_DRIVER_STRING);
+        }
+    }
+
+#undef XSTR
+#undef STR
+#endif  // OVERRIDE_RS_DRIVER
+
+    if (loadDefault) {
+        if (!loadRuntime("libRSDriver.so", rsc)) {
+            ALOGE("Failed to load default runtime!");
+            return NULL;
+        }
+    }
+
     rsc->mHal.funcs.setPriority(rsc, rsc->mThreadPriority);
 
     if (rsc->mIsGraphicsContext) {
