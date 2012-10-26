@@ -161,8 +161,7 @@ typedef struct {
 } MTLaunchStruct;
 
 void rsdScriptLaunchThreads(const android::renderscript::Context *rsc,
-                            android::renderscript::Script *s,
-                            uint32_t slot,
+                            bool isThreadable,
                             const android::renderscript::Allocation * ain,
                             android::renderscript::Allocation * aout,
                             const void * usr,

@@ -176,6 +176,7 @@ static void wc_xy(void *usr, uint32_t idx) {
     MTLaunchStruct *mtls = (MTLaunchStruct *)usr;
     RsForEachStubParamStruct p;
     memcpy(&p, &mtls->fep, sizeof(p));
+    p.lid = idx;
     RsdHal * dc = (RsdHal *)mtls->rsc->mHal.drv;
     uint32_t sig = mtls->sig;
 
@@ -222,6 +223,7 @@ static void wc_x(void *usr, uint32_t idx) {
     MTLaunchStruct *mtls = (MTLaunchStruct *)usr;
     RsForEachStubParamStruct p;
     memcpy(&p, &mtls->fep, sizeof(p));
+    p.lid = idx;
     RsdHal * dc = (RsdHal *)mtls->rsc->mHal.drv;
     uint32_t sig = mtls->sig;
 
@@ -328,8 +330,7 @@ void rsdScriptInvokeForEachMtlsSetup(const Context *rsc,
 }
 
 void rsdScriptLaunchThreads(const Context *rsc,
-                            Script *s,
-                            uint32_t slot,
+                            bool isThreadable,
                             const Allocation * ain,
                             Allocation * aout,
                             const void * usr,
@@ -337,11 +338,10 @@ void rsdScriptLaunchThreads(const Context *rsc,
                             const RsScriptCall *sc,
                             MTLaunchStruct *mtls) {
 
-    Script * oldTLS = setTLS(s);
     Context *mrsc = (Context *)rsc;
     RsdHal * dc = (RsdHal *)mtls->rsc->mHal.drv;
 
-    if ((dc->mWorkers.mCount > 1) && s->mHal.info.isThreadable && !dc->mInForEach) {
+    if ((dc->mWorkers.mCount > 1) && isThreadable && !dc->mInForEach) {
         dc->mInForEach = true;
         if (mtls->fep.dimY > 1) {
             mtls->mSliceSize = mtls->fep.dimY / (dc->mWorkers.mCount * 4);
@@ -382,8 +382,6 @@ void rsdScriptLaunchThreads(const Context *rsc,
             }
         }
     }
-
-    setTLS(oldTLS);
 }
 
 void rsdScriptInvokeForEach(const Context *rsc,
@@ -415,7 +413,9 @@ void rsdScriptInvokeForEach(const Context *rsc,
     }
 
 
-    rsdScriptLaunchThreads(rsc, s, slot, ain, aout, usr, usrLen, sc, &mtls);
+    Script * oldTLS = setTLS(s);
+    rsdScriptLaunchThreads(rsc, s->mHal.info.isThreadable, ain, aout, usr, usrLen, sc, &mtls);
+    setTLS(oldTLS);
 }
 
 

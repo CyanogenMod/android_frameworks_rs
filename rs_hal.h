@@ -58,6 +58,7 @@ typedef struct {
     uint32_t lod;
     RsAllocationCubemapFace face;
     uint32_t ar[16];
+    uint32_t lid;
 
     uint32_t dimX;
     uint32_t dimY;
