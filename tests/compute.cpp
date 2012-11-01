@@ -56,6 +56,8 @@ int main(int argc, char** argv)
     t.clear();
     a1.clear();
     e.clear();
+    ain.clear();
+    aout.clear();
     delete rs;
     printf("Delete OK\n");
 }
