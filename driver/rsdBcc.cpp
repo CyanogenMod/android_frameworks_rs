@@ -90,7 +90,8 @@ bool rsdScriptInit(const Context *rsc,
 
     exec = drv->mCompilerDriver->build(*drv->mCompilerContext,
                                        cacheDir, resName,
-                                       (const char *)bitcode, bitcodeSize);
+                                       (const char *)bitcode, bitcodeSize,
+                                       NULL);
 
     if (exec == NULL) {
         ALOGE("bcc: FAILS to prepare executable for '%s'", resName);
