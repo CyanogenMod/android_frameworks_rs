@@ -1,8 +1,5 @@
 
 #include "RenderScript.h"
-#include "Element.h"
-#include "Type.h"
-#include "Allocation.h"
 
 #include "ScriptC_mono.h"
 
@@ -12,10 +9,10 @@ using namespace renderscriptCpp;
 int main(int argc, char** argv)
 {
 
-    RenderScript *rs = new RenderScript();
-    printf("New RS %p\n", rs);
+    sp<RS> rs = new RS();
+    printf("New RS %p\n", rs.get());
 
-    bool r = rs->init(16);
+    bool r = rs->init();
     printf("Init returned %i\n", r);
 
     sp<const Element> e = Element::RGBA_8888(rs);
@@ -45,11 +42,8 @@ int main(int argc, char** argv)
     //ain->copy1DRangeFrom(0, 128*128, (int32_t *)buf, 128*128*4);
     ain->copy1DRangeFromUnchecked(0, t->getCount(), buf, t->getCount()*4);
 
-
-
     sc->forEach_root(ain, aout);
     printf("for each done\n");
-
 
     printf("Deleting stuff\n");
     sc.clear();
@@ -58,6 +52,6 @@ int main(int argc, char** argv)
     e.clear();
     ain.clear();
     aout.clear();
-    delete rs;
+    //    delete rs;
     printf("Delete OK\n");
 }
