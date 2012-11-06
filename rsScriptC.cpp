@@ -250,8 +250,14 @@ bool ScriptC::runCompiler(Context *rsc,
     bitcodeLen = BT->getTranslatedBitcodeSize();
 #endif
 
+    if (!cacheDir) {
+        // MUST BE FIXED BEFORE ANYTHING USING C++ API IS RELEASED
+        cacheDir = getenv("EXTERNAL_STORAGE");
+        ALOGV("Cache dir changed to %s", cacheDir);
+    }
+
     // ensure that cache dir exists
-    if (!createCacheDir(cacheDir)) {
+    if (cacheDir && !createCacheDir(cacheDir)) {
       return false;
     }
 

@@ -21,8 +21,6 @@
 #include <string.h>
 
 #include "RenderScript.h"
-#include "Element.h"
-#include "Type.h"
 
 using namespace android;
 using namespace renderscriptCpp;
@@ -64,7 +62,7 @@ void Type::calcElementCount() {
 }
 
 
-Type::Type(void *id, RenderScript *rs) : BaseObj(id, rs) {
+Type::Type(void *id, sp<RS> rs) : BaseObj(id, rs) {
     mDimX = 0;
     mDimY = 0;
     mDimZ = 0;
@@ -96,7 +94,7 @@ void Type::updateFromNative() {
     */
 }
 
-Type::Builder::Builder(RenderScript *rs, sp<const Element> e) {
+Type::Builder::Builder(sp<RS> rs, sp<const Element> e) {
     mRS = rs;
     mElement = e;
     mDimX = 0;
@@ -148,7 +146,7 @@ sp<const Type> Type::Builder::create() {
         }
     }
 
-    void * id = rsTypeCreate(mRS->mContext, mElement->getID(), mDimX, mDimY, mDimZ,
+    void * id = rsTypeCreate(mRS->getContext(), mElement->getID(), mDimX, mDimY, mDimZ,
             mDimMipmaps, mDimFaces);
     Type *t = new Type(id, mRS);
     t->mElement = mElement;

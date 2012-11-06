@@ -16,10 +16,7 @@
 
 #define LOG_TAG "libRS_cpp"
 
-#include <rs.h>
-
 #include "RenderScript.h"
-#include "BaseObj.h"
 
 using namespace android;
 using namespace renderscriptCpp;
@@ -36,7 +33,7 @@ void * BaseObj::getObjID(sp<const BaseObj> o) {
 }
 
 
-BaseObj::BaseObj(void *id, RenderScript *rs) {
+BaseObj::BaseObj(void *id, sp<RS> rs) {
     mRS = rs;
     mID = id;
 }
@@ -48,14 +45,14 @@ void BaseObj::checkValid() {
 }
 
 BaseObj::~BaseObj() {
-    rsObjDestroy(mRS->mContext, mID);
+    rsObjDestroy(mRS->getContext(), mID);
     mRS = NULL;
     mID = NULL;
 }
 
 void BaseObj::updateFromNative() {
     const char *name = NULL;
-    rsaGetName(mRS, mID, &name);
+    rsaGetName(mRS->getContext(), mID, &name);
     mName = name;
 }
 
@@ -65,6 +62,3 @@ bool BaseObj::equals(const BaseObj *obj) {
         return true;
     return mID == obj->mID;
 }
-
-
-
