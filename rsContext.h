@@ -68,6 +68,7 @@ public:
     Hal mHal;
 
     static Context * createContext(Device *, const RsSurfaceConfig *sc);
+    static Context * createContext(Device *, const RsSurfaceConfig *sc, bool forceCpu);
     static Context * createContextLite();
     ~Context();
 
@@ -223,6 +224,8 @@ protected:
     int32_t mThreadPriority;
     bool mIsGraphicsContext;
 
+    bool mForceCpu;
+
     bool mRunning;
     bool mExit;
     bool mPaused;
@@ -243,7 +246,6 @@ protected:
 private:
     Context();
     bool initContext(Device *, const RsSurfaceConfig *sc);
-
 
     bool initGLThread();
     void deinitEGL();
