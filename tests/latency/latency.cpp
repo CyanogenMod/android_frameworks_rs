@@ -9,8 +9,8 @@ using namespace renderscriptCpp;
 int main(int argc, char** argv)
 {
     int iters = 100;
-
     int numElems = 1000;
+    bool forceCpu = false;
 
     if (argc >= 2) {
         iters = atoi(argv[1]);
@@ -30,11 +30,20 @@ int main(int argc, char** argv)
         }
     }
 
+    if (argc >= 4) {
+        int temp = atoi(argv[3]);
+        if (temp != 0)
+            forceCpu = true;
+    }
+
+    if (forceCpu)
+        printf("forcing CPU\n");
+
     printf("numElems = %d\n", numElems);
 
     sp<RS> rs = new RS();
 
-    bool r = rs->init(true); // force CPU execution
+    bool r = rs->init(forceCpu); // force CPU execution
 
     sp<const Element> e = Element::U32(rs);
 
