@@ -43,7 +43,8 @@ class RS : public android::LightRefBase<RS> {
     RS();
     virtual ~RS();
 
-    bool init();
+    bool init() { return init(false); }
+    bool init(bool forceCpu);
 
     void setErrorHandler(ErrorHandlerFunc_t func);
     ErrorHandlerFunc_t getErrorHandler() { return mErrorFunc; }
@@ -56,7 +57,7 @@ class RS : public android::LightRefBase<RS> {
     RsContext getContext() { return mContext; }
 
  private:
-    bool init(int targetApi);
+    bool init(int targetApi, bool forceCpu);
     static void * threadProc(void *);
 
     static bool gInitialized;
