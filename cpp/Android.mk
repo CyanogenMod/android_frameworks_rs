@@ -20,7 +20,8 @@ LOCAL_SRC_FILES:= \
 	Type.cpp \
 	Allocation.cpp \
 	Script.cpp \
-	ScriptC.cpp
+	ScriptC.cpp \
+	ScriptIntrinsics.cpp
 
 LOCAL_SHARED_LIBRARIES := \
 	libRS \

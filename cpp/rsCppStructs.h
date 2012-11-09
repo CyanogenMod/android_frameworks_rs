@@ -523,8 +523,33 @@ protected:
 
 };
 
+class ScriptIntrinsic : public Script {
+ protected:
+    ScriptIntrinsic(sp<RS> rs, int id, Element *e);
+};
+
+class ScriptIntrinsicBlend : public ScriptIntrinsic {
+ public:
+    ScriptIntrinsicBlend(sp<RS> rs, Element *e);
+    void blendClear(sp<Allocation> in, sp<Allocation> out);
+    void blendSrc(sp<Allocation> in, sp<Allocation> out);
+    void blendDst(sp<Allocation> in, sp<Allocation> out);
+    void blendSrcOver(sp<Allocation> in, sp<Allocation> out);
+    void blendDstOver(sp<Allocation> in, sp<Allocation> out);
+    void blendSrcIn(sp<Allocation> in, sp<Allocation> out);
+    void blendDstIn(sp<Allocation> in, sp<Allocation> out);
+    void blendSrcOut(sp<Allocation> in, sp<Allocation> out);
+    void blendDstOut(sp<Allocation> in, sp<Allocation> out);
+    void blendSrcAtop(sp<Allocation> in, sp<Allocation> out);
+    void blendDstAtop(sp<Allocation> in, sp<Allocation> out);
+    void blendXor(sp<Allocation> in, sp<Allocation> out);
+    void blendMultiply(sp<Allocation> in, sp<Allocation> out);
+    void blendAdd(sp<Allocation> in, sp<Allocation> out);
+    void blendSubtract(sp<Allocation> in, sp<Allocation> out);
+};
 
 }
+
 }
 
 #endif
