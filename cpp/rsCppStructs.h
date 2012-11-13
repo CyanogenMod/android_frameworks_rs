@@ -551,6 +551,13 @@ class ScriptIntrinsicBlend : public ScriptIntrinsic {
     void blendSubtract(sp<Allocation> in, sp<Allocation> out);
 };
 
+class ScriptIntrinsicBlur : public ScriptIntrinsic {
+ public:
+    ScriptIntrinsicBlur(sp<RS> rs, Element *e);
+    void blur(sp<Allocation> in, sp<Allocation> out);
+    void setRadius(float radius);
+};
+
 }
 
 }

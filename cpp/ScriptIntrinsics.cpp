@@ -95,7 +95,16 @@ void ScriptIntrinsicBlend::blendSubtract(sp<Allocation> in, sp<Allocation> out) 
     Script::forEach(35, in, out, NULL, 0);
 }
 
+ScriptIntrinsicBlur::ScriptIntrinsicBlur(sp<RS> rs, Element *e)
+    : ScriptIntrinsic(rs, RS_SCRIPT_INTRINSIC_ID_BLUR, e) {
 
+}
 
+void ScriptIntrinsicBlur::blur(sp<Allocation> in, sp<Allocation> out) {
+    Script::setVar(1, in);
+    Script::forEach(0, NULL, out, NULL, 0);
+}
 
-
+void ScriptIntrinsicBlur::setRadius(float radius) {
+    Script::setVar(0, &radius, sizeof(float));
+}
