@@ -99,6 +99,7 @@ public:
                  uint32_t w, uint32_t h, uint32_t d, const void *data, size_t sizeBytes);
 
     void read(Context *rsc, uint32_t xoff, uint32_t lod, uint32_t count, void *data, size_t sizeBytes);
+    void readUnchecked(Context *rsc, uint32_t xoff, uint32_t lod, uint32_t count, void *data, size_t sizeBytes);
     void read(Context *rsc, uint32_t xoff, uint32_t yoff, uint32_t lod, RsAllocationCubemapFace face,
                  uint32_t w, uint32_t h, void *data, size_t sizeBytes);
     void read(Context *rsc, uint32_t xoff, uint32_t yoff, uint32_t zoff, uint32_t lod, RsAllocationCubemapFace face,

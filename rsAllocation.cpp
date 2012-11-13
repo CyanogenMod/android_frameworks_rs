@@ -124,6 +124,12 @@ void Allocation::read(Context *rsc, uint32_t xoff, uint32_t lod,
     rsc->mHal.funcs.allocation.read1D(rsc, this, xoff, lod, count, data, sizeBytes);
 }
 
+void Allocation::readUnchecked(Context *rsc, uint32_t xoff, uint32_t lod,
+                         uint32_t count, void *data, size_t sizeBytes) {
+    rsc->mHal.funcs.allocation.read1D(rsc, this, xoff, lod, count, data, sizeBytes);
+}
+
+
 void Allocation::read(Context *rsc, uint32_t xoff, uint32_t yoff, uint32_t lod, RsAllocationCubemapFace face,
              uint32_t w, uint32_t h, void *data, size_t sizeBytes) {
     const size_t eSize = mHal.state.elementSizeBytes;
@@ -658,6 +664,12 @@ void rsi_AllocationIoSend(Context *rsc, RsAllocation valloc) {
 void rsi_AllocationIoReceive(Context *rsc, RsAllocation valloc) {
     Allocation *alloc = static_cast<Allocation *>(valloc);
     alloc->ioReceive(rsc);
+}
+
+void rsi_Allocation1DRead(Context *rsc, RsAllocation va, uint32_t xoff, uint32_t lod,
+                          uint32_t count, void *data, size_t sizeBytes) {
+    Allocation *a = static_cast<Allocation *>(va);
+    a->readUnchecked(rsc, xoff, lod, count, data, sizeBytes);
 }
 
 }

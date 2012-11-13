@@ -178,6 +178,22 @@ void Allocation::copy1DRangeFromUnchecked(uint32_t off, size_t count, const void
     rsAllocation1DData(mRS->getContext(), getIDSafe(), off, mSelectedLOD, count, data, dataLen);
 }
 
+void Allocation::copy1DRangeToUnchecked(uint32_t off, size_t count, void *data, size_t dataLen) {
+    if(count < 1) {
+        ALOGE("Count must be >= 1.");
+        return;
+    }
+    if((off + count) > mCurrentCount) {
+        ALOGE("Overflow, Available count %zu, got %zu at offset %zu.", mCurrentCount, count, off);
+        return;
+    }
+    if((count * mType->getElement()->getSizeBytes()) > dataLen) {
+        ALOGE("Array too small for allocation type.");
+        return;
+    }
+    rsAllocation1DRead(mRS->getContext(), getIDSafe(), off, mSelectedLOD, count, data, dataLen);
+}
+
 void Allocation::copy1DRangeFrom(uint32_t off, size_t count, const int32_t *d, size_t dataLen) {
     validateIsInt32();
     copy1DRangeFromUnchecked(off, count, d, dataLen);

@@ -221,6 +221,15 @@ AllocationRead {
     param void * data
     }
 
+Allocation1DRead {
+    param RsAllocation va
+    param uint32_t xoff
+    param uint32_t lod
+    param uint32_t count
+    param void *data
+    }
+
+
 AllocationSyncAll {
     param RsAllocation va
     param RsAllocationUsageType src

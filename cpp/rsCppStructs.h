@@ -218,7 +218,10 @@ public:
     void ioGetInput();
 
     void generateMipmaps();
+
     void copy1DRangeFromUnchecked(uint32_t off, size_t count, const void *data, size_t dataLen);
+    void copy1DRangeToUnchecked(uint32_t off, size_t count, void *data, size_t dataLen);
+
     void copy1DRangeFrom(uint32_t off, size_t count, const int32_t* d, size_t dataLen);
     void copy1DRangeFrom(uint32_t off, size_t count, const int16_t* d, size_t dataLen);
     void copy1DRangeFrom(uint32_t off, size_t count, const int8_t* d, size_t dataLen);
