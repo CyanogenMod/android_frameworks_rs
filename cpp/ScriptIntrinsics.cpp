@@ -23,12 +23,12 @@
 using namespace android;
 using namespace renderscriptCpp;
 
-ScriptIntrinsic::ScriptIntrinsic(sp<RS> rs, int id, Element *e)
+ScriptIntrinsic::ScriptIntrinsic(sp<RS> rs, int id, sp<const Element> e)
     : Script(NULL, rs) {
-    mID = rsScriptIntrinsicCreate(rs->getContext(), id, e);
+    mID = rsScriptIntrinsicCreate(rs->getContext(), id, e->getID());
 }
 
-ScriptIntrinsicBlend::ScriptIntrinsicBlend(sp<RS> rs, Element *e)
+ScriptIntrinsicBlend::ScriptIntrinsicBlend(sp<RS> rs, sp<const Element> e)
     : ScriptIntrinsic(rs, RS_SCRIPT_INTRINSIC_ID_BLEND, e) {
 
 }
@@ -95,7 +95,7 @@ void ScriptIntrinsicBlend::blendSubtract(sp<Allocation> in, sp<Allocation> out) 
     Script::forEach(35, in, out, NULL, 0);
 }
 
-ScriptIntrinsicBlur::ScriptIntrinsicBlur(sp<RS> rs, Element *e)
+ScriptIntrinsicBlur::ScriptIntrinsicBlur(sp<RS> rs, sp<const Element> e)
     : ScriptIntrinsic(rs, RS_SCRIPT_INTRINSIC_ID_BLUR, e) {
 
 }

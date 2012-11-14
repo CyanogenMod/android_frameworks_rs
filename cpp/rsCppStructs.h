@@ -528,12 +528,12 @@ protected:
 
 class ScriptIntrinsic : public Script {
  protected:
-    ScriptIntrinsic(sp<RS> rs, int id, Element *e);
+    ScriptIntrinsic(sp<RS> rs, int id, sp<const Element> e);
 };
 
 class ScriptIntrinsicBlend : public ScriptIntrinsic {
  public:
-    ScriptIntrinsicBlend(sp<RS> rs, Element *e);
+    ScriptIntrinsicBlend(sp<RS> rs, sp <const Element> e);
     void blendClear(sp<Allocation> in, sp<Allocation> out);
     void blendSrc(sp<Allocation> in, sp<Allocation> out);
     void blendDst(sp<Allocation> in, sp<Allocation> out);
@@ -553,7 +553,7 @@ class ScriptIntrinsicBlend : public ScriptIntrinsic {
 
 class ScriptIntrinsicBlur : public ScriptIntrinsic {
  public:
-    ScriptIntrinsicBlur(sp<RS> rs, Element *e);
+    ScriptIntrinsicBlur(sp<RS> rs, sp <const Element> e);
     void blur(sp<Allocation> in, sp<Allocation> out);
     void setRadius(float radius);
 };
