@@ -254,6 +254,10 @@ public:
                                    uint32_t usage = RS_ALLOCATION_USAGE_SCRIPT);
     static sp<Allocation> createSized(sp<RS> rs, sp<const Element> e, size_t count,
                                    uint32_t usage = RS_ALLOCATION_USAGE_SCRIPT);
+    static sp<Allocation> createSized2D(sp<RS> rs, sp<const Element> e,
+                                        size_t x, size_t y,
+                                        uint32_t usage = RS_ALLOCATION_USAGE_SCRIPT);
+
 
 };
 

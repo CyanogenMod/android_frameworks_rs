@@ -307,7 +307,7 @@ void resize(int dimX, int dimY) {
 
 
 android::sp<Allocation> Allocation::createTyped(sp<RS> rs, sp<const Type> type,
-                        RsAllocationMipmapControl mips, uint32_t usage) {
+                                                RsAllocationMipmapControl mips, uint32_t usage) {
     void *id = rsAllocationCreateTyped(rs->getContext(), type->getID(), mips, usage, 0);
     if (id == 0) {
         ALOGE("Allocation creation failed.");
@@ -317,8 +317,10 @@ android::sp<Allocation> Allocation::createTyped(sp<RS> rs, sp<const Type> type,
 }
 
 android::sp<Allocation> Allocation::createTyped(sp<RS> rs, sp<const Type> type,
-                                    RsAllocationMipmapControl mips, uint32_t usage, void *pointer) {
-    void *id = rsAllocationCreateTyped(rs->getContext(), type->getID(), mips, usage, (uint32_t)pointer);
+                                                RsAllocationMipmapControl mips, uint32_t usage,
+                                                void *pointer) {
+    void *id = rsAllocationCreateTyped(rs->getContext(), type->getID(), mips, usage,
+                                       (uint32_t)pointer);
     if (id == 0) {
         ALOGE("Allocation creation failed.");
     }
@@ -326,21 +328,25 @@ android::sp<Allocation> Allocation::createTyped(sp<RS> rs, sp<const Type> type,
 }
 
 android::sp<Allocation> Allocation::createTyped(sp<RS> rs, sp<const Type> type,
-        uint32_t usage) {
+                                                uint32_t usage) {
     return createTyped(rs, type, RS_ALLOCATION_MIPMAP_NONE, usage);
 }
 
 android::sp<Allocation> Allocation::createSized(sp<RS> rs, sp<const Element> e,
-        size_t count, uint32_t usage) {
-
+                                                size_t count, uint32_t usage) {
     Type::Builder b(rs, e);
     b.setX(count);
     sp<const Type> t = b.create();
 
-    void *id = rsAllocationCreateTyped(rs->getContext(), t->getID(),
-        RS_ALLOCATION_MIPMAP_NONE, usage, 0);
-    if (id == 0) {
-        ALOGE("Allocation creation failed.");
-    }
-    return new Allocation(id, rs, t, usage);
+    return createTyped(rs, t, usage);
+}
+
+android::sp<Allocation> Allocation::createSized2D(sp<RS> rs, sp<const Element> e,
+                                                  size_t x, size_t y, uint32_t usage) {
+    Type::Builder b(rs, e);
+    b.setX(x);
+    b.setY(y);
+    sp<const Type> t = b.create();
+
+    return createTyped(rs, t, usage);
 }
