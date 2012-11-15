@@ -221,25 +221,17 @@ public:
 
     void generateMipmaps();
 
-    void copy1DRangeFromUnchecked(uint32_t off, size_t count, const void *data, size_t dataLen);
-    void copy1DRangeToUnchecked(uint32_t off, size_t count, void *data, size_t dataLen);
+    void copy1DRangeFrom(uint32_t off, size_t count, const void *data, size_t dataLen);
+    void copy1DRangeTo(uint32_t off, size_t count, void *data, size_t dataLen);
 
-    void copy1DRangeFrom(uint32_t off, size_t count, const int32_t* d, size_t dataLen);
-    void copy1DRangeFrom(uint32_t off, size_t count, const int16_t* d, size_t dataLen);
-    void copy1DRangeFrom(uint32_t off, size_t count, const int8_t* d, size_t dataLen);
-    void copy1DRangeFrom(uint32_t off, size_t count, const float* d, size_t dataLen);
-    void copy1DRangeFrom(uint32_t off, size_t count, const Allocation *data, uint32_t dataOff);
+    void copy1DRangeFrom(uint32_t off, size_t count, sp<const Allocation> data, uint32_t dataOff);
 
     void copy2DRangeFrom(uint32_t xoff, uint32_t yoff, uint32_t w, uint32_t h,
-                         const int32_t *data, size_t dataLen);
+                         const void *data, size_t dataLen);
+    //TODO: add copy2DRangeTo
+
     void copy2DRangeFrom(uint32_t xoff, uint32_t yoff, uint32_t w, uint32_t h,
-                         const int16_t *data, size_t dataLen);
-    void copy2DRangeFrom(uint32_t xoff, uint32_t yoff, uint32_t w, uint32_t h,
-                         const int8_t *data, size_t dataLen);
-    void copy2DRangeFrom(uint32_t xoff, uint32_t yoff, uint32_t w, uint32_t h,
-                         const float *data, size_t dataLen);
-    void copy2DRangeFrom(uint32_t xoff, uint32_t yoff, uint32_t w, uint32_t h,
-                         const Allocation *data, size_t dataLen,
+                         sp<const Allocation> data, size_t dataLen,
                          uint32_t dataXoff, uint32_t dataYoff);
 
     void resize(int dimX);

@@ -66,7 +66,7 @@ int main(int argc, char** argv)
 
     uint32_t temp;
 
-    aout->copy1DRangeFromUnchecked(0, 1, &temp, sizeof(temp));
+    rs->finish();
 
     gettimeofday(&stop, NULL);
 

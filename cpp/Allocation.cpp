@@ -160,7 +160,7 @@ void Allocation::generateMipmaps() {
     rsAllocationGenerateMipmaps(mRS->getContext(), getID());
 }
 
-void Allocation::copy1DRangeFromUnchecked(uint32_t off, size_t count, const void *data,
+void Allocation::copy1DRangeFrom(uint32_t off, size_t count, const void *data,
         size_t dataLen) {
 
     if(count < 1) {
@@ -179,7 +179,7 @@ void Allocation::copy1DRangeFromUnchecked(uint32_t off, size_t count, const void
     rsAllocation1DData(mRS->getContext(), getIDSafe(), off, mSelectedLOD, count, data, dataLen);
 }
 
-void Allocation::copy1DRangeToUnchecked(uint32_t off, size_t count, void *data, size_t dataLen) {
+void Allocation::copy1DRangeTo(uint32_t off, size_t count, void *data, size_t dataLen) {
     if(count < 1) {
         ALOGE("Count must be >= 1.");
         return;
@@ -195,28 +195,8 @@ void Allocation::copy1DRangeToUnchecked(uint32_t off, size_t count, void *data, 
     rsAllocation1DRead(mRS->getContext(), getIDSafe(), off, mSelectedLOD, count, data, dataLen);
 }
 
-void Allocation::copy1DRangeFrom(uint32_t off, size_t count, const int32_t *d, size_t dataLen) {
-    validateIsInt32();
-    copy1DRangeFromUnchecked(off, count, d, dataLen);
-}
-
-void Allocation::copy1DRangeFrom(uint32_t off, size_t count, const int16_t *d, size_t dataLen) {
-    validateIsInt16();
-    copy1DRangeFromUnchecked(off, count, d, dataLen);
-}
-
-void Allocation::copy1DRangeFrom(uint32_t off, size_t count, const int8_t *d, size_t dataLen) {
-    validateIsInt8();
-    copy1DRangeFromUnchecked(off, count, d, dataLen);
-}
-
-void Allocation::copy1DRangeFrom(uint32_t off, size_t count, const float *d, size_t dataLen) {
-    validateIsFloat32();
-    copy1DRangeFromUnchecked(off, count, d, dataLen);
-}
-
-void Allocation::copy1DRangeFrom(uint32_t off, size_t count, const Allocation *data,
-        uint32_t dataOff) {
+void Allocation::copy1DRangeFrom(uint32_t off, size_t count, sp<const Allocation> data,
+                                 uint32_t dataOff) {
 
     rsAllocationCopy2DRange(mRS->getContext(), getIDSafe(), off, 0,
                             mSelectedLOD, mSelectedFace,
@@ -235,35 +215,14 @@ void Allocation::validate2DRange(uint32_t xoff, uint32_t yoff, uint32_t w, uint3
 }
 
 void Allocation::copy2DRangeFrom(uint32_t xoff, uint32_t yoff, uint32_t w, uint32_t h,
-                                 const int8_t *data, size_t dataLen) {
+                                 const void *data, size_t dataLen) {
     validate2DRange(xoff, yoff, w, h);
     rsAllocation2DData(mRS->getContext(), getIDSafe(), xoff, yoff, mSelectedLOD, mSelectedFace,
                        w, h, data, dataLen);
 }
 
 void Allocation::copy2DRangeFrom(uint32_t xoff, uint32_t yoff, uint32_t w, uint32_t h,
-                                 const int16_t *data, size_t dataLen) {
-    validate2DRange(xoff, yoff, w, h);
-    rsAllocation2DData(mRS->getContext(), getIDSafe(), xoff, yoff, mSelectedLOD, mSelectedFace,
-                       w, h, data, dataLen);
-}
-
-void Allocation::copy2DRangeFrom(uint32_t xoff, uint32_t yoff, uint32_t w, uint32_t h,
-                                 const int32_t *data, size_t dataLen) {
-    validate2DRange(xoff, yoff, w, h);
-    rsAllocation2DData(mRS->getContext(), getIDSafe(), xoff, yoff, mSelectedLOD, mSelectedFace,
-                       w, h, data, dataLen);
-}
-
-void Allocation::copy2DRangeFrom(uint32_t xoff, uint32_t yoff, uint32_t w, uint32_t h,
-                                 const float *data, size_t dataLen) {
-    validate2DRange(xoff, yoff, w, h);
-    rsAllocation2DData(mRS->getContext(), getIDSafe(), xoff, yoff, mSelectedLOD, mSelectedFace,
-                       w, h, data, dataLen);
-}
-
-void Allocation::copy2DRangeFrom(uint32_t xoff, uint32_t yoff, uint32_t w, uint32_t h,
-                                 const Allocation *data, size_t dataLen,
+                                 sp<const Allocation> data, size_t dataLen,
                                  uint32_t dataXoff, uint32_t dataYoff) {
     validate2DRange(xoff, yoff, w, h);
     rsAllocationCopy2DRange(mRS->getContext(), getIDSafe(), xoff, yoff,
