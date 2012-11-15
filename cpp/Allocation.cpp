@@ -37,7 +37,8 @@ void Allocation::updateCacheInfo(sp<const Type> t) {
 }
 
 Allocation::Allocation(void *id, sp<RS> rs, sp<const Type> t, uint32_t usage) :
-        BaseObj(id, rs) {
+    BaseObj(id, rs), mSelectedY(0), mSelectedZ(0), mSelectedLOD(0),
+    mSelectedFace(RS_ALLOCATION_CUBEMAP_FACE_POSITIVE_X) {
 
     if ((usage & ~(RS_ALLOCATION_USAGE_SCRIPT |
                    RS_ALLOCATION_USAGE_GRAPHICS_TEXTURE |

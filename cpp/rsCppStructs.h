@@ -56,6 +56,8 @@ class RS : public android::LightRefBase<RS> {
 
     RsContext getContext() { return mContext; }
 
+    void finish();
+
  private:
     bool init(int targetApi, bool forceCpu);
     static void * threadProc(void *);

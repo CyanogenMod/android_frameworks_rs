@@ -161,3 +161,7 @@ void RS::setErrorHandler(ErrorHandlerFunc_t func) {
 void RS::setMessageHandler(MessageHandlerFunc_t func) {
     mMessageFunc  = func;
 }
+
+void RS::finish() {
+    rsContextFinish(mContext);
+}
