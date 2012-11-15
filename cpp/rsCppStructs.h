@@ -386,6 +386,73 @@ private:
     size_t mVectorSize;
 };
 
+class FieldPacker {
+protected:
+    unsigned char* mData;
+    size_t mPos;
+    size_t mLen;
+
+public:
+    FieldPacker(size_t len)
+        : mPos(0),
+          mLen(len) {
+        mData = new unsigned char[len];
+    }
+
+    virtual ~FieldPacker() {
+        delete [] mData;
+    }
+
+    void align(size_t v) {
+        if ((v & (v - 1)) != 0) {
+            ALOGE("Non-power-of-two alignment: %zu", v);
+            return;
+        }
+
+        while ((mPos & (v - 1)) != 0) {
+            mData[mPos++] = 0;
+        }
+    }
+
+    void reset() {
+        mPos = 0;
+    }
+
+    void reset(size_t i) {
+        if (i >= mLen) {
+            ALOGE("Out of bounds: i (%zu) >= len (%zu)", i, mLen);
+            return;
+        }
+        mPos = i;
+    }
+
+    void skip(size_t i) {
+        size_t res = mPos + i;
+        if (res > mLen) {
+            ALOGE("Exceeded buffer length: i (%zu) > len (%zu)", i, mLen);
+            return;
+        }
+        mPos = res;
+    }
+
+    void* getData() const {
+        return mData;
+    }
+
+    size_t getLength() const {
+        return mLen;
+    }
+
+    template <typename T>
+    void add(T t) {
+        align(sizeof(t));
+        if (mPos + sizeof(t) <= mLen) {
+            memcpy(&mData[mPos], &t, sizeof(t));
+            mPos += sizeof(t);
+        }
+    }
+};
+
 class Type : public BaseObj {
 protected:
     friend class Allocation;
