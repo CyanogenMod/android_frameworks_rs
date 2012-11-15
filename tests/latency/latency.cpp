@@ -64,8 +64,6 @@ int main(int argc, char** argv)
         sc->forEach_root(ain, aout);
     }
 
-    uint32_t temp;
-
     rs->finish();
 
     gettimeofday(&stop, NULL);

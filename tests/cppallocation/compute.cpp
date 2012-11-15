@@ -40,11 +40,11 @@ int main(int argc, char** argv)
         buf[ct] = (uint32_t)ct;
     }
 
-    ain->copy1DRangeFrom(0, numElems, buf, numElems*sizeof(uint32_t));
+    ain->copy1DRangeFrom(0, numElems, buf);
 
     sc->forEach_multiply(ain, aout);
 
-    aout->copy1DRangeTo(0, numElems, buf, numElems*sizeof(uint32_t));
+    aout->copy1DRangeTo(0, numElems, buf);
 
     for (uint32_t ct=0; ct < numElems; ct++) {
         if (buf[ct] !=  ct * 2) {

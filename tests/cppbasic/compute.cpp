@@ -39,7 +39,7 @@ int main(int argc, char** argv)
     for (uint32_t ct=0; ct < t->getCount(); ct++) {
         buf[ct] = ct | (ct << 16);
     }
-    ain->copy1DRangeFrom(0, t->getCount(), buf, t->getCount()*4);
+    ain->copy1DRangeFrom(0, t->getCount(), buf);
 
     sc->forEach_root(ain, aout);
     printf("for each done\n");

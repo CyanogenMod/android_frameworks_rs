@@ -160,8 +160,7 @@ void Allocation::generateMipmaps() {
     rsAllocationGenerateMipmaps(mRS->getContext(), getID());
 }
 
-void Allocation::copy1DRangeFrom(uint32_t off, size_t count, const void *data,
-        size_t dataLen) {
+void Allocation::copy1DRangeFrom(uint32_t off, size_t count, const void *data) {
 
     if(count < 1) {
         ALOGE("Count must be >= 1.");
@@ -171,15 +170,12 @@ void Allocation::copy1DRangeFrom(uint32_t off, size_t count, const void *data,
         ALOGE("Overflow, Available count %zu, got %zu at offset %zu.", mCurrentCount, count, off);
         return;
     }
-    if((count * mType->getElement()->getSizeBytes()) > dataLen) {
-        ALOGE("Array too small for allocation type.");
-        return;
-    }
 
-    rsAllocation1DData(mRS->getContext(), getIDSafe(), off, mSelectedLOD, count, data, dataLen);
+    rsAllocation1DData(mRS->getContext(), getIDSafe(), off, mSelectedLOD, count, data,
+                       count * mType->getElement()->getSizeBytes());
 }
 
-void Allocation::copy1DRangeTo(uint32_t off, size_t count, void *data, size_t dataLen) {
+void Allocation::copy1DRangeTo(uint32_t off, size_t count, void *data) {
     if(count < 1) {
         ALOGE("Count must be >= 1.");
         return;
@@ -188,11 +184,9 @@ void Allocation::copy1DRangeTo(uint32_t off, size_t count, void *data, size_t da
         ALOGE("Overflow, Available count %zu, got %zu at offset %zu.", mCurrentCount, count, off);
         return;
     }
-    if((count * mType->getElement()->getSizeBytes()) > dataLen) {
-        ALOGE("Array too small for allocation type.");
-        return;
-    }
-    rsAllocation1DRead(mRS->getContext(), getIDSafe(), off, mSelectedLOD, count, data, dataLen);
+
+    rsAllocation1DRead(mRS->getContext(), getIDSafe(), off, mSelectedLOD, count, data,
+                       count * mType->getElement()->getSizeBytes());
 }
 
 void Allocation::copy1DRangeFrom(uint32_t off, size_t count, sp<const Allocation> data,
@@ -203,6 +197,15 @@ void Allocation::copy1DRangeFrom(uint32_t off, size_t count, sp<const Allocation
                             count, 1, data->getIDSafe(), dataOff, 0,
                             data->mSelectedLOD, data->mSelectedFace);
 }
+
+void Allocation::copy1DFrom(const void* data) {
+    copy1DRangeFrom(0, mCurrentCount, data);
+}
+
+void Allocation::copy1DTo(void* data) {
+    copy1DRangeTo(0, mCurrentCount, data);
+}
+
 
 void Allocation::validate2DRange(uint32_t xoff, uint32_t yoff, uint32_t w, uint32_t h) {
     if (mAdaptedAllocation != NULL) {
@@ -215,15 +218,14 @@ void Allocation::validate2DRange(uint32_t xoff, uint32_t yoff, uint32_t w, uint3
 }
 
 void Allocation::copy2DRangeFrom(uint32_t xoff, uint32_t yoff, uint32_t w, uint32_t h,
-                                 const void *data, size_t dataLen) {
+                                 const void *data) {
     validate2DRange(xoff, yoff, w, h);
     rsAllocation2DData(mRS->getContext(), getIDSafe(), xoff, yoff, mSelectedLOD, mSelectedFace,
-                       w, h, data, dataLen);
+                       w, h, data, w * h * mType->getElement()->getSizeBytes());
 }
 
 void Allocation::copy2DRangeFrom(uint32_t xoff, uint32_t yoff, uint32_t w, uint32_t h,
-                                 sp<const Allocation> data, size_t dataLen,
-                                 uint32_t dataXoff, uint32_t dataYoff) {
+                                 sp<const Allocation> data, uint32_t dataXoff, uint32_t dataYoff) {
     validate2DRange(xoff, yoff, w, h);
     rsAllocationCopy2DRange(mRS->getContext(), getIDSafe(), xoff, yoff,
                             mSelectedLOD, mSelectedFace,
