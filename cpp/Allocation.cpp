@@ -233,6 +233,13 @@ void Allocation::copy2DRangeFrom(uint32_t xoff, uint32_t yoff, uint32_t w, uint3
                             data->mSelectedLOD, data->mSelectedFace);
 }
 
+void Allocation::copy2DRangeTo(uint32_t xoff, uint32_t yoff, uint32_t w, uint32_t h,
+                               void* data) {
+    validate2DRange(xoff, yoff, w, h);
+    rsAllocation2DRead(mRS->getContext(), getIDSafe(), xoff, yoff, mSelectedLOD, mSelectedFace,
+                       w, h, data, w * h * mType->getElement()->getSizeBytes());
+}
+
 /*
 void resize(int dimX) {
     if ((mType.getY() > 0)|| (mType.getZ() > 0) || mType.hasFaces() || mType.hasMipmaps()) {

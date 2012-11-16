@@ -231,6 +231,10 @@ public:
 
     void copy2DRangeFrom(uint32_t xoff, uint32_t yoff, uint32_t w, uint32_t h,
                          const void *data);
+
+    void copy2DRangeTo(uint32_t xoff, uint32_t yoff, uint32_t w, uint32_t h,
+                       void *data);
+
     void copy2DRangeFrom(uint32_t xoff, uint32_t yoff, uint32_t w, uint32_t h,
                          sp<const Allocation> data, uint32_t dataXoff, uint32_t dataYoff);
 

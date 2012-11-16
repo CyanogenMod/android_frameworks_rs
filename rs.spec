@@ -229,6 +229,16 @@ Allocation1DRead {
     param void *data
     }
 
+Allocation2DRead {
+    param RsAllocation va
+    param uint32_t xoff
+    param uint32_t yoff
+    param uint32_t lod
+    param RsAllocationCubemapFace face
+    param uint32_t w
+    param uint32_t h
+    param void *data
+}
 
 AllocationSyncAll {
     param RsAllocation va

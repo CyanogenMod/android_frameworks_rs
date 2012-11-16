@@ -672,6 +672,13 @@ void rsi_Allocation1DRead(Context *rsc, RsAllocation va, uint32_t xoff, uint32_t
     a->readUnchecked(rsc, xoff, lod, count, data, sizeBytes);
 }
 
+void rsi_Allocation2DRead(Context *rsc, RsAllocation va, uint32_t xoff, uint32_t yoff,
+                          uint32_t lod, RsAllocationCubemapFace face, uint32_t w,
+                          uint32_t h, void *data, size_t sizeBytes) {
+    Allocation *a = static_cast<Allocation *>(va);
+    a->read(rsc, xoff, yoff, lod, face, w, h, data, sizeBytes);
+}
+
 }
 }
 
