@@ -15,18 +15,31 @@
  */
 
 
-#include "rsdCore.h"
-#include "rsdIntrinsics.h"
-#include "rsdAllocation.h"
-
-#include "rsdIntrinsicInlines.h"
+#include "rsCpuIntrinsic.h"
+#include "rsCpuIntrinsicInlines.h"
 
 using namespace android;
 using namespace android::renderscript;
 
-struct ConvolveParams {
-    float f[4];
+namespace android {
+namespace renderscript {
+
+
+class RsdCpuScriptIntrinsicBlend : public RsdCpuScriptIntrinsic {
+public:
+    virtual void populateScript(Script *);
+
+    virtual ~RsdCpuScriptIntrinsicBlend();
+    RsdCpuScriptIntrinsicBlend(RsdCpuReferenceImpl *ctx, const Script *s);
+
+protected:
+    static void kernel(const RsForEachStubParamStruct *p,
+                          uint32_t xstart, uint32_t xend,
+                          uint32_t instep, uint32_t outstep);
 };
+
+}
+}
 
 
 enum {
@@ -92,10 +105,10 @@ extern "C" void rsdIntrinsicBlendSub_K(void *dst, const void *src, uint32_t coun
 
 //#undef ARCH_ARM_HAVE_NEON
 
-static void ColorMatrix_uchar4(const RsForEachStubParamStruct *p,
-                               uint32_t xstart, uint32_t xend,
-                               uint32_t instep, uint32_t outstep) {
-    ConvolveParams *cp = (ConvolveParams *)p->usr;
+void RsdCpuScriptIntrinsicBlend::kernel(const RsForEachStubParamStruct *p,
+                                        uint32_t xstart, uint32_t xend,
+                                        uint32_t instep, uint32_t outstep) {
+    RsdCpuScriptIntrinsicBlend *cp = (RsdCpuScriptIntrinsicBlend *)p->usr;
 
     // instep/outstep can be ignored--sizeof(uchar4) known at compile time
     uchar4 *out = (uchar4 *)p->out;
@@ -442,15 +455,23 @@ static void ColorMatrix_uchar4(const RsForEachStubParamStruct *p,
     }
 }
 
-void * rsdIntrinsic_InitBlend(const android::renderscript::Context *dc,
-                              android::renderscript::Script *script,
-                              RsdIntriniscFuncs_t *funcs) {
 
-    script->mHal.info.exportedVariableCount = 0;
-    funcs->root = ColorMatrix_uchar4;
+RsdCpuScriptIntrinsicBlend::RsdCpuScriptIntrinsicBlend(RsdCpuReferenceImpl *ctx, const Script *s)
+            : RsdCpuScriptIntrinsic(ctx, s, RS_SCRIPT_INTRINSIC_ID_BLEND) {
 
-    ConvolveParams *cp = (ConvolveParams *)calloc(1, sizeof(ConvolveParams));
-    return cp;
+    mRootPtr = &kernel;
 }
+
+RsdCpuScriptIntrinsicBlend::~RsdCpuScriptIntrinsicBlend() {
+}
+
+void RsdCpuScriptIntrinsicBlend::populateScript(Script *s) {
+    s->mHal.info.exportedVariableCount = 0;
+}
+
+RsdCpuScriptImpl * rsdIntrinsic_Blend(RsdCpuReferenceImpl *ctx, const Script *s) {
+    return new RsdCpuScriptIntrinsicBlend(ctx, s);
+}
+
 
 

@@ -60,8 +60,7 @@ public:
 //protected:
     void setupScript(Context *);
     void setupGLState(Context *);
-    Script * setTLS(Script *);
-  private:
+private:
 #ifndef ANDROID_RS_SERIALIZE
     bcinfo::BitcodeTranslator *BT;
 #endif

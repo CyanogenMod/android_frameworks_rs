@@ -70,9 +70,18 @@ public:
         State state;
 
         struct DrvState {
-            mutable void * mallocPtrLOD0;
-            mutable uint32_t strideLOD0;
-        } drvState;
+            struct LodState {
+                void * mallocPtr;
+                size_t stride;
+                uint32_t dimX;
+                uint32_t dimY;
+                uint32_t dimZ;
+            } lod[android::renderscript::Allocation::MAX_LOD];
+            size_t faceOffset;
+            uint32_t lodCount;
+            uint32_t faceCount;
+        };
+        mutable DrvState drvState;
 
     };
     Hal mHal;

@@ -21,6 +21,8 @@
 #include <rsRuntime.h>
 #include <rsAllocation.h>
 
+#include "../cpu_ref/rsd_cpu.h"
+
 #include <GLES/gl.h>
 #include <GLES2/gl2.h>
 
@@ -49,19 +51,6 @@ struct DrvAllocation {
     RsdFrameBufferObj * readBackFBO;
     ANativeWindow *wnd;
     ANativeWindowBuffer *wndBuffer;
-
-    struct LodState {
-        void * mallocPtr;
-        size_t stride;
-        uint32_t dimX;
-        uint32_t dimY;
-        uint32_t dimZ;
-    } lod[android::renderscript::Allocation::MAX_LOD];
-    size_t faceOffset;
-    uint32_t lodCount;
-    uint32_t faceCount;
-
-
 };
 
 GLenum rsdTypeToGLType(RsDataType t);

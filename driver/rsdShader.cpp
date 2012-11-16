@@ -346,9 +346,9 @@ void RsdShader::logUniform(const Element *field, const float *fd, uint32_t array
                 rsAssert(0);
             }
         }
-        ALOGE("Element size %u data=%p", elementSize, fd);
+        ALOGV("Element size %u data=%p", elementSize, fd);
         fd += elementSize;
-        ALOGE("New data=%p", fd);
+        ALOGV("New data=%p", fd);
     }
 }
 
@@ -524,8 +524,7 @@ void RsdShader::setupUserConstants(const Context *rsc, RsdShaderCache *sc, bool 
             continue;
         }
 
-        DrvAllocation *adrv = (DrvAllocation *)alloc->mHal.drv;
-        const uint8_t *data = static_cast<const uint8_t *>(adrv->lod[0].mallocPtr);
+        const uint8_t *data = static_cast<const uint8_t *>(alloc->mHal.drvState.lod[0].mallocPtr);
         const Element *e = mRSProgram->mHal.state.constantTypes[ct]->getElement();
         for (uint32_t field=0; field < e->mHal.state.fieldsCount; field++) {
             const Element *f = e->mHal.state.fields[field];

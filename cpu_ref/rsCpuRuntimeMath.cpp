@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 The Android Open Source Project
+ * Copyright (C) 2011-2012 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,8 +22,8 @@
 #include "rsMatrix3x3.h"
 #include "rsMatrix2x2.h"
 
-#include "rsdCore.h"
-#include "rsdRuntime.h"
+#include "rsCpuCore.h"
+#include "rsCpuScript.h"
 
 
 using namespace android;
@@ -375,7 +375,7 @@ static int32_t SC_AtomicMax(volatile int32_t *ptr, int32_t value) {
 //                 ::= f  # float
 //                 ::= d  # double
 
-static RsdSymbolTable gSyms[] = {
+static RsdCpuReference::CpuSymbol gSyms[] = {
     { "_Z4acosf", (void *)&acosf, true },
     { "_Z5acoshf", (void *)&acoshf, true },
     { "_Z4asinf", (void *)&asinf, true },
@@ -532,11 +532,11 @@ static RsdSymbolTable gSyms[] = {
     { NULL, NULL, false }
 };
 
-const RsdSymbolTable * rsdLookupSymbolMath(const char *sym) {
-    const RsdSymbolTable *syms = gSyms;
+const RsdCpuReference::CpuSymbol * RsdCpuScriptImpl::lookupSymbolMath(const char *sym) {
+    const RsdCpuReference::CpuSymbol *syms = gSyms;
 
-    while (syms->mPtr) {
-        if (!strcmp(syms->mName, sym)) {
+    while (syms->fnPtr) {
+        if (!strcmp(syms->name, sym)) {
             return syms;
         }
         syms++;

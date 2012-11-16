@@ -235,7 +235,7 @@ void Allocation::dumpLOGV(const char *prefix) const {
     }
 
     ALOGV("%s allocation ptr=%p  mUsageFlags=0x04%x, mMipmapControl=0x%04x",
-         prefix, mHal.drvState.mallocPtrLOD0, mHal.state.usageFlags, mHal.state.mipmapControl);
+         prefix, mHal.drvState.lod[0].mallocPtr, mHal.state.usageFlags, mHal.state.mipmapControl);
 }
 
 uint32_t Allocation::getPackedSize() const {

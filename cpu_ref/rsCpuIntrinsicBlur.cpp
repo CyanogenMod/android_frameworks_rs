@@ -14,25 +14,45 @@
  * limitations under the License.
  */
 
-
-#include "rsdCore.h"
-#include "rsdIntrinsics.h"
-#include "rsdAllocation.h"
-
-#include "rsdIntrinsicInlines.h"
+#include "rsCpuIntrinsic.h"
+#include "rsCpuIntrinsicInlines.h"
 
 using namespace android;
 using namespace android::renderscript;
 
-struct ConvolveParams {
+namespace android {
+namespace renderscript {
+
+
+class RsdCpuScriptIntrinsicBlur : public RsdCpuScriptIntrinsic {
+public:
+    virtual void populateScript(Script *);
+    virtual void invokeFreeChildren();
+
+    virtual void setGlobalVar(uint32_t slot, const void *data, size_t dataLength);
+    virtual void setGlobalObj(uint32_t slot, ObjectBase *data);
+
+    virtual ~RsdCpuScriptIntrinsicBlur();
+    RsdCpuScriptIntrinsicBlur(RsdCpuReferenceImpl *ctx, const Script *s);
+
+protected:
     float fp[104];
     short ip[104];
     float radius;
     int iradius;
     ObjectBaseRef<Allocation> alloc;
+
+    static void kernel(const RsForEachStubParamStruct *p,
+                       uint32_t xstart, uint32_t xend,
+                       uint32_t instep, uint32_t outstep);
+    void ComputeGaussianWeights();
 };
 
-static void ComputeGaussianWeights(ConvolveParams *cp) {
+}
+}
+
+
+void RsdCpuScriptIntrinsicBlur::ComputeGaussianWeights() {
     // Compute gaussian weights for the blur
     // e is the euler's number
     float e = 2.718281828459045f;
@@ -46,7 +66,7 @@ static void ComputeGaussianWeights(ConvolveParams *cp) {
     // The larger the radius gets, the more our gaussian blur
     // will resemble a box blur since with large sigma
     // the gaussian curve begins to lose its shape
-    float sigma = 0.4f * cp->radius + 0.6f;
+    float sigma = 0.4f * radius + 0.6f;
 
     // Now compute the coefficients. We will store some redundant values to save
     // some math during the blur calculations precompute some values
@@ -56,35 +76,30 @@ static void ComputeGaussianWeights(ConvolveParams *cp) {
     float normalizeFactor = 0.0f;
     float floatR = 0.0f;
     int r;
-    cp->iradius = (float)ceil(cp->radius) + 0.5f;
-    for (r = -cp->iradius; r <= cp->iradius; r ++) {
+    iradius = (float)ceil(radius) + 0.5f;
+    for (r = -iradius; r <= iradius; r ++) {
         floatR = (float)r;
-        cp->fp[r + cp->iradius] = coeff1 * powf(e, floatR * floatR * coeff2);
-        normalizeFactor += cp->fp[r + cp->iradius];
+        fp[r + iradius] = coeff1 * powf(e, floatR * floatR * coeff2);
+        normalizeFactor += fp[r + iradius];
     }
 
     //Now we need to normalize the weights because all our coefficients need to add up to one
     normalizeFactor = 1.0f / normalizeFactor;
-    for (r = -cp->iradius; r <= cp->iradius; r ++) {
-        cp->fp[r + cp->iradius] *= normalizeFactor;
-        cp->ip[r + cp->iradius] = (short)(cp->ip[r + cp->iradius] * 32768);
+    for (r = -iradius; r <= iradius; r ++) {
+        fp[r + iradius] *= normalizeFactor;
+        ip[r + iradius] = (short)(ip[r + iradius] * 32768);
     }
 }
 
-static void Blur_Bind(const Context *dc, const Script *script,
-                             void * intrinsicData, uint32_t slot, Allocation *data) {
-    ConvolveParams *cp = (ConvolveParams *)intrinsicData;
+void RsdCpuScriptIntrinsicBlur::setGlobalObj(uint32_t slot, ObjectBase *data) {
     rsAssert(slot == 1);
-    cp->alloc.set(data);
+    alloc.set(static_cast<Allocation *>(data));
 }
 
-static void Blur_SetVar(const Context *dc, const Script *script, void * intrinsicData,
-                               uint32_t slot, void *data, size_t dataLength) {
-    ConvolveParams *cp = (ConvolveParams *)intrinsicData;
+void RsdCpuScriptIntrinsicBlur::setGlobalVar(uint32_t slot, const void *data, size_t dataLength) {
     rsAssert(slot == 0);
-
-    cp->radius = ((const float *)data)[0];
-    ComputeGaussianWeights(cp);
+    radius = ((const float *)data)[0];
+    ComputeGaussianWeights();
 }
 
 
@@ -158,17 +173,17 @@ static void OneH(const RsForEachStubParamStruct *p, uchar4 *out, int32_t x,
 }
 
 
-static void Blur_uchar4(const RsForEachStubParamStruct *p,
-                                    uint32_t xstart, uint32_t xend,
-                                    uint32_t instep, uint32_t outstep) {
+void RsdCpuScriptIntrinsicBlur::kernel(const RsForEachStubParamStruct *p,
+                                       uint32_t xstart, uint32_t xend,
+                                       uint32_t instep, uint32_t outstep) {
     float buf[4 * 2048];
-    ConvolveParams *cp = (ConvolveParams *)p->usr;
+    RsdCpuScriptIntrinsicBlur *cp = (RsdCpuScriptIntrinsicBlur *)p->usr;
     if (!cp->alloc.get()) {
         ALOGE("Blur executed without input, skipping");
         return;
     }
-    DrvAllocation *din = (DrvAllocation *)cp->alloc->mHal.drv;
-    const uchar *pin = (const uchar *)din->lod[0].mallocPtr;
+    const uchar *pin = (const uchar *)cp->alloc->mHal.drvState.lod[0].mallocPtr;
+    const size_t stride = cp->alloc->mHal.drvState.lod[0].stride;
 
     uchar4 *out = (uchar4 *)p->out;
     uint32_t x1 = xstart;
@@ -177,11 +192,11 @@ static void Blur_uchar4(const RsForEachStubParamStruct *p,
     float4 *fout = (float4 *)buf;
     int y = p->y;
     if ((y > cp->iradius) && (y < ((int)p->dimY - cp->iradius))) {
-        const uchar *pi = pin + (y - cp->iradius) * din->lod[0].stride;
-        OneVF(fout, pi, din->lod[0].stride, cp->fp, cp->iradius * 2 + 1, x1, x2);
+        const uchar *pi = pin + (y - cp->iradius) * stride;
+        OneVF(fout, pi, stride, cp->fp, cp->iradius * 2 + 1, x1, x2);
     } else {
         while(x2 > x1) {
-            OneV(p, fout, x1, y, pin, din->lod[0].stride, cp->fp, cp->iradius);
+            OneV(p, fout, x1, y, pin, stride, cp->fp, cp->iradius);
             fout++;
             x1++;
         }
@@ -208,19 +223,29 @@ static void Blur_uchar4(const RsForEachStubParamStruct *p,
 
 }
 
-void * rsdIntrinsic_InitBlur(const android::renderscript::Context *dc,
-                                    android::renderscript::Script *script,
-                                    RsdIntriniscFuncs_t *funcs) {
+RsdCpuScriptIntrinsicBlur::RsdCpuScriptIntrinsicBlur(RsdCpuReferenceImpl *ctx, const Script *s)
+            : RsdCpuScriptIntrinsic(ctx, s, RS_SCRIPT_INTRINSIC_ID_BLUR) {
 
-    script->mHal.info.exportedVariableCount = 2;
-    funcs->setVarObj = Blur_Bind;
-    funcs->setVar = Blur_SetVar;
-    funcs->root = Blur_uchar4;
+    mRootPtr = &kernel;
+    radius = 5;
+    ComputeGaussianWeights();
+}
 
-    ConvolveParams *cp = (ConvolveParams *)calloc(1, sizeof(ConvolveParams));
-    cp->radius = 5;
-    ComputeGaussianWeights(cp);
-    return cp;
+RsdCpuScriptIntrinsicBlur::~RsdCpuScriptIntrinsicBlur() {
+}
+
+void RsdCpuScriptIntrinsicBlur::populateScript(Script *s) {
+    s->mHal.info.exportedVariableCount = 2;
+}
+
+void RsdCpuScriptIntrinsicBlur::invokeFreeChildren() {
+    alloc.clear();
+}
+
+
+RsdCpuScriptImpl * rsdIntrinsic_Blur(RsdCpuReferenceImpl *ctx, const Script *s) {
+
+    return new RsdCpuScriptIntrinsicBlur(ctx, s);
 }
 
 

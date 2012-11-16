@@ -21,21 +21,12 @@ LOCAL_SRC_FILES:= \
 	driver/rsdFrameBuffer.cpp \
 	driver/rsdFrameBufferObj.cpp \
 	driver/rsdGL.cpp \
-	driver/rsdIntrinsics.cpp \
-	driver/rsdIntrinsicBlend.cpp \
-	driver/rsdIntrinsicBlur.cpp \
-	driver/rsdIntrinsicConvolve3x3.cpp \
-	driver/rsdIntrinsicConvolve5x5.cpp \
-	driver/rsdIntrinsicLUT.cpp \
-	driver/rsdIntrinsicColorMatrix.cpp \
-	driver/rsdIntrinsicYuvToRGB.cpp \
 	driver/rsdMesh.cpp \
 	driver/rsdMeshObj.cpp \
 	driver/rsdPath.cpp \
 	driver/rsdProgram.cpp \
 	driver/rsdProgramRaster.cpp \
 	driver/rsdProgramStore.cpp \
-	driver/rsdRuntimeMath.cpp \
 	driver/rsdRuntimeStubs.cpp \
 	driver/rsdSampler.cpp \
 	driver/rsdScriptGroup.cpp \
@@ -43,13 +34,8 @@ LOCAL_SRC_FILES:= \
 	driver/rsdShaderCache.cpp \
 	driver/rsdVertexArray.cpp
 
-ifeq ($(ARCH_ARM_HAVE_NEON),true)
-    LOCAL_CFLAGS += -DARCH_ARM_HAVE_NEON
-    LOCAL_SRC_FILES+= \
-        driver/rsdIntrinsics_Convolve.S
-endif
 
-LOCAL_SHARED_LIBRARIES += libRS
+LOCAL_SHARED_LIBRARIES += libRS libRSCpuRef
 LOCAL_SHARED_LIBRARIES += libcutils libutils libEGL libGLESv1_CM libGLESv2
 LOCAL_SHARED_LIBRARIES += libbcc libbcinfo libui libgui libsync
 
@@ -258,3 +244,6 @@ LOCAL_STATIC_LIBRARIES := libcutils libutils
 LOCAL_LDLIBS := -lpthread
 
 include $(BUILD_HOST_STATIC_LIBRARY)
+
+include $(call all-makefiles-under,$(LOCAL_PATH))
+

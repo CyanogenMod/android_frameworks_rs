@@ -265,7 +265,7 @@ typedef struct {
     } framebuffer;
 
     struct {
-        bool (*init)(const Context *rsc, const ScriptGroup *sg);
+        bool (*init)(const Context *rsc, ScriptGroup *sg);
         void (*setInput)(const Context *rsc, const ScriptGroup *sg,
                          const ScriptKernelID *kid, Allocation *);
         void (*setOutput)(const Context *rsc, const ScriptGroup *sg,

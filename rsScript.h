@@ -72,7 +72,6 @@ public:
             char const **exportedPragmaValueList;
 
             int (* root)();
-            bool isThreadable;
         };
         DriverInfo info;
     };
@@ -85,7 +84,7 @@ public:
 
     struct Enviroment_t {
         int64_t mStartTimeMillis;
-        int64_t mLastDtTime;
+        mutable int64_t mLastDtTime;
 
         ObjectBaseRef<ProgramVertex> mVertex;
         ObjectBaseRef<ProgramFragment> mFragment;

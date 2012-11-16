@@ -19,6 +19,8 @@
 
 #include <rs_hal.h>
 
+#include "../cpu_ref/rsd_cpu.h"
+
 #include "rsMutex.h"
 #include "rsSignal.h"
 
@@ -27,12 +29,6 @@
 typedef void (* InvokeFunc_t)(void);
 typedef void (* ForEachFunc_t)(void);
 typedef void (*WorkerCallback_t)(void *usr, uint32_t idx);
-
-typedef struct RsdSymbolTableRec {
-    const char * mName;
-    void * mPtr;
-    bool threadable;
-} RsdSymbolTable;
 
 typedef struct ScriptTLSStructRec {
     android::renderscript::Context * mContext;
@@ -43,32 +39,12 @@ typedef struct RsdHalRec {
     uint32_t version_major;
     uint32_t version_minor;
     bool mHasGraphics;
-    bool mInForEach;
-
-    struct Workers {
-        volatile int mRunningCount;
-        volatile int mLaunchCount;
-        uint32_t mCount;
-        pthread_t *mThreadId;
-        pid_t *mNativeThreadId;
-        android::renderscript::Signal mCompleteSignal;
-
-        android::renderscript::Signal *mLaunchSignals;
-        WorkerCallback_t mLaunchCallback;
-        void *mLaunchData;
-    };
-    Workers mWorkers;
-    bool mExit;
 
     ScriptTLSStruct mTlsStruct;
+    android::renderscript::RsdCpuReference *mCpuRef;
 
     RsdGL gl;
 } RsdHal;
-
-extern pthread_key_t rsdgThreadTLSKey;
-extern uint32_t rsdgThreadTLSKeyCount;
-extern pthread_mutex_t rsdgInitMutex;
-
 
 void rsdLaunchThreads(android::renderscript::Context *rsc, WorkerCallback_t cbk, void *data);
 

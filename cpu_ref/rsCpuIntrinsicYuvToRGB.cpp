@@ -15,25 +15,43 @@
  */
 
 
-#include "rsdCore.h"
-#include "rsdIntrinsics.h"
-#include "rsdAllocation.h"
-
-#include "rsdIntrinsicInlines.h"
+#include "rsCpuIntrinsic.h"
+#include "rsCpuIntrinsicInlines.h"
 
 using namespace android;
 using namespace android::renderscript;
 
-struct YuvParams {
+namespace android {
+namespace renderscript {
+
+
+class RsdCpuScriptIntrinsicYuvToRGB : public RsdCpuScriptIntrinsic {
+public:
+    virtual void populateScript(Script *);
+    virtual void invokeFreeChildren();
+
+    virtual void setGlobalObj(uint32_t slot, ObjectBase *data);
+
+    virtual ~RsdCpuScriptIntrinsicYuvToRGB();
+    RsdCpuScriptIntrinsicYuvToRGB(RsdCpuReferenceImpl *ctx, const Script *s);
+
+protected:
     ObjectBaseRef<Allocation> alloc;
+
+    static void kernel(const RsForEachStubParamStruct *p,
+                       uint32_t xstart, uint32_t xend,
+                       uint32_t instep, uint32_t outstep);
 };
 
-static void YuvToRGB_Bind(const Context *dc, const Script *script,
-                             void * intrinsicData, uint32_t slot, Allocation *data) {
-    YuvParams *cp = (YuvParams *)intrinsicData;
-    rsAssert(slot == 0);
-    cp->alloc.set(data);
 }
+}
+
+
+void RsdCpuScriptIntrinsicYuvToRGB::setGlobalObj(uint32_t slot, ObjectBase *data) {
+    rsAssert(slot == 0);
+    alloc.set(static_cast<Allocation *>(data));
+}
+
 
 
 
@@ -82,16 +100,16 @@ static short YuvCoeff[] = {
 
 extern "C" void rsdIntrinsicYuv_K(void *dst, const uchar *Y, const uchar *uv, uint32_t count, const short *param);
 
-static void YuvToRGB_uchar4(const RsForEachStubParamStruct *p,
-                                    uint32_t xstart, uint32_t xend,
-                                    uint32_t instep, uint32_t outstep) {
-    YuvParams *cp = (YuvParams *)p->usr;
+void RsdCpuScriptIntrinsicYuvToRGB::kernel(const RsForEachStubParamStruct *p,
+                                           uint32_t xstart, uint32_t xend,
+                                           uint32_t instep, uint32_t outstep) {
+    RsdCpuScriptIntrinsicYuvToRGB *cp = (RsdCpuScriptIntrinsicYuvToRGB *)p->usr;
     if (!cp->alloc.get()) {
         ALOGE("YuvToRGB executed without input, skipping");
         return;
     }
-    DrvAllocation *din = (DrvAllocation *)cp->alloc->mHal.drv;
-    const uchar *pin = (const uchar *)din->lod[0].mallocPtr;
+    const uchar *pin = (const uchar *)cp->alloc->mHal.drvState.lod[0].mallocPtr;
+    const size_t stride = cp->alloc->mHal.drvState.lod[0].stride;
 
     const uchar *Y = pin + (p->y * p->dimX);
     const uchar *uv = pin + (p->dimX * p->dimY);
@@ -125,15 +143,27 @@ static void YuvToRGB_uchar4(const RsForEachStubParamStruct *p,
     }
 }
 
-void * rsdIntrinsic_InitYuvToRGB(const android::renderscript::Context *dc,
-                                 android::renderscript::Script *script,
-                                 RsdIntriniscFuncs_t *funcs) {
+RsdCpuScriptIntrinsicYuvToRGB::RsdCpuScriptIntrinsicYuvToRGB(
+            RsdCpuReferenceImpl *ctx, const Script *s)
+            : RsdCpuScriptIntrinsic(ctx, s, RS_SCRIPT_INTRINSIC_ID_YUV_TO_RGB) {
 
-    script->mHal.info.exportedVariableCount = 1;
-    funcs->setVarObj = YuvToRGB_Bind;
-    funcs->root = YuvToRGB_uchar4;
-    YuvParams *cp = (YuvParams *)calloc(1, sizeof(YuvParams));
-    return cp;
+    mRootPtr = &kernel;
+}
+
+RsdCpuScriptIntrinsicYuvToRGB::~RsdCpuScriptIntrinsicYuvToRGB() {
+}
+
+void RsdCpuScriptIntrinsicYuvToRGB::populateScript(Script *s) {
+    s->mHal.info.exportedVariableCount = 1;
+}
+
+void RsdCpuScriptIntrinsicYuvToRGB::invokeFreeChildren() {
+    alloc.clear();
+}
+
+
+RsdCpuScriptImpl * rsdIntrinsic_YuvToRGB(RsdCpuReferenceImpl *ctx, const Script *s) {
+    return new RsdCpuScriptIntrinsicYuvToRGB(ctx, s);
 }
 
 
