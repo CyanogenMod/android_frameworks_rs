@@ -453,6 +453,34 @@ public:
             mPos += sizeof(t);
         }
     }
+
+    /*
+    void add(rs_matrix4x4 m) {
+        for (size_t i = 0; i < 16; i++) {
+            add(m.m[i]);
+        }
+    }
+
+    void add(rs_matrix3x3 m) {
+        for (size_t i = 0; i < 9; i++) {
+            add(m.m[i]);
+        }
+    }
+
+    void add(rs_matrix2x2 m) {
+        for (size_t i = 0; i < 4; i++) {
+            add(m.m[i]);
+        }
+    }
+    */
+
+    void add(BaseObj* obj) {
+        if (obj != NULL) {
+            add((uint32_t) (uintptr_t) obj->getID());
+        } else {
+            add((uint32_t) 0);
+        }
+    }
 };
 
 class Type : public BaseObj {
