@@ -24,7 +24,7 @@
 #include <rs.h>
 
 namespace android {
-namespace renderscriptCpp {
+namespace RSC {
 
 typedef void (*ErrorHandlerFunc_t)(uint32_t errorNum, const char *errorText);
 typedef void (*MessageHandlerFunc_t)(uint32_t msgNum, const void *msgData, size_t msgLen);

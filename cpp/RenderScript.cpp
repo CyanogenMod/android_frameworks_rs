@@ -25,7 +25,7 @@
 #include "rs.h"
 
 using namespace android;
-using namespace renderscriptCpp;
+using namespace RSC;
 
 bool RS::gInitialized = false;
 pthread_mutex_t RS::gInitMutex = PTHREAD_MUTEX_INITIALIZER;

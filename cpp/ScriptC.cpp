@@ -20,7 +20,7 @@
 #include "RenderScript.h"
 
 using namespace android;
-using namespace renderscriptCpp;
+using namespace RSC;
 
 ScriptC::ScriptC(sp<RS> rs,
                  const void *codeTxt, size_t codeLength,

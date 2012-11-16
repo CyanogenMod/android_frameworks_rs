@@ -17,7 +17,7 @@
 #include "RenderScript.h"
 
 using namespace android;
-using namespace renderscriptCpp;
+using namespace RSC;
 
 void * Allocation::getIDSafe() const {
     return getID();

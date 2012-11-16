@@ -23,7 +23,7 @@
 #include "RenderScript.h"
 
 using namespace android;
-using namespace renderscriptCpp;
+using namespace RSC;
 
 void Type::calcElementCount() {
     bool hasLod = hasMipmaps();

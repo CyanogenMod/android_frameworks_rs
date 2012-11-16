@@ -4,7 +4,7 @@
 #include "ScriptC_mono.h"
 
 using namespace android;
-using namespace renderscriptCpp;
+using namespace RSC;
 
 int main(int argc, char** argv)
 {

@@ -19,7 +19,7 @@
 #include "RenderScript.h"
 
 using namespace android;
-using namespace renderscriptCpp;
+using namespace RSC;
 
 void * BaseObj::getID() const {
     if (mID == NULL) {

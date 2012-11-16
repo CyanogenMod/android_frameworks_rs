@@ -21,7 +21,7 @@
 #include "rsDefines.h"
 
 using namespace android;
-using namespace renderscriptCpp;
+using namespace RSC;
 
 ScriptIntrinsic::ScriptIntrinsic(sp<RS> rs, int id, sp<const Element> e)
     : Script(NULL, rs) {

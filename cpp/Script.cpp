@@ -20,7 +20,7 @@
 #include "RenderScript.h"
 
 using namespace android;
-using namespace renderscriptCpp;
+using namespace RSC;
 
 void Script::invoke(uint32_t slot, const void *v, size_t len) const {
     rsScriptInvokeV(mRS->getContext(), getID(), slot, v, len);
