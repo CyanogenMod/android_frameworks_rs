@@ -258,7 +258,8 @@ extern "C" bool rsdHalInit(RsContext c, uint32_t version_major,
         cpu = rsc->props.mDebugMaxThreads;
     }
     if (cpu < 2) {
-        cpu = 0;
+        dc->mWorkers.mCount = 0;
+        return true;
     }
     ALOGV("%p Launching thread(s), CPUs %i", rsc, cpu);
 
