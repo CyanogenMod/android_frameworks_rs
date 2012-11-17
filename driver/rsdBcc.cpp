@@ -341,7 +341,7 @@ void rsdScriptLaunchThreads(const Context *rsc,
     Context *mrsc = (Context *)rsc;
     RsdHal * dc = (RsdHal *)mtls->rsc->mHal.drv;
 
-    if ((dc->mWorkers.mCount > 1) && s->mHal.info.isThreadable && !dc->mInForEach) {
+    if ((dc->mWorkers.mCount >= 1) && s->mHal.info.isThreadable && !dc->mInForEach) {
         dc->mInForEach = true;
         if (mtls->fep.dimY > 1) {
             mtls->mSliceSize = mtls->fep.dimY / (dc->mWorkers.mCount * 4);
