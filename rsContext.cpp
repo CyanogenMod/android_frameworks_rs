@@ -212,7 +212,6 @@ bool Context::loadRuntime(const char* filename, Context* rsc) {
 
     driverSO = dlopen(filename, RTLD_LAZY);
     if (driverSO == NULL) {
-        rsc->setError(RS_ERROR_FATAL_DRIVER, "Failed loading RS driver");
         ALOGE("Failed loading RS driver: %s", dlerror());
         return false;
     }
@@ -230,14 +229,12 @@ bool Context::loadRuntime(const char* filename, Context* rsc) {
     }
 
     if (halInit == NULL) {
-        rsc->setError(RS_ERROR_FATAL_DRIVER, "Failed to find rsdHalInit");
         dlclose(driverSO);
         ALOGE("Failed to find rsdHalInit: %s", dlerror());
         return false;
     }
 
     if (!(*halInit)(rsc, 0, 0)) {
-        rsc->setError(RS_ERROR_FATAL_DRIVER, "Failed initializing RS Driver");
         dlclose(driverSO);
         ALOGE("Hal init failed");
         return false;
@@ -293,6 +290,7 @@ void * Context::threadProc(void *vrsc) {
     if (loadDefault) {
         if (!loadRuntime("libRSDriver.so", rsc)) {
             ALOGE("Failed to load default runtime!");
+            rsc->setError(RS_ERROR_FATAL_DRIVER, "Failed loading RS driver");
             return NULL;
         }
     }
