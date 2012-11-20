@@ -102,7 +102,7 @@ ENTRY(rsdIntrinsicConvolve3x3_K)
         vpop            {q4-q7}
         pop             {r4-r8, r10, r11, lr}
         bx              lr
-END(TestConvolveK)
+END(rsdIntrinsicConvolve3x3_K)
 
 /*
         r0 = dst
@@ -111,7 +111,6 @@ END(TestConvolveK)
         r3 = length
 */
 ENTRY(rsdIntrinsicColorMatrix4x4_K)
-        .save           {r4, lr}
         stmfd           sp!, {r4, lr}
         vpush           {q4-q7}
 
@@ -179,7 +178,6 @@ END(rsdIntrinsicColorMatrix4x4_K)
         r3 = length
 */
 ENTRY(rsdIntrinsicColorMatrix3x3_K)
-        .save           {r4, lr}
         stmfd           sp!, {r4, lr}
         vpush           {q4-q7}
 
@@ -236,7 +234,6 @@ END(rsdIntrinsicColorMatrix3x3_K)
         r3 = length
 */
 ENTRY(rsdIntrinsicColorMatrixDot_K)
-        .save           {r4, lr}
         stmfd           sp!, {r4, lr}
         vpush           {q4-q7}
 
