@@ -47,11 +47,13 @@ public:
     virtual void setGlobalObj(uint32_t slot, ObjectBase *data);
 
     virtual ~RsdCpuScriptIntrinsic();
-    RsdCpuScriptIntrinsic(RsdCpuReferenceImpl *ctx, const Script *s, RsScriptIntrinsicID iid);
+    RsdCpuScriptIntrinsic(RsdCpuReferenceImpl *ctx, const Script *s, const Element *,
+                          RsScriptIntrinsicID iid);
 
 protected:
     RsScriptIntrinsicID mID;
     outer_foreach_t mRootPtr;
+    ObjectBaseRef<const Element> mElement;
 
 };
 

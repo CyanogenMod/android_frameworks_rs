@@ -34,12 +34,13 @@ public:
     virtual void setGlobalObj(uint32_t slot, ObjectBase *data);
 
     virtual ~RsdCpuScriptIntrinsicConvolve3x3();
-    RsdCpuScriptIntrinsicConvolve3x3(RsdCpuReferenceImpl *ctx, const Script *s);
+    RsdCpuScriptIntrinsicConvolve3x3(RsdCpuReferenceImpl *ctx, const Script *s, const Element *);
 
 protected:
-    float fp[16];
-    short ip[16];
-    ObjectBaseRef<Allocation> alloc;
+    float mFp[16];
+    short mIp[16];
+    ObjectBaseRef<const Allocation> mAlloc;
+    ObjectBaseRef<const Element> mElement;
 
     static void kernel(const RsForEachStubParamStruct *p,
                        uint32_t xstart, uint32_t xend,
@@ -52,15 +53,15 @@ protected:
 
 void RsdCpuScriptIntrinsicConvolve3x3::setGlobalObj(uint32_t slot, ObjectBase *data) {
     rsAssert(slot == 1);
-    alloc.set(static_cast<Allocation *>(data));
+    mAlloc.set(static_cast<Allocation *>(data));
 }
 
 void RsdCpuScriptIntrinsicConvolve3x3::setGlobalVar(uint32_t slot, const void *data,
                                                     size_t dataLength) {
     rsAssert(slot == 0);
-    memcpy (&fp, data, dataLength);
+    memcpy (&mFp, data, dataLength);
     for(int ct=0; ct < 9; ct++) {
-        ip[ct] = (short)(fp[ct] * 255.f + 0.5f);
+        mIp[ct] = (short)(mFp[ct] * 255.f + 0.5f);
     }
 }
 
@@ -95,12 +96,12 @@ void RsdCpuScriptIntrinsicConvolve3x3::kernel(const RsForEachStubParamStruct *p,
                                               uint32_t instep, uint32_t outstep) {
     RsdCpuScriptIntrinsicConvolve3x3 *cp = (RsdCpuScriptIntrinsicConvolve3x3 *)p->usr;
 
-    if (!cp->alloc.get()) {
+    if (!cp->mAlloc.get()) {
         ALOGE("Convolve3x3 executed without input, skipping");
         return;
     }
-    const uchar *pin = (const uchar *)cp->alloc->mHal.drvState.lod[0].mallocPtr;
-    const size_t stride = cp->alloc->mHal.drvState.lod[0].stride;
+    const uchar *pin = (const uchar *)cp->mAlloc->mHal.drvState.lod[0].mallocPtr;
+    const size_t stride = cp->mAlloc->mHal.drvState.lod[0].stride;
 
     uint32_t y1 = rsMin((int32_t)p->y + 1, (int32_t)(p->dimY-1));
     uint32_t y2 = rsMax((int32_t)p->y - 1, 0);
@@ -112,7 +113,7 @@ void RsdCpuScriptIntrinsicConvolve3x3::kernel(const RsForEachStubParamStruct *p,
     uint32_t x1 = xstart;
     uint32_t x2 = xend;
     if(x1 == 0) {
-        ConvolveOne(p, 0, out, py0, py1, py2, cp->fp);
+        ConvolveOne(p, 0, out, py0, py1, py2, cp->mFp);
         x1 ++;
         out++;
     }
@@ -121,14 +122,14 @@ void RsdCpuScriptIntrinsicConvolve3x3::kernel(const RsForEachStubParamStruct *p,
 #if defined(ARCH_ARM_HAVE_NEON)
         int32_t len = (x2 - x1 - 1) >> 1;
         if(len > 0) {
-            rsdIntrinsicConvolve3x3_K(out, &py0[x1-1], &py1[x1-1], &py2[x1-1], cp->ip, len);
+            rsdIntrinsicConvolve3x3_K(out, &py0[x1-1], &py1[x1-1], &py2[x1-1], cp->mIp, len);
             x1 += len << 1;
             out += len << 1;
         }
 #endif
 
         while(x1 != x2) {
-            ConvolveOne(p, x1, out, py0, py1, py2, cp->fp);
+            ConvolveOne(p, x1, out, py0, py1, py2, cp->mFp);
             out++;
             x1++;
         }
@@ -136,13 +137,13 @@ void RsdCpuScriptIntrinsicConvolve3x3::kernel(const RsForEachStubParamStruct *p,
 }
 
 RsdCpuScriptIntrinsicConvolve3x3::RsdCpuScriptIntrinsicConvolve3x3(
-            RsdCpuReferenceImpl *ctx, const Script *s)
-            : RsdCpuScriptIntrinsic(ctx, s, RS_SCRIPT_INTRINSIC_ID_CONVOLVE_3x3) {
+            RsdCpuReferenceImpl *ctx, const Script *s, const Element *e)
+            : RsdCpuScriptIntrinsic(ctx, s, e, RS_SCRIPT_INTRINSIC_ID_CONVOLVE_3x3) {
 
     mRootPtr = &kernel;
     for(int ct=0; ct < 9; ct++) {
-        fp[ct] = 1.f / 9.f;
-        ip[ct] = (short)(fp[ct] * 255.f + 0.5f);
+        mFp[ct] = 1.f / 9.f;
+        mIp[ct] = (short)(mFp[ct] * 255.f + 0.5f);
     }
 }
 
@@ -154,13 +155,13 @@ void RsdCpuScriptIntrinsicConvolve3x3::populateScript(Script *s) {
 }
 
 void RsdCpuScriptIntrinsicConvolve3x3::invokeFreeChildren() {
-    alloc.clear();
+    mAlloc.clear();
 }
 
 
-RsdCpuScriptImpl * rsdIntrinsic_Convolve3x3(RsdCpuReferenceImpl *ctx, const Script *s) {
+RsdCpuScriptImpl * rsdIntrinsic_Convolve3x3(RsdCpuReferenceImpl *ctx, const Script *s, const Element *e) {
 
-    return new RsdCpuScriptIntrinsicConvolve3x3(ctx, s);
+    return new RsdCpuScriptIntrinsicConvolve3x3(ctx, s, e);
 }
 
 

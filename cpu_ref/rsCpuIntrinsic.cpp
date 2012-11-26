@@ -21,10 +21,11 @@ using namespace android;
 using namespace android::renderscript;
 
 RsdCpuScriptIntrinsic::RsdCpuScriptIntrinsic(RsdCpuReferenceImpl *ctx, const Script *s,
-                                             RsScriptIntrinsicID iid)
+                                             const Element *e, RsScriptIntrinsicID iid)
         : RsdCpuScriptImpl(ctx, s) {
 
     mID = iid;
+    mElement.set(e);
 }
 
 RsdCpuScriptIntrinsic::~RsdCpuScriptIntrinsic() {

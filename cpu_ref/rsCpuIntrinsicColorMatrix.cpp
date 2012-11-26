@@ -32,7 +32,7 @@ public:
     virtual void setGlobalVar(uint32_t slot, const void *data, size_t dataLength);
 
     virtual ~RsdCpuScriptIntrinsicColorMatrix();
-    RsdCpuScriptIntrinsicColorMatrix(RsdCpuReferenceImpl *ctx, const Script *s);
+    RsdCpuScriptIntrinsicColorMatrix(RsdCpuReferenceImpl *ctx, const Script *s, const Element *e);
 
 protected:
     float fp[16];
@@ -191,8 +191,8 @@ void RsdCpuScriptIntrinsicColorMatrix::kernelDot(const RsForEachStubParamStruct 
 
 
 RsdCpuScriptIntrinsicColorMatrix::RsdCpuScriptIntrinsicColorMatrix(
-            RsdCpuReferenceImpl *ctx, const Script *s)
-            : RsdCpuScriptIntrinsic(ctx, s, RS_SCRIPT_INTRINSIC_ID_COLOR_MATRIX) {
+            RsdCpuReferenceImpl *ctx, const Script *s, const Element *e)
+            : RsdCpuScriptIntrinsic(ctx, s, e, RS_SCRIPT_INTRINSIC_ID_COLOR_MATRIX) {
 
     const static float defaultMatrix[] = {
         1.f, 0.f, 0.f, 0.f,
@@ -210,9 +210,10 @@ void RsdCpuScriptIntrinsicColorMatrix::populateScript(Script *s) {
     s->mHal.info.exportedVariableCount = 1;
 }
 
-RsdCpuScriptImpl * rsdIntrinsic_ColorMatrix(RsdCpuReferenceImpl *ctx, const Script *s) {
+RsdCpuScriptImpl * rsdIntrinsic_ColorMatrix(RsdCpuReferenceImpl *ctx,
+                                            const Script *s, const Element *e) {
 
-    return new RsdCpuScriptIntrinsicColorMatrix(ctx, s);
+    return new RsdCpuScriptIntrinsicColorMatrix(ctx, s, e);
 }
 
 

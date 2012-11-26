@@ -33,7 +33,7 @@ public:
     virtual void setGlobalObj(uint32_t slot, ObjectBase *data);
 
     virtual ~RsdCpuScriptIntrinsicLUT();
-    RsdCpuScriptIntrinsicLUT(RsdCpuReferenceImpl *ctx, const Script *s);
+    RsdCpuScriptIntrinsicLUT(RsdCpuReferenceImpl *ctx, const Script *s, const Element *e);
 
 protected:
     ObjectBaseRef<Allocation> lut;
@@ -78,8 +78,9 @@ void RsdCpuScriptIntrinsicLUT::kernel(const RsForEachStubParamStruct *p,
     }
 }
 
-RsdCpuScriptIntrinsicLUT::RsdCpuScriptIntrinsicLUT(RsdCpuReferenceImpl *ctx, const Script *s)
-            : RsdCpuScriptIntrinsic(ctx, s, RS_SCRIPT_INTRINSIC_ID_LUT) {
+RsdCpuScriptIntrinsicLUT::RsdCpuScriptIntrinsicLUT(RsdCpuReferenceImpl *ctx,
+                                                   const Script *s, const Element *e)
+            : RsdCpuScriptIntrinsic(ctx, s, e, RS_SCRIPT_INTRINSIC_ID_LUT) {
 
     mRootPtr = &kernel;
 }
@@ -96,9 +97,10 @@ void RsdCpuScriptIntrinsicLUT::invokeFreeChildren() {
 }
 
 
-RsdCpuScriptImpl * rsdIntrinsic_LUT(RsdCpuReferenceImpl *ctx, const Script *s) {
+RsdCpuScriptImpl * rsdIntrinsic_LUT(RsdCpuReferenceImpl *ctx,
+                                    const Script *s, const Element *e) {
 
-    return new RsdCpuScriptIntrinsicLUT(ctx, s);
+    return new RsdCpuScriptIntrinsicLUT(ctx, s, e);
 }
 
 

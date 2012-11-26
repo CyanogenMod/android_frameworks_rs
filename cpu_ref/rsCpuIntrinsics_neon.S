@@ -284,7 +284,7 @@ static void OneVF(float4 *out, const uchar *ptrIn, int iStride,
     r5 = sp+4, x1
     r6 = sp+8, x2
 */
-ENTRY(rsdIntrinsicBlurVF_K)
+ENTRY(rsdIntrinsicBlurVFU4_K)
         push            {r4-r8, r10, r11, lr}
         vpush           {q4-q7}
 
@@ -324,7 +324,7 @@ ENTRY(rsdIntrinsicBlurVF_K)
         vpop            {q4-q7}
         pop             {r4-r8, r10, r11, lr}
         bx              lr
-END(rsdIntrinsicBlurVF_K)
+END(rsdIntrinsicBlurVFU4_K)
 
 /*
 static void OneVF(float4 *out, const uchar *ptrIn, int iStride,
@@ -337,7 +337,7 @@ static void OneVF(float4 *out, const uchar *ptrIn, int iStride,
     r4 = sp, x1
     r5 = sp+4, x2
 */
-ENTRY(rsdIntrinsicBlurHF_K)
+ENTRY(rsdIntrinsicBlurHFU4_K)
         push            {r4-r8, r10, r11, lr}
         vpush           {q4-q7}
 
@@ -357,8 +357,7 @@ ENTRY(rsdIntrinsicBlurHF_K)
 2:
         vld1.32 {q1}, [r7]!
         vld1.32 {q2}, [r7]!
-        vld1.32 {d6[0]}, [r10]!
-        vld1.32 {d6[1]}, [r10]!
+        vld1.32 {d6}, [r10]!
         vmla.f32 q0, q1, d6[0]
         vmla.f32 q0, q2, d6[1]
         subs r11, r11, #2
@@ -376,7 +375,7 @@ ENTRY(rsdIntrinsicBlurHF_K)
         vpop            {q4-q7}
         pop             {r4-r8, r10, r11, lr}
         bx              lr
-END(rsdIntrinsicBlurHF_K)
+END(rsdIntrinsicBlurHFU4_K)
 
 /*
         r0 = dst

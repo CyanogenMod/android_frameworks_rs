@@ -423,13 +423,20 @@ RsdCpuReference::CpuScript * RsdCpuReferenceImpl::createScript(const ScriptC *s,
     return i;
 }
 
-extern RsdCpuScriptImpl * rsdIntrinsic_Convolve3x3(RsdCpuReferenceImpl *ctx, const Script *s);
-extern RsdCpuScriptImpl * rsdIntrinsic_ColorMatrix(RsdCpuReferenceImpl *ctx, const Script *s);
-extern RsdCpuScriptImpl * rsdIntrinsic_LUT(RsdCpuReferenceImpl *ctx, const Script *s);
-extern RsdCpuScriptImpl * rsdIntrinsic_Convolve5x5(RsdCpuReferenceImpl *ctx, const Script *s);
-extern RsdCpuScriptImpl * rsdIntrinsic_Blur(RsdCpuReferenceImpl *ctx, const Script *s);
-extern RsdCpuScriptImpl * rsdIntrinsic_YuvToRGB(RsdCpuReferenceImpl *ctx, const Script *s);
-extern RsdCpuScriptImpl * rsdIntrinsic_Blend(RsdCpuReferenceImpl *ctx, const Script *s);
+extern RsdCpuScriptImpl * rsdIntrinsic_Convolve3x3(RsdCpuReferenceImpl *ctx,
+                                                   const Script *s, const Element *e);
+extern RsdCpuScriptImpl * rsdIntrinsic_ColorMatrix(RsdCpuReferenceImpl *ctx,
+                                                   const Script *s, const Element *e);
+extern RsdCpuScriptImpl * rsdIntrinsic_LUT(RsdCpuReferenceImpl *ctx,
+                                           const Script *s, const Element *e);
+extern RsdCpuScriptImpl * rsdIntrinsic_Convolve5x5(RsdCpuReferenceImpl *ctx,
+                                                   const Script *s, const Element *e);
+extern RsdCpuScriptImpl * rsdIntrinsic_Blur(RsdCpuReferenceImpl *ctx,
+                                            const Script *s, const Element *e);
+extern RsdCpuScriptImpl * rsdIntrinsic_YuvToRGB(RsdCpuReferenceImpl *ctx,
+                                                const Script *s, const Element *e);
+extern RsdCpuScriptImpl * rsdIntrinsic_Blend(RsdCpuReferenceImpl *ctx,
+                                             const Script *s, const Element *e);
 
 RsdCpuReference::CpuScript * RsdCpuReferenceImpl::createIntrinsic(const Script *s,
                                     RsScriptIntrinsicID iid, Element *e) {
@@ -437,25 +444,25 @@ RsdCpuReference::CpuScript * RsdCpuReferenceImpl::createIntrinsic(const Script *
     RsdCpuScriptImpl *i = NULL;
     switch (iid) {
     case RS_SCRIPT_INTRINSIC_ID_CONVOLVE_3x3:
-        i = rsdIntrinsic_Convolve3x3(this, s);
+        i = rsdIntrinsic_Convolve3x3(this, s, e);
         break;
     case RS_SCRIPT_INTRINSIC_ID_COLOR_MATRIX:
-        i = rsdIntrinsic_ColorMatrix(this, s);
+        i = rsdIntrinsic_ColorMatrix(this, s, e);
         break;
     case RS_SCRIPT_INTRINSIC_ID_LUT:
-        i = rsdIntrinsic_LUT(this, s);
+        i = rsdIntrinsic_LUT(this, s, e);
         break;
     case RS_SCRIPT_INTRINSIC_ID_CONVOLVE_5x5:
-        i = rsdIntrinsic_Convolve5x5(this, s);
+        i = rsdIntrinsic_Convolve5x5(this, s, e);
         break;
     case RS_SCRIPT_INTRINSIC_ID_BLUR:
-        i = rsdIntrinsic_Blur(this, s);
+        i = rsdIntrinsic_Blur(this, s, e);
         break;
     case RS_SCRIPT_INTRINSIC_ID_YUV_TO_RGB:
-        i = rsdIntrinsic_YuvToRGB(this, s);
+        i = rsdIntrinsic_YuvToRGB(this, s, e);
         break;
     case RS_SCRIPT_INTRINSIC_ID_BLEND:
-        i = rsdIntrinsic_Blend(this, s);
+        i = rsdIntrinsic_Blend(this, s, e);
         break;
 
     default:

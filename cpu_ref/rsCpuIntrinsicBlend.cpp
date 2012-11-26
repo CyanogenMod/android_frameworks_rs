@@ -30,7 +30,7 @@ public:
     virtual void populateScript(Script *);
 
     virtual ~RsdCpuScriptIntrinsicBlend();
-    RsdCpuScriptIntrinsicBlend(RsdCpuReferenceImpl *ctx, const Script *s);
+    RsdCpuScriptIntrinsicBlend(RsdCpuReferenceImpl *ctx, const Script *s, const Element *e);
 
 protected:
     static void kernel(const RsForEachStubParamStruct *p,
@@ -456,8 +456,9 @@ void RsdCpuScriptIntrinsicBlend::kernel(const RsForEachStubParamStruct *p,
 }
 
 
-RsdCpuScriptIntrinsicBlend::RsdCpuScriptIntrinsicBlend(RsdCpuReferenceImpl *ctx, const Script *s)
-            : RsdCpuScriptIntrinsic(ctx, s, RS_SCRIPT_INTRINSIC_ID_BLEND) {
+RsdCpuScriptIntrinsicBlend::RsdCpuScriptIntrinsicBlend(RsdCpuReferenceImpl *ctx,
+                                                       const Script *s, const Element *e)
+            : RsdCpuScriptIntrinsic(ctx, s, e, RS_SCRIPT_INTRINSIC_ID_BLEND) {
 
     mRootPtr = &kernel;
 }
@@ -469,8 +470,9 @@ void RsdCpuScriptIntrinsicBlend::populateScript(Script *s) {
     s->mHal.info.exportedVariableCount = 0;
 }
 
-RsdCpuScriptImpl * rsdIntrinsic_Blend(RsdCpuReferenceImpl *ctx, const Script *s) {
-    return new RsdCpuScriptIntrinsicBlend(ctx, s);
+RsdCpuScriptImpl * rsdIntrinsic_Blend(RsdCpuReferenceImpl *ctx,
+                                      const Script *s, const Element *e) {
+    return new RsdCpuScriptIntrinsicBlend(ctx, s, e);
 }
 
 

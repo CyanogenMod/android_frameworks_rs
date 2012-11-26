@@ -34,7 +34,7 @@ public:
     virtual void setGlobalObj(uint32_t slot, ObjectBase *data);
 
     virtual ~RsdCpuScriptIntrinsicConvolve5x5();
-    RsdCpuScriptIntrinsicConvolve5x5(RsdCpuReferenceImpl *ctx, const Script *s);
+    RsdCpuScriptIntrinsicConvolve5x5(RsdCpuReferenceImpl *ctx, const Script *s, const Element *e);
 
 protected:
     float fp[28];
@@ -167,8 +167,8 @@ void RsdCpuScriptIntrinsicConvolve5x5::kernel(const RsForEachStubParamStruct *p,
 
 
 RsdCpuScriptIntrinsicConvolve5x5::RsdCpuScriptIntrinsicConvolve5x5(
-            RsdCpuReferenceImpl *ctx, const Script *s)
-            : RsdCpuScriptIntrinsic(ctx, s, RS_SCRIPT_INTRINSIC_ID_CONVOLVE_5x5) {
+            RsdCpuReferenceImpl *ctx, const Script *s, const Element *e)
+            : RsdCpuScriptIntrinsic(ctx, s, e, RS_SCRIPT_INTRINSIC_ID_CONVOLVE_5x5) {
 
     mRootPtr = &kernel;
     for(int ct=0; ct < 9; ct++) {
@@ -189,9 +189,10 @@ void RsdCpuScriptIntrinsicConvolve5x5::invokeFreeChildren() {
 }
 
 
-RsdCpuScriptImpl * rsdIntrinsic_Convolve5x5(RsdCpuReferenceImpl *ctx, const Script *s) {
+RsdCpuScriptImpl * rsdIntrinsic_Convolve5x5(RsdCpuReferenceImpl *ctx,
+                                            const Script *s, const Element *e) {
 
-    return new RsdCpuScriptIntrinsicConvolve5x5(ctx, s);
+    return new RsdCpuScriptIntrinsicConvolve5x5(ctx, s, e);
 }
 
 

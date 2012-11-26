@@ -33,7 +33,7 @@ public:
     virtual void setGlobalObj(uint32_t slot, ObjectBase *data);
 
     virtual ~RsdCpuScriptIntrinsicYuvToRGB();
-    RsdCpuScriptIntrinsicYuvToRGB(RsdCpuReferenceImpl *ctx, const Script *s);
+    RsdCpuScriptIntrinsicYuvToRGB(RsdCpuReferenceImpl *ctx, const Script *s, const Element *e);
 
 protected:
     ObjectBaseRef<Allocation> alloc;
@@ -144,8 +144,8 @@ void RsdCpuScriptIntrinsicYuvToRGB::kernel(const RsForEachStubParamStruct *p,
 }
 
 RsdCpuScriptIntrinsicYuvToRGB::RsdCpuScriptIntrinsicYuvToRGB(
-            RsdCpuReferenceImpl *ctx, const Script *s)
-            : RsdCpuScriptIntrinsic(ctx, s, RS_SCRIPT_INTRINSIC_ID_YUV_TO_RGB) {
+            RsdCpuReferenceImpl *ctx, const Script *s, const Element *e)
+            : RsdCpuScriptIntrinsic(ctx, s, e, RS_SCRIPT_INTRINSIC_ID_YUV_TO_RGB) {
 
     mRootPtr = &kernel;
 }
@@ -162,8 +162,9 @@ void RsdCpuScriptIntrinsicYuvToRGB::invokeFreeChildren() {
 }
 
 
-RsdCpuScriptImpl * rsdIntrinsic_YuvToRGB(RsdCpuReferenceImpl *ctx, const Script *s) {
-    return new RsdCpuScriptIntrinsicYuvToRGB(ctx, s);
+RsdCpuScriptImpl * rsdIntrinsic_YuvToRGB(RsdCpuReferenceImpl *ctx,
+                                         const Script *s, const Element *e) {
+    return new RsdCpuScriptIntrinsicYuvToRGB(ctx, s, e);
 }
 
 
