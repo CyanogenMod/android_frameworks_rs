@@ -157,7 +157,7 @@ typedef struct {
         void (*data2D)(const Context *rsc, const Allocation *alloc,
                        uint32_t xoff, uint32_t yoff, uint32_t lod,
                        RsAllocationCubemapFace face, uint32_t w, uint32_t h,
-                       const void *data, size_t sizeBytes);
+                       const void *data, size_t sizeBytes, size_t stride);
         void (*data3D)(const Context *rsc, const Allocation *alloc,
                        uint32_t xoff, uint32_t yoff, uint32_t zoff,
                        uint32_t lod, RsAllocationCubemapFace face,
@@ -169,7 +169,7 @@ typedef struct {
         void (*read2D)(const Context *rsc, const Allocation *alloc,
                        uint32_t xoff, uint32_t yoff, uint32_t lod,
                        RsAllocationCubemapFace face, uint32_t w, uint32_t h,
-                       void *data, size_t sizeBytes);
+                       void *data, size_t sizeBytes, size_t stride);
         void (*read3D)(const Context *rsc, const Allocation *alloc,
                        uint32_t xoff, uint32_t yoff, uint32_t zoff,
                        uint32_t lod, RsAllocationCubemapFace face,

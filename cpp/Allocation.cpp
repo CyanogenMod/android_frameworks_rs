@@ -221,7 +221,7 @@ void Allocation::copy2DRangeFrom(uint32_t xoff, uint32_t yoff, uint32_t w, uint3
                                  const void *data) {
     validate2DRange(xoff, yoff, w, h);
     rsAllocation2DData(mRS->getContext(), getIDSafe(), xoff, yoff, mSelectedLOD, mSelectedFace,
-                       w, h, data, w * h * mType->getElement()->getSizeBytes());
+                       w, h, data, w * h * mType->getElement()->getSizeBytes(), w * mType->getElement()->getSizeBytes());
 }
 
 void Allocation::copy2DRangeFrom(uint32_t xoff, uint32_t yoff, uint32_t w, uint32_t h,
@@ -237,8 +237,31 @@ void Allocation::copy2DRangeTo(uint32_t xoff, uint32_t yoff, uint32_t w, uint32_
                                void* data) {
     validate2DRange(xoff, yoff, w, h);
     rsAllocation2DRead(mRS->getContext(), getIDSafe(), xoff, yoff, mSelectedLOD, mSelectedFace,
-                       w, h, data, w * h * mType->getElement()->getSizeBytes());
+                       w, h, data, w * h * mType->getElement()->getSizeBytes(), w * mType->getElement()->getSizeBytes());
 }
+
+void Allocation::copy2DStridedFrom(uint32_t xoff, uint32_t yoff, uint32_t w, uint32_t h,
+                                   const void *data, size_t stride) {
+    validate2DRange(xoff, yoff, w, h);
+    rsAllocation2DData(mRS->getContext(), getIDSafe(), xoff, yoff, mSelectedLOD, mSelectedFace,
+                       w, h, data, w * h * mType->getElement()->getSizeBytes(), stride);
+}
+
+void Allocation::copy2DStridedFrom(const void* data, size_t stride) {
+    copy2DStridedFrom(0, 0, mCurrentDimX, mCurrentDimY, data, stride);
+}
+
+void Allocation::copy2DStridedTo(uint32_t xoff, uint32_t yoff, uint32_t w, uint32_t h,
+                                 void *data, size_t stride) {
+    validate2DRange(xoff, yoff, w, h);
+    rsAllocation2DRead(mRS->getContext(), getIDSafe(), xoff, yoff, mSelectedLOD, mSelectedFace,
+                       w, h, data, w * h * mType->getElement()->getSizeBytes(), stride);
+}
+
+void Allocation::copy2DStridedTo(void* data, size_t stride) {
+    copy2DStridedTo(0, 0, mCurrentDimX, mCurrentDimY, data, stride);
+}
+
 
 /*
 void resize(int dimX) {

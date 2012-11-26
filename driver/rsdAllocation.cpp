@@ -582,11 +582,14 @@ void rsdAllocationData1D(const Context *rsc, const Allocation *alloc,
 
 void rsdAllocationData2D(const Context *rsc, const Allocation *alloc,
                          uint32_t xoff, uint32_t yoff, uint32_t lod, RsAllocationCubemapFace face,
-                         uint32_t w, uint32_t h, const void *data, size_t sizeBytes) {
+                         uint32_t w, uint32_t h, const void *data, size_t sizeBytes, size_t stride) {
     DrvAllocation *drv = (DrvAllocation *)alloc->mHal.drv;
 
     uint32_t eSize = alloc->mHal.state.elementSizeBytes;
     uint32_t lineSize = eSize * w;
+    if (!stride) {
+        stride = lineSize;
+    }
 
     if (alloc->mHal.drvState.lod[0].mallocPtr) {
         const uint8_t *src = static_cast<const uint8_t *>(data);
@@ -598,7 +601,7 @@ void rsdAllocationData2D(const Context *rsc, const Allocation *alloc,
                 alloc->decRefs(dst, w);
             }
             memcpy(dst, src, lineSize);
-            src += lineSize;
+            src += stride;
             dst += alloc->mHal.drvState.lod[lod].stride;
         }
         drv->uploadDeferred = true;
@@ -623,10 +626,13 @@ void rsdAllocationRead1D(const Context *rsc, const Allocation *alloc,
 }
 
 void rsdAllocationRead2D(const Context *rsc, const Allocation *alloc,
-                         uint32_t xoff, uint32_t yoff, uint32_t lod, RsAllocationCubemapFace face,
-                         uint32_t w, uint32_t h, void *data, size_t sizeBytes) {
+                                uint32_t xoff, uint32_t yoff, uint32_t lod, RsAllocationCubemapFace face,
+                                uint32_t w, uint32_t h, void *data, size_t sizeBytes, size_t stride) {
     uint32_t eSize = alloc->mHal.state.elementSizeBytes;
     uint32_t lineSize = eSize * w;
+    if (!stride) {
+        stride = lineSize;
+    }
 
     if (alloc->mHal.drvState.lod[0].mallocPtr) {
         uint8_t *dst = static_cast<uint8_t *>(data);
@@ -634,13 +640,14 @@ void rsdAllocationRead2D(const Context *rsc, const Allocation *alloc,
 
         for (uint32_t line=yoff; line < (yoff+h); line++) {
             memcpy(dst, src, lineSize);
-            dst += lineSize;
+            dst += stride;
             src += alloc->mHal.drvState.lod[lod].stride;
         }
     } else {
         ALOGE("Add code to readback from non-script memory");
     }
 }
+
 
 void rsdAllocationRead3D(const Context *rsc, const Allocation *alloc,
                          uint32_t xoff, uint32_t yoff, uint32_t zoff,
