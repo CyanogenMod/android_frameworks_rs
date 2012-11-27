@@ -128,10 +128,13 @@ void * RS::threadProc(void *vrsc) {
                 rs->mErrorFunc(usrID, (const char *)rbuf);
             }
             break;
+        case RS_MESSAGE_TO_CLIENT_NONE:
         case RS_MESSAGE_TO_CLIENT_EXCEPTION:
+        case RS_MESSAGE_TO_CLIENT_RESIZE:
             // teardown. But we want to avoid starving other threads during
             // teardown by yielding until the next line in the destructor can
-            // execute to set mRun = false
+            // execute to set mRun = false. Note that the FIFO sends an
+            // empty NONE message when it reaches its destructor.
             usleep(1000);
             break;
         case RS_MESSAGE_TO_CLIENT_USER:
