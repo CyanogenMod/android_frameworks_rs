@@ -200,6 +200,7 @@ Allocation2DData {
     param uint32_t w
     param uint32_t h
     param const void *data
+    param size_t stride
     }
 
 Allocation2DElementData {
@@ -238,6 +239,7 @@ Allocation2DRead {
     param uint32_t w
     param uint32_t h
     param void *data
+    param size_t stride
 }
 
 AllocationSyncAll {

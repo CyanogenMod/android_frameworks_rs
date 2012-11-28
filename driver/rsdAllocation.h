@@ -88,7 +88,7 @@ void rsdAllocationData2D(const android::renderscript::Context *rsc,
                          const android::renderscript::Allocation *alloc,
                          uint32_t xoff, uint32_t yoff, uint32_t lod, RsAllocationCubemapFace face,
                          uint32_t w, uint32_t h,
-                         const void *data, uint32_t sizeBytes);
+                         const void *data, uint32_t sizeBytes, size_t stride);
 void rsdAllocationData3D(const android::renderscript::Context *rsc,
                          const android::renderscript::Allocation *alloc,
                          uint32_t xoff, uint32_t yoff, uint32_t zoff,
@@ -103,7 +103,7 @@ void rsdAllocationRead2D(const android::renderscript::Context *rsc,
                          const android::renderscript::Allocation *alloc,
                          uint32_t xoff, uint32_t yoff, uint32_t lod, RsAllocationCubemapFace face,
                          uint32_t w, uint32_t h,
-                         void *data, uint32_t sizeBytes);
+                         void *data, uint32_t sizeBytes, size_t stride);
 void rsdAllocationRead3D(const android::renderscript::Context *rsc,
                          const android::renderscript::Allocation *alloc,
                          uint32_t xoff, uint32_t yoff, uint32_t zoff,

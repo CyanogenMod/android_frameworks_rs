@@ -238,6 +238,14 @@ public:
     void copy2DRangeFrom(uint32_t xoff, uint32_t yoff, uint32_t w, uint32_t h,
                          sp<const Allocation> data, uint32_t dataXoff, uint32_t dataYoff);
 
+    void copy2DStridedFrom(uint32_t xoff, uint32_t yoff, uint32_t w, uint32_t h,
+                           const void *data, size_t stride);
+    void copy2DStridedFrom(const void *data, size_t stride);
+
+    void copy2DStridedTo(uint32_t xoff, uint32_t yoff, uint32_t w, uint32_t h,
+                         void *data, size_t stride);
+    void copy2DStridedTo(void *data, size_t stride);
+
     void resize(int dimX);
     void resize(int dimX, int dimY);
 

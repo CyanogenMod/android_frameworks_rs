@@ -469,7 +469,7 @@ bool FontState::cacheBitmap(FT_Bitmap *bitmap, uint32_t *retOriginX, uint32_t *r
 
     mRSC->mHal.funcs.allocation.data2D(mRSC, mTextTexture.get(), 0, 0, 0,
         RS_ALLOCATION_CUBEMAP_FACE_POSITIVE_X, mCacheWidth, mCacheHeight,
-        mCacheBuffer, mCacheWidth*mCacheHeight);
+        mCacheBuffer, mCacheWidth*mCacheHeight, mCacheWidth);
 
     mFontShaderF->bindTexture(mRSC, 0, mTextTexture.get());
 
