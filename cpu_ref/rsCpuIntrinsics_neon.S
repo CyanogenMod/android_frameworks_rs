@@ -377,6 +377,42 @@ ENTRY(rsdIntrinsicBlurHFU4_K)
         bx              lr
 END(rsdIntrinsicBlurHFU4_K)
 
+ENTRY(rsdIntrinsicBlurHFU1_K)
+        push            {r4-r8, r10, r11, lr}
+        vpush           {q4-q7}
+
+        ldr r4, [sp, #32+64]
+        ldr r5, [sp, #32+64 + 4]
+
+1:
+        add r7, r1, r4, lsl #4  /* const uchar *pi = ptrIn + x1 * 4; */
+        mov r10, r2
+        mov r11, r3
+
+        veor q0, q0
+
+2:
+        vld1.32 {q1}, [r7]
+        add r7, r7, #4
+        vld1.32 {d4[0]}, [r10]!
+        vmla.f32 q0, q1, d4[0]
+        subs r11, r11, #1
+        bne 2b
+
+        vcvt.s32.f32 q0, q0
+        vmovn.u32 d0, q0
+        vmovn.u16 d0, q0
+
+        vst1.32 {d0[0]}, [r0]!
+        add r4, r4, #1
+        cmp r4, r5
+        bne 1b
+
+        vpop            {q4-q7}
+        pop             {r4-r8, r10, r11, lr}
+        bx              lr
+END(rsdIntrinsicBlurHFU1_K)
+
 /*
         r0 = dst
         r1 = Y
