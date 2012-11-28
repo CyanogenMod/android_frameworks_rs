@@ -56,6 +56,9 @@ protected:
 
 
 void RsdCpuScriptIntrinsicBlur::ComputeGaussianWeights() {
+    memset(fp, 0, sizeof(fp));
+    memset(ip, 0, sizeof(ip));
+
     // Compute gaussian weights for the blur
     // e is the euler's number
     float e = 2.718281828459045f;
@@ -144,6 +147,7 @@ static void OneVU1(const RsForEachStubParamStruct *p, float *out, int32_t x, int
 
 extern "C" void rsdIntrinsicBlurVFU4_K(void *dst, const void *pin, int stride, const void *gptr, int rct, int x1, int ct);
 extern "C" void rsdIntrinsicBlurHFU4_K(void *dst, const void *pin, const void *gptr, int rct, int x1, int ct);
+extern "C" void rsdIntrinsicBlurHFU1_K(void *dst, const void *pin, const void *gptr, int rct, int x1, int ct);
 
 static void OneVFU4(float4 *out,
                     const uchar *ptrIn, int iStride, const float* gPtr, int ct,
@@ -174,22 +178,40 @@ static void OneVFU4(float4 *out,
         out->xyzw = blurredPixel;
         x1++;
         out++;
+        ptrIn++;
     }
 }
 
 static void OneVFU1(float *out,
                     const uchar *ptrIn, int iStride, const float* gPtr, int ct, int len) {
 
+    while(len && (((int)ptrIn) & 0x3)) {
+        const uchar *pi = ptrIn;
+        float blurredPixel = 0;
+        const float* gp = gPtr;
+
+        for (int r = 0; r < ct; r++) {
+            float pf = (float)pi[0];
+            blurredPixel += pf * gp[0];
+            pi += iStride;
+            gp++;
+        }
+        out[0] = blurredPixel;
+        len--;
+        out++;
+        ptrIn++;
+    }
+
 #if defined(ARCH_ARM_HAVE_NEON)
     {
         int t = len >> 2;
         t &= ~1;
         if(t) {
-            rsdIntrinsicBlurVFU4_K(out, ptrIn, iStride, gPtr, ct, 0, len);
+            rsdIntrinsicBlurVFU4_K(out, ptrIn, iStride, gPtr, ct, 0, t << 2);
+            len -= t << 2;
+            ptrIn += t << 2;
+            out += t << 2;
         }
-        len -= t << 2;
-        ptrIn += t << 2;
-        out += t << 2;
     }
 #endif
 
@@ -207,6 +229,7 @@ static void OneVFU1(float *out,
         out[0] = blurredPixel;
         len--;
         out++;
+        ptrIn++;
     }
 }
 
@@ -244,6 +267,7 @@ static void OneHU1(const RsForEachStubParamStruct *p, uchar *out, int32_t x,
 void RsdCpuScriptIntrinsicBlur::kernelU4(const RsForEachStubParamStruct *p,
                                          uint32_t xstart, uint32_t xend,
                                          uint32_t instep, uint32_t outstep) {
+    // fixme
     float buf[4 * 2048];
     RsdCpuScriptIntrinsicBlur *cp = (RsdCpuScriptIntrinsicBlur *)p->usr;
     if (!cp->alloc.get()) {
@@ -321,16 +345,20 @@ void RsdCpuScriptIntrinsicBlur::kernelU1(const RsForEachStubParamStruct *p,
     }
 
     x1 = xstart;
-    while ((x1 < (uint32_t)cp->iradius) && (x1 < x2)) {
+    while ((x1 < x2) &&
+           ((x1 < (uint32_t)cp->iradius) || (((int)out) & 0x3))) {
         OneHU1(p, out, x1, buf, cp->fp, cp->iradius);
         out++;
         x1++;
     }
-#if 0//defined(ARCH_ARM_HAVE_NEON)
+#if defined(ARCH_ARM_HAVE_NEON)
     if ((x1 + cp->iradius) < x2) {
-        rsdIntrinsicBlurHFU4_K(out, ((float4 *)buf) - cp->iradius, cp->fp, cp->iradius * 2 + 1, x1, 0, x2 - cp->iradius);
-        out += (x2 - cp->iradius) - x1;
-        x1 = x2 - cp->iradius;
+        uint32_t len = x2 - (x1 + cp->iradius);
+        len >>= 2;
+        rsdIntrinsicBlurHFU1_K(out, ((float4 *)buf) - cp->iradius, cp->fp,
+                               cp->iradius * 2 + 1, x1, x1+len);
+        out += len << 2;
+        x1 += len << 2;
     }
 #endif
     while(x2 > x1) {
