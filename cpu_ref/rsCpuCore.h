@@ -89,6 +89,9 @@ public:
     RsdCpuScriptImpl * setTLS(RsdCpuScriptImpl *sc);
 
     Context * getContext() {return mRSC;}
+    uint32_t getThreadCount() const {
+        return mWorkers.mCount + 1;
+    }
 
     void launchThreads(const Allocation * ain, Allocation * aout,
                        const RsScriptCall *sc, MTLaunchStruct *mtls);

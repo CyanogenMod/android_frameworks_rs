@@ -385,7 +385,7 @@ ENTRY(rsdIntrinsicBlurHFU1_K)
         ldr r5, [sp, #32+64 + 4]
 
 1:
-        add r7, r1, r4, lsl #4  /* const uchar *pi = ptrIn + x1 * 4; */
+        add r7, r1, r4, lsl #2  /* const uchar *pi = ptrIn + x1 * 4; */
         mov r10, r2
         mov r11, r3
 
@@ -404,7 +404,7 @@ ENTRY(rsdIntrinsicBlurHFU1_K)
         vmovn.u16 d0, q0
 
         vst1.32 {d0[0]}, [r0]!
-        add r4, r4, #1
+        add r4, r4, #4
         cmp r4, r5
         bne 1b
 
