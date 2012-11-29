@@ -250,7 +250,9 @@ void * Context::threadProc(void *vrsc) {
     Context *rsc = static_cast<Context *>(vrsc);
 #ifndef ANDROID_RS_SERIALIZE
     rsc->mNativeThreadId = gettid();
-    setpriority(PRIO_PROCESS, rsc->mNativeThreadId, ANDROID_PRIORITY_DISPLAY);
+    if (!rsc->isSynchronous()) {
+        setpriority(PRIO_PROCESS, rsc->mNativeThreadId, ANDROID_PRIORITY_DISPLAY);
+    }
     rsc->mThreadPriority = ANDROID_PRIORITY_DISPLAY;
 #endif //ANDROID_RS_SERIALIZE
     rsc->props.mLogTimes = getProp("debug.rs.profile") != 0;
@@ -318,6 +320,11 @@ void * Context::threadProc(void *vrsc) {
     }
 
     rsc->mRunning = true;
+
+    if (rsc->isSynchronous()) {
+        return NULL;
+    }
+
     if (!rsc->mIsGraphicsContext) {
         while (!rsc->mExit) {
             rsc->mIO.playCoreCommands(rsc, -1);
@@ -442,17 +449,15 @@ Context::Context() {
     mIsContextLite = false;
     memset(&watchdog, 0, sizeof(watchdog));
     mForceCpu = false;
-}
-
-Context * Context::createContext(Device *dev, const RsSurfaceConfig *sc) {
-    return createContext(dev, sc, false);
+    mSynchronous = false;
 }
 
 Context * Context::createContext(Device *dev, const RsSurfaceConfig *sc,
-                                 bool forceCpu) {
+                                 bool forceCpu, bool synchronous) {
     Context * rsc = new Context();
 
     rsc->mForceCpu = forceCpu;
+    rsc->mSynchronous = synchronous;
 
     if (!rsc->initContext(dev, sc)) {
         delete rsc;
@@ -500,22 +505,25 @@ bool Context::initContext(Device *dev, const RsSurfaceConfig *sc) {
 
     timerInit();
     timerSet(RS_TIMER_INTERNAL);
+    if (mSynchronous) {
+        threadProc(this);
+    } else {
+        status = pthread_create(&mThreadId, &threadAttr, threadProc, this);
+        if (status) {
+            ALOGE("Failed to start rs context thread.");
+            return false;
+        }
+        while (!mRunning && (mError == RS_ERROR_NONE)) {
+            usleep(100);
+        }
 
-    status = pthread_create(&mThreadId, &threadAttr, threadProc, this);
-    if (status) {
-        ALOGE("Failed to start rs context thread.");
-        return false;
-    }
-    while (!mRunning && (mError == RS_ERROR_NONE)) {
-        usleep(100);
-    }
+        if (mError != RS_ERROR_NONE) {
+            ALOGE("Errors during thread init");
+            return false;
+        }
 
-    if (mError != RS_ERROR_NONE) {
-        ALOGE("Errors during thread init");
-        return false;
+        pthread_attr_destroy(&threadAttr);
     }
-
-    pthread_attr_destroy(&threadAttr);
     return true;
 }
 
@@ -817,14 +825,15 @@ void rsi_ContextDeinitToClient(Context *rsc) {
 
 RsContext rsContextCreate(RsDevice vdev, uint32_t version,
                           uint32_t sdkVersion) {
-    return rsContextCreate(vdev, version, sdkVersion, false);
+    return rsContextCreate(vdev, version, sdkVersion, false, false);
 }
 
 RsContext rsContextCreate(RsDevice vdev, uint32_t version,
-                          uint32_t sdkVersion, bool forceCpu) {
+                          uint32_t sdkVersion, bool forceCpu,
+                          bool synchronous) {
     ALOGV("rsContextCreate dev=%p", vdev);
     Device * dev = static_cast<Device *>(vdev);
-    Context *rsc = Context::createContext(dev, NULL, forceCpu);
+    Context *rsc = Context::createContext(dev, NULL, forceCpu, synchronous);
     if (rsc) {
         rsc->setTargetSdkVersion(sdkVersion);
     }

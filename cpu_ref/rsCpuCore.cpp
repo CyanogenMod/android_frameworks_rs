@@ -132,6 +132,16 @@ void * RsdCpuReferenceImpl::helperThreadProc(void *vrsc) {
 void RsdCpuReferenceImpl::launchThreads(WorkerCallback_t cbk, void *data) {
     mWorkers.mLaunchData = data;
     mWorkers.mLaunchCallback = cbk;
+
+    // fast path for very small launches
+    MTLaunchStruct *mtls = (MTLaunchStruct *)data;
+    if (mtls && mtls->fep.dimY <= 1 && mtls->xEnd <= mtls->xStart + mtls->mSliceSize) {
+        if (mWorkers.mLaunchCallback) {
+            mWorkers.mLaunchCallback(mWorkers.mLaunchData, 0);
+        }
+        return;
+    }
+
     android_atomic_release_store(mWorkers.mCount, &mWorkers.mRunningCount);
     for (uint32_t ct = 0; ct < mWorkers.mCount; ct++) {
         mWorkers.mLaunchSignals[ct].set();
@@ -140,7 +150,7 @@ void RsdCpuReferenceImpl::launchThreads(WorkerCallback_t cbk, void *data) {
     // We use the calling thread as one of the workers so we can start without
     // the delay of the thread wakeup.
     if (mWorkers.mLaunchCallback) {
-       mWorkers.mLaunchCallback(mWorkers.mLaunchData, 0);
+        mWorkers.mLaunchCallback(mWorkers.mLaunchData, 0);
     }
 
     while (android_atomic_acquire_load(&mWorkers.mRunningCount) != 0) {
