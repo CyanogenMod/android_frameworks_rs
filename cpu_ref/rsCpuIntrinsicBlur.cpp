@@ -36,11 +36,13 @@ public:
     RsdCpuScriptIntrinsicBlur(RsdCpuReferenceImpl *ctx, const Script *s, const Element *e);
 
 protected:
-    float fp[104];
-    short ip[104];
-    float radius;
-    int iradius;
-    ObjectBaseRef<Allocation> alloc;
+    float mFp[104];
+    short mIp[104];
+    void **mScratch;
+    size_t *mScratchSize;
+    float mRadius;
+    int mIradius;
+    ObjectBaseRef<Allocation> mAlloc;
 
     static void kernelU4(const RsForEachStubParamStruct *p,
                          uint32_t xstart, uint32_t xend,
@@ -56,8 +58,8 @@ protected:
 
 
 void RsdCpuScriptIntrinsicBlur::ComputeGaussianWeights() {
-    memset(fp, 0, sizeof(fp));
-    memset(ip, 0, sizeof(ip));
+    memset(mFp, 0, sizeof(mFp));
+    memset(mIp, 0, sizeof(mIp));
 
     // Compute gaussian weights for the blur
     // e is the euler's number
@@ -72,7 +74,7 @@ void RsdCpuScriptIntrinsicBlur::ComputeGaussianWeights() {
     // The larger the radius gets, the more our gaussian blur
     // will resemble a box blur since with large sigma
     // the gaussian curve begins to lose its shape
-    float sigma = 0.4f * radius + 0.6f;
+    float sigma = 0.4f * mRadius + 0.6f;
 
     // Now compute the coefficients. We will store some redundant values to save
     // some math during the blur calculations precompute some values
@@ -82,29 +84,29 @@ void RsdCpuScriptIntrinsicBlur::ComputeGaussianWeights() {
     float normalizeFactor = 0.0f;
     float floatR = 0.0f;
     int r;
-    iradius = (float)ceil(radius) + 0.5f;
-    for (r = -iradius; r <= iradius; r ++) {
+    mIradius = (float)ceil(mRadius) + 0.5f;
+    for (r = -mIradius; r <= mIradius; r ++) {
         floatR = (float)r;
-        fp[r + iradius] = coeff1 * powf(e, floatR * floatR * coeff2);
-        normalizeFactor += fp[r + iradius];
+        mFp[r + mIradius] = coeff1 * powf(e, floatR * floatR * coeff2);
+        normalizeFactor += mFp[r + mIradius];
     }
 
     //Now we need to normalize the weights because all our coefficients need to add up to one
     normalizeFactor = 1.0f / normalizeFactor;
-    for (r = -iradius; r <= iradius; r ++) {
-        fp[r + iradius] *= normalizeFactor;
-        ip[r + iradius] = (short)(ip[r + iradius] * 32768);
+    for (r = -mIradius; r <= mIradius; r ++) {
+        mFp[r + mIradius] *= normalizeFactor;
+        mIp[r + mIradius] = (short)(mIp[r + mIradius] * 32768);
     }
 }
 
 void RsdCpuScriptIntrinsicBlur::setGlobalObj(uint32_t slot, ObjectBase *data) {
     rsAssert(slot == 1);
-    alloc.set(static_cast<Allocation *>(data));
+    mAlloc.set(static_cast<Allocation *>(data));
 }
 
 void RsdCpuScriptIntrinsicBlur::setGlobalVar(uint32_t slot, const void *data, size_t dataLength) {
     rsAssert(slot == 0);
-    radius = ((const float *)data)[0];
+    mRadius = ((const float *)data)[0];
     ComputeGaussianWeights();
 }
 
@@ -183,9 +185,11 @@ static void OneVFU4(float4 *out,
 }
 
 static void OneVFU1(float *out,
-                    const uchar *ptrIn, int iStride, const float* gPtr, int ct, int len) {
+                    const uchar *ptrIn, int iStride, const float* gPtr, int ct, int x1, int x2) {
 
-    while(len && (((int)ptrIn) & 0x3)) {
+    int len = x2 - x1;
+
+    while((x2 > x1) && (((int)ptrIn) & 0x3)) {
         const uchar *pi = ptrIn;
         float blurredPixel = 0;
         const float* gp = gPtr;
@@ -197,14 +201,14 @@ static void OneVFU1(float *out,
             gp++;
         }
         out[0] = blurredPixel;
-        len--;
+        x1++;
         out++;
         ptrIn++;
     }
 
 #if defined(ARCH_ARM_HAVE_NEON)
     {
-        int t = len >> 2;
+        int t = (x2 - x1) >> 2;
         t &= ~1;
         if(t) {
             rsdIntrinsicBlurVFU4_K(out, ptrIn, iStride, gPtr, ct, 0, t << 2);
@@ -267,49 +271,57 @@ static void OneHU1(const RsForEachStubParamStruct *p, uchar *out, int32_t x,
 void RsdCpuScriptIntrinsicBlur::kernelU4(const RsForEachStubParamStruct *p,
                                          uint32_t xstart, uint32_t xend,
                                          uint32_t instep, uint32_t outstep) {
-    // fixme
-    float buf[4 * 2048];
+
+    float stackbuf[4 * 2048];
+    float *buf = &stackbuf[0];
     RsdCpuScriptIntrinsicBlur *cp = (RsdCpuScriptIntrinsicBlur *)p->usr;
-    if (!cp->alloc.get()) {
+    if (!cp->mAlloc.get()) {
         ALOGE("Blur executed without input, skipping");
         return;
     }
-    const uchar *pin = (const uchar *)cp->alloc->mHal.drvState.lod[0].mallocPtr;
-    const size_t stride = cp->alloc->mHal.drvState.lod[0].stride;
+    const uchar *pin = (const uchar *)cp->mAlloc->mHal.drvState.lod[0].mallocPtr;
+    const size_t stride = cp->mAlloc->mHal.drvState.lod[0].stride;
 
     uchar4 *out = (uchar4 *)p->out;
     uint32_t x1 = xstart;
     uint32_t x2 = xend;
 
+    if (p->dimX > 2048) {
+        if ((p->dimX > cp->mScratchSize[p->lid]) || !cp->mScratch[p->lid]) {
+            cp->mScratch[p->lid] = realloc(cp->mScratch[p->lid], p->dimX * 16);
+            cp->mScratchSize[p->lid] = p->dimX;
+        }
+        buf = (float *)cp->mScratch[p->lid];
+    }
     float4 *fout = (float4 *)buf;
     int y = p->y;
-    if ((y > cp->iradius) && (y < ((int)p->dimY - cp->iradius))) {
-        const uchar *pi = pin + (y - cp->iradius) * stride;
-        OneVFU4(fout, pi, stride, cp->fp, cp->iradius * 2 + 1, x1, x2);
+    if ((y > cp->mIradius) && (y < ((int)p->dimY - cp->mIradius))) {
+        const uchar *pi = pin + (y - cp->mIradius) * stride;
+        OneVFU4(fout, pi, stride, cp->mFp, cp->mIradius * 2 + 1, x1, x2);
     } else {
         while(x2 > x1) {
-            OneVU4(p, fout, x1, y, pin, stride, cp->fp, cp->iradius);
+            OneVU4(p, fout, x1, y, pin, stride, cp->mFp, cp->mIradius);
             fout++;
             x1++;
         }
     }
 
     x1 = xstart;
-    while ((x1 < (uint32_t)cp->iradius) && (x1 < x2)) {
-        OneHU4(p, out, x1, (float4 *)buf, cp->fp, cp->iradius);
+    while ((x1 < (uint32_t)cp->mIradius) && (x1 < x2)) {
+        OneHU4(p, out, x1, (float4 *)buf, cp->mFp, cp->mIradius);
         out++;
         x1++;
     }
 #if defined(ARCH_ARM_HAVE_NEON)
-    if ((x1 + cp->iradius) < x2) {
-        rsdIntrinsicBlurHFU4_K(out, ((float4 *)buf) - cp->iradius, cp->fp,
-                               cp->iradius * 2 + 1, x1, x2 - cp->iradius);
-        out += (x2 - cp->iradius) - x1;
-        x1 = x2 - cp->iradius;
+    if ((x1 + cp->mIradius) < x2) {
+        rsdIntrinsicBlurHFU4_K(out, ((float4 *)buf) - cp->mIradius, cp->mFp,
+                               cp->mIradius * 2 + 1, x1, x2 - cp->mIradius);
+        out += (x2 - cp->mIradius) - x1;
+        x1 = x2 - cp->mIradius;
     }
 #endif
     while(x2 > x1) {
-        OneHU4(p, out, x1, (float4 *)buf, cp->fp, cp->iradius);
+        OneHU4(p, out, x1, (float4 *)buf, cp->mFp, cp->mIradius);
         out++;
         x1++;
     }
@@ -320,12 +332,12 @@ void RsdCpuScriptIntrinsicBlur::kernelU1(const RsForEachStubParamStruct *p,
                                          uint32_t instep, uint32_t outstep) {
     float buf[4 * 2048];
     RsdCpuScriptIntrinsicBlur *cp = (RsdCpuScriptIntrinsicBlur *)p->usr;
-    if (!cp->alloc.get()) {
+    if (!cp->mAlloc.get()) {
         ALOGE("Blur executed without input, skipping");
         return;
     }
-    const uchar *pin = (const uchar *)cp->alloc->mHal.drvState.lod[0].mallocPtr;
-    const size_t stride = cp->alloc->mHal.drvState.lod[0].stride;
+    const uchar *pin = (const uchar *)cp->mAlloc->mHal.drvState.lod[0].mallocPtr;
+    const size_t stride = cp->mAlloc->mHal.drvState.lod[0].stride;
 
     uchar *out = (uchar *)p->out;
     uint32_t x1 = xstart;
@@ -333,12 +345,12 @@ void RsdCpuScriptIntrinsicBlur::kernelU1(const RsForEachStubParamStruct *p,
 
     float *fout = (float *)buf;
     int y = p->y;
-    if ((y > cp->iradius) && (y < ((int)p->dimY - cp->iradius))) {
-        const uchar *pi = pin + (y - cp->iradius) * stride;
-        OneVFU1(fout, pi, stride, cp->fp, cp->iradius * 2 + 1, x2-x1);
+    if ((y > cp->mIradius) && (y < ((int)p->dimY - cp->mIradius))) {
+        const uchar *pi = pin + (y - cp->mIradius) * stride;
+        OneVFU1(fout, pi, stride, cp->mFp, cp->mIradius * 2 + 1, x1, x2);
     } else {
         while(x2 > x1) {
-            OneVU1(p, fout, x1, y, pin, stride, cp->fp, cp->iradius);
+            OneVU1(p, fout, x1, y, pin, stride, cp->mFp, cp->mIradius);
             fout++;
             x1++;
         }
@@ -346,23 +358,23 @@ void RsdCpuScriptIntrinsicBlur::kernelU1(const RsForEachStubParamStruct *p,
 
     x1 = xstart;
     while ((x1 < x2) &&
-           ((x1 < (uint32_t)cp->iradius) || (((int)out) & 0x3))) {
-        OneHU1(p, out, x1, buf, cp->fp, cp->iradius);
+           ((x1 < (uint32_t)cp->mIradius) || (((int)out) & 0x3))) {
+        OneHU1(p, out, x1, buf, cp->mFp, cp->mIradius);
         out++;
         x1++;
     }
 #if defined(ARCH_ARM_HAVE_NEON)
-    if ((x1 + cp->iradius) < x2) {
-        uint32_t len = x2 - (x1 + cp->iradius);
-        len >>= 2;
-        rsdIntrinsicBlurHFU1_K(out, ((float4 *)buf) - cp->iradius, cp->fp,
-                               cp->iradius * 2 + 1, x1, x1+len);
-        out += len << 2;
-        x1 += len << 2;
+    if ((x1 + cp->mIradius) < x2) {
+        uint32_t len = x2 - (x1 + cp->mIradius);
+        len &= ~3;
+        rsdIntrinsicBlurHFU1_K(out, ((float *)buf) - cp->mIradius, cp->mFp,
+                               cp->mIradius * 2 + 1, x1, x1 + len);
+        out += len;
+        x1 += len;
     }
 #endif
     while(x2 > x1) {
-        OneHU1(p, out, x1, buf, cp->fp, cp->iradius);
+        OneHU1(p, out, x1, buf, cp->mFp, cp->mIradius);
         out++;
         x1++;
     }
@@ -384,11 +396,27 @@ RsdCpuScriptIntrinsicBlur::RsdCpuScriptIntrinsicBlur(RsdCpuReferenceImpl *ctx,
         }
     }
     rsAssert(mRootPtr);
-    radius = 5;
+    mRadius = 5;
+
+    mScratch = new void *[mCtx->getThreadCount()];
+    mScratchSize = new size_t[mCtx->getThreadCount()];
+
     ComputeGaussianWeights();
 }
 
 RsdCpuScriptIntrinsicBlur::~RsdCpuScriptIntrinsicBlur() {
+    uint32_t threads = mCtx->getThreadCount();
+    if (mScratch) {
+        for (size_t i = 0; i < threads; i++) {
+            if (mScratch[i]) {
+                free(mScratch[i]);
+            }
+        }
+        delete []mScratch;
+    }
+    if (mScratchSize) {
+        delete []mScratchSize;
+    }
 }
 
 void RsdCpuScriptIntrinsicBlur::populateScript(Script *s) {
@@ -396,7 +424,7 @@ void RsdCpuScriptIntrinsicBlur::populateScript(Script *s) {
 }
 
 void RsdCpuScriptIntrinsicBlur::invokeFreeChildren() {
-    alloc.clear();
+    mAlloc.clear();
 }
 
 
