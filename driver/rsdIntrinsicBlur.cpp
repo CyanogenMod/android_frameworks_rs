@@ -188,14 +188,27 @@ static void Blur_uchar4(const RsForEachStubParamStruct *p,
     float4 *fout = (float4 *)buf;
 
     int y = p->y;
+    uint32_t vx1 = x1;
+    uint32_t vx2 = x2;
+
+    if (vx1 > (uint32_t)cp->iradius) {
+        vx1 -= cp->iradius;
+    } else {
+        vx1 = 0;
+    }
+    vx2 += cp->iradius;
+    if (vx2 >= p->dimX) {
+        vx2 = p->dimX - 1;
+    }
+
     if ((y > cp->iradius) && (y < ((int)p->dimY - cp->iradius))) {
         const uchar *pi = pin + (y - cp->iradius) * din->lod[0].stride;
-        OneVF(fout, pi, din->lod[0].stride, cp->fp, cp->iradius * 2 + 1, x1, x2);
+        OneVF(fout + vx1, pi, din->lod[0].stride, cp->fp, cp->iradius * 2 + 1, vx1, vx2);
     } else {
-        while(x2 > x1) {
-            OneV(p, fout, x1, y, pin, din->lod[0].stride, cp->fp, cp->iradius);
+        while(vx2 > vx1) {
+            OneV(p, fout, vx1, y, pin, din->lod[0].stride, cp->fp, cp->iradius);
             fout++;
-            x1++;
+            vx1++;
         }
     }
 
