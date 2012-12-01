@@ -18,7 +18,29 @@
 #pragma rs java_package_name(com.android.rs.image)
 #pragma rs_fp_relaxed
 
+int g_i = 4;
+
+float g_f = 5.9;
+
 const static float3 gMonoMult = {0.299f, 0.587f, 0.114f};
+
+bool *failed;
+
+#define _RS_ASSERT(b) \
+do { \
+    if (!(b)) { \
+        *failed = true; \
+        rsDebug(#b " FAILED", 0); \
+    } \
+\
+} while (0)
+
+struct myStruct {
+    int i;
+    int j;
+    float f;
+    char c[3];
+};
 
 void root(const uchar4 *v_in, uchar4 *v_out) {
     float4 f4 = rsUnpackColor8888(*v_in);
@@ -27,4 +49,28 @@ void root(const uchar4 *v_in, uchar4 *v_out) {
     *v_out = rsPackColorTo8888(mono);
 }
 
+void foo(int i, float f) {
+    rsDebug("g_i", g_i);
+    rsDebug("g_f", g_f);
+    rsDebug("i", i);
+    rsDebug("f", f);
+}
+
+void bar(int i, int j, char k, int l, int m, int n) {
+    _RS_ASSERT(i == 47);
+    _RS_ASSERT(j == -3);
+    _RS_ASSERT(k == 'c');
+    _RS_ASSERT(l == -7);
+    _RS_ASSERT(m == 14);
+    _RS_ASSERT(n == -8);
+}
+
+int __attribute__((kernel)) kern1(int i, uint32_t x, uint32_t y) {
+    return i + 10 * x + 100 *y;
+}
+
+void __attribute__((kernel)) verify_kern1(int i, uint32_t x, uint32_t y) {
+    _RS_ASSERT(i == (10 * x + 100 * y));
+    rsDebug("i ", i);
+}
 
