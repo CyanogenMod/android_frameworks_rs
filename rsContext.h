@@ -67,8 +67,7 @@ public:
     };
     Hal mHal;
 
-    static Context * createContext(Device *, const RsSurfaceConfig *sc);
-    static Context * createContext(Device *, const RsSurfaceConfig *sc, bool forceCpu);
+    static Context * createContext(Device *, const RsSurfaceConfig *sc, bool forceCpu = false, bool synchronous = false);
     static Context * createContextLite();
     ~Context();
 
@@ -103,6 +102,8 @@ public:
 
     ScriptCState mScriptC;
     FBOCache mFBOCache;
+
+    bool isSynchronous() {return mSynchronous;}
 
     void swapBuffers();
     void setRootScript(Script *);
@@ -247,6 +248,7 @@ private:
     Context();
     bool initContext(Device *, const RsSurfaceConfig *sc);
 
+    bool mSynchronous;
     bool initGLThread();
     void deinitEGL();
 

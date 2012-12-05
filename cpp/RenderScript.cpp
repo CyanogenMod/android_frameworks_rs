@@ -54,18 +54,18 @@ RS::~RS() {
     mDev = NULL;
 }
 
-bool RS::init(bool forceCpu) {
-    return RS::init(RS_VERSION, forceCpu);
+bool RS::init(bool forceCpu, bool synchronous) {
+    return RS::init(RS_VERSION, forceCpu, synchronous);
 }
 
-bool RS::init(int targetApi, bool forceCpu) {
+bool RS::init(int targetApi, bool forceCpu, bool synchronous) {
     mDev = rsDeviceCreate();
     if (mDev == 0) {
         ALOGE("Device creation failed");
         return false;
     }
 
-    mContext = rsContextCreate(mDev, 0, targetApi, forceCpu);
+    mContext = rsContextCreate(mDev, 0, targetApi, forceCpu, synchronous);
     if (mContext == 0) {
         ALOGE("Context creation failed");
         return false;
