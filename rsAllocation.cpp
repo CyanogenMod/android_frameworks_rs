@@ -33,6 +33,7 @@ Allocation::Allocation(Context *rsc, const Type *type, uint32_t usages,
     mHal.state.mipmapControl = RS_ALLOCATION_MIPMAP_NONE;
     mHal.state.usageFlags = usages;
     mHal.state.mipmapControl = mc;
+    mHal.state.userProvidedPtr = ptr;
 
     setType(type);
     updateCache();

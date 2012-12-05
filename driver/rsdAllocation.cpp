@@ -283,9 +283,24 @@ bool rsdAllocationInit(const Context *rsc, Allocation *alloc, bool forceZero) {
 
     uint8_t * ptr = NULL;
     if (alloc->mHal.state.usageFlags & RS_ALLOCATION_USAGE_IO_OUTPUT) {
+    } else if (alloc->mHal.state.userProvidedPtr != NULL) {
+        // user-provided allocation
+        // limitations: no faces, no LOD, USAGE_SCRIPT only
+        if (alloc->mHal.state.usageFlags != RS_ALLOCATION_USAGE_SCRIPT) {
+            ALOGE("Can't use user-allocated buffers if usage is not USAGE_SCRIPT");
+            return false;
+        }
+        if (alloc->getType()->getDimLOD() || alloc->getType()->getDimFaces()) {
+            ALOGE("User-allocated buffers must not have multiple faces or LODs");
+            return false;
+        }
+        ptr = (uint8_t*)alloc->mHal.state.userProvidedPtr;
     } else {
-
-        ptr = (uint8_t *)malloc(allocSize);
+        if (forceZero) {
+            ptr = (uint8_t *)calloc(1, allocSize);
+        } else {
+            ptr = (uint8_t *)malloc(allocSize);
+        }
         if (!ptr) {
             free(drv);
             return false;
@@ -312,10 +327,6 @@ bool rsdAllocationInit(const Context *rsc, Allocation *alloc, bool forceZero) {
 
     drv->glType = rsdTypeToGLType(alloc->mHal.state.type->getElement()->getComponent().getType());
     drv->glFormat = rsdKindToGLFormat(alloc->mHal.state.type->getElement()->getComponent().getKind());
-
-    if (forceZero && ptr) {
-        memset(ptr, 0, alloc->mHal.state.type->getSizeBytes());
-    }
 
     if (alloc->mHal.state.usageFlags & ~RS_ALLOCATION_USAGE_SCRIPT) {
         drv->uploadDeferred = true;
@@ -346,7 +357,10 @@ void rsdAllocationDestroy(const Context *rsc, Allocation *alloc) {
     }
 
     if (alloc->mHal.drvState.lod[0].mallocPtr) {
-        free(alloc->mHal.drvState.lod[0].mallocPtr);
+        // don't free user-allocated ptrs
+        if (!alloc->mHal.state.userProvidedPtr) {
+            free(alloc->mHal.drvState.lod[0].mallocPtr);
+        }
         alloc->mHal.drvState.lod[0].mallocPtr = NULL;
     }
     if (drv->readBackFBO != NULL) {

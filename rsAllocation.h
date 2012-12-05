@@ -61,7 +61,7 @@ public:
             bool hasMipmaps;
             bool hasFaces;
             bool hasReferences;
-            void * unused_01;
+            void * userProvidedPtr;
             int32_t surfaceTextureID;
             ANativeWindow *wndSurface;
             SurfaceTexture *surfaceTexture;
