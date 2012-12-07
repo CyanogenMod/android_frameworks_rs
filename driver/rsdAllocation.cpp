@@ -585,12 +585,15 @@ void rsdAllocationData1D(const Context *rsc, const Allocation *alloc,
     uint8_t * ptr = GetOffsetPtr(alloc, xoff, 0, 0, RS_ALLOCATION_CUBEMAP_FACE_POSITIVE_X);
     uint32_t size = count * eSize;
 
-    if (alloc->mHal.state.hasReferences) {
-        alloc->incRefs(data, count);
-        alloc->decRefs(ptr, count);
+    if (ptr != data) {
+        // Skip the copy if we are the same allocation. This can arise from
+        // our Bitmap optimization, where we share the same storage.
+        if (alloc->mHal.state.hasReferences) {
+            alloc->incRefs(data, count);
+            alloc->decRefs(ptr, count);
+        }
+        memcpy(ptr, data, size);
     }
-
-    memcpy(ptr, data, size);
     drv->uploadDeferred = true;
 }
 
@@ -608,6 +611,12 @@ void rsdAllocationData2D(const Context *rsc, const Allocation *alloc,
     if (alloc->mHal.drvState.lod[0].mallocPtr) {
         const uint8_t *src = static_cast<const uint8_t *>(data);
         uint8_t *dst = GetOffsetPtr(alloc, xoff, yoff, lod, face);
+        if (dst == src) {
+            // Skip the copy if we are the same allocation. This can arise from
+            // our Bitmap optimization, where we share the same storage.
+            drv->uploadDeferred = true;
+            return;
+        }
 
         for (uint32_t line=yoff; line < (yoff+h); line++) {
             if (alloc->mHal.state.hasReferences) {
@@ -636,7 +645,11 @@ void rsdAllocationRead1D(const Context *rsc, const Allocation *alloc,
                          void *data, size_t sizeBytes) {
     const uint32_t eSize = alloc->mHal.state.type->getElementSizeBytes();
     const uint8_t * ptr = GetOffsetPtr(alloc, xoff, 0, 0, RS_ALLOCATION_CUBEMAP_FACE_POSITIVE_X);
-    memcpy(data, ptr, count * eSize);
+    if (data != ptr) {
+        // Skip the copy if we are the same allocation. This can arise from
+        // our Bitmap optimization, where we share the same storage.
+        memcpy(data, ptr, count * eSize);
+    }
 }
 
 void rsdAllocationRead2D(const Context *rsc, const Allocation *alloc,
@@ -651,6 +664,11 @@ void rsdAllocationRead2D(const Context *rsc, const Allocation *alloc,
     if (alloc->mHal.drvState.lod[0].mallocPtr) {
         uint8_t *dst = static_cast<uint8_t *>(data);
         const uint8_t *src = GetOffsetPtr(alloc, xoff, yoff, lod, face);
+        if (dst == src) {
+            // Skip the copy if we are the same allocation. This can arise from
+            // our Bitmap optimization, where we share the same storage.
+            return;
+        }
 
         for (uint32_t line=yoff; line < (yoff+h); line++) {
             memcpy(dst, src, lineSize);
