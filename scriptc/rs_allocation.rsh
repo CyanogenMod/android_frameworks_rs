@@ -286,6 +286,66 @@ extern void __attribute__((overloadable))
  */
 extern void __attribute__((overloadable))
     rsSetElementAt(rs_allocation a, void* ptr, uint32_t x, uint32_t y);
+
+#define SET_ELEMENT_AT(T)                                               \
+    extern void __attribute__((overloadable))                           \
+    __rsSetElementAt_##T(rs_allocation a, T val, uint32_t x);           \
+    extern void __attribute__((overloadable))                           \
+    __rsSetElementAt_##T(rs_allocation a, T val, uint32_t x, uint32_t y); \
+                                                                        \
+    static inline void __attribute__((overloadable))                    \
+    rsSetElementAt_##T(rs_allocation a, T val, uint32_t x) {            \
+        __rsSetElementAt_##T(a, val, x);                                \
+    }                                                                   \
+    static inline void __attribute__((overloadable))                    \
+    rsSetElementAt_##T(rs_allocation a, T val, uint32_t x, uint32_t y) { \
+        __rsSetElementAt_##T(a, val, x, y);                     \
+    }                                                           \
+
+SET_ELEMENT_AT(char)
+SET_ELEMENT_AT(char2)
+SET_ELEMENT_AT(char3)
+SET_ELEMENT_AT(char4)
+SET_ELEMENT_AT(uchar)
+SET_ELEMENT_AT(uchar2)
+SET_ELEMENT_AT(uchar3)
+SET_ELEMENT_AT(uchar4)
+SET_ELEMENT_AT(short)
+SET_ELEMENT_AT(short2)
+SET_ELEMENT_AT(short3)
+SET_ELEMENT_AT(short4)
+SET_ELEMENT_AT(ushort)
+SET_ELEMENT_AT(ushort2)
+SET_ELEMENT_AT(ushort3)
+SET_ELEMENT_AT(ushort4)
+SET_ELEMENT_AT(int)
+SET_ELEMENT_AT(int2)
+SET_ELEMENT_AT(int3)
+SET_ELEMENT_AT(int4)
+SET_ELEMENT_AT(uint)
+SET_ELEMENT_AT(uint2)
+SET_ELEMENT_AT(uint3)
+SET_ELEMENT_AT(uint4)
+SET_ELEMENT_AT(long)
+SET_ELEMENT_AT(long2)
+SET_ELEMENT_AT(long3)
+SET_ELEMENT_AT(long4)
+SET_ELEMENT_AT(ulong)
+SET_ELEMENT_AT(ulong2)
+SET_ELEMENT_AT(ulong3)
+SET_ELEMENT_AT(ulong4)
+SET_ELEMENT_AT(float)
+SET_ELEMENT_AT(float2)
+SET_ELEMENT_AT(float3)
+SET_ELEMENT_AT(float4)
+SET_ELEMENT_AT(double)
+SET_ELEMENT_AT(double2)
+SET_ELEMENT_AT(double3)
+SET_ELEMENT_AT(double4)
+
+#undef SET_ELEMENT_AT
+
+
 #endif // (defined(RS_VERSION) && (RS_VERSION >= 18))
 
 #endif
