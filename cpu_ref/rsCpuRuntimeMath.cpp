@@ -83,20 +83,6 @@ static int32_t SC_clz_i32(int32_t v) {return (int32_t)__builtin_clz((uint32_t)v)
 static int16_t SC_clz_i16(int16_t v) {return (int16_t)__builtin_clz(v);}
 static int8_t SC_clz_i8(int8_t v) {return (int8_t)__builtin_clz(v);}
 
-static uint32_t SC_max_u32(uint32_t v, uint32_t v2) {return rsMax(v, v2);}
-static uint16_t SC_max_u16(uint16_t v, uint16_t v2) {return rsMax(v, v2);}
-static uint8_t SC_max_u8(uint8_t v, uint8_t v2) {return rsMax(v, v2);}
-static int32_t SC_max_i32(int32_t v, int32_t v2) {return rsMax(v, v2);}
-static int16_t SC_max_i16(int16_t v, int16_t v2) {return rsMax(v, v2);}
-static int8_t SC_max_i8(int8_t v, int8_t v2) {return rsMax(v, v2);}
-
-static uint32_t SC_min_u32(uint32_t v, uint32_t v2) {return rsMin(v, v2);}
-static uint16_t SC_min_u16(uint16_t v, uint16_t v2) {return rsMin(v, v2);}
-static uint8_t SC_min_u8(uint8_t v, uint8_t v2) {return rsMin(v, v2);}
-static int32_t SC_min_i32(int32_t v, int32_t v2) {return rsMin(v, v2);}
-static int16_t SC_min_i16(int16_t v, int16_t v2) {return rsMin(v, v2);}
-static int8_t SC_min_i8(int8_t v, int8_t v2) {return rsMin(v, v2);}
-
 //////////////////////////////////////////////////////////////////////////////
 // Float util
 //////////////////////////////////////////////////////////////////////////////
@@ -394,7 +380,6 @@ static RsdCpuReference::CpuSymbol gSyms[] = {
     { "_Z4exp2f", (void *)&exp2f, true },
     { "_Z5exp10f", (void *)&SC_exp10, true },
     { "_Z5expm1f", (void *)&expm1f, true },
-    { "_Z4fabsf", (void *)&fabsf, true },
     { "_Z4fdimff", (void *)&fdimf, true },
     { "_Z5floorf", (void *)&floorf, true },
     { "_Z3fmafff", (void *)&fmaf, true },
@@ -441,18 +426,6 @@ static RsdCpuReference::CpuSymbol gSyms[] = {
     { "_Z3clzi", (void *)&SC_clz_i32, true },
     { "_Z3clzs", (void *)&SC_clz_i16, true },
     { "_Z3clzc", (void *)&SC_clz_i8, true },
-    { "_Z3maxjj", (void *)&SC_max_u32, true },
-    { "_Z3maxtt", (void *)&SC_max_u16, true },
-    { "_Z3maxhh", (void *)&SC_max_u8, true },
-    { "_Z3maxii", (void *)&SC_max_i32, true },
-    { "_Z3maxss", (void *)&SC_max_i16, true },
-    { "_Z3maxcc", (void *)&SC_max_i8, true },
-    { "_Z3minjj", (void *)&SC_min_u32, true },
-    { "_Z3mintt", (void *)&SC_min_u16, true },
-    { "_Z3minhh", (void *)&SC_min_u8, true },
-    { "_Z3minii", (void *)&SC_min_i32, true },
-    { "_Z3minss", (void *)&SC_min_i16, true },
-    { "_Z3mincc", (void *)&SC_min_i8, true },
 
     { "_Z5clampfff", (void *)&SC_clamp_f32, true },
     { "_Z3maxff", (void *)&SC_max_f32, true },
