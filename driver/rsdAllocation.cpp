@@ -25,7 +25,7 @@
 #include "hardware/gralloc.h"
 #include "ui/Rect.h"
 #include "ui/GraphicBufferMapper.h"
-#include "gui/SurfaceTexture.h"
+#include "gui/GLConsumer.h"
 
 #include <GLES/gl.h>
 #include <GLES2/gl2.h>
