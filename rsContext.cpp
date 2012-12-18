@@ -18,9 +18,12 @@
 #include "rsDevice.h"
 #include "rsContext.h"
 #include "rsThreadIO.h"
+
+#ifndef RS_COMPATIBILITY_LIB
 #include "rsMesh.h"
 #include <ui/FramebufferNativeWindow.h>
 #include <gui/DisplayEventReceiver.h>
+#endif
 
 #include <sys/types.h>
 #include <sys/resource.h>
@@ -29,7 +32,7 @@
 #include <cutils/properties.h>
 
 #include <sys/syscall.h>
-
+#include <string.h>
 #include <dlfcn.h>
 
 using namespace android;
@@ -52,11 +55,14 @@ bool Context::initGLThread() {
 }
 
 void Context::deinitEGL() {
+#ifndef RS_COMPATIBILITY_LIB
     mHal.funcs.shutdownGraphics(this);
+#endif
 }
 
 Context::PushState::PushState(Context *con) {
     mRsc = con;
+#ifndef RS_COMPATIBILITY_LIB
     if (con->mIsGraphicsContext) {
         mFragment.set(con->getProgramFragment());
         mVertex.set(con->getProgramVertex());
@@ -64,9 +70,11 @@ Context::PushState::PushState(Context *con) {
         mRaster.set(con->getProgramRaster());
         mFont.set(con->getFont());
     }
+#endif
 }
 
 Context::PushState::~PushState() {
+#ifndef RS_COMPATIBILITY_LIB
     if (mRsc->mIsGraphicsContext) {
         mRsc->setProgramFragment(mFragment.get());
         mRsc->setProgramVertex(mVertex.get());
@@ -74,6 +82,7 @@ Context::PushState::~PushState() {
         mRsc->setProgramRaster(mRaster.get());
         mRsc->setFont(mFont.get());
     }
+#endif
 }
 
 
@@ -86,7 +95,9 @@ uint32_t Context::runScript(Script *s) {
 
 uint32_t Context::runRootScript() {
     timerSet(RS_TIMER_SCRIPT);
+#ifndef RS_COMPATIBILITY_LIB
     mStateFragmentStore.mLast.clear();
+#endif
     watchdog.inRoot = true;
     uint32_t ret = runScript(mRootScript.get());
     watchdog.inRoot = false;
@@ -166,18 +177,21 @@ void Context::timerPrint() {
 }
 
 bool Context::setupCheck() {
-
+#ifndef RS_COMPATIBILITY_LIB
     mFragmentStore->setup(this, &mStateFragmentStore);
     mFragment->setup(this, &mStateFragment);
     mRaster->setup(this, &mStateRaster);
     mVertex->setup(this, &mStateVertex);
     mFBOCache.setup(this);
+#endif
     return true;
 }
 
+#ifndef RS_COMPATIBILITY_LIB
 void Context::setupProgramStore() {
     mFragmentStore->setup(this, &mStateFragmentStore);
 }
+#endif
 
 static uint32_t getProp(const char *str) {
     char buf[PROPERTY_VALUE_MAX];
@@ -186,6 +200,7 @@ static uint32_t getProp(const char *str) {
 }
 
 void Context::displayDebugStats() {
+#ifndef RS_COMPATIBILITY_LIB
     char buffer[128];
     sprintf(buffer, "Avg fps %u, Frame %i ms, Script %i ms", mAverageFPS, mTimeMSLastFrame, mTimeMSLastScript);
     float oldR, oldG, oldB, oldA;
@@ -203,6 +218,7 @@ void Context::displayDebugStats() {
 
     setFont(lastFont.get());
     mStateFont.setFontColor(oldR, oldG, oldB, oldA);
+#endif
 }
 
 bool Context::loadRuntime(const char* filename, Context* rsc) {
@@ -250,10 +266,17 @@ void * Context::threadProc(void *vrsc) {
     Context *rsc = static_cast<Context *>(vrsc);
 #ifndef ANDROID_RS_SERIALIZE
     rsc->mNativeThreadId = gettid();
+#ifndef RS_COMPATIBILITY_LIB
     if (!rsc->isSynchronous()) {
         setpriority(PRIO_PROCESS, rsc->mNativeThreadId, ANDROID_PRIORITY_DISPLAY);
     }
     rsc->mThreadPriority = ANDROID_PRIORITY_DISPLAY;
+#else
+    if (!rsc->isSynchronous()) {
+        setpriority(PRIO_PROCESS, rsc->mNativeThreadId, -4);
+    }
+    rsc->mThreadPriority = -4;
+#endif
 #endif //ANDROID_RS_SERIALIZE
     rsc->props.mLogTimes = getProp("debug.rs.profile") != 0;
     rsc->props.mLogScripts = getProp("debug.rs.script") != 0;
@@ -299,6 +322,7 @@ void * Context::threadProc(void *vrsc) {
 
     rsc->mHal.funcs.setPriority(rsc, rsc->mThreadPriority);
 
+#ifndef RS_COMPATIBILITY_LIB
     if (rsc->mIsGraphicsContext) {
         if (!rsc->initGLThread()) {
             rsc->setError(RS_ERROR_OUT_OF_MEMORY, "Failed initializing GL");
@@ -318,6 +342,7 @@ void * Context::threadProc(void *vrsc) {
         rsc->mStateSampler.init(rsc);
         rsc->mFBOCache.init(rsc);
     }
+#endif
 
     rsc->mRunning = true;
 
@@ -329,6 +354,7 @@ void * Context::threadProc(void *vrsc) {
         while (!rsc->mExit) {
             rsc->mIO.playCoreCommands(rsc, -1);
         }
+#ifndef RS_COMPATIBILITY_LIB
     } else {
 #ifndef ANDROID_RS_SERIALIZE
         DisplayEventReceiver displayEvent;
@@ -379,15 +405,18 @@ void * Context::threadProc(void *vrsc) {
                 rsc->timerReset();
             }
         }
+#endif
     }
 
     ALOGV("%p RS Thread exiting", rsc);
 
+#ifndef RS_COMPATIBILITY_LIB
     if (rsc->mIsGraphicsContext) {
         pthread_mutex_lock(&gInitMutex);
         rsc->deinitEGL();
         pthread_mutex_unlock(&gInitMutex);
     }
+#endif
 
     ALOGV("%p RS Thread exited", rsc);
     return NULL;
@@ -396,6 +425,7 @@ void * Context::threadProc(void *vrsc) {
 void Context::destroyWorkerThreadResources() {
     //ALOGV("destroyWorkerThreadResources 1");
     ObjectBase::zeroAllUserRef(this);
+#ifndef RS_COMPATIBILITY_LIB
     if (mIsGraphicsContext) {
          mRaster.clear();
          mFragment.clear();
@@ -411,6 +441,7 @@ void Context::destroyWorkerThreadResources() {
          mStateSampler.deinit(this);
          mFBOCache.deinit(this);
     }
+#endif
     ObjectBase::freeAllChildren(this);
     mExit = true;
     //ALOGV("destroyWorkerThreadResources 2");
@@ -553,6 +584,7 @@ Context::~Context() {
     ALOGV("%p Context::~Context done", this);
 }
 
+#ifndef RS_COMPATIBILITY_LIB
 void Context::setSurface(uint32_t w, uint32_t h, RsNativeWindow sur) {
     rsAssert(mIsGraphicsContext);
     mHal.funcs.setSurface(this, w, h, sur);
@@ -650,6 +682,7 @@ void Context::setFont(Font *f) {
         mFont.set(f);
     }
 }
+#endif
 
 void Context::assignName(ObjectBase *obj, const char *name, uint32_t len) {
     rsAssert(!obj->getName());
@@ -715,8 +748,10 @@ void rsi_ContextFinish(Context *rsc) {
 }
 
 void rsi_ContextBindRootScript(Context *rsc, RsScript vs) {
+#ifndef RS_COMPATIBILITY_LIB
     Script *s = static_cast<Script *>(vs);
     rsc->setRootScript(s);
+#endif
 }
 
 void rsi_ContextBindSampler(Context *rsc, uint32_t slot, RsSampler vs) {
@@ -730,6 +765,7 @@ void rsi_ContextBindSampler(Context *rsc, uint32_t slot, RsSampler vs) {
     s->bindToContext(&rsc->mStateSampler, slot);
 }
 
+#ifndef RS_COMPATIBILITY_LIB
 void rsi_ContextBindProgramStore(Context *rsc, RsProgramStore vpfs) {
     ProgramStore *pfs = static_cast<ProgramStore *>(vpfs);
     rsc->setProgramStore(pfs);
@@ -754,6 +790,7 @@ void rsi_ContextBindFont(Context *rsc, RsFont vfont) {
     Font *font = static_cast<Font *>(vfont);
     rsc->setFont(font);
 }
+#endif
 
 void rsi_AssignName(Context *rsc, RsObjectBase obj, const char *name, size_t name_length) {
     ObjectBase *ob = static_cast<ObjectBase *>(obj);
@@ -766,6 +803,7 @@ void rsi_ObjDestroy(Context *rsc, void *optr) {
     ob->decUserRef();
 }
 
+#ifndef RS_COMPATIBILITY_LIB
 void rsi_ContextPause(Context *rsc) {
     rsc->pause();
 }
@@ -777,6 +815,7 @@ void rsi_ContextResume(Context *rsc) {
 void rsi_ContextSetSurface(Context *rsc, uint32_t w, uint32_t h, RsNativeWindow sur) {
     rsc->setSurface(w, h, sur);
 }
+#endif
 
 void rsi_ContextSetPriority(Context *rsc, int32_t p) {
     rsc->setPriority(p);
@@ -840,6 +879,7 @@ RsContext rsContextCreate(RsDevice vdev, uint32_t version,
     return rsc;
 }
 
+#ifndef RS_COMPATIBILITY_LIB
 RsContext rsContextCreateGL(RsDevice vdev, uint32_t version,
                             uint32_t sdkVersion, RsSurfaceConfig sc,
                             uint32_t dpi) {
@@ -853,6 +893,7 @@ RsContext rsContextCreateGL(RsDevice vdev, uint32_t version,
     ALOGV("%p rsContextCreateGL ret", rsc);
     return rsc;
 }
+#endif
 
 // Only to be called at a3d load time, before object is visible to user
 // not thread safe

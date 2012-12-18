@@ -42,9 +42,15 @@ struct DrvAllocation {
     // Is this a legal structure to be used as an FBO render target
     uint32_t renderTargetID;
 
+#ifndef RS_COMPATIBILITY_LIB
     GLenum glTarget;
     GLenum glType;
     GLenum glFormat;
+#else
+    int glTarget;
+    int glType;
+    int glFormat;
+#endif
 
     bool uploadDeferred;
 
@@ -53,8 +59,10 @@ struct DrvAllocation {
     ANativeWindowBuffer *wndBuffer;
 };
 
+#ifndef RS_COMPATIBILITY_LIB
 GLenum rsdTypeToGLType(RsDataType t);
 GLenum rsdKindToGLFormat(RsDataKind k);
+#endif
 
 
 bool rsdAllocationInit(const android::renderscript::Context *rsc,

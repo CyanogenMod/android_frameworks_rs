@@ -17,25 +17,28 @@
 
 #include "rsdCore.h"
 #include "rsdAllocation.h"
-#include "rsdFrameBufferObj.h"
 
 #include "rsAllocation.h"
 
 #include "system/window.h"
-#include "hardware/gralloc.h"
 #include "ui/Rect.h"
 #include "ui/GraphicBufferMapper.h"
+
+#ifndef RS_COMPATIBILITY_LIB
+#include "rsdFrameBufferObj.h"
 #include "gui/GLConsumer.h"
+#include "hardware/gralloc.h"
 
 #include <GLES/gl.h>
 #include <GLES2/gl2.h>
 #include <GLES/glext.h>
+#endif
 
 using namespace android;
 using namespace android::renderscript;
 
 
-
+#ifndef RS_COMPATIBILITY_LIB
 const static GLenum gFaceOrder[] = {
     GL_TEXTURE_CUBE_MAP_POSITIVE_X,
     GL_TEXTURE_CUBE_MAP_NEGATIVE_X,
@@ -44,7 +47,6 @@ const static GLenum gFaceOrder[] = {
     GL_TEXTURE_CUBE_MAP_POSITIVE_Z,
     GL_TEXTURE_CUBE_MAP_NEGATIVE_Z
 };
-
 
 GLenum rsdTypeToGLType(RsDataType t) {
     switch (t) {
@@ -75,6 +77,7 @@ GLenum rsdKindToGLFormat(RsDataKind k) {
     }
     return 0;
 }
+#endif
 
 uint8_t *GetOffsetPtr(const android::renderscript::Allocation *alloc,
                       uint32_t xoff, uint32_t yoff, uint32_t lod,
@@ -90,6 +93,7 @@ uint8_t *GetOffsetPtr(const android::renderscript::Allocation *alloc,
 static void Update2DTexture(const Context *rsc, const Allocation *alloc, const void *ptr,
                             uint32_t xoff, uint32_t yoff, uint32_t lod,
                             RsAllocationCubemapFace face, uint32_t w, uint32_t h) {
+#ifndef RS_COMPATIBILITY_LIB
     DrvAllocation *drv = (DrvAllocation *)alloc->mHal.drv;
 
     rsAssert(drv->textureID);
@@ -100,9 +104,11 @@ static void Update2DTexture(const Context *rsc, const Allocation *alloc, const v
         t = gFaceOrder[face];
     }
     RSD_CALL_GL(glTexSubImage2D, t, lod, xoff, yoff, w, h, drv->glFormat, drv->glType, ptr);
+#endif
 }
 
 
+#ifndef RS_COMPATIBILITY_LIB
 static void Upload2DTexture(const Context *rsc, const Allocation *alloc, bool isFirstUpload) {
     DrvAllocation *drv = (DrvAllocation *)alloc->mHal.drv;
 
@@ -143,8 +149,10 @@ static void Upload2DTexture(const Context *rsc, const Allocation *alloc, bool is
     }
     rsdGLCheckError(rsc, "Upload2DTexture");
 }
+#endif
 
 static void UploadToTexture(const Context *rsc, const Allocation *alloc) {
+#ifndef RS_COMPATIBILITY_LIB
     DrvAllocation *drv = (DrvAllocation *)alloc->mHal.drv;
 
     if (alloc->mHal.state.usageFlags & RS_ALLOCATION_USAGE_IO_INPUT) {
@@ -178,9 +186,11 @@ static void UploadToTexture(const Context *rsc, const Allocation *alloc) {
         }
     }
     rsdGLCheckError(rsc, "UploadToTexture");
+#endif
 }
 
 static void AllocateRenderTarget(const Context *rsc, const Allocation *alloc) {
+#ifndef RS_COMPATIBILITY_LIB
     DrvAllocation *drv = (DrvAllocation *)alloc->mHal.drv;
 
     if (!drv->glFormat) {
@@ -201,9 +211,11 @@ static void AllocateRenderTarget(const Context *rsc, const Allocation *alloc) {
                               alloc->mHal.state.dimensionX, alloc->mHal.state.dimensionY);
     }
     rsdGLCheckError(rsc, "AllocateRenderTarget");
+#endif
 }
 
 static void UploadToBufferObject(const Context *rsc, const Allocation *alloc) {
+#ifndef RS_COMPATIBILITY_LIB
     DrvAllocation *drv = (DrvAllocation *)alloc->mHal.drv;
 
     rsAssert(!alloc->mHal.state.type->getDimY());
@@ -224,6 +236,7 @@ static void UploadToBufferObject(const Context *rsc, const Allocation *alloc) {
                  alloc->mHal.drvState.lod[0].mallocPtr, GL_DYNAMIC_DRAW);
     RSD_CALL_GL(glBindBuffer, drv->glTarget, 0);
     rsdGLCheckError(rsc, "UploadToBufferObject");
+#endif
 }
 
 static size_t AllocationBuildPointerTable(const Context *rsc, const Allocation *alloc,
@@ -326,8 +339,13 @@ bool rsdAllocationInit(const Context *rsc, Allocation *alloc, bool forceZero) {
         }
     }
 
+#ifndef RS_COMPATIBILITY_LIB
     drv->glType = rsdTypeToGLType(alloc->mHal.state.type->getElement()->getComponent().getType());
     drv->glFormat = rsdKindToGLFormat(alloc->mHal.state.type->getElement()->getComponent().getKind());
+#else
+    drv->glType = 0;
+    drv->glFormat = 0;
+#endif
 
     if (alloc->mHal.state.usageFlags & ~RS_ALLOCATION_USAGE_SCRIPT) {
         drv->uploadDeferred = true;
@@ -342,6 +360,7 @@ bool rsdAllocationInit(const Context *rsc, Allocation *alloc, bool forceZero) {
 void rsdAllocationDestroy(const Context *rsc, Allocation *alloc) {
     DrvAllocation *drv = (DrvAllocation *)alloc->mHal.drv;
 
+#ifndef RS_COMPATIBILITY_LIB
     if (drv->bufferID) {
         // Causes a SW crash....
         //ALOGV(" mBufferID %i", mBufferID);
@@ -356,6 +375,7 @@ void rsdAllocationDestroy(const Context *rsc, Allocation *alloc) {
         RSD_CALL_GL(glDeleteRenderbuffers, 1, &drv->renderTargetID);
         drv->renderTargetID = 0;
     }
+#endif
 
     if (alloc->mHal.drvState.lod[0].mallocPtr) {
         // don't free user-allocated ptrs
@@ -364,10 +384,14 @@ void rsdAllocationDestroy(const Context *rsc, Allocation *alloc) {
         }
         alloc->mHal.drvState.lod[0].mallocPtr = NULL;
     }
+
+#ifndef RS_COMPATIBILITY_LIB
     if (drv->readBackFBO != NULL) {
         delete drv->readBackFBO;
         drv->readBackFBO = NULL;
     }
+#endif
+
     free(drv);
     alloc->mHal.drv = NULL;
 }
@@ -400,6 +424,7 @@ void rsdAllocationResize(const Context *rsc, const Allocation *alloc,
 }
 
 static void rsdAllocationSyncFromFBO(const Context *rsc, const Allocation *alloc) {
+#ifndef RS_COMPATIBILITY_LIB
     if (!alloc->getIsScript()) {
         return; // nothing to sync
     }
@@ -428,6 +453,7 @@ static void rsdAllocationSyncFromFBO(const Context *rsc, const Allocation *alloc
 
     // Revert framebuffer to its original
     lastFbo->setActive(rsc);
+#endif
 }
 
 
@@ -472,11 +498,16 @@ void rsdAllocationMarkDirty(const Context *rsc, const Allocation *alloc) {
 }
 
 int32_t rsdAllocationInitSurfaceTexture(const Context *rsc, const Allocation *alloc) {
+#ifndef RS_COMPATIBILITY_LIB
     DrvAllocation *drv = (DrvAllocation *)alloc->mHal.drv;
     UploadToTexture(rsc, alloc);
     return drv->textureID;
+#else
+    return 0;
+#endif
 }
 
+#ifndef RS_COMPATIBILITY_LIB
 static bool IoGetBuffer(const Context *rsc, Allocation *alloc, ANativeWindow *nw) {
     DrvAllocation *drv = (DrvAllocation *)alloc->mHal.drv;
 
@@ -499,8 +530,10 @@ static bool IoGetBuffer(const Context *rsc, Allocation *alloc, ANativeWindow *nw
 
     return true;
 }
+#endif
 
 void rsdAllocationSetSurfaceTexture(const Context *rsc, Allocation *alloc, ANativeWindow *nw) {
+#ifndef RS_COMPATIBILITY_LIB
     DrvAllocation *drv = (DrvAllocation *)alloc->mHal.drv;
 
     //ALOGE("rsdAllocationSetSurfaceTexture %p  %p", alloc, nw);
@@ -551,9 +584,11 @@ void rsdAllocationSetSurfaceTexture(const Context *rsc, Allocation *alloc, ANati
 
         IoGetBuffer(rsc, alloc, nw);
     }
+#endif
 }
 
 void rsdAllocationIoSend(const Context *rsc, Allocation *alloc) {
+#ifndef RS_COMPATIBILITY_LIB
     DrvAllocation *drv = (DrvAllocation *)alloc->mHal.drv;
     ANativeWindow *nw = alloc->mHal.state.wndSurface;
 
@@ -574,11 +609,14 @@ void rsdAllocationIoSend(const Context *rsc, Allocation *alloc) {
 
         IoGetBuffer(rsc, alloc, nw);
     }
+#endif
 }
 
 void rsdAllocationIoReceive(const Context *rsc, Allocation *alloc) {
+#ifndef RS_COMPATIBILITY_LIB
     DrvAllocation *drv = (DrvAllocation *)alloc->mHal.drv;
     alloc->mHal.state.surfaceTexture->updateTexImage();
+#endif
 }
 
 

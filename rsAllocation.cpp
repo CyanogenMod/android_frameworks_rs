@@ -409,9 +409,11 @@ Allocation *Allocation::createFromStream(Context *rsc, IStream *stream) {
 }
 
 void Allocation::sendDirty(const Context *rsc) const {
+#ifndef RS_COMPATIBILITY_LIB
     for (size_t ct=0; ct < mToDirtyList.size(); ct++) {
         mToDirtyList[ct]->forceDirty();
     }
+#endif
     mRSC->mHal.funcs.allocation.markDirty(rsc, this);
 }
 

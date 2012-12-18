@@ -29,6 +29,9 @@ namespace renderscript {
 // Context
 //////////////////////////////////////////////////////////////////////////////
 
+void rsrAllocationSyncAll(Context *, Script *, Allocation *);
+
+#ifndef RS_COMPATIBILITY_LIB
 void rsrBindTexture(Context *, ProgramFragment *, uint32_t slot, Allocation *);
 void rsrBindConstant(Context *, ProgramFragment *, uint32_t slot, Allocation *);
 void rsrBindConstant(Context *, ProgramVertex*, uint32_t slot, Allocation *);
@@ -73,6 +76,7 @@ void rsrMeshComputeBoundingBox(Context *, Mesh *,
 
 
 void rsrColor(Context *, float r, float g, float b, float a);
+#endif
 
 void rsrAllocationCopy1DRange(Context *, Allocation *dstAlloc,
                               uint32_t dstOff,
@@ -88,6 +92,7 @@ void rsrAllocationCopy2DRange(Context *, Allocation *dstAlloc,
                               uint32_t srcXoff, uint32_t srcYoff,
                               uint32_t srcMip, uint32_t srcFace);
 
+#ifndef RS_COMPATIBILITY_LIB
 void rsrPrepareClear(Context *);
 uint32_t rsrGetWidth(Context *);
 uint32_t rsrGetHeight(Context *);
@@ -101,6 +106,7 @@ void rsrMeasureText(Context *, const char *text,
                     int32_t *left, int32_t *right, int32_t *top, int32_t *bottom);
 void rsrBindFont(Context *, Font *);
 void rsrFontColor(Context *, float r, float g, float b, float a);
+#endif
 
 //////////////////////////////////////////////////////////////////////////////
 // Time routines

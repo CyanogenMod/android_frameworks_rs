@@ -229,8 +229,4 @@ void CpuScriptGroupImpl::execute() {
     }
 }
 
-void rsdScriptGroupDestroy(const android::renderscript::Context *rsc,
-                           const android::renderscript::ScriptGroup *sg) {
-}
-
 

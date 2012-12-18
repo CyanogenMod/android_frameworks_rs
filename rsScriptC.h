@@ -21,8 +21,10 @@
 
 #include "rsEnv.h"
 
+#ifndef RS_COMPATIBILITY_LIB
 #ifndef ANDROID_RS_SERIALIZE
 #include "bcinfo/BitcodeTranslator.h"
+#endif
 #endif
 
 // ---------------------------------------------------------------------------
@@ -61,10 +63,13 @@ public:
     void setupScript(Context *);
     void setupGLState(Context *);
 private:
+#ifndef RS_COMPATIBILITY_LIB
 #ifndef ANDROID_RS_SERIALIZE
     bcinfo::BitcodeTranslator *BT;
 #endif
+
     bool createCacheDir(const char *cacheDir);
+#endif
 };
 
 class ScriptCState {

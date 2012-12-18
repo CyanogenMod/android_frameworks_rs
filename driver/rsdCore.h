@@ -24,10 +24,13 @@
 #include "rsMutex.h"
 #include "rsSignal.h"
 
+#ifndef RS_COMPATIBILITY_LIB
 #include "rsdGL.h"
+#endif
 
 typedef void (* InvokeFunc_t)(void);
 typedef void (* ForEachFunc_t)(void);
+typedef int (* RootFunc_t)(void);
 typedef void (*WorkerCallback_t)(void *usr, uint32_t idx);
 
 typedef struct ScriptTLSStructRec {
@@ -43,7 +46,9 @@ typedef struct RsdHalRec {
     ScriptTLSStruct mTlsStruct;
     android::renderscript::RsdCpuReference *mCpuRef;
 
+#ifndef RS_COMPATIBILITY_LIB
     RsdGL gl;
+#endif
 } RsdHal;
 
 void rsdLaunchThreads(android::renderscript::Context *rsc, WorkerCallback_t cbk, void *data);

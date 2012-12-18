@@ -17,7 +17,7 @@
 #ifndef RSD_SCRIPT_GROUP_H
 #define RSD_SCRIPT_GROUP_H
 
-#include <rsd_cpu.h>
+#include "rsd_cpu.h"
 
 namespace android {
 namespace renderscript {

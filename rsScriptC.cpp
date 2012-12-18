@@ -19,9 +19,11 @@
 #include "utils/Timers.h"
 #include "utils/StopWatch.h"
 
+#ifndef RS_COMPATIBILITY_LIB
 #ifndef ANDROID_RS_SERIALIZE
 #include <bcinfo/BitcodeTranslator.h>
 #include <bcinfo/BitcodeWrapper.h>
+#endif
 #endif
 
 #include <sys/stat.h>
@@ -35,17 +37,21 @@ using namespace android::renderscript;
     ScriptC * sc = (ScriptC *) tls->mScript
 
 ScriptC::ScriptC(Context *rsc) : Script(rsc) {
+#ifndef RS_COMPATIBILITY_LIB
 #ifndef ANDROID_RS_SERIALIZE
     BT = NULL;
+#endif
 #endif
 }
 
 ScriptC::~ScriptC() {
+#ifndef RS_COMPATIBILITY_LIB
 #ifndef ANDROID_RS_SERIALIZE
     if (BT) {
         delete BT;
         BT = NULL;
     }
+#endif
 #endif
     if (mInitialized) {
         mRSC->mHal.funcs.script.invokeFreeChildren(mRSC, this);
@@ -53,6 +59,7 @@ ScriptC::~ScriptC() {
     }
 }
 
+#ifndef RS_COMPATIBILITY_LIB
 bool ScriptC::createCacheDir(const char *cacheDir) {
     String8 cacheDirString, currentDir;
     struct stat statBuf;
@@ -89,6 +96,7 @@ bool ScriptC::createCacheDir(const char *cacheDir) {
     }
     return true;
 }
+#endif
 
 void ScriptC::setupScript(Context *rsc) {
     mEnviroment.mStartTimeMillis
@@ -106,6 +114,7 @@ void ScriptC::setupScript(Context *rsc) {
 }
 
 void ScriptC::setupGLState(Context *rsc) {
+#ifndef RS_COMPATIBILITY_LIB
     if (mEnviroment.mFragmentStore.get()) {
         rsc->setProgramStore(mEnviroment.mFragmentStore.get());
     }
@@ -118,6 +127,7 @@ void ScriptC::setupGLState(Context *rsc) {
     if (mEnviroment.mRaster.get()) {
         rsc->setProgramRaster(mEnviroment.mRaster.get());
     }
+#endif
 }
 
 uint32_t ScriptC::run(Context *rsc) {
@@ -217,6 +227,7 @@ bool ScriptC::runCompiler(Context *rsc,
                           size_t bitcodeLen) {
 
     //ALOGE("runCompiler %p %p %p %p %p %i", rsc, this, resName, cacheDir, bitcode, bitcodeLen);
+#ifndef RS_COMPATIBILITY_LIB
 #ifndef ANDROID_RS_SERIALIZE
     uint32_t sdkVersion = 0;
     bcinfo::BitcodeWrapper bcWrapper((const char *)bitcode, bitcodeLen);
@@ -260,16 +271,19 @@ bool ScriptC::runCompiler(Context *rsc,
     if (cacheDir && !createCacheDir(cacheDir)) {
       return false;
     }
+#endif
 
     if (!rsc->mHal.funcs.script.init(rsc, this, resName, cacheDir, bitcode, bitcodeLen, 0)) {
         return false;
     }
 
     mInitialized = true;
+#ifndef RS_COMPATIBILITY_LIB
     mEnviroment.mFragment.set(rsc->getDefaultProgramFragment());
     mEnviroment.mVertex.set(rsc->getDefaultProgramVertex());
     mEnviroment.mFragmentStore.set(rsc->getDefaultProgramStore());
     mEnviroment.mRaster.set(rsc->getDefaultProgramRaster());
+#endif
 
     rsc->mHal.funcs.script.invokeInit(rsc, this);
 
@@ -285,6 +299,7 @@ bool ScriptC::runCompiler(Context *rsc,
             return false;
         }
 
+#ifndef RS_COMPATIBILITY_LIB
         if (!strcmp(key, "stateVertex")) {
             if (!strcmp(value, "default")) {
                 continue;
@@ -332,6 +347,8 @@ bool ScriptC::runCompiler(Context *rsc,
             ALOGE("Unrecognized value %s passed to stateStore", value);
             return false;
         }
+#endif
+
     }
 
     mSlots = new ObjectBaseRef<Allocation>[mHal.info.exportedVariableCount];

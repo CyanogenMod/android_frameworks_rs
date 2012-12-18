@@ -19,11 +19,14 @@
 
 #include "rsUtils.h"
 #include "rs_hal.h"
+#include <string.h>
 
 #include "rsThreadIO.h"
 #include "rsScriptC.h"
 #include "rsScriptGroup.h"
 #include "rsSampler.h"
+
+#ifndef RS_COMPATIBILITY_LIB
 #include "rsFont.h"
 #include "rsPath.h"
 #include "rsProgramFragment.h"
@@ -31,7 +34,8 @@
 #include "rsProgramRaster.h"
 #include "rsProgramVertex.h"
 #include "rsFBOCache.h"
-#include <string.h>
+#endif
+
 
 // ---------------------------------------------------------------------------
 namespace android {
@@ -81,11 +85,13 @@ public:
         ~PushState();
 
     private:
+#ifndef RS_COMPATIBILITY_LIB
         ObjectBaseRef<ProgramFragment> mFragment;
         ObjectBaseRef<ProgramVertex> mVertex;
         ObjectBaseRef<ProgramStore> mStore;
         ObjectBaseRef<ProgramRaster> mRaster;
         ObjectBaseRef<Font> mFont;
+#endif
         Context *mRsc;
     };
 
@@ -94,16 +100,19 @@ public:
     ElementState mStateElement;
     TypeState mStateType;
     SamplerState mStateSampler;
+
+    ScriptCState mScriptC;
+    bool isSynchronous() {return mSynchronous;}
+    bool setupCheck();
+
+#ifndef RS_COMPATIBILITY_LIB
+    FBOCache mFBOCache;
     ProgramFragmentState mStateFragment;
     ProgramStoreState mStateFragmentStore;
     ProgramRasterState mStateRaster;
     ProgramVertexState mStateVertex;
     FontState mStateFont;
 
-    ScriptCState mScriptC;
-    FBOCache mFBOCache;
-
-    bool isSynchronous() {return mSynchronous;}
 
     void swapBuffers();
     void setRootScript(Script *);
@@ -121,12 +130,13 @@ public:
     ProgramVertex * getProgramVertex() {return mVertex.get();}
     Font * getFont() {return mFont.get();}
 
-    bool setupCheck();
     void setupProgramStore();
 
     void pause();
     void resume();
     void setSurface(uint32_t w, uint32_t h, RsNativeWindow sur);
+#endif
+
     void setPriority(int32_t p);
     void destroyWorkerThreadResources();
 
@@ -141,6 +151,7 @@ public:
     void initToClient();
     void deinitToClient();
 
+#ifndef RS_COMPATIBILITY_LIB
     ProgramFragment * getDefaultProgramFragment() const {
         return mStateFragment.mDefault.get();
     }
@@ -162,6 +173,13 @@ public:
 
     uint32_t getCurrentSurfaceWidth() const;
     uint32_t getCurrentSurfaceHeight() const;
+
+    void setWatchdogGL(const char *cmd, uint32_t line, const char *file) const {
+        watchdog.command = cmd;
+        watchdog.file = file;
+        watchdog.line = line;
+    }
+#endif
 
     mutable ThreadIO mIO;
 
@@ -198,11 +216,6 @@ public:
         uint32_t line;
     } watchdog;
     static void printWatchdogInfo(void *ctx);
-    void setWatchdogGL(const char *cmd, uint32_t line, const char *file) const {
-        watchdog.command = cmd;
-        watchdog.file = file;
-        watchdog.line = line;
-    }
 
     void dumpDebug() const;
     void setError(RsError e, const char *msg = NULL) const;
@@ -236,11 +249,13 @@ protected:
     pid_t mNativeThreadId;
 
     ObjectBaseRef<Script> mRootScript;
+#ifndef RS_COMPATIBILITY_LIB
     ObjectBaseRef<ProgramFragment> mFragment;
     ObjectBaseRef<ProgramVertex> mVertex;
     ObjectBaseRef<ProgramStore> mFragmentStore;
     ObjectBaseRef<ProgramRaster> mRaster;
     ObjectBaseRef<Font> mFont;
+#endif
 
     void displayDebugStats();
 
