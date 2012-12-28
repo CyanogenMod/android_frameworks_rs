@@ -243,6 +243,7 @@ static size_t AllocationBuildPointerTable(const Context *rsc, const Allocation *
         const Type *type, uint8_t *ptr) {
     alloc->mHal.drvState.lod[0].dimX = type->getDimX();
     alloc->mHal.drvState.lod[0].dimY = type->getDimY();
+    alloc->mHal.drvState.lod[0].dimZ = type->getDimZ();
     alloc->mHal.drvState.lod[0].mallocPtr = 0;
     alloc->mHal.drvState.lod[0].stride = alloc->mHal.drvState.lod[0].dimX * type->getElementSizeBytes();
     alloc->mHal.drvState.lodCount = type->getLODCount();
