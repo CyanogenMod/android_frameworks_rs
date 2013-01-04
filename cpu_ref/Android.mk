@@ -21,6 +21,7 @@ LOCAL_SRC_FILES:= \
 	rsCpuRuntimeStubs.cpp \
 	rsCpuScriptGroup.cpp \
 	rsCpuIntrinsic.cpp \
+	rsCpuIntrinsic3DLUT.cpp \
 	rsCpuIntrinsicBlend.cpp \
 	rsCpuIntrinsicBlur.cpp \
 	rsCpuIntrinsicColorMatrix.cpp \
