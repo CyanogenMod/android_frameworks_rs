@@ -106,7 +106,7 @@ void ProgramFragmentState::init(Context *rsc) {
     builder.add(colorElem.get(), "Color", 1);
     ObjectBaseRef<const Element> constInput = builder.create(rsc);
 
-    ObjectBaseRef<Type> inputType = Type::getTypeRef(rsc, constInput.get(), 1, 0, 0, false, false);
+    ObjectBaseRef<Type> inputType = Type::getTypeRef(rsc, constInput.get(), 1, 0, 0, false, false, 0);
 
     uint32_t tmp[2];
     tmp[0] = RS_PROGRAM_PARAM_CONSTANT;

@@ -147,7 +147,7 @@ sp<const Type> Type::Builder::create() {
     }
 
     void * id = rsTypeCreate(mRS->getContext(), mElement->getID(), mDimX, mDimY, mDimZ,
-            mDimMipmaps, mDimFaces);
+            mDimMipmaps, mDimFaces, 0);
     Type *t = new Type(id, mRS);
     t->mElement = mElement;
     t->mDimX = mDimX;
