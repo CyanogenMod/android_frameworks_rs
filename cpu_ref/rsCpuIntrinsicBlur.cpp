@@ -272,8 +272,8 @@ void RsdCpuScriptIntrinsicBlur::kernelU4(const RsForEachStubParamStruct *p,
                                          uint32_t xstart, uint32_t xend,
                                          uint32_t instep, uint32_t outstep) {
 
-    float stackbuf[4 * 2048];
-    float *buf = &stackbuf[0];
+    float4 stackbuf[2048];
+    float4 *buf = &stackbuf[0];
     RsdCpuScriptIntrinsicBlur *cp = (RsdCpuScriptIntrinsicBlur *)p->usr;
     if (!cp->mAlloc.get()) {
         ALOGE("Blur executed without input, skipping");
@@ -291,7 +291,7 @@ void RsdCpuScriptIntrinsicBlur::kernelU4(const RsForEachStubParamStruct *p,
             cp->mScratch[p->lid] = realloc(cp->mScratch[p->lid], p->dimX * 16);
             cp->mScratchSize[p->lid] = p->dimX;
         }
-        buf = (float *)cp->mScratch[p->lid];
+        buf = (float4 *)cp->mScratch[p->lid];
     }
     float4 *fout = (float4 *)buf;
     int y = p->y;
@@ -308,20 +308,20 @@ void RsdCpuScriptIntrinsicBlur::kernelU4(const RsForEachStubParamStruct *p,
 
     x1 = xstart;
     while ((x1 < (uint32_t)cp->mIradius) && (x1 < x2)) {
-        OneHU4(p, out, x1, (float4 *)buf, cp->mFp, cp->mIradius);
+        OneHU4(p, out, x1, buf, cp->mFp, cp->mIradius);
         out++;
         x1++;
     }
 #if defined(ARCH_ARM_HAVE_NEON)
     if ((x1 + cp->mIradius) < x2) {
-        rsdIntrinsicBlurHFU4_K(out, ((float4 *)buf) - cp->mIradius, cp->mFp,
+        rsdIntrinsicBlurHFU4_K(out, buf - cp->mIradius, cp->mFp,
                                cp->mIradius * 2 + 1, x1, x2 - cp->mIradius);
         out += (x2 - cp->mIradius) - x1;
         x1 = x2 - cp->mIradius;
     }
 #endif
     while(x2 > x1) {
-        OneHU4(p, out, x1, (float4 *)buf, cp->mFp, cp->mIradius);
+        OneHU4(p, out, x1, buf, cp->mFp, cp->mIradius);
         out++;
         x1++;
     }
