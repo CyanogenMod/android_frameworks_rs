@@ -1020,6 +1020,20 @@ _RS_RUNTIME float __attribute__((overloadable)) native_exp10(float v);
 FN_FUNC_FN(native_exp10)
 
 
+_RS_RUNTIME float __attribute__((overloadable)) native_log2(float v);
+FN_FUNC_FN(native_log2)
+
+_RS_RUNTIME float __attribute__((overloadable)) native_log(float v);
+FN_FUNC_FN(native_log)
+
+_RS_RUNTIME float __attribute__((overloadable)) native_log10(float v);
+FN_FUNC_FN(native_log10)
+
+
+_RS_RUNTIME float __attribute__((overloadable)) native_powr(float v, float y);
+FN_FUNC_FN_FN(native_powr)
+
+
 #endif  // (defined(RS_VERSION) && (RS_VERSION >= 18))
 
 
