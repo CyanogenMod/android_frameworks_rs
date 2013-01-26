@@ -211,7 +211,7 @@ static void OneVFU1(float *out,
         int t = (x2 - x1) >> 2;
         t &= ~1;
         if(t) {
-            rsdIntrinsicBlurVFU4_K(out, ptrIn, iStride, gPtr, ct, 0, t << 2);
+            rsdIntrinsicBlurVFU4_K(out, ptrIn, iStride, gPtr, ct, 0, t );
             len -= t << 2;
             ptrIn += t << 2;
             out += t << 2;
@@ -345,7 +345,7 @@ void RsdCpuScriptIntrinsicBlur::kernelU1(const RsForEachStubParamStruct *p,
 
     float *fout = (float *)buf;
     int y = p->y;
-    if ((y > cp->mIradius) && (y < ((int)p->dimY - cp->mIradius))) {
+    if ((y > cp->mIradius) && (y < ((int)p->dimY - cp->mIradius -1))) {
         const uchar *pi = pin + (y - cp->mIradius) * stride;
         OneVFU1(fout, pi, stride, cp->mFp, cp->mIradius * 2 + 1, x1, x2);
     } else {
