@@ -391,6 +391,17 @@ void rsdAllocationDestroy(const Context *rsc, Allocation *alloc) {
         delete drv->readBackFBO;
         drv->readBackFBO = NULL;
     }
+
+    if ((alloc->mHal.state.usageFlags & RS_ALLOCATION_USAGE_IO_OUTPUT) &&
+        (alloc->mHal.state.usageFlags & RS_ALLOCATION_USAGE_SCRIPT)) {
+
+        DrvAllocation *drv = (DrvAllocation *)alloc->mHal.drv;
+        ANativeWindow *nw = alloc->mHal.state.wndSurface;
+
+        GraphicBufferMapper &mapper = GraphicBufferMapper::get();
+        mapper.unlock(drv->wndBuffer->handle);
+        int32_t r = nw->queueBuffer(nw, drv->wndBuffer, -1);
+    }
 #endif
 
     free(drv);
