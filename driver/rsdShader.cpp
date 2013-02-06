@@ -405,6 +405,11 @@ void RsdShader::setupSampler(const Context *rsc, const Sampler *s, const Allocat
     // This tells us the correct texture type
     DrvAllocation *drvTex = (DrvAllocation *)tex->mHal.drv;
     const GLenum target = drvTex->glTarget;
+    if (!target) {
+        // this can happen if the user set the wrong allocation flags.
+        rsc->setError(RS_ERROR_BAD_VALUE, "Allocation not compatible with sampler");
+        return;
+    }
 
     if (!dc->gl.gl.OES_texture_npot && tex->getType()->getIsNp2()) {
         if (tex->getHasGraphicsMipmaps() &&
@@ -502,7 +507,7 @@ void RsdShader::setupTextures(const Context *rsc, RsdShaderCache *sc) {
                 GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
             RSD_CALL_GL(glTexParameteri, mCurrentState->mTextureTargets[ct],
                 GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-            rsdGLCheckError(rsc, "ProgramFragment::setup tex env");
+            rsdGLCheckError(rsc, "ProgramFragment::setup basic tex env");
         }
         rsdGLCheckError(rsc, "ProgramFragment::setup uniforms");
     }
