@@ -319,6 +319,7 @@ ScriptForEach {
     param RsAllocation ain
     param RsAllocation aout
     param const void * usr
+    param const RsScriptCall * sc
 }
 
 ScriptSetVarI {

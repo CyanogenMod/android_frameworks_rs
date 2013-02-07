@@ -33,7 +33,7 @@ void Script::forEach(uint32_t slot, sp<const Allocation> ain, sp<const Allocatio
     }
     void *in_id = BaseObj::getObjID(ain);
     void *out_id = BaseObj::getObjID(aout);
-    rsScriptForEach(mRS->getContext(), getID(), slot, in_id, out_id, usr, usrLen);
+    rsScriptForEach(mRS->getContext(), getID(), slot, in_id, out_id, usr, usrLen, NULL, 0);
 }
 
 
