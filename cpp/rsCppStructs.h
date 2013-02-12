@@ -23,6 +23,10 @@
 
 #include <rs.h>
 
+// Every row in an RS allocation is guaranteed to be aligned by this amount
+// Every row in a user-backed allocation must be aligned by this amount
+#define RS_CPU_ALLOCATION_ALIGNMENT 16
+
 namespace android {
 namespace RSC {
 
@@ -541,6 +545,7 @@ public:
 
     Type(void *id, sp<RS> rs);
 
+    static sp<const Type> create(sp<RS> rs, sp<const Element> e, uint32_t dimX, uint32_t dimY, uint32_t dimZ);
 
     class Builder {
     protected:
