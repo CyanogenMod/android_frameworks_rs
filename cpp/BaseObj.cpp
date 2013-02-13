@@ -17,6 +17,7 @@
 #define LOG_TAG "libRS_cpp"
 
 #include "RenderScript.h"
+#include <rs.h>
 
 using namespace android;
 using namespace RSC;

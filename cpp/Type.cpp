@@ -20,6 +20,7 @@
 #include <malloc.h>
 #include <string.h>
 
+#include <rs.h>
 #include "RenderScript.h"
 
 using namespace android;

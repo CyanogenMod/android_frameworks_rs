@@ -21,8 +21,6 @@
 #include <utils/Vector.h>
 #include "utils/RefBase.h"
 
-#include <rs.h>
-
 // Every row in an RS allocation is guaranteed to be aligned by this amount
 // Every row in a user-backed allocation must be aligned by this amount
 #define RS_CPU_ALLOCATION_ALIGNMENT 16
