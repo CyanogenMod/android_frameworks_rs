@@ -176,6 +176,7 @@ static void wc_xy(void *usr, uint32_t idx) {
     MTLaunchStruct *mtls = (MTLaunchStruct *)usr;
     RsForEachStubParamStruct p;
     memcpy(&p, &mtls->fep, sizeof(p));
+    p.lid = idx;
     RsdHal * dc = (RsdHal *)mtls->rsc->mHal.drv;
     uint32_t sig = mtls->sig;
 
@@ -222,6 +223,7 @@ static void wc_x(void *usr, uint32_t idx) {
     MTLaunchStruct *mtls = (MTLaunchStruct *)usr;
     RsForEachStubParamStruct p;
     memcpy(&p, &mtls->fep, sizeof(p));
+    p.lid = idx;
     RsdHal * dc = (RsdHal *)mtls->rsc->mHal.drv;
     uint32_t sig = mtls->sig;
 
@@ -341,17 +343,40 @@ void rsdScriptLaunchThreads(const Context *rsc,
     Context *mrsc = (Context *)rsc;
     RsdHal * dc = (RsdHal *)mtls->rsc->mHal.drv;
 
-    if ((dc->mWorkers.mCount > 1) && s->mHal.info.isThreadable && !dc->mInForEach) {
+    if ((dc->mWorkers.mCount >= 1) && s->mHal.info.isThreadable && !dc->mInForEach) {
+        const size_t targetByteChunk = 16 * 1024;
         dc->mInForEach = true;
         if (mtls->fep.dimY > 1) {
-            mtls->mSliceSize = mtls->fep.dimY / (dc->mWorkers.mCount * 4);
+            uint32_t s1 = mtls->fep.dimY / ((dc->mWorkers.mCount + 1) * 4);
+            uint32_t s2 = 0;
+
+            // This chooses our slice size to rate limit atomic ops to
+            // one per 16k bytes of reads/writes.
+            if (mtls->fep.yStrideOut) {
+                s2 = targetByteChunk / mtls->fep.yStrideOut;
+            } else {
+                s2 = targetByteChunk / mtls->fep.yStrideIn;
+            }
+            mtls->mSliceSize = rsMin(s1, s2);
+
             if(mtls->mSliceSize < 1) {
                 mtls->mSliceSize = 1;
             }
 
             rsdLaunchThreads(mrsc, wc_xy, mtls);
         } else {
-            mtls->mSliceSize = mtls->fep.dimX / (dc->mWorkers.mCount * 4);
+            uint32_t s1 = mtls->fep.dimX / ((dc->mWorkers.mCount + 1) * 4);
+            uint32_t s2 = 0;
+
+            // This chooses our slice size to rate limit atomic ops to
+            // one per 16k bytes of reads/writes.
+            if (mtls->fep.eStrideOut) {
+                s2 = targetByteChunk / mtls->fep.eStrideOut;
+            } else {
+                s2 = targetByteChunk / mtls->fep.eStrideIn;
+            }
+            mtls->mSliceSize = rsMin(s1, s2);
+
             if(mtls->mSliceSize < 1) {
                 mtls->mSliceSize = 1;
             }
@@ -364,6 +389,7 @@ void rsdScriptLaunchThreads(const Context *rsc,
     } else {
         RsForEachStubParamStruct p;
         memcpy(&p, &mtls->fep, sizeof(p));
+        p.lid = 0;
         uint32_t sig = mtls->sig;
 
         //ALOGE("launch 3");

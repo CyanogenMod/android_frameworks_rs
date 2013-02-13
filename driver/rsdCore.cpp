@@ -189,7 +189,8 @@ static void * HelperThreadProc(void *vrsc) {
     while (!dc->mExit) {
         dc->mWorkers.mLaunchSignals[idx].wait();
         if (dc->mWorkers.mLaunchCallback) {
-           dc->mWorkers.mLaunchCallback(dc->mWorkers.mLaunchData, idx);
+            // idx +1 is used because the calling thread is always worker 0.
+            dc->mWorkers.mLaunchCallback(dc->mWorkers.mLaunchData, idx+1);
         }
         android_atomic_dec(&dc->mWorkers.mRunningCount);
         dc->mWorkers.mCompleteSignal.set();
@@ -208,6 +209,13 @@ void rsdLaunchThreads(Context *rsc, WorkerCallback_t cbk, void *data) {
     for (uint32_t ct = 0; ct < dc->mWorkers.mCount; ct++) {
         dc->mWorkers.mLaunchSignals[ct].set();
     }
+
+    // We use the calling thread as one of the workers so we can start without
+    // the delay of the thread wakeup.
+    if (dc->mWorkers.mLaunchCallback) {
+       dc->mWorkers.mLaunchCallback(dc->mWorkers.mLaunchData, 0);
+    }
+
     while (android_atomic_acquire_load(&dc->mWorkers.mRunningCount) != 0) {
         dc->mWorkers.mCompleteSignal.wait();
     }
@@ -250,11 +258,13 @@ extern "C" bool rsdHalInit(RsContext c, uint32_t version_major,
         cpu = rsc->props.mDebugMaxThreads;
     }
     if (cpu < 2) {
-        cpu = 0;
+        dc->mWorkers.mCount = 0;
+        return true;
     }
     ALOGV("%p Launching thread(s), CPUs %i", rsc, cpu);
 
-    dc->mWorkers.mCount = (uint32_t)cpu;
+    // Subtract one from the cpu count because we also use the command thread as a worker.
+    dc->mWorkers.mCount = (uint32_t)(cpu - 1);
     dc->mWorkers.mThreadId = (pthread_t *) calloc(dc->mWorkers.mCount, sizeof(pthread_t));
     dc->mWorkers.mNativeThreadId = (pid_t *) calloc(dc->mWorkers.mCount, sizeof(pid_t));
     dc->mWorkers.mLaunchSignals = new Signal[dc->mWorkers.mCount];

@@ -44,9 +44,6 @@ static void LUT_uchar4(const RsForEachStubParamStruct *p,
     uint32_t x1 = xstart;
     uint32_t x2 = xend;
 
-    in += xstart;
-    out += xstart;
-
     DrvAllocation *din = (DrvAllocation *)cp->lut->mHal.drv;
     const uchar *tr = (const uchar *)din->lod[0].mallocPtr;
     const uchar *tg = &tr[256];

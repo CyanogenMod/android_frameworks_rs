@@ -103,9 +103,6 @@ static void ColorMatrix_uchar4(const RsForEachStubParamStruct *p,
     uint32_t x1 = xstart;
     uint32_t x2 = xend;
 
-    in += xstart;
-    out += xstart;
-
     switch (p->slot) {
     case BLEND_CLEAR:
         for (;x1 < x2; x1++, out++) {

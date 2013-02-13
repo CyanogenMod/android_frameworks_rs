@@ -56,7 +56,7 @@ static void ConvolveOne(const RsForEachStubParamStruct *p, uint32_t x, uchar4 *o
                         const float* coeff) {
 
     uint32_t x1 = rsMax((int32_t)x-1, 0);
-    uint32_t x2 = rsMin((int32_t)x+1, (int32_t)p->dimX);
+    uint32_t x2 = rsMin((int32_t)x+1, (int32_t)p->dimX-1);
 
     float4 px = convert_float4(py0[x1]) * coeff[0] +
                 convert_float4(py0[x]) * coeff[1] +
