@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2012 The Android Open Source Project
+ * Copyright (C) 2013 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -174,6 +174,7 @@ enum RsDataKind {
     RS_KIND_PIXEL_RGB,
     RS_KIND_PIXEL_RGBA,
     RS_KIND_PIXEL_DEPTH,
+    RS_KIND_PIXEL_YUV,
 
     RS_KIND_INVALID = 100,
 };
