@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2012 The Android Open Source Project
+ * Copyright (C) 2013 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -272,7 +272,38 @@ static size_t AllocationBuildPointerTable(const Context *rsc, const Allocation *
             if (ty > 1) ty >>= 1;
             if (tz > 1) tz >>= 1;
         }
+    } else if (alloc->mHal.state.yuv) {
+        // YUV only supports basic 2d
+        // so we can stash the plane pointers in the mipmap levels.
+        switch(alloc->mHal.state.yuv) {
+        case HAL_PIXEL_FORMAT_YV12:
+            offsets[1] = o;
+            alloc->mHal.drvState.lod[1].dimX = alloc->mHal.drvState.lod[0].dimX / 2;
+            alloc->mHal.drvState.lod[1].dimY = alloc->mHal.drvState.lod[0].dimY / 2;
+            alloc->mHal.drvState.lod[1].stride = rsRound(alloc->mHal.drvState.lod[1].dimX *
+                                                  type->getElementSizeBytes(), 16);
+            o += alloc->mHal.drvState.lod[1].stride * alloc->mHal.drvState.lod[1].dimY;
+            offsets[2] = o;
+            alloc->mHal.drvState.lod[2].dimX = alloc->mHal.drvState.lod[1].dimX;
+            alloc->mHal.drvState.lod[2].dimY = alloc->mHal.drvState.lod[1].dimY;
+            alloc->mHal.drvState.lod[2].stride = alloc->mHal.drvState.lod[1].stride;
+            o += alloc->mHal.drvState.lod[2].stride * alloc->mHal.drvState.lod[2].dimY;
+            alloc->mHal.drvState.lodCount = 3;
+            break;
+        case HAL_PIXEL_FORMAT_YCrCb_420_SP:  // NV21
+            offsets[1] = o;
+            alloc->mHal.drvState.lod[1].dimX = alloc->mHal.drvState.lod[0].dimX;
+            alloc->mHal.drvState.lod[1].dimY = alloc->mHal.drvState.lod[0].dimY / 2;
+            alloc->mHal.drvState.lod[1].stride = rsRound(alloc->mHal.drvState.lod[1].dimX *
+                                                  type->getElementSizeBytes(), 16);
+            o += alloc->mHal.drvState.lod[1].stride * alloc->mHal.drvState.lod[1].dimY;
+            alloc->mHal.drvState.lodCount = 2;
+            break;
+        default:
+            rsAssert(0);
+        }
     }
+
     alloc->mHal.drvState.faceOffset = o;
 
     alloc->mHal.drvState.lod[0].mallocPtr = ptr;
@@ -717,6 +748,21 @@ void rsdAllocationData2D(const Context *rsc, const Allocation *alloc,
             memcpy(dst, src, lineSize);
             src += stride;
             dst += alloc->mHal.drvState.lod[lod].stride;
+        }
+        if (alloc->mHal.state.yuv) {
+            int lod = 1;
+            while (alloc->mHal.drvState.lod[lod].mallocPtr) {
+                uint32_t lineSize = alloc->mHal.drvState.lod[lod].dimX;
+                uint8_t *dst = GetOffsetPtr(alloc, xoff, yoff, lod, face);
+
+                for (uint32_t line=(yoff >> 1); line < ((yoff+h)>>1); line++) {
+                    memcpy(dst, src, lineSize);
+                    src += lineSize;
+                    dst += alloc->mHal.drvState.lod[lod].stride;
+                }
+                lod++;
+            }
+
         }
         drv->uploadDeferred = true;
     } else {
