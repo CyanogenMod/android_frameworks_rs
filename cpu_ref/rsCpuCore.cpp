@@ -46,8 +46,8 @@ RsdCpuReference::~RsdCpuReference() {
 }
 
 RsdCpuReference * RsdCpuReference::create(Context *rsc, uint32_t version_major,
-                                          uint32_t version_minor, sym_lookup_t lfn,
-                                          script_lookup_t slfn) {
+        uint32_t version_minor, sym_lookup_t lfn, script_lookup_t slfn,
+        bcc::RSLinkRuntimeCallback pLinkRuntimeCallback) {
 
     RsdCpuReferenceImpl *cpu = new RsdCpuReferenceImpl(rsc);
     if (!cpu) {
@@ -57,6 +57,9 @@ RsdCpuReference * RsdCpuReference::create(Context *rsc, uint32_t version_major,
         delete cpu;
         return NULL;
     }
+
+    cpu->setLinkRuntimeCallback(pLinkRuntimeCallback);
+
     return cpu;
 }
 
@@ -71,6 +74,7 @@ const Script * RsdCpuReference::getTlsScript() {
     return tls->mScript;
 }
 
+pthread_key_t RsdCpuReference::getThreadTLSKey(){ return gThreadTLSKey; }
 
 ////////////////////////////////////////////////////////////
 ///
@@ -84,6 +88,7 @@ RsdCpuReferenceImpl::RsdCpuReferenceImpl(Context *rsc) {
     memset(&mWorkers, 0, sizeof(mWorkers));
     memset(&mTlsStruct, 0, sizeof(mTlsStruct));
     mExit = false;
+    mLinkRuntimeCallback = NULL;
 
 }
 

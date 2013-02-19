@@ -19,6 +19,18 @@
 
 #include "rsAllocation.h"
 
+namespace llvm {
+
+class Module;
+
+}  // end namespace llvm
+
+namespace bcc {
+
+class RSScript;
+typedef llvm::Module* (*RSLinkRuntimeCallback) (bcc::RSScript *, llvm::Module *, llvm::Module *);
+
+}  // end namespace bcc;
 
 namespace android {
 namespace renderscript {
@@ -66,6 +78,9 @@ public:
 
         virtual Allocation * getAllocationForPointer(const void *ptr) const = 0;
         virtual ~CpuScript() {}
+
+        virtual  void * getRSExecutable()  = 0;
+
     };
     typedef CpuScript * (* script_lookup_t)(Context *, const Script *s);
 
@@ -79,9 +94,11 @@ public:
 
     static Context * getTlsContext();
     static const Script * getTlsScript();
+    static pthread_key_t getThreadTLSKey();
 
     static RsdCpuReference * create(Context *c, uint32_t version_major,
-                                    uint32_t version_minor, sym_lookup_t lfn, script_lookup_t slfn);
+                                    uint32_t version_minor, sym_lookup_t lfn, script_lookup_t slfn,
+                                    bcc::RSLinkRuntimeCallback pLinkRuntimeCallback = NULL);
     virtual ~RsdCpuReference();
     virtual void setPriority(int32_t priority) = 0;
 
@@ -90,6 +107,8 @@ public:
                                      uint32_t flags) = 0;
     virtual CpuScript * createIntrinsic(const Script *s, RsScriptIntrinsicID iid, Element *e) = 0;
     virtual CpuScriptGroup * createScriptGroup(const ScriptGroup *sg) = 0;
+    virtual bool getInForEach() = 0;
+
 };
 
 

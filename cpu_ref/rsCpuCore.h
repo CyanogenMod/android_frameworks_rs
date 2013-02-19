@@ -110,6 +110,14 @@ public:
         return mScriptLookupFn(mRSC, s);
     }
 
+    void setLinkRuntimeCallback(
+            bcc::RSLinkRuntimeCallback pLinkRuntimeCallback) {
+        mLinkRuntimeCallback = pLinkRuntimeCallback;
+    }
+    bcc::RSLinkRuntimeCallback getLinkRuntimeCallback() {
+        return mLinkRuntimeCallback;
+    }
+    virtual bool getInForEach() { return mInForEach; }
 
 protected:
     Context *mRSC;
@@ -135,6 +143,8 @@ protected:
     script_lookup_t mScriptLookupFn;
 
     ScriptTLSStruct mTlsStruct;
+
+    bcc::RSLinkRuntimeCallback mLinkRuntimeCallback;
 };
 
 

@@ -91,7 +91,8 @@ bool RsdCpuScriptImpl::init(char const *resName, char const *cacheDir,
     mCompilerDriver->setRSRuntimeLookupContext(this);
 
     exec = mCompilerDriver->build(*mCompilerContext, cacheDir, resName,
-                                  (const char *)bitcode, bitcodeSize, NULL);
+                                  (const char *)bitcode, bitcodeSize, NULL,
+                                  mCtx->getLinkRuntimeCallback());
 
     if (exec == NULL) {
         ALOGE("bcc: FAILS to prepare executable for '%s'", resName);
