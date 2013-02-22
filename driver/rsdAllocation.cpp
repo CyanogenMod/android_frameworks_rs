@@ -27,6 +27,8 @@
 #ifndef RS_COMPATIBILITY_LIB
 #include "rsdFrameBufferObj.h"
 #include "gui/GLConsumer.h"
+#include "gui/CpuConsumer.h"
+#include "gui/Surface.h"
 #include "hardware/gralloc.h"
 
 #include <GLES/gl.h>
@@ -239,6 +241,39 @@ static void UploadToBufferObject(const Context *rsc, const Allocation *alloc) {
 #endif
 }
 
+static void DeriveYUVLayout(int yuv, Allocation::Hal::DrvState *state) {
+    // YUV only supports basic 2d
+    // so we can stash the plane pointers in the mipmap levels.
+    switch(yuv) {
+    case HAL_PIXEL_FORMAT_YV12:
+        state->lod[1].dimX = state->lod[0].dimX / 2;
+        state->lod[1].dimY = state->lod[0].dimY / 2;
+        state->lod[1].stride = rsRound(state->lod[0].stride >> 1, 16);
+        state->lod[1].mallocPtr = ((uint8_t *)state->lod[0].mallocPtr) +
+                (state->lod[0].stride * state->lod[0].dimY);
+
+        state->lod[2].dimX = state->lod[1].dimX;
+        state->lod[2].dimY = state->lod[1].dimY;
+        state->lod[2].stride = state->lod[1].stride;
+        state->lod[2].mallocPtr = ((uint8_t *)state->lod[1].mallocPtr) +
+                (state->lod[1].stride * state->lod[1].dimY);
+
+        state->lodCount = 3;
+        break;
+    case HAL_PIXEL_FORMAT_YCrCb_420_SP:  // NV21
+        state->lod[1].dimX = state->lod[0].dimX;
+        state->lod[1].dimY = state->lod[0].dimY / 2;
+        state->lod[1].stride = state->lod[0].stride;
+        state->lod[1].mallocPtr = ((uint8_t *)state->lod[0].mallocPtr) +
+                (state->lod[0].stride * state->lod[0].dimY);
+        state->lodCount = 2;
+        break;
+    default:
+        rsAssert(0);
+    }
+}
+
+
 static size_t AllocationBuildPointerTable(const Context *rsc, const Allocation *alloc,
         const Type *type, uint8_t *ptr) {
     alloc->mHal.drvState.lod[0].dimX = type->getDimX();
@@ -273,34 +308,10 @@ static size_t AllocationBuildPointerTable(const Context *rsc, const Allocation *
             if (tz > 1) tz >>= 1;
         }
     } else if (alloc->mHal.state.yuv) {
-        // YUV only supports basic 2d
-        // so we can stash the plane pointers in the mipmap levels.
-        switch(alloc->mHal.state.yuv) {
-        case HAL_PIXEL_FORMAT_YV12:
-            offsets[1] = o;
-            alloc->mHal.drvState.lod[1].dimX = alloc->mHal.drvState.lod[0].dimX / 2;
-            alloc->mHal.drvState.lod[1].dimY = alloc->mHal.drvState.lod[0].dimY / 2;
-            alloc->mHal.drvState.lod[1].stride = rsRound(alloc->mHal.drvState.lod[1].dimX *
-                                                  type->getElementSizeBytes(), 16);
-            o += alloc->mHal.drvState.lod[1].stride * alloc->mHal.drvState.lod[1].dimY;
-            offsets[2] = o;
-            alloc->mHal.drvState.lod[2].dimX = alloc->mHal.drvState.lod[1].dimX;
-            alloc->mHal.drvState.lod[2].dimY = alloc->mHal.drvState.lod[1].dimY;
-            alloc->mHal.drvState.lod[2].stride = alloc->mHal.drvState.lod[1].stride;
-            o += alloc->mHal.drvState.lod[2].stride * alloc->mHal.drvState.lod[2].dimY;
-            alloc->mHal.drvState.lodCount = 3;
-            break;
-        case HAL_PIXEL_FORMAT_YCrCb_420_SP:  // NV21
-            offsets[1] = o;
-            alloc->mHal.drvState.lod[1].dimX = alloc->mHal.drvState.lod[0].dimX;
-            alloc->mHal.drvState.lod[1].dimY = alloc->mHal.drvState.lod[0].dimY / 2;
-            alloc->mHal.drvState.lod[1].stride = rsRound(alloc->mHal.drvState.lod[1].dimX *
-                                                  type->getElementSizeBytes(), 16);
-            o += alloc->mHal.drvState.lod[1].stride * alloc->mHal.drvState.lod[1].dimY;
-            alloc->mHal.drvState.lodCount = 2;
-            break;
-        default:
-            rsAssert(0);
+        DeriveYUVLayout(alloc->mHal.state.yuv, &alloc->mHal.drvState);
+
+        for (uint32_t ct = 1; ct < alloc->mHal.drvState.lodCount; ct++) {
+            offsets[ct] = (size_t)alloc->mHal.drvState.lod[ct].mallocPtr;
         }
     }
 
@@ -343,6 +354,10 @@ bool rsdAllocationInit(const Context *rsc, Allocation *alloc, bool forceZero) {
 
     uint8_t * ptr = NULL;
     if (alloc->mHal.state.usageFlags & RS_ALLOCATION_USAGE_IO_OUTPUT) {
+
+    } else if (alloc->mHal.state.usageFlags & RS_ALLOCATION_USAGE_IO_INPUT) {
+        // Allocation is allocated when the surface is created
+        // in getSurface
     } else if (alloc->mHal.state.userProvidedPtr != NULL) {
         // user-provided allocation
         // limitations: no faces, no LOD, USAGE_SCRIPT only
@@ -574,13 +589,16 @@ void rsdAllocationMarkDirty(const Context *rsc, const Allocation *alloc) {
     drv->uploadDeferred = true;
 }
 
-int32_t rsdAllocationInitSurfaceTexture(const Context *rsc, const Allocation *alloc) {
+void* rsdAllocationGetSurface(const Context *rsc, const Allocation *alloc) {
 #ifndef RS_COMPATIBILITY_LIB
     DrvAllocation *drv = (DrvAllocation *)alloc->mHal.drv;
-    UploadToTexture(rsc, alloc);
-    return drv->textureID;
+
+    drv->cpuConsumer = new CpuConsumer(2);
+    sp<IGraphicBufferProducer> bp = drv->cpuConsumer->getProducerInterface();
+    bp->incStrong(NULL);
+    return bp.get();
 #else
-    return 0;
+    return NULL;
 #endif
 }
 
@@ -610,11 +628,9 @@ static bool IoGetBuffer(const Context *rsc, Allocation *alloc, ANativeWindow *nw
 }
 #endif
 
-void rsdAllocationSetSurfaceTexture(const Context *rsc, Allocation *alloc, ANativeWindow *nw) {
+void rsdAllocationSetSurface(const Context *rsc, Allocation *alloc, ANativeWindow *nw) {
 #ifndef RS_COMPATIBILITY_LIB
     DrvAllocation *drv = (DrvAllocation *)alloc->mHal.drv;
-
-    //ALOGE("rsdAllocationSetSurfaceTexture %p  %p", alloc, nw);
 
     if (alloc->mHal.state.usageFlags & RS_ALLOCATION_USAGE_GRAPHICS_RENDER_TARGET) {
         //TODO finish support for render target + script
@@ -651,6 +667,33 @@ void rsdAllocationSetSurfaceTexture(const Context *rsc, Allocation *alloc, ANati
                                                  alloc->mHal.drvState.lod[0].dimY);
         if (r) {
             rsc->setError(RS_ERROR_DRIVER, "Error setting IO output buffer dimensions.");
+            return;
+        }
+
+        int format = 0;
+        const Element *e = alloc->mHal.state.type->getElement();
+        switch(e->getType()) {
+        case RS_TYPE_UNSIGNED_8:
+            switch (e->getVectorSize()) {
+            case 1:
+                rsAssert(e->getKind() == RS_KIND_PIXEL_A);
+                format = PIXEL_FORMAT_A_8;
+                break;
+            case 4:
+                rsAssert(e->getKind() == RS_KIND_PIXEL_RGBA);
+                format = PIXEL_FORMAT_RGBA_8888;
+                break;
+            default:
+                rsAssert(0);
+            }
+            break;
+        default:
+            rsAssert(0);
+        }
+
+        r = native_window_set_buffers_format(nw, format);
+        if (r) {
+            rsc->setError(RS_ERROR_DRIVER, "Error setting IO output buffer format.");
             return;
         }
 
@@ -693,7 +736,25 @@ void rsdAllocationIoSend(const Context *rsc, Allocation *alloc) {
 void rsdAllocationIoReceive(const Context *rsc, Allocation *alloc) {
 #ifndef RS_COMPATIBILITY_LIB
     DrvAllocation *drv = (DrvAllocation *)alloc->mHal.drv;
-    alloc->mHal.state.surfaceTexture->updateTexImage();
+
+    if (alloc->mHal.state.usageFlags & RS_ALLOCATION_USAGE_SCRIPT) {
+        if (drv->lb.data != NULL) {
+            drv->cpuConsumer->unlockBuffer(drv->lb);
+        }
+
+        status_t ret = drv->cpuConsumer->lockNextBuffer(&drv->lb);
+        alloc->mHal.drvState.lod[0].mallocPtr = drv->lb.data;
+        alloc->mHal.drvState.lod[0].stride = drv->lb.stride * alloc->mHal.state.elementSizeBytes;
+
+        if (alloc->mHal.state.yuv) {
+            DeriveYUVLayout(alloc->mHal.state.yuv, &alloc->mHal.drvState);
+        }
+
+    } else {
+        alloc->mHal.state.surfaceTexture->updateTexImage();
+    }
+
+
 #endif
 }
 

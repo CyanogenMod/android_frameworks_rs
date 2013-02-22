@@ -70,15 +70,10 @@ AllocationCubeCreateFromBitmap {
     ret RsAllocation
 }
 
-AllocationGetSurfaceTextureID {
+AllocationGetSurface {
     param RsAllocation alloc
-    ret int32_t
-}
-
-AllocationGetSurfaceTextureID2 {
-    param RsAllocation alloc
-    param void *st
     sync
+    ret RsNativeWindow
 }
 
 AllocationSetSurface {

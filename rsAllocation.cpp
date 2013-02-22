@@ -443,10 +443,8 @@ void Allocation::resize2D(Context *rsc, uint32_t dimX, uint32_t dimY) {
     ALOGE("not implemented");
 }
 
-int32_t Allocation::getSurfaceTextureID(const Context *rsc) {
-    int32_t id = rsc->mHal.funcs.allocation.initSurfaceTexture(rsc, this);
-    mHal.state.surfaceTextureID = id;
-    return id;
+void * Allocation::getSurface(const Context *rsc) {
+    return rsc->mHal.funcs.allocation.getSurface(rsc, this);
 }
 
 void Allocation::setSurfaceTexture(const Context *rsc, GLConsumer *st) {
@@ -467,7 +465,7 @@ void Allocation::setSurface(const Context *rsc, RsNativeWindow sur) {
     if (nw) {
         nw->incStrong(NULL);
     }
-    rsc->mHal.funcs.allocation.setSurfaceTexture(rsc, this, nw);
+    rsc->mHal.funcs.allocation.setSurface(rsc, this, nw);
     mHal.state.wndSurface = nw;
     if (old) {
         old->decStrong(NULL);
@@ -641,14 +639,10 @@ void rsi_AllocationCopy2DRange(Context *rsc,
                                            (RsAllocationCubemapFace)srcFace);
 }
 
-int32_t rsi_AllocationGetSurfaceTextureID(Context *rsc, RsAllocation valloc) {
+void * rsi_AllocationGetSurface(Context *rsc, RsAllocation valloc) {
     Allocation *alloc = static_cast<Allocation *>(valloc);
-    return alloc->getSurfaceTextureID(rsc);
-}
-
-void rsi_AllocationGetSurfaceTextureID2(Context *rsc, RsAllocation valloc, void *vst, size_t len) {
-    Allocation *alloc = static_cast<Allocation *>(valloc);
-    alloc->setSurfaceTexture(rsc, static_cast<GLConsumer *>(vst));
+    void *s = alloc->getSurface(rsc);
+    return s;
 }
 
 void rsi_AllocationSetSurface(Context *rsc, RsAllocation valloc, RsNativeWindow sur) {

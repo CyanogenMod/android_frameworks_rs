@@ -150,7 +150,7 @@ public:
         return mHal.state.mipmapControl != RS_ALLOCATION_MIPMAP_NONE;
     }
 
-    int32_t getSurfaceTextureID(const Context *rsc);
+    void * getSurface(const Context *rsc);
     void setSurfaceTexture(const Context *rsc, GLConsumer *st);
     void setSurface(const Context *rsc, RsNativeWindow sur);
     void ioSend(const Context *rsc);
