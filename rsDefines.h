@@ -76,6 +76,12 @@ enum RsDeviceParam {
     RS_DEVICE_PARAM_COUNT
 };
 
+enum RsContextType {
+    RS_CONTEXT_TYPE_NORMAL,
+    RS_CONTEXT_TYPE_DEBUG,
+    RS_CONTEXT_TYPE_PROFILE
+};
+
 typedef struct {
     uint32_t colorMin;
     uint32_t colorPref;

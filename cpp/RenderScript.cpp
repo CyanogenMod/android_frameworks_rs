@@ -65,7 +65,7 @@ bool RS::init(int targetApi, bool forceCpu, bool synchronous) {
         return false;
     }
 
-    mContext = rsContextCreate(mDev, 0, targetApi, forceCpu, synchronous);
+    mContext = rsContextCreate(mDev, 0, targetApi, RS_CONTEXT_TYPE_NORMAL, forceCpu, synchronous);
     if (mContext == 0) {
         ALOGE("Context creation failed");
         return false;
