@@ -23,13 +23,14 @@
 
 #include "../cpu_ref/rsd_cpu.h"
 #include "gui/CpuConsumer.h"
+#include "gui/GLConsumer.h"
 
 #include <GLES/gl.h>
 #include <GLES2/gl2.h>
 
 class RsdFrameBufferObj;
+struct ANativeWindow;
 struct ANativeWindowBuffer;
-
 
 struct DrvAllocation {
     // Is this a legal structure to be used as a texture source.
@@ -48,6 +49,9 @@ struct DrvAllocation {
     GLenum glTarget;
     GLenum glType;
     GLenum glFormat;
+
+    ANativeWindow *wndSurface;
+    android::GLConsumer *surfaceTexture;
 #else
     int glTarget;
     int glType;

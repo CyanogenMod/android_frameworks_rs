@@ -63,7 +63,6 @@ void Allocation::updateCache() {
 
 Allocation::~Allocation() {
     freeChildrenUnlocked();
-    setSurfaceTexture(mRSC, NULL);
     mRSC->mHal.funcs.allocation.destroy(mRSC, this);
 }
 
@@ -447,29 +446,9 @@ void * Allocation::getSurface(const Context *rsc) {
     return rsc->mHal.funcs.allocation.getSurface(rsc, this);
 }
 
-void Allocation::setSurfaceTexture(const Context *rsc, GLConsumer *st) {
-    if(st != mHal.state.surfaceTexture) {
-        if(mHal.state.surfaceTexture != NULL) {
-            mHal.state.surfaceTexture->decStrong(NULL);
-        }
-        mHal.state.surfaceTexture = st;
-        if(mHal.state.surfaceTexture != NULL) {
-            mHal.state.surfaceTexture->incStrong(NULL);
-        }
-    }
-}
-
 void Allocation::setSurface(const Context *rsc, RsNativeWindow sur) {
     ANativeWindow *nw = (ANativeWindow *)sur;
-    ANativeWindow *old = mHal.state.wndSurface;
-    if (nw) {
-        nw->incStrong(NULL);
-    }
     rsc->mHal.funcs.allocation.setSurface(rsc, this, nw);
-    mHal.state.wndSurface = nw;
-    if (old) {
-        old->decStrong(NULL);
-    }
 }
 
 void Allocation::ioSend(const Context *rsc) {

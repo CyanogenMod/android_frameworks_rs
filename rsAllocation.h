@@ -19,11 +19,8 @@
 
 #include "rsType.h"
 
-struct ANativeWindow;
-
 // ---------------------------------------------------------------------------
 namespace android {
-class GLConsumer;
 
 namespace renderscript {
 
@@ -61,8 +58,8 @@ public:
             bool hasReferences;
             void * userProvidedPtr;
             int32_t surfaceTextureID;
-            ANativeWindow *wndSurface;
-            GLConsumer *surfaceTexture;
+            void *deprecated01;
+            void *deprecated02;
         };
         State state;
 
@@ -151,7 +148,6 @@ public:
     }
 
     void * getSurface(const Context *rsc);
-    void setSurfaceTexture(const Context *rsc, GLConsumer *st);
     void setSurface(const Context *rsc, RsNativeWindow sur);
     void ioSend(const Context *rsc);
     void ioReceive(const Context *rsc);
