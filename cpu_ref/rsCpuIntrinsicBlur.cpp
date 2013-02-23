@@ -204,10 +204,11 @@ static void OneVFU1(float *out,
         x1++;
         out++;
         ptrIn++;
+        len--;
     }
 
 #if defined(ARCH_ARM_HAVE_NEON)
-    {
+    if (x2 > x1) {
         int t = (x2 - x1) >> 2;
         t &= ~1;
         if(t) {
@@ -219,7 +220,7 @@ static void OneVFU1(float *out,
     }
 #endif
 
-    while(len) {
+    while(len > 0) {
         const uchar *pi = ptrIn;
         float blurredPixel = 0;
         const float* gp = gPtr;
@@ -367,10 +368,12 @@ void RsdCpuScriptIntrinsicBlur::kernelU1(const RsForEachStubParamStruct *p,
     if ((x1 + cp->mIradius) < x2) {
         uint32_t len = x2 - (x1 + cp->mIradius);
         len &= ~3;
-        rsdIntrinsicBlurHFU1_K(out, ((float *)buf) - cp->mIradius, cp->mFp,
-                               cp->mIradius * 2 + 1, x1, x1 + len);
-        out += len;
-        x1 += len;
+        if (len > 0) {
+            rsdIntrinsicBlurHFU1_K(out, ((float *)buf) - cp->mIradius, cp->mFp,
+                                   cp->mIradius * 2 + 1, x1, x1 + len);
+            out += len;
+            x1 += len;
+        }
     }
 #endif
     while(x2 > x1) {
