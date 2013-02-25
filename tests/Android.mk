@@ -23,6 +23,8 @@ LOCAL_MODULE:= rstest-compute
 
 LOCAL_MODULE_TAGS := tests
 
+LOCAL_CFLAGS := $(call cc-option,-Qunused-arguments)
+
 intermediates := $(call intermediates-dir-for,STATIC_LIBRARIES,libRS,TARGET,)
 librs_generated_headers := \
     $(intermediates)/rsgApiStructs.h \
