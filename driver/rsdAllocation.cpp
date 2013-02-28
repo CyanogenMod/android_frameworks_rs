@@ -241,9 +241,10 @@ static void UploadToBufferObject(const Context *rsc, const Allocation *alloc) {
 #endif
 }
 
-static void DeriveYUVLayout(int yuv, Allocation::Hal::DrvState *state) {
+static size_t DeriveYUVLayout(int yuv, Allocation::Hal::DrvState *state) {
     // YUV only supports basic 2d
     // so we can stash the plane pointers in the mipmap levels.
+    size_t uvSize = 0;
     switch(yuv) {
     case HAL_PIXEL_FORMAT_YV12:
         state->lod[1].dimX = state->lod[0].dimX / 2;
@@ -251,12 +252,14 @@ static void DeriveYUVLayout(int yuv, Allocation::Hal::DrvState *state) {
         state->lod[1].stride = rsRound(state->lod[0].stride >> 1, 16);
         state->lod[1].mallocPtr = ((uint8_t *)state->lod[0].mallocPtr) +
                 (state->lod[0].stride * state->lod[0].dimY);
+        uvSize += state->lod[1].stride * state->lod[1].dimY;
 
         state->lod[2].dimX = state->lod[1].dimX;
         state->lod[2].dimY = state->lod[1].dimY;
         state->lod[2].stride = state->lod[1].stride;
         state->lod[2].mallocPtr = ((uint8_t *)state->lod[1].mallocPtr) +
                 (state->lod[1].stride * state->lod[1].dimY);
+        uvSize += state->lod[2].stride * state->lod[2].dimY;
 
         state->lodCount = 3;
         break;
@@ -266,11 +269,13 @@ static void DeriveYUVLayout(int yuv, Allocation::Hal::DrvState *state) {
         state->lod[1].stride = state->lod[0].stride;
         state->lod[1].mallocPtr = ((uint8_t *)state->lod[0].mallocPtr) +
                 (state->lod[0].stride * state->lod[0].dimY);
+        uvSize += state->lod[1].stride * state->lod[1].dimY;
         state->lodCount = 2;
         break;
     default:
         rsAssert(0);
     }
+    return uvSize;
 }
 
 
@@ -308,7 +313,7 @@ static size_t AllocationBuildPointerTable(const Context *rsc, const Allocation *
             if (tz > 1) tz >>= 1;
         }
     } else if (alloc->mHal.state.yuv) {
-        DeriveYUVLayout(alloc->mHal.state.yuv, &alloc->mHal.drvState);
+        o += DeriveYUVLayout(alloc->mHal.state.yuv, &alloc->mHal.drvState);
 
         for (uint32_t ct = 1; ct < alloc->mHal.drvState.lodCount; ct++) {
             offsets[ct] = (size_t)alloc->mHal.drvState.lod[ct].mallocPtr;
