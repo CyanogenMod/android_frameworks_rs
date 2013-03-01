@@ -37,7 +37,7 @@ LOCAL_SRC_FILES:= \
 
 LOCAL_SHARED_LIBRARIES += libRS libRSCpuRef
 LOCAL_SHARED_LIBRARIES += libcutils libutils libEGL libGLESv1_CM libGLESv2
-LOCAL_SHARED_LIBRARIES += libbcc libbcinfo libui libgui libsync
+LOCAL_SHARED_LIBRARIES += libbcc libbcinfo libLLVM libui libgui libsync
 
 LOCAL_C_INCLUDES += frameworks/compile/libbcc/include
 
@@ -148,7 +148,7 @@ LOCAL_SRC_FILES:= \
 	rsType.cpp
 
 LOCAL_SHARED_LIBRARIES += libcutils libutils libEGL libGLESv1_CM libGLESv2 libbcc
-LOCAL_SHARED_LIBRARIES += libui libbcinfo libgui libsync libdl
+LOCAL_SHARED_LIBRARIES += libui libbcinfo libLLVM libgui libsync libdl
 
 LOCAL_STATIC_LIBRARIES := libft2
 
