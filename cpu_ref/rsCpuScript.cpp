@@ -144,27 +144,6 @@ void RsdCpuScriptImpl::populateScript(Script *script) {
     }
 }
 
-/*
-bool rsdInitIntrinsic(const Context *rsc, Script *s, RsScriptIntrinsicID iid, Element *e) {
-    pthread_mutex_lock(&rsdgInitMutex);
-
-    DrvScript *drv = (DrvScript *)calloc(1, sizeof(DrvScript));
-    if (drv == NULL) {
-        goto error;
-    }
-    s->mHal.drv = drv;
-    drv->mIntrinsicID = iid;
-    drv->mIntrinsicData = rsdIntrinsic_Init(rsc, s, iid, &drv->mIntrinsicFuncs);
-    s->mHal.info.isThreadable = true;
-
-    pthread_mutex_unlock(&rsdgInitMutex);
-    return true;
-
-error:
-    pthread_mutex_unlock(&rsdgInitMutex);
-    return false;
-}
-*/
 
 typedef void (*rs_t)(const void *, void *, const void *, uint32_t, uint32_t, uint32_t, uint32_t);
 

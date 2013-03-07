@@ -79,8 +79,9 @@ public:
         virtual Allocation * getAllocationForPointer(const void *ptr) const = 0;
         virtual ~CpuScript() {}
 
+#ifndef RS_COMPATIBILITY_LIB
         virtual  void * getRSExecutable()  = 0;
-
+#endif
     };
     typedef CpuScript * (* script_lookup_t)(Context *, const Script *s);
 
@@ -97,8 +98,11 @@ public:
     static pthread_key_t getThreadTLSKey();
 
     static RsdCpuReference * create(Context *c, uint32_t version_major,
-                                    uint32_t version_minor, sym_lookup_t lfn, script_lookup_t slfn,
-                                    bcc::RSLinkRuntimeCallback pLinkRuntimeCallback = NULL);
+                                    uint32_t version_minor, sym_lookup_t lfn, script_lookup_t slfn
+#ifndef RS_COMPATIBILITY_LIB
+                                    , bcc::RSLinkRuntimeCallback pLinkRuntimeCallback = NULL
+#endif
+                                    );
     virtual ~RsdCpuReference();
     virtual void setPriority(int32_t priority) = 0;
 

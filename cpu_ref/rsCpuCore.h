@@ -110,6 +110,7 @@ public:
         return mScriptLookupFn(mRSC, s);
     }
 
+#ifndef RS_COMPATIBILITY_LIB
     void setLinkRuntimeCallback(
             bcc::RSLinkRuntimeCallback pLinkRuntimeCallback) {
         mLinkRuntimeCallback = pLinkRuntimeCallback;
@@ -117,6 +118,7 @@ public:
     bcc::RSLinkRuntimeCallback getLinkRuntimeCallback() {
         return mLinkRuntimeCallback;
     }
+#endif
     virtual bool getInForEach() { return mInForEach; }
 
 protected:
@@ -144,7 +146,9 @@ protected:
 
     ScriptTLSStruct mTlsStruct;
 
+#ifndef RS_COMPATIBILITY_LIB
     bcc::RSLinkRuntimeCallback mLinkRuntimeCallback;
+#endif
 };
 
 
