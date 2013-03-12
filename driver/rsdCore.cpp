@@ -55,6 +55,8 @@ static RsdHalFunctions FunctionTable = {
     Shutdown,
     NULL,
     SetPriority,
+    rsdAllocRuntimeMem,
+    rsdFreeRuntimeMem,
     {
         rsdScriptInit,
         rsdInitIntrinsic,
@@ -202,3 +204,11 @@ void Shutdown(Context *rsc) {
     rsc->mHal.drv = NULL;
 }
 
+void* rsdAllocRuntimeMem(size_t size, uint32_t flags) {
+    void* buffer = calloc(size, sizeof(char));
+    return buffer;
+}
+
+void rsdFreeRuntimeMem(void* ptr) {
+    free(ptr);
+}
