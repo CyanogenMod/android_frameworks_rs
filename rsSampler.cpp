@@ -98,7 +98,13 @@ ObjectBaseRef<Sampler> Sampler::getSampler(Context *rsc,
     }
     ObjectBase::asyncUnlock();
 
-    Sampler *s = new Sampler(rsc, magFilter, minFilter, wrapS, wrapT, wrapR, aniso);
+    void* allocMem = rsc->mHal.funcs.allocRuntimeMem(sizeof(Sampler), 0);
+    if (!allocMem) {
+        rsc->setError(RS_ERROR_FATAL_DRIVER, "Couldn't allocate memory for Allocation");
+        return NULL;
+    }
+
+    Sampler *s = new (allocMem) Sampler(rsc, magFilter, minFilter, wrapS, wrapT, wrapR, aniso);
     returnRef.set(s);
 
     ObjectBase::asyncLock();
@@ -107,6 +113,14 @@ ObjectBaseRef<Sampler> Sampler::getSampler(Context *rsc,
 
     return returnRef;
 }
+
+void Sampler::operator delete(void* ptr) {
+    if (ptr) {
+        Sampler *s = (Sampler*) ptr;
+        s->getContext()->mHal.funcs.freeRuntimeMem(ptr);
+    }
+}
+
 
 ////////////////////////////////
 
