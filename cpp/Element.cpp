@@ -40,7 +40,7 @@ const char * Element::getSubElementName(uint32_t index) {
     if (index >= mVisibleElementMap.size()) {
         mRS->throwError("Illegal sub-element index");
     }
-    return mElementNames[mVisibleElementMap[index]];
+    return mElementNames[mVisibleElementMap[index]].string();
 }
 
 size_t Element::getSubElementArraySize(uint32_t index) {
@@ -338,7 +338,7 @@ void Element::Builder::add(sp</*const*/ Element>e, android::String8 &name, uint3
     // Skip padding fields after a vector 3 type.
     if (mSkipPadding) {
         const char *s1 = "#padding_";
-        const char *s2 = name;
+        const char *s2 = name.string();
         size_t len = strlen(s1);
         if (strlen(s2) >= len) {
             if (!memcmp(s1, s2, len)) {

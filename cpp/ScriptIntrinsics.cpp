@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-#include <utils/Log.h>
 #include <malloc.h>
 
 #include "RenderScript.h"

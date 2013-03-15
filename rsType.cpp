@@ -16,7 +16,9 @@
 
 #include "rsContext.h"
 
+#ifndef RS_SERVER
 #include "system/graphics.h"
+#endif
 
 using namespace android;
 using namespace android::renderscript;
@@ -108,7 +110,7 @@ void Type::compute() {
     if (mHal.state.faces) {
         offset *= 6;
     }
-
+#ifndef RS_SERVER
     // YUV only supports basic 2d
     // so we can stash the plane pointers in the mipmap levels.
     if (mHal.state.dimYuv) {
@@ -133,7 +135,7 @@ void Type::compute() {
             rsAssert(0);
         }
     }
-
+#endif
     mTotalSizeBytes = offset;
     mHal.state.element = mElement.get();
 }

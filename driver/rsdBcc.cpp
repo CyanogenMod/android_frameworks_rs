@@ -25,9 +25,11 @@
 #include "rsElement.h"
 #include "rsScriptC.h"
 
+#ifndef RS_SERVER
 #include "utils/Vector.h"
 #include "utils/Timers.h"
 #include "utils/StopWatch.h"
+#endif
 
 using namespace android;
 using namespace android::renderscript;

@@ -113,7 +113,7 @@ static void One(const RsForEachStubParamStruct *p, uint32_t x, uchar4 *out,
         //ALOGE("x %i  %i,%i,%i,%i  %i,%i,%i,%i", x, o.x, o.y, o.z, o.w, out[0].x, out[0].y, out[0].z, out[0].w);
     //}
     //o.w = 0xff;
-    out->rgba = o.rgba;
+    out->xyzw = o.xyzw;
 }
 
 extern "C" void rsdIntrinsicConvolve5x5_K(void *dst, const void *y0, const void *y1,

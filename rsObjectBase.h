@@ -22,7 +22,9 @@
 
 #define RS_OBJECT_DEBUG 0
 
+#ifndef RS_SERVER
 #include <utils/CallStack.h>
+#endif
 
 namespace android {
 namespace renderscript {

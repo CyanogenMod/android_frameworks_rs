@@ -19,8 +19,10 @@
 #include "rsAdapter.h"
 #include "rs_hal.h"
 
+#ifndef RS_SERVER
 #include "system/window.h"
 #include "gui/GLConsumer.h"
+#endif
 
 using namespace android;
 using namespace android::renderscript;

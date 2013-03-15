@@ -17,8 +17,8 @@
 #ifndef ANDROID_RS_STREAM_H
 #define ANDROID_RS_STREAM_H
 
-#include <utils/String8.h>
 #include <stdio.h>
+#include "rsUtils.h"
 
 // ---------------------------------------------------------------------------
 namespace android {

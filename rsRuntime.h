@@ -17,7 +17,9 @@
 #include "rsContext.h"
 #include "rsScriptC.h"
 
+#ifndef RS_SERVER
 #include "utils/Timers.h"
+#endif
 
 #include <time.h>
 

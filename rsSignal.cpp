@@ -95,9 +95,11 @@ bool Signal::wait(uint64_t timeout) {
         mSet = false;
         ret = true;
     } else {
+#ifndef RS_SERVER
         if (status != ETIMEDOUT) {
             ALOGE("LocklessCommandFifo: error %i waiting for condition.", status);
         }
+#endif
     }
 
     status = pthread_mutex_unlock(&mMutex);

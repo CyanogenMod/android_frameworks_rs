@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
+#ifndef RS_SERVER
 #include <cutils/compiler.h>
+#endif
 
 #include "rsContext.h"
 #include "rsScriptC.h"

@@ -17,9 +17,12 @@
 #ifndef ANDROID_RSCPPSTRUCTS_H
 #define ANDROID_RSCPPSTRUCTS_H
 
-#include <utils/String8.h>
-#include <utils/Vector.h>
+#include "rsUtils.h"
+#ifndef RS_SERVER
 #include "utils/RefBase.h"
+#else
+#include "RefBase.h"
+#endif
 
 // Every row in an RS allocation is guaranteed to be aligned by this amount
 // Every row in a user-backed allocation must be aligned by this amount
