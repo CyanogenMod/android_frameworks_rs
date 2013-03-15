@@ -51,6 +51,8 @@ public:
     };
     Hal mHal;
 
+    void operator delete(void* ptr);
+
     static ObjectBaseRef<Sampler> getSampler(Context *,
                                              RsSamplerValue magFilter,
                                              RsSamplerValue minFilter,
