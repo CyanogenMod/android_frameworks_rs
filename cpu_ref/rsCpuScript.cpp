@@ -28,29 +28,82 @@
 #include "utils/Timers.h"
 #include "utils/StopWatch.h"
 
-
-#include <bcc/BCCContext.h>
-#include <bcc/Renderscript/RSCompilerDriver.h>
-#include <bcc/Renderscript/RSExecutable.h>
-#include <bcc/Renderscript/RSInfo.h>
+#ifdef RS_COMPATIBILITY_LIB
+    #include <dlfcn.h>
+    #include <stdio.h>
+    #include <string.h>
+#else
+    #include <bcc/BCCContext.h>
+    #include <bcc/Renderscript/RSCompilerDriver.h>
+    #include <bcc/Renderscript/RSExecutable.h>
+    #include <bcc/Renderscript/RSInfo.h>
+#endif
 
 namespace android {
 namespace renderscript {
 
 
+#ifdef RS_COMPATIBILITY_LIB
+#define MAXLINE 500
+#define MAKE_STR_HELPER(S) #S
+#define MAKE_STR(S) MAKE_STR_HELPER(S)
+#define EXPORT_VAR_STR "exportVarCount: "
+#define EXPORT_VAR_STR_LEN strlen(EXPORT_VAR_STR)
+#define EXPORT_FUNC_STR "exportFuncCount: "
+#define EXPORT_FUNC_STR_LEN strlen(EXPORT_FUNC_STR)
+#define EXPORT_FOREACH_STR "exportForEachCount: "
+#define EXPORT_FOREACH_STR_LEN strlen(EXPORT_FOREACH_STR)
+#define OBJECT_SLOT_STR "objectSlotCount: "
+#define OBJECT_SLOT_STR_LEN strlen(OBJECT_SLOT_STR)
+
+// Copy up to a newline or size chars from str -> s, updating str
+// Returns s when successful and NULL when '\0' is finally reached.
+static char* strgets(char *s, int size, const char **ppstr) {
+    if (!ppstr || !*ppstr || **ppstr == '\0' || size < 1) {
+        return NULL;
+    }
+
+    int i;
+    for (i = 0; i < (size - 1); i++) {
+        s[i] = **ppstr;
+        (*ppstr)++;
+        if (s[i] == '\0') {
+            return s;
+        } else if (s[i] == '\n') {
+            s[i+1] = '\0';
+            return s;
+        }
+    }
+
+    // size has been exceeded.
+    s[i] = '\0';
+
+    return s;
+}
+#endif
 
 RsdCpuScriptImpl::RsdCpuScriptImpl(RsdCpuReferenceImpl *ctx, const Script *s) {
     mCtx = ctx;
     mScript = s;
+
+#ifdef RS_COMPATIBILITY_LIB
+    mScriptSO = NULL;
+    mInvokeFunctions = NULL;
+    mForEachFunctions = NULL;
+    mFieldAddress = NULL;
+    mFieldIsObject = NULL;
+    mForEachSignatures = NULL;
+#else
+    mCompilerContext = NULL;
+    mCompilerDriver = NULL;
+    mExecutable = NULL;
+#endif
 
     mRoot = NULL;
     mRootExpand = NULL;
     mInit = NULL;
     mFreeChildren = NULL;
 
-    mCompilerContext = NULL;
-    mCompilerDriver = NULL;
-    mExecutable = NULL;
 
     mBoundAllocs = NULL;
     mIntrinsicData = NULL;
@@ -66,6 +119,7 @@ bool RsdCpuScriptImpl::init(char const *resName, char const *cacheDir,
 
     mCtx->lockMutex();
 
+#ifndef RS_COMPATIBILITY_LIB
     bcc::RSExecutable *exec;
     const bcc::RSInfo *info;
 
@@ -121,11 +175,256 @@ bool RsdCpuScriptImpl::init(char const *resName, char const *cacheDir,
         memset(mBoundAllocs, 0, sizeof(void *) * info->getExportVarNames().size());
     }
 
+#else
+
+    String8 scriptSOName(cacheDir);
+    scriptSOName = scriptSOName.getPathDir();
+    scriptSOName.appendPath("lib");
+    scriptSOName.append("/librs.");
+    scriptSOName.append(resName);
+    scriptSOName.append(".so");
+
+    //script->mHal.drv = drv;
+
+    //ALOGV("Opening up shared object: %s", scriptSOName.string());
+    mScriptSO = dlopen(scriptSOName.string(), RTLD_NOW | RTLD_LOCAL);
+    if (mScriptSO == NULL) {
+        ALOGE("Unable to open shared library (%s): %s",
+              scriptSOName.string(), dlerror());
+
+        // One final attempt to find the library in "/system/lib".
+        // We do this to allow bundled applications to use the compatibility
+        // library fallback path. Those applications don't have a private
+        // library path, so they need to install to the system directly.
+        String8 scriptSONameSystem("/system/lib/librs.");
+        scriptSONameSystem.append(resName);
+        scriptSONameSystem.append(".so");
+        mScriptSO = dlopen(scriptSONameSystem.string(), RTLD_NOW | RTLD_LOCAL);
+        if (mScriptSO == NULL) {
+            ALOGE("Unable to open system shared library (%s): %s",
+                  scriptSONameSystem.string(), dlerror());
+            goto error;
+        }
+    }
+
+    if (mScriptSO) {
+        char line[MAXLINE];
+        mRoot = (RootFunc_t) dlsym(mScriptSO, "root");
+        if (mRoot) {
+            //ALOGE("Found root(): %p", mRoot);
+        }
+        mRootExpand = (RootFunc_t) dlsym(mScriptSO, "root.expand");
+        if (mRootExpand) {
+            //ALOGE("Found root.expand(): %p", mRootExpand);
+        }
+        mInit = (InvokeFunc_t) dlsym(mScriptSO, "init");
+        if (mInit) {
+            //ALOGE("Found init(): %p", mInit);
+        }
+        mFreeChildren = (InvokeFunc_t) dlsym(mScriptSO, ".rs.dtor");
+        if (mFreeChildren) {
+            //ALOGE("Found .rs.dtor(): %p", mFreeChildren);
+        }
+
+        const char *rsInfo = (const char *) dlsym(mScriptSO, ".rs.info");
+        if (rsInfo) {
+            //ALOGE("Found .rs.info(): %p - %s", rsInfo, rsInfo);
+        }
+
+        size_t varCount = 0;
+        if (strgets(line, MAXLINE, &rsInfo) == NULL) {
+            goto error;
+        }
+        if (sscanf(line, EXPORT_VAR_STR "%zu", &varCount) != 1) {
+            ALOGE("Invalid export var count!: %s", line);
+            goto error;
+        }
+
+        mExportedVariableCount = varCount;
+        //ALOGE("varCount: %zu", varCount);
+        if (varCount > 0) {
+            // Start by creating/zeroing this member, since we don't want to
+            // accidentally clean up invalid pointers later (if we error out).
+            mFieldIsObject = new bool[varCount];
+            if (mFieldIsObject == NULL) {
+                goto error;
+            }
+            memset(mFieldIsObject, 0, varCount * sizeof(*mFieldIsObject));
+            mFieldAddress = new void*[varCount];
+            if (mFieldAddress == NULL) {
+                goto error;
+            }
+            for (size_t i = 0; i < varCount; ++i) {
+                if (strgets(line, MAXLINE, &rsInfo) == NULL) {
+                    goto error;
+                }
+                char *c = strrchr(line, '\n');
+                if (c) {
+                    *c = '\0';
+                }
+                mFieldAddress[i] = dlsym(mScriptSO, line);
+                if (mFieldAddress[i] == NULL) {
+                    ALOGE("Failed to find variable address for %s: %s",
+                          line, dlerror());
+                    // Not a critical error if we don't find a global variable.
+                }
+                else {
+                    //ALOGE("Found variable %s at %p", line,
+                    //mFieldAddress[i]);
+                }
+            }
+        }
+
+        size_t funcCount = 0;
+        if (strgets(line, MAXLINE, &rsInfo) == NULL) {
+            goto error;
+        }
+        if (sscanf(line, EXPORT_FUNC_STR "%zu", &funcCount) != 1) {
+            ALOGE("Invalid export func count!: %s", line);
+            goto error;
+        }
+
+        mExportedFunctionCount = funcCount;
+        //ALOGE("funcCount: %zu", funcCount);
+
+        if (funcCount > 0) {
+            mInvokeFunctions = new InvokeFunc_t[funcCount];
+            if (mInvokeFunctions == NULL) {
+                goto error;
+            }
+            for (size_t i = 0; i < funcCount; ++i) {
+                if (strgets(line, MAXLINE, &rsInfo) == NULL) {
+                    goto error;
+                }
+                char *c = strrchr(line, '\n');
+                if (c) {
+                    *c = '\0';
+                }
+
+                mInvokeFunctions[i] = (InvokeFunc_t) dlsym(mScriptSO, line);
+                if (mInvokeFunctions[i] == NULL) {
+                    ALOGE("Failed to get function address for %s(): %s",
+                          line, dlerror());
+                    goto error;
+                }
+                else {
+                    //ALOGE("Found InvokeFunc_t %s at %p", line, mInvokeFunctions[i]);
+                }
+            }
+        }
+
+        size_t forEachCount = 0;
+        if (strgets(line, MAXLINE, &rsInfo) == NULL) {
+            goto error;
+        }
+        if (sscanf(line, EXPORT_FOREACH_STR "%zu", &forEachCount) != 1) {
+            ALOGE("Invalid export forEach count!: %s", line);
+            goto error;
+        }
+
+        if (forEachCount > 0) {
+
+            mForEachSignatures = new uint32_t[forEachCount];
+            if (mForEachSignatures == NULL) {
+                goto error;
+            }
+            mForEachFunctions = new ForEachFunc_t[forEachCount];
+            if (mForEachFunctions == NULL) {
+                goto error;
+            }
+            for (size_t i = 0; i < forEachCount; ++i) {
+                unsigned int tmpSig = 0;
+                char tmpName[MAXLINE];
+
+                if (strgets(line, MAXLINE, &rsInfo) == NULL) {
+                    goto error;
+                }
+                if (sscanf(line, "%u - %" MAKE_STR(MAXLINE) "s",
+                           &tmpSig, tmpName) != 2) {
+                    ALOGE("Invalid export forEach!: %s", line);
+                    goto error;
+                }
+
+                // Lookup the expanded ForEach kernel.
+                strncat(tmpName, ".expand", MAXLINE-1-strlen(tmpName));
+                mForEachSignatures[i] = tmpSig;
+                mForEachFunctions[i] =
+                        (ForEachFunc_t) dlsym(mScriptSO, tmpName);
+                if (mForEachFunctions[i] == NULL) {
+                    ALOGE("Failed to find forEach function address for %s: %s",
+                          tmpName, dlerror());
+                    // Ignore missing root.expand functions.
+                    // root() is always specified at location 0.
+                    if (i != 0) {
+                        goto error;
+                    }
+                }
+                else {
+                    //ALOGE("Found forEach %s at %p", tmpName, mForEachFunctions[i]);
+                }
+            }
+        }
+
+        size_t objectSlotCount = 0;
+        if (strgets(line, MAXLINE, &rsInfo) == NULL) {
+            goto error;
+        }
+        if (sscanf(line, OBJECT_SLOT_STR "%zu", &objectSlotCount) != 1) {
+            ALOGE("Invalid object slot count!: %s", line);
+            goto error;
+        }
+
+        if (objectSlotCount > 0) {
+            rsAssert(varCount > 0);
+            for (size_t i = 0; i < objectSlotCount; ++i) {
+                uint32_t varNum = 0;
+                if (strgets(line, MAXLINE, &rsInfo) == NULL) {
+                    goto error;
+                }
+                if (sscanf(line, "%u", &varNum) != 1) {
+                    ALOGE("Invalid object slot!: %s", line);
+                    goto error;
+                }
+
+                if (varNum < varCount) {
+                    mFieldIsObject[varNum] = true;
+                }
+            }
+        }
+
+        if (varCount > 0) {
+            mBoundAllocs = new Allocation *[varCount];
+            memset(mBoundAllocs, 0, varCount * sizeof(*mBoundAllocs));
+        }
+
+        if (mScriptSO == (void*)1) {
+            //rsdLookupRuntimeStub(script, "acos");
+        }
+    }
+#endif
+
     mCtx->unlockMutex();
     return true;
+
+#ifdef RS_COMPATIBILITY_LIB
+error:
+
+    mCtx->unlockMutex();
+    delete[] mInvokeFunctions;
+    delete[] mForEachFunctions;
+    delete[] mFieldAddress;
+    delete[] mFieldIsObject;
+    delete[] mForEachSignatures;
+    delete[] mBoundAllocs;
+    if (mScriptSO) {
+        dlclose(mScriptSO);
+    }
+    return false;
+#endif
 }
 
 void RsdCpuScriptImpl::populateScript(Script *script) {
+#ifndef RS_COMPATIBILITY_LIB
     const bcc::RSInfo *info = &mExecutable->getInfo();
 
     // Copy info over to runtime
@@ -142,6 +441,21 @@ void RsdCpuScriptImpl::populateScript(Script *script) {
     } else {
         script->mHal.info.root = mRoot;
     }
+#else
+    // Copy info over to runtime
+    script->mHal.info.exportedFunctionCount = mExportedFunctionCount;
+    script->mHal.info.exportedVariableCount = mExportedVariableCount;
+    script->mHal.info.exportedPragmaCount = 0;
+    script->mHal.info.exportedPragmaKeyList = 0;
+    script->mHal.info.exportedPragmaValueList = 0;
+
+    // Bug, need to stash in metadata
+    if (mRootExpand) {
+        script->mHal.info.root = mRootExpand;
+    } else {
+        script->mHal.info.root = mRoot;
+    }
+#endif
 }
 
 
@@ -264,15 +578,19 @@ void RsdCpuScriptImpl::invokeForEach(uint32_t slot,
 }
 
 void RsdCpuScriptImpl::forEachKernelSetup(uint32_t slot, MTLaunchStruct *mtls) {
-
     mtls->script = this;
     mtls->fep.slot = slot;
-
+#ifndef RS_COMPATIBILITY_LIB
     rsAssert(slot < mExecutable->getExportForeachFuncAddrs().size());
     mtls->kernel = reinterpret_cast<ForEachFunc_t>(
                       mExecutable->getExportForeachFuncAddrs()[slot]);
     rsAssert(mtls->kernel != NULL);
     mtls->sig = mExecutable->getInfo().getExportForeachFuncs()[slot].second;
+#else
+    mtls->kernel = reinterpret_cast<ForEachFunc_t>(mForEachFunctions[slot]);
+    rsAssert(mtls->kernel != NULL);
+    mtls->sig = mForEachSignatures[slot];
+#endif
 }
 
 int RsdCpuScriptImpl::invokeRoot() {
@@ -300,7 +618,11 @@ void RsdCpuScriptImpl::invokeFunction(uint32_t slot, const void *params,
 
     RsdCpuScriptImpl * oldTLS = mCtx->setTLS(this);
     reinterpret_cast<void (*)(const void *, uint32_t)>(
+#ifndef RS_COMPATIBILITY_LIB
         mExecutable->getExportFuncAddrs()[slot])(params, paramLength);
+#else
+        mInvokeFunctions[slot])(params, paramLength);
+#endif
     mCtx->setTLS(oldTLS);
 }
 
@@ -313,8 +635,12 @@ void RsdCpuScriptImpl::setGlobalVar(uint32_t slot, const void *data, size_t data
         //return;
     //}
 
+#ifndef RS_COMPATIBILITY_LIB
     int32_t *destPtr = reinterpret_cast<int32_t *>(
                           mExecutable->getExportVarAddrs()[slot]);
+#else
+    int32_t *destPtr = reinterpret_cast<int32_t *>(mFieldAddress[slot]);
+#endif
     if (!destPtr) {
         //ALOGV("Calling setVar on slot = %i which is null", slot);
         return;
@@ -327,8 +653,12 @@ void RsdCpuScriptImpl::setGlobalVarWithElemDims(uint32_t slot, const void *data,
                                                 const Element *elem,
                                                 const size_t *dims, size_t dimLength) {
 
+#ifndef RS_COMPATIBILITY_LIB
     int32_t *destPtr = reinterpret_cast<int32_t *>(
         mExecutable->getExportVarAddrs()[slot]);
+#else
+    int32_t *destPtr = reinterpret_cast<int32_t *>(mFieldAddress[slot]);
+#endif
     if (!destPtr) {
         //ALOGV("Calling setVar on slot = %i which is null", slot);
         return;
@@ -365,8 +695,12 @@ void RsdCpuScriptImpl::setGlobalBind(uint32_t slot, Allocation *data) {
     //rsAssert(!script->mFieldIsObject[slot]);
     //ALOGE("setGlobalBind %p %p %i %p", dc, script, slot, data);
 
+#ifndef RS_COMPATIBILITY_LIB
     int32_t *destPtr = reinterpret_cast<int32_t *>(
                           mExecutable->getExportVarAddrs()[slot]);
+#else
+    int32_t *destPtr = reinterpret_cast<int32_t *>(mFieldAddress[slot]);
+#endif
     if (!destPtr) {
         //ALOGV("Calling setVar on slot = %i which is null", slot);
         return;
@@ -390,8 +724,12 @@ void RsdCpuScriptImpl::setGlobalObj(uint32_t slot, ObjectBase *data) {
         //return;
     //}
 
+#ifndef RS_COMPATIBILITY_LIB
     int32_t *destPtr = reinterpret_cast<int32_t *>(
                           mExecutable->getExportVarAddrs()[slot]);
+#else
+    int32_t *destPtr = reinterpret_cast<int32_t *>(mFieldAddress[slot]);
+#endif
     if (!destPtr) {
         //ALOGV("Calling setVar on slot = %i which is null", slot);
         return;
@@ -401,7 +739,7 @@ void RsdCpuScriptImpl::setGlobalObj(uint32_t slot, ObjectBase *data) {
 }
 
 RsdCpuScriptImpl::~RsdCpuScriptImpl() {
-
+#ifndef RS_COMPATIBILITY_LIB
     if (mExecutable) {
         Vector<void *>::const_iterator var_addr_iter =
             mExecutable->getExportVarAddrs().begin();
@@ -441,6 +779,29 @@ RsdCpuScriptImpl::~RsdCpuScriptImpl() {
     if (mBoundAllocs) {
         delete[] mBoundAllocs;
     }
+#else
+    if (mFieldIsObject) {
+        for (size_t i = 0; i < mExportedVariableCount; ++i) {
+            if (mFieldIsObject[i]) {
+                if (mFieldAddress[i] != NULL) {
+                    ObjectBase **obj_addr =
+                        reinterpret_cast<ObjectBase **>(mFieldAddress[i]);
+                    rsrClearObject(mCtx->getContext(), obj_addr);
+                }
+            }
+        }
+    }
+
+    if (mInvokeFunctions) delete[] mInvokeFunctions;
+    if (mForEachFunctions) delete[] mForEachFunctions;
+    if (mFieldAddress) delete[] mFieldAddress;
+    if (mFieldIsObject) delete[] mFieldIsObject;
+    if (mForEachSignatures) delete[] mForEachSignatures;
+    if (mBoundAllocs) delete[] mBoundAllocs;
+    if (mScriptSO) {
+        dlclose(mScriptSO);
+    }
+#endif
 }
 
 Allocation * RsdCpuScriptImpl::getAllocationForPointer(const void *ptr) const {

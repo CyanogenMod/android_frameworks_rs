@@ -262,6 +262,8 @@ bool Context::loadRuntime(const char* filename, Context* rsc) {
     return true;
 }
 
+extern "C" bool rsdHalInit(RsContext c, uint32_t version_major, uint32_t version_minor);
+
 void * Context::threadProc(void *vrsc) {
     Context *rsc = static_cast<Context *>(vrsc);
 #ifndef ANDROID_RS_SERIALIZE
@@ -290,6 +292,7 @@ void * Context::threadProc(void *vrsc) {
     bool loadDefault = true;
 
     // Provide a mechanism for dropping in a different RS driver.
+#ifndef RS_COMPATIBILITY_LIB
 #ifdef OVERRIDE_RS_DRIVER
 #define XSTR(S) #S
 #define STR(S) XSTR(S)
@@ -319,6 +322,12 @@ void * Context::threadProc(void *vrsc) {
             return NULL;
         }
     }
+#else // RS_COMPATIBILITY_LIB
+    if (rsdHalInit(rsc, 0, 0) != true) {
+        return NULL;
+    }
+#endif
+
 
     rsc->mHal.funcs.setPriority(rsc, rsc->mThreadPriority);
 

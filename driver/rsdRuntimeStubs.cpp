@@ -112,6 +112,7 @@ static void SC_AllocationCopy2DRange(Allocation *dstAlloc,
                              srcXoff, srcYoff, srcMip, srcFace);
 }
 
+#ifndef RS_COMPATIBILITY_LIB
 static void SC_AllocationIoSend(Allocation *alloc) {
     Context *rsc = RsdCpuReference::getTlsContext();
     rsdAllocationIoSend(rsc, alloc);
@@ -392,7 +393,7 @@ static void SC_FontColor(float r, float g, float b, float a) {
     Context *rsc = RsdCpuReference::getTlsContext();
     rsrFontColor(rsc, r, g, b, a);
 }
-
+#endif
 
 
 //////////////////////////////////////////////////////////////////////////////
