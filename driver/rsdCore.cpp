@@ -38,9 +38,12 @@
 #include <sys/types.h>
 #include <sys/resource.h>
 #include <sched.h>
-#include <cutils/properties.h>
 #include <sys/syscall.h>
 #include <string.h>
+
+#ifndef RS_SERVER
+#include <cutils/properties.h>
+#endif
 
 using namespace android;
 using namespace android::renderscript;

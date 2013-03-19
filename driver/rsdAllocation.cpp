@@ -14,15 +14,16 @@
  * limitations under the License.
  */
 
-
 #include "rsdCore.h"
 #include "rsdAllocation.h"
 
 #include "rsAllocation.h"
 
+#ifndef RS_SERVER
 #include "system/window.h"
 #include "ui/Rect.h"
 #include "ui/GraphicBufferMapper.h"
+#endif
 
 #ifndef RS_COMPATIBILITY_LIB
 #include "rsdFrameBufferObj.h"
@@ -34,6 +35,11 @@
 #include <GLES/gl.h>
 #include <GLES2/gl2.h>
 #include <GLES/glext.h>
+#endif
+
+#ifdef RS_SERVER
+// server requires malloc.h for memalign
+#include <malloc.h>
 #endif
 
 using namespace android;
@@ -241,10 +247,12 @@ static void UploadToBufferObject(const Context *rsc, const Allocation *alloc) {
 #endif
 }
 
+
 static size_t DeriveYUVLayout(int yuv, Allocation::Hal::DrvState *state) {
     // YUV only supports basic 2d
     // so we can stash the plane pointers in the mipmap levels.
     size_t uvSize = 0;
+#ifndef RS_SERVER
     switch(yuv) {
     case HAL_PIXEL_FORMAT_YV12:
         state->lod[1].dimX = state->lod[0].dimX / 2;
@@ -275,6 +283,7 @@ static size_t DeriveYUVLayout(int yuv, Allocation::Hal::DrvState *state) {
     default:
         rsAssert(0);
     }
+#endif
     return uvSize;
 }
 
@@ -406,6 +415,7 @@ bool rsdAllocationInit(const Context *rsc, Allocation *alloc, bool forceZero) {
         rsAssert(!"Size mismatch");
     }
 
+#ifndef RS_SERVER
     drv->glTarget = GL_NONE;
     if (alloc->mHal.state.usageFlags & RS_ALLOCATION_USAGE_GRAPHICS_TEXTURE) {
         if (alloc->mHal.state.hasFaces) {
@@ -418,6 +428,7 @@ bool rsdAllocationInit(const Context *rsc, Allocation *alloc, bool forceZero) {
             drv->glTarget = GL_ARRAY_BUFFER;
         }
     }
+#endif
 
 #ifndef RS_COMPATIBILITY_LIB
     drv->glType = rsdTypeToGLType(alloc->mHal.state.type->getElement()->getComponent().getType());

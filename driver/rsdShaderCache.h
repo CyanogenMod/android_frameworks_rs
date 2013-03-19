@@ -25,8 +25,12 @@ class Context;
 }
 }
 
+#ifndef RS_SERVER
 #include <utils/String8.h>
 #include <utils/Vector.h>
+#else
+#include "rsUtils.h"
+#endif
 class RsdShader;
 
 // ---------------------------------------------------------------------------

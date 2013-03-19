@@ -145,17 +145,21 @@ void Allocation::syncAll(RsAllocationUsageType srcLocation) {
 }
 
 void Allocation::ioSendOutput() {
+#ifndef RS_COMPATIBILITY_LIB
     if ((mUsage & RS_ALLOCATION_USAGE_IO_OUTPUT) == 0) {
         ALOGE("Can only send buffer if IO_OUTPUT usage specified.");
     }
     rsAllocationIoSend(mRS->getContext(), getID());
+#endif
 }
 
 void Allocation::ioGetInput() {
+#ifndef RS_COMPATIBILITY_LIB
     if ((mUsage & RS_ALLOCATION_USAGE_IO_INPUT) == 0) {
         ALOGE("Can only send buffer if IO_OUTPUT usage specified.");
     }
     rsAllocationIoReceive(mRS->getContext(), getID());
+#endif
 }
 
 void Allocation::generateMipmaps() {

@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-#define LOG_TAG "libRS_cpp"
-
 #include "RenderScript.h"
 #include <rs.h>
 

@@ -21,11 +21,14 @@
 #include "rsMatrix2x2.h"
 #include "rsRuntime.h"
 
-#include "utils/Timers.h"
 #include "rsCpuCore.h"
 #include "rsCpuScript.h"
 
 #include <time.h>
+
+#ifndef RS_SERVER
+#include "utils/Timers.h"
+#endif
 
 using namespace android;
 using namespace android::renderscript;

@@ -16,14 +16,17 @@
 
 #include "rsContext.h"
 #include "rsScriptC.h"
-#include "utils/Timers.h"
-#include "utils/StopWatch.h"
 
 #ifndef RS_COMPATIBILITY_LIB
 #ifndef ANDROID_RS_SERIALIZE
 #include <bcinfo/BitcodeTranslator.h>
 #include <bcinfo/BitcodeWrapper.h>
 #endif
+#endif
+
+#ifndef RS_SERVER
+#include "utils/Timers.h"
+#include "utils/StopWatch.h"
 #endif
 
 #include <sys/stat.h>
@@ -99,8 +102,10 @@ bool ScriptC::createCacheDir(const char *cacheDir) {
 #endif
 
 void ScriptC::setupScript(Context *rsc) {
+#ifndef RS_SERVER
     mEnviroment.mStartTimeMillis
                 = nanoseconds_to_milliseconds(systemTime(SYSTEM_TIME_MONOTONIC));
+#endif
 
     for (uint32_t ct=0; ct < mHal.info.exportedVariableCount; ct++) {
         if (mSlots[ct].get() && !mTypes[ct].get()) {
