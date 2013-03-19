@@ -82,15 +82,6 @@ AllocationSetSurface {
     sync
     }
 
-AllocationIoSend {
-    param RsAllocation alloc
-    }
-
-AllocationIoReceive {
-    param RsAllocation alloc
-    }
-
-
 ContextFinish {
     sync
     }
