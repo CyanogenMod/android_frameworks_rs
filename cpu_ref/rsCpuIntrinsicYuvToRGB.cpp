@@ -61,30 +61,30 @@ static uchar4 rsYuvToRGBA_uchar4(uchar y, uchar u, uchar v) {
     short V = ((short)v) - 128;
 
     short4 p;
-    p.r = (Y * 298 + V * 409 + 128) >> 8;
-    p.g = (Y * 298 - U * 100 - V * 208 + 128) >> 8;
-    p.b = (Y * 298 + U * 516 + 128) >> 8;
-    p.a = 255;
-    if(p.r < 0) {
-        p.r = 0;
+    p.x = (Y * 298 + V * 409 + 128) >> 8;
+    p.y = (Y * 298 - U * 100 - V * 208 + 128) >> 8;
+    p.z = (Y * 298 + U * 516 + 128) >> 8;
+    p.w = 255;
+    if(p.x < 0) {
+        p.x = 0;
     }
-    if(p.r > 255) {
-        p.r = 255;
+    if(p.x > 255) {
+        p.x = 255;
     }
-    if(p.g < 0) {
-        p.g = 0;
+    if(p.y < 0) {
+        p.y = 0;
     }
-    if(p.g > 255) {
-        p.g = 255;
+    if(p.y > 255) {
+        p.y = 255;
     }
-    if(p.b < 0) {
-        p.b = 0;
+    if(p.z < 0) {
+        p.z = 0;
     }
-    if(p.b > 255) {
-        p.b = 255;
+    if(p.z > 255) {
+        p.z = 255;
     }
 
-    return (uchar4){p.r, p.g, p.b, p.a};
+    return (uchar4){p.x, p.y, p.z, p.w};
 }
 
 

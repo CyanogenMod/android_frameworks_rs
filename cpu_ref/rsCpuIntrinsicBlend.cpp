@@ -143,7 +143,7 @@ void RsdCpuScriptIntrinsicBlend::kernel(const RsForEachStubParamStruct *p,
         for (;x1 < x2; x1++, out++, in++) {
             short4 in_s = convert_short4(*in);
             short4 out_s = convert_short4(*out);
-            in_s = in_s + ((out_s * (short4)(255 - in_s.a)) >> (short4)8);
+            in_s = in_s + ((out_s * (short4)(255 - in_s.w)) >> (short4)8);
             *out = convert_uchar4(in_s);
         }
         break;
@@ -160,7 +160,7 @@ void RsdCpuScriptIntrinsicBlend::kernel(const RsForEachStubParamStruct *p,
         for (;x1 < x2; x1++, out++, in++) {
             short4 in_s = convert_short4(*in);
             short4 out_s = convert_short4(*out);
-            in_s = out_s + ((in_s * (short4)(255 - out_s.a)) >> (short4)8);
+            in_s = out_s + ((in_s * (short4)(255 - out_s.w)) >> (short4)8);
             *out = convert_uchar4(in_s);
         }
         break;
@@ -176,7 +176,7 @@ void RsdCpuScriptIntrinsicBlend::kernel(const RsForEachStubParamStruct *p,
 #endif
         for (;x1 < x2; x1++, out++, in++) {
             short4 in_s = convert_short4(*in);
-            in_s = (in_s * out->a) >> (short4)8;
+            in_s = (in_s * out->w) >> (short4)8;
             *out = convert_uchar4(in_s);
         }
         break;
@@ -192,7 +192,7 @@ void RsdCpuScriptIntrinsicBlend::kernel(const RsForEachStubParamStruct *p,
 #endif
         for (;x1 < x2; x1++, out++, in++) {
             short4 out_s = convert_short4(*out);
-            out_s = (out_s * in->a) >> (short4)8;
+            out_s = (out_s * in->w) >> (short4)8;
             *out = convert_uchar4(out_s);
         }
         break;
@@ -208,7 +208,7 @@ void RsdCpuScriptIntrinsicBlend::kernel(const RsForEachStubParamStruct *p,
 #endif
         for (;x1 < x2; x1++, out++, in++) {
             short4 in_s = convert_short4(*in);
-            in_s = (in_s * (short4)(255 - out->a)) >> (short4)8;
+            in_s = (in_s * (short4)(255 - out->w)) >> (short4)8;
             *out = convert_uchar4(in_s);
         }
         break;
@@ -224,7 +224,7 @@ void RsdCpuScriptIntrinsicBlend::kernel(const RsForEachStubParamStruct *p,
 #endif
         for (;x1 < x2; x1++, out++, in++) {
             short4 out_s = convert_short4(*out);
-            out_s = (out_s * (short4)(255 - in->a)) >> (short4)8;
+            out_s = (out_s * (short4)(255 - in->w)) >> (short4)8;
             *out = convert_uchar4(out_s);
         }
         break;
@@ -241,8 +241,8 @@ void RsdCpuScriptIntrinsicBlend::kernel(const RsForEachStubParamStruct *p,
         for (;x1 < x2; x1++, out++, in++) {
             short4 in_s = convert_short4(*in);
             short4 out_s = convert_short4(*out);
-            out_s.rgb = ((in_s.rgb * out_s.a) +
-              (out_s.rgb * ((short3)255 - (short3)in_s.a))) >> (short3)8;
+            out_s.xyz = ((in_s.xyz * out_s.w) +
+              (out_s.xyz * ((short3)255 - (short3)in_s.w))) >> (short3)8;
             *out = convert_uchar4(out_s);
         }
         break;
@@ -259,8 +259,8 @@ void RsdCpuScriptIntrinsicBlend::kernel(const RsForEachStubParamStruct *p,
         for (;x1 < x2; x1++, out++, in++) {
             short4 in_s = convert_short4(*in);
             short4 out_s = convert_short4(*out);
-            out_s.rgb = ((out_s.rgb * in_s.a) +
-              (in_s.rgb * ((short3)255 - (short3)out_s.a))) >> (short3)8;
+            out_s.xyz = ((out_s.xyz * in_s.w) +
+              (in_s.xyz * ((short3)255 - (short3)out_s.w))) >> (short3)8;
             *out = convert_uchar4(out_s);
         }
         break;
@@ -388,12 +388,12 @@ void RsdCpuScriptIntrinsicBlend::kernel(const RsForEachStubParamStruct *p,
         }
 #endif
         for (;x1 < x2; x1++, out++, in++) {
-            uint32_t iR = in->r, iG = in->g, iB = in->b, iA = in->a,
-                oR = out->r, oG = out->g, oB = out->b, oA = out->a;
-            out->r = (oR + iR) > 255 ? 255 : oR + iR;
-            out->g = (oG + iG) > 255 ? 255 : oG + iG;
-            out->b = (oB + iB) > 255 ? 255 : oB + iB;
-            out->a = (oA + iA) > 255 ? 255 : oA + iA;
+            uint32_t iR = in->x, iG = in->y, iB = in->z, iA = in->w,
+                oR = out->x, oG = out->y, oB = out->z, oA = out->w;
+            out->x = (oR + iR) > 255 ? 255 : oR + iR;
+            out->y = (oG + iG) > 255 ? 255 : oG + iG;
+            out->z = (oB + iB) > 255 ? 255 : oB + iB;
+            out->w = (oA + iA) > 255 ? 255 : oA + iA;
         }
         break;
     case BLEND_SUBTRACT:
@@ -407,12 +407,12 @@ void RsdCpuScriptIntrinsicBlend::kernel(const RsForEachStubParamStruct *p,
         }
 #endif
         for (;x1 < x2; x1++, out++, in++) {
-            int32_t iR = in->r, iG = in->g, iB = in->b, iA = in->a,
-                oR = out->r, oG = out->g, oB = out->b, oA = out->a;
-            out->r = (oR - iR) < 0 ? 0 : oR - iR;
-            out->g = (oG - iG) < 0 ? 0 : oG - iG;
-            out->b = (oB - iB) < 0 ? 0 : oB - iB;
-            out->a = (oA - iA) < 0 ? 0 : oA - iA;
+            int32_t iR = in->x, iG = in->y, iB = in->z, iA = in->w,
+                oR = out->x, oG = out->y, oB = out->z, oA = out->w;
+            out->x = (oR - iR) < 0 ? 0 : oR - iR;
+            out->y = (oG - iG) < 0 ? 0 : oG - iG;
+            out->z = (oB - iB) < 0 ? 0 : oB - iB;
+            out->w = (oA - iA) < 0 ? 0 : oA - iA;
         }
         break;
     case BLEND_STAMP:

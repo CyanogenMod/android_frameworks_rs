@@ -18,10 +18,12 @@
 #include "rsCpuScript.h"
 #include "rsCpuScriptGroup.h"
 
+#ifndef RS_SERVER
 #include <bcc/BCCContext.h>
 #include <bcc/Renderscript/RSCompilerDriver.h>
 #include <bcc/Renderscript/RSExecutable.h>
 #include <bcc/Renderscript/RSInfo.h>
+#endif
 
 #include "rsScript.h"
 #include "rsScriptGroup.h"

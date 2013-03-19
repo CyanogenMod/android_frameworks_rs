@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 The Android Open Source Project
+ * Copyright (C) 2013 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,19 +20,111 @@
 #define LOG_NDEBUG 0
 #define LOG_TAG "RenderScript"
 
+#ifndef RS_SERVER
 #include <utils/Log.h>
-
-#include "rsStream.h"
-
 #include <utils/String8.h>
 #include <utils/Vector.h>
+#include <cutils/atomic.h>
+#endif
+
+#include <stdint.h>
 
 #include <stdlib.h>
 #include <pthread.h>
 #include <time.h>
-#include <cutils/atomic.h>
 
 #include <math.h>
+
+#ifdef RS_SERVER
+
+#include <string>
+#include <vector>
+#include <algorithm>
+
+#define ALOGE(...)
+#define ALOGV(...)
+#define ALOGW(...)
+#define ALOGD(...)
+
+namespace android {
+
+    // server has no Vector or String8 classes; implement on top of STL
+    class String8: public std::string {
+    public:
+    String8(const char *ptr) : std::string(ptr) {
+
+        }
+    String8() : std::string() {
+
+        }
+
+        const char* string() const {
+            return this->c_str();
+        }
+
+        void setTo(const char* str, ssize_t len) {
+            this->assign(str, len);
+        }
+        void setTo(const char* str) {
+            this->assign(str);
+        }
+
+    };
+
+    template <class T> class Vector: public std::vector<T> {
+    public:
+        void push(T obj) {
+            this->push_back(obj);
+        }
+        void removeAt(uint32_t index) {
+            this->erase(this->begin() + index);
+        }
+        ssize_t add(const T& obj) {
+            this->push_back(obj);
+            return this->size() - 1;
+        }
+        void setCapacity(ssize_t capacity) {
+            this->resize(capacity);
+        }
+
+        T* editArray() {
+            return this->data();
+        }
+
+        const T* array() {
+            return this->data();
+        }
+
+    };
+
+    template<> class Vector<bool>: public std::vector<char> {
+    public:
+        void push(bool obj) {
+            this->push_back(obj);
+        }
+        void removeAt(uint32_t index) {
+            this->erase(this->begin() + index);
+        }
+        ssize_t add(const bool& obj) {
+            this->push_back(obj);
+            return this->size() - 1;
+        }
+        void setCapacity(ssize_t capacity) {
+            this->resize(capacity);
+        }
+
+        bool* editArray() {
+            return (bool*)this->data();
+        }
+
+        const bool* array() {
+            return (const bool*)this->data();
+        }
+    };
+
+}
+
+#endif // RS_SERVER
 
 namespace android {
 namespace renderscript {

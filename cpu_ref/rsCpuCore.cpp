@@ -24,10 +24,20 @@
 #include <sys/types.h>
 #include <sys/resource.h>
 #include <sched.h>
-#include <cutils/properties.h>
 #include <sys/syscall.h>
 #include <string.h>
+
+#ifndef RS_SERVER
+#include <cutils/properties.h>
 #include "utils/StopWatch.h"
+#endif
+
+#ifdef RS_SERVER
+// Android exposes gettid(), standard Linux does not
+static pid_t gettid() {
+    return syscall(SYS_gettid);
+}
+#endif
 
 using namespace android;
 using namespace android::renderscript;
@@ -102,8 +112,7 @@ RsdCpuReferenceImpl::RsdCpuReferenceImpl(Context *rsc) {
 void * RsdCpuReferenceImpl::helperThreadProc(void *vrsc) {
     RsdCpuReferenceImpl *dc = (RsdCpuReferenceImpl *)vrsc;
 
-
-    uint32_t idx = (uint32_t)android_atomic_inc(&dc->mWorkers.mLaunchCount);
+    uint32_t idx = __sync_fetch_and_add(&dc->mWorkers.mLaunchCount, 1);
 
     //ALOGV("RS helperThread starting %p idx=%i", dc, idx);
 
@@ -132,7 +141,7 @@ void * RsdCpuReferenceImpl::helperThreadProc(void *vrsc) {
            // idx +1 is used because the calling thread is always worker 0.
            dc->mWorkers.mLaunchCallback(dc->mWorkers.mLaunchData, idx+1);
         }
-        android_atomic_dec(&dc->mWorkers.mRunningCount);
+        __sync_fetch_and_sub(&dc->mWorkers.mRunningCount, 1);
         dc->mWorkers.mCompleteSignal.set();
     }
 
@@ -153,7 +162,9 @@ void RsdCpuReferenceImpl::launchThreads(WorkerCallback_t cbk, void *data) {
         return;
     }
 
-    android_atomic_release_store(mWorkers.mCount, &mWorkers.mRunningCount);
+    mWorkers.mRunningCount = mWorkers.mCount;
+    __sync_synchronize();
+
     for (uint32_t ct = 0; ct < mWorkers.mCount; ct++) {
         mWorkers.mLaunchSignals[ct].set();
     }
@@ -164,7 +175,7 @@ void RsdCpuReferenceImpl::launchThreads(WorkerCallback_t cbk, void *data) {
         mWorkers.mLaunchCallback(mWorkers.mLaunchData, 0);
     }
 
-    while (android_atomic_acquire_load(&mWorkers.mRunningCount) != 0) {
+    while (__sync_fetch_and_or(&mWorkers.mRunningCount, 0) != 0) {
         mWorkers.mCompleteSignal.wait();
     }
 }
@@ -224,8 +235,9 @@ bool RsdCpuReferenceImpl::init(uint32_t version_major, uint32_t version_minor,
 
     mWorkers.mCompleteSignal.init();
 
-    android_atomic_release_store(mWorkers.mCount, &mWorkers.mRunningCount);
-    android_atomic_release_store(0, &mWorkers.mLaunchCount);
+    mWorkers.mRunningCount = mWorkers.mCount;
+    mWorkers.mLaunchCount = 0;
+    __sync_synchronize();
 
     pthread_attr_t threadAttr;
     status = pthread_attr_init(&threadAttr);
@@ -242,7 +254,7 @@ bool RsdCpuReferenceImpl::init(uint32_t version_major, uint32_t version_minor,
             break;
         }
     }
-    while (android_atomic_acquire_load(&mWorkers.mRunningCount) != 0) {
+    while (__sync_fetch_and_or(&mWorkers.mRunningCount, 0) != 0) {
         usleep(100);
     }
 
@@ -261,7 +273,8 @@ RsdCpuReferenceImpl::~RsdCpuReferenceImpl() {
     mExit = true;
     mWorkers.mLaunchData = NULL;
     mWorkers.mLaunchCallback = NULL;
-    android_atomic_release_store(mWorkers.mCount, &mWorkers.mRunningCount);
+    mWorkers.mRunningCount = mWorkers.mCount;
+    __sync_synchronize();
     for (uint32_t ct = 0; ct < mWorkers.mCount; ct++) {
         mWorkers.mLaunchSignals[ct].set();
     }
@@ -269,7 +282,7 @@ RsdCpuReferenceImpl::~RsdCpuReferenceImpl() {
     for (uint32_t ct = 0; ct < mWorkers.mCount; ct++) {
         pthread_join(mWorkers.mThreadId[ct], &res);
     }
-    rsAssert(android_atomic_acquire_load(&mWorkers.mRunningCount) == 0);
+    rsAssert(__sync_fetch_and_or(&mWorkers.mRunningCount, 0) == 0);
 
     // Global structure cleanup.
     lockMutex();
@@ -292,7 +305,7 @@ static void wc_xy(void *usr, uint32_t idx) {
 
     outer_foreach_t fn = (outer_foreach_t) mtls->kernel;
     while (1) {
-        uint32_t slice = (uint32_t)android_atomic_inc(&mtls->mSliceNum);
+        uint32_t slice = (uint32_t)__sync_fetch_and_add(&mtls->mSliceNum, 1);
         uint32_t yStart = mtls->yStart + slice * mtls->mSliceSize;
         uint32_t yEnd = yStart + mtls->mSliceSize;
         yEnd = rsMin(yEnd, mtls->yEnd);
@@ -322,7 +335,7 @@ static void wc_x(void *usr, uint32_t idx) {
 
     outer_foreach_t fn = (outer_foreach_t) mtls->kernel;
     while (1) {
-        uint32_t slice = (uint32_t)android_atomic_inc(&mtls->mSliceNum);
+        uint32_t slice = (uint32_t)__sync_fetch_and_add(&mtls->mSliceNum, 1);
         uint32_t xStart = mtls->xStart + slice * mtls->mSliceSize;
         uint32_t xEnd = xStart + mtls->mSliceSize;
         xEnd = rsMin(xEnd, mtls->xEnd);

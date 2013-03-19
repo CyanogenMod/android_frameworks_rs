@@ -14,14 +14,12 @@
  * limitations under the License.
  */
 
-#define LOG_TAG "libRS_cpp"
-
-#include <utils/Log.h>
 #include <malloc.h>
 #include <string.h>
 
 #include <rs.h>
 #include "RenderScript.h"
+#include "rsUtils.h"
 
 using namespace android;
 using namespace RSC;

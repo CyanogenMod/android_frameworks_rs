@@ -29,11 +29,20 @@
 #include <sys/resource.h>
 #include <sched.h>
 
-#include <cutils/properties.h>
-
 #include <sys/syscall.h>
 #include <string.h>
 #include <dlfcn.h>
+
+#ifndef RS_SERVER
+#include <cutils/properties.h>
+#endif
+
+#ifdef RS_SERVER
+// Android exposes gettid(), standard Linux does not
+static pid_t gettid() {
+    return syscall(SYS_gettid);
+}
+#endif
 
 using namespace android;
 using namespace android::renderscript;
@@ -194,9 +203,13 @@ void Context::setupProgramStore() {
 #endif
 
 static uint32_t getProp(const char *str) {
+#ifndef RS_SERVER
     char buf[PROPERTY_VALUE_MAX];
     property_get(str, buf, "0");
     return atoi(buf);
+#else
+    return 0;
+#endif
 }
 
 void Context::displayDebugStats() {

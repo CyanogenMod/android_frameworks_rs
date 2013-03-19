@@ -135,7 +135,7 @@ void RsdCpuScriptIntrinsic3DLUT::kernel(const RsForEachStubParamStruct *p,
         uint4 v2 = (v + 0x7f) >> (int4)8;
 
         uchar4 ret = convert_uchar4(v2);
-        ret.a = in->a;
+        ret.w = in->w;
 
         #if 0
         if (!x1) {

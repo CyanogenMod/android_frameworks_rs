@@ -15,8 +15,6 @@
  */
 
 #include "rsFifoSocket.h"
-#include "utils/Timers.h"
-#include "utils/StopWatch.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -25,6 +23,11 @@
 #include <poll.h>
 #include <sys/types.h>
 #include <sys/socket.h>
+
+#ifndef RS_SERVER
+#include "utils/Timers.h"
+#include "utils/StopWatch.h"
+#endif
 
 using namespace android;
 using namespace android::renderscript;

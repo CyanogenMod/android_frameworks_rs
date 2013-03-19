@@ -23,10 +23,11 @@
 //#include "rsdAllocation.h"
 //#include "rsCpuIntrinsics.h"
 
-
+#ifndef RS_SERVER
 #include "utils/Vector.h"
 #include "utils/Timers.h"
 #include "utils/StopWatch.h"
+#endif
 
 #ifdef RS_COMPATIBILITY_LIB
     #include <dlfcn.h>
@@ -177,10 +178,14 @@ bool RsdCpuScriptImpl::init(char const *resName, char const *cacheDir,
 
 #else
 
+#ifndef RS_SERVER
     String8 scriptSOName(cacheDir);
     scriptSOName = scriptSOName.getPathDir();
     scriptSOName.appendPath("lib");
     scriptSOName.append("/librs.");
+#else
+    String8 scriptSOName("lib");
+#endif
     scriptSOName.append(resName);
     scriptSOName.append(".so");
 

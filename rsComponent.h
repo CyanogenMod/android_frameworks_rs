@@ -19,7 +19,7 @@
 
 #include "rsUtils.h"
 #include "rsDefines.h"
-
+#include "rsStream.h"
 // ---------------------------------------------------------------------------
 namespace android {
 namespace renderscript {
