@@ -70,7 +70,7 @@ void rsdScriptInvokeForEach(const Context *rsc,
                             const Allocation * ain,
                             Allocation * aout,
                             const void * usr,
-                            uint32_t usrLen,
+                            size_t usrLen,
                             const RsScriptCall *sc) {
 
     RsdCpuReference::CpuScript *cs = (RsdCpuReference::CpuScript *)s->mHal.drv;
