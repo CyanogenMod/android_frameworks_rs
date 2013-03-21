@@ -424,8 +424,16 @@ public class ImageProcessingActivity extends Activity
 
 
         mRS = RenderScript.create(this);
-        mInPixelsAllocation = Allocation.createFromBitmap(mRS, mBitmapIn);
-        mInPixelsAllocation2 = Allocation.createFromBitmap(mRS, mBitmapIn2);
+        mInPixelsAllocation = Allocation.createFromBitmap(mRS, mBitmapIn,
+                                                          Allocation.MipmapControl.MIPMAP_NONE,
+                                                          Allocation.USAGE_SHARED |
+                                                          Allocation.USAGE_GRAPHICS_TEXTURE |
+                                                          Allocation.USAGE_SCRIPT);
+        mInPixelsAllocation2 = Allocation.createFromBitmap(mRS, mBitmapIn2,
+                                                           Allocation.MipmapControl.MIPMAP_NONE,
+                                                           Allocation.USAGE_SHARED |
+                                                           Allocation.USAGE_GRAPHICS_TEXTURE |
+                                                           Allocation.USAGE_SCRIPT);
         mOutPixelsAllocation = Allocation.createFromBitmap(mRS, mBitmapOut);
 
 
