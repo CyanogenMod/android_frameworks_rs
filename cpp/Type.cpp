@@ -19,7 +19,6 @@
 
 #include <rs.h>
 #include "RenderScript.h"
-#include "rsUtils.h"
 
 using namespace android;
 using namespace RSC;

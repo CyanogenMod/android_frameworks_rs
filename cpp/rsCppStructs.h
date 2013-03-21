@@ -17,7 +17,7 @@
 #ifndef ANDROID_RSCPPSTRUCTS_H
 #define ANDROID_RSCPPSTRUCTS_H
 
-#include "rsUtils.h"
+#include "rsCppUtils.h"
 #ifndef RS_SERVER
 #include "utils/RefBase.h"
 #else
