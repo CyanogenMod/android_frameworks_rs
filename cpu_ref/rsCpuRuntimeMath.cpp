@@ -27,15 +27,29 @@
 #include "rsCpuCore.h"
 #include "rsCpuScript.h"
 
-
 using namespace android;
 using namespace android::renderscript;
 
+#define EXPORT_F32_FN_F32(func)                                 \
+    float __attribute__((overloadable)) SC_##func(float v) {    \
+        return func(v);                                         \
+    }
+
+#define EXPORT_F32_FN_F32_F32(func)                                     \
+    float __attribute__((overloadable)) SC_##func(float t, float v) {   \
+        return func(t, v);                                              \
+    }
 
 //////////////////////////////////////////////////////////////////////////////
 // Float util
 //////////////////////////////////////////////////////////////////////////////
 
+// Handle missing Gingerbread functions like tgammaf.
+float SC_tgammaf(float x) {
+    return tgamma(x);
+}
+
+uint32_t SC_abs_i32(int32_t v) {return abs(v);}
 
 static void SC_MatrixLoadRotate(Matrix4x4 *m, float rot, float x, float y, float z) {
     m->loadRotate(rot, x, y, z);
@@ -94,6 +108,54 @@ static float SC_frac(float v) {
     return fmin(v - i, 0x1.fffffep-1f);
 }
 
+#ifdef RS_COMPATIBILITY_LIB
+EXPORT_F32_FN_F32(acosf)
+EXPORT_F32_FN_F32(acoshf)
+EXPORT_F32_FN_F32(asinf)
+EXPORT_F32_FN_F32(asinhf)
+EXPORT_F32_FN_F32(atanf)
+EXPORT_F32_FN_F32_F32(atan2f)
+EXPORT_F32_FN_F32(atanhf)
+EXPORT_F32_FN_F32(cbrtf)
+EXPORT_F32_FN_F32(ceilf)
+EXPORT_F32_FN_F32_F32(copysignf)
+EXPORT_F32_FN_F32(cosf)
+EXPORT_F32_FN_F32(coshf)
+EXPORT_F32_FN_F32(erfcf)
+EXPORT_F32_FN_F32(erff)
+EXPORT_F32_FN_F32(expf)
+EXPORT_F32_FN_F32(exp2f)
+EXPORT_F32_FN_F32(expm1f)
+EXPORT_F32_FN_F32_F32(fdimf)
+EXPORT_F32_FN_F32(floorf)
+float SC_fmaf(float u, float t, float v) {return fmaf(u, t, v);}
+EXPORT_F32_FN_F32_F32(fmaxf)
+EXPORT_F32_FN_F32_F32(fminf)
+EXPORT_F32_FN_F32_F32(fmodf)
+float SC_frexpf(float v, int* ptr) {return frexpf(v, ptr);}
+EXPORT_F32_FN_F32_F32(hypotf)
+EXPORT_F32_FN_F32(ilogbf)
+float SC_ldexpf(float v, int i) {return ldexpf(v, i);}
+EXPORT_F32_FN_F32(lgammaf)
+float SC_lgammaf_r(float v, int* ptr) {return lgammaf_r(v, ptr);}
+EXPORT_F32_FN_F32(logf)
+EXPORT_F32_FN_F32(log10f)
+EXPORT_F32_FN_F32(log1pf)
+EXPORT_F32_FN_F32(logbf)
+float SC_modff(float v, float* ptr) {return modff(v, ptr);}
+EXPORT_F32_FN_F32_F32(nextafterf)
+EXPORT_F32_FN_F32_F32(powf)
+EXPORT_F32_FN_F32_F32(remainderf)
+float SC_remquof(float t, float v, int* ptr) {return remquof(t, v, ptr);}
+EXPORT_F32_FN_F32(rintf)
+EXPORT_F32_FN_F32(roundf)
+EXPORT_F32_FN_F32(sinf)
+EXPORT_F32_FN_F32(sinhf)
+EXPORT_F32_FN_F32(sqrtf)
+EXPORT_F32_FN_F32(tanf)
+EXPORT_F32_FN_F32(tanhf)
+EXPORT_F32_FN_F32(truncf)
+#endif
 
 //////////////////////////////////////////////////////////////////////////////
 // Class implementation
