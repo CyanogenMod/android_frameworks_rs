@@ -84,3 +84,40 @@ PathCreate {
     param float quality
     ret RsPath
     }
+
+ContextBindProgramStore {
+    param RsProgramStore pgm
+    }
+
+ContextBindProgramFragment {
+    param RsProgramFragment pgm
+    }
+
+ContextBindProgramVertex {
+    param RsProgramVertex pgm
+    }
+
+ContextBindProgramRaster {
+    param RsProgramRaster pgm
+    }
+
+ContextBindFont {
+    param RsFont pgm
+    }
+
+ContextSetSurface {
+    param uint32_t width
+    param uint32_t height
+    param RsNativeWindow sur
+        sync
+    }
+
+ContextBindRootScript {
+    param RsScript sampler
+    }
+
+ContextPause {
+    }
+
+ContextResume {
+    }

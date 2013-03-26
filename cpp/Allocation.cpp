@@ -317,7 +317,7 @@ android::sp<Allocation> Allocation::createTyped(sp<RS> rs, sp<const Type> type,
                                                 RsAllocationMipmapControl mips, uint32_t usage,
                                                 void *pointer) {
     void *id = rsAllocationCreateTyped(rs->getContext(), type->getID(), mips, usage,
-                                       (uint32_t)pointer);
+                                       (uintptr_t)pointer);
     if (id == 0) {
         ALOGE("Allocation creation failed.");
     }

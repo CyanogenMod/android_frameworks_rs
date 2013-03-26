@@ -346,7 +346,7 @@ RsType rsi_TypeCreate(Context *rsc, RsElement _e, uint32_t dimX,
 }
 }
 
-void rsaTypeGetNativeData(RsContext con, RsType type, uint32_t *typeData, uint32_t typeDataSize) {
+void rsaTypeGetNativeData(RsContext con, RsType type, uintptr_t *typeData, uint32_t typeDataSize) {
     rsAssert(typeDataSize == 6);
     // Pack the data in the follofing way mHal.state.dimX; mHal.state.dimY; mHal.state.dimZ;
     // mHal.state.lodCount; mHal.state.faces; mElement; into typeData
@@ -357,6 +357,6 @@ void rsaTypeGetNativeData(RsContext con, RsType type, uint32_t *typeData, uint32
     (*typeData++) = t->getDimZ();
     (*typeData++) = t->getDimLOD() ? 1 : 0;
     (*typeData++) = t->getDimFaces() ? 1 : 0;
-    (*typeData++) = (uint32_t)t->getElement();
+    (*typeData++) = (uintptr_t)t->getElement();
     t->getElement()->incUserRef();
 }

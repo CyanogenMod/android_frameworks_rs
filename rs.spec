@@ -48,7 +48,7 @@ AllocationCreateTyped {
     param RsType vtype
     param RsAllocationMipmapControl mips
     param uint32_t usages
-    param uint32_t ptr
+    param uintptr_t ptr
     ret RsAllocation
 }
 
@@ -84,43 +84,6 @@ AllocationSetSurface {
 
 ContextFinish {
     sync
-    }
-
-ContextBindRootScript {
-    param RsScript sampler
-    }
-
-ContextBindProgramStore {
-    param RsProgramStore pgm
-    }
-
-ContextBindProgramFragment {
-    param RsProgramFragment pgm
-    }
-
-ContextBindProgramVertex {
-    param RsProgramVertex pgm
-    }
-
-ContextBindProgramRaster {
-    param RsProgramRaster pgm
-    }
-
-ContextBindFont {
-    param RsFont pgm
-    }
-
-ContextPause {
-    }
-
-ContextResume {
-    }
-
-ContextSetSurface {
-    param uint32_t width
-    param uint32_t height
-    param RsNativeWindow sur
-        sync
     }
 
 ContextDump {

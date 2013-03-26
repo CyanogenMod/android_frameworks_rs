@@ -40,7 +40,7 @@ void rsdScriptInvokeForEach(const android::renderscript::Context *rsc,
                             const android::renderscript::Allocation * ain,
                             android::renderscript::Allocation * aout,
                             const void * usr,
-                            uint32_t usrLen,
+                            size_t usrLen,
                             const RsScriptCall *sc);
 
 int rsdScriptInvokeRoot(const android::renderscript::Context *dc,

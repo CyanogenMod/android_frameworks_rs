@@ -526,7 +526,7 @@ void rsdAllocationResize(const Context *rsc, const Allocation *alloc,
 
 
     if (dimX > oldDimX) {
-        uint32_t stride = alloc->mHal.state.elementSizeBytes;
+        size_t stride = alloc->mHal.state.elementSizeBytes;
         memset(((uint8_t *)alloc->mHal.drvState.lod[0].mallocPtr) + stride * oldDimX,
                  0, stride * (dimX - oldDimX));
     }
@@ -797,13 +797,13 @@ void rsdAllocationIoReceive(const Context *rsc, Allocation *alloc) {
 
 
 void rsdAllocationData1D(const Context *rsc, const Allocation *alloc,
-                         uint32_t xoff, uint32_t lod, uint32_t count,
+                         uint32_t xoff, uint32_t lod, size_t count,
                          const void *data, size_t sizeBytes) {
     DrvAllocation *drv = (DrvAllocation *)alloc->mHal.drv;
 
-    const uint32_t eSize = alloc->mHal.state.type->getElementSizeBytes();
+    const size_t eSize = alloc->mHal.state.type->getElementSizeBytes();
     uint8_t * ptr = GetOffsetPtr(alloc, xoff, 0, 0, RS_ALLOCATION_CUBEMAP_FACE_POSITIVE_X);
-    uint32_t size = count * eSize;
+    size_t size = count * eSize;
 
     if (ptr != data) {
         // Skip the copy if we are the same allocation. This can arise from
@@ -822,8 +822,8 @@ void rsdAllocationData2D(const Context *rsc, const Allocation *alloc,
                          uint32_t w, uint32_t h, const void *data, size_t sizeBytes, size_t stride) {
     DrvAllocation *drv = (DrvAllocation *)alloc->mHal.drv;
 
-    uint32_t eSize = alloc->mHal.state.elementSizeBytes;
-    uint32_t lineSize = eSize * w;
+    size_t eSize = alloc->mHal.state.elementSizeBytes;
+    size_t lineSize = eSize * w;
     if (!stride) {
         stride = lineSize;
     }
@@ -850,7 +850,7 @@ void rsdAllocationData2D(const Context *rsc, const Allocation *alloc,
         if (alloc->mHal.state.yuv) {
             int lod = 1;
             while (alloc->mHal.drvState.lod[lod].mallocPtr) {
-                uint32_t lineSize = alloc->mHal.drvState.lod[lod].dimX;
+                size_t lineSize = alloc->mHal.drvState.lod[lod].dimX;
                 uint8_t *dst = GetOffsetPtr(alloc, xoff, yoff, lod, face);
 
                 for (uint32_t line=(yoff >> 1); line < ((yoff+h)>>1); line++) {
@@ -871,14 +871,14 @@ void rsdAllocationData2D(const Context *rsc, const Allocation *alloc,
 void rsdAllocationData3D(const Context *rsc, const Allocation *alloc,
                          uint32_t xoff, uint32_t yoff, uint32_t zoff,
                          uint32_t lod, RsAllocationCubemapFace face,
-                         uint32_t w, uint32_t h, uint32_t d, const void *data, uint32_t sizeBytes) {
+                         uint32_t w, uint32_t h, uint32_t d, const void *data, size_t sizeBytes) {
 
 }
 
 void rsdAllocationRead1D(const Context *rsc, const Allocation *alloc,
-                         uint32_t xoff, uint32_t lod, uint32_t count,
+                         uint32_t xoff, uint32_t lod, size_t count,
                          void *data, size_t sizeBytes) {
-    const uint32_t eSize = alloc->mHal.state.type->getElementSizeBytes();
+    const size_t eSize = alloc->mHal.state.type->getElementSizeBytes();
     const uint8_t * ptr = GetOffsetPtr(alloc, xoff, 0, 0, RS_ALLOCATION_CUBEMAP_FACE_POSITIVE_X);
     if (data != ptr) {
         // Skip the copy if we are the same allocation. This can arise from
@@ -890,8 +890,8 @@ void rsdAllocationRead1D(const Context *rsc, const Allocation *alloc,
 void rsdAllocationRead2D(const Context *rsc, const Allocation *alloc,
                                 uint32_t xoff, uint32_t yoff, uint32_t lod, RsAllocationCubemapFace face,
                                 uint32_t w, uint32_t h, void *data, size_t sizeBytes, size_t stride) {
-    uint32_t eSize = alloc->mHal.state.elementSizeBytes;
-    uint32_t lineSize = eSize * w;
+    size_t eSize = alloc->mHal.state.elementSizeBytes;
+    size_t lineSize = eSize * w;
     if (!stride) {
         stride = lineSize;
     }
@@ -919,7 +919,7 @@ void rsdAllocationRead2D(const Context *rsc, const Allocation *alloc,
 void rsdAllocationRead3D(const Context *rsc, const Allocation *alloc,
                          uint32_t xoff, uint32_t yoff, uint32_t zoff,
                          uint32_t lod, RsAllocationCubemapFace face,
-                         uint32_t w, uint32_t h, uint32_t d, void *data, uint32_t sizeBytes) {
+                         uint32_t w, uint32_t h, uint32_t d, void *data, size_t sizeBytes) {
 
 }
 
@@ -935,7 +935,7 @@ void rsdAllocationUnlock1D(const android::renderscript::Context *rsc,
 
 void rsdAllocationData1D_alloc(const android::renderscript::Context *rsc,
                                const android::renderscript::Allocation *dstAlloc,
-                               uint32_t dstXoff, uint32_t dstLod, uint32_t count,
+                               uint32_t dstXoff, uint32_t dstLod, size_t count,
                                const android::renderscript::Allocation *srcAlloc,
                                uint32_t srcXoff, uint32_t srcLod) {
 }
@@ -948,7 +948,7 @@ void rsdAllocationData2D_alloc_script(const android::renderscript::Context *rsc,
                                       const android::renderscript::Allocation *srcAlloc,
                                       uint32_t srcXoff, uint32_t srcYoff, uint32_t srcLod,
                                       RsAllocationCubemapFace srcFace) {
-    uint32_t elementSize = dstAlloc->getType()->getElementSizeBytes();
+    size_t elementSize = dstAlloc->getType()->getElementSizeBytes();
     for (uint32_t i = 0; i < h; i ++) {
         uint8_t *dstPtr = GetOffsetPtr(dstAlloc, dstXoff, dstYoff + i, dstLod, dstFace);
         uint8_t *srcPtr = GetOffsetPtr(srcAlloc, srcXoff, srcYoff + i, srcLod, srcFace);
@@ -988,10 +988,10 @@ void rsdAllocationData3D_alloc(const android::renderscript::Context *rsc,
 
 void rsdAllocationElementData1D(const Context *rsc, const Allocation *alloc,
                                 uint32_t x,
-                                const void *data, uint32_t cIdx, uint32_t sizeBytes) {
+                                const void *data, uint32_t cIdx, size_t sizeBytes) {
     DrvAllocation *drv = (DrvAllocation *)alloc->mHal.drv;
 
-    uint32_t eSize = alloc->mHal.state.elementSizeBytes;
+    size_t eSize = alloc->mHal.state.elementSizeBytes;
     uint8_t * ptr = GetOffsetPtr(alloc, x, 0, 0, RS_ALLOCATION_CUBEMAP_FACE_POSITIVE_X);
 
     const Element * e = alloc->mHal.state.type->getElement()->getField(cIdx);
@@ -1008,10 +1008,10 @@ void rsdAllocationElementData1D(const Context *rsc, const Allocation *alloc,
 
 void rsdAllocationElementData2D(const Context *rsc, const Allocation *alloc,
                                 uint32_t x, uint32_t y,
-                                const void *data, uint32_t cIdx, uint32_t sizeBytes) {
+                                const void *data, uint32_t cIdx, size_t sizeBytes) {
     DrvAllocation *drv = (DrvAllocation *)alloc->mHal.drv;
 
-    uint32_t eSize = alloc->mHal.state.elementSizeBytes;
+    size_t eSize = alloc->mHal.state.elementSizeBytes;
     uint8_t * ptr = GetOffsetPtr(alloc, x, y, 0, RS_ALLOCATION_CUBEMAP_FACE_POSITIVE_X);
 
     const Element * e = alloc->mHal.state.type->getElement()->getField(cIdx);
