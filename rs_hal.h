@@ -112,7 +112,7 @@ typedef struct {
                               const Allocation * ain,
                               Allocation * aout,
                               const void * usr,
-                              uint32_t usrLen,
+                              size_t usrLen,
                               const RsScriptCall *sc);
         void (*invokeInit)(const Context *rsc, Script *s);
         void (*invokeFreeChildren)(const Context *rsc, Script *s);
@@ -153,7 +153,7 @@ typedef struct {
         void (*ioReceive)(const Context *rsc, Allocation *alloc);
 
         void (*data1D)(const Context *rsc, const Allocation *alloc,
-                       uint32_t xoff, uint32_t lod, uint32_t count,
+                       uint32_t xoff, uint32_t lod, size_t count,
                        const void *data, size_t sizeBytes);
         void (*data2D)(const Context *rsc, const Allocation *alloc,
                        uint32_t xoff, uint32_t yoff, uint32_t lod,
@@ -165,7 +165,7 @@ typedef struct {
                        uint32_t w, uint32_t h, uint32_t d, const void *data, size_t sizeBytes);
 
         void (*read1D)(const Context *rsc, const Allocation *alloc,
-                       uint32_t xoff, uint32_t lod, uint32_t count,
+                       uint32_t xoff, uint32_t lod, size_t count,
                        void *data, size_t sizeBytes);
         void (*read2D)(const Context *rsc, const Allocation *alloc,
                        uint32_t xoff, uint32_t yoff, uint32_t lod,
@@ -185,7 +185,7 @@ typedef struct {
         // Allocation to allocation copies
         void (*allocData1D)(const Context *rsc,
                             const Allocation *dstAlloc,
-                            uint32_t dstXoff, uint32_t dstLod, uint32_t count,
+                            uint32_t dstXoff, uint32_t dstLod, size_t count,
                             const Allocation *srcAlloc, uint32_t srcXoff, uint32_t srcLod);
         void (*allocData2D)(const Context *rsc,
                             const Allocation *dstAlloc,

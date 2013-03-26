@@ -189,7 +189,7 @@ static void OneVFU1(float *out,
 
     int len = x2 - x1;
 
-    while((x2 > x1) && (((int)ptrIn) & 0x3)) {
+    while((x2 > x1) && (((uintptr_t)ptrIn) & 0x3)) {
         const uchar *pi = ptrIn;
         float blurredPixel = 0;
         const float* gp = gPtr;
@@ -359,7 +359,7 @@ void RsdCpuScriptIntrinsicBlur::kernelU1(const RsForEachStubParamStruct *p,
 
     x1 = xstart;
     while ((x1 < x2) &&
-           ((x1 < (uint32_t)cp->mIradius) || (((int)out) & 0x3))) {
+           ((x1 < (uint32_t)cp->mIradius) || (((uintptr_t)out) & 0x3))) {
         OneHU1(p, out, x1, buf, cp->mFp, cp->mIradius);
         out++;
         x1++;

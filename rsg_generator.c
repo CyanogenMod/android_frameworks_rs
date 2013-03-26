@@ -248,9 +248,9 @@ void printApiCpp(FILE *f) {
             fprintf(f, "    }\n\n");
 
             fprintf(f, "    ThreadIO *io = &((Context *)rsc)->mIO;\n");
-            fprintf(f, "    const uint32_t size = sizeof(RS_CMD_%s);\n", api->name);
+            fprintf(f, "    const size_t size = sizeof(RS_CMD_%s);\n", api->name);
             if (hasInlineDataPointers(api)) {
-                fprintf(f, "    uint32_t dataSize = 0;\n");
+                fprintf(f, "    size_t dataSize = 0;\n");
                 for (ct2=0; ct2 < api->paramCount; ct2++) {
                     const VarType *vt = &api->params[ct2];
                     if (vt->isConst && vt->ptrLevel) {
@@ -659,7 +659,7 @@ int main(int argc, char **argv) {
             printPlaybackFuncs(f, "rsp_");
             fprintf(f, "\n\ntypedef struct RsPlaybackRemoteHeaderRec {\n");
             fprintf(f, "    uint32_t command;\n");
-            fprintf(f, "    uint32_t size;\n");
+            fprintf(f, "    size_t size;\n");
             fprintf(f, "} RsPlaybackRemoteHeader;\n\n");
             fprintf(f, "typedef void (*RsPlaybackLocalFunc)(Context *, const void *, size_t sizeBytes);\n");
             fprintf(f, "typedef void (*RsPlaybackRemoteFunc)(Context *, ThreadIO *);\n");

@@ -199,7 +199,7 @@ void rsi_ScriptSetVarObj(Context *rsc, RsScript vs, uint32_t slot, RsObjectBase 
     s->setVarObj(slot, o);
 }
 
-void rsi_ScriptSetVarJ(Context *rsc, RsScript vs, uint32_t slot, long long value) {
+void rsi_ScriptSetVarJ(Context *rsc, RsScript vs, uint32_t slot, int64_t value) {
     Script *s = static_cast<Script *>(vs);
     s->setVar(slot, &value, sizeof(value));
 }

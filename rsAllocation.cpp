@@ -549,8 +549,8 @@ void rsi_AllocationResize2D(Context *rsc, RsAllocation va, uint32_t dimX, uint32
 
 RsAllocation rsi_AllocationCreateTyped(Context *rsc, RsType vtype,
                                        RsAllocationMipmapControl mips,
-                                       uint32_t usages, uint32_t ptr) {
-    Allocation * alloc = Allocation::createAllocation(rsc, static_cast<Type *>(vtype), usages, mips, (void *)ptr);
+                                       uint32_t usages, uintptr_t ptr) {
+    Allocation * alloc = Allocation::createAllocation(rsc, static_cast<Type *>(vtype), usages, mips, (void*)ptr);
     if (!alloc) {
         return NULL;
     }
