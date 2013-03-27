@@ -72,6 +72,31 @@ typedef uint32_t uint;
 typedef uint64_t ulong;
 #endif
 
+#ifdef RS_COMPATIBILITY_LIB
+#define OPAQUETYPE(t) \
+    typedef struct { const int* const p; } __attribute__((packed, aligned(4))) t;
+
+OPAQUETYPE(rs_element)
+OPAQUETYPE(rs_type)
+OPAQUETYPE(rs_allocation)
+OPAQUETYPE(rs_sampler)
+OPAQUETYPE(rs_script)
+OPAQUETYPE(rs_script_call)
+#undef OPAQUETYPE
+
+typedef struct {
+    int tm_sec;     ///< seconds
+    int tm_min;     ///< minutes
+    int tm_hour;    ///< hours
+    int tm_mday;    ///< day of the month
+    int tm_mon;     ///< month
+    int tm_year;    ///< year
+    int tm_wday;    ///< day of the week
+    int tm_yday;    ///< day of the year
+    int tm_isdst;   ///< daylight savings time
+} rs_tm;
+#endif
+
 //////////////////////////////////////////////////////////////////////////////
 // Allocation
 //////////////////////////////////////////////////////////////////////////////
@@ -480,10 +505,17 @@ static float SC_GetDt() {
     return rsrGetDt(rsc, sc);
 }
 
+#ifndef RS_COMPATIBILITY_LIB
 time_t SC_Time(time_t *timer) {
     Context *rsc = RsdCpuReference::getTlsContext();
     return rsrTime(rsc, timer);
 }
+#else
+static int SC_Time(int *timer) {
+    Context *rsc = RsdCpuReference::getTlsContext();
+    return rsrTime(rsc, (long*)timer);
+}
+#endif
 
 tm* SC_LocalTime(tm *local, time_t *timer) {
     Context *rsc = RsdCpuReference::getTlsContext();
@@ -1140,6 +1172,68 @@ static RsdCpuReference::CpuSymbol gSyms[] = {
 
 #ifdef RS_COMPATIBILITY_LIB
 
+//////////////////////////////////////////////////////////////////////////////
+// Compatibility Library entry points
+//////////////////////////////////////////////////////////////////////////////
+
+bool rsIsObject(rs_element src) {
+    return SC_IsObject((ObjectBase*)src.p);
+}
+
+#define CLEAR_SET_OBJ(t) \
+    void __attribute__((overloadable)) rsClearObject(t *dst) { \
+    return SC_ClearObject((ObjectBase**) dst); \
+    } \
+    void __attribute__((overloadable)) rsSetObject(t *dst, t src) { \
+    return SC_SetObject((ObjectBase**) dst, (ObjectBase*) src.p); \
+    }
+
+CLEAR_SET_OBJ(rs_element)
+CLEAR_SET_OBJ(rs_type)
+CLEAR_SET_OBJ(rs_allocation)
+CLEAR_SET_OBJ(rs_sampler)
+CLEAR_SET_OBJ(rs_script)
+#undef CLEAR_SET_OBJ
+
+const Allocation * rsGetAllocation(const void *ptr) {
+    return SC_GetAllocation(ptr);
+}
+
+void __attribute__((overloadable)) rsForEach(rs_script script,
+                                             rs_allocation in,
+                                             rs_allocation out,
+                                             const void *usr,
+                                             const rs_script_call *call) {
+    return SC_ForEach_SAAUS((Script *)script.p, (Allocation*)in.p, (Allocation*)out.p, usr, (RsScriptCall*)call);
+}
+
+void __attribute__((overloadable)) rsForEach(rs_script script,
+                                             rs_allocation in,
+                                             rs_allocation out,
+                                             const void *usr,
+                                             uint32_t usrLen,
+                                             const rs_script_call *call) {
+    return SC_ForEach_SAAULS((Script *)script.p, (Allocation*)in.p, (Allocation*)out.p, usr, usrLen, (RsScriptCall*)call);
+}
+
+int rsTime(int *timer) {
+    return SC_Time(timer);
+}
+
+rs_tm* rsLocaltime(rs_tm* local, const int *timer) {
+    return (rs_tm*)(SC_LocalTime((tm*)local, (long*)timer));
+}
+
+int64_t rsUptimeMillis() {
+    Context *rsc = RsdCpuReference::getTlsContext();
+    return rsrUptimeMillis(rsc);
+}
+
+uint32_t rsSendToClientBlocking2(int cmdID, void *data, int len) {
+    Context *rsc = RsdCpuReference::getTlsContext();
+    return rsrToClientBlocking(rsc, cmdID, data, len);
+}
+
 uint32_t rsSendToClientBlocking(int cmdID) {
     Context *rsc = RsdCpuReference::getTlsContext();
     return rsrToClientBlocking(rsc, cmdID, NULL, 0);
@@ -1323,11 +1417,11 @@ void rsDebug(const char *s, rs_matrix4x4 *m) {
 }
 
 void rsDebug(const char *s, rs_matrix3x3 *m) {
-    SC_debugFM4v4(s, (float *) m);
+    SC_debugFM3v3(s, (float *) m);
 }
 
 void rsDebug(const char *s, rs_matrix2x2 *m) {
-    SC_debugFM4v4(s, (float *) m);
+    SC_debugFM2v2(s, (float *) m);
 }
 
 void rsDebug(const char *s, char c) {
