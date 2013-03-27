@@ -29,19 +29,34 @@
 #include <GLES/glext.h>
 #endif
 
+using namespace android;
+using namespace android::renderscript;
+
+#if 0
+
 typedef float float2 __attribute__((ext_vector_type(2)));
 typedef float float3 __attribute__((ext_vector_type(3)));
 typedef float float4 __attribute__((ext_vector_type(4)));
 typedef uint8_t uchar4 __attribute__((ext_vector_type(4)));
 
-using namespace android;
-using namespace android::renderscript;
 
 #if defined(ARCH_ARM_HAVE_VFP)
     #define LOCAL_CALL __attribute__((pcs("aapcs-vfp")))
 #else
     #define LOCAL_CALL
 #endif
+
+extern "C" {
+    typedef float4 Sampler2DFn(const uint8_t *p, size_t stride,
+                               int lx, int ly, int nx, int ny,
+                               float w0, float w1, float w2, float w3) LOCAL_CALL;
+
+    Sampler2DFn rsdCpuGetSample2D_L_k;
+    Sampler2DFn rsdCpuGetSample2D_A_k;
+    Sampler2DFn rsdCpuGetSample2D_LA_k;
+    Sampler2DFn rsdCpuGetSample2D_RGB_k;
+    Sampler2DFn rsdCpuGetSample2D_RGBA_k;
+}
 
 // 565 Conversion bits taken from SkBitmap
 #define SK_R16_BITS     5
@@ -217,6 +232,7 @@ static float4 LOCAL_CALL
 }
 
 
+#if 1
 static float4 LOCAL_CALL
             getSample2D_A(const uint8_t *p, size_t stride,
                           int locX, int locY, int nextX, int nextY,
@@ -281,6 +297,7 @@ static float4 LOCAL_CALL
     r *= (1.f / 255.f);
     return r;
 }
+#endif
 static float4 getSample2D_565(const uint8_t *p, size_t stride,
                          int locX, int locY, int nextX, int nextY,
                          float w0, float w1, float w2, float w3) {
@@ -294,18 +311,6 @@ static float4 getSample2D_565(const uint8_t *p, size_t stride,
     return ret;
 }
 
-
-extern "C" {
-    typedef float4 Sampler2DFn(const uint8_t *p, size_t stride,
-                               int lx, int ly, int nx, int ny,
-                               float w0, float w1, float w2, float w3) LOCAL_CALL;
-
-    Sampler2DFn rsdCpuGetSample2D_L_k;
-    Sampler2DFn rsdCpuGetSample2D_A_k;
-    Sampler2DFn rsdCpuGetSample2D_LA_k;
-    Sampler2DFn rsdCpuGetSample2D_RGB_k;
-    Sampler2DFn rsdCpuGetSample2D_RGBA_k;
-}
 
 #if 0
 static Sampler2DFn* GetBilinearSampleTable2D[] = {
@@ -518,6 +523,54 @@ static float4
 }
 
 static float4
+        sample_LOD_LinearPixel_Clamp(Allocation *a, const Type *type,
+                               RsDataKind dk, RsDataType dt,
+                               Sampler *s, float u, float v, int32_t lod) {
+    const RsSamplerValue wrapS = s->mHal.state.wrapS;
+    const RsSamplerValue wrapT = s->mHal.state.wrapT;
+    const int sourceW = type->mHal.state.lodDimX[lod];
+    const int sourceH = type->mHal.state.lodDimY[lod];
+
+    float pixelU = u * (float)sourceW;
+    float pixelV = v * (float)sourceH;
+    int iPixelU = (int)pixelU;
+    int iPixelV = (int)pixelV;
+
+    float fracU = pixelU - iPixelU;
+    float fracV = pixelV - iPixelV;
+
+    if (fracU < 0.5f) {
+        iPixelU -= 1;
+        fracU += 0.5f;
+    } else {
+        fracU -= 0.5f;
+    }
+    if (fracV < 0.5f) {
+        iPixelV -= 1;
+        fracV += 0.5f;
+    } else {
+        fracV -= 0.5f;
+    }
+    float oneMinusFracU = 1.0f - fracU;
+    float oneMinusFracV = 1.0f - fracV;
+
+    float w1 = oneMinusFracU * oneMinusFracV;
+    float w2 = fracU * oneMinusFracV;
+    float w3 = oneMinusFracU * fracV;
+    float w4 = fracU * fracV;
+
+    int nextX = rsMax(0, rsMin(iPixelU + 1, sourceW - 1));
+    int nextY = rsMax(0, rsMin(iPixelV + 1, sourceH - 1));
+    int locX = rsMax(0, rsMin(iPixelU, sourceW - 1));
+    int locY = rsMax(0, rsMin(iPixelV, sourceH - 1));
+
+    const uint8_t *ptr = (const uint8_t *)a->mHal.drvState.lod[lod].mallocPtr;
+    size_t stride = a->mHal.drvState.lod[lod].stride;
+
+    return GetBilinearSampleTable2D[dk](ptr, stride, locX, locY, nextX, nextY, w1, w2, w3, w4);
+}
+
+static float4
         sample_LOD_NearestPixel(Allocation *a, const Type *type,
                                 RsDataKind dk, RsDataType dt,
                                 Sampler *s,
@@ -670,6 +723,47 @@ static float4 GenericSample2D(Allocation *a, Sampler *s, float u, float v, float
 }
 
 
+static float4 GenericSample2D_Clamp(Allocation *a, Sampler *s, float u, float v, float lod) {
+    const Type *type = a->getType();
+    const Element *elem = type->getElement();
+    const RsDataKind dk = elem->getKind();
+    const RsDataType dt = elem->getType();
+
+    if (!(a->mHal.state.usageFlags & RS_ALLOCATION_USAGE_GRAPHICS_TEXTURE)) {
+        const Context *rsc = RsdCpuReference::getTlsContext();
+        rsc->setError(RS_ERROR_BAD_VALUE, "Sampling from texture witout USAGE_GRAPHICS_TEXTURE.");
+        return 0.f;
+    }
+
+    if (lod <= 0.0f) {
+        if (s->mHal.state.magFilter == RS_SAMPLER_NEAREST) {
+            return sample_LOD_NearestPixel(a, type, dk, dt, s, u, v, 0);
+        }
+        return sample_LOD_LinearPixel_Clamp(a, type, dk, dt, s, u, v, 0);
+    }
+
+    if (s->mHal.state.minFilter == RS_SAMPLER_LINEAR_MIP_NEAREST) {
+        int32_t maxLOD = type->mHal.state.lodCount - 1;
+        lod = rsMin(lod, (float)maxLOD);
+        int32_t nearestLOD = (int32_t)round(lod);
+        return sample_LOD_LinearPixel_Clamp(a, type, dk, dt, s, u, v, nearestLOD);
+    }
+
+    if (s->mHal.state.minFilter == RS_SAMPLER_LINEAR_MIP_LINEAR) {
+        int32_t lod0 = (int32_t)floor(lod);
+        int32_t lod1 = (int32_t)ceil(lod);
+        int32_t maxLOD = type->mHal.state.lodCount - 1;
+        lod0 = rsMin(lod0, maxLOD);
+        lod1 = rsMin(lod1, maxLOD);
+        float4 sample0 = sample_LOD_LinearPixel_Clamp(a, type, dk, dt, s, u, v, lod0);
+        float4 sample1 = sample_LOD_LinearPixel_Clamp(a, type, dk, dt, s, u, v, lod1);
+        float frac = lod - (float)lod0;
+        return sample0 * (1.0f - frac) + sample1 * frac;
+    }
+
+    return sample_LOD_NearestPixel(a, type, dk, dt, s, u, v, 0);
+}
+
 
 
 // Must match pixel kind in rsDefines.h
@@ -756,11 +850,11 @@ static void * LinearClamp[] = {
     0,
     (void *) GenericSample1D,                // YUV
 
-    (void *) GenericSample2D,                // L,
-    (void *) GenericSample2D,                // A,
-    (void *) GenericSample2D,                // LA,
+    (void *) GenericSample2D_Clamp,                // L,
+    (void *) GenericSample2D_Clamp,                // A,
+    (void *) GenericSample2D_Clamp,                // LA,
     (void *) GenericSample2D,                // RGB,
-    (void *) GenericSample2D,                // RGBA,
+    (void *) GenericSample2D_Clamp,          // RGBA,
     0,
     (void *) GenericSample2D,                // YUV
 };
@@ -802,8 +896,10 @@ static void * Generic[] = {
     0,
     (void *) GenericSample2D,                // YUV
 };
+#endif
 
 bool rsdSamplerInit(const Context *, const Sampler *s) {
+#if 0
     s->mHal.drv = Generic;
 
     if ((s->mHal.state.minFilter == s->mHal.state.magFilter) &&
@@ -862,7 +958,7 @@ bool rsdSamplerInit(const Context *, const Sampler *s) {
         }
 
     }
-
+#endif
     return true;
 }
 
