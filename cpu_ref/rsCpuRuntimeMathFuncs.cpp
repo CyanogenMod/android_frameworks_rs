@@ -86,6 +86,12 @@ IMPORT_F32_FN_F32(tanh)
 IMPORT_F32_FN_F32(tgamma)
 IMPORT_F32_FN_F32(trunc)
 
+extern float SC_randf2(float min, float max);
+float __attribute__((overloadable)) rsRand(float min, float max) {
+  return SC_randf2(min, max);
+}
+
+
 // !!! DANGER !!!
 // These functions are potentially missing on older Android versions.
 // Work around the issue by supplying our own variants.
