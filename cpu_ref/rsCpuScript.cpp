@@ -122,7 +122,6 @@ bool RsdCpuScriptImpl::init(char const *resName, char const *cacheDir,
 
 #ifndef RS_COMPATIBILITY_LIB
     bcc::RSExecutable *exec;
-    const bcc::RSInfo *info;
 
     mCompilerContext = NULL;
     mCompilerDriver = NULL;
@@ -145,8 +144,13 @@ bool RsdCpuScriptImpl::init(char const *resName, char const *cacheDir,
     mCompilerDriver->setRSRuntimeLookupFunction(lookupRuntimeStub);
     mCompilerDriver->setRSRuntimeLookupContext(this);
 
+    const char *core_lib = NULL;
+    RSSelectRTCallback selectRTCallback = mCtx->getSelectRTCallback();
+    if (selectRTCallback != NULL) {
+        core_lib = selectRTCallback((const char *)bitcode, bitcodeSize);
+    }
     exec = mCompilerDriver->build(*mCompilerContext, cacheDir, resName,
-                                  (const char *)bitcode, bitcodeSize, NULL,
+                                  (const char *)bitcode, bitcodeSize, core_lib,
                                   mCtx->getLinkRuntimeCallback());
 
     if (exec == NULL) {
@@ -170,7 +174,7 @@ bool RsdCpuScriptImpl::init(char const *resName, char const *cacheDir,
         reinterpret_cast<void (*)()>(exec->getSymbolAddress(".rs.dtor"));
 
 
-    info = &mExecutable->getInfo();
+    const bcc::RSInfo *info = &mExecutable->getInfo();
     if (info->getExportVarNames().size()) {
         mBoundAllocs = new Allocation *[info->getExportVarNames().size()];
         memset(mBoundAllocs, 0, sizeof(void *) * info->getExportVarNames().size());

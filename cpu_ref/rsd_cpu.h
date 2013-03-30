@@ -32,6 +32,8 @@ class RSScript;
 typedef llvm::Module* (*RSLinkRuntimeCallback) (bcc::RSScript *, llvm::Module *, llvm::Module *);
 
 }  // end namespace bcc;
+
+typedef const char* (*RSSelectRTCallback) (const char*, size_t);
 #endif
 
 namespace android {
@@ -102,7 +104,8 @@ public:
     static RsdCpuReference * create(Context *c, uint32_t version_major,
                                     uint32_t version_minor, sym_lookup_t lfn, script_lookup_t slfn
 #ifndef RS_COMPATIBILITY_LIB
-                                    , bcc::RSLinkRuntimeCallback pLinkRuntimeCallback = NULL
+                                    , bcc::RSLinkRuntimeCallback pLinkRuntimeCallback = NULL,
+                                    RSSelectRTCallback pSelectRTCallback = NULL
 #endif
                                     );
     virtual ~RsdCpuReference();

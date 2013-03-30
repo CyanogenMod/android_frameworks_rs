@@ -58,7 +58,8 @@ RsdCpuReference::~RsdCpuReference() {
 RsdCpuReference * RsdCpuReference::create(Context *rsc, uint32_t version_major,
         uint32_t version_minor, sym_lookup_t lfn, script_lookup_t slfn
 #ifndef RS_COMPATIBILITY_LIB
-        , bcc::RSLinkRuntimeCallback pLinkRuntimeCallback
+        , bcc::RSLinkRuntimeCallback pLinkRuntimeCallback,
+        RSSelectRTCallback pSelectRTCallback
 #endif
         ) {
 
@@ -73,6 +74,7 @@ RsdCpuReference * RsdCpuReference::create(Context *rsc, uint32_t version_major,
 
 #ifndef RS_COMPATIBILITY_LIB
     cpu->setLinkRuntimeCallback(pLinkRuntimeCallback);
+    cpu->setSelectRTCallback(pSelectRTCallback);
 #endif
 
     return cpu;
@@ -105,6 +107,7 @@ RsdCpuReferenceImpl::RsdCpuReferenceImpl(Context *rsc) {
     mExit = false;
 #ifndef RS_COMPATIBILITY_LIB
     mLinkRuntimeCallback = NULL;
+    mSelectRTCallback = NULL;
 #endif
 }
 
