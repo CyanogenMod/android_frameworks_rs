@@ -118,6 +118,13 @@ public:
     bcc::RSLinkRuntimeCallback getLinkRuntimeCallback() {
         return mLinkRuntimeCallback;
     }
+
+    void setSelectRTCallback(RSSelectRTCallback pSelectRTCallback) {
+        mSelectRTCallback = pSelectRTCallback;
+    }
+    RSSelectRTCallback getSelectRTCallback() {
+        return mSelectRTCallback;
+    }
 #endif
     virtual bool getInForEach() { return mInForEach; }
 
@@ -148,6 +155,7 @@ protected:
 
 #ifndef RS_COMPATIBILITY_LIB
     bcc::RSLinkRuntimeCallback mLinkRuntimeCallback;
+    RSSelectRTCallback mSelectRTCallback;
 #endif
 };
 
