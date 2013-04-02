@@ -33,8 +33,7 @@ LOCAL_SRC_FILES:= \
 ifeq ($(ARCH_ARM_HAVE_NEON),true)
     LOCAL_CFLAGS += -DARCH_ARM_HAVE_NEON
     LOCAL_SRC_FILES+= \
-        rsCpuIntrinsics_neon.S \
-        rsCpuSample_neon.S
+        rsCpuIntrinsics_neon.S
 endif
 
 ifeq ($(ARCH_ARM_HAVE_VFP),true)
