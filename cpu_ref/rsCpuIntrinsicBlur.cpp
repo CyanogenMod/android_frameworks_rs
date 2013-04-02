@@ -180,7 +180,7 @@ static void OneVFU4(float4 *out,
         out->xyzw = blurredPixel;
         x1++;
         out++;
-        ptrIn++;
+        ptrIn+=4;
     }
 }
 
