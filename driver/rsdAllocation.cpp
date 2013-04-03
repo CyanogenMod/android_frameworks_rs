@@ -610,7 +610,8 @@ void* rsdAllocationGetSurface(const Context *rsc, const Allocation *alloc) {
 #ifndef RS_COMPATIBILITY_LIB
     DrvAllocation *drv = (DrvAllocation *)alloc->mHal.drv;
 
-    drv->cpuConsumer = new CpuConsumer(2);
+    // Configure CpuConsumer to be in asynchronous mode
+    drv->cpuConsumer = new CpuConsumer(2, false);
     sp<IGraphicBufferProducer> bp = drv->cpuConsumer->getProducerInterface();
     bp->incStrong(NULL);
     return bp.get();
@@ -775,16 +776,24 @@ void rsdAllocationIoReceive(const Context *rsc, Allocation *alloc) {
     DrvAllocation *drv = (DrvAllocation *)alloc->mHal.drv;
 
     if (alloc->mHal.state.usageFlags & RS_ALLOCATION_USAGE_SCRIPT) {
-        if (drv->lb.data != NULL) {
-            drv->cpuConsumer->unlockBuffer(drv->lb);
-        }
+        CpuConsumer::LockedBuffer lb;
+        status_t ret = drv->cpuConsumer->lockNextBuffer(&lb);
+        if (ret == OK) {
+            if (drv->lb.data != NULL) {
+                drv->cpuConsumer->unlockBuffer(drv->lb);
+            }
+            drv->lb = lb;
+            alloc->mHal.drvState.lod[0].mallocPtr = drv->lb.data;
+            alloc->mHal.drvState.lod[0].stride = drv->lb.stride *
+                    alloc->mHal.state.elementSizeBytes;
 
-        status_t ret = drv->cpuConsumer->lockNextBuffer(&drv->lb);
-        alloc->mHal.drvState.lod[0].mallocPtr = drv->lb.data;
-        alloc->mHal.drvState.lod[0].stride = drv->lb.stride * alloc->mHal.state.elementSizeBytes;
-
-        if (alloc->mHal.state.yuv) {
-            DeriveYUVLayout(alloc->mHal.state.yuv, &alloc->mHal.drvState);
+            if (alloc->mHal.state.yuv) {
+                DeriveYUVLayout(alloc->mHal.state.yuv, &alloc->mHal.drvState);
+            }
+        } else if (ret == BAD_VALUE) {
+            // No new frame, don't do anything
+        } else {
+            rsc->setError(RS_ERROR_DRIVER, "Error receiving IO input buffer.");
         }
 
     } else {
@@ -1101,5 +1110,3 @@ void rsdAllocationGenerateMipmaps(const Context *rsc, const Allocation *alloc) {
         }
     }
 }
-
-
