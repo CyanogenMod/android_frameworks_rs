@@ -19,12 +19,7 @@
 
 #include "rsUtils.h"
 #include "rsDefines.h"
-
-#define RS_OBJECT_DEBUG 0
-
-#ifndef RS_SERVER
-#include <utils/CallStack.h>
-#endif
+#include "rsDebugHelper.h"
 
 namespace android {
 namespace renderscript {
@@ -91,10 +86,7 @@ private:
     mutable const ObjectBase * mPrev;
     mutable const ObjectBase * mNext;
 
-#if RS_OBJECT_DEBUG
-    CallStack mStack;
-#endif
-
+    DebugHelper *mDH;
 };
 
 template<class T>

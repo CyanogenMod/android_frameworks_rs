@@ -28,9 +28,10 @@ ObjectBase::ObjectBase(Context *rsc) {
     mRSC = rsc;
     mNext = NULL;
     mPrev = NULL;
+    mDH = NULL;
 
 #if RS_OBJECT_DEBUG
-    mStack.update(2);
+    mDH = new DebugHelper();
 #endif
 
     rsAssert(rsc);
@@ -41,7 +42,9 @@ ObjectBase::ObjectBase(Context *rsc) {
 ObjectBase::~ObjectBase() {
     //ALOGV("~ObjectBase %p  ref %i,%i", this, mUserRefCount, mSysRefCount);
 #if RS_OBJECT_DEBUG
-    mStack.dump();
+    mDH->dump();
+    delete mDH;
+    mDH = NULL;
 #endif
 
     if (mPrev || mNext) {
@@ -113,7 +116,7 @@ bool ObjectBase::decUserRef() const {
 #if RS_OBJECT_DEBUG
     //ALOGV("ObjectBase %p decU ref %i, %i", this, mUserRefCount, mSysRefCount);
     if (mUserRefCount <= 0) {
-        mStack.dump();
+        mDH->dump();
     }
 #endif
 
