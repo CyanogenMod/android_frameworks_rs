@@ -350,6 +350,28 @@ SET_ELEMENT_AT(double4)
 #undef SET_ELEMENT_AT
 
 
+/**
+ * Extract a single element from an allocation.
+ */
+extern const uchar __attribute__((overloadable))
+    rsGetElementAtYuv_uchar_Y(rs_allocation a, uint32_t x, uint32_t y);
+
+/**
+ * Extract a single element from an allocation.
+ *
+ * Coordinates are in the dimensions of the Y plane
+ */
+extern const uchar __attribute__((overloadable))
+    rsGetElementAtYuv_uchar_U(rs_allocation a, uint32_t x, uint32_t y);
+
+/**
+ * Extract a single element from an allocation.
+ *
+ * Coordinates are in the dimensions of the Y plane
+ */
+extern const uchar __attribute__((overloadable))
+    rsGetElementAtYuv_uchar_V(rs_allocation a, uint32_t x, uint32_t y);
+
 #endif // (defined(RS_VERSION) && (RS_VERSION >= 18))
 
 #endif
