@@ -569,16 +569,18 @@ static void * ElementAt1D(Allocation *a, RsDataType dt, uint32_t vecSize, uint32
         return NULL;
     }
 
-    if (vecSize != e->getVectorSize()) {
-        sprintf(buf, "Vector size mismatch for ElementAt %i of %i", vecSize, e->getVectorSize());
-        rsc->setError(RS_ERROR_FATAL_UNKNOWN, buf);
-        return NULL;
-    }
+    if (vecSize > 0) {
+        if (vecSize != e->getVectorSize()) {
+            sprintf(buf, "Vector size mismatch for ElementAt %i of %i", vecSize, e->getVectorSize());
+            rsc->setError(RS_ERROR_FATAL_UNKNOWN, buf);
+            return NULL;
+        }
 
-    if (dt != e->getType()) {
-        sprintf(buf, "Data type mismatch for ElementAt %i of %i", dt, e->getType());
-        rsc->setError(RS_ERROR_FATAL_UNKNOWN, buf);
-        return NULL;
+        if (dt != e->getType()) {
+            sprintf(buf, "Data type mismatch for ElementAt %i of %i", dt, e->getType());
+            rsc->setError(RS_ERROR_FATAL_UNKNOWN, buf);
+            return NULL;
+        }
     }
 
     uint8_t *p = (uint8_t *)a->mHal.drvState.lod[0].mallocPtr;
@@ -604,16 +606,18 @@ static void * ElementAt2D(Allocation *a, RsDataType dt, uint32_t vecSize, uint32
         return NULL;
     }
 
-    if (vecSize != e->getVectorSize()) {
-        sprintf(buf, "Vector size mismatch for ElementAt %i of %i", vecSize, e->getVectorSize());
-        rsc->setError(RS_ERROR_FATAL_UNKNOWN, buf);
-        return NULL;
-    }
+    if (vecSize > 0) {
+        if (vecSize != e->getVectorSize()) {
+            sprintf(buf, "Vector size mismatch for ElementAt %i of %i", vecSize, e->getVectorSize());
+            rsc->setError(RS_ERROR_FATAL_UNKNOWN, buf);
+            return NULL;
+        }
 
-    if (dt != e->getType()) {
-        sprintf(buf, "Data type mismatch for ElementAt %i of %i", dt, e->getType());
-        rsc->setError(RS_ERROR_FATAL_UNKNOWN, buf);
-        return NULL;
+        if (dt != e->getType()) {
+            sprintf(buf, "Data type mismatch for ElementAt %i of %i", dt, e->getType());
+            rsc->setError(RS_ERROR_FATAL_UNKNOWN, buf);
+            return NULL;
+        }
     }
 
     uint8_t *p = (uint8_t *)a->mHal.drvState.lod[0].mallocPtr;
@@ -646,16 +650,18 @@ static void * ElementAt3D(Allocation *a, RsDataType dt, uint32_t vecSize, uint32
         return NULL;
     }
 
-    if (vecSize != e->getVectorSize()) {
-        sprintf(buf, "Vector size mismatch for ElementAt %i of %i", vecSize, e->getVectorSize());
-        rsc->setError(RS_ERROR_FATAL_UNKNOWN, buf);
-        return NULL;
-    }
+    if (vecSize > 0) {
+        if (vecSize != e->getVectorSize()) {
+            sprintf(buf, "Vector size mismatch for ElementAt %i of %i", vecSize, e->getVectorSize());
+            rsc->setError(RS_ERROR_FATAL_UNKNOWN, buf);
+            return NULL;
+        }
 
-    if (dt != e->getType()) {
-        sprintf(buf, "Data type mismatch for ElementAt %i of %i", dt, e->getType());
-        rsc->setError(RS_ERROR_FATAL_UNKNOWN, buf);
-        return NULL;
+        if (dt != e->getType()) {
+            sprintf(buf, "Data type mismatch for ElementAt %i of %i", dt, e->getType());
+            rsc->setError(RS_ERROR_FATAL_UNKNOWN, buf);
+            return NULL;
+        }
     }
 
     uint8_t *p = (uint8_t *)a->mHal.drvState.lod[0].mallocPtr;
@@ -664,39 +670,71 @@ static void * ElementAt3D(Allocation *a, RsDataType dt, uint32_t vecSize, uint32
     return &p[(eSize * x) + (y * stride)];
 }
 
+static const void * SC_GetElementAt1D(Allocation *a, uint32_t x) {
+    return ElementAt1D(a, RS_TYPE_UNSIGNED_8, 0, x);
+}
+static const void * SC_GetElementAt2D(Allocation *a, uint32_t x, uint32_t y) {
+    return ElementAt2D(a, RS_TYPE_UNSIGNED_8, 0, x, y);
+}
+static const void * SC_GetElementAt3D(Allocation *a, uint32_t x, uint32_t y, uint32_t z) {
+    return ElementAt3D(a, RS_TYPE_UNSIGNED_8, 0, x, y, z);
+}
+
+static void SC_SetElementAt1D(Allocation *a, const void *ptr, uint32_t x) {
+    const Type *t = a->getType();
+    const Element *e = t->getElement();
+    void *tmp = ElementAt1D(a, RS_TYPE_UNSIGNED_8, 0, x);
+    if (tmp != NULL) {
+        memcpy(tmp, ptr, e->getSizeBytes());
+    }
+}
+static void SC_SetElementAt2D(Allocation *a, const void *ptr, uint32_t x, uint32_t y) {
+    const Type *t = a->getType();
+    const Element *e = t->getElement();
+    void *tmp = ElementAt2D(a, RS_TYPE_UNSIGNED_8, 0, x, y);
+    if (tmp != NULL) {
+        memcpy(tmp, ptr, e->getSizeBytes());
+    }
+}
+static void SC_SetElementAt3D(Allocation *a, const void *ptr, uint32_t x, uint32_t y, uint32_t z) {
+    const Type *t = a->getType();
+    const Element *e = t->getElement();
+    void *tmp = ElementAt3D(a, RS_TYPE_UNSIGNED_8, 0, x, y, z);
+    if (tmp != NULL) {
+        memcpy(tmp, ptr, e->getSizeBytes());
+    }
+}
+
 #define ELEMENT_AT(T, DT, VS)                                               \
-    static void SC_SetElementAt1_##T(Allocation *a, T val, uint32_t x) {           \
+    static void SC_SetElementAt1_##T(Allocation *a, const T *val, uint32_t x) {           \
         void *r = ElementAt1D(a, DT, VS, x);                            \
-        if (r != NULL) ((T *)r)[0] = val;                               \
+        if (r != NULL) ((T *)r)[0] = *val;                               \
         else ALOGE("Error from %s", __PRETTY_FUNCTION__);               \
     }                                                                   \
-    static void SC_SetElementAt2_##T(Allocation * a, T val, uint32_t x, uint32_t y) { \
+    static void SC_SetElementAt2_##T(Allocation * a, const T * val, uint32_t x, uint32_t y) { \
         void *r = ElementAt2D(a, DT, VS, x, y);            \
-        if (r != NULL) ((T *)r)[0] = val;                               \
+        if (r != NULL) ((T *)r)[0] = *val;                               \
         else ALOGE("Error from %s", __PRETTY_FUNCTION__);               \
     }                                                                   \
-    static void SC_SetElementAt3_##T(Allocation * a, T val, uint32_t x, uint32_t y, uint32_t z) { \
+    static void SC_SetElementAt3_##T(Allocation * a, const T * val, uint32_t x, uint32_t y, uint32_t z) { \
         void *r = ElementAt3D(a, DT, VS, x, y, z);         \
-        if (r != NULL) ((T *)r)[0] = val;                               \
+        if (r != NULL) ((T *)r)[0] = *val;                               \
         else ALOGE("Error from %s", __PRETTY_FUNCTION__);               \
     }                                                                   \
-    static T SC_GetElementAt1_##T(Allocation * a, uint32_t x) {                  \
+    static void SC_GetElementAt1_##T(Allocation * a, T *val, uint32_t x) {                  \
         void *r = ElementAt1D(a, DT, VS, x);               \
-        if (r != NULL) return ((T *)r)[0];                              \
-        ALOGE("Error from %s", __PRETTY_FUNCTION__);                    \
-        return 0;                                                       \
+        if (r != NULL) *val = ((T *)r)[0];                              \
+        else ALOGE("Error from %s", __PRETTY_FUNCTION__);                    \
     }                                                                   \
-    static T SC_GetElementAt2_##T(Allocation * a, uint32_t x, uint32_t y) {      \
+    static void SC_GetElementAt2_##T(Allocation * a, T *val, uint32_t x, uint32_t y) {      \
         void *r = ElementAt2D(a, DT, VS, x, y);            \
-        if (r != NULL) return ((T *)r)[0];                              \
-        ALOGE("Error from %s", __PRETTY_FUNCTION__);                    \
-        return 0;                                                       \
+        if (r != NULL) *val = ((T *)r)[0];                              \
+        else ALOGE("Error from %s", __PRETTY_FUNCTION__);                    \
     }                                                                   \
-    static T SC_GetElementAt3_##T(Allocation * a, uint32_t x, uint32_t y, uint32_t z) { \
+    static void SC_GetElementAt3_##T(Allocation * a, T *val, uint32_t x, uint32_t y, uint32_t z) { \
         void *r = ElementAt3D(a, DT, VS, x, y, z);         \
-        if (r != NULL) return ((T *)r)[0];                              \
-        ALOGE("Error from %s", __PRETTY_FUNCTION__);                    \
-        return 0;                                                       \
+        if (r != NULL) *val = ((T *)r)[0];                              \
+        else ALOGE("Error from %s", __PRETTY_FUNCTION__);                    \
     }
 
 ELEMENT_AT(char, RS_TYPE_SIGNED_8, 1)
@@ -765,267 +803,275 @@ ELEMENT_AT(double4, RS_TYPE_FLOAT_64, 4)
 
 static RsdCpuReference::CpuSymbol gSyms[] = {
     // Debug runtime
-    { "_Z20rsGetElementAt_uchar13rs_allocationcj", (void *)&SC_GetElementAt1_uchar, true },
-    { "_Z21rsGetElementAt_uchar213rs_allocationj", (void *)&SC_GetElementAt1_uchar2, true },
-    { "_Z21rsGetElementAt_uchar313rs_allocationj", (void *)&SC_GetElementAt1_uchar3, true },
-    { "_Z21rsGetElementAt_uchar413rs_allocationj", (void *)&SC_GetElementAt1_uchar4, true },
-    { "_Z20rsGetElementAt_uchar13rs_allocationjj", (void *)&SC_GetElementAt2_uchar, true },
-    { "_Z21rsGetElementAt_uchar213rs_allocationjj", (void *)&SC_GetElementAt2_uchar2, true },
-    { "_Z21rsGetElementAt_uchar313rs_allocationjj", (void *)&SC_GetElementAt2_uchar3, true },
-    { "_Z21rsGetElementAt_uchar413rs_allocationjj", (void *)&SC_GetElementAt2_uchar4, true },
-    { "_Z20rsGetElementAt_uchar13rs_allocationjjj", (void *)&SC_GetElementAt3_uchar, true },
-    { "_Z21rsGetElementAt_uchar213rs_allocationjjj", (void *)&SC_GetElementAt3_uchar2, true },
-    { "_Z21rsGetElementAt_uchar313rs_allocationjjj", (void *)&SC_GetElementAt3_uchar3, true },
-    { "_Z21rsGetElementAt_uchar413rs_allocationjjj", (void *)&SC_GetElementAt3_uchar4, true },
-
-    { "_Z19rsGetElementAt_char13rs_allocationj", (void *)&SC_GetElementAt1_char, true },
-    { "_Z20rsGetElementAt_char213rs_allocationj", (void *)&SC_GetElementAt1_char2, true },
-    { "_Z20rsGetElementAt_char313rs_allocationj", (void *)&SC_GetElementAt1_char3, true },
-    { "_Z20rsGetElementAt_char413rs_allocationj", (void *)&SC_GetElementAt1_char4, true },
-    { "_Z19rsGetElementAt_char13rs_allocationjj", (void *)&SC_GetElementAt2_char, true },
-    { "_Z20rsGetElementAt_char213rs_allocationjj", (void *)&SC_GetElementAt2_char2, true },
-    { "_Z20rsGetElementAt_char313rs_allocationjj", (void *)&SC_GetElementAt2_char3, true },
-    { "_Z20rsGetElementAt_char413rs_allocationjj", (void *)&SC_GetElementAt2_char4, true },
-    { "_Z19rsGetElementAt_char13rs_allocationjjj", (void *)&SC_GetElementAt3_char, true },
-    { "_Z20rsGetElementAt_char213rs_allocationjjj", (void *)&SC_GetElementAt3_char2, true },
-    { "_Z20rsGetElementAt_char313rs_allocationjjj", (void *)&SC_GetElementAt3_char3, true },
-    { "_Z20rsGetElementAt_char413rs_allocationjjj", (void *)&SC_GetElementAt3_char4, true },
-
-    { "_Z21rsGetElementAt_ushort13rs_allocationcj", (void *)&SC_GetElementAt1_ushort, true },
-    { "_Z22rsGetElementAt_ushort213rs_allocationj", (void *)&SC_GetElementAt1_ushort2, true },
-    { "_Z22rsGetElementAt_ushort313rs_allocationj", (void *)&SC_GetElementAt1_ushort3, true },
-    { "_Z22rsGetElementAt_ushort413rs_allocationj", (void *)&SC_GetElementAt1_ushort4, true },
-    { "_Z21rsGetElementAt_ushort13rs_allocationjj", (void *)&SC_GetElementAt2_ushort, true },
-    { "_Z22rsGetElementAt_ushort213rs_allocationjj", (void *)&SC_GetElementAt2_ushort2, true },
-    { "_Z22rsGetElementAt_ushort313rs_allocationjj", (void *)&SC_GetElementAt2_ushort3, true },
-    { "_Z22rsGetElementAt_ushort413rs_allocationjj", (void *)&SC_GetElementAt2_ushort4, true },
-    { "_Z21rsGetElementAt_ushort13rs_allocationjjj", (void *)&SC_GetElementAt3_ushort, true },
-    { "_Z22rsGetElementAt_ushort213rs_allocationjjj", (void *)&SC_GetElementAt3_ushort2, true },
-    { "_Z22rsGetElementAt_ushort313rs_allocationjjj", (void *)&SC_GetElementAt3_ushort3, true },
-    { "_Z22rsGetElementAt_ushort413rs_allocationjjj", (void *)&SC_GetElementAt3_ushort4, true },
-
-    { "_Z20rsGetElementAt_short13rs_allocationj", (void *)&SC_GetElementAt1_short, true },
-    { "_Z21rsGetElementAt_short213rs_allocationj", (void *)&SC_GetElementAt1_short2, true },
-    { "_Z21rsGetElementAt_short313rs_allocationj", (void *)&SC_GetElementAt1_short3, true },
-    { "_Z21rsGetElementAt_short413rs_allocationj", (void *)&SC_GetElementAt1_short4, true },
-    { "_Z20rsGetElementAt_short13rs_allocationjj", (void *)&SC_GetElementAt2_short, true },
-    { "_Z21rsGetElementAt_short213rs_allocationjj", (void *)&SC_GetElementAt2_short2, true },
-    { "_Z21rsGetElementAt_short313rs_allocationjj", (void *)&SC_GetElementAt2_short3, true },
-    { "_Z21rsGetElementAt_short413rs_allocationjj", (void *)&SC_GetElementAt2_short4, true },
-    { "_Z20rsGetElementAt_short13rs_allocationjjj", (void *)&SC_GetElementAt3_short, true },
-    { "_Z21rsGetElementAt_short213rs_allocationjjj", (void *)&SC_GetElementAt3_short2, true },
-    { "_Z21rsGetElementAt_short313rs_allocationjjj", (void *)&SC_GetElementAt3_short3, true },
-    { "_Z21rsGetElementAt_short413rs_allocationjjj", (void *)&SC_GetElementAt3_short4, true },
-
-    { "_Z19rsGetElementAt_uint13rs_allocationcj", (void *)&SC_GetElementAt1_uint, true },
-    { "_Z20rsGetElementAt_uint213rs_allocationj", (void *)&SC_GetElementAt1_uint2, true },
-    { "_Z20rsGetElementAt_uint313rs_allocationj", (void *)&SC_GetElementAt1_uint3, true },
-    { "_Z20rsGetElementAt_uint413rs_allocationj", (void *)&SC_GetElementAt1_uint4, true },
-    { "_Z19rsGetElementAt_uint13rs_allocationjj", (void *)&SC_GetElementAt2_uint, true },
-    { "_Z20rsGetElementAt_uint213rs_allocationjj", (void *)&SC_GetElementAt2_uint2, true },
-    { "_Z20rsGetElementAt_uint313rs_allocationjj", (void *)&SC_GetElementAt2_uint3, true },
-    { "_Z20rsGetElementAt_uint413rs_allocationjj", (void *)&SC_GetElementAt2_uint4, true },
-    { "_Z19rsGetElementAt_uint13rs_allocationjjj", (void *)&SC_GetElementAt3_uint, true },
-    { "_Z20rsGetElementAt_uint213rs_allocationjjj", (void *)&SC_GetElementAt3_uint2, true },
-    { "_Z20rsGetElementAt_uint313rs_allocationjjj", (void *)&SC_GetElementAt3_uint3, true },
-    { "_Z20rsGetElementAt_uint413rs_allocationjjj", (void *)&SC_GetElementAt3_uint4, true },
-
-    { "_Z18rsGetElementAt_int13rs_allocationj", (void *)&SC_GetElementAt1_int, true },
-    { "_Z19rsGetElementAt_int213rs_allocationj", (void *)&SC_GetElementAt1_int2, true },
-    { "_Z19rsGetElementAt_int313rs_allocationj", (void *)&SC_GetElementAt1_int3, true },
-    { "_Z19rsGetElementAt_int413rs_allocationj", (void *)&SC_GetElementAt1_int4, true },
-    { "_Z18rsGetElementAt_int13rs_allocationjj", (void *)&SC_GetElementAt2_int, true },
-    { "_Z19rsGetElementAt_int213rs_allocationjj", (void *)&SC_GetElementAt2_int2, true },
-    { "_Z19rsGetElementAt_int313rs_allocationjj", (void *)&SC_GetElementAt2_int3, true },
-    { "_Z19rsGetElementAt_int413rs_allocationjj", (void *)&SC_GetElementAt2_int4, true },
-    { "_Z18rsGetElementAt_int13rs_allocationjjj", (void *)&SC_GetElementAt3_int, true },
-    { "_Z19rsGetElementAt_int213rs_allocationjjj", (void *)&SC_GetElementAt3_int2, true },
-    { "_Z19rsGetElementAt_int313rs_allocationjjj", (void *)&SC_GetElementAt3_int3, true },
-    { "_Z19rsGetElementAt_int413rs_allocationjjj", (void *)&SC_GetElementAt3_int4, true },
-
-    { "_Z20rsGetElementAt_ulong13rs_allocationcj", (void *)&SC_GetElementAt1_ulong, true },
-    { "_Z21rsGetElementAt_ulong213rs_allocationj", (void *)&SC_GetElementAt1_ulong2, true },
-    { "_Z21rsGetElementAt_ulong313rs_allocationj", (void *)&SC_GetElementAt1_ulong3, true },
-    { "_Z21rsGetElementAt_ulong413rs_allocationj", (void *)&SC_GetElementAt1_ulong4, true },
-    { "_Z20rsGetElementAt_ulong13rs_allocationjj", (void *)&SC_GetElementAt2_ulong, true },
-    { "_Z21rsGetElementAt_ulong213rs_allocationjj", (void *)&SC_GetElementAt2_ulong2, true },
-    { "_Z21rsGetElementAt_ulong313rs_allocationjj", (void *)&SC_GetElementAt2_ulong3, true },
-    { "_Z21rsGetElementAt_ulong413rs_allocationjj", (void *)&SC_GetElementAt2_ulong4, true },
-    { "_Z20rsGetElementAt_ulong13rs_allocationjjj", (void *)&SC_GetElementAt3_ulong, true },
-    { "_Z21rsGetElementAt_ulong213rs_allocationjjj", (void *)&SC_GetElementAt3_ulong2, true },
-    { "_Z21rsGetElementAt_ulong313rs_allocationjjj", (void *)&SC_GetElementAt3_ulong3, true },
-    { "_Z21rsGetElementAt_ulong413rs_allocationjjj", (void *)&SC_GetElementAt3_ulong4, true },
-
-    { "_Z19rsGetElementAt_long13rs_allocationj", (void *)&SC_GetElementAt1_long, true },
-    { "_Z20rsGetElementAt_long213rs_allocationj", (void *)&SC_GetElementAt1_long2, true },
-    { "_Z20rsGetElementAt_long313rs_allocationj", (void *)&SC_GetElementAt1_long3, true },
-    { "_Z20rsGetElementAt_long413rs_allocationj", (void *)&SC_GetElementAt1_long4, true },
-    { "_Z19rsGetElementAt_long13rs_allocationjj", (void *)&SC_GetElementAt2_long, true },
-    { "_Z20rsGetElementAt_long213rs_allocationjj", (void *)&SC_GetElementAt2_long2, true },
-    { "_Z20rsGetElementAt_long313rs_allocationjj", (void *)&SC_GetElementAt2_long3, true },
-    { "_Z20rsGetElementAt_long413rs_allocationjj", (void *)&SC_GetElementAt2_long4, true },
-    { "_Z19rsGetElementAt_long13rs_allocationjjj", (void *)&SC_GetElementAt3_long, true },
-    { "_Z20rsGetElementAt_long213rs_allocationjjj", (void *)&SC_GetElementAt3_long2, true },
-    { "_Z20rsGetElementAt_long313rs_allocationjjj", (void *)&SC_GetElementAt3_long3, true },
-    { "_Z20rsGetElementAt_long413rs_allocationjjj", (void *)&SC_GetElementAt3_long4, true },
-
-    { "_Z20rsGetElementAt_float13rs_allocationcj", (void *)&SC_GetElementAt1_float, true },
-    { "_Z21rsGetElementAt_float213rs_allocationj", (void *)&SC_GetElementAt1_float2, true },
-    { "_Z21rsGetElementAt_float313rs_allocationj", (void *)&SC_GetElementAt1_float3, true },
-    { "_Z21rsGetElementAt_float413rs_allocationj", (void *)&SC_GetElementAt1_float4, true },
-    { "_Z20rsGetElementAt_float13rs_allocationjj", (void *)&SC_GetElementAt2_float, true },
-    { "_Z21rsGetElementAt_float213rs_allocationjj", (void *)&SC_GetElementAt2_float2, true },
-    { "_Z21rsGetElementAt_float313rs_allocationjj", (void *)&SC_GetElementAt2_float3, true },
-    { "_Z21rsGetElementAt_float413rs_allocationjj", (void *)&SC_GetElementAt2_float4, true },
-    { "_Z20rsGetElementAt_float13rs_allocationjjj", (void *)&SC_GetElementAt3_float, true },
-    { "_Z21rsGetElementAt_float213rs_allocationjjj", (void *)&SC_GetElementAt3_float2, true },
-    { "_Z21rsGetElementAt_float313rs_allocationjjj", (void *)&SC_GetElementAt3_float3, true },
-    { "_Z21rsGetElementAt_float413rs_allocationjjj", (void *)&SC_GetElementAt3_float4, true },
-
-    { "_Z21rsGetElementAt_double13rs_allocationcj", (void *)&SC_GetElementAt1_double, true },
-    { "_Z22rsGetElementAt_double213rs_allocationj", (void *)&SC_GetElementAt1_double2, true },
-    { "_Z22rsGetElementAt_double313rs_allocationj", (void *)&SC_GetElementAt1_double3, true },
-    { "_Z22rsGetElementAt_double413rs_allocationj", (void *)&SC_GetElementAt1_double4, true },
-    { "_Z21rsGetElementAt_double13rs_allocationjj", (void *)&SC_GetElementAt2_double, true },
-    { "_Z22rsGetElementAt_double213rs_allocationjj", (void *)&SC_GetElementAt2_double2, true },
-    { "_Z22rsGetElementAt_double313rs_allocationjj", (void *)&SC_GetElementAt2_double3, true },
-    { "_Z22rsGetElementAt_double413rs_allocationjj", (void *)&SC_GetElementAt2_double4, true },
-    { "_Z21rsGetElementAt_double13rs_allocationjjj", (void *)&SC_GetElementAt3_double, true },
-    { "_Z22rsGetElementAt_double213rs_allocationjjj", (void *)&SC_GetElementAt3_double2, true },
-    { "_Z22rsGetElementAt_double313rs_allocationjjj", (void *)&SC_GetElementAt3_double3, true },
-    { "_Z22rsGetElementAt_double413rs_allocationjjj", (void *)&SC_GetElementAt3_double4, true },
+    { "_Z14rsGetElementAt13rs_allocationj", (void *)&SC_GetElementAt1D, true },
+    { "_Z14rsGetElementAt13rs_allocationjj", (void *)&SC_GetElementAt2D, true },
+    { "_Z14rsGetElementAt13rs_allocationjjj", (void *)&SC_GetElementAt3D, true },
+    { "_Z14rsSetElementAt13rs_allocationPKvj", (void *)&SC_SetElementAt1D, true },
+    { "_Z14rsSetElementAt13rs_allocationPKvjj", (void *)&SC_SetElementAt2D, true },
+    { "_Z14rsSetElementAt13rs_allocationPKvjjj", (void *)&SC_SetElementAt3D, true },
 
 
+    { "_Z20rsGetElementAt_uchar13rs_allocationPhj", (void *)&SC_GetElementAt1_uchar, true },
+    { "_Z21rsGetElementAt_uchar213rs_allocationPDv2_hj", (void *)&SC_GetElementAt1_uchar2, true },
+    { "_Z21rsGetElementAt_uchar313rs_allocationPDv3_hj", (void *)&SC_GetElementAt1_uchar3, true },
+    { "_Z21rsGetElementAt_uchar413rs_allocationPDv4_hj", (void *)&SC_GetElementAt1_uchar4, true },
+    { "_Z20rsGetElementAt_uchar13rs_allocationPhjj", (void *)&SC_GetElementAt2_uchar, true },
+    { "_Z21rsGetElementAt_uchar213rs_allocationPDv2_hjj", (void *)&SC_GetElementAt2_uchar2, true },
+    { "_Z21rsGetElementAt_uchar313rs_allocationPDv3_hjj", (void *)&SC_GetElementAt2_uchar3, true },
+    { "_Z21rsGetElementAt_uchar413rs_allocationPDv4_hjj", (void *)&SC_GetElementAt2_uchar4, true },
+    { "_Z20rsGetElementAt_uchar13rs_allocationPhjjj", (void *)&SC_GetElementAt3_uchar, true },
+    { "_Z21rsGetElementAt_uchar213rs_allocationPDv2_hjjj", (void *)&SC_GetElementAt3_uchar2, true },
+    { "_Z21rsGetElementAt_uchar313rs_allocationPDv3_hjjj", (void *)&SC_GetElementAt3_uchar3, true },
+    { "_Z21rsGetElementAt_uchar413rs_allocationPDv4_hjjj", (void *)&SC_GetElementAt3_uchar4, true },
 
-    { "_Z20rsSetElementAt_uchar13rs_allocationhj", (void *)&SC_SetElementAt1_uchar, true },
-    { "_Z21rsSetElementAt_uchar213rs_allocationDv2_hj", (void *)&SC_SetElementAt1_uchar2, true },
-    { "_Z21rsSetElementAt_uchar313rs_allocationDv3_hj", (void *)&SC_SetElementAt1_uchar3, true },
-    { "_Z21rsSetElementAt_uchar413rs_allocationDv4_hj", (void *)&SC_SetElementAt1_uchar4, true },
-    { "_Z20rsSetElementAt_uchar13rs_allocationhjj", (void *)&SC_SetElementAt2_uchar, true },
-    { "_Z21rsSetElementAt_uchar213rs_allocationDv2_hjj", (void *)&SC_SetElementAt2_uchar2, true },
-    { "_Z21rsSetElementAt_uchar313rs_allocationDv3_hjj", (void *)&SC_SetElementAt2_uchar3, true },
-    { "_Z21rsSetElementAt_uchar413rs_allocationDv4_hjj", (void *)&SC_SetElementAt2_uchar4, true },
-    { "_Z20rsSetElementAt_uchar13rs_allocationhjjj", (void *)&SC_SetElementAt3_uchar, true },
-    { "_Z21rsSetElementAt_uchar213rs_allocationDv2_hjjj", (void *)&SC_SetElementAt3_uchar2, true },
-    { "_Z21rsSetElementAt_uchar313rs_allocationDv3_hjjj", (void *)&SC_SetElementAt3_uchar3, true },
-    { "_Z21rsSetElementAt_uchar413rs_allocationDv4_hjjj", (void *)&SC_SetElementAt3_uchar4, true },
+    { "_Z19rsGetElementAt_char13rs_allocationPcj", (void *)&SC_GetElementAt1_char, true },
+    { "_Z20rsGetElementAt_char213rs_allocationPDv2_cj", (void *)&SC_GetElementAt1_char2, true },
+    { "_Z20rsGetElementAt_char313rs_allocationPDv3_cj", (void *)&SC_GetElementAt1_char3, true },
+    { "_Z20rsGetElementAt_char413rs_allocationPDv4_cj", (void *)&SC_GetElementAt1_char4, true },
+    { "_Z19rsGetElementAt_char13rs_allocationPcjj", (void *)&SC_GetElementAt2_char, true },
+    { "_Z20rsGetElementAt_char213rs_allocationPDv2_cjj", (void *)&SC_GetElementAt2_char2, true },
+    { "_Z20rsGetElementAt_char313rs_allocationPDv3_cjj", (void *)&SC_GetElementAt2_char3, true },
+    { "_Z20rsGetElementAt_char413rs_allocationPDv4_cjj", (void *)&SC_GetElementAt2_char4, true },
+    { "_Z19rsGetElementAt_char13rs_allocationPcjjj", (void *)&SC_GetElementAt3_char, true },
+    { "_Z20rsGetElementAt_char213rs_allocationPDv2_cjjj", (void *)&SC_GetElementAt3_char2, true },
+    { "_Z20rsGetElementAt_char313rs_allocationPDv3_cjjj", (void *)&SC_GetElementAt3_char3, true },
+    { "_Z20rsGetElementAt_char413rs_allocationPDv4_cjjj", (void *)&SC_GetElementAt3_char4, true },
 
-    { "_Z19rsSetElementAt_char13rs_allocationcj", (void *)&SC_SetElementAt1_char, true },
-    { "_Z20rsSetElementAt_char213rs_allocationDv2_cj", (void *)&SC_SetElementAt1_char2, true },
-    { "_Z20rsSetElementAt_char313rs_allocationDv3_cj", (void *)&SC_SetElementAt1_char3, true },
-    { "_Z20rsSetElementAt_char413rs_allocationDv4_cj", (void *)&SC_SetElementAt1_char4, true },
-    { "_Z19rsSetElementAt_char13rs_allocationcjj", (void *)&SC_SetElementAt2_char, true },
-    { "_Z20rsSetElementAt_char213rs_allocationDv2_cjj", (void *)&SC_SetElementAt2_char2, true },
-    { "_Z20rsSetElementAt_char313rs_allocationDv3_cjj", (void *)&SC_SetElementAt2_char3, true },
-    { "_Z20rsSetElementAt_char413rs_allocationDv4_cjj", (void *)&SC_SetElementAt2_char4, true },
-    { "_Z19rsSetElementAt_char13rs_allocationcjjj", (void *)&SC_SetElementAt3_char, true },
-    { "_Z20rsSetElementAt_char213rs_allocationDv2_cjjj", (void *)&SC_SetElementAt3_char2, true },
-    { "_Z20rsSetElementAt_char313rs_allocationDv3_cjjj", (void *)&SC_SetElementAt3_char3, true },
-    { "_Z20rsSetElementAt_char413rs_allocationDv4_cjjj", (void *)&SC_SetElementAt3_char4, true },
+    { "_Z21rsGetElementAt_ushort13rs_allocationPtj", (void *)&SC_GetElementAt1_ushort, true },
+    { "_Z22rsGetElementAt_ushort213rs_allocationPDv2_tj", (void *)&SC_GetElementAt1_ushort2, true },
+    { "_Z22rsGetElementAt_ushort313rs_allocationPDv3_tj", (void *)&SC_GetElementAt1_ushort3, true },
+    { "_Z22rsGetElementAt_ushort413rs_allocationPDv4_tj", (void *)&SC_GetElementAt1_ushort4, true },
+    { "_Z21rsGetElementAt_ushort13rs_allocationPtjj", (void *)&SC_GetElementAt2_ushort, true },
+    { "_Z22rsGetElementAt_ushort213rs_allocationPDv2_tjj", (void *)&SC_GetElementAt2_ushort2, true },
+    { "_Z22rsGetElementAt_ushort313rs_allocationPDv3_tjj", (void *)&SC_GetElementAt2_ushort3, true },
+    { "_Z22rsGetElementAt_ushort413rs_allocationPDv4_tjj", (void *)&SC_GetElementAt2_ushort4, true },
+    { "_Z21rsGetElementAt_ushort13rs_allocationPtjjj", (void *)&SC_GetElementAt3_ushort, true },
+    { "_Z22rsGetElementAt_ushort213rs_allocationPDv2_tjjj", (void *)&SC_GetElementAt3_ushort2, true },
+    { "_Z22rsGetElementAt_ushort313rs_allocationPDv3_tjjj", (void *)&SC_GetElementAt3_ushort3, true },
+    { "_Z22rsGetElementAt_ushort413rs_allocationPDv4_tjjj", (void *)&SC_GetElementAt3_ushort4, true },
 
-    { "_Z21rsSetElementAt_ushort13rs_allocationht", (void *)&SC_SetElementAt1_ushort, true },
-    { "_Z22rsSetElementAt_ushort213rs_allocationDv2_tj", (void *)&SC_SetElementAt1_ushort2, true },
-    { "_Z22rsSetElementAt_ushort313rs_allocationDv3_tj", (void *)&SC_SetElementAt1_ushort3, true },
-    { "_Z22rsSetElementAt_ushort413rs_allocationDv4_tj", (void *)&SC_SetElementAt1_ushort4, true },
-    { "_Z21rsSetElementAt_ushort13rs_allocationtjj", (void *)&SC_SetElementAt2_ushort, true },
-    { "_Z22rsSetElementAt_ushort213rs_allocationDv2_tjj", (void *)&SC_SetElementAt2_ushort2, true },
-    { "_Z22rsSetElementAt_ushort313rs_allocationDv3_tjj", (void *)&SC_SetElementAt2_ushort3, true },
-    { "_Z22rsSetElementAt_ushort413rs_allocationDv4_tjj", (void *)&SC_SetElementAt2_ushort4, true },
-    { "_Z21rsSetElementAt_ushort13rs_allocationtjjj", (void *)&SC_SetElementAt3_ushort, true },
-    { "_Z22rsSetElementAt_ushort213rs_allocationDv2_tjjj", (void *)&SC_SetElementAt3_ushort2, true },
-    { "_Z22rsSetElementAt_ushort313rs_allocationDv3_tjjj", (void *)&SC_SetElementAt3_ushort3, true },
-    { "_Z22rsSetElementAt_ushort413rs_allocationDv4_tjjj", (void *)&SC_SetElementAt3_ushort4, true },
+    { "_Z20rsGetElementAt_short13rs_allocationPsj", (void *)&SC_GetElementAt1_short, true },
+    { "_Z21rsGetElementAt_short213rs_allocationPDv2_sj", (void *)&SC_GetElementAt1_short2, true },
+    { "_Z21rsGetElementAt_short313rs_allocationPDv3_sj", (void *)&SC_GetElementAt1_short3, true },
+    { "_Z21rsGetElementAt_short413rs_allocationPDv4_sj", (void *)&SC_GetElementAt1_short4, true },
+    { "_Z20rsGetElementAt_short13rs_allocationPsjj", (void *)&SC_GetElementAt2_short, true },
+    { "_Z21rsGetElementAt_short213rs_allocationPDv2_sjj", (void *)&SC_GetElementAt2_short2, true },
+    { "_Z21rsGetElementAt_short313rs_allocationPDv3_sjj", (void *)&SC_GetElementAt2_short3, true },
+    { "_Z21rsGetElementAt_short413rs_allocationPDv4_sjj", (void *)&SC_GetElementAt2_short4, true },
+    { "_Z20rsGetElementAt_short13rs_allocationPsjjj", (void *)&SC_GetElementAt3_short, true },
+    { "_Z21rsGetElementAt_short213rs_allocationPDv2_sjjj", (void *)&SC_GetElementAt3_short2, true },
+    { "_Z21rsGetElementAt_short313rs_allocationPDv3_sjjj", (void *)&SC_GetElementAt3_short3, true },
+    { "_Z21rsGetElementAt_short413rs_allocationPDv4_sjjj", (void *)&SC_GetElementAt3_short4, true },
 
-    { "_Z20rsSetElementAt_short13rs_allocationsj", (void *)&SC_SetElementAt1_short, true },
-    { "_Z21rsSetElementAt_short213rs_allocationDv2_sj", (void *)&SC_SetElementAt1_short2, true },
-    { "_Z21rsSetElementAt_short313rs_allocationDv3_sj", (void *)&SC_SetElementAt1_short3, true },
-    { "_Z21rsSetElementAt_short413rs_allocationDv4_sj", (void *)&SC_SetElementAt1_short4, true },
-    { "_Z20rsSetElementAt_short13rs_allocationsjj", (void *)&SC_SetElementAt2_short, true },
-    { "_Z21rsSetElementAt_short213rs_allocationDv2_sjj", (void *)&SC_SetElementAt2_short2, true },
-    { "_Z21rsSetElementAt_short313rs_allocationDv3_sjj", (void *)&SC_SetElementAt2_short3, true },
-    { "_Z21rsSetElementAt_short413rs_allocationDv4_sjj", (void *)&SC_SetElementAt2_short4, true },
-    { "_Z20rsSetElementAt_short13rs_allocationsjjj", (void *)&SC_SetElementAt3_short, true },
-    { "_Z21rsSetElementAt_short213rs_allocationDv2_sjjj", (void *)&SC_SetElementAt3_short2, true },
-    { "_Z21rsSetElementAt_short313rs_allocationDv3_sjjj", (void *)&SC_SetElementAt3_short3, true },
-    { "_Z21rsSetElementAt_short413rs_allocationDv4_sjjj", (void *)&SC_SetElementAt3_short4, true },
+    { "_Z19rsGetElementAt_uint13rs_allocationPjj", (void *)&SC_GetElementAt1_uint, true },
+    { "_Z20rsGetElementAt_uint213rs_allocationPDv2_jj", (void *)&SC_GetElementAt1_uint2, true },
+    { "_Z20rsGetElementAt_uint313rs_allocationPDv3_jj", (void *)&SC_GetElementAt1_uint3, true },
+    { "_Z20rsGetElementAt_uint413rs_allocationPDv4_jj", (void *)&SC_GetElementAt1_uint4, true },
+    { "_Z19rsGetElementAt_uint13rs_allocationPjjj", (void *)&SC_GetElementAt2_uint, true },
+    { "_Z20rsGetElementAt_uint213rs_allocationPDv2_jjj", (void *)&SC_GetElementAt2_uint2, true },
+    { "_Z20rsGetElementAt_uint313rs_allocationPDv3_jjj", (void *)&SC_GetElementAt2_uint3, true },
+    { "_Z20rsGetElementAt_uint413rs_allocationPDv4_jjj", (void *)&SC_GetElementAt2_uint4, true },
+    { "_Z19rsGetElementAt_uint13rs_allocationPjjjj", (void *)&SC_GetElementAt3_uint, true },
+    { "_Z20rsGetElementAt_uint213rs_allocationPDv2_jjjj", (void *)&SC_GetElementAt3_uint2, true },
+    { "_Z20rsGetElementAt_uint313rs_allocationPDv3_jjjj", (void *)&SC_GetElementAt3_uint3, true },
+    { "_Z20rsGetElementAt_uint413rs_allocationPDv4_jjjj", (void *)&SC_GetElementAt3_uint4, true },
 
-    { "_Z19rsSetElementAt_uint13rs_allocationjj", (void *)&SC_SetElementAt1_uint, true },
-    { "_Z20rsSetElementAt_uint213rs_allocationDv2_jj", (void *)&SC_SetElementAt1_uint2, true },
-    { "_Z20rsSetElementAt_uint313rs_allocationDv3_jj", (void *)&SC_SetElementAt1_uint3, true },
-    { "_Z20rsSetElementAt_uint413rs_allocationDv4_jj", (void *)&SC_SetElementAt1_uint4, true },
-    { "_Z19rsSetElementAt_uint13rs_allocationjjj", (void *)&SC_SetElementAt2_uint, true },
-    { "_Z20rsSetElementAt_uint213rs_allocationDv2_jjj", (void *)&SC_SetElementAt2_uint2, true },
-    { "_Z20rsSetElementAt_uint313rs_allocationDv3_jjj", (void *)&SC_SetElementAt2_uint3, true },
-    { "_Z20rsSetElementAt_uint413rs_allocationDv4_jjj", (void *)&SC_SetElementAt2_uint4, true },
-    { "_Z19rsSetElementAt_uint13rs_allocationjjjj", (void *)&SC_SetElementAt3_uint, true },
-    { "_Z20rsSetElementAt_uint213rs_allocationDv2_jjjj", (void *)&SC_SetElementAt3_uint2, true },
-    { "_Z20rsSetElementAt_uint313rs_allocationDv3_jjjj", (void *)&SC_SetElementAt3_uint3, true },
-    { "_Z20rsSetElementAt_uint413rs_allocationDv4_jjjj", (void *)&SC_SetElementAt3_uint4, true },
+    { "_Z18rsGetElementAt_int13rs_allocationPij", (void *)&SC_GetElementAt1_int, true },
+    { "_Z19rsGetElementAt_int213rs_allocationPDv2_ij", (void *)&SC_GetElementAt1_int2, true },
+    { "_Z19rsGetElementAt_int313rs_allocationPDv3_ij", (void *)&SC_GetElementAt1_int3, true },
+    { "_Z19rsGetElementAt_int413rs_allocationPDv4_ij", (void *)&SC_GetElementAt1_int4, true },
+    { "_Z18rsGetElementAt_int13rs_allocationPijj", (void *)&SC_GetElementAt2_int, true },
+    { "_Z19rsGetElementAt_int213rs_allocationPDv2_ijj", (void *)&SC_GetElementAt2_int2, true },
+    { "_Z19rsGetElementAt_int313rs_allocationPDv3_ijj", (void *)&SC_GetElementAt2_int3, true },
+    { "_Z19rsGetElementAt_int413rs_allocationPDv4_ijj", (void *)&SC_GetElementAt2_int4, true },
+    { "_Z18rsGetElementAt_int13rs_allocationPijjj", (void *)&SC_GetElementAt3_int, true },
+    { "_Z19rsGetElementAt_int213rs_allocationPDv2_ijjj", (void *)&SC_GetElementAt3_int2, true },
+    { "_Z19rsGetElementAt_int313rs_allocationPDv3_ijjj", (void *)&SC_GetElementAt3_int3, true },
+    { "_Z19rsGetElementAt_int413rs_allocationPDv4_ijjj", (void *)&SC_GetElementAt3_int4, true },
 
-    { "_Z19rsSetElementAt_int13rs_allocationij", (void *)&SC_SetElementAt1_int, true },
-    { "_Z19rsSetElementAt_int213rs_allocationDv2_ij", (void *)&SC_SetElementAt1_int2, true },
-    { "_Z19rsSetElementAt_int313rs_allocationDv3_ij", (void *)&SC_SetElementAt1_int3, true },
-    { "_Z19rsSetElementAt_int413rs_allocationDv4_ij", (void *)&SC_SetElementAt1_int4, true },
-    { "_Z18rsSetElementAt_int13rs_allocationijj", (void *)&SC_SetElementAt2_int, true },
-    { "_Z19rsSetElementAt_int213rs_allocationDv2_ijj", (void *)&SC_SetElementAt2_int2, true },
-    { "_Z19rsSetElementAt_int313rs_allocationDv3_ijj", (void *)&SC_SetElementAt2_int3, true },
-    { "_Z19rsSetElementAt_int413rs_allocationDv4_ijj", (void *)&SC_SetElementAt2_int4, true },
-    { "_Z18rsSetElementAt_int13rs_allocationijjj", (void *)&SC_SetElementAt3_int, true },
-    { "_Z19rsSetElementAt_int213rs_allocationDv2_ijjj", (void *)&SC_SetElementAt3_int2, true },
-    { "_Z19rsSetElementAt_int313rs_allocationDv3_ijjj", (void *)&SC_SetElementAt3_int3, true },
-    { "_Z19rsSetElementAt_int413rs_allocationDv4_ijjj", (void *)&SC_SetElementAt3_int4, true },
+    { "_Z20rsGetElementAt_ulong13rs_allocationPmj", (void *)&SC_GetElementAt1_ulong, true },
+    { "_Z21rsGetElementAt_ulong213rs_allocationPDv2_mj", (void *)&SC_GetElementAt1_ulong2, true },
+    { "_Z21rsGetElementAt_ulong313rs_allocationPDv3_mj", (void *)&SC_GetElementAt1_ulong3, true },
+    { "_Z21rsGetElementAt_ulong413rs_allocationPDv4_mj", (void *)&SC_GetElementAt1_ulong4, true },
+    { "_Z20rsGetElementAt_ulong13rs_allocationPmjj", (void *)&SC_GetElementAt2_ulong, true },
+    { "_Z21rsGetElementAt_ulong213rs_allocationPDv2_mjj", (void *)&SC_GetElementAt2_ulong2, true },
+    { "_Z21rsGetElementAt_ulong313rs_allocationPDv3_mjj", (void *)&SC_GetElementAt2_ulong3, true },
+    { "_Z21rsGetElementAt_ulong413rs_allocationPDv4_mjj", (void *)&SC_GetElementAt2_ulong4, true },
+    { "_Z20rsGetElementAt_ulong13rs_allocationPmjjj", (void *)&SC_GetElementAt3_ulong, true },
+    { "_Z21rsGetElementAt_ulong213rs_allocationPDv2_mjjj", (void *)&SC_GetElementAt3_ulong2, true },
+    { "_Z21rsGetElementAt_ulong313rs_allocationPDv3_mjjj", (void *)&SC_GetElementAt3_ulong3, true },
+    { "_Z21rsGetElementAt_ulong413rs_allocationPDv4_mjjj", (void *)&SC_GetElementAt3_ulong4, true },
 
-    { "_Z20rsSetElementAt_ulong13rs_allocationmt", (void *)&SC_SetElementAt1_ulong, true },
-    { "_Z21rsSetElementAt_ulong213rs_allocationDv2_mj", (void *)&SC_SetElementAt1_ulong2, true },
-    { "_Z21rsSetElementAt_ulong313rs_allocationDv3_mj", (void *)&SC_SetElementAt1_ulong3, true },
-    { "_Z21rsSetElementAt_ulong413rs_allocationDv4_mj", (void *)&SC_SetElementAt1_ulong4, true },
-    { "_Z20rsSetElementAt_ulong13rs_allocationmjj", (void *)&SC_SetElementAt2_ulong, true },
-    { "_Z21rsSetElementAt_ulong213rs_allocationDv2_mjj", (void *)&SC_SetElementAt2_ulong2, true },
-    { "_Z21rsSetElementAt_ulong313rs_allocationDv3_mjj", (void *)&SC_SetElementAt2_ulong3, true },
-    { "_Z21rsSetElementAt_ulong413rs_allocationDv4_mjj", (void *)&SC_SetElementAt2_ulong4, true },
-    { "_Z20rsSetElementAt_ulong13rs_allocationmjjj", (void *)&SC_SetElementAt3_ulong, true },
-    { "_Z21rsSetElementAt_ulong213rs_allocationDv2_mjjj", (void *)&SC_SetElementAt3_ulong2, true },
-    { "_Z21rsSetElementAt_ulong313rs_allocationDv3_mjjj", (void *)&SC_SetElementAt3_ulong3, true },
-    { "_Z21rsSetElementAt_ulong413rs_allocationDv4_mjjj", (void *)&SC_SetElementAt3_ulong4, true },
+    { "_Z19rsGetElementAt_long13rs_allocationPlj", (void *)&SC_GetElementAt1_long, true },
+    { "_Z20rsGetElementAt_long213rs_allocationPDv2_lj", (void *)&SC_GetElementAt1_long2, true },
+    { "_Z20rsGetElementAt_long313rs_allocationPDv3_lj", (void *)&SC_GetElementAt1_long3, true },
+    { "_Z20rsGetElementAt_long413rs_allocationPDv4_lj", (void *)&SC_GetElementAt1_long4, true },
+    { "_Z19rsGetElementAt_long13rs_allocationPljj", (void *)&SC_GetElementAt2_long, true },
+    { "_Z20rsGetElementAt_long213rs_allocationPDv2_ljj", (void *)&SC_GetElementAt2_long2, true },
+    { "_Z20rsGetElementAt_long313rs_allocationPDv3_ljj", (void *)&SC_GetElementAt2_long3, true },
+    { "_Z20rsGetElementAt_long413rs_allocationPDv4_ljj", (void *)&SC_GetElementAt2_long4, true },
+    { "_Z19rsGetElementAt_long13rs_allocationPljjj", (void *)&SC_GetElementAt3_long, true },
+    { "_Z20rsGetElementAt_long213rs_allocationPDv2_ljjj", (void *)&SC_GetElementAt3_long2, true },
+    { "_Z20rsGetElementAt_long313rs_allocationPDv3_ljjj", (void *)&SC_GetElementAt3_long3, true },
+    { "_Z20rsGetElementAt_long413rs_allocationPDv4_ljjj", (void *)&SC_GetElementAt3_long4, true },
 
-    { "_Z19rsSetElementAt_long13rs_allocationlj", (void *)&SC_SetElementAt1_long, true },
-    { "_Z20rsSetElementAt_long213rs_allocationDv2_lj", (void *)&SC_SetElementAt1_long2, true },
-    { "_Z20rsSetElementAt_long313rs_allocationDv3_lj", (void *)&SC_SetElementAt1_long3, true },
-    { "_Z20rsSetElementAt_long413rs_allocationDv4_lj", (void *)&SC_SetElementAt1_long4, true },
-    { "_Z19rsSetElementAt_long13rs_allocationljj", (void *)&SC_SetElementAt2_long, true },
-    { "_Z20rsSetElementAt_long213rs_allocationDv2_ljj", (void *)&SC_SetElementAt2_long2, true },
-    { "_Z20rsSetElementAt_long313rs_allocationDv3_ljj", (void *)&SC_SetElementAt2_long3, true },
-    { "_Z20rsSetElementAt_long413rs_allocationDv4_ljj", (void *)&SC_SetElementAt2_long4, true },
-    { "_Z19rsSetElementAt_long13rs_allocationljjj", (void *)&SC_SetElementAt3_long, true },
-    { "_Z20rsSetElementAt_long213rs_allocationDv2_ljjj", (void *)&SC_SetElementAt3_long2, true },
-    { "_Z20rsSetElementAt_long313rs_allocationDv3_ljjj", (void *)&SC_SetElementAt3_long3, true },
-    { "_Z20rsSetElementAt_long413rs_allocationDv4_ljjj", (void *)&SC_SetElementAt3_long4, true },
+    { "_Z20rsGetElementAt_float13rs_allocationPfj", (void *)&SC_GetElementAt1_float, true },
+    { "_Z21rsGetElementAt_float213rs_allocationPDv2_fj", (void *)&SC_GetElementAt1_float2, true },
+    { "_Z21rsGetElementAt_float313rs_allocationPDv3_fj", (void *)&SC_GetElementAt1_float3, true },
+    { "_Z21rsGetElementAt_float413rs_allocationPDv4_fj", (void *)&SC_GetElementAt1_float4, true },
+    { "_Z20rsGetElementAt_float13rs_allocationPfjj", (void *)&SC_GetElementAt2_float, true },
+    { "_Z21rsGetElementAt_float213rs_allocationPDv2_fjj", (void *)&SC_GetElementAt2_float2, true },
+    { "_Z21rsGetElementAt_float313rs_allocationPDv3_fjj", (void *)&SC_GetElementAt2_float3, true },
+    { "_Z21rsGetElementAt_float413rs_allocationPDv4_fjj", (void *)&SC_GetElementAt2_float4, true },
+    { "_Z20rsGetElementAt_float13rs_allocationPfjjj", (void *)&SC_GetElementAt3_float, true },
+    { "_Z21rsGetElementAt_float213rs_allocationPDv2_fjjj", (void *)&SC_GetElementAt3_float2, true },
+    { "_Z21rsGetElementAt_float313rs_allocationPDv3_fjjj", (void *)&SC_GetElementAt3_float3, true },
+    { "_Z21rsGetElementAt_float413rs_allocationPDv4_fjjj", (void *)&SC_GetElementAt3_float4, true },
 
-    { "_Z20rsSetElementAt_float13rs_allocationft", (void *)&SC_SetElementAt1_float, true },
-    { "_Z21rsSetElementAt_float213rs_allocationDv2_fj", (void *)&SC_SetElementAt1_float2, true },
-    { "_Z21rsSetElementAt_float313rs_allocationDv3_fj", (void *)&SC_SetElementAt1_float3, true },
-    { "_Z21rsSetElementAt_float413rs_allocationDv4_fj", (void *)&SC_SetElementAt1_float4, true },
-    { "_Z20rsSetElementAt_float13rs_allocationfjj", (void *)&SC_SetElementAt2_float, true },
-    { "_Z21rsSetElementAt_float213rs_allocationDv2_fjj", (void *)&SC_SetElementAt2_float2, true },
-    { "_Z21rsSetElementAt_float313rs_allocationDv3_fjj", (void *)&SC_SetElementAt2_float3, true },
-    { "_Z21rsSetElementAt_float413rs_allocationDv4_fjj", (void *)&SC_SetElementAt2_float4, true },
-    { "_Z20rsSetElementAt_float13rs_allocationfjjj", (void *)&SC_SetElementAt3_float, true },
-    { "_Z21rsSetElementAt_float213rs_allocationDv2_fjjj", (void *)&SC_SetElementAt3_float2, true },
-    { "_Z21rsSetElementAt_float313rs_allocationDv3_fjjj", (void *)&SC_SetElementAt3_float3, true },
-    { "_Z21rsSetElementAt_float413rs_allocationDv4_fjjj", (void *)&SC_SetElementAt3_float4, true },
+    { "_Z21rsGetElementAt_double13rs_allocationPdj", (void *)&SC_GetElementAt1_double, true },
+    { "_Z22rsGetElementAt_double213rs_allocationPDv2_dj", (void *)&SC_GetElementAt1_double2, true },
+    { "_Z22rsGetElementAt_double313rs_allocationPDv3_dj", (void *)&SC_GetElementAt1_double3, true },
+    { "_Z22rsGetElementAt_double413rs_allocationPDv4_dj", (void *)&SC_GetElementAt1_double4, true },
+    { "_Z21rsGetElementAt_double13rs_allocationPdjj", (void *)&SC_GetElementAt2_double, true },
+    { "_Z22rsGetElementAt_double213rs_allocationPDv2_djj", (void *)&SC_GetElementAt2_double2, true },
+    { "_Z22rsGetElementAt_double313rs_allocationPDv3_djj", (void *)&SC_GetElementAt2_double3, true },
+    { "_Z22rsGetElementAt_double413rs_allocationPDv4_djj", (void *)&SC_GetElementAt2_double4, true },
+    { "_Z21rsGetElementAt_double13rs_allocationPdjjj", (void *)&SC_GetElementAt3_double, true },
+    { "_Z22rsGetElementAt_double213rs_allocationPDv2_djjj", (void *)&SC_GetElementAt3_double2, true },
+    { "_Z22rsGetElementAt_double313rs_allocationPDv3_djjj", (void *)&SC_GetElementAt3_double3, true },
+    { "_Z22rsGetElementAt_double413rs_allocationPDv4_djjj", (void *)&SC_GetElementAt3_double4, true },
 
-    { "_Z21rsSetElementAt_double13rs_allocationdt", (void *)&SC_SetElementAt1_double, true },
-    { "_Z22rsSetElementAt_double213rs_allocationDv2_dj", (void *)&SC_SetElementAt1_double2, true },
-    { "_Z22rsSetElementAt_double313rs_allocationDv3_dj", (void *)&SC_SetElementAt1_double3, true },
-    { "_Z22rsSetElementAt_double413rs_allocationDv4_dj", (void *)&SC_SetElementAt1_double4, true },
-    { "_Z21rsSetElementAt_double13rs_allocationdjj", (void *)&SC_SetElementAt2_double, true },
-    { "_Z22rsSetElementAt_double213rs_allocationDv2_djj", (void *)&SC_SetElementAt2_double2, true },
-    { "_Z22rsSetElementAt_double313rs_allocationDv3_djj", (void *)&SC_SetElementAt2_double3, true },
-    { "_Z22rsSetElementAt_double413rs_allocationDv4_djj", (void *)&SC_SetElementAt2_double4, true },
-    { "_Z21rsSetElementAt_double13rs_allocationdjjj", (void *)&SC_SetElementAt3_double, true },
-    { "_Z22rsSetElementAt_double213rs_allocationDv2_djjj", (void *)&SC_SetElementAt3_double2, true },
-    { "_Z22rsSetElementAt_double313rs_allocationDv3_djjj", (void *)&SC_SetElementAt3_double3, true },
-    { "_Z22rsSetElementAt_double413rs_allocationDv4_djjj", (void *)&SC_SetElementAt3_double4, true },
+
+
+    { "_Z20rsSetElementAt_uchar13rs_allocationPKhj", (void *)&SC_SetElementAt1_uchar, true },
+    { "_Z21rsSetElementAt_uchar213rs_allocationPKDv2_hj", (void *)&SC_SetElementAt1_uchar2, true },
+    { "_Z21rsSetElementAt_uchar313rs_allocationPKDv3_hj", (void *)&SC_SetElementAt1_uchar3, true },
+    { "_Z21rsSetElementAt_uchar413rs_allocationPKDv4_hj", (void *)&SC_SetElementAt1_uchar4, true },
+    { "_Z20rsSetElementAt_uchar13rs_allocationPKhjj", (void *)&SC_SetElementAt2_uchar, true },
+    { "_Z21rsSetElementAt_uchar213rs_allocationPKDv2_hjj", (void *)&SC_SetElementAt2_uchar2, true },
+    { "_Z21rsSetElementAt_uchar313rs_allocationPKDv3_hjj", (void *)&SC_SetElementAt2_uchar3, true },
+    { "_Z21rsSetElementAt_uchar413rs_allocationPKDv4_hjj", (void *)&SC_SetElementAt2_uchar4, true },
+    { "_Z20rsSetElementAt_uchar13rs_allocationPKhjjj", (void *)&SC_SetElementAt3_uchar, true },
+    { "_Z21rsSetElementAt_uchar213rs_allocationPKDv2_hjjj", (void *)&SC_SetElementAt3_uchar2, true },
+    { "_Z21rsSetElementAt_uchar313rs_allocationPKDv3_hjjj", (void *)&SC_SetElementAt3_uchar3, true },
+    { "_Z21rsSetElementAt_uchar413rs_allocationPKDv4_hjjj", (void *)&SC_SetElementAt3_uchar4, true },
+
+    { "_Z19rsSetElementAt_char13rs_allocationPKcj", (void *)&SC_SetElementAt1_char, true },
+    { "_Z20rsSetElementAt_char213rs_allocationPKDv2_cj", (void *)&SC_SetElementAt1_char2, true },
+    { "_Z20rsSetElementAt_char313rs_allocationPKDv3_cj", (void *)&SC_SetElementAt1_char3, true },
+    { "_Z20rsSetElementAt_char413rs_allocationPKDv4_cj", (void *)&SC_SetElementAt1_char4, true },
+    { "_Z19rsSetElementAt_char13rs_allocationPKcjj", (void *)&SC_SetElementAt2_char, true },
+    { "_Z20rsSetElementAt_char213rs_allocationPKDv2_cjj", (void *)&SC_SetElementAt2_char2, true },
+    { "_Z20rsSetElementAt_char313rs_allocationPKDv3_cjj", (void *)&SC_SetElementAt2_char3, true },
+    { "_Z20rsSetElementAt_char413rs_allocationPKDv4_cjj", (void *)&SC_SetElementAt2_char4, true },
+    { "_Z19rsSetElementAt_char13rs_allocationPKcjjj", (void *)&SC_SetElementAt3_char, true },
+    { "_Z20rsSetElementAt_char213rs_allocationPKDv2_cjjj", (void *)&SC_SetElementAt3_char2, true },
+    { "_Z20rsSetElementAt_char313rs_allocationPKDv3_cjjj", (void *)&SC_SetElementAt3_char3, true },
+    { "_Z20rsSetElementAt_char413rs_allocationPKDv4_cjjj", (void *)&SC_SetElementAt3_char4, true },
+
+    { "_Z21rsSetElementAt_ushort13rs_allocationPKht", (void *)&SC_SetElementAt1_ushort, true },
+    { "_Z22rsSetElementAt_ushort213rs_allocationPKDv2_tj", (void *)&SC_SetElementAt1_ushort2, true },
+    { "_Z22rsSetElementAt_ushort313rs_allocationPKDv3_tj", (void *)&SC_SetElementAt1_ushort3, true },
+    { "_Z22rsSetElementAt_ushort413rs_allocationPKDv4_tj", (void *)&SC_SetElementAt1_ushort4, true },
+    { "_Z21rsSetElementAt_ushort13rs_allocationPKtjj", (void *)&SC_SetElementAt2_ushort, true },
+    { "_Z22rsSetElementAt_ushort213rs_allocationPKDv2_tjj", (void *)&SC_SetElementAt2_ushort2, true },
+    { "_Z22rsSetElementAt_ushort313rs_allocationPKDv3_tjj", (void *)&SC_SetElementAt2_ushort3, true },
+    { "_Z22rsSetElementAt_ushort413rs_allocationPKDv4_tjj", (void *)&SC_SetElementAt2_ushort4, true },
+    { "_Z21rsSetElementAt_ushort13rs_allocationPKtjjj", (void *)&SC_SetElementAt3_ushort, true },
+    { "_Z22rsSetElementAt_ushort213rs_allocationPKDv2_tjjj", (void *)&SC_SetElementAt3_ushort2, true },
+    { "_Z22rsSetElementAt_ushort313rs_allocationPKDv3_tjjj", (void *)&SC_SetElementAt3_ushort3, true },
+    { "_Z22rsSetElementAt_ushort413rs_allocationPKDv4_tjjj", (void *)&SC_SetElementAt3_ushort4, true },
+
+    { "_Z20rsSetElementAt_short13rs_allocationPKsj", (void *)&SC_SetElementAt1_short, true },
+    { "_Z21rsSetElementAt_short213rs_allocationPKDv2_sj", (void *)&SC_SetElementAt1_short2, true },
+    { "_Z21rsSetElementAt_short313rs_allocationPKDv3_sj", (void *)&SC_SetElementAt1_short3, true },
+    { "_Z21rsSetElementAt_short413rs_allocationPKDv4_sj", (void *)&SC_SetElementAt1_short4, true },
+    { "_Z20rsSetElementAt_short13rs_allocationPKsjj", (void *)&SC_SetElementAt2_short, true },
+    { "_Z21rsSetElementAt_short213rs_allocationPKDv2_sjj", (void *)&SC_SetElementAt2_short2, true },
+    { "_Z21rsSetElementAt_short313rs_allocationPKDv3_sjj", (void *)&SC_SetElementAt2_short3, true },
+    { "_Z21rsSetElementAt_short413rs_allocationPKDv4_sjj", (void *)&SC_SetElementAt2_short4, true },
+    { "_Z20rsSetElementAt_short13rs_allocationPKsjjj", (void *)&SC_SetElementAt3_short, true },
+    { "_Z21rsSetElementAt_short213rs_allocationPKDv2_sjjj", (void *)&SC_SetElementAt3_short2, true },
+    { "_Z21rsSetElementAt_short313rs_allocationPKDv3_sjjj", (void *)&SC_SetElementAt3_short3, true },
+    { "_Z21rsSetElementAt_short413rs_allocationPKDv4_sjjj", (void *)&SC_SetElementAt3_short4, true },
+
+    { "_Z19rsSetElementAt_uint13rs_allocationPKjj", (void *)&SC_SetElementAt1_uint, true },
+    { "_Z20rsSetElementAt_uint213rs_allocationPKDv2_jj", (void *)&SC_SetElementAt1_uint2, true },
+    { "_Z20rsSetElementAt_uint313rs_allocationPKDv3_jj", (void *)&SC_SetElementAt1_uint3, true },
+    { "_Z20rsSetElementAt_uint413rs_allocationPKDv4_jj", (void *)&SC_SetElementAt1_uint4, true },
+    { "_Z19rsSetElementAt_uint13rs_allocationPKjjj", (void *)&SC_SetElementAt2_uint, true },
+    { "_Z20rsSetElementAt_uint213rs_allocationPKDv2_jjj", (void *)&SC_SetElementAt2_uint2, true },
+    { "_Z20rsSetElementAt_uint313rs_allocationPKDv3_jjj", (void *)&SC_SetElementAt2_uint3, true },
+    { "_Z20rsSetElementAt_uint413rs_allocationPKDv4_jjj", (void *)&SC_SetElementAt2_uint4, true },
+    { "_Z19rsSetElementAt_uint13rs_allocationPKjjjj", (void *)&SC_SetElementAt3_uint, true },
+    { "_Z20rsSetElementAt_uint213rs_allocationPKDv2_jjjj", (void *)&SC_SetElementAt3_uint2, true },
+    { "_Z20rsSetElementAt_uint313rs_allocationPKDv3_jjjj", (void *)&SC_SetElementAt3_uint3, true },
+    { "_Z20rsSetElementAt_uint413rs_allocationPKDv4_jjjj", (void *)&SC_SetElementAt3_uint4, true },
+
+    { "_Z19rsSetElementAt_int13rs_allocationPKij", (void *)&SC_SetElementAt1_int, true },
+    { "_Z19rsSetElementAt_int213rs_allocationPKDv2_ij", (void *)&SC_SetElementAt1_int2, true },
+    { "_Z19rsSetElementAt_int313rs_allocationPKDv3_ij", (void *)&SC_SetElementAt1_int3, true },
+    { "_Z19rsSetElementAt_int413rs_allocationPKDv4_ij", (void *)&SC_SetElementAt1_int4, true },
+    { "_Z18rsSetElementAt_int13rs_allocationPKijj", (void *)&SC_SetElementAt2_int, true },
+    { "_Z19rsSetElementAt_int213rs_allocationPKDv2_ijj", (void *)&SC_SetElementAt2_int2, true },
+    { "_Z19rsSetElementAt_int313rs_allocationPKDv3_ijj", (void *)&SC_SetElementAt2_int3, true },
+    { "_Z19rsSetElementAt_int413rs_allocationPKDv4_ijj", (void *)&SC_SetElementAt2_int4, true },
+    { "_Z18rsSetElementAt_int13rs_allocationPKijjj", (void *)&SC_SetElementAt3_int, true },
+    { "_Z19rsSetElementAt_int213rs_allocationPKDv2_ijjj", (void *)&SC_SetElementAt3_int2, true },
+    { "_Z19rsSetElementAt_int313rs_allocationPKDv3_ijjj", (void *)&SC_SetElementAt3_int3, true },
+    { "_Z19rsSetElementAt_int413rs_allocationPKDv4_ijjj", (void *)&SC_SetElementAt3_int4, true },
+
+    { "_Z20rsSetElementAt_ulong13rs_allocationPKmt", (void *)&SC_SetElementAt1_ulong, true },
+    { "_Z21rsSetElementAt_ulong213rs_allocationPKDv2_mj", (void *)&SC_SetElementAt1_ulong2, true },
+    { "_Z21rsSetElementAt_ulong313rs_allocationPKDv3_mj", (void *)&SC_SetElementAt1_ulong3, true },
+    { "_Z21rsSetElementAt_ulong413rs_allocationPKDv4_mj", (void *)&SC_SetElementAt1_ulong4, true },
+    { "_Z20rsSetElementAt_ulong13rs_allocationPKmjj", (void *)&SC_SetElementAt2_ulong, true },
+    { "_Z21rsSetElementAt_ulong213rs_allocationPKDv2_mjj", (void *)&SC_SetElementAt2_ulong2, true },
+    { "_Z21rsSetElementAt_ulong313rs_allocationPKDv3_mjj", (void *)&SC_SetElementAt2_ulong3, true },
+    { "_Z21rsSetElementAt_ulong413rs_allocationPKDv4_mjj", (void *)&SC_SetElementAt2_ulong4, true },
+    { "_Z20rsSetElementAt_ulong13rs_allocationPKmjjj", (void *)&SC_SetElementAt3_ulong, true },
+    { "_Z21rsSetElementAt_ulong213rs_allocationPKDv2_mjjj", (void *)&SC_SetElementAt3_ulong2, true },
+    { "_Z21rsSetElementAt_ulong313rs_allocationPKDv3_mjjj", (void *)&SC_SetElementAt3_ulong3, true },
+    { "_Z21rsSetElementAt_ulong413rs_allocationPKDv4_mjjj", (void *)&SC_SetElementAt3_ulong4, true },
+
+    { "_Z19rsSetElementAt_long13rs_allocationPKlj", (void *)&SC_SetElementAt1_long, true },
+    { "_Z20rsSetElementAt_long213rs_allocationPKDv2_lj", (void *)&SC_SetElementAt1_long2, true },
+    { "_Z20rsSetElementAt_long313rs_allocationPKDv3_lj", (void *)&SC_SetElementAt1_long3, true },
+    { "_Z20rsSetElementAt_long413rs_allocationPKDv4_lj", (void *)&SC_SetElementAt1_long4, true },
+    { "_Z19rsSetElementAt_long13rs_allocationPKljj", (void *)&SC_SetElementAt2_long, true },
+    { "_Z20rsSetElementAt_long213rs_allocationPKDv2_ljj", (void *)&SC_SetElementAt2_long2, true },
+    { "_Z20rsSetElementAt_long313rs_allocationPKDv3_ljj", (void *)&SC_SetElementAt2_long3, true },
+    { "_Z20rsSetElementAt_long413rs_allocationPKDv4_ljj", (void *)&SC_SetElementAt2_long4, true },
+    { "_Z19rsSetElementAt_long13rs_allocationPKljjj", (void *)&SC_SetElementAt3_long, true },
+    { "_Z20rsSetElementAt_long213rs_allocationPKDv2_ljjj", (void *)&SC_SetElementAt3_long2, true },
+    { "_Z20rsSetElementAt_long313rs_allocationPKDv3_ljjj", (void *)&SC_SetElementAt3_long3, true },
+    { "_Z20rsSetElementAt_long413rs_allocationPKDv4_ljjj", (void *)&SC_SetElementAt3_long4, true },
+
+    { "_Z20rsSetElementAt_float13rs_allocationPKft", (void *)&SC_SetElementAt1_float, true },
+    { "_Z21rsSetElementAt_float213rs_allocationPKDv2_fj", (void *)&SC_SetElementAt1_float2, true },
+    { "_Z21rsSetElementAt_float313rs_allocationPKDv3_fj", (void *)&SC_SetElementAt1_float3, true },
+    { "_Z21rsSetElementAt_float413rs_allocationPKDv4_fj", (void *)&SC_SetElementAt1_float4, true },
+    { "_Z20rsSetElementAt_float13rs_allocationPKfjj", (void *)&SC_SetElementAt2_float, true },
+    { "_Z21rsSetElementAt_float213rs_allocationPKDv2_fjj", (void *)&SC_SetElementAt2_float2, true },
+    { "_Z21rsSetElementAt_float313rs_allocationPKDv3_fjj", (void *)&SC_SetElementAt2_float3, true },
+    { "_Z21rsSetElementAt_float413rs_allocationPKDv4_fjj", (void *)&SC_SetElementAt2_float4, true },
+    { "_Z20rsSetElementAt_float13rs_allocationPKfjjj", (void *)&SC_SetElementAt3_float, true },
+    { "_Z21rsSetElementAt_float213rs_allocationPKDv2_fjjj", (void *)&SC_SetElementAt3_float2, true },
+    { "_Z21rsSetElementAt_float313rs_allocationPKDv3_fjjj", (void *)&SC_SetElementAt3_float3, true },
+    { "_Z21rsSetElementAt_float413rs_allocationPKDv4_fjjj", (void *)&SC_SetElementAt3_float4, true },
+
+    { "_Z21rsSetElementAt_double13rs_allocationPKdt", (void *)&SC_SetElementAt1_double, true },
+    { "_Z22rsSetElementAt_double213rs_allocationPKDv2_dj", (void *)&SC_SetElementAt1_double2, true },
+    { "_Z22rsSetElementAt_double313rs_allocationPKDv3_dj", (void *)&SC_SetElementAt1_double3, true },
+    { "_Z22rsSetElementAt_double413rs_allocationPKDv4_dj", (void *)&SC_SetElementAt1_double4, true },
+    { "_Z21rsSetElementAt_double13rs_allocationPKdjj", (void *)&SC_SetElementAt2_double, true },
+    { "_Z22rsSetElementAt_double213rs_allocationPKDv2_djj", (void *)&SC_SetElementAt2_double2, true },
+    { "_Z22rsSetElementAt_double313rs_allocationPKDv3_djj", (void *)&SC_SetElementAt2_double3, true },
+    { "_Z22rsSetElementAt_double413rs_allocationPKDv4_djj", (void *)&SC_SetElementAt2_double4, true },
+    { "_Z21rsSetElementAt_double13rs_allocationPKdjjj", (void *)&SC_SetElementAt3_double, true },
+    { "_Z22rsSetElementAt_double213rs_allocationPKDv2_djjj", (void *)&SC_SetElementAt3_double2, true },
+    { "_Z22rsSetElementAt_double313rs_allocationPKDv3_djjj", (void *)&SC_SetElementAt3_double3, true },
+    { "_Z22rsSetElementAt_double413rs_allocationPKDv4_djjj", (void *)&SC_SetElementAt3_double4, true },
 
 
     // Refcounting
