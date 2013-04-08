@@ -245,5 +245,207 @@ LOCAL_LDLIBS := -lpthread
 
 include $(BUILD_HOST_STATIC_LIBRARY)
 
+
+LLVM_ROOT_PATH := external/llvm
+
+#=============================================================================
+# android librsloader for libbcc (Device)
+#-----------------------------------------------------------------------------
+
+rsloader_SRC_FILES := \
+  driver/linkloader/android/librsloader.cpp \
+  driver/linkloader/lib/ELFHeader.cpp \
+  driver/linkloader/lib/ELFSymbol.cpp \
+  driver/linkloader/lib/ELFSectionHeader.cpp \
+  driver/linkloader/lib/ELFTypes.cpp \
+  driver/linkloader/lib/GOT.cpp \
+  driver/linkloader/lib/MemChunk.cpp \
+  driver/linkloader/lib/StubLayout.cpp \
+  driver/linkloader/utils/helper.cpp \
+  driver/linkloader/utils/raw_ostream.cpp \
+  driver/linkloader/utils/rsl_assert.cpp
+
+include $(CLEAR_VARS)
+
+LOCAL_MODULE := librsloader
+
+LOCAL_MODULE_TAGS := optional
+
+LOCAL_SRC_FILES := $(rsloader_SRC_FILES)
+
+LOCAL_ADDITIONAL_DEPENDENCIES := $(LOCAL_PATH)/Android.mk
+
+LOCAL_CFLAGS += $(rs_base_CFLAGS)
+
+LOCAL_C_INCLUDES := \
+  $(LOCAL_PATH)/driver/linkloader \
+  $(LOCAL_PATH)/driver/linkloader/include \
+  $(LOCAL_C_INCLUDES)
+
+include $(LLVM_ROOT_PATH)/llvm-device-build.mk
+include $(BUILD_STATIC_LIBRARY)
+
+
+#=============================================================================
+# android librsloader for libbcc (Host)
+#-----------------------------------------------------------------------------
+
+include $(CLEAR_VARS)
+
+LOCAL_MODULE := librsloader
+
+LOCAL_MODULE_TAGS := optional
+
+LOCAL_SRC_FILES := $(rsloader_SRC_FILES)
+
+LOCAL_ADDITIONAL_DEPENDENCIES := $(LOCAL_PATH)/Android.mk
+
+LOCAL_CFLAGS += $(rs_base_CFLAGS)
+LOCAL_CFLAGS += -D__HOST__
+
+LOCAL_C_INCLUDES := \
+  $(LOCAL_PATH)/driver/linkloader \
+  $(LOCAL_PATH)/driver/linkloader/include \
+  $(LOCAL_C_INCLUDES)
+
+include $(LLVM_ROOT_PATH)/llvm-host-build.mk
+include $(BUILD_HOST_STATIC_LIBRARY)
+
+
+#=============================================================================
+# librsloader-test (Device)
+#-----------------------------------------------------------------------------
+
+include $(CLEAR_VARS)
+
+LOCAL_MODULE := test-librsloader
+
+LOCAL_MODULE_TAGS := tests
+
+LOCAL_SHARED_LIBRARIES := \
+  libstlport
+
+LOCAL_STATIC_LIBRARIES := \
+  librsloader \
+  libcutils \
+  libLLVMSupport
+
+LOCAL_SRC_FILES := \
+  driver/linkloader/android/test-librsloader.c
+
+LOCAL_ADDITIONAL_DEPENDENCIES := $(LOCAL_PATH)/Android.mk
+
+LOCAL_CFLAGS += $(rs_base_CFLAGS)
+
+LOCAL_C_INCLUDES := \
+  $(LOCAL_PATH)/driver/linkloader \
+  $(LOCAL_PATH)/driver/linkloader/include
+
+include $(LLVM_ROOT_PATH)/llvm-device-build.mk
+include $(BUILD_EXECUTABLE)
+
+
+#=============================================================================
+# librsloader-test (Host)
+#-----------------------------------------------------------------------------
+
+include $(CLEAR_VARS)
+
+LOCAL_MODULE := test-librsloader
+
+LOCAL_MODULE_TAGS := tests
+
+LOCAL_LDLIBS := \
+  -lpthread \
+  -ldl
+
+LOCAL_STATIC_LIBRARIES := \
+  librsloader \
+  libcutils \
+  libLLVMSupport
+
+LOCAL_SRC_FILES := \
+  driver/linkloader/android/test-librsloader.c
+
+LOCAL_ADDITIONAL_DEPENDENCIES := $(LOCAL_PATH)/Android.mk
+
+LOCAL_CFLAGS += $(rs_base_CFLAGS)
+
+LOCAL_C_INCLUDES := \
+  $(LOCAL_PATH)/driver/linkloader \
+  $(LOCAL_PATH)/driver/linkloader/include
+
+include $(LLVM_ROOT_PATH)/llvm-host-build.mk
+include $(BUILD_HOST_EXECUTABLE)
+
+
+#=============================================================================
+# rsloader
+#-----------------------------------------------------------------------------
+
+ifdef BUILD_RSLOADER_TOOL
+include $(CLEAR_VARS)
+
+LOCAL_MODULE := rsloader
+
+LOCAL_MODULE_TAGS := tests
+
+LOCAL_SHARED_LIBRARIES := \
+  libstlport
+
+LOCAL_STATIC_LIBRARIES := \
+  libLLVMSupport
+
+LOCAL_SRC_FILES := \
+  driver/linkloader/lib/ELFHeader.cpp \
+  driver/linkloader/lib/ELFSymbol.cpp \
+  driver/linkloader/lib/ELFSectionHeader.cpp \
+  driver/linkloader/lib/ELFTypes.cpp \
+  driver/linkloader/lib/StubLayout.cpp \
+  driver/linkloader/utils/raw_ostream.cpp \
+  driver/linkloader/utils/rsl_assert.cpp \
+  driver/linkloader/utils/helper.cpp \
+  driver/linkloader/main.cpp
+
+LOCAL_C_INCLUDES := \
+  $(LOCAL_PATH)/driver/linkloader \
+  $(LOCAL_PATH)/driver/linkloader/include \
+  $(LOCAL_C_INCLUDES)
+
+include $(LLVM_ROOT_PATH)/llvm-device-build.mk
+include $(BUILD_EXECUTABLE)
+endif
+
+
+#=============================================================================
+# stub-layout-unit-test
+#-----------------------------------------------------------------------------
+
+ifdef BUILD_STUB_LAYOUT_TEST
+include $(CLEAR_VARS)
+
+LOCAL_MODULE := stub-layout-unit-test
+
+LOCAL_MODULE_TAGS := tests
+
+LOCAL_SHARED_LIBRARIES := \
+  libstlport
+
+LOCAL_SRC_FILES := \
+  driver/linkloader/lib/StubLayout.cpp \
+  driver/linkloader/utils/raw_ostream.cpp \
+  driver/linkloader/utils/helper.cpp \
+  driver/linkloader/tests/stub-test.cpp
+
+LOCAL_C_INCLUDES := \
+  $(LOCAL_PATH)/driver/linkloader \
+  $(LOCAL_PATH)/driver/linkloader/include \
+  $(LOCAL_C_INCLUDES)
+
+include $(LLVM_ROOT_PATH)/llvm-device-build.mk
+include $(BUILD_EXECUTABLE)
+endif
+
+
 include $(call all-makefiles-under,$(LOCAL_PATH))
 
