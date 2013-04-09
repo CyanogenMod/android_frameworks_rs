@@ -158,6 +158,19 @@ Allocation2DData {
     param size_t stride
     }
 
+Allocation3DData {
+    param RsAllocation va
+    param uint32_t xoff
+    param uint32_t yoff
+    param uint32_t zoff
+    param uint32_t lod
+    param uint32_t w
+    param uint32_t h
+    param uint32_t d
+    param const void *data
+    param size_t stride
+    }
+
 Allocation2DElementData {
     param RsAllocation va
     param uint32_t x
@@ -208,12 +221,6 @@ AllocationResize1D {
     param uint32_t dimX
     }
 
-AllocationResize2D {
-    param RsAllocation va
-    param uint32_t dimX
-    param uint32_t dimY
-    }
-
 AllocationCopy2DRange {
     param RsAllocation dest
     param uint32_t destXoff
@@ -228,6 +235,23 @@ AllocationCopy2DRange {
     param uint32_t srcMip
     param uint32_t srcFace
     }
+
+AllocationCopy3DRange {
+    param RsAllocation dest
+    param uint32_t destXoff
+    param uint32_t destYoff
+    param uint32_t destZoff
+    param uint32_t destMip
+    param uint32_t width
+    param uint32_t height
+    param uint32_t depth
+    param RsAllocation src
+    param uint32_t srcXoff
+    param uint32_t srcYoff
+    param uint32_t srcZoff
+    param uint32_t srcMip
+    }
+
 
 SamplerCreate {
     direct

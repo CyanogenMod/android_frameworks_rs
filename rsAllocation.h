@@ -99,20 +99,15 @@ public:
 
     void data(Context *rsc, uint32_t xoff, uint32_t lod, uint32_t count, const void *data, size_t sizeBytes);
     void data(Context *rsc, uint32_t xoff, uint32_t yoff, uint32_t lod, RsAllocationCubemapFace face,
-              uint32_t w, uint32_t h, const void *data, size_t sizeBytes);
-    void data(Context *rsc, uint32_t xoff, uint32_t yoff, uint32_t lod, RsAllocationCubemapFace face,
               uint32_t w, uint32_t h, const void *data, size_t sizeBytes, size_t stride);
-    void data(Context *rsc, uint32_t xoff, uint32_t yoff, uint32_t zoff, uint32_t lod, RsAllocationCubemapFace face,
-              uint32_t w, uint32_t h, uint32_t d, const void *data, size_t sizeBytes);
+    void data(Context *rsc, uint32_t xoff, uint32_t yoff, uint32_t zoff, uint32_t lod,
+              uint32_t w, uint32_t h, uint32_t d, const void *data, size_t sizeBytes, size_t stride);
 
     void read(Context *rsc, uint32_t xoff, uint32_t lod, uint32_t count, void *data, size_t sizeBytes);
-    void readUnchecked(Context *rsc, uint32_t xoff, uint32_t lod, uint32_t count, void *data, size_t sizeBytes);
-    void read(Context *rsc, uint32_t xoff, uint32_t yoff, uint32_t lod, RsAllocationCubemapFace face,
-              uint32_t w, uint32_t h, void *data, size_t sizeBytes);
     void read(Context *rsc, uint32_t xoff, uint32_t yoff, uint32_t lod, RsAllocationCubemapFace face,
               uint32_t w, uint32_t h, void *data, size_t sizeBytes, size_t stride);
-    void read(Context *rsc, uint32_t xoff, uint32_t yoff, uint32_t zoff, uint32_t lod, RsAllocationCubemapFace face,
-              uint32_t w, uint32_t h, uint32_t d, void *data, size_t sizeBytes);
+    void read(Context *rsc, uint32_t xoff, uint32_t yoff, uint32_t zoff, uint32_t lod,
+              uint32_t w, uint32_t h, uint32_t d, void *data, size_t sizeBytes, size_t stride);
 
     void elementData(Context *rsc, uint32_t x,
                      const void *data, uint32_t elementOff, size_t sizeBytes);
