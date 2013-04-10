@@ -36,7 +36,7 @@ LOCAL_SRC_FILES:= \
 
 
 LOCAL_SHARED_LIBRARIES += libRS libRSCpuRef
-LOCAL_SHARED_LIBRARIES += libcutils libutils libEGL libGLESv1_CM libGLESv2
+LOCAL_SHARED_LIBRARIES += liblog libcutils libutils libEGL libGLESv1_CM libGLESv2
 LOCAL_SHARED_LIBRARIES += libbcc libbcinfo libLLVM libui libgui libsync
 
 LOCAL_C_INCLUDES += frameworks/compile/libbcc/include
@@ -147,7 +147,7 @@ LOCAL_SRC_FILES:= \
 	rsThreadIO.cpp \
 	rsType.cpp
 
-LOCAL_SHARED_LIBRARIES += libcutils libutils libEGL libGLESv1_CM libGLESv2 libbcc
+LOCAL_SHARED_LIBRARIES += liblog libcutils libutils libEGL libGLESv1_CM libGLESv2 libbcc
 LOCAL_SHARED_LIBRARIES += libui libbcinfo libLLVM libgui libsync libdl
 
 LOCAL_STATIC_LIBRARIES := libft2
@@ -239,7 +239,7 @@ LOCAL_SRC_FILES:= \
 	rsThreadIO.cpp \
 	rsType.cpp
 
-LOCAL_STATIC_LIBRARIES := libcutils libutils
+LOCAL_STATIC_LIBRARIES := libcutils libutils liblog
 
 LOCAL_LDLIBS := -lpthread
 
@@ -328,6 +328,7 @@ LOCAL_SHARED_LIBRARIES := \
 LOCAL_STATIC_LIBRARIES := \
   librsloader \
   libcutils \
+  liblog \
   libLLVMSupport
 
 LOCAL_SRC_FILES := \
@@ -362,6 +363,7 @@ LOCAL_LDLIBS := \
 LOCAL_STATIC_LIBRARIES := \
   librsloader \
   libcutils \
+  liblog \
   libLLVMSupport
 
 LOCAL_SRC_FILES := \
@@ -448,4 +450,3 @@ endif
 
 
 include $(call all-makefiles-under,$(LOCAL_PATH))
-
