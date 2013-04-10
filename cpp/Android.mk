@@ -27,7 +27,8 @@ LOCAL_SHARED_LIBRARIES := \
 	libRS \
 	libz \
 	libcutils \
-	libutils
+	libutils \
+	liblog
 
 LOCAL_MODULE:= libRScpp
 
@@ -44,4 +45,3 @@ LOCAL_C_INCLUDES += $(intermediates)
 
 
 include $(BUILD_SHARED_LIBRARY)
-

@@ -40,7 +40,7 @@ ifeq ($(ARCH_ARM_HAVE_VFP),true)
     LOCAL_CFLAGS += -DARCH_ARM_HAVE_VFP
 endif
 
-LOCAL_SHARED_LIBRARIES += libRS libcutils libutils libsync
+LOCAL_SHARED_LIBRARIES += libRS libcutils libutils liblog libsync
 LOCAL_SHARED_LIBRARIES += libbcc libbcinfo
 
 LOCAL_C_INCLUDES += frameworks/compile/libbcc/include
@@ -52,5 +52,3 @@ LOCAL_LDLIBS := -lpthread -ldl
 LOCAL_MODULE_TAGS := optional
 
 include $(BUILD_SHARED_LIBRARY)
-
-
