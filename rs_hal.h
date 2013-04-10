@@ -160,9 +160,9 @@ typedef struct {
                        RsAllocationCubemapFace face, uint32_t w, uint32_t h,
                        const void *data, size_t sizeBytes, size_t stride);
         void (*data3D)(const Context *rsc, const Allocation *alloc,
-                       uint32_t xoff, uint32_t yoff, uint32_t zoff,
-                       uint32_t lod, RsAllocationCubemapFace face,
-                       uint32_t w, uint32_t h, uint32_t d, const void *data, size_t sizeBytes);
+                       uint32_t xoff, uint32_t yoff, uint32_t zoff, uint32_t lod,
+                       uint32_t w, uint32_t h, uint32_t d, const void *data, size_t sizeBytes,
+                       size_t stride);
 
         void (*read1D)(const Context *rsc, const Allocation *alloc,
                        uint32_t xoff, uint32_t lod, size_t count,
@@ -172,9 +172,9 @@ typedef struct {
                        RsAllocationCubemapFace face, uint32_t w, uint32_t h,
                        void *data, size_t sizeBytes, size_t stride);
         void (*read3D)(const Context *rsc, const Allocation *alloc,
-                       uint32_t xoff, uint32_t yoff, uint32_t zoff,
-                       uint32_t lod, RsAllocationCubemapFace face,
-                       uint32_t w, uint32_t h, uint32_t d, void *data, size_t sizeBytes);
+                       uint32_t xoff, uint32_t yoff, uint32_t zoff, uint32_t lod,
+                       uint32_t w, uint32_t h, uint32_t d, void *data, size_t sizeBytes,
+                       size_t stride);
 
         // Lock and unlock make a 1D region of memory available to the CPU
         // for direct access by pointer.  Once unlock is called control is
@@ -197,11 +197,11 @@ typedef struct {
         void (*allocData3D)(const Context *rsc,
                             const Allocation *dstAlloc,
                             uint32_t dstXoff, uint32_t dstYoff, uint32_t dstZoff,
-                            uint32_t dstLod, RsAllocationCubemapFace dstFace,
+                            uint32_t dstLod,
                             uint32_t w, uint32_t h, uint32_t d,
                             const Allocation *srcAlloc,
                             uint32_t srcXoff, uint32_t srcYoff, uint32_t srcZoff,
-                            uint32_t srcLod, RsAllocationCubemapFace srcFace);
+                            uint32_t srcLod);
 
         void (*elementData1D)(const Context *rsc, const Allocation *alloc, uint32_t x,
                               const void *data, uint32_t elementOff, size_t sizeBytes);

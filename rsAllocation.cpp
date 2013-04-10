@@ -109,8 +109,10 @@ void Allocation::data(Context *rsc, uint32_t xoff, uint32_t yoff, uint32_t lod, 
 }
 
 void Allocation::data(Context *rsc, uint32_t xoff, uint32_t yoff, uint32_t zoff,
-                      uint32_t lod, RsAllocationCubemapFace face,
-                      uint32_t w, uint32_t h, uint32_t d, const void *data, size_t sizeBytes) {
+                      uint32_t lod,
+                      uint32_t w, uint32_t h, uint32_t d, const void *data, size_t sizeBytes, size_t stride) {
+    rsc->mHal.funcs.allocation.data3D(rsc, this, xoff, yoff, zoff, lod, w, h, d, data, sizeBytes, stride);
+    sendDirty(rsc);
 }
 
 void Allocation::read(Context *rsc, uint32_t xoff, uint32_t lod,
@@ -127,40 +129,33 @@ void Allocation::read(Context *rsc, uint32_t xoff, uint32_t lod,
     rsc->mHal.funcs.allocation.read1D(rsc, this, xoff, lod, count, data, sizeBytes);
 }
 
-void Allocation::readUnchecked(Context *rsc, uint32_t xoff, uint32_t lod,
-                         uint32_t count, void *data, size_t sizeBytes) {
-    rsc->mHal.funcs.allocation.read1D(rsc, this, xoff, lod, count, data, sizeBytes);
-}
-
-
-void Allocation::read(Context *rsc, uint32_t xoff, uint32_t yoff, uint32_t lod, RsAllocationCubemapFace face,
-                      uint32_t w, uint32_t h, void *data, size_t sizeBytes) {
-    const size_t eSize = mHal.state.elementSizeBytes;
-    const size_t lineSize = eSize * w;
-
-    if ((lineSize * h) != sizeBytes) {
-        ALOGE("Allocation size mismatch, expected %zu, got %zu", (lineSize * h), sizeBytes);
-        rsAssert(!"Allocation::read called with mismatched size");
-        return;
-    }
-
-    read(rsc, xoff, yoff, lod, face, w, h, data, sizeBytes, lineSize);
-}
-
 void Allocation::read(Context *rsc, uint32_t xoff, uint32_t yoff, uint32_t lod, RsAllocationCubemapFace face,
                       uint32_t w, uint32_t h, void *data, size_t sizeBytes, size_t stride) {
     const size_t eSize = mHal.state.elementSizeBytes;
     const size_t lineSize = eSize * w;
     if (!stride) {
         stride = lineSize;
+    } else {
+        if ((lineSize * h) != sizeBytes) {
+            ALOGE("Allocation size mismatch, expected %zu, got %zu", (lineSize * h), sizeBytes);
+            rsAssert(!"Allocation::read called with mismatched size");
+            return;
+        }
     }
 
     rsc->mHal.funcs.allocation.read2D(rsc, this, xoff, yoff, lod, face, w, h, data, sizeBytes, stride);
 }
 
-void Allocation::read(Context *rsc, uint32_t xoff, uint32_t yoff, uint32_t zoff,
-                      uint32_t lod, RsAllocationCubemapFace face,
-                      uint32_t w, uint32_t h, uint32_t d, void *data, size_t sizeBytes) {
+void Allocation::read(Context *rsc, uint32_t xoff, uint32_t yoff, uint32_t zoff, uint32_t lod,
+                      uint32_t w, uint32_t h, uint32_t d, void *data, size_t sizeBytes, size_t stride) {
+    const size_t eSize = mHal.state.elementSizeBytes;
+    const size_t lineSize = eSize * w;
+    if (!stride) {
+        stride = lineSize;
+    }
+
+    rsc->mHal.funcs.allocation.read3D(rsc, this, xoff, yoff, zoff, lod, w, h, d, data, sizeBytes, stride);
+
 }
 
 void Allocation::elementData(Context *rsc, uint32_t x, const void *data,
@@ -498,7 +493,7 @@ void rsi_AllocationCopyToBitmap(Context *rsc, RsAllocation va, void *data, size_
     Allocation *a = static_cast<Allocation *>(va);
     const Type * t = a->getType();
     a->read(rsc, 0, 0, 0, RS_ALLOCATION_CUBEMAP_FACE_POSITIVE_X,
-            t->getDimX(), t->getDimY(), data, sizeBytes);
+            t->getDimX(), t->getDimY(), data, sizeBytes, 0);
 }
 
 void rsi_Allocation1DData(Context *rsc, RsAllocation va, uint32_t xoff, uint32_t lod,
@@ -525,12 +520,19 @@ void rsi_Allocation2DData(Context *rsc, RsAllocation va, uint32_t xoff, uint32_t
     a->data(rsc, xoff, yoff, lod, face, w, h, data, sizeBytes, stride);
 }
 
+void rsi_Allocation3DData(Context *rsc, RsAllocation va, uint32_t xoff, uint32_t yoff, uint32_t zoff, uint32_t lod,
+                          uint32_t w, uint32_t h, uint32_t d, const void *data, size_t sizeBytes, size_t stride) {
+    Allocation *a = static_cast<Allocation *>(va);
+    a->data(rsc, xoff, yoff, zoff, lod, w, h, d, data, sizeBytes, stride);
+}
+
+
 void rsi_AllocationRead(Context *rsc, RsAllocation va, void *data, size_t sizeBytes) {
     Allocation *a = static_cast<Allocation *>(va);
     const Type * t = a->getType();
     if(t->getDimY()) {
         a->read(rsc, 0, 0, 0, RS_ALLOCATION_CUBEMAP_FACE_POSITIVE_X,
-                t->getDimX(), t->getDimY(), data, sizeBytes);
+                t->getDimX(), t->getDimY(), data, sizeBytes, 0);
     } else {
         a->read(rsc, 0, 0, t->getDimX(), data, sizeBytes);
     }
@@ -635,6 +637,22 @@ void rsi_AllocationCopy2DRange(Context *rsc,
                                            (RsAllocationCubemapFace)srcFace);
 }
 
+void rsi_AllocationCopy3DRange(Context *rsc,
+                               RsAllocation dstAlloc,
+                               uint32_t dstXoff, uint32_t dstYoff, uint32_t dstZoff,
+                               uint32_t dstMip,
+                               uint32_t width, uint32_t height, uint32_t depth,
+                               RsAllocation srcAlloc,
+                               uint32_t srcXoff, uint32_t srcYoff, uint32_t srcZoff,
+                               uint32_t srcMip) {
+    Allocation *dst = static_cast<Allocation *>(dstAlloc);
+    Allocation *src= static_cast<Allocation *>(srcAlloc);
+    rsc->mHal.funcs.allocation.allocData3D(rsc, dst, dstXoff, dstYoff, dstZoff, dstMip,
+                                           width, height, depth,
+                                           src, srcXoff, srcYoff, srcZoff, srcMip);
+}
+
+
 void * rsi_AllocationGetSurface(Context *rsc, RsAllocation valloc) {
     Allocation *alloc = static_cast<Allocation *>(valloc);
     void *s = alloc->getSurface(rsc);
@@ -659,7 +677,7 @@ void rsi_AllocationIoReceive(Context *rsc, RsAllocation valloc) {
 void rsi_Allocation1DRead(Context *rsc, RsAllocation va, uint32_t xoff, uint32_t lod,
                           uint32_t count, void *data, size_t sizeBytes) {
     Allocation *a = static_cast<Allocation *>(va);
-    a->readUnchecked(rsc, xoff, lod, count, data, sizeBytes);
+    rsc->mHal.funcs.allocation.read1D(rsc, a, xoff, lod, count, data, sizeBytes);
 }
 
 void rsi_Allocation2DRead(Context *rsc, RsAllocation va, uint32_t xoff, uint32_t yoff,

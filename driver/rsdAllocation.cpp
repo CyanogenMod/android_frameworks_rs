@@ -88,10 +88,11 @@ GLenum rsdKindToGLFormat(RsDataKind k) {
 #endif
 
 uint8_t *GetOffsetPtr(const android::renderscript::Allocation *alloc,
-                      uint32_t xoff, uint32_t yoff, uint32_t lod,
-                      RsAllocationCubemapFace face) {
+                      uint32_t xoff, uint32_t yoff, uint32_t zoff,
+                      uint32_t lod, RsAllocationCubemapFace face) {
     uint8_t *ptr = (uint8_t *)alloc->mHal.drvState.lod[lod].mallocPtr;
     ptr += face * alloc->mHal.drvState.faceOffset;
+    ptr += zoff * alloc->mHal.drvState.lod[lod].dimY * alloc->mHal.drvState.lod[lod].stride;
     ptr += yoff * alloc->mHal.drvState.lod[lod].stride;
     ptr += xoff * alloc->mHal.state.elementSizeBytes;
     return ptr;
@@ -131,7 +132,7 @@ static void Upload2DTexture(const Context *rsc, const Allocation *alloc, bool is
     rsdGLCheckError(rsc, "Upload2DTexture 1 ");
     for (uint32_t face = 0; face < faceCount; face ++) {
         for (uint32_t lod = 0; lod < alloc->mHal.state.type->getLODCount(); lod++) {
-            const uint8_t *p = GetOffsetPtr(alloc, 0, 0, lod, (RsAllocationCubemapFace)face);
+            const uint8_t *p = GetOffsetPtr(alloc, 0, 0, 0, lod, (RsAllocationCubemapFace)face);
 
             GLenum t = GL_TEXTURE_2D;
             if (alloc->mHal.state.hasFaces) {
@@ -811,7 +812,7 @@ void rsdAllocationData1D(const Context *rsc, const Allocation *alloc,
     DrvAllocation *drv = (DrvAllocation *)alloc->mHal.drv;
 
     const size_t eSize = alloc->mHal.state.type->getElementSizeBytes();
-    uint8_t * ptr = GetOffsetPtr(alloc, xoff, 0, 0, RS_ALLOCATION_CUBEMAP_FACE_POSITIVE_X);
+    uint8_t * ptr = GetOffsetPtr(alloc, xoff, 0, 0, 0, RS_ALLOCATION_CUBEMAP_FACE_POSITIVE_X);
     size_t size = count * eSize;
 
     if (ptr != data) {
@@ -839,7 +840,7 @@ void rsdAllocationData2D(const Context *rsc, const Allocation *alloc,
 
     if (alloc->mHal.drvState.lod[0].mallocPtr) {
         const uint8_t *src = static_cast<const uint8_t *>(data);
-        uint8_t *dst = GetOffsetPtr(alloc, xoff, yoff, lod, face);
+        uint8_t *dst = GetOffsetPtr(alloc, xoff, yoff, 0, lod, face);
         if (dst == src) {
             // Skip the copy if we are the same allocation. This can arise from
             // our Bitmap optimization, where we share the same storage.
@@ -860,7 +861,7 @@ void rsdAllocationData2D(const Context *rsc, const Allocation *alloc,
             int lod = 1;
             while (alloc->mHal.drvState.lod[lod].mallocPtr) {
                 size_t lineSize = alloc->mHal.drvState.lod[lod].dimX;
-                uint8_t *dst = GetOffsetPtr(alloc, xoff, yoff, lod, face);
+                uint8_t *dst = GetOffsetPtr(alloc, xoff, yoff, 0, lod, face);
 
                 for (uint32_t line=(yoff >> 1); line < ((yoff+h)>>1); line++) {
                     memcpy(dst, src, lineSize);
@@ -879,16 +880,48 @@ void rsdAllocationData2D(const Context *rsc, const Allocation *alloc,
 
 void rsdAllocationData3D(const Context *rsc, const Allocation *alloc,
                          uint32_t xoff, uint32_t yoff, uint32_t zoff,
-                         uint32_t lod, RsAllocationCubemapFace face,
-                         uint32_t w, uint32_t h, uint32_t d, const void *data, size_t sizeBytes) {
+                         uint32_t lod,
+                         uint32_t w, uint32_t h, uint32_t d, const void *data,
+                         size_t sizeBytes, size_t stride) {
+    DrvAllocation *drv = (DrvAllocation *)alloc->mHal.drv;
 
+    uint32_t eSize = alloc->mHal.state.elementSizeBytes;
+    uint32_t lineSize = eSize * w;
+    if (!stride) {
+        stride = lineSize;
+    }
+
+    if (alloc->mHal.drvState.lod[0].mallocPtr) {
+        const uint8_t *src = static_cast<const uint8_t *>(data);
+        for (uint32_t z = zoff; z < d; z++) {
+            uint8_t *dst = GetOffsetPtr(alloc, xoff, yoff, z, lod,
+                                        RS_ALLOCATION_CUBEMAP_FACE_POSITIVE_X);
+            if (dst == src) {
+                // Skip the copy if we are the same allocation. This can arise from
+                // our Bitmap optimization, where we share the same storage.
+                drv->uploadDeferred = true;
+                return;
+            }
+
+            for (uint32_t line=yoff; line < (yoff+h); line++) {
+                if (alloc->mHal.state.hasReferences) {
+                    alloc->incRefs(src, w);
+                    alloc->decRefs(dst, w);
+                }
+                memcpy(dst, src, lineSize);
+                src += stride;
+                dst += alloc->mHal.drvState.lod[lod].stride;
+            }
+        }
+        drv->uploadDeferred = true;
+    }
 }
 
 void rsdAllocationRead1D(const Context *rsc, const Allocation *alloc,
                          uint32_t xoff, uint32_t lod, size_t count,
                          void *data, size_t sizeBytes) {
     const size_t eSize = alloc->mHal.state.type->getElementSizeBytes();
-    const uint8_t * ptr = GetOffsetPtr(alloc, xoff, 0, 0, RS_ALLOCATION_CUBEMAP_FACE_POSITIVE_X);
+    const uint8_t * ptr = GetOffsetPtr(alloc, xoff, 0, 0, 0, RS_ALLOCATION_CUBEMAP_FACE_POSITIVE_X);
     if (data != ptr) {
         // Skip the copy if we are the same allocation. This can arise from
         // our Bitmap optimization, where we share the same storage.
@@ -907,7 +940,7 @@ void rsdAllocationRead2D(const Context *rsc, const Allocation *alloc,
 
     if (alloc->mHal.drvState.lod[0].mallocPtr) {
         uint8_t *dst = static_cast<uint8_t *>(data);
-        const uint8_t *src = GetOffsetPtr(alloc, xoff, yoff, lod, face);
+        const uint8_t *src = GetOffsetPtr(alloc, xoff, yoff, 0, lod, face);
         if (dst == src) {
             // Skip the copy if we are the same allocation. This can arise from
             // our Bitmap optimization, where we share the same storage.
@@ -927,9 +960,32 @@ void rsdAllocationRead2D(const Context *rsc, const Allocation *alloc,
 
 void rsdAllocationRead3D(const Context *rsc, const Allocation *alloc,
                          uint32_t xoff, uint32_t yoff, uint32_t zoff,
-                         uint32_t lod, RsAllocationCubemapFace face,
-                         uint32_t w, uint32_t h, uint32_t d, void *data, size_t sizeBytes) {
+                         uint32_t lod,
+                         uint32_t w, uint32_t h, uint32_t d, void *data, size_t sizeBytes, size_t stride) {
+    uint32_t eSize = alloc->mHal.state.elementSizeBytes;
+    uint32_t lineSize = eSize * w;
+    if (!stride) {
+        stride = lineSize;
+    }
 
+    if (alloc->mHal.drvState.lod[0].mallocPtr) {
+        uint8_t *dst = static_cast<uint8_t *>(data);
+        for (uint32_t z = zoff; z < d; z++) {
+            const uint8_t *src = GetOffsetPtr(alloc, xoff, yoff, z, lod,
+                                              RS_ALLOCATION_CUBEMAP_FACE_POSITIVE_X);
+            if (dst == src) {
+                // Skip the copy if we are the same allocation. This can arise from
+                // our Bitmap optimization, where we share the same storage.
+                return;
+            }
+
+            for (uint32_t line=yoff; line < (yoff+h); line++) {
+                memcpy(dst, src, lineSize);
+                dst += stride;
+                src += alloc->mHal.drvState.lod[lod].stride;
+            }
+        }
+    }
 }
 
 void * rsdAllocationLock1D(const android::renderscript::Context *rsc,
@@ -959,12 +1015,33 @@ void rsdAllocationData2D_alloc_script(const android::renderscript::Context *rsc,
                                       RsAllocationCubemapFace srcFace) {
     size_t elementSize = dstAlloc->getType()->getElementSizeBytes();
     for (uint32_t i = 0; i < h; i ++) {
-        uint8_t *dstPtr = GetOffsetPtr(dstAlloc, dstXoff, dstYoff + i, dstLod, dstFace);
-        uint8_t *srcPtr = GetOffsetPtr(srcAlloc, srcXoff, srcYoff + i, srcLod, srcFace);
+        uint8_t *dstPtr = GetOffsetPtr(dstAlloc, dstXoff, dstYoff + i, 0, dstLod, dstFace);
+        uint8_t *srcPtr = GetOffsetPtr(srcAlloc, srcXoff, srcYoff + i, 0, srcLod, srcFace);
         memcpy(dstPtr, srcPtr, w * elementSize);
 
         //ALOGE("COPIED dstXoff(%u), dstYoff(%u), dstLod(%u), dstFace(%u), w(%u), h(%u), srcXoff(%u), srcYoff(%u), srcLod(%u), srcFace(%u)",
         //     dstXoff, dstYoff, dstLod, dstFace, w, h, srcXoff, srcYoff, srcLod, srcFace);
+    }
+}
+
+void rsdAllocationData3D_alloc_script(const android::renderscript::Context *rsc,
+                                      const android::renderscript::Allocation *dstAlloc,
+                                      uint32_t dstXoff, uint32_t dstYoff, uint32_t dstZoff, uint32_t dstLod,
+                                      uint32_t w, uint32_t h, uint32_t d,
+                                      const android::renderscript::Allocation *srcAlloc,
+                                      uint32_t srcXoff, uint32_t srcYoff, uint32_t srcZoff, uint32_t srcLod) {
+    uint32_t elementSize = dstAlloc->getType()->getElementSizeBytes();
+    for (uint32_t j = 0; j < d; j++) {
+        for (uint32_t i = 0; i < h; i ++) {
+            uint8_t *dstPtr = GetOffsetPtr(dstAlloc, dstXoff, dstYoff + i, dstZoff + j,
+                                           dstLod, RS_ALLOCATION_CUBEMAP_FACE_POSITIVE_X);
+            uint8_t *srcPtr = GetOffsetPtr(srcAlloc, srcXoff, srcYoff + i, srcZoff + j,
+                                           srcLod, RS_ALLOCATION_CUBEMAP_FACE_POSITIVE_X);
+            memcpy(dstPtr, srcPtr, w * elementSize);
+
+            //ALOGE("COPIED dstXoff(%u), dstYoff(%u), dstLod(%u), dstFace(%u), w(%u), h(%u), srcXoff(%u), srcYoff(%u), srcLod(%u), srcFace(%u)",
+            //     dstXoff, dstYoff, dstLod, dstFace, w, h, srcXoff, srcYoff, srcLod, srcFace);
+        }
     }
 }
 
@@ -988,11 +1065,19 @@ void rsdAllocationData2D_alloc(const android::renderscript::Context *rsc,
 void rsdAllocationData3D_alloc(const android::renderscript::Context *rsc,
                                const android::renderscript::Allocation *dstAlloc,
                                uint32_t dstXoff, uint32_t dstYoff, uint32_t dstZoff,
-                               uint32_t dstLod, RsAllocationCubemapFace dstFace,
+                               uint32_t dstLod,
                                uint32_t w, uint32_t h, uint32_t d,
                                const android::renderscript::Allocation *srcAlloc,
                                uint32_t srcXoff, uint32_t srcYoff, uint32_t srcZoff,
-                               uint32_t srcLod, RsAllocationCubemapFace srcFace) {
+                               uint32_t srcLod) {
+    if (!dstAlloc->getIsScript() && !srcAlloc->getIsScript()) {
+        rsc->setError(RS_ERROR_FATAL_DRIVER, "Non-script allocation copies not "
+                                             "yet implemented.");
+        return;
+    }
+    rsdAllocationData3D_alloc_script(rsc, dstAlloc, dstXoff, dstYoff, dstZoff,
+                                     dstLod, w, h, d, srcAlloc,
+                                     srcXoff, srcYoff, srcZoff, srcLod);
 }
 
 void rsdAllocationElementData1D(const Context *rsc, const Allocation *alloc,
@@ -1001,7 +1086,7 @@ void rsdAllocationElementData1D(const Context *rsc, const Allocation *alloc,
     DrvAllocation *drv = (DrvAllocation *)alloc->mHal.drv;
 
     size_t eSize = alloc->mHal.state.elementSizeBytes;
-    uint8_t * ptr = GetOffsetPtr(alloc, x, 0, 0, RS_ALLOCATION_CUBEMAP_FACE_POSITIVE_X);
+    uint8_t * ptr = GetOffsetPtr(alloc, x, 0, 0, 0, RS_ALLOCATION_CUBEMAP_FACE_POSITIVE_X);
 
     const Element * e = alloc->mHal.state.type->getElement()->getField(cIdx);
     ptr += alloc->mHal.state.type->getElement()->getFieldOffsetBytes(cIdx);
@@ -1021,7 +1106,7 @@ void rsdAllocationElementData2D(const Context *rsc, const Allocation *alloc,
     DrvAllocation *drv = (DrvAllocation *)alloc->mHal.drv;
 
     size_t eSize = alloc->mHal.state.elementSizeBytes;
-    uint8_t * ptr = GetOffsetPtr(alloc, x, y, 0, RS_ALLOCATION_CUBEMAP_FACE_POSITIVE_X);
+    uint8_t * ptr = GetOffsetPtr(alloc, x, y, 0, 0, RS_ALLOCATION_CUBEMAP_FACE_POSITIVE_X);
 
     const Element * e = alloc->mHal.state.type->getElement()->getField(cIdx);
     ptr += alloc->mHal.state.type->getElement()->getFieldOffsetBytes(cIdx);
@@ -1040,9 +1125,9 @@ static void mip565(const Allocation *alloc, int lod, RsAllocationCubemapFace fac
     uint32_t h = alloc->mHal.drvState.lod[lod + 1].dimY;
 
     for (uint32_t y=0; y < h; y++) {
-        uint16_t *oPtr = (uint16_t *)GetOffsetPtr(alloc, 0, y, lod + 1, face);
-        const uint16_t *i1 = (uint16_t *)GetOffsetPtr(alloc, 0, y*2, lod, face);
-        const uint16_t *i2 = (uint16_t *)GetOffsetPtr(alloc, 0, y*2+1, lod, face);
+        uint16_t *oPtr = (uint16_t *)GetOffsetPtr(alloc, 0, y, 0, lod + 1, face);
+        const uint16_t *i1 = (uint16_t *)GetOffsetPtr(alloc, 0, 0, y*2, lod, face);
+        const uint16_t *i2 = (uint16_t *)GetOffsetPtr(alloc, 0, 0, y*2+1, lod, face);
 
         for (uint32_t x=0; x < w; x++) {
             *oPtr = rsBoxFilter565(i1[0], i1[1], i2[0], i2[1]);
@@ -1058,9 +1143,9 @@ static void mip8888(const Allocation *alloc, int lod, RsAllocationCubemapFace fa
     uint32_t h = alloc->mHal.drvState.lod[lod + 1].dimY;
 
     for (uint32_t y=0; y < h; y++) {
-        uint32_t *oPtr = (uint32_t *)GetOffsetPtr(alloc, 0, y, lod + 1, face);
-        const uint32_t *i1 = (uint32_t *)GetOffsetPtr(alloc, 0, y*2, lod, face);
-        const uint32_t *i2 = (uint32_t *)GetOffsetPtr(alloc, 0, y*2+1, lod, face);
+        uint32_t *oPtr = (uint32_t *)GetOffsetPtr(alloc, 0, y, 0, lod + 1, face);
+        const uint32_t *i1 = (uint32_t *)GetOffsetPtr(alloc, 0, y*2, 0, lod, face);
+        const uint32_t *i2 = (uint32_t *)GetOffsetPtr(alloc, 0, y*2+1, 0, lod, face);
 
         for (uint32_t x=0; x < w; x++) {
             *oPtr = rsBoxFilter8888(i1[0], i1[1], i2[0], i2[1]);
@@ -1076,9 +1161,9 @@ static void mip8(const Allocation *alloc, int lod, RsAllocationCubemapFace face)
     uint32_t h = alloc->mHal.drvState.lod[lod + 1].dimY;
 
     for (uint32_t y=0; y < h; y++) {
-        uint8_t *oPtr = GetOffsetPtr(alloc, 0, y, lod + 1, face);
-        const uint8_t *i1 = GetOffsetPtr(alloc, 0, y*2, lod, face);
-        const uint8_t *i2 = GetOffsetPtr(alloc, 0, y*2+1, lod, face);
+        uint8_t *oPtr = GetOffsetPtr(alloc, 0, y, 0, lod + 1, face);
+        const uint8_t *i1 = GetOffsetPtr(alloc, 0, y*2, 0, lod, face);
+        const uint8_t *i2 = GetOffsetPtr(alloc, 0, y*2+1, 0, lod, face);
 
         for (uint32_t x=0; x < w; x++) {
             *oPtr = (uint8_t)(((uint32_t)i1[0] + i1[1] + i2[0] + i2[1]) * 0.25f);
