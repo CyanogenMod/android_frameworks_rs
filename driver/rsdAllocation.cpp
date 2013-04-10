@@ -374,9 +374,10 @@ bool rsdAllocationInit(const Context *rsc, Allocation *alloc, bool forceZero) {
         // in getSurface
     } else if (alloc->mHal.state.userProvidedPtr != NULL) {
         // user-provided allocation
-        // limitations: no faces, no LOD, USAGE_SCRIPT only
-        if (alloc->mHal.state.usageFlags != (RS_ALLOCATION_USAGE_SCRIPT | RS_ALLOCATION_USAGE_SHARED)) {
-            ALOGE("Can't use user-allocated buffers if usage is not USAGE_SCRIPT and USAGE_SHARED");
+        // limitations: no faces, no LOD, USAGE_SCRIPT or SCRIPT+TEXTURE only
+        if (!(alloc->mHal.state.usageFlags == (RS_ALLOCATION_USAGE_SCRIPT | RS_ALLOCATION_USAGE_SHARED) ||
+              alloc->mHal.state.usageFlags == (RS_ALLOCATION_USAGE_SCRIPT | RS_ALLOCATION_USAGE_SHARED | RS_ALLOCATION_USAGE_GRAPHICS_TEXTURE))) {
+            ALOGE("Can't use user-allocated buffers if usage is not USAGE_SCRIPT | USAGE_SHARED or USAGE_SCRIPT | USAGE_SHARED | USAGE_GRAPHICS_TEXTURE");
             return false;
         }
         if (alloc->getType()->getDimLOD() || alloc->getType()->getDimFaces()) {
@@ -596,6 +597,10 @@ void rsdAllocationSyncAll(const Context *rsc, const Allocation *alloc,
     }
     if (alloc->mHal.state.usageFlags & RS_ALLOCATION_USAGE_GRAPHICS_VERTEX) {
         UploadToBufferObject(rsc, alloc);
+    }
+
+    if (alloc->mHal.state.usageFlags & RS_ALLOCATION_USAGE_SHARED) {
+        // NOP in CPU driver for now
     }
 
     drv->uploadDeferred = false;
