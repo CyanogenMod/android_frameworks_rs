@@ -129,11 +129,15 @@ namespace android {
 namespace renderscript {
 
 RsScriptKernelID rsi_ScriptKernelIDCreate(Context *rsc, RsScript vs, int slot, int sig) {
-    return new ScriptKernelID(rsc, (Script *)vs, slot, sig);
+    ScriptKernelID *kid = new ScriptKernelID(rsc, (Script *)vs, slot, sig);
+    kid->incUserRef();
+    return kid;
 }
 
 RsScriptFieldID rsi_ScriptFieldIDCreate(Context *rsc, RsScript vs, int slot) {
-    return new ScriptFieldID(rsc, (Script *)vs, slot);
+    ScriptFieldID *fid = new ScriptFieldID(rsc, (Script *)vs, slot);
+    fid->incUserRef();
+    return fid;
 }
 
 void rsi_ScriptBindAllocation(Context * rsc, RsScript vs, RsAllocation va, uint32_t slot) {

@@ -249,6 +249,7 @@ ScriptGroup * ScriptGroup::create(Context *rsc,
     if (rsc->mHal.funcs.scriptgroup.init) {
         rsc->mHal.funcs.scriptgroup.init(rsc, sg);
     }
+    sg->incUserRef();
     return sg;
 }
 
