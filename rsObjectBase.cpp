@@ -133,11 +133,8 @@ bool ObjectBase::decUserRef() const {
 bool ObjectBase::zeroUserRef() const {
     //ALOGV("ObjectBase %p zeroU ref %i, %i", this, mUserRefCount, mSysRefCount);
     __sync_and_and_fetch(&mUserRefCount, 0);
-    if ((__sync_fetch_and_sub(&mUserRefCount, 1) <= 1)) {
-        __sync_synchronize();
-        if (mSysRefCount <= 0) {
-            return checkDelete(this);
-        }
+    if (mSysRefCount <= 0) {
+        return checkDelete(this);
     }
     return false;
 }
