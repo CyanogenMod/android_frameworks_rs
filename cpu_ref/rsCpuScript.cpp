@@ -359,14 +359,12 @@ bool RsdCpuScriptImpl::init(char const *resName, char const *cacheDir,
                 mForEachSignatures[i] = tmpSig;
                 mForEachFunctions[i] =
                         (ForEachFunc_t) dlsym(mScriptSO, tmpName);
-                if (mForEachFunctions[i] == NULL) {
-                    ALOGE("Failed to find forEach function address for %s: %s",
-                          tmpName, dlerror());
+                if (i != 0 && mForEachFunctions[i] == NULL) {
                     // Ignore missing root.expand functions.
                     // root() is always specified at location 0.
-                    if (i != 0) {
-                        goto error;
-                    }
+                    ALOGE("Failed to find forEach function address for %s: %s",
+                          tmpName, dlerror());
+                    goto error;
                 }
                 else {
                     //ALOGE("Found forEach %s at %p", tmpName, mForEachFunctions[i]);
