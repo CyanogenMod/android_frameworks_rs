@@ -331,6 +331,13 @@ ScriptSetVarV {
     param const void * data
     }
 
+ScriptGetVarV {
+    param RsScript s
+    param uint32_t slot
+    param void * data
+    sync
+    }
+
 ScriptSetVarVE {
     param RsScript s
     param uint32_t slot

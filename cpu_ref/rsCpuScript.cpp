@@ -658,6 +658,24 @@ void RsdCpuScriptImpl::setGlobalVar(uint32_t slot, const void *data, size_t data
     memcpy(destPtr, data, dataLength);
 }
 
+void RsdCpuScriptImpl::getGlobalVar(uint32_t slot, void *data, size_t dataLength) {
+    //rsAssert(!script->mFieldIsObject[slot]);
+    //ALOGE("getGlobalVar %p %p %i %p %i", dc, script, slot, data, dataLength);
+
+#ifndef RS_COMPATIBILITY_LIB
+    int32_t *srcPtr = reinterpret_cast<int32_t *>(
+                          mExecutable->getExportVarAddrs()[slot]);
+#else
+    int32_t *srcPtr = reinterpret_cast<int32_t *>(mFieldAddress[slot]);
+#endif
+    if (!srcPtr) {
+        //ALOGV("Calling setVar on slot = %i which is null", slot);
+        return;
+    }
+    memcpy(data, srcPtr, dataLength);
+}
+
+
 void RsdCpuScriptImpl::setGlobalVarWithElemDims(uint32_t slot, const void *data, size_t dataLength,
                                                 const Element *elem,
                                                 const size_t *dims, size_t dimLength) {
