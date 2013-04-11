@@ -256,19 +256,19 @@ static size_t DeriveYUVLayout(int yuv, Allocation::Hal::DrvState *state) {
 #ifndef RS_SERVER
     switch(yuv) {
     case HAL_PIXEL_FORMAT_YV12:
-        state->lod[1].dimX = state->lod[0].dimX / 2;
-        state->lod[1].dimY = state->lod[0].dimY / 2;
-        state->lod[1].stride = rsRound(state->lod[0].stride >> 1, 16);
-        state->lod[1].mallocPtr = ((uint8_t *)state->lod[0].mallocPtr) +
+        state->lod[2].dimX = state->lod[0].dimX / 2;
+        state->lod[2].dimY = state->lod[0].dimY / 2;
+        state->lod[2].stride = rsRound(state->lod[0].stride >> 1, 16);
+        state->lod[2].mallocPtr = ((uint8_t *)state->lod[0].mallocPtr) +
                 (state->lod[0].stride * state->lod[0].dimY);
-        uvSize += state->lod[1].stride * state->lod[1].dimY;
-
-        state->lod[2].dimX = state->lod[1].dimX;
-        state->lod[2].dimY = state->lod[1].dimY;
-        state->lod[2].stride = state->lod[1].stride;
-        state->lod[2].mallocPtr = ((uint8_t *)state->lod[1].mallocPtr) +
-                (state->lod[1].stride * state->lod[1].dimY);
         uvSize += state->lod[2].stride * state->lod[2].dimY;
+
+        state->lod[1].dimX = state->lod[2].dimX;
+        state->lod[1].dimY = state->lod[2].dimY;
+        state->lod[1].stride = state->lod[2].stride;
+        state->lod[1].mallocPtr = ((uint8_t *)state->lod[2].mallocPtr) +
+                (state->lod[2].stride * state->lod[2].dimY);
+        uvSize += state->lod[1].stride * state->lod[2].dimY;
 
         state->lodCount = 3;
         break;
@@ -612,6 +612,13 @@ void rsdAllocationMarkDirty(const Context *rsc, const Allocation *alloc) {
     drv->uploadDeferred = true;
 }
 
+#ifndef RS_COMPATIBILITY_LIB
+void DrvAllocation::NewBufferListener::onFrameAvailable() {
+    intptr_t ip = (intptr_t)alloc;
+    rsc->sendMessageToClient(NULL, RS_MESSAGE_TO_CLIENT_NEW_BUFFER, ip, 0, true);
+}
+#endif
+
 void* rsdAllocationGetSurface(const Context *rsc, const Allocation *alloc) {
 #ifndef RS_COMPATIBILITY_LIB
     DrvAllocation *drv = (DrvAllocation *)alloc->mHal.drv;
@@ -620,6 +627,13 @@ void* rsdAllocationGetSurface(const Context *rsc, const Allocation *alloc) {
     drv->cpuConsumer = new CpuConsumer(2, false);
     sp<IGraphicBufferProducer> bp = drv->cpuConsumer->getProducerInterface();
     bp->incStrong(NULL);
+
+    drv->mBufferListener = new DrvAllocation::NewBufferListener();
+    drv->mBufferListener->rsc = rsc;
+    drv->mBufferListener->alloc = alloc;
+
+    drv->cpuConsumer->setFrameAvailableListener(drv->mBufferListener);
+
     return bp.get();
 #else
     return NULL;
