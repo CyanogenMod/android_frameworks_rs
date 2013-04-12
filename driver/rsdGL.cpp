@@ -267,8 +267,6 @@ bool rsdGLInit(const Context *rsc) {
         }
     }
 
-    eglSwapInterval(dc->gl.egl.display, 0);
-
     if (numConfigs) {
         EGLConfig* const configs = new EGLConfig[numConfigs];
 

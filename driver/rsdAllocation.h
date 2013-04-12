@@ -48,6 +48,16 @@ struct DrvAllocation {
     uint32_t renderTargetID;
 
 #ifndef RS_COMPATIBILITY_LIB
+    class NewBufferListener : public android::ConsumerBase::FrameAvailableListener {
+    public:
+        const android::renderscript::Context *rsc;
+        const android::renderscript::Allocation *alloc;
+
+        virtual void onFrameAvailable();
+    };
+    android::sp<NewBufferListener> mBufferListener;
+
+
     GLenum glTarget;
     GLenum glType;
     GLenum glFormat;

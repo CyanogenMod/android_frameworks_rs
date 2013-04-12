@@ -48,6 +48,7 @@ using namespace android;
 using namespace android::renderscript;
 
 pthread_mutex_t Context::gInitMutex = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t Context::gMessageMutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t Context::gLibMutex = PTHREAD_MUTEX_INITIALIZER;
 
 bool Context::initGLThread() {
@@ -732,7 +733,10 @@ RsMessageToClientType Context::getMessageToClient(void *data, size_t *receiveLen
 bool Context::sendMessageToClient(const void *data, RsMessageToClientType cmdID,
                                   uint32_t subID, size_t len, bool waitForSpace) const {
 
-    return mIO.sendToClient(cmdID, subID, data, len, waitForSpace);
+    pthread_mutex_lock(&gMessageMutex);
+    bool ret = mIO.sendToClient(cmdID, subID, data, len, waitForSpace);
+    pthread_mutex_unlock(&gMessageMutex);
+    return ret;
 }
 
 void Context::initToClient() {
