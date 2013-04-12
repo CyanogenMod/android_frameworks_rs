@@ -53,6 +53,9 @@ void rsdScriptInvokeFreeChildren(const android::renderscript::Context *dc,
 void rsdScriptSetGlobalVar(const android::renderscript::Context *,
                            const android::renderscript::Script *,
                            uint32_t slot, void *data, size_t dataLen);
+void rsdScriptGetGlobalVar(const android::renderscript::Context *,
+                           const android::renderscript::Script *,
+                           uint32_t slot, void *data, size_t dataLen);
 void rsdScriptSetGlobalVarWithElemDims(const android::renderscript::Context *,
                                        const android::renderscript::Script *,
                                        uint32_t slot, void *data,

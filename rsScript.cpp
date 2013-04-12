@@ -60,6 +60,15 @@ void Script::setVar(uint32_t slot, const void *val, size_t len) {
     mRSC->mHal.funcs.script.setGlobalVar(mRSC, this, slot, (void *)val, len);
 }
 
+void Script::getVar(uint32_t slot, const void *val, size_t len) {
+    //ALOGE("getVar %i %p %i", slot, val, len);
+    if (slot >= mHal.info.exportedVariableCount) {
+        ALOGE("Script::getVar unable to set allocation, invalid slot index");
+        return;
+    }
+    mRSC->mHal.funcs.script.getGlobalVar(mRSC, this, slot, (void *)val, len);
+}
+
 void Script::setVar(uint32_t slot, const void *val, size_t len, Element *e,
                     const size_t *dims, size_t dimLen) {
     if (slot >= mHal.info.exportedVariableCount) {
@@ -228,6 +237,11 @@ void rsi_ScriptSetVarD(Context *rsc, RsScript vs, uint32_t slot, double value) {
 void rsi_ScriptSetVarV(Context *rsc, RsScript vs, uint32_t slot, const void *data, size_t len) {
     Script *s = static_cast<Script *>(vs);
     s->setVar(slot, data, len);
+}
+
+void rsi_ScriptGetVarV(Context *rsc, RsScript vs, uint32_t slot, void *data, size_t len) {
+    Script *s = static_cast<Script *>(vs);
+    s->getVar(slot, data, len);
 }
 
 void rsi_ScriptSetVarVE(Context *rsc, RsScript vs, uint32_t slot,

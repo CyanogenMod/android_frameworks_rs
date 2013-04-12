@@ -62,6 +62,7 @@ public:
     virtual void invokeFreeChildren();
 
     virtual void setGlobalVar(uint32_t slot, const void *data, size_t dataLength);
+    virtual void getGlobalVar(uint32_t slot, void *data, size_t dataLength);
     virtual void setGlobalVarWithElemDims(uint32_t slot, const void *data, size_t dataLength,
                                   const Element *e, const size_t *dims, size_t dimLength);
     virtual void setGlobalBind(uint32_t slot, Allocation *data);
