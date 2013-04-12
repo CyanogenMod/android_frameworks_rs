@@ -121,6 +121,10 @@ typedef struct {
                              uint32_t slot,
                              void *data,
                              size_t dataLength);
+        void (*getGlobalVar)(const Context *rsc, const Script *s,
+                             uint32_t slot,
+                             void *data,
+                             size_t dataLength);
         void (*setGlobalVarWithElemDims)(const Context *rsc, const Script *s,
                                          uint32_t slot,
                                          void *data,
