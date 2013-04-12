@@ -75,6 +75,7 @@ public:
     static Context * createContextLite();
     ~Context();
 
+    static pthread_mutex_t gMessageMutex;
     static pthread_mutex_t gInitMutex;
     // Library mutex (for providing thread-safe calls from the runtime)
     static pthread_mutex_t gLibMutex;
