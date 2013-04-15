@@ -71,7 +71,9 @@ public:
     };
     Hal mHal;
 
-    static Context * createContext(Device *, const RsSurfaceConfig *sc, bool forceCpu = false, bool synchronous = false);
+    static Context * createContext(Device *, const RsSurfaceConfig *sc,
+            RsContextType ct = RS_CONTEXT_TYPE_NORMAL,
+            bool forceCpu = false, bool synchronous = false);
     static Context * createContextLite();
     ~Context();
 
@@ -229,6 +231,9 @@ public:
     uint32_t getTargetSdkVersion() const {return mTargetSdkVersion;}
     void setTargetSdkVersion(uint32_t sdkVer) {mTargetSdkVersion = sdkVer;}
 
+    RsContextType getContextType() const { return mContextType; }
+    void setContextType(RsContextType ct) { mContextType = ct; }
+
     Device *mDev;
 protected:
 
@@ -240,6 +245,8 @@ protected:
     bool mIsGraphicsContext;
 
     bool mForceCpu;
+
+    RsContextType mContextType;
 
     bool mRunning;
     bool mExit;

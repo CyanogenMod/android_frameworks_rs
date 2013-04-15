@@ -149,6 +149,11 @@ bool RsdCpuScriptImpl::init(char const *resName, char const *cacheDir,
     if (selectRTCallback != NULL) {
         core_lib = selectRTCallback((const char *)bitcode, bitcodeSize);
     }
+
+    if (mCtx->getContext()->getContextType() == RS_CONTEXT_TYPE_DEBUG) {
+        // Use the libclcore_debug.bc instead of the default library.
+        core_lib = bcc::RSInfo::LibCLCoreDebugPath;
+    }
     exec = mCompilerDriver->build(*mCompilerContext, cacheDir, resName,
                                   (const char *)bitcode, bitcodeSize, core_lib,
                                   mCtx->getLinkRuntimeCallback());
