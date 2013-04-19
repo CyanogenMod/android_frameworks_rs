@@ -18,6 +18,10 @@
 #include "rsCpuIntrinsic.h"
 #include "rsCpuIntrinsicInlines.h"
 
+#ifndef RS_COMPATIBILITY_LIB
+#include "hardware/gralloc.h"
+#endif
+
 using namespace android;
 using namespace android::renderscript;
 
@@ -99,6 +103,7 @@ static short YuvCoeff[] = {
 };
 
 extern "C" void rsdIntrinsicYuv_K(void *dst, const uchar *Y, const uchar *uv, uint32_t count, const short *param);
+extern "C" void rsdIntrinsicYuv2_K(void *dst, const uchar *Y, const uchar *u, const uchar *v, uint32_t count, const short *param);
 
 void RsdCpuScriptIntrinsicYuvToRGB::kernel(const RsForEachStubParamStruct *p,
                                            uint32_t xstart, uint32_t xend,
@@ -109,39 +114,87 @@ void RsdCpuScriptIntrinsicYuvToRGB::kernel(const RsForEachStubParamStruct *p,
         return;
     }
     const uchar *pinY = (const uchar *)cp->alloc->mHal.drvState.lod[0].mallocPtr;
-    const uchar *pinUV = (const uchar *)cp->alloc->mHal.drvState.lod[1].mallocPtr;
     const size_t strideY = cp->alloc->mHal.drvState.lod[0].stride;
-    const size_t strideUV = cp->alloc->mHal.drvState.lod[1].stride;
-
     const uchar *Y = pinY + (p->y * strideY);
-    const uchar *uv = pinUV + ((p->y >> 1) * strideUV);
 
     uchar4 *out = (uchar4 *)p->out;
     uint32_t x1 = xstart;
     uint32_t x2 = xend;
 
-    if(x2 > x1) {
-#if defined(ARCH_ARM_HAVE_NEON)
-        int32_t len = (x2 - x1 - 1) >> 3;
-        if(len > 0) {
-            rsdIntrinsicYuv_K(out, Y, uv, len, YuvCoeff);
-            x1 += len << 3;
-            out += len << 3;
-        }
+    switch (cp->alloc->mHal.state.yuv) {
+    // In API 17 there was no yuv format and the intrinsic treated everything as NV21
+    case 0:
+#if !defined(RS_SERVER) && !defined(RS_COMPATIBILITY_LIB)
+    case HAL_PIXEL_FORMAT_YCrCb_420_SP:  // NV21
 #endif
+        {
+            const uchar *pinUV = (const uchar *)cp->alloc->mHal.drvState.lod[1].mallocPtr;
+            const size_t strideUV = cp->alloc->mHal.drvState.lod[1].stride;
+            const uchar *uv = pinUV + ((p->y >> 1) * strideUV);
 
-       // ALOGE("y %i  %i  %i", p->y, x1, x2);
-        while(x1 < x2) {
-            uchar u = uv[(x1 & 0xffffe) + 1];
-            uchar v = uv[(x1 & 0xffffe) + 0];
-            *out = rsYuvToRGBA_uchar4(Y[x1], u, v);
-            out++;
-            x1++;
-            *out = rsYuvToRGBA_uchar4(Y[x1], u, v);
-            out++;
-            x1++;
+            if(x2 > x1) {
+        #if defined(ARCH_ARM_HAVE_NEON)
+                int32_t len = (x2 - x1 - 1) >> 3;
+                if(len > 0) {
+                    rsdIntrinsicYuv_K(out, Y, uv, len, YuvCoeff);
+                    x1 += len << 3;
+                    out += len << 3;
+                }
+        #endif
+
+               // ALOGE("y %i  %i  %i", p->y, x1, x2);
+                while(x1 < x2) {
+                    uchar u = uv[(x1 & 0xffffe) + 1];
+                    uchar v = uv[(x1 & 0xffffe) + 0];
+                    *out = rsYuvToRGBA_uchar4(Y[x1], u, v);
+                    out++;
+                    x1++;
+                    *out = rsYuvToRGBA_uchar4(Y[x1], u, v);
+                    out++;
+                    x1++;
+                }
+            }
         }
+        break;
+
+#if !defined(RS_SERVER) && !defined(RS_COMPATIBILITY_LIB)
+    case HAL_PIXEL_FORMAT_YV12:
+        {
+            const uchar *pinU = (const uchar *)cp->alloc->mHal.drvState.lod[1].mallocPtr;
+            const size_t strideU = cp->alloc->mHal.drvState.lod[1].stride;
+            const uchar *u = pinU + ((p->y >> 1) * strideU);
+
+            const uchar *pinV = (const uchar *)cp->alloc->mHal.drvState.lod[2].mallocPtr;
+            const size_t strideV = cp->alloc->mHal.drvState.lod[2].stride;
+            const uchar *v = pinV + ((p->y >> 1) * strideV);
+
+            if(x2 > x1) {
+        #if defined(ARCH_ARM_HAVE_NEON)
+                int32_t len = (x2 - x1 - 1) >> 3;
+                if(len > 0) {
+                    rsdIntrinsicYuv2_K(out, Y, u, v, len, YuvCoeff);
+                    x1 += len << 3;
+                    out += len << 3;
+                }
+        #endif
+
+               // ALOGE("y %i  %i  %i", p->y, x1, x2);
+                while(x1 < x2) {
+                    uchar ut = u[x1];
+                    uchar vt = v[x1];
+                    *out = rsYuvToRGBA_uchar4(Y[x1], ut, vt);
+                    out++;
+                    x1++;
+                    *out = rsYuvToRGBA_uchar4(Y[x1], ut, vt);
+                    out++;
+                    x1++;
+                }
+            }
+        }
+        break;
+#endif
     }
+
 }
 
 RsdCpuScriptIntrinsicYuvToRGB::RsdCpuScriptIntrinsicYuvToRGB(
