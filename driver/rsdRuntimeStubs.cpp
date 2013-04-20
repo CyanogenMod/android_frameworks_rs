@@ -565,20 +565,20 @@ static void * ElementAt1D(Allocation *a, RsDataType dt, uint32_t vecSize, uint32
     char buf[256];
     if (x >= t->getLODDimX(0)) {
         sprintf(buf, "Out range ElementAt X %i of %i", x, t->getLODDimX(0));
-        rsc->setError(RS_ERROR_FATAL_UNKNOWN, buf);
+        rsc->setError(RS_ERROR_FATAL_DEBUG, buf);
         return NULL;
     }
 
     if (vecSize > 0) {
         if (vecSize != e->getVectorSize()) {
             sprintf(buf, "Vector size mismatch for ElementAt %i of %i", vecSize, e->getVectorSize());
-            rsc->setError(RS_ERROR_FATAL_UNKNOWN, buf);
+            rsc->setError(RS_ERROR_FATAL_DEBUG, buf);
             return NULL;
         }
 
         if (dt != e->getType()) {
             sprintf(buf, "Data type mismatch for ElementAt %i of %i", dt, e->getType());
-            rsc->setError(RS_ERROR_FATAL_UNKNOWN, buf);
+            rsc->setError(RS_ERROR_FATAL_DEBUG, buf);
             return NULL;
         }
     }
@@ -596,26 +596,26 @@ static void * ElementAt2D(Allocation *a, RsDataType dt, uint32_t vecSize, uint32
     char buf[256];
     if (x >= t->getLODDimX(0)) {
         sprintf(buf, "Out range ElementAt X %i of %i", x, t->getLODDimX(0));
-        rsc->setError(RS_ERROR_FATAL_UNKNOWN, buf);
+        rsc->setError(RS_ERROR_FATAL_DEBUG, buf);
         return NULL;
     }
 
     if (y >= t->getLODDimY(0)) {
         sprintf(buf, "Out range ElementAt Y %i of %i", y, t->getLODDimY(0));
-        rsc->setError(RS_ERROR_FATAL_UNKNOWN, buf);
+        rsc->setError(RS_ERROR_FATAL_DEBUG, buf);
         return NULL;
     }
 
     if (vecSize > 0) {
         if (vecSize != e->getVectorSize()) {
             sprintf(buf, "Vector size mismatch for ElementAt %i of %i", vecSize, e->getVectorSize());
-            rsc->setError(RS_ERROR_FATAL_UNKNOWN, buf);
+            rsc->setError(RS_ERROR_FATAL_DEBUG, buf);
             return NULL;
         }
 
         if (dt != e->getType()) {
             sprintf(buf, "Data type mismatch for ElementAt %i of %i", dt, e->getType());
-            rsc->setError(RS_ERROR_FATAL_UNKNOWN, buf);
+            rsc->setError(RS_ERROR_FATAL_DEBUG, buf);
             return NULL;
         }
     }
@@ -634,32 +634,32 @@ static void * ElementAt3D(Allocation *a, RsDataType dt, uint32_t vecSize, uint32
     char buf[256];
     if (x >= t->getLODDimX(0)) {
         sprintf(buf, "Out range ElementAt X %i of %i", x, t->getLODDimX(0));
-        rsc->setError(RS_ERROR_FATAL_UNKNOWN, buf);
+        rsc->setError(RS_ERROR_FATAL_DEBUG, buf);
         return NULL;
     }
 
     if (y >= t->getLODDimY(0)) {
         sprintf(buf, "Out range ElementAt Y %i of %i", y, t->getLODDimY(0));
-        rsc->setError(RS_ERROR_FATAL_UNKNOWN, buf);
+        rsc->setError(RS_ERROR_FATAL_DEBUG, buf);
         return NULL;
     }
 
     if (z >= t->getLODDimZ(0)) {
         sprintf(buf, "Out range ElementAt Z %i of %i", z, t->getLODDimZ(0));
-        rsc->setError(RS_ERROR_FATAL_UNKNOWN, buf);
+        rsc->setError(RS_ERROR_FATAL_DEBUG, buf);
         return NULL;
     }
 
     if (vecSize > 0) {
         if (vecSize != e->getVectorSize()) {
             sprintf(buf, "Vector size mismatch for ElementAt %i of %i", vecSize, e->getVectorSize());
-            rsc->setError(RS_ERROR_FATAL_UNKNOWN, buf);
+            rsc->setError(RS_ERROR_FATAL_DEBUG, buf);
             return NULL;
         }
 
         if (dt != e->getType()) {
             sprintf(buf, "Data type mismatch for ElementAt %i of %i", dt, e->getType());
-            rsc->setError(RS_ERROR_FATAL_UNKNOWN, buf);
+            rsc->setError(RS_ERROR_FATAL_DEBUG, buf);
             return NULL;
         }
     }
@@ -1008,7 +1008,7 @@ static RsdCpuReference::CpuSymbol gSyms[] = {
     { "_Z20rsSetElementAt_uint313rs_allocationPKDv3_jjjj", (void *)&SC_SetElementAt3_uint3, true },
     { "_Z20rsSetElementAt_uint413rs_allocationPKDv4_jjjj", (void *)&SC_SetElementAt3_uint4, true },
 
-    { "_Z19rsSetElementAt_int13rs_allocationPKij", (void *)&SC_SetElementAt1_int, true },
+    { "_Z18rsSetElementAt_int13rs_allocationPKij", (void *)&SC_SetElementAt1_int, true },
     { "_Z19rsSetElementAt_int213rs_allocationPKDv2_ij", (void *)&SC_SetElementAt1_int2, true },
     { "_Z19rsSetElementAt_int313rs_allocationPKDv3_ij", (void *)&SC_SetElementAt1_int3, true },
     { "_Z19rsSetElementAt_int413rs_allocationPKDv4_ij", (void *)&SC_SetElementAt1_int4, true },

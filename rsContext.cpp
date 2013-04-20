@@ -316,6 +316,8 @@ void * Context::threadProc(void *vrsc) {
         ALOGE("Skipping override driver and loading default CPU driver");
     } else if (rsc->mForceCpu) {
         ALOGV("Application requested CPU execution");
+    } else if (rsc->getContextType() == RS_CONTEXT_TYPE_DEBUG) {
+        ALOGV("Application requested debug context");
     } else {
         if (loadRuntime(OVERRIDE_RS_DRIVER_STRING, rsc)) {
             ALOGE("Successfully loaded runtime: %s", OVERRIDE_RS_DRIVER_STRING);
@@ -503,15 +505,18 @@ Context::Context() {
     mIsContextLite = false;
     memset(&watchdog, 0, sizeof(watchdog));
     mForceCpu = false;
+    mContextType = RS_CONTEXT_TYPE_NORMAL;
     mSynchronous = false;
 }
 
 Context * Context::createContext(Device *dev, const RsSurfaceConfig *sc,
-                                 bool forceCpu, bool synchronous) {
+                                 RsContextType ct, bool forceCpu,
+                                 bool synchronous) {
     Context * rsc = new Context();
 
     rsc->mForceCpu = forceCpu;
     rsc->mSynchronous = synchronous;
+    rsc->mContextType = ct;
 
     if (!rsc->initContext(dev, sc)) {
         delete rsc;
@@ -896,7 +901,7 @@ RsContext rsContextCreate(RsDevice vdev, uint32_t version, uint32_t sdkVersion,
                           RsContextType ct, bool forceCpu, bool synchronous) {
     ALOGV("rsContextCreate dev=%p", vdev);
     Device * dev = static_cast<Device *>(vdev);
-    Context *rsc = Context::createContext(dev, NULL, forceCpu, synchronous);
+    Context *rsc = Context::createContext(dev, NULL, ct, forceCpu, synchronous);
     if (rsc) {
         rsc->setTargetSdkVersion(sdkVersion);
     }

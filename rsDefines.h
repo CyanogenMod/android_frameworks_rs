@@ -300,6 +300,9 @@ enum RsError {
     RS_ERROR_OUT_OF_MEMORY = 4,
     RS_ERROR_DRIVER = 5,
 
+    // Errors that only occur in the debug context.
+    RS_ERROR_FATAL_DEBUG = 0x0800,
+
     RS_ERROR_FATAL_UNKNOWN = 0x1000,
     RS_ERROR_FATAL_DRIVER = 0x1001,
     RS_ERROR_FATAL_PROGRAM_LINK = 0x1002
