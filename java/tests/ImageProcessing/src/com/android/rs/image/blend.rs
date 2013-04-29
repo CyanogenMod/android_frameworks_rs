@@ -13,6 +13,7 @@
 // limitations under the License.
 
 #include "ip.rsh"
+#pragma rs_fp_relaxed
 
 uchar alpha = 0x0;
 

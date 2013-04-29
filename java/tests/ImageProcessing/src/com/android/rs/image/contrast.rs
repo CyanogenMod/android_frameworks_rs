@@ -15,6 +15,7 @@
  */
 
 #include "ip.rsh"
+#pragma rs_fp_relaxed
 
 static float brightM = 0.f;
 static float brightC = 0.f;

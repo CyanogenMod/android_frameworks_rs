@@ -15,6 +15,7 @@
  */
 
 #include "ip.rsh"
+#pragma rs_fp_relaxed
 
 float vibrance = 0.f;
 
