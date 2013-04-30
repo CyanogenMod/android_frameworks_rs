@@ -25,11 +25,11 @@
 
 // Conversions
 #define CVT_FUNC_2(typeout, typein)                             \
-_RS_RUNTIME typeout##2 __attribute__((overloadable))            \
+_RS_RUNTIME typeout##2 __attribute__((const, overloadable))     \
         convert_##typeout##2(typein##2 v);                      \
-_RS_RUNTIME typeout##3 __attribute__((overloadable))            \
+_RS_RUNTIME typeout##3 __attribute__((const, overloadable))     \
         convert_##typeout##3(typein##3 v);                      \
-_RS_RUNTIME typeout##4 __attribute__((overloadable))            \
+_RS_RUNTIME typeout##4 __attribute__((const, overloadable))     \
         convert_##typeout##4(typein##4 v);
 
 
@@ -92,89 +92,89 @@ CVT_FUNC(float)
 
 // Float ops, 6.11.2
 
-#define FN_FUNC_FN(fnc)                                         \
-_RS_RUNTIME float2 __attribute__((overloadable)) fnc(float2 v); \
-_RS_RUNTIME float3 __attribute__((overloadable)) fnc(float3 v); \
-_RS_RUNTIME float4 __attribute__((overloadable)) fnc(float4 v);
+#define FN_FUNC_FN(fnc)                                                \
+_RS_RUNTIME float2 __attribute__((const, overloadable)) fnc(float2 v); \
+_RS_RUNTIME float3 __attribute__((const, overloadable)) fnc(float3 v); \
+_RS_RUNTIME float4 __attribute__((const, overloadable)) fnc(float4 v);
 
-#define F_FUNC_FN(fnc)                                          \
-_RS_RUNTIME float __attribute__((overloadable)) fnc(float2 v);  \
-_RS_RUNTIME float __attribute__((overloadable)) fnc(float3 v);  \
-_RS_RUNTIME float __attribute__((overloadable)) fnc(float4 v);
+#define F_FUNC_FN(fnc)                                                \
+_RS_RUNTIME float __attribute__((const, overloadable)) fnc(float2 v); \
+_RS_RUNTIME float __attribute__((const, overloadable)) fnc(float3 v); \
+_RS_RUNTIME float __attribute__((const, overloadable)) fnc(float4 v);
 
-#define IN_FUNC_FN(fnc)                                         \
-_RS_RUNTIME int2 __attribute__((overloadable)) fnc(float2 v);   \
-_RS_RUNTIME int3 __attribute__((overloadable)) fnc(float3 v);   \
-_RS_RUNTIME int4 __attribute__((overloadable)) fnc(float4 v);
+#define IN_FUNC_FN(fnc)                                              \
+_RS_RUNTIME int2 __attribute__((const, overloadable)) fnc(float2 v); \
+_RS_RUNTIME int3 __attribute__((const, overloadable)) fnc(float3 v); \
+_RS_RUNTIME int4 __attribute__((const, overloadable)) fnc(float4 v);
 
-#define FN_FUNC_FN_FN(fnc)                                                  \
-_RS_RUNTIME float2 __attribute__((overloadable)) fnc(float2 v1, float2 v2); \
-_RS_RUNTIME float3 __attribute__((overloadable)) fnc(float3 v1, float3 v2); \
-_RS_RUNTIME float4 __attribute__((overloadable)) fnc(float4 v1, float4 v2);
+#define FN_FUNC_FN_FN(fnc)                                                         \
+_RS_RUNTIME float2 __attribute__((const, overloadable)) fnc(float2 v1, float2 v2); \
+_RS_RUNTIME float3 __attribute__((const, overloadable)) fnc(float3 v1, float3 v2); \
+_RS_RUNTIME float4 __attribute__((const, overloadable)) fnc(float4 v1, float4 v2);
 
-#define F_FUNC_FN_FN(fnc)                                                   \
-_RS_RUNTIME float __attribute__((overloadable)) fnc(float2 v1, float2 v2);  \
-_RS_RUNTIME float __attribute__((overloadable)) fnc(float3 v1, float3 v2);  \
-_RS_RUNTIME float __attribute__((overloadable)) fnc(float4 v1, float4 v2);
+#define F_FUNC_FN_FN(fnc)                                                         \
+_RS_RUNTIME float __attribute__((const, overloadable)) fnc(float2 v1, float2 v2); \
+_RS_RUNTIME float __attribute__((const, overloadable)) fnc(float3 v1, float3 v2); \
+_RS_RUNTIME float __attribute__((const, overloadable)) fnc(float4 v1, float4 v2);
 
-#define FN_FUNC_FN_F(fnc)                                                   \
-_RS_RUNTIME float2 __attribute__((overloadable)) fnc(float2 v1, float v2);  \
-_RS_RUNTIME float3 __attribute__((overloadable)) fnc(float3 v1, float v2);  \
-_RS_RUNTIME float4 __attribute__((overloadable)) fnc(float4 v1, float v2);
+#define FN_FUNC_FN_F(fnc)                                                         \
+_RS_RUNTIME float2 __attribute__((const, overloadable)) fnc(float2 v1, float v2); \
+_RS_RUNTIME float3 __attribute__((const, overloadable)) fnc(float3 v1, float v2); \
+_RS_RUNTIME float4 __attribute__((const, overloadable)) fnc(float4 v1, float v2);
 
-#define FN_FUNC_FN_IN(fnc)                                                  \
-_RS_RUNTIME float2 __attribute__((overloadable)) fnc(float2 v1, int2 v2);   \
-_RS_RUNTIME float3 __attribute__((overloadable)) fnc(float3 v1, int3 v2);   \
-_RS_RUNTIME float4 __attribute__((overloadable)) fnc(float4 v1, int4 v2);   \
+#define FN_FUNC_FN_IN(fnc)                                                       \
+_RS_RUNTIME float2 __attribute__((const, overloadable)) fnc(float2 v1, int2 v2); \
+_RS_RUNTIME float3 __attribute__((const, overloadable)) fnc(float3 v1, int3 v2); \
+_RS_RUNTIME float4 __attribute__((const, overloadable)) fnc(float4 v1, int4 v2);
 
-#define FN_FUNC_FN_I(fnc)                                                   \
-_RS_RUNTIME float2 __attribute__((overloadable)) fnc(float2 v1, int v2);    \
-_RS_RUNTIME float3 __attribute__((overloadable)) fnc(float3 v1, int v2);    \
-_RS_RUNTIME float4 __attribute__((overloadable)) fnc(float4 v1, int v2);
+#define FN_FUNC_FN_I(fnc)                                                       \
+_RS_RUNTIME float2 __attribute__((const, overloadable)) fnc(float2 v1, int v2); \
+_RS_RUNTIME float3 __attribute__((const, overloadable)) fnc(float3 v1, int v2); \
+_RS_RUNTIME float4 __attribute__((const, overloadable)) fnc(float4 v1, int v2);
 
-#define FN_FUNC_FN_PFN(fnc)                         \
-_RS_RUNTIME float2 __attribute__((overloadable))    \
-        fnc(float2 v1, float2 *v2);                 \
-_RS_RUNTIME float3 __attribute__((overloadable))    \
-        fnc(float3 v1, float3 *v2);                 \
-_RS_RUNTIME float4 __attribute__((overloadable))    \
+#define FN_FUNC_FN_PFN(fnc)                            \
+_RS_RUNTIME float2 __attribute__((pure, overloadable)) \
+        fnc(float2 v1, float2 *v2);                    \
+_RS_RUNTIME float3 __attribute__((pure, overloadable)) \
+        fnc(float3 v1, float3 *v2);                    \
+_RS_RUNTIME float4 __attribute__((pure, overloadable)) \
         fnc(float4 v1, float4 *v2);
 
-#define FN_FUNC_FN_PIN(fnc)                                                 \
-_RS_RUNTIME float2 __attribute__((overloadable)) fnc(float2 v1, int2 *v2);  \
-_RS_RUNTIME float3 __attribute__((overloadable)) fnc(float3 v1, int3 *v2);  \
-_RS_RUNTIME float4 __attribute__((overloadable)) fnc(float4 v1, int4 *v2);
+#define FN_FUNC_FN_PIN(fnc)                                                      \
+_RS_RUNTIME float2 __attribute__((pure, overloadable)) fnc(float2 v1, int2 *v2); \
+_RS_RUNTIME float3 __attribute__((pure, overloadable)) fnc(float3 v1, int3 *v2); \
+_RS_RUNTIME float4 __attribute__((pure, overloadable)) fnc(float4 v1, int4 *v2);
 
-#define FN_FUNC_FN_FN_FN(fnc)                       \
-_RS_RUNTIME float2 __attribute__((overloadable))    \
-        fnc(float2 v1, float2 v2, float2 v3);       \
-_RS_RUNTIME float3 __attribute__((overloadable))    \
-        fnc(float3 v1, float3 v2, float3 v3);       \
-_RS_RUNTIME float4 __attribute__((overloadable))    \
+#define FN_FUNC_FN_FN_FN(fnc)                           \
+_RS_RUNTIME float2 __attribute__((const, overloadable)) \
+        fnc(float2 v1, float2 v2, float2 v3);           \
+_RS_RUNTIME float3 __attribute__((const, overloadable)) \
+        fnc(float3 v1, float3 v2, float3 v3);           \
+_RS_RUNTIME float4 __attribute__((const, overloadable)) \
         fnc(float4 v1, float4 v2, float4 v3);
 
-#define FN_FUNC_FN_FN_F(fnc)                        \
-_RS_RUNTIME float2 __attribute__((overloadable))    \
-        fnc(float2 v1, float2 v2, float v3);        \
-_RS_RUNTIME float3 __attribute__((overloadable))    \
-        fnc(float3 v1, float3 v2, float v3);        \
-_RS_RUNTIME float4 __attribute__((overloadable))    \
+#define FN_FUNC_FN_FN_F(fnc)                            \
+_RS_RUNTIME float2 __attribute__((const, overloadable)) \
+        fnc(float2 v1, float2 v2, float v3);            \
+_RS_RUNTIME float3 __attribute__((const, overloadable)) \
+        fnc(float3 v1, float3 v2, float v3);            \
+_RS_RUNTIME float4 __attribute__((const, overloadable)) \
         fnc(float4 v1, float4 v2, float v3);
 
-#define FN_FUNC_FN_F_F(fnc)                         \
-_RS_RUNTIME float2 __attribute__((overloadable))    \
-        fnc(float2 v1, float v2, float v3);         \
-_RS_RUNTIME float3 __attribute__((overloadable))    \
-        fnc(float3 v1, float v2, float v3);         \
-_RS_RUNTIME float4 __attribute__((overloadable))    \
+#define FN_FUNC_FN_F_F(fnc)                             \
+_RS_RUNTIME float2 __attribute__((const, overloadable)) \
+        fnc(float2 v1, float v2, float v3);             \
+_RS_RUNTIME float3 __attribute__((const, overloadable)) \
+        fnc(float3 v1, float v2, float v3);             \
+_RS_RUNTIME float4 __attribute__((const, overloadable)) \
         fnc(float4 v1, float v2, float v3);
 
-#define FN_FUNC_FN_FN_PIN(fnc)                      \
-_RS_RUNTIME float2 __attribute__((overloadable))    \
-        fnc(float2 v1, float2 v2, int2 *v3);        \
-_RS_RUNTIME float3 __attribute__((overloadable))    \
-        fnc(float3 v1, float3 v2, int3 *v3);        \
-_RS_RUNTIME float4 __attribute__((overloadable))    \
+#define FN_FUNC_FN_FN_PIN(fnc)                         \
+_RS_RUNTIME float2 __attribute__((pure, overloadable)) \
+        fnc(float2 v1, float2 v2, int2 *v3);           \
+_RS_RUNTIME float3 __attribute__((pure, overloadable)) \
+        fnc(float3 v1, float3 v2, int3 *v3);           \
+_RS_RUNTIME float4 __attribute__((pure, overloadable)) \
         fnc(float4 v1, float4 v2, int4 *v3);
 
 
@@ -183,7 +183,7 @@ _RS_RUNTIME float4 __attribute__((overloadable))    \
  *
  * Supports float, float2, float3, float4
  */
-extern float __attribute__((overloadable)) acos(float);
+extern float __attribute__((const, overloadable)) acos(float);
 FN_FUNC_FN(acos)
 
 /**
@@ -191,7 +191,7 @@ FN_FUNC_FN(acos)
  *
  * Supports float, float2, float3, float4
  */
-extern float __attribute__((overloadable)) acosh(float);
+extern float __attribute__((const, overloadable)) acosh(float);
 FN_FUNC_FN(acosh)
 
 /**
@@ -199,7 +199,7 @@ FN_FUNC_FN(acosh)
  *
  * Supports float, float2, float3, float4
  */
-_RS_RUNTIME float __attribute__((overloadable)) acospi(float v);
+_RS_RUNTIME float __attribute__((const, overloadable)) acospi(float v);
 FN_FUNC_FN(acospi)
 
 /**
@@ -207,7 +207,7 @@ FN_FUNC_FN(acospi)
  *
  * Supports float, float2, float3, float4
  */
-extern float __attribute__((overloadable)) asin(float);
+extern float __attribute__((const, overloadable)) asin(float);
 FN_FUNC_FN(asin)
 
 /**
@@ -215,7 +215,7 @@ FN_FUNC_FN(asin)
  *
  * Supports float, float2, float3, float4
  */
-extern float __attribute__((overloadable)) asinh(float);
+extern float __attribute__((const, overloadable)) asinh(float);
 FN_FUNC_FN(asinh)
 
 
@@ -224,7 +224,7 @@ FN_FUNC_FN(asinh)
  *
  * Supports float, float2, float3, float4
  */
-_RS_RUNTIME float __attribute__((overloadable)) asinpi(float v);
+_RS_RUNTIME float __attribute__((const, overloadable)) asinpi(float v);
 FN_FUNC_FN(asinpi)
 
 /**
@@ -232,7 +232,7 @@ FN_FUNC_FN(asinpi)
  *
  * Supports float, float2, float3, float4
  */
-extern float __attribute__((overloadable)) atan(float);
+extern float __attribute__((const, overloadable)) atan(float);
 FN_FUNC_FN(atan)
 
 /**
@@ -244,7 +244,7 @@ FN_FUNC_FN(atan)
  * @param y
  * @param x
  */
-extern float __attribute__((overloadable)) atan2(float y, float x);
+extern float __attribute__((const, overloadable)) atan2(float y, float x);
 FN_FUNC_FN_FN(atan2)
 
 /**
@@ -252,7 +252,7 @@ FN_FUNC_FN_FN(atan2)
  *
  * Supports float, float2, float3, float4
  */
-extern float __attribute__((overloadable)) atanh(float);
+extern float __attribute__((const, overloadable)) atanh(float);
 FN_FUNC_FN(atanh)
 
 /**
@@ -260,7 +260,7 @@ FN_FUNC_FN(atanh)
  *
  * Supports float, float2, float3, float4
  */
-_RS_RUNTIME float __attribute__((overloadable)) atanpi(float v);
+_RS_RUNTIME float __attribute__((const, overloadable)) atanpi(float v);
 FN_FUNC_FN(atanpi)
 
 /**
@@ -272,7 +272,7 @@ FN_FUNC_FN(atanpi)
  * @param y
  * @param x
  */
-_RS_RUNTIME float __attribute__((overloadable)) atan2pi(float y, float x);
+_RS_RUNTIME float __attribute__((const, overloadable)) atan2pi(float y, float x);
 FN_FUNC_FN_FN(atan2pi)
 
 
@@ -281,7 +281,7 @@ FN_FUNC_FN_FN(atan2pi)
  *
  * Supports float, float2, float3, float4.
  */
-extern float __attribute__((overloadable)) cbrt(float);
+extern float __attribute__((const, overloadable)) cbrt(float);
 FN_FUNC_FN(cbrt)
 
 /**
@@ -289,7 +289,7 @@ FN_FUNC_FN(cbrt)
  *
  * Supports float, float2, float3, float4.
  */
-extern float __attribute__((overloadable)) ceil(float);
+extern float __attribute__((const, overloadable)) ceil(float);
 FN_FUNC_FN(ceil)
 
 /**
@@ -301,7 +301,7 @@ FN_FUNC_FN(ceil)
  * @param x
  * @param y
  */
-extern float __attribute__((overloadable)) copysign(float x, float y);
+extern float __attribute__((const, overloadable)) copysign(float x, float y);
 FN_FUNC_FN_FN(copysign)
 
 /**
@@ -309,7 +309,7 @@ FN_FUNC_FN_FN(copysign)
  *
  * Supports float, float2, float3, float4.
  */
-extern float __attribute__((overloadable)) cos(float);
+extern float __attribute__((const, overloadable)) cos(float);
 FN_FUNC_FN(cos)
 
 /**
@@ -317,7 +317,7 @@ FN_FUNC_FN(cos)
  *
  * Supports float, float2, float3, float4.
  */
-extern float __attribute__((overloadable)) cosh(float);
+extern float __attribute__((const, overloadable)) cosh(float);
 FN_FUNC_FN(cosh)
 
 /**
@@ -325,7 +325,7 @@ FN_FUNC_FN(cosh)
  *
  * Supports float, float2, float3, float4.
  */
-_RS_RUNTIME float __attribute__((overloadable)) cospi(float v);
+_RS_RUNTIME float __attribute__((const, overloadable)) cospi(float v);
 FN_FUNC_FN(cospi)
 
 /**
@@ -333,7 +333,7 @@ FN_FUNC_FN(cospi)
  *
  * Supports float, float2, float3, float4.
  */
-extern float __attribute__((overloadable)) erfc(float);
+extern float __attribute__((const, overloadable)) erfc(float);
 FN_FUNC_FN(erfc)
 
 /**
@@ -341,7 +341,7 @@ FN_FUNC_FN(erfc)
  *
  * Supports float, float2, float3, float4.
  */
-extern float __attribute__((overloadable)) erf(float);
+extern float __attribute__((const, overloadable)) erf(float);
 FN_FUNC_FN(erf)
 
 /**
@@ -349,7 +349,7 @@ FN_FUNC_FN(erf)
  *
  * Supports float, float2, float3, float4.
  */
-extern float __attribute__((overloadable)) exp(float);
+extern float __attribute__((const, overloadable)) exp(float);
 FN_FUNC_FN(exp)
 
 /**
@@ -357,7 +357,7 @@ FN_FUNC_FN(exp)
  *
  * Supports float, float2, float3, float4.
  */
-extern float __attribute__((overloadable)) exp2(float);
+extern float __attribute__((const, overloadable)) exp2(float);
 FN_FUNC_FN(exp2)
 
 /**
@@ -366,7 +366,7 @@ FN_FUNC_FN(exp2)
  * Supports float, float2, float3, float4. Both arguments must be of the same
  * type.
  */
-extern float __attribute__((overloadable)) pow(float x, float y);
+extern float __attribute__((const, overloadable)) pow(float x, float y);
 FN_FUNC_FN_FN(pow)
 
 /**
@@ -374,7 +374,7 @@ FN_FUNC_FN_FN(pow)
  *
  * Supports float, float2, float3, float4.
  */
-_RS_RUNTIME float __attribute__((overloadable)) exp10(float v);
+_RS_RUNTIME float __attribute__((const, overloadable)) exp10(float v);
 FN_FUNC_FN(exp10)
 
 /**
@@ -382,7 +382,7 @@ FN_FUNC_FN(exp10)
  *
  * Supports float, float2, float3, float4.
  */
-extern float __attribute__((overloadable)) expm1(float);
+extern float __attribute__((const, overloadable)) expm1(float);
 FN_FUNC_FN(expm1)
 
 /**
@@ -390,7 +390,7 @@ FN_FUNC_FN(expm1)
  *
  * Supports float, float2, float3, float4.
  */
-extern float __attribute__((overloadable)) fabs(float);
+extern float __attribute__((const, overloadable)) fabs(float);
 FN_FUNC_FN(fabs)
 
 /**
@@ -399,7 +399,7 @@ FN_FUNC_FN(fabs)
  * Supports float, float2, float3, float4.  Both arguments must be of the same
  * type.
  */
-extern float __attribute__((overloadable)) fdim(float, float);
+extern float __attribute__((const, overloadable)) fdim(float, float);
 FN_FUNC_FN_FN(fdim)
 
 /**
@@ -407,7 +407,7 @@ FN_FUNC_FN_FN(fdim)
  *
  * Supports float, float2, float3, float4.
  */
-extern float __attribute__((overloadable)) floor(float);
+extern float __attribute__((const, overloadable)) floor(float);
 FN_FUNC_FN(floor)
 
 /**
@@ -415,7 +415,7 @@ FN_FUNC_FN(floor)
  *
  * Supports float, float2, float3, float4.
  */
-extern float __attribute__((overloadable)) fma(float a, float b, float c);
+extern float __attribute__((const, overloadable)) fma(float a, float b, float c);
 FN_FUNC_FN_FN_FN(fma)
 
 /**
@@ -425,7 +425,7 @@ FN_FUNC_FN_FN_FN(fma)
  * @param x: may be float, float2, float3, float4
  * @param y: may be float or vector.  If vector must match type of x.
  */
-extern float __attribute__((overloadable)) fmax(float x, float y);
+extern float __attribute__((const, overloadable)) fmax(float x, float y);
 FN_FUNC_FN_FN(fmax);
 FN_FUNC_FN_F(fmax);
 
@@ -435,7 +435,7 @@ FN_FUNC_FN_F(fmax);
  * @param x: may be float, float2, float3, float4
  * @param y: may be float or vector.  If vector must match type of x.
  */
-extern float __attribute__((overloadable)) fmin(float x, float y);
+extern float __attribute__((const, overloadable)) fmin(float x, float y);
 FN_FUNC_FN_FN(fmin);
 FN_FUNC_FN_F(fmin);
 
@@ -444,7 +444,7 @@ FN_FUNC_FN_F(fmin);
  *
  * Supports float, float2, float3, float4.
  */
-extern float __attribute__((overloadable)) fmod(float x, float y);
+extern float __attribute__((const, overloadable)) fmod(float x, float y);
 FN_FUNC_FN_FN(fmod)
 
 /**
@@ -453,7 +453,7 @@ FN_FUNC_FN_FN(fmod)
  * @param iptr  iptr[0] will be set to the floor of the input value.
  * Supports float, float2, float3, float4.
  */
-_RS_RUNTIME float __attribute__((overloadable)) fract(float v, float *iptr);
+_RS_RUNTIME float __attribute__((pure, overloadable)) fract(float v, float *iptr);
 FN_FUNC_FN_PFN(fract)
 
 /**
@@ -461,22 +461,22 @@ FN_FUNC_FN_PFN(fract)
  *
  * Supports float, float2, float3, float4.
  */
-static inline float __attribute__((overloadable)) fract(float v) {
+static inline float __attribute__((const, overloadable)) fract(float v) {
     float unused;
     return fract(v, &unused);
 }
 
-static inline float2 __attribute__((overloadable)) fract(float2 v) {
+static inline float2 __attribute__((const, overloadable)) fract(float2 v) {
     float2 unused;
     return fract(v, &unused);
 }
 
-static inline float3 __attribute__((overloadable)) fract(float3 v) {
+static inline float3 __attribute__((const, overloadable)) fract(float3 v) {
     float3 unused;
     return fract(v, &unused);
 }
 
-static inline float4 __attribute__((overloadable)) fract(float4 v) {
+static inline float4 __attribute__((const, overloadable)) fract(float4 v) {
     float4 unused;
     return fract(v, &unused);
 }
@@ -487,7 +487,7 @@ static inline float4 __attribute__((overloadable)) fract(float4 v) {
  * @param v Supports float, float2, float3, float4.
  * @param iptr  Must have the same vector size as v.
  */
-extern float __attribute__((overloadable)) frexp(float v, int *iptr);
+extern float __attribute__((pure, overloadable)) frexp(float v, int *iptr);
 FN_FUNC_FN_PIN(frexp)
 
 /**
@@ -495,7 +495,7 @@ FN_FUNC_FN_PIN(frexp)
  *
  * Supports float, float2, float3, float4.
  */
-extern float __attribute__((overloadable)) hypot(float x, float y);
+extern float __attribute__((const, overloadable)) hypot(float x, float y);
 FN_FUNC_FN_FN(hypot)
 
 /**
@@ -503,7 +503,7 @@ FN_FUNC_FN_FN(hypot)
  *
  * Supports 1,2,3,4 components
  */
-extern int __attribute__((overloadable)) ilogb(float);
+extern int __attribute__((const, overloadable)) ilogb(float);
 IN_FUNC_FN(ilogb)
 
 /**
@@ -512,7 +512,7 @@ IN_FUNC_FN(ilogb)
  * @param x Supports 1,2,3,4 components
  * @param y Supports single component or matching vector.
  */
-extern float __attribute__((overloadable)) ldexp(float x, int y);
+extern float __attribute__((const, overloadable)) ldexp(float x, int y);
 FN_FUNC_FN_IN(ldexp)
 FN_FUNC_FN_I(ldexp)
 
@@ -521,7 +521,7 @@ FN_FUNC_FN_I(ldexp)
  *
  * Supports 1,2,3,4 components
  */
-extern float __attribute__((overloadable)) lgamma(float);
+extern float __attribute__((const, overloadable)) lgamma(float);
 FN_FUNC_FN(lgamma)
 
 /**
@@ -530,7 +530,7 @@ FN_FUNC_FN(lgamma)
  * @param x Supports 1,2,3,4 components
  * @param y Supports matching vector.
  */
-extern float __attribute__((overloadable)) lgamma(float x, int* y);
+extern float __attribute__((pure, overloadable)) lgamma(float x, int* y);
 FN_FUNC_FN_PIN(lgamma)
 
 /**
@@ -538,7 +538,7 @@ FN_FUNC_FN_PIN(lgamma)
  *
  * Supports 1,2,3,4 components
  */
-extern float __attribute__((overloadable)) log(float);
+extern float __attribute__((const, overloadable)) log(float);
 FN_FUNC_FN(log)
 
 /**
@@ -546,7 +546,7 @@ FN_FUNC_FN(log)
  *
  * Supports 1,2,3,4 components
  */
-extern float __attribute__((overloadable)) log10(float);
+extern float __attribute__((const, overloadable)) log10(float);
 FN_FUNC_FN(log10)
 
 /**
@@ -554,7 +554,7 @@ FN_FUNC_FN(log10)
  *
  * Supports 1,2,3,4 components
  */
-_RS_RUNTIME float __attribute__((overloadable)) log2(float v);
+_RS_RUNTIME float __attribute__((const, overloadable)) log2(float v);
 FN_FUNC_FN(log2)
 
 /**
@@ -562,7 +562,7 @@ FN_FUNC_FN(log2)
  *
  * Supports 1,2,3,4 components
  */
-extern float __attribute__((overloadable)) log1p(float v);
+extern float __attribute__((const, overloadable)) log1p(float v);
 FN_FUNC_FN(log1p)
 
 /**
@@ -570,7 +570,7 @@ FN_FUNC_FN(log1p)
  *
  * Supports 1,2,3,4 components
  */
-extern float __attribute__((overloadable)) logb(float);
+extern float __attribute__((const, overloadable)) logb(float);
 FN_FUNC_FN(logb)
 
 /**
@@ -578,7 +578,7 @@ FN_FUNC_FN(logb)
  *
  * Supports 1,2,3,4 components
  */
-extern float __attribute__((overloadable)) mad(float a, float b, float c);
+extern float __attribute__((const, overloadable)) mad(float a, float b, float c);
 FN_FUNC_FN_FN_FN(mad)
 
 /**
@@ -589,17 +589,17 @@ FN_FUNC_FN_FN_FN(mad)
  * @param iret iret[0] will be set to the integral portion of the number.
  * @return The floating point portion of the value.
  */
-extern float __attribute__((overloadable)) modf(float x, float *iret);
+extern float __attribute__((pure, overloadable)) modf(float x, float *iret);
 FN_FUNC_FN_PFN(modf);
 
-extern float __attribute__((overloadable)) nan(uint);
+extern float __attribute__((const, overloadable)) nan(uint);
 
 /**
  * Return the next floating point number from x towards y.
  *
  * Supports 1,2,3,4 components
  */
-extern float __attribute__((overloadable)) nextafter(float x, float y);
+extern float __attribute__((const, overloadable)) nextafter(float x, float y);
 FN_FUNC_FN_FN(nextafter)
 
 /**
@@ -607,7 +607,7 @@ FN_FUNC_FN_FN(nextafter)
  *
  * Supports 1,2,3,4 components
  */
-_RS_RUNTIME float __attribute__((overloadable)) pown(float v, int p);
+_RS_RUNTIME float __attribute__((const, overloadable)) pown(float v, int p);
 FN_FUNC_FN_IN(pown)
 
 /**
@@ -616,7 +616,7 @@ FN_FUNC_FN_IN(pown)
  *
  * Supports 1,2,3,4 components
  */
-_RS_RUNTIME float __attribute__((overloadable)) powr(float v, float p);
+_RS_RUNTIME float __attribute__((const, overloadable)) powr(float v, float p);
 FN_FUNC_FN_FN(powr)
 
 /**
@@ -624,11 +624,11 @@ FN_FUNC_FN_FN(powr)
  *
  * Supports 1,2,3,4 components
  */
-extern float __attribute__((overloadable)) remainder(float x, float y);
+extern float __attribute__((const, overloadable)) remainder(float x, float y);
 FN_FUNC_FN_FN(remainder)
 
 // document once we know the precision of bionic
-extern float __attribute__((overloadable)) remquo(float, float, int *);
+extern float __attribute__((pure, overloadable)) remquo(float, float, int *);
 FN_FUNC_FN_FN_PIN(remquo)
 
 /**
@@ -636,7 +636,7 @@ FN_FUNC_FN_FN_PIN(remquo)
  *
  * Supports 1,2,3,4 components
  */
-extern float __attribute__((overloadable)) rint(float);
+extern float __attribute__((const, overloadable)) rint(float);
 FN_FUNC_FN(rint)
 
 /**
@@ -644,7 +644,7 @@ FN_FUNC_FN(rint)
  *
  * Supports 1,2,3,4 components
  */
-_RS_RUNTIME float __attribute__((overloadable)) rootn(float v, int n);
+_RS_RUNTIME float __attribute__((const, overloadable)) rootn(float v, int n);
 FN_FUNC_FN_IN(rootn)
 
 /**
@@ -652,7 +652,7 @@ FN_FUNC_FN_IN(rootn)
  *
  * Supports 1,2,3,4 components
  */
-extern float __attribute__((overloadable)) round(float);
+extern float __attribute__((const, overloadable)) round(float);
 FN_FUNC_FN(round)
 
 /**
@@ -660,7 +660,7 @@ FN_FUNC_FN(round)
  *
  * Supports 1,2,3,4 components
  */
-extern float __attribute__((overloadable)) sqrt(float);
+extern float __attribute__((const, overloadable)) sqrt(float);
 FN_FUNC_FN(sqrt)
 
 /**
@@ -668,7 +668,7 @@ FN_FUNC_FN(sqrt)
  *
  * Supports 1,2,3,4 components
  */
-_RS_RUNTIME float __attribute__((overloadable)) rsqrt(float v);
+_RS_RUNTIME float __attribute__((const, overloadable)) rsqrt(float v);
 FN_FUNC_FN(rsqrt)
 
 /**
@@ -677,7 +677,7 @@ FN_FUNC_FN(rsqrt)
  * @param v The incoming value in radians
  * Supports 1,2,3,4 components
  */
-extern float __attribute__((overloadable)) sin(float v);
+extern float __attribute__((const, overloadable)) sin(float v);
 FN_FUNC_FN(sin)
 
 /**
@@ -689,7 +689,7 @@ FN_FUNC_FN(sin)
  *
  * Supports 1,2,3,4 components
  */
-_RS_RUNTIME float __attribute__((overloadable)) sincos(float v, float *cosptr);
+_RS_RUNTIME float __attribute__((pure, overloadable)) sincos(float v, float *cosptr);
 FN_FUNC_FN_PFN(sincos);
 
 /**
@@ -697,7 +697,7 @@ FN_FUNC_FN_PFN(sincos);
  *
  * Supports 1,2,3,4 components
  */
-extern float __attribute__((overloadable)) sinh(float);
+extern float __attribute__((const, overloadable)) sinh(float);
 FN_FUNC_FN(sinh)
 
 /**
@@ -705,7 +705,7 @@ FN_FUNC_FN(sinh)
  *
  * Supports 1,2,3,4 components
  */
-_RS_RUNTIME float __attribute__((overloadable)) sinpi(float v);
+_RS_RUNTIME float __attribute__((const, overloadable)) sinpi(float v);
 FN_FUNC_FN(sinpi)
 
 /**
@@ -714,7 +714,7 @@ FN_FUNC_FN(sinpi)
  * Supports 1,2,3,4 components
  * @param v The incoming value in radians
  */
-extern float __attribute__((overloadable)) tan(float v);
+extern float __attribute__((const, overloadable)) tan(float v);
 FN_FUNC_FN(tan)
 
 /**
@@ -723,7 +723,7 @@ FN_FUNC_FN(tan)
  * Supports 1,2,3,4 components
  * @param v The incoming value in radians
  */
-extern float __attribute__((overloadable)) tanh(float);
+extern float __attribute__((const, overloadable)) tanh(float);
 FN_FUNC_FN(tanh)
 
 /**
@@ -731,7 +731,7 @@ FN_FUNC_FN(tanh)
  *
  * Supports 1,2,3,4 components
  */
-_RS_RUNTIME float __attribute__((overloadable)) tanpi(float v);
+_RS_RUNTIME float __attribute__((const, overloadable)) tanpi(float v);
 FN_FUNC_FN(tanpi)
 
 /**
@@ -739,7 +739,7 @@ FN_FUNC_FN(tanpi)
  *
  * Supports 1,2,3,4 components
  */
-extern float __attribute__((overloadable)) tgamma(float);
+extern float __attribute__((const, overloadable)) tgamma(float);
 FN_FUNC_FN(tgamma)
 
 /**
@@ -747,15 +747,15 @@ FN_FUNC_FN(tgamma)
  *
  * Supports 1,2,3,4 components
  */
-extern float __attribute__((overloadable)) trunc(float);
+extern float __attribute__((const, overloadable)) trunc(float);
 FN_FUNC_FN(trunc)
 
 
-#define XN_FUNC_YN(typeout, fnc, typein)                                \
-extern typeout __attribute__((overloadable)) fnc(typein);               \
-_RS_RUNTIME typeout##2 __attribute__((overloadable)) fnc(typein##2 v);  \
-_RS_RUNTIME typeout##3 __attribute__((overloadable)) fnc(typein##3 v);  \
-_RS_RUNTIME typeout##4 __attribute__((overloadable)) fnc(typein##4 v);
+#define XN_FUNC_YN(typeout, fnc, typein)                                      \
+extern typeout __attribute__((const, overloadable)) fnc(typein);              \
+_RS_RUNTIME typeout##2 __attribute__((const, overloadable)) fnc(typein##2 v); \
+_RS_RUNTIME typeout##3 __attribute__((const, overloadable)) fnc(typein##3 v); \
+_RS_RUNTIME typeout##4 __attribute__((const, overloadable)) fnc(typein##4 v);
 
 #define UIN_FUNC_IN(fnc)          \
 XN_FUNC_YN(uchar, fnc, char)      \
@@ -771,14 +771,14 @@ XN_FUNC_YN(uint, fnc, uint)       \
 XN_FUNC_YN(int, fnc, int)
 
 
-#define XN_FUNC_XN_XN_BODY(type, fnc, body)         \
-_RS_RUNTIME type __attribute__((overloadable))      \
-        fnc(type v1, type v2);                      \
-_RS_RUNTIME type##2 __attribute__((overloadable))   \
-        fnc(type##2 v1, type##2 v2);                \
-_RS_RUNTIME type##3 __attribute__((overloadable))   \
-        fnc(type##3 v1, type##3 v2);                \
-_RS_RUNTIME type##4 __attribute__((overloadable))   \
+#define XN_FUNC_XN_XN_BODY(type, fnc, body)              \
+_RS_RUNTIME type __attribute__((const, overloadable))    \
+        fnc(type v1, type v2);                           \
+_RS_RUNTIME type##2 __attribute__((const, overloadable)) \
+        fnc(type##2 v1, type##2 v2);                     \
+_RS_RUNTIME type##3 __attribute__((const, overloadable)) \
+        fnc(type##3 v1, type##3 v2);                     \
+_RS_RUNTIME type##4 __attribute__((const, overloadable)) \
         fnc(type##4 v1, type##4 v2);
 
 #define IN_FUNC_IN_IN_BODY(fnc, body)   \
@@ -827,7 +827,7 @@ FN_FUNC_FN_F(max)
  * @param low Lower bound, must be scalar or matching vector.
  * @param high High bound, must match type of low
  */
-_RS_RUNTIME float __attribute__((overloadable)) clamp(float amount, float low, float high);
+_RS_RUNTIME float __attribute__((const, overloadable)) clamp(float amount, float low, float high);
 FN_FUNC_FN_FN_FN(clamp)
 FN_FUNC_FN_F_F(clamp)
 
@@ -836,7 +836,7 @@ FN_FUNC_FN_F_F(clamp)
  *
  * Supports 1,2,3,4 components
  */
-_RS_RUNTIME float __attribute__((overloadable)) degrees(float radians);
+_RS_RUNTIME float __attribute__((const, overloadable)) degrees(float radians);
 FN_FUNC_FN(degrees)
 
 /**
@@ -844,7 +844,7 @@ FN_FUNC_FN(degrees)
  *
  * Supports 1,2,3,4 components
  */
-_RS_RUNTIME float __attribute__((overloadable)) mix(float start, float stop, float amount);
+_RS_RUNTIME float __attribute__((const, overloadable)) mix(float start, float stop, float amount);
 FN_FUNC_FN_FN_FN(mix)
 FN_FUNC_FN_FN_F(mix)
 
@@ -853,7 +853,7 @@ FN_FUNC_FN_FN_F(mix)
  *
  * Supports 1,2,3,4 components
  */
-_RS_RUNTIME float __attribute__((overloadable)) radians(float degrees);
+_RS_RUNTIME float __attribute__((const, overloadable)) radians(float degrees);
 FN_FUNC_FN(radians)
 
 /**
@@ -864,18 +864,18 @@ FN_FUNC_FN(radians)
  *
  * Supports 1,2,3,4 components
  */
-_RS_RUNTIME float __attribute__((overloadable)) step(float edge, float v);
+_RS_RUNTIME float __attribute__((const, overloadable)) step(float edge, float v);
 FN_FUNC_FN_FN(step)
 FN_FUNC_FN_F(step)
 
 // not implemented
-extern float __attribute__((overloadable)) smoothstep(float, float, float);
-extern float2 __attribute__((overloadable)) smoothstep(float2, float2, float2);
-extern float3 __attribute__((overloadable)) smoothstep(float3, float3, float3);
-extern float4 __attribute__((overloadable)) smoothstep(float4, float4, float4);
-extern float2 __attribute__((overloadable)) smoothstep(float, float, float2);
-extern float3 __attribute__((overloadable)) smoothstep(float, float, float3);
-extern float4 __attribute__((overloadable)) smoothstep(float, float, float4);
+extern float __attribute__((const, overloadable)) smoothstep(float, float, float);
+extern float2 __attribute__((const, overloadable)) smoothstep(float2, float2, float2);
+extern float3 __attribute__((const, overloadable)) smoothstep(float3, float3, float3);
+extern float4 __attribute__((const, overloadable)) smoothstep(float4, float4, float4);
+extern float2 __attribute__((const, overloadable)) smoothstep(float, float, float2);
+extern float3 __attribute__((const, overloadable)) smoothstep(float, float, float3);
+extern float4 __attribute__((const, overloadable)) smoothstep(float, float, float4);
 
 /**
  * Return the sign of a value.
@@ -886,7 +886,7 @@ extern float4 __attribute__((overloadable)) smoothstep(float, float, float4);
  *
  * Supports 1,2,3,4 components
  */
-_RS_RUNTIME float __attribute__((overloadable)) sign(float v);
+_RS_RUNTIME float __attribute__((const, overloadable)) sign(float v);
 FN_FUNC_FN(sign)
 
 /**
@@ -894,15 +894,15 @@ FN_FUNC_FN(sign)
  *
  * Supports 3,4 components
  */
-_RS_RUNTIME float3 __attribute__((overloadable)) cross(float3 lhs, float3 rhs);
-_RS_RUNTIME float4 __attribute__((overloadable)) cross(float4 lhs, float4 rhs);
+_RS_RUNTIME float3 __attribute__((const, overloadable)) cross(float3 lhs, float3 rhs);
+_RS_RUNTIME float4 __attribute__((const, overloadable)) cross(float4 lhs, float4 rhs);
 
 /**
  * Compute the dot product of two vectors.
  *
  * Supports 1,2,3,4 components
  */
-_RS_RUNTIME float __attribute__((overloadable)) dot(float lhs, float rhs);
+_RS_RUNTIME float __attribute__((const, overloadable)) dot(float lhs, float rhs);
 F_FUNC_FN_FN(dot)
 
 /**
@@ -910,7 +910,7 @@ F_FUNC_FN_FN(dot)
  *
  * Supports 1,2,3,4 components
  */
-_RS_RUNTIME float __attribute__((overloadable)) length(float v);
+_RS_RUNTIME float __attribute__((const, overloadable)) length(float v);
 F_FUNC_FN(length)
 
 /**
@@ -918,7 +918,7 @@ F_FUNC_FN(length)
  *
  * Supports 1,2,3,4 components
  */
-_RS_RUNTIME float __attribute__((overloadable)) distance(float lhs, float rhs);
+_RS_RUNTIME float __attribute__((const, overloadable)) distance(float lhs, float rhs);
 F_FUNC_FN_FN(distance)
 
 /**
@@ -926,7 +926,7 @@ F_FUNC_FN_FN(distance)
  *
  * Supports 1,2,3,4 components
  */
-_RS_RUNTIME float __attribute__((overloadable)) normalize(float v);
+_RS_RUNTIME float __attribute__((const, overloadable)) normalize(float v);
 FN_FUNC_FN(normalize)
 
 
@@ -938,7 +938,7 @@ FN_FUNC_FN(normalize)
  *
  * Supports 1,2,3,4 components
  */
-_RS_RUNTIME float __attribute__((overloadable)) half_recip(float);
+_RS_RUNTIME float __attribute__((const, overloadable)) half_recip(float);
 FN_FUNC_FN(half_recip)
 
 /**
@@ -946,7 +946,7 @@ FN_FUNC_FN(half_recip)
  *
  * Supports 1,2,3,4 components
  */
-_RS_RUNTIME float __attribute__((overloadable)) half_sqrt(float);
+_RS_RUNTIME float __attribute__((const, overloadable)) half_sqrt(float);
 FN_FUNC_FN(half_sqrt)
 
 /**
@@ -954,7 +954,7 @@ FN_FUNC_FN(half_sqrt)
  *
  * Supports 1,2,3,4 components
  */
-_RS_RUNTIME float __attribute__((overloadable)) half_rsqrt(float v);
+_RS_RUNTIME float __attribute__((const, overloadable)) half_rsqrt(float v);
 FN_FUNC_FN(half_rsqrt)
 
 /**
@@ -962,7 +962,7 @@ FN_FUNC_FN(half_rsqrt)
  *
  * Supports 1,2,3,4 components
  */
-_RS_RUNTIME float __attribute__((overloadable)) fast_length(float v);
+_RS_RUNTIME float __attribute__((const, overloadable)) fast_length(float v);
 F_FUNC_FN(fast_length)
 
 /**
@@ -970,7 +970,7 @@ F_FUNC_FN(fast_length)
  *
  * Supports 1,2,3,4 components
  */
-_RS_RUNTIME float __attribute__((overloadable)) fast_distance(float lhs, float rhs);
+_RS_RUNTIME float __attribute__((const, overloadable)) fast_distance(float lhs, float rhs);
 F_FUNC_FN_FN(fast_distance)
 
 /**
@@ -978,7 +978,7 @@ F_FUNC_FN_FN(fast_distance)
  *
  * Supports 1,2,3,4 components
  */
-_RS_RUNTIME float __attribute__((overloadable)) fast_normalize(float v);
+_RS_RUNTIME float __attribute__((const, overloadable)) fast_normalize(float v);
 F_FUNC_FN(fast_normalize)
 
 #endif  // (defined(RS_VERSION) && (RS_VERSION >= 17))
@@ -996,7 +996,7 @@ F_FUNC_FN(fast_normalize)
  *
  * Supports 1,2,3,4 components
  */
-_RS_RUNTIME float __attribute__((overloadable)) native_exp2(float v);
+_RS_RUNTIME float __attribute__((const, overloadable)) native_exp2(float v);
 FN_FUNC_FN(native_exp2)
 
 /**
@@ -1006,7 +1006,7 @@ FN_FUNC_FN(native_exp2)
  *
  * Supports 1,2,3,4 components
  */
-_RS_RUNTIME float __attribute__((overloadable)) native_exp(float v);
+_RS_RUNTIME float __attribute__((const, overloadable)) native_exp(float v);
 FN_FUNC_FN(native_exp)
 
 /**
@@ -1016,21 +1016,21 @@ FN_FUNC_FN(native_exp)
  *
  * Supports 1,2,3,4 components
  */
-_RS_RUNTIME float __attribute__((overloadable)) native_exp10(float v);
+_RS_RUNTIME float __attribute__((const, overloadable)) native_exp10(float v);
 FN_FUNC_FN(native_exp10)
 
 
-_RS_RUNTIME float __attribute__((overloadable)) native_log2(float v);
+_RS_RUNTIME float __attribute__((const, overloadable)) native_log2(float v);
 FN_FUNC_FN(native_log2)
 
-_RS_RUNTIME float __attribute__((overloadable)) native_log(float v);
+_RS_RUNTIME float __attribute__((const, overloadable)) native_log(float v);
 FN_FUNC_FN(native_log)
 
-_RS_RUNTIME float __attribute__((overloadable)) native_log10(float v);
+_RS_RUNTIME float __attribute__((const, overloadable)) native_log10(float v);
 FN_FUNC_FN(native_log10)
 
 
-_RS_RUNTIME float __attribute__((overloadable)) native_powr(float v, float y);
+_RS_RUNTIME float __attribute__((const, overloadable)) native_powr(float v, float y);
 FN_FUNC_FN_FN(native_powr)
 
 
