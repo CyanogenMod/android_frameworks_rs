@@ -125,6 +125,14 @@ public:
     RSSelectRTCallback getSelectRTCallback() {
         return mSelectRTCallback;
     }
+
+    virtual void setSetupCompilerCallback(
+            RSSetupCompilerCallback pSetupCompilerCallback) {
+        mSetupCompilerCallback = pSetupCompilerCallback;
+    }
+    virtual RSSetupCompilerCallback getSetupCompilerCallback() const {
+        return mSetupCompilerCallback;
+    }
 #endif
     virtual bool getInForEach() { return mInForEach; }
 
@@ -156,6 +164,7 @@ protected:
 #ifndef RS_COMPATIBILITY_LIB
     bcc::RSLinkRuntimeCallback mLinkRuntimeCallback;
     RSSelectRTCallback mSelectRTCallback;
+    RSSetupCompilerCallback mSetupCompilerCallback;
 #endif
 };
 
