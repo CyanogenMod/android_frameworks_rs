@@ -144,6 +144,13 @@ bool RsdCpuScriptImpl::init(char const *resName, char const *cacheDir,
     mCompilerDriver->setRSRuntimeLookupFunction(lookupRuntimeStub);
     mCompilerDriver->setRSRuntimeLookupContext(this);
 
+    // Run any compiler setup functions we have been provided with.
+    RSSetupCompilerCallback setupCompilerCallback =
+            mCtx->getSetupCompilerCallback();
+    if (setupCompilerCallback != NULL) {
+        setupCompilerCallback(mCompilerDriver);
+    }
+
     const char *core_lib = NULL;
     RSSelectRTCallback selectRTCallback = mCtx->getSelectRTCallback();
     if (selectRTCallback != NULL) {
