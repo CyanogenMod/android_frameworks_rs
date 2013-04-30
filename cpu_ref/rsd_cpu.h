@@ -28,12 +28,16 @@ class Module;
 
 namespace bcc {
 
+class RSCompilerDriver;
 class RSScript;
-typedef llvm::Module* (*RSLinkRuntimeCallback) (bcc::RSScript *, llvm::Module *, llvm::Module *);
+typedef llvm::Module* (*RSLinkRuntimeCallback)
+        (bcc::RSScript *, llvm::Module *, llvm::Module *);
 
 }  // end namespace bcc;
 
 typedef const char* (*RSSelectRTCallback) (const char*, size_t);
+
+typedef void (*RSSetupCompilerCallback) (bcc::RSCompilerDriver *);
 #endif
 
 namespace android {
@@ -119,6 +123,11 @@ public:
     virtual CpuScriptGroup * createScriptGroup(const ScriptGroup *sg) = 0;
     virtual bool getInForEach() = 0;
 
+#ifndef RS_COMPATIBILITY_LIB
+    virtual void setSetupCompilerCallback(
+            RSSetupCompilerCallback pSetupCompilerCallback) = 0;
+    virtual RSSetupCompilerCallback getSetupCompilerCallback() const = 0;
+#endif
 };
 
 

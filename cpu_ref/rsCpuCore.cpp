@@ -109,6 +109,7 @@ RsdCpuReferenceImpl::RsdCpuReferenceImpl(Context *rsc) {
 #ifndef RS_COMPATIBILITY_LIB
     mLinkRuntimeCallback = NULL;
     mSelectRTCallback = NULL;
+    mSetupCompilerCallback = NULL;
 #endif
 }
 
