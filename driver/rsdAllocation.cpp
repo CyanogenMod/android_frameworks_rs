@@ -694,11 +694,6 @@ void rsdAllocationSetSurface(const Context *rsc, Allocation *alloc, ANativeWindo
     if (nw != NULL) {
         int32_t r;
         uint32_t flags = 0;
-        r = native_window_set_buffer_count(nw, 3);
-        if (r) {
-            rsc->setError(RS_ERROR_DRIVER, "Error setting IO output buffer count.");
-            goto error;
-        }
 
         if (alloc->mHal.state.usageFlags & RS_ALLOCATION_USAGE_SCRIPT) {
             flags |= GRALLOC_USAGE_SW_READ_RARELY | GRALLOC_USAGE_SW_WRITE_OFTEN;
