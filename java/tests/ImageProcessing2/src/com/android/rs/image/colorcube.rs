@@ -56,16 +56,16 @@ void root(const uchar4 *in, uchar4 *out, uint32_t x, uint32_t y) {
     uint4 v011 = convert_uint4(rsGetElementAt_uchar4(gCube, coord1.x, coord2.y, coord2.z));
     uint4 v111 = convert_uint4(rsGetElementAt_uchar4(gCube, coord2.x, coord2.y, coord2.z));
 
-    uint4 yz00 = ((v000 * weight1.x) + (v100 * weight2.x)) >> (int4)8;
-    uint4 yz10 = ((v010 * weight1.x) + (v110 * weight2.x)) >> (int4)8;
-    uint4 yz01 = ((v001 * weight1.x) + (v101 * weight2.x)) >> (int4)8;
-    uint4 yz11 = ((v011 * weight1.x) + (v111 * weight2.x)) >> (int4)8;
+    uint4 yz00 = ((v000 * weight1.x) + (v100 * weight2.x)) >> (uint4)8;
+    uint4 yz10 = ((v010 * weight1.x) + (v110 * weight2.x)) >> (uint4)8;
+    uint4 yz01 = ((v001 * weight1.x) + (v101 * weight2.x)) >> (uint4)8;
+    uint4 yz11 = ((v011 * weight1.x) + (v111 * weight2.x)) >> (uint4)8;
 
-    uint4 z0 = ((yz00 * weight1.y) + (yz10 * weight2.y)) >> (int4)16;
-    uint4 z1 = ((yz01 * weight1.y) + (yz11 * weight2.y)) >> (int4)16;
+    uint4 z0 = ((yz00 * weight1.y) + (yz10 * weight2.y)) >> (uint4)16;
+    uint4 z1 = ((yz01 * weight1.y) + (yz11 * weight2.y)) >> (uint4)16;
 
-    uint4 v = ((z0 * weight1.z) + (z1 * weight2.z)) >> (int4)16;
-    uint4 v2 = (v + 0x7f) >> (int4)8;
+    uint4 v = ((z0 * weight1.z) + (z1 * weight2.z)) >> (uint4)16;
+    uint4 v2 = (v + 0x7f) >> (uint4)8;
 
     *out = convert_uchar4(v2);
     out->a = 0xff;
