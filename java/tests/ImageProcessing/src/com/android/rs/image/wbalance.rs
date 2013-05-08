@@ -131,12 +131,15 @@ static unsigned char contrastClamp(int c)
     return  (unsigned char) c;
 }
 
-void whiteBalanceKernel(const uchar4 *in, uchar4 *out) {
-    float Rc =  in->r*scaleR;
-    float Gc =  in->g*scaleG;
-    float Bc =  in->b*scaleB;
+uchar4 __attribute__((kernel)) whiteBalanceKernel(uchar4 in) {
+    float Rc =  in.r*scaleR;
+    float Gc =  in.g*scaleG;
+    float Bc =  in.b*scaleB;
 
-    out->r = contrastClamp(Rc);
-    out->g = contrastClamp(Gc);
-    out->b = contrastClamp(Bc);
+    uchar4 out;
+    out.r = contrastClamp(Rc);
+    out.g = contrastClamp(Gc);
+    out.b = contrastClamp(Bc);
+    out.a = 255;
+    return out;
 }
