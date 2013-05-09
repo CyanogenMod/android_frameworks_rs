@@ -476,8 +476,9 @@ void rsdAllocationDestroy(const Context *rsc, Allocation *alloc) {
 #endif
 
     if (alloc->mHal.drvState.lod[0].mallocPtr) {
-        // don't free user-allocated ptrs
-        if (!(drv->useUserProvidedPtr)) {
+        // don't free user-allocated ptrs or IO_OUTPUT buffers
+        if (!(drv->useUserProvidedPtr) &&
+            !(alloc->mHal.state.usageFlags & RS_ALLOCATION_USAGE_IO_OUTPUT)) {
             free(alloc->mHal.drvState.lod[0].mallocPtr);
         }
         alloc->mHal.drvState.lod[0].mallocPtr = NULL;
