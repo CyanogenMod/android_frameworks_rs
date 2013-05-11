@@ -433,7 +433,7 @@ void * Context::threadProc(void *vrsc) {
 #endif
     }
 
-    ALOGV("%p RS Thread exiting", rsc);
+    //ALOGV("%p RS Thread exiting", rsc);
 
 #ifndef RS_COMPATIBILITY_LIB
     if (rsc->mIsGraphicsContext) {
@@ -443,7 +443,7 @@ void * Context::threadProc(void *vrsc) {
     }
 #endif
 
-    ALOGV("%p RS Thread exited", rsc);
+    //ALOGV("%p RS Thread exited", rsc);
     return NULL;
 }
 
@@ -587,7 +587,7 @@ bool Context::initContext(Device *dev, const RsSurfaceConfig *sc) {
 }
 
 Context::~Context() {
-    ALOGV("%p Context::~Context", this);
+    //ALOGV("%p Context::~Context", this);
 
     if (!mIsContextLite) {
         mPaused = false;
@@ -609,7 +609,7 @@ Context::~Context() {
         }
         pthread_mutex_unlock(&gInitMutex);
     }
-    ALOGV("%p Context::~Context done", this);
+    //ALOGV("%p Context::~Context done", this);
 }
 
 #ifndef RS_COMPATIBILITY_LIB
@@ -861,10 +861,10 @@ void rsi_ContextDestroyWorker(Context *rsc) {
 }
 
 void rsi_ContextDestroy(Context *rsc) {
-    ALOGV("%p rsContextDestroy", rsc);
+    //ALOGV("%p rsContextDestroy", rsc);
     rsContextDestroyWorker(rsc);
     delete rsc;
-    ALOGV("%p rsContextDestroy done", rsc);
+    //ALOGV("%p rsContextDestroy done", rsc);
 }
 
 
@@ -899,7 +899,7 @@ void rsi_ContextSendMessage(Context *rsc, uint32_t id, const uint8_t *data, size
 
 RsContext rsContextCreate(RsDevice vdev, uint32_t version, uint32_t sdkVersion,
                           RsContextType ct, bool forceCpu, bool synchronous) {
-    ALOGV("rsContextCreate dev=%p", vdev);
+    //ALOGV("rsContextCreate dev=%p", vdev);
     Device * dev = static_cast<Device *>(vdev);
     Context *rsc = Context::createContext(dev, NULL, ct, forceCpu, synchronous);
     if (rsc) {
@@ -912,14 +912,14 @@ RsContext rsContextCreate(RsDevice vdev, uint32_t version, uint32_t sdkVersion,
 RsContext rsContextCreateGL(RsDevice vdev, uint32_t version,
                             uint32_t sdkVersion, RsSurfaceConfig sc,
                             uint32_t dpi) {
-    ALOGV("rsContextCreateGL dev=%p", vdev);
+    //ALOGV("rsContextCreateGL dev=%p", vdev);
     Device * dev = static_cast<Device *>(vdev);
     Context *rsc = Context::createContext(dev, &sc);
     if (rsc) {
         rsc->setTargetSdkVersion(sdkVersion);
         rsc->setDPI(dpi);
     }
-    ALOGV("%p rsContextCreateGL ret", rsc);
+    //ALOGV("%p rsContextCreateGL ret", rsc);
     return rsc;
 }
 #endif
