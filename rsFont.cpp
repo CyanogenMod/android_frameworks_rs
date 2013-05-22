@@ -20,7 +20,9 @@
 #include "rsFont.h"
 #include "rsProgramFragment.h"
 #include "rsMesh.h"
+#ifdef HAVE_ANDROID_OS
 #include <cutils/properties.h>
+#endif
 
 #ifndef ANDROID_RS_SERIALIZE
 #include <ft2build.h>
@@ -337,27 +339,31 @@ FontState::FontState() {
     mLibrary = NULL;
 #endif //ANDROID_RS_SERIALIZE
 
+    float gamma = DEFAULT_TEXT_GAMMA;
+    int32_t blackThreshold = DEFAULT_TEXT_BLACK_GAMMA_THRESHOLD;
+    int32_t whiteThreshold = DEFAULT_TEXT_WHITE_GAMMA_THRESHOLD;
+
+#ifdef HAVE_ANDROID_OS
     // Get the renderer properties
     char property[PROPERTY_VALUE_MAX];
 
     // Get the gamma
-    float gamma = DEFAULT_TEXT_GAMMA;
     if (property_get(PROPERTY_TEXT_GAMMA, property, NULL) > 0) {
         gamma = atof(property);
     }
 
     // Get the black gamma threshold
-    int32_t blackThreshold = DEFAULT_TEXT_BLACK_GAMMA_THRESHOLD;
     if (property_get(PROPERTY_TEXT_BLACK_GAMMA_THRESHOLD, property, NULL) > 0) {
         blackThreshold = atoi(property);
     }
-    mBlackThreshold = (float)(blackThreshold) / 255.0f;
 
     // Get the white gamma threshold
-    int32_t whiteThreshold = DEFAULT_TEXT_WHITE_GAMMA_THRESHOLD;
     if (property_get(PROPERTY_TEXT_WHITE_GAMMA_THRESHOLD, property, NULL) > 0) {
         whiteThreshold = atoi(property);
     }
+#endif
+
+    mBlackThreshold = (float)(blackThreshold) / 255.0f;
     mWhiteThreshold = (float)(whiteThreshold) / 255.0f;
 
     // Compute the gamma tables

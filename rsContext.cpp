@@ -33,7 +33,7 @@
 #include <string.h>
 #include <dlfcn.h>
 
-#ifndef RS_SERVER
+#if !defined(RS_SERVER) && defined(HAVE_ANDROID_OS)
 #include <cutils/properties.h>
 #endif
 
@@ -204,7 +204,7 @@ void Context::setupProgramStore() {
 #endif
 
 static uint32_t getProp(const char *str) {
-#ifndef RS_SERVER
+#if !defined(RS_SERVER) && defined(HAVE_ANDROID_OS)
     char buf[PROPERTY_VALUE_MAX];
     property_get(str, buf, "0");
     return atoi(buf);
