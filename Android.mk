@@ -311,3 +311,4 @@ LOCAL_C_INCLUDES := \
 include $(LLVM_ROOT_PATH)/llvm-host-build.mk
 include $(BUILD_HOST_STATIC_LIBRARY)
 
+include $(call all-makefiles-under,$(LOCAL_PATH))
