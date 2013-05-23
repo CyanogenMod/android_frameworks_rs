@@ -34,6 +34,9 @@
 
 #ifdef RS_SERVER
 
+#define ATRACE_TAG
+#define ATRACE_CALL(...)
+
 #include <string>
 #include <vector>
 #include <algorithm>

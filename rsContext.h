@@ -26,6 +26,11 @@
 #include "rsScriptGroup.h"
 #include "rsSampler.h"
 
+#ifndef RS_SERVER
+#define ATRACE_TAG ATRACE_TAG_RS
+#include "utils/Trace.h"
+#endif
+
 #ifndef RS_COMPATIBILITY_LIB
 #include "rsFont.h"
 #include "rsPath.h"
@@ -34,6 +39,7 @@
 #include "rsProgramRaster.h"
 #include "rsProgramVertex.h"
 #include "rsFBOCache.h"
+
 #endif
 
 
@@ -61,6 +67,8 @@ class Device;
 #define CHECK_OBJ(o)
 #define CHECK_OBJ_OR_NULL(o)
 #endif
+
+
 
 class Context {
 public:

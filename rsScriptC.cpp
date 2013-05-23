@@ -168,6 +168,8 @@ void ScriptC::runForEach(Context *rsc,
                          size_t usrBytes,
                          const RsScriptCall *sc) {
 
+    ATRACE_CALL();
+
     Context::PushState ps(rsc);
 
     setupGLState(rsc);
@@ -176,6 +178,8 @@ void ScriptC::runForEach(Context *rsc,
 }
 
 void ScriptC::Invoke(Context *rsc, uint32_t slot, const void *data, size_t len) {
+    ATRACE_CALL();
+
     if (slot >= mHal.info.exportedFunctionCount) {
         rsc->setError(RS_ERROR_BAD_SCRIPT, "Calling invoke on bad script");
         return;
@@ -230,7 +234,7 @@ bool ScriptC::runCompiler(Context *rsc,
                           const char *cacheDir,
                           const uint8_t *bitcode,
                           size_t bitcodeLen) {
-
+    ATRACE_CALL();
     //ALOGE("runCompiler %p %p %p %p %p %i", rsc, this, resName, cacheDir, bitcode, bitcodeLen);
 #ifndef RS_COMPATIBILITY_LIB
 #ifndef ANDROID_RS_SERIALIZE
