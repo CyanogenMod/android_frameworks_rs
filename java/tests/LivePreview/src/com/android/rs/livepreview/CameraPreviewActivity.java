@@ -228,11 +228,14 @@ public class CameraPreviewActivity extends Activity
 
 
         // Set initial values
+	//
+        int initialSize = mPreviewSizes.size() - 1;
 
-        mNextPreviewSize = mPreviewSizes.get(15);
-        mResolutionSpinner.setSelection(15);
+	mNextPreviewSize = mPreviewSizes.get(initialSize);
+        mResolutionSpinner.setSelection(initialSize);
 
-        if (mPreviewTexture != null) {
+	if(mPreviewTexture != null)
+	{
             startPreview();
         }
     }
