@@ -22,7 +22,7 @@ LOCAL_MODULE_TAGS := tests
 LOCAL_SRC_FILES := $(call all-java-files-under, src) \
                    $(call all-renderscript-files-under, src)
 
-LOCAL_STATIC_JAVA_LIBRARIES := android.support.v8.renderscript
+LOCAL_STATIC_JAVA_LIBRARIES := android-support-v8-renderscript
 
 LOCAL_PACKAGE_NAME := ImageProcessing2
 LOCAL_SDK_VERSION := 8
