@@ -25,13 +25,14 @@ public class WhiteBalance extends TestBase {
 
     public void createTest(android.content.res.Resources res) {
         mScript = new ScriptC_wbalance(mRS);
-    }
 
-    public void runTest() {
         mScript.set_histogramSource(mInPixelsAllocation);
         mScript.set_histogramWidth(mInPixelsAllocation.getType().getX());
         mScript.set_histogramHeight(mInPixelsAllocation.getType().getY());
         mScript.invoke_prepareWhiteBalance();
+    }
+
+    public void runTest() {
         mScript.forEach_whiteBalanceKernel(mInPixelsAllocation, mOutPixelsAllocation);
     }
 

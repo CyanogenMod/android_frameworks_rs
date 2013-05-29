@@ -32,13 +32,13 @@ void vibranceKernel(const uchar4 *in, uchar4 *out) {
     int r = in->r;
     int g = in->g;
     int b = in->b;
-    float red = (r-max(g, b))/256.f;
+    float red = (r-max(g, b)) * (1.f / 256.f);
     float S = (float)(Vib/(1+native_exp(-red*3)))+1;
     float MS = 1.0f - S;
     float Rt = Rf * MS;
     float Gt = Gf * MS;
     float Bt = Bf * MS;
-    int t = (r + g) / 2;
+    int t = (r + g) >> 1;
     R = r;
     G = g;
     B = b;

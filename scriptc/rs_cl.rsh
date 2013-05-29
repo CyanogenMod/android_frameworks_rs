@@ -827,9 +827,34 @@ FN_FUNC_FN_F(max)
  * @param low Lower bound, must be scalar or matching vector.
  * @param high High bound, must match type of low
  */
+
+#if !defined(RS_VERSION) || (RS_VERSION < 19)
 _RS_RUNTIME float __attribute__((const, overloadable)) clamp(float amount, float low, float high);
 FN_FUNC_FN_FN_FN(clamp)
 FN_FUNC_FN_F_F(clamp)
+#else
+#define _CLAMP(T)                                                                   \
+extern T __attribute__((overloadable)) clamp(T amount, T low, T high);              \
+extern T##2 __attribute__((overloadable)) clamp(T##2 amount, T##2 low, T##2 high);  \
+extern T##3 __attribute__((overloadable)) clamp(T##3 amount, T##3 low, T##3 high);  \
+extern T##4 __attribute__((overloadable)) clamp(T##4 amount, T##4 low, T##4 high);  \
+extern T##2 __attribute__((overloadable)) clamp(T##2 amount, T low, T high);        \
+extern T##3 __attribute__((overloadable)) clamp(T##3 amount, T low, T high);        \
+extern T##4 __attribute__((overloadable)) clamp(T##4 amount, T low, T high)
+
+_CLAMP(float);
+_CLAMP(double);
+_CLAMP(char);
+_CLAMP(uchar);
+_CLAMP(short);
+_CLAMP(ushort);
+_CLAMP(int);
+_CLAMP(uint);
+_CLAMP(long);
+_CLAMP(ulong);
+
+#undef _CLAMP
+#endif
 
 /**
  * Convert from radians to degrees.
