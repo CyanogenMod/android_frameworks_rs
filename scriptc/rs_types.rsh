@@ -16,7 +16,7 @@
 
 /** @file rs_types.rsh
  *
- *  Define the standard Renderscript types
+ *  Define the standard RenderScript types
  *
  *  Integers
  *  8 bit: char, int8_t
@@ -115,73 +115,73 @@ typedef uint32_t size_t;
 typedef int32_t ssize_t;
 
 /**
- * \brief Opaque handle to a Renderscript element.
+ * \brief Opaque handle to a RenderScript element.
  *
  * See: android.renderscript.Element
  */
 typedef struct { const int* const p; } __attribute__((packed, aligned(4))) rs_element;
 /**
- * \brief Opaque handle to a Renderscript type.
+ * \brief Opaque handle to a RenderScript type.
  *
  * See: android.renderscript.Type
  */
 typedef struct { const int* const p; } __attribute__((packed, aligned(4))) rs_type;
 /**
- * \brief Opaque handle to a Renderscript allocation.
+ * \brief Opaque handle to a RenderScript allocation.
  *
  * See: android.renderscript.Allocation
  */
 typedef struct { const int* const p; } __attribute__((packed, aligned(4))) rs_allocation;
 /**
- * \brief Opaque handle to a Renderscript sampler object.
+ * \brief Opaque handle to a RenderScript sampler object.
  *
  * See: android.renderscript.Sampler
  */
 typedef struct { const int* const p; } __attribute__((packed, aligned(4))) rs_sampler;
 /**
- * \brief Opaque handle to a Renderscript script object.
+ * \brief Opaque handle to a RenderScript script object.
  *
  * See: android.renderscript.ScriptC
  */
 typedef struct { const int* const p; } __attribute__((packed, aligned(4))) rs_script;
 /**
- * \brief Opaque handle to a Renderscript mesh object.
+ * \brief Opaque handle to a RenderScript mesh object.
  *
  * See: android.renderscript.Mesh
  */
 typedef struct { const int* const p; } __attribute__((packed, aligned(4))) rs_mesh;
 /**
- * \brief Opaque handle to a Renderscript Path object.
+ * \brief Opaque handle to a RenderScript Path object.
  *
  * See: android.renderscript.Path
  */
 typedef struct { const int* const p; } __attribute__((packed, aligned(4))) rs_path;
 /**
- * \brief Opaque handle to a Renderscript ProgramFragment object.
+ * \brief Opaque handle to a RenderScript ProgramFragment object.
  *
  * See: android.renderscript.ProgramFragment
  */
 typedef struct { const int* const p; } __attribute__((packed, aligned(4))) rs_program_fragment;
 /**
- * \brief Opaque handle to a Renderscript ProgramVertex object.
+ * \brief Opaque handle to a RenderScript ProgramVertex object.
  *
  * See: android.renderscript.ProgramVertex
  */
 typedef struct { const int* const p; } __attribute__((packed, aligned(4))) rs_program_vertex;
 /**
- * \brief Opaque handle to a Renderscript ProgramRaster object.
+ * \brief Opaque handle to a RenderScript ProgramRaster object.
  *
  * See: android.renderscript.ProgramRaster
  */
 typedef struct { const int* const p; } __attribute__((packed, aligned(4))) rs_program_raster;
 /**
- * \brief Opaque handle to a Renderscript ProgramStore object.
+ * \brief Opaque handle to a RenderScript ProgramStore object.
  *
  * See: android.renderscript.ProgramStore
  */
 typedef struct { const int* const p; } __attribute__((packed, aligned(4))) rs_program_store;
 /**
- * \brief Opaque handle to a Renderscript font object.
+ * \brief Opaque handle to a RenderScript font object.
  *
  * See: android.renderscript.Font
  */
