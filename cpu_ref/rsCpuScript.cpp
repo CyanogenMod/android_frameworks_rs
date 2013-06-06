@@ -38,7 +38,34 @@
     #include <bcc/Renderscript/RSCompilerDriver.h>
     #include <bcc/Renderscript/RSExecutable.h>
     #include <bcc/Renderscript/RSInfo.h>
+    #include <cutils/properties.h>
 #endif
+
+#ifndef RS_COMPATIBILITY_LIB
+namespace {
+static bool is_force_recompile() {
+#ifdef RS_SERVER
+  return false;
+#else
+  char buf[PROPERTY_VALUE_MAX];
+
+  // Re-compile if floating point precision has been overridden.
+  property_get("debug.rs.precision", buf, "");
+  if (buf[0] != '\0') {
+    return true;
+  }
+
+  // Re-compile if debug.rs.forcerecompile is set.
+  property_get("debug.rs.forcerecompile", buf, "0");
+  if ((::strcmp(buf, "1") == 0) || (::strcmp(buf, "true") == 0)) {
+    return true;
+  } else {
+    return false;
+  }
+#endif  // RS_SERVER
+}
+}  // namespace
+#endif  // !defined(RS_COMPATIBILITY_LIB)
 
 namespace android {
 namespace renderscript {
@@ -121,7 +148,7 @@ bool RsdCpuScriptImpl::init(char const *resName, char const *cacheDir,
     mCtx->lockMutex();
 
 #ifndef RS_COMPATIBILITY_LIB
-    bcc::RSExecutable *exec;
+    bcc::RSExecutable *exec = NULL;
 
     mCompilerContext = NULL;
     mCompilerDriver = NULL;
@@ -161,10 +188,26 @@ bool RsdCpuScriptImpl::init(char const *resName, char const *cacheDir,
         // Use the libclcore_debug.bc instead of the default library.
         core_lib = bcc::RSInfo::LibCLCoreDebugPath;
         mCompilerDriver->setDebugContext(true);
+        // Skip the cache lookup
+    } else if (!is_force_recompile()) {
+        // Attempt to just load the script from cache first if we can.
+        exec = mCompilerDriver->loadScript(cacheDir, resName,
+                                           (const char *)bitcode, bitcodeSize);
     }
-    exec = mCompilerDriver->build(*mCompilerContext, cacheDir, resName,
-                                  (const char *)bitcode, bitcodeSize, core_lib,
-                                  mCtx->getLinkRuntimeCallback());
+
+    // TODO(srhines): This is being refactored, but it simply wraps the
+    // build (compile) and load steps together.
+    if (exec == NULL) {
+        bool built = mCompilerDriver->build(*mCompilerContext, cacheDir,
+                                            resName, (const char *)bitcode,
+                                            bitcodeSize, core_lib,
+                                            mCtx->getLinkRuntimeCallback());
+        if (built) {
+            exec = mCompilerDriver->loadScript(cacheDir, resName,
+                                               (const char *)bitcode,
+                                               bitcodeSize);
+        }
+    }
 
     if (exec == NULL) {
         ALOGE("bcc: FAILS to prepare executable for '%s'", resName);
