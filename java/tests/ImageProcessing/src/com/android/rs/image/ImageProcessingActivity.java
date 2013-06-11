@@ -98,7 +98,8 @@ public class ImageProcessingActivity extends Activity
         WHITE_BALANCE ("White Balance"),
         COLOR_CUBE ("Color Cube"),
         COLOR_CUBE_3D_INTRINSIC ("Color Cube (3D LUT intrinsic)"),
-        USAGE_IO ("Usage io)");
+        USAGE_IO ("Usage io"),
+        HISTOGRAM ("Histogram");
 
 
         private final String name;
@@ -358,6 +359,9 @@ public class ImageProcessingActivity extends Activity
             break;
         case USAGE_IO:
             mTest = new UsageIO();
+            break;
+        case HISTOGRAM:
+            mTest = new Histogram();
             break;
         }
 
