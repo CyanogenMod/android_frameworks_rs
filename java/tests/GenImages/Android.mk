@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2008 The Android Open Source Project
+# Copyright (C) 2013 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,9 +19,9 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE_TAGS := tests
 
-LOCAL_SRC_FILES := $(call all-java-files-under, src) $(call all-renderscript-files-under, src)
+LOCAL_SRC_FILES := $(call all-java-files-under, src) \
+                   $(call all-renderscript-files-under, src)
 
-LOCAL_PACKAGE_NAME := RsBalls
-LOCAL_SDK_VERSION := 17
+LOCAL_PACKAGE_NAME := RsGenImages
 
 include $(BUILD_PACKAGE)
