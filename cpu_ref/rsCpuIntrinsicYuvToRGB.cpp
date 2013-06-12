@@ -132,6 +132,13 @@ void RsdCpuScriptIntrinsicYuvToRGB::kernel(const RsForEachStubParamStruct *p,
             const size_t strideUV = cp->alloc->mHal.drvState.lod[1].stride;
             const uchar *uv = pinUV + ((p->y >> 1) * strideUV);
 
+            if (pinUV == NULL) {
+                // Legacy yuv support didn't fill in uv
+                uv = ((uint8_t *)cp->alloc->mHal.drvState.lod[0].mallocPtr) +
+                     (cp->alloc->mHal.drvState.lod[0].stride *
+                      cp->alloc->mHal.drvState.lod[0].dimY);
+            }
+
             if(x2 > x1) {
         #if defined(ARCH_ARM_HAVE_NEON)
                 int32_t len = (x2 - x1 - 1) >> 3;
