@@ -114,8 +114,18 @@ void RsdCpuScriptIntrinsicYuvToRGB::kernel(const RsForEachStubParamStruct *p,
         return;
     }
     const uchar *pinY = (const uchar *)cp->alloc->mHal.drvState.lod[0].mallocPtr;
-    const size_t strideY = cp->alloc->mHal.drvState.lod[0].stride;
+
+    size_t strideY = cp->alloc->mHal.drvState.lod[0].stride;
+
+    // calculate correct stride in legacy case
+    if (cp->alloc->mHal.drvState.lod[0].dimY == 0) {
+        strideY = p->dimX;
+    }
     const uchar *Y = pinY + (p->y * strideY);
+
+    //    ALOGE("pinY, %p, Y, %p, p->y, %d, strideY, %d", pinY, Y, p->y, strideY);
+    //    ALOGE("dimX, %d, dimY, %d", cp->alloc->mHal.drvState.lod[0].dimX, cp->alloc->mHal.drvState.lod[0].dimY);
+    //    ALOGE("p->dimX, %d, p->dimY, %d", p->dimX, p->dimY);
 
     uchar4 *out = (uchar4 *)p->out;
     uint32_t x1 = xstart;
@@ -129,20 +139,22 @@ void RsdCpuScriptIntrinsicYuvToRGB::kernel(const RsForEachStubParamStruct *p,
 #endif
         {
             const uchar *pinUV = (const uchar *)cp->alloc->mHal.drvState.lod[1].mallocPtr;
-            const size_t strideUV = cp->alloc->mHal.drvState.lod[1].stride;
+            size_t strideUV = cp->alloc->mHal.drvState.lod[1].stride;
             const uchar *uv = pinUV + ((p->y >> 1) * strideUV);
 
             if (pinUV == NULL) {
                 // Legacy yuv support didn't fill in uv
+                strideUV = strideY;
                 uv = ((uint8_t *)cp->alloc->mHal.drvState.lod[0].mallocPtr) +
-                     (cp->alloc->mHal.drvState.lod[0].stride *
-                      cp->alloc->mHal.drvState.lod[0].dimY);
+                    (strideY * p->dimY) +
+                    ((p->y >> 1) * strideUV);
             }
 
             if(x2 > x1) {
         #if defined(ARCH_ARM_HAVE_NEON)
                 int32_t len = (x2 - x1 - 1) >> 3;
                 if(len > 0) {
+                    //                    ALOGE("%p, %p, %p, %d, %p", out, Y, uv, len, YuvCoeff);
                     rsdIntrinsicYuv_K(out, Y, uv, len, YuvCoeff);
                     x1 += len << 3;
                     out += len << 3;
