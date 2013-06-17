@@ -29,6 +29,8 @@
 #include "utils/StopWatch.h"
 #endif
 
+#include "cutils/trace.h"
+
 #include <sys/stat.h>
 
 using namespace android;
@@ -167,14 +169,27 @@ void ScriptC::runForEach(Context *rsc,
                          const void * usr,
                          size_t usrBytes,
                          const RsScriptCall *sc) {
-
-    ATRACE_CALL();
+    // Trace this function call.
+    // To avoid overhead, we only build the string, if tracing is actually
+    // enabled.
+    String8 *AString = NULL;
+    const char *String = "";
+    if (ATRACE_ENABLED()) {
+        AString = new String8("runForEach_");
+        AString->append(mHal.info.exportedForeachFuncList[slot].first);
+        String = AString->string();
+    }
+    ATRACE_NAME(String);
+    (void)String;
 
     Context::PushState ps(rsc);
 
     setupGLState(rsc);
     setupScript(rsc);
     rsc->mHal.funcs.script.invokeForEach(rsc, this, slot, ain, aout, usr, usrBytes, sc);
+
+    if (AString)
+        delete AString;
 }
 
 void ScriptC::Invoke(Context *rsc, uint32_t slot, const void *data, size_t len) {
