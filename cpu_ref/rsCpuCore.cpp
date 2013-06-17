@@ -477,6 +477,8 @@ extern RsdCpuScriptImpl * rsdIntrinsic_YuvToRGB(RsdCpuReferenceImpl *ctx,
                                                 const Script *s, const Element *e);
 extern RsdCpuScriptImpl * rsdIntrinsic_Blend(RsdCpuReferenceImpl *ctx,
                                              const Script *s, const Element *e);
+extern RsdCpuScriptImpl * rsdIntrinsic_Histogram(RsdCpuReferenceImpl *ctx,
+                                                 const Script *s, const Element *e);
 
 RsdCpuReference::CpuScript * RsdCpuReferenceImpl::createIntrinsic(const Script *s,
                                     RsScriptIntrinsicID iid, Element *e) {
@@ -506,6 +508,9 @@ RsdCpuReference::CpuScript * RsdCpuReferenceImpl::createIntrinsic(const Script *
         break;
     case RS_SCRIPT_INTRINSIC_ID_BLEND:
         i = rsdIntrinsic_Blend(this, s, e);
+        break;
+    case RS_SCRIPT_INTRINSIC_ID_HISTOGRAM:
+        i = rsdIntrinsic_Histogram(this, s, e);
         break;
 
     default:

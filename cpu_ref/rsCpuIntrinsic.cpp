@@ -73,6 +73,16 @@ void RsdCpuScriptIntrinsic::invokeFreeChildren() {
 }
 
 
+void RsdCpuScriptIntrinsic::preLaunch(uint32_t slot, const Allocation * ain,
+                                      Allocation * aout, const void * usr,
+                                      uint32_t usrLen, const RsScriptCall *sc) {
+}
+
+void RsdCpuScriptIntrinsic::postLaunch(uint32_t slot, const Allocation * ain,
+                                       Allocation * aout, const void * usr,
+                                       uint32_t usrLen, const RsScriptCall *sc) {
+}
+
 void RsdCpuScriptIntrinsic::invokeForEach(uint32_t slot,
                                           const Allocation * ain,
                                           Allocation * aout,
@@ -81,6 +91,8 @@ void RsdCpuScriptIntrinsic::invokeForEach(uint32_t slot,
                                           const RsScriptCall *sc) {
 
     MTLaunchStruct mtls;
+    preLaunch(slot, ain, aout, usr, usrLen, sc);
+
     forEachMtlsSetup(ain, aout, usr, usrLen, sc, &mtls);
     mtls.script = this;
     mtls.fep.slot = slot;
@@ -91,6 +103,8 @@ void RsdCpuScriptIntrinsic::invokeForEach(uint32_t slot,
     RsdCpuScriptImpl * oldTLS = mCtx->setTLS(this);
     mCtx->launchThreads(ain, aout, sc, &mtls);
     mCtx->setTLS(oldTLS);
+
+    postLaunch(slot, ain, aout, usr, usrLen, sc);
 }
 
 void RsdCpuScriptIntrinsic::forEachKernelSetup(uint32_t slot, MTLaunchStruct *mtls) {
