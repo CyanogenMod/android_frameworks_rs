@@ -23,11 +23,13 @@ import android.util.Log;
 
 public class Histogram extends TestBase {
     private ScriptC_histogram mScript;
+    private ScriptIntrinsicHistogram mHist;
     private Allocation mSum;
     private Allocation mSums;
 
     public void createTest(android.content.res.Resources res) {
         mScript = new ScriptC_histogram(mRS);
+        mHist = ScriptIntrinsicHistogram.create(mRS, Element.U8_4(mRS));
 
         int w = mInPixelsAllocation.getType().getX();
         int h = mInPixelsAllocation.getType().getY();
@@ -58,8 +60,11 @@ public class Histogram extends TestBase {
     public void runTest() {
         Script.LaunchOptions lo = new Script.LaunchOptions();
         lo.setX(0, 1);
-        mScript.forEach_pass1(mSums, lo);
-        mScript.forEach_pass2(mSum);
+        //mScript.forEach_pass1(mSums, lo);
+        //mScript.forEach_pass2(mSum);
+
+        mHist.setOutput(mSum);
+        mHist.forEach_dot(mInPixelsAllocation);
 
         mScript.invoke_rescale();
 
