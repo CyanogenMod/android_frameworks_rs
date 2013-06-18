@@ -52,6 +52,12 @@ protected:
     static void kernelP1U4(const RsForEachStubParamStruct *p,
                           uint32_t xstart, uint32_t xend,
                           uint32_t instep, uint32_t outstep);
+    static void kernelP1U3(const RsForEachStubParamStruct *p,
+                          uint32_t xstart, uint32_t xend,
+                          uint32_t instep, uint32_t outstep);
+    static void kernelP1U2(const RsForEachStubParamStruct *p,
+                          uint32_t xstart, uint32_t xend,
+                          uint32_t instep, uint32_t outstep);
     static void kernelP1L(const RsForEachStubParamStruct *p,
                           uint32_t xstart, uint32_t xend,
                           uint32_t instep, uint32_t outstep);
@@ -90,10 +96,19 @@ void RsdCpuScriptIntrinsicHistogram::preLaunch(uint32_t slot, const Allocation *
 
     switch (slot) {
     case 0:
-        if (ain->getType()->getElement()->getVectorSize() == 1) {
+        switch(mAllocOut->getType()->getElement()->getVectorSize()) {
+        case 1:
             mRootPtr = &kernelP1U1;
-        } else {
+            break;
+        case 2:
+            mRootPtr = &kernelP1U2;
+            break;
+        case 3:
+            mRootPtr = &kernelP1U3;
+            break;
+        case 4:
             mRootPtr = &kernelP1U4;
+            break;
         }
         break;
     case 1:
@@ -124,15 +139,46 @@ void RsdCpuScriptIntrinsicHistogram::kernelP1U4(const RsForEachStubParamStruct *
                                                 uint32_t instep, uint32_t outstep) {
 
     RsdCpuScriptIntrinsicHistogram *cp = (RsdCpuScriptIntrinsicHistogram *)p->usr;
-    uchar4 *in = (uchar4 *)p->in;
+    uchar *in = (uchar *)p->in;
     int * sums = &cp->mSums[256 * 4 * p->lid];
 
     for (uint32_t x = xstart; x < xend; x++) {
-        sums[(in[0].x << 2)    ] ++;
-        sums[(in[0].y << 2) + 1] ++;
-        sums[(in[0].z << 2) + 2] ++;
-        sums[(in[0].w << 2) + 3] ++;
-        in ++;
+        sums[(in[0] << 2)    ] ++;
+        sums[(in[1] << 2) + 1] ++;
+        sums[(in[2] << 2) + 2] ++;
+        sums[(in[3] << 2) + 3] ++;
+        in += 4;
+    }
+}
+
+void RsdCpuScriptIntrinsicHistogram::kernelP1U3(const RsForEachStubParamStruct *p,
+                                                uint32_t xstart, uint32_t xend,
+                                                uint32_t instep, uint32_t outstep) {
+
+    RsdCpuScriptIntrinsicHistogram *cp = (RsdCpuScriptIntrinsicHistogram *)p->usr;
+    uchar *in = (uchar *)p->in;
+    int * sums = &cp->mSums[256 * 4 * p->lid];
+
+    for (uint32_t x = xstart; x < xend; x++) {
+        sums[(in[0] << 2)    ] ++;
+        sums[(in[1] << 2) + 1] ++;
+        sums[(in[2] << 2) + 2] ++;
+        in += 4;
+    }
+}
+
+void RsdCpuScriptIntrinsicHistogram::kernelP1U2(const RsForEachStubParamStruct *p,
+                                                uint32_t xstart, uint32_t xend,
+                                                uint32_t instep, uint32_t outstep) {
+
+    RsdCpuScriptIntrinsicHistogram *cp = (RsdCpuScriptIntrinsicHistogram *)p->usr;
+    uchar *in = (uchar *)p->in;
+    int * sums = &cp->mSums[256 * 2 * p->lid];
+
+    for (uint32_t x = xstart; x < xend; x++) {
+        sums[(in[0] << 2)    ] ++;
+        sums[(in[1] << 2) + 1] ++;
+        in += 2;
     }
 }
 
@@ -141,16 +187,16 @@ void RsdCpuScriptIntrinsicHistogram::kernelP1L(const RsForEachStubParamStruct *p
                                                uint32_t instep, uint32_t outstep) {
 
     RsdCpuScriptIntrinsicHistogram *cp = (RsdCpuScriptIntrinsicHistogram *)p->usr;
-    uchar4 *in = (uchar4 *)p->in;
+    uchar *in = (uchar *)p->in;
     int * sums = &cp->mSums[256 * p->lid];
 
     for (uint32_t x = xstart; x < xend; x++) {
-        int t = (cp->mDotI[0] * in[0].x) +
-                (cp->mDotI[1] * in[0].y) +
-                (cp->mDotI[2] * in[0].z) +
-                (cp->mDotI[3] * in[0].w);
+        int t = (cp->mDotI[0] * in[0]) +
+                (cp->mDotI[1] * in[1]) +
+                (cp->mDotI[2] * in[2]) +
+                (cp->mDotI[3] * in[3]);
         sums[t >> 8] ++;
-        in ++;
+        in += 4;
     }
 }
 
