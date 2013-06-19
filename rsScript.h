@@ -19,6 +19,7 @@
 
 #include "rsAllocation.h"
 
+#include <utility>
 
 // ---------------------------------------------------------------------------
 namespace android {
@@ -72,6 +73,7 @@ public:
             size_t exportedPragmaCount;
             char const **exportedPragmaKeyList;
             char const **exportedPragmaValueList;
+            const std::pair<const char *, uint32_t> *exportedForeachFuncList;
 
             int (* root)();
         };

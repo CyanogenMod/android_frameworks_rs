@@ -493,6 +493,7 @@ void RsdCpuScriptImpl::populateScript(Script *script) {
     // Copy info over to runtime
     script->mHal.info.exportedFunctionCount = info->getExportFuncNames().size();
     script->mHal.info.exportedVariableCount = info->getExportVarNames().size();
+    script->mHal.info.exportedForeachFuncList = info->getExportForeachFuncs().array();
     script->mHal.info.exportedPragmaCount = info->getPragmas().size();
     script->mHal.info.exportedPragmaKeyList =
         const_cast<const char**>(mExecutable->getPragmaKeys().array());
