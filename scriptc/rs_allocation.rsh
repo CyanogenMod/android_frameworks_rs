@@ -134,17 +134,17 @@ extern void __attribute__((overloadable))
  * Extract a single element from an allocation.
  */
 extern const void * __attribute__((overloadable))
-    rsGetElementAt(rs_allocation, uint32_t x);
+    rsGetElementAt(rs_allocation a, uint32_t x);
 /**
  * \overload
  */
 extern const void * __attribute__((overloadable))
-    rsGetElementAt(rs_allocation, uint32_t x, uint32_t y);
+    rsGetElementAt(rs_allocation a, uint32_t x, uint32_t y);
 /**
  * \overload
  */
 extern const void * __attribute__((overloadable))
-    rsGetElementAt(rs_allocation, uint32_t x, uint32_t y, uint32_t z);
+    rsGetElementAt(rs_allocation a, uint32_t x, uint32_t y, uint32_t z);
 
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 18))

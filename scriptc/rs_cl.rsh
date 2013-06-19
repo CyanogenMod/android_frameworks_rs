@@ -92,6 +92,25 @@ CVT_FUNC(float)
 
 // Float ops, 6.11.2
 
+#ifdef DOXYGEN
+
+#define FN_FUNC_FN(fnc)
+#define F_FUNC_FN(fnc)
+#define IN_FUNC_FN(fnc)
+#define FN_FUNC_FN_FN(fnc)
+#define F_FUNC_FN_FN(fnc)
+#define FN_FUNC_FN_F(fnc)
+#define FN_FUNC_FN_IN(fnc)
+#define FN_FUNC_FN_I(fnc)
+#define FN_FUNC_FN_PFN(fnc)
+#define FN_FUNC_FN_PIN(fnc)
+#define FN_FUNC_FN_FN_FN(fnc)
+#define FN_FUNC_FN_FN_F(fnc)
+#define FN_FUNC_FN_F_F(fnc)
+#define FN_FUNC_FN_FN_PIN(fnc)
+
+#else
+
 #define FN_FUNC_FN(fnc)                                                \
 _RS_RUNTIME float2 __attribute__((const, overloadable)) fnc(float2 v); \
 _RS_RUNTIME float3 __attribute__((const, overloadable)) fnc(float3 v); \
@@ -176,6 +195,8 @@ _RS_RUNTIME float3 __attribute__((pure, overloadable)) \
         fnc(float3 v1, float3 v2, int3 *v3);           \
 _RS_RUNTIME float4 __attribute__((pure, overloadable)) \
         fnc(float4 v1, float4 v2, int4 *v3);
+
+#endif  // DOXYGEN
 
 
 /**
@@ -750,12 +771,34 @@ FN_FUNC_FN(tgamma)
 extern float __attribute__((const, overloadable)) trunc(float);
 FN_FUNC_FN(trunc)
 
+#ifdef DOXYGEN
+
+#define XN_FUNC_YN(typeout, fnc, typein)                                \
+extern typeout __attribute__((overloadable)) fnc(typein v);
+
+#define XN_FUNC_XN_XN_BODY(type, fnc, body)         \
+_RS_RUNTIME type __attribute__((overloadable))      \
+        fnc(type v1, type v2);
+
+#else
 
 #define XN_FUNC_YN(typeout, fnc, typein)                                      \
-extern typeout __attribute__((const, overloadable)) fnc(typein);              \
+extern typeout __attribute__((const, overloadable)) fnc(typein v);            \
 _RS_RUNTIME typeout##2 __attribute__((const, overloadable)) fnc(typein##2 v); \
 _RS_RUNTIME typeout##3 __attribute__((const, overloadable)) fnc(typein##3 v); \
 _RS_RUNTIME typeout##4 __attribute__((const, overloadable)) fnc(typein##4 v);
+
+#define XN_FUNC_XN_XN_BODY(type, fnc, body)              \
+_RS_RUNTIME type __attribute__((const, overloadable))    \
+        fnc(type v1, type v2);                           \
+_RS_RUNTIME type##2 __attribute__((const, overloadable)) \
+        fnc(type##2 v1, type##2 v2);                     \
+_RS_RUNTIME type##3 __attribute__((const, overloadable)) \
+        fnc(type##3 v1, type##3 v2);                     \
+_RS_RUNTIME type##4 __attribute__((const, overloadable)) \
+        fnc(type##4 v1, type##4 v2);
+
+#endif  // DOXYGEN
 
 #define UIN_FUNC_IN(fnc)          \
 XN_FUNC_YN(uchar, fnc, char)      \
@@ -770,17 +813,6 @@ XN_FUNC_YN(short, fnc, short)     \
 XN_FUNC_YN(uint, fnc, uint)       \
 XN_FUNC_YN(int, fnc, int)
 
-
-#define XN_FUNC_XN_XN_BODY(type, fnc, body)              \
-_RS_RUNTIME type __attribute__((const, overloadable))    \
-        fnc(type v1, type v2);                           \
-_RS_RUNTIME type##2 __attribute__((const, overloadable)) \
-        fnc(type##2 v1, type##2 v2);                     \
-_RS_RUNTIME type##3 __attribute__((const, overloadable)) \
-        fnc(type##3 v1, type##3 v2);                     \
-_RS_RUNTIME type##4 __attribute__((const, overloadable)) \
-        fnc(type##4 v1, type##4 v2);
-
 #define IN_FUNC_IN_IN_BODY(fnc, body)   \
 XN_FUNC_XN_XN_BODY(uchar, fnc, body)    \
 XN_FUNC_XN_XN_BODY(char, fnc, body)     \
@@ -791,6 +823,7 @@ XN_FUNC_XN_XN_BODY(int, fnc, body)      \
 XN_FUNC_XN_XN_BODY(float, fnc, body)
 
 /**
+ * \fn uchar abs(char)
  * Return the absolute value of a value.
  *
  * Supports 1,2,3,4 components of char, short, int.
