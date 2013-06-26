@@ -52,55 +52,36 @@ enum IntrinsicEnums {
 
 };
 
-static inline int4 convert_int4(uchar4 i) {
-    int4 f4 = {i.x, i.y, i.z, i.w};
-    return f4;
-}
-
-static inline uint4 convert_uint4(uchar4 i) {
-    uint4 f4 = {i.x, i.y, i.z, i.w};
-    return f4;
-}
-
-static inline int4 convert_int4(float4 i) {
-    int4 f4 = {i.x, i.y, i.z, i.w};
-    return f4;
-}
-
-static inline short4 convert_short4(uchar4 i) {
-    short4 f4 = {i.x, i.y, i.z, i.w};
-    return f4;
-}
-
-static inline float4 convert_float4(uchar4 i) {
-    float4 f4 = {i.x, i.y, i.z, i.w};
-    return f4;
-}
-
-static inline float4 convert_float4(int4 i) {
-    float4 f4 = {i.x, i.y, i.z, i.w};
-    return f4;
-}
-
-static inline uchar4 convert_uchar4(short4 i) {
-    uchar4 f4 = {(uchar)i.x, (uchar)i.y, (uchar)i.z, (uchar)i.w};
-    return f4;
-}
-
-static inline uchar4 convert_uchar4(int4 i) {
-    uchar4 f4 = {(uchar)i.x, (uchar)i.y, (uchar)i.z, (uchar)i.w};
-    return f4;
-}
-
-static inline uchar4 convert_uchar4(uint4 i) {
-    uchar4 f4 = {(uchar)i.x, (uchar)i.y, (uchar)i.z, (uchar)i.w};
-    return f4;
-}
-
-static inline uchar4 convert_uchar4(float4 i) {
-    uchar4 f4 = {(uchar)i.x, (uchar)i.y, (uchar)i.z, (uchar)i.w};
-    return f4;
-}
+#define CVT_FUNC_2(typeout, typein)                             \
+static inline typeout##2 __attribute__((const, overloadable))   \
+    convert_##typeout##2(typein##2 i) {                         \
+        typeout##2 f = {(typeout)i.x, (typeout)i.y};            \
+        return f;                                               \
+    }                                                           \
+static inline typeout##3 __attribute__((const, overloadable))   \
+    convert_##typeout##3(typein##3 i) {                         \
+        typeout##3 f = {(typeout)i.x, (typeout)i.y, (typeout)i.z}; \
+        return f;                                               \
+    }                                                           \
+static inline typeout##4 __attribute__((const, overloadable))   \
+    convert_##typeout##4(typein##4 i) {                         \
+        typeout##4 f = {(typeout)i.x, (typeout)i.y, (typeout)i.z, (typeout)i.w}; \
+        return f;                                               \
+    }
+#define CVT_FUNC(type)  CVT_FUNC_2(type, uchar)     \
+                        CVT_FUNC_2(type, char)      \
+                        CVT_FUNC_2(type, ushort)    \
+                        CVT_FUNC_2(type, short)     \
+                        CVT_FUNC_2(type, uint)      \
+                        CVT_FUNC_2(type, int)       \
+                        CVT_FUNC_2(type, float)
+CVT_FUNC(char)
+CVT_FUNC(uchar)
+CVT_FUNC(short)
+CVT_FUNC(ushort)
+CVT_FUNC(int)
+CVT_FUNC(uint)
+CVT_FUNC(float)
 
 
 static inline int4 clamp(int4 amount, int low, int high) {
@@ -121,4 +102,25 @@ static inline float4 clamp(float4 amount, float low, float high) {
     return r;
 }
 
+static inline int2 clamp(int2 amount, int low, int high) {
+    int2 r;
+    r.x = amount.x < low ? low : (amount.x > high ? high : amount.x);
+    r.y = amount.y < low ? low : (amount.y > high ? high : amount.y);
+    return r;
+}
+
+static inline float2 clamp(float2 amount, float low, float high) {
+    float2 r;
+    r.x = amount.x < low ? low : (amount.x > high ? high : amount.x);
+    r.y = amount.y < low ? low : (amount.y > high ? high : amount.y);
+    return r;
+}
+
+static inline int clamp(int amount, int low, int high) {
+    return amount < low ? low : (amount > high ? high : amount);
+}
+
+static inline float clamp(float amount, float low, float high) {
+    return amount < low ? low : (amount > high ? high : amount);
+}
 
