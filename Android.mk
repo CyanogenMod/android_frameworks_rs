@@ -149,8 +149,7 @@ LOCAL_SRC_FILES:= \
 
 LOCAL_SHARED_LIBRARIES += liblog libcutils libutils libEGL libGLESv1_CM libGLESv2 libbcc
 LOCAL_SHARED_LIBRARIES += libui libbcinfo libLLVM libgui libsync libdl
-
-LOCAL_STATIC_LIBRARIES := libft2
+LOCAL_SHARED_LIBRARIES += libft2 libpng libz
 
 LOCAL_C_INCLUDES += external/freetype/include
 LOCAL_C_INCLUDES += frameworks/compile/libbcc/include
