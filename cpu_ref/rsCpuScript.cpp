@@ -14,14 +14,8 @@
  * limitations under the License.
  */
 
-
-
 #include "rsCpuCore.h"
-
 #include "rsCpuScript.h"
-//#include "rsdRuntime.h"
-//#include "rsdAllocation.h"
-//#include "rsCpuIntrinsics.h"
 
 #ifndef RS_SERVER
 #include "utils/Vector.h"
@@ -38,7 +32,12 @@
     #include <bcc/Renderscript/RSCompilerDriver.h>
     #include <bcc/Renderscript/RSExecutable.h>
     #include <bcc/Renderscript/RSInfo.h>
+    #include <bcinfo/MetadataExtractor.h>
     #include <cutils/properties.h>
+
+    #include <sys/types.h>
+    #include <sys/wait.h>
+    #include <unistd.h>
 #endif
 
 #ifndef RS_COMPATIBILITY_LIB
@@ -64,6 +63,74 @@ static bool is_force_recompile() {
   }
 #endif  // RS_SERVER
 }
+
+//#define EXTERNAL_BCC_COMPILER 1
+#ifdef EXTERNAL_BCC_COMPILER
+const static char *BCC_EXE_PATH = "/system/bin/bcc";
+
+static bool compileBitcode(const char *cacheDir,
+                           const char *resName,
+                           const char *bitcode,
+                           size_t bitcodeSize,
+                           const char *core_lib) {
+    rsAssert(cacheDir && resName && bitcode && bitcodeSize && core_lib);
+
+    android::String8 bcFilename(cacheDir);
+    bcFilename.append("/");
+    bcFilename.append(resName);
+    bcFilename.append(".bc");
+    FILE *bcfile = fopen(bcFilename.string(), "w");
+    if (!bcfile) {
+        ALOGE("Could not write to %s", bcFilename.string());
+        return false;
+    }
+    size_t nwritten = fwrite(bitcode, 1, bitcodeSize, bcfile);
+    fclose(bcfile);
+    if (nwritten != bitcodeSize) {
+        ALOGE("Could not write %zu bytes to %s", bitcodeSize,
+              bcFilename.string());
+        return false;
+    }
+
+    pid_t pid = fork();
+    switch (pid) {
+    case -1: {  // Error occurred (we attempt no recovery)
+        ALOGE("Couldn't fork for bcc compiler execution");
+        return false;
+    }
+    case 0: {  // Child process
+        // Execute the bcc compiler.
+        execl(BCC_EXE_PATH,
+              BCC_EXE_PATH,
+              "-o", resName,
+              "-output_path", cacheDir,
+              "-bclib", core_lib,
+              bcFilename.string(),
+              (char *) NULL);
+        ALOGE("execl() failed: %s", strerror(errno));
+        abort();
+        return false;
+    }
+    default: {  // Parent process (actual driver)
+        // Wait on child process to finish compiling the source.
+        int status = 0;
+        pid_t w = waitpid(pid, &status, 0);
+        if (w == -1) {
+            ALOGE("Could not wait for bcc compiler");
+            return false;
+        }
+
+        if (WIFEXITED(status) && WEXITSTATUS(status) == 0) {
+            return true;
+        }
+
+        ALOGE("bcc compiler terminated unexpectedly");
+        return false;
+    }
+    }
+}
+#endif  // EXTERNAL_BCC_COMPILER
+
 }  // namespace
 #endif  // !defined(RS_COMPATIBILITY_LIB)
 
@@ -178,7 +245,36 @@ bool RsdCpuScriptImpl::init(char const *resName, char const *cacheDir,
         setupCompilerCallback(mCompilerDriver);
     }
 
-    const char *core_lib = NULL;
+    const char *core_lib = bcc::RSInfo::LibCLCorePath;
+
+    bcinfo::MetadataExtractor ME((const char *) bitcode, bitcodeSize);
+    if (!ME.extract()) {
+        ALOGE("Could not extract metadata from bitcode");
+        return false;
+    }
+
+    enum bcinfo::RSFloatPrecision prec = ME.getRSFloatPrecision();
+    switch (prec) {
+    case bcinfo::RS_FP_Imprecise:
+    case bcinfo::RS_FP_Relaxed:
+#if defined(ARCH_ARM_HAVE_NEON)
+        // NEON-capable devices can use an accelerated math library for all
+        // reduced precision scripts.
+        core_lib = bcc::RSInfo::LibCLCoreNEONPath;
+#endif
+        break;
+    case bcinfo::RS_FP_Full:
+        break;
+    default:
+        ALOGE("Unknown precision for bitcode");
+        return false;
+    }
+
+#if defined(ARCH_X86_HAVE_SSE2)
+    // SSE2- or above capable devices will use an optimized library.
+    core_lib = bcc::RSInfo::LibCLCoreX86Path;
+#endif
+
     RSSelectRTCallback selectRTCallback = mCtx->getSelectRTCallback();
     if (selectRTCallback != NULL) {
         core_lib = selectRTCallback((const char *)bitcode, bitcodeSize);
@@ -195,13 +291,16 @@ bool RsdCpuScriptImpl::init(char const *resName, char const *cacheDir,
                                            (const char *)bitcode, bitcodeSize);
     }
 
-    // TODO(srhines): This is being refactored, but it simply wraps the
-    // build (compile) and load steps together.
     if (exec == NULL) {
+#ifdef EXTERNAL_BCC_COMPILER
+        bool built = compileBitcode(cacheDir, resName, (const char *)bitcode,
+                                    bitcodeSize, core_lib);
+#else
         bool built = mCompilerDriver->build(*mCompilerContext, cacheDir,
                                             resName, (const char *)bitcode,
                                             bitcodeSize, core_lib,
                                             mCtx->getLinkRuntimeCallback());
+#endif  // EXTERNAL_BCC_COMPILER
         if (built) {
             exec = mCompilerDriver->loadScript(cacheDir, resName,
                                                (const char *)bitcode,
