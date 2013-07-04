@@ -24,10 +24,13 @@
 #include "../cpu_ref/rsd_cpu.h"
 
 #ifndef RS_SERVER
-#include "gui/CpuConsumer.h"
-#include "gui/GLConsumer.h"
 #include <GLES/gl.h>
 #include <GLES2/gl2.h>
+#endif
+
+#if !defined(RS_SERVER) && !defined(RS_COMPATIBILITY_LIB)
+#include "gui/CpuConsumer.h"
+#include "gui/GLConsumer.h"
 #endif
 
 class RsdFrameBufferObj;
@@ -77,7 +80,7 @@ struct DrvAllocation {
     ANativeWindow *wnd;
     ANativeWindowBuffer *wndBuffer;
 
-#ifndef RS_SERVER
+#if !defined(RS_SERVER) && !defined(RS_COMPATIBILITY_LIB)
     android::sp< android::CpuConsumer > cpuConsumer;
     android::CpuConsumer::LockedBuffer lb;
 #endif

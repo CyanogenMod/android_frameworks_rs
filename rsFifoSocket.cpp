@@ -24,11 +24,6 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 
-#ifndef RS_SERVER
-#include "utils/Timers.h"
-#include "utils/StopWatch.h"
-#endif
-
 using namespace android;
 using namespace android::renderscript;
 

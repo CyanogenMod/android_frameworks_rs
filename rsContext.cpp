@@ -32,8 +32,9 @@
 #include <sys/syscall.h>
 #include <string.h>
 #include <dlfcn.h>
+#include <unistd.h>
 
-#ifndef RS_SERVER
+#if !defined(RS_SERVER)
 #include <cutils/properties.h>
 #endif
 

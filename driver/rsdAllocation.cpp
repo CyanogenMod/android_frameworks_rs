@@ -19,10 +19,12 @@
 
 #include "rsAllocation.h"
 
-#ifndef RS_SERVER
+#if !defined(RS_SERVER) && !defined(RS_COMPATIBILITY_LIB)
 #include "system/window.h"
 #include "ui/Rect.h"
 #include "ui/GraphicBufferMapper.h"
+#else
+#include "system/graphics.h"
 #endif
 
 #ifndef RS_COMPATIBILITY_LIB
