@@ -93,13 +93,14 @@ ProgramFragmentState::~ProgramFragmentState() {
 }
 
 void ProgramFragmentState::init(Context *rsc) {
-    String8 shaderString(RS_SHADER_INTERNAL);
-    shaderString.append("varying lowp vec4 varColor;\n");
-    shaderString.append("varying vec2 varTex0;\n");
-    shaderString.append("void main() {\n");
-    shaderString.append("  lowp vec4 col = UNI_Color;\n");
-    shaderString.append("  gl_FragColor = col;\n");
-    shaderString.append("}\n");
+    const char *shaderString =
+            RS_SHADER_INTERNAL
+            "varying lowp vec4 varColor;\n"
+            "varying vec2 varTex0;\n"
+            "void main() {\n"
+            "  lowp vec4 col = UNI_Color;\n"
+            "  gl_FragColor = col;\n"
+            "}\n";
 
     ObjectBaseRef<const Element> colorElem = Element::createRef(rsc, RS_TYPE_FLOAT_32, RS_KIND_USER, false, 4);
     Element::Builder builder;
@@ -114,7 +115,7 @@ void ProgramFragmentState::init(Context *rsc) {
 
     Allocation *constAlloc = Allocation::createAllocation(rsc, inputType.get(),
                               RS_ALLOCATION_USAGE_SCRIPT | RS_ALLOCATION_USAGE_GRAPHICS_CONSTANTS);
-    ProgramFragment *pf = new ProgramFragment(rsc, shaderString.string(), shaderString.length(),
+    ProgramFragment *pf = new ProgramFragment(rsc, shaderString, strlen(shaderString),
                                               NULL, 0, NULL, tmp, 2);
     pf->bindAllocation(rsc, constAlloc, 0);
     pf->setConstantColor(rsc, 1.0f, 1.0f, 1.0f, 1.0f);

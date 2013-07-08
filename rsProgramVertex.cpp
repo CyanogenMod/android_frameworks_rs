@@ -190,15 +190,16 @@ void ProgramVertexState::init(Context *rsc) {
 
     ObjectBaseRef<Type> inputType = Type::getTypeRef(rsc, constInput.get(), 1, 0, 0, false, false, 0);
 
-    String8 shaderString(RS_SHADER_INTERNAL);
-    shaderString.append("varying vec4 varColor;\n");
-    shaderString.append("varying vec2 varTex0;\n");
-    shaderString.append("void main() {\n");
-    shaderString.append("  gl_Position = UNI_MVP * ATTRIB_position;\n");
-    shaderString.append("  gl_PointSize = 1.0;\n");
-    shaderString.append("  varColor = ATTRIB_color;\n");
-    shaderString.append("  varTex0 = ATTRIB_texture0;\n");
-    shaderString.append("}\n");
+    const char *shaderString =
+            RS_SHADER_INTERNAL
+            "varying vec4 varColor;\n"
+            "varying vec2 varTex0;\n"
+            "void main() {\n"
+            "  gl_Position = UNI_MVP * ATTRIB_position;\n"
+            "  gl_PointSize = 1.0;\n"
+            "  varColor = ATTRIB_color;\n"
+            "  varTex0 = ATTRIB_texture0;\n"
+            "}\n";
 
     uint32_t tmp[4];
     tmp[0] = RS_PROGRAM_PARAM_CONSTANT;
@@ -206,7 +207,7 @@ void ProgramVertexState::init(Context *rsc) {
     tmp[2] = RS_PROGRAM_PARAM_INPUT;
     tmp[3] = (uint32_t)attrElem.get();
 
-    ProgramVertex *pv = new ProgramVertex(rsc, shaderString.string(), shaderString.length(),
+    ProgramVertex *pv = new ProgramVertex(rsc, shaderString, strlen(shaderString),
                                           NULL, 0, NULL, tmp, 4);
     Allocation *alloc = Allocation::createAllocation(rsc, inputType.get(),
                               RS_ALLOCATION_USAGE_SCRIPT | RS_ALLOCATION_USAGE_GRAPHICS_CONSTANTS);

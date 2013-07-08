@@ -640,11 +640,9 @@ void FontState::checkInit() {
     initVertexArrayBuffers();
 
     // We store a string with letters in a rough frequency of occurrence
-    mLatinPrecache = String8(" eisarntolcdugpmhbyfvkwzxjq");
-    mLatinPrecache += String8("EISARNTOLCDUGPMHBYFVKWZXJQ");
-    mLatinPrecache += String8(",.?!()-+@;:`'");
-    mLatinPrecache += String8("0123456789");
-
+    mLatinPrecache = " eisarntolcdugpmhbyfvkwzxjq"
+                     "EISARNTOLCDUGPMHBYFVKWZXJQ"
+                     ",.?!()-+@;:`'0123456789";
     mInitialized = true;
 }
 
@@ -740,7 +738,8 @@ void FontState::precacheLatin(Font *font) {
     // Remaining capacity is measured in %
     uint32_t remainingCapacity = getRemainingCacheCapacity();
     uint32_t precacheIdx = 0;
-    while (remainingCapacity > 25 && precacheIdx < mLatinPrecache.size()) {
+    const size_t l = strlen(mLatinPrecache);
+    while ((remainingCapacity > 25) && (precacheIdx < l)) {
         font->getCachedUTFChar((int32_t)mLatinPrecache[precacheIdx]);
         remainingCapacity = getRemainingCacheCapacity();
         precacheIdx ++;
