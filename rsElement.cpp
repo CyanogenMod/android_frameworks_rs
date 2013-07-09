@@ -44,7 +44,12 @@ void Element::preDestroy() const {
 }
 
 void Element::clear() {
-    delete [] mFields;
+    if (mFields) {
+        for (size_t i = 0; i < mFieldCount; i++) {
+            delete[] mFields[i].name;
+        }
+        delete [] mFields;
+    }
     mFields = NULL;
     mFieldCount = 0;
     mHasReference = false;
@@ -87,7 +92,7 @@ void Element::dumpLOGV(const char *prefix) const {
     for (uint32_t ct = 0; ct < mFieldCount; ct++) {
         ALOGV("%s Element field index: %u ------------------", prefix, ct);
         ALOGV("%s name: %s, offsetBits: %u, arraySize: %u",
-             prefix, mFields[ct].name.string(), mFields[ct].offsetBits, mFields[ct].arraySize);
+             prefix, mFields[ct].name, mFields[ct].offsetBits, mFields[ct].arraySize);
         mFields[ct].e->dumpLOGV(prefix);
     }
 }
@@ -95,16 +100,14 @@ void Element::dumpLOGV(const char *prefix) const {
 void Element::serialize(Context *rsc, OStream *stream) const {
     // Need to identify ourselves
     stream->addU32((uint32_t)getClassId());
-
-    String8 name(getName());
-    stream->addString(&name);
+    stream->addString(getName());
 
     mComponent.serialize(stream);
 
     // Now serialize all the fields
     stream->addU32(mFieldCount);
     for (uint32_t ct = 0; ct < mFieldCount; ct++) {
-        stream->addString(&mFields[ct].name);
+        stream->addString(mFields[ct].name);
         stream->addU32(mFields[ct].arraySize);
         mFields[ct].e->serialize(rsc, stream);
     }
@@ -118,8 +121,7 @@ Element *Element::createFromStream(Context *rsc, IStream *stream) {
         return NULL;
     }
 
-    String8 name;
-    stream->loadString(&name);
+    const char *name = stream->loadString();
 
     Component component;
     component.loadFromStream(stream);
@@ -138,13 +140,9 @@ Element *Element::createFromStream(Context *rsc, IStream *stream) {
     size_t *subElemNamesLengths = new size_t[fieldCount];
     uint32_t *arraySizes = new uint32_t[fieldCount];
 
-    String8 elemName;
     for (uint32_t ct = 0; ct < fieldCount; ct ++) {
-        stream->loadString(&elemName);
-        subElemNamesLengths[ct] = elemName.length();
-        char *tmpName = new char[subElemNamesLengths[ct]];
-        memcpy(tmpName, elemName.string(), subElemNamesLengths[ct]);
-        subElemNames[ct] = tmpName;
+        subElemNames[ct] = stream->loadString();
+        subElemNamesLengths[ct] = strlen(subElemNames[ct]);
         arraySizes[ct] = stream->loadU32();
         subElems[ct] = Element::createFromStream(rsc, stream);
     }
@@ -155,6 +153,7 @@ Element *Element::createFromStream(Context *rsc, IStream *stream) {
         delete [] subElemNames[ct];
         subElems[ct]->decUserRef();
     }
+    delete[] name;
     delete[] subElems;
     delete[] subElemNames;
     delete[] subElemNamesLengths;
@@ -179,7 +178,7 @@ void Element::compute() {
 
     uint32_t noPaddingFieldCount = 0;
     for (uint32_t ct = 0; ct < mFieldCount; ct ++) {
-        if (mFields[ct].name.string()[0] != '#') {
+        if (mFields[ct].name[0] != '#') {
             noPaddingFieldCount ++;
         }
     }
@@ -203,14 +202,14 @@ void Element::compute() {
             mHasReference = true;
         }
 
-        if (mFields[ct].name.string()[0] == '#') {
+        if (mFields[ct].name[0] == '#') {
             continue;
         }
 
         mHal.state.fields[ctNoPadding] = mFields[ct].e.get();
         mHal.state.fieldArraySizes[ctNoPadding] = mFields[ct].arraySize;
-        mHal.state.fieldNames[ctNoPadding] = mFields[ct].name.string();
-        mHal.state.fieldNameLengths[ctNoPadding] = mFields[ct].name.length() + 1; // to include 0
+        mHal.state.fieldNames[ctNoPadding] = mFields[ct].name;
+        mHal.state.fieldNameLengths[ctNoPadding] = strlen(mFields[ct].name) + 1; // to include 0
         mHal.state.fieldOffsetBytes[ctNoPadding] = mFields[ct].offsetBits >> 3;
 
         ctNoPadding ++;
@@ -274,8 +273,8 @@ ObjectBaseRef<const Element> Element::createRef(Context *rsc, size_t count, cons
                 }
 
                 if ((ee->mFields[i].e.get() != ein[i]) ||
-                    (ee->mFields[i].name.length() != len) ||
-                    (ee->mFields[i].name != nin[i]) ||
+                    (strlen(ee->mFields[i].name) != len) ||
+                    strcmp(ee->mFields[i].name, nin[i]) ||
                     (ee->mFields[i].arraySize != asize)) {
                     match = false;
                     break;
@@ -307,7 +306,7 @@ ObjectBaseRef<const Element> Element::createRef(Context *rsc, size_t count, cons
         }
 
         e->mFields[ct].e.set(ein[ct]);
-        e->mFields[ct].name.setTo(nin[ct], len);
+        e->mFields[ct].name = rsuCopyString(nin[ct], len);
         e->mFields[ct].arraySize = asize;
     }
     e->compute();

@@ -59,7 +59,7 @@ public:
     }
     void loadByteArray(void *dest, size_t numBytes);
     uint64_t loadOffset();
-    void loadString(String8 *s);
+    const char * loadString();
     uint64_t getPos() const {
         return mPos;
     }
@@ -132,7 +132,8 @@ public:
     }
     void addByteArray(const void *src, size_t numBytes);
     void addOffset(uint64_t v);
-    void addString(String8 *s);
+    void addString(const char *name);
+    void addString(const char *name, size_t len);
     uint64_t getPos() const {
         return mPos;
     }

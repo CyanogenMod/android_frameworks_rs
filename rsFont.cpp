@@ -58,7 +58,7 @@ bool Font::init(const char *name, float fontSize, uint32_t dpi, const void *data
         return false;
     }
 
-    mFontName = name;
+    mFontName = rsuCopyString(name);
     mFontSize = fontSize;
     mDpi = dpi;
 
@@ -492,13 +492,13 @@ bool FontState::cacheBitmap(FT_Bitmap *bitmap, uint32_t *retOriginX, uint32_t *r
 #endif //ANDROID_RS_SERIALIZE
 
 void FontState::initRenderState() {
-    String8 shaderString("varying vec2 varTex0;\n");
-    shaderString.append("void main() {\n");
-    shaderString.append("  lowp vec4 col = UNI_Color;\n");
-    shaderString.append("  col.a = texture2D(UNI_Tex0, varTex0.xy).a;\n");
-    shaderString.append("  col.a = pow(col.a, UNI_Gamma);\n");
-    shaderString.append("  gl_FragColor = col;\n");
-    shaderString.append("}\n");
+    const char *shaderString = "varying vec2 varTex0;\n"
+                               "void main() {\n"
+                               "  lowp vec4 col = UNI_Color;\n"
+                               "  col.a = texture2D(UNI_Tex0, varTex0.xy).a;\n"
+                               "  col.a = pow(col.a, UNI_Gamma);\n"
+                               "  gl_FragColor = col;\n"
+                               "}\n";
 
     const char *textureNames[] = { "Tex0" };
     const size_t textureNamesLengths[] = { 4 };
@@ -524,7 +524,7 @@ void FontState::initRenderState() {
     mFontShaderFConstant.set(Allocation::createAllocation(mRSC, inputType.get(),
                                                           RS_ALLOCATION_USAGE_SCRIPT |
                                                           RS_ALLOCATION_USAGE_GRAPHICS_CONSTANTS));
-    ProgramFragment *pf = new ProgramFragment(mRSC, shaderString.string(), shaderString.length(),
+    ProgramFragment *pf = new ProgramFragment(mRSC, shaderString, strlen(shaderString),
                                               textureNames, numTextures, textureNamesLengths,
                                               tmp, 4);
     mFontShaderF.set(pf);
@@ -757,11 +757,12 @@ void FontState::renderText(const char *text, uint32_t len, int32_t x, int32_t y,
     Font *currentFont = mRSC->getFont();
     if (!currentFont) {
         if (!mDefault.get()) {
-            String8 fontsDir("/fonts/Roboto-Regular.ttf");
-            String8 fullPath(getenv("ANDROID_ROOT"));
-            fullPath += fontsDir;
-
-            mDefault.set(Font::create(mRSC, fullPath.string(), 8, mRSC->getDPI()));
+            char fullPath[1024];
+            const char * root = getenv("ANDROID_ROOT");
+            rsAssert(strlen(root) < 256);
+            strcpy(fullPath, root);
+            strcat(fullPath, "/fonts/Roboto-Regular.ttf");
+            mDefault.set(Font::create(mRSC, fullPath, 8, mRSC->getDPI()));
         }
         currentFont = mDefault.get();
     }

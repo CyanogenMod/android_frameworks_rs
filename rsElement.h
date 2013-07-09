@@ -83,7 +83,7 @@ public:
 
     uint32_t getFieldCount() const {return mFieldCount;}
     const Element * getField(uint32_t idx) const {return mFields[idx].e.get();}
-    const char * getFieldName(uint32_t idx) const {return mFields[idx].name.string();}
+    const char * getFieldName(uint32_t idx) const {return mFields[idx].name;}
     uint32_t getFieldArraySize(uint32_t idx) const {return mFields[idx].arraySize;}
 
     const Component & getComponent() const {return mComponent;}
@@ -137,7 +137,7 @@ protected:
     void clear();
 
     typedef struct {
-        String8 name;
+        const char *name;
         ObjectBaseRef<const Element> e;
         uint32_t offsetBits;
         uint32_t offsetBitsUnpadded;

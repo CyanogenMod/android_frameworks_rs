@@ -81,9 +81,7 @@ void Mesh::init() {
 void Mesh::serialize(Context *rsc, OStream *stream) const {
     // Need to identify ourselves
     stream->addU32((uint32_t)getClassId());
-
-    String8 name(getName());
-    stream->addString(&name);
+    stream->addString(getName());
 
     // Store number of vertex streams
     stream->addU32(mHal.state.vertexBuffersCount);
@@ -113,8 +111,7 @@ Mesh *Mesh::createFromStream(Context *rsc, IStream *stream) {
         return NULL;
     }
 
-    String8 name;
-    stream->loadString(&name);
+    const char *name = stream->loadString();
 
     uint32_t vertexBuffersCount = stream->loadU32();
     ObjectBaseRef<Allocation> *vertexBuffers = NULL;
@@ -148,7 +145,7 @@ Mesh *Mesh::createFromStream(Context *rsc, IStream *stream) {
     }
 
     Mesh *mesh = new Mesh(rsc, vertexBuffersCount, primitivesCount);
-    mesh->setName(name.string(), name.size());
+    mesh->assignName(name);
     for (uint32_t vCount = 0; vCount < vertexBuffersCount; vCount ++) {
         mesh->setVertexBuffer(vertexBuffers[vCount].get(), vCount);
     }
