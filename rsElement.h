@@ -57,18 +57,6 @@ public:
     };
     Hal mHal;
 
-    class Builder {
-    public:
-        Builder();
-        void add(const Element *e, const char *nameStr, uint32_t arraySize);
-        ObjectBaseRef<const Element> create(Context *rsc);
-    private:
-        Vector<ObjectBaseRef<const Element> > mBuilderElementRefs;
-        Vector<const Element *> mBuilderElements;
-        Vector<const char*> mBuilderNameStrings;
-        Vector<size_t> mBuilderNameLengths;
-        Vector<uint32_t> mBuilderArrays;
-    };
     uint32_t getGLType() const;
     uint32_t getGLFormat() const;
 
@@ -133,8 +121,8 @@ public:
     static const Element* create(Context *rsc, size_t count,
                                  const Element **ein,
                                  const char **nin,
-                                 const size_t * lengths,
-                                 const uint32_t *asin) {
+                                 const size_t * lengths = NULL,
+                                 const uint32_t *asin = NULL) {
         ObjectBaseRef<const Element> elem = createRef(rsc, count, ein, nin, lengths, asin);
         elem->incUserRef();
         return elem.get();

@@ -117,6 +117,7 @@ LOCAL_SRC_FILES:= \
 	rsAnimation.cpp \
 	rsComponent.cpp \
 	rsContext.cpp \
+	rsCppUtils.cpp \
 	rsDevice.cpp \
 	rsElement.cpp \
 	rsFBOCache.cpp \

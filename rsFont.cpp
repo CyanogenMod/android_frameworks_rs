@@ -508,10 +508,10 @@ void FontState::initRenderState() {
                                                                 RS_KIND_USER, false, 4);
     ObjectBaseRef<const Element> gammaElem = Element::createRef(mRSC, RS_TYPE_FLOAT_32,
                                                                 RS_KIND_USER, false, 1);
-    Element::Builder builder;
-    builder.add(colorElem.get(), "Color", 1);
-    builder.add(gammaElem.get(), "Gamma", 1);
-    ObjectBaseRef<const Element> constInput = builder.create(mRSC);
+
+    const char *ebn1[] = { "Color", "Gamma" };
+    const Element *ebe1[] = {colorElem.get(), gammaElem.get()};
+    ObjectBaseRef<const Element> constInput = Element::create(mRSC, 2, ebe1, ebn1);
 
     ObjectBaseRef<Type> inputType = Type::getTypeRef(mRSC, constInput.get(), 1, 0, 0, false, false, 0);
 
@@ -607,10 +607,9 @@ void FontState::initVertexArrayBuffers() {
     ObjectBaseRef<const Element> posElem = Element::createRef(mRSC, RS_TYPE_FLOAT_32, RS_KIND_USER, false, 3);
     ObjectBaseRef<const Element> texElem = Element::createRef(mRSC, RS_TYPE_FLOAT_32, RS_KIND_USER, false, 2);
 
-    Element::Builder builder;
-    builder.add(posElem.get(), "position", 1);
-    builder.add(texElem.get(), "texture0", 1);
-    ObjectBaseRef<const Element> vertexDataElem = builder.create(mRSC);
+    const char *ebn1[] = { "position", "texture0" };
+    const Element *ebe1[] = {posElem.get(), texElem.get()};
+    ObjectBaseRef<const Element> vertexDataElem = Element::create(mRSC, 2, ebe1, ebn1);
 
     ObjectBaseRef<Type> vertexDataType = Type::getTypeRef(mRSC, vertexDataElem.get(),
                                                           mMaxNumberOfQuads * 4,

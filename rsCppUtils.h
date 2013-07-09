@@ -124,6 +124,9 @@ namespace android {
 namespace android {
 namespace renderscript {
 
+const char * rsuCopyString(const char *name);
+const char * rsuCopyString(const char *name, size_t len);
+
 #if 1
 #define rsAssert(v) do {if(!(v)) ALOGE("rsAssert failed: %s, in %s at %i", #v, __FILE__, __LINE__);} while (0)
 #else
