@@ -183,7 +183,7 @@ protected:
     uint32_t getRemainingCacheCapacity();
 
     void precacheLatin(Font *font);
-    String8 mLatinPrecache;
+    const char *mLatinPrecache;
 
     Context *mRSC;
 
