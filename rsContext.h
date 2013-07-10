@@ -26,9 +26,13 @@
 #include "rsScriptGroup.h"
 #include "rsSampler.h"
 
-#ifndef RS_SERVER
+#if !defined(RS_SERVER) && !defined(RS_COMPATIBILITY_LIB)
 #define ATRACE_TAG ATRACE_TAG_RS
 #include "utils/Trace.h"
+#else
+#define ATRACE_ENABLED(...) false
+#define ATRACE_NAME(...)
+#define ATRACE_CALL(...)
 #endif
 
 #ifndef RS_COMPATIBILITY_LIB

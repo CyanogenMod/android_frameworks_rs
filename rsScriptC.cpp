@@ -26,9 +26,8 @@
 
 #if !defined(RS_SERVER) && !defined(RS_COMPATIBILITY_LIB)
 #include "utils/Timers.h"
-#endif
-
 #include "cutils/trace.h"
+#endif
 
 #include <sys/stat.h>
 

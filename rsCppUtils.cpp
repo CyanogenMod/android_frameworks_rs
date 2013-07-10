@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 
-
-
+#include "rsUtils.h"
 #include "rsCppUtils.h"
 
 namespace android {
