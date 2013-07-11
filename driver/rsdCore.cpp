@@ -20,6 +20,7 @@
 #include "rsdAllocation.h"
 #include "rsdBcc.h"
 #ifndef RS_COMPATIBILITY_LIB
+    #include "MemChunk.h"
     #include "rsdGL.h"
     #include "rsdPath.h"
     #include "rsdProgramStore.h"
@@ -189,7 +190,7 @@ extern "C" bool rsdHalInit(RsContext c, uint32_t version_major,
     }
     rsc->mHal.drv = dc;
 
-    dc->mCpuRef = RsdCpuReference::create((Context *)c, version_major, version_minor,
+    dc->mCpuRef = RsdCpuReference::create(rsc, version_major, version_minor,
                                           &rsdLookupRuntimeStub, &LookupScript);
     if (!dc->mCpuRef) {
         ALOGE("RsdCpuReference::create for driver hal failed.");
@@ -201,6 +202,16 @@ extern "C" bool rsdHalInit(RsContext c, uint32_t version_major,
     // Set a callback for compiler setup here.
     if (false) {
         dc->mCpuRef->setSetupCompilerCallback(NULL);
+    }
+
+    // Set a callback for switching MemChunk's allocator here.
+    // Note that the allocation function must return page-aligned memory, so
+    // that it can be mprotected properly (i.e. code should be written and
+    // later switched to read+execute only).
+    if (false) {
+        MemChunk::registerAllocFreeCallbacks(
+                rsc->mHal.funcs.allocRuntimeMem,
+                rsc->mHal.funcs.freeRuntimeMem);
     }
 #endif
 
