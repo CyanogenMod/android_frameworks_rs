@@ -40,6 +40,7 @@ LOCAL_SHARED_LIBRARIES += liblog libcutils libutils libEGL libGLESv1_CM libGLESv
 LOCAL_SHARED_LIBRARIES += libbcc libbcinfo libLLVM libui libgui libsync
 
 LOCAL_C_INCLUDES += frameworks/compile/libbcc/include
+LOCAL_C_INCLUDES += frameworks/rs/driver/linkloader/include
 
 LOCAL_CFLAGS += $(rs_base_CFLAGS)
 
