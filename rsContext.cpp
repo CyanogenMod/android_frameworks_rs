@@ -32,6 +32,7 @@
 #include <sys/syscall.h>
 #include <string.h>
 #include <dlfcn.h>
+#include <unistd.h>
 
 #if !defined(RS_SERVER) && defined(HAVE_ANDROID_OS)
 #include <cutils/properties.h>

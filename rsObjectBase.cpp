@@ -29,6 +29,7 @@ ObjectBase::ObjectBase(Context *rsc) {
     mNext = NULL;
     mPrev = NULL;
     mDH = NULL;
+    mName = NULL;
 
 #if RS_OBJECT_DEBUG
     mDH = new DebugHelper();
@@ -47,6 +48,8 @@ ObjectBase::~ObjectBase() {
     mDH = NULL;
 #endif
 
+    free(const_cast<char *>(mName));
+
     if (mPrev || mNext) {
         // While the normal practice is to call remove before we call
         // delete.  Its possible for objects without a re-use list
@@ -62,9 +65,9 @@ ObjectBase::~ObjectBase() {
 }
 
 void ObjectBase::dumpLOGV(const char *op) const {
-    if (mName.size()) {
+    if (mName) {
         ALOGV("%s RSobj %p, name %s, refs %i,%i  links %p,%p,%p",
-             op, this, mName.string(), mUserRefCount, mSysRefCount, mNext, mPrev, mRSC);
+             op, this, mName, mUserRefCount, mSysRefCount, mNext, mPrev, mRSC);
     } else {
         ALOGV("%s RSobj %p, no-name, refs %i,%i  links %p,%p,%p",
              op, this, mUserRefCount, mSysRefCount, mNext, mPrev, mRSC);
@@ -152,11 +155,14 @@ bool ObjectBase::decSysRef() const {
 }
 
 void ObjectBase::setName(const char *name) {
-    mName.setTo(name);
+    mName = strdup(name);
 }
 
 void ObjectBase::setName(const char *name, uint32_t len) {
-    mName.setTo(name, len);
+    char *c = (char*)calloc(len + 1, sizeof(char));
+    rsAssert(c);
+    memcpy(c, name, len);
+    mName = c;
 }
 
 void ObjectBase::asyncLock() {

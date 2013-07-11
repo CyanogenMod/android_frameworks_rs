@@ -26,8 +26,9 @@
 #include <sched.h>
 #include <sys/syscall.h>
 #include <string.h>
+#include <unistd.h>
 
-#ifndef RS_SERVER
+#if !defined(RS_SERVER) && !defined(RS_COMPATIBILITY_LIB)
 #include <cutils/properties.h>
 #include "utils/StopWatch.h"
 #endif

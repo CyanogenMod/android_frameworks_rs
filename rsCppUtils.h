@@ -17,7 +17,7 @@
 #ifndef ANDROID_RS_CPP_UTILS_H
 #define ANDROID_RS_CPP_UTILS_H
 
-#ifndef RS_SERVER
+#if !defined(RS_SERVER) && !defined(RS_COMPATIBILITY_LIB)
 #include <utils/Log.h>
 #include <utils/String8.h>
 #include <utils/Vector.h>
@@ -32,7 +32,11 @@
 
 #include <math.h>
 
-#ifdef RS_SERVER
+#ifdef RS_COMPATIBILITY_LIB
+#include <android/log.h>
+#endif
+
+#if defined(RS_SERVER) || defined(RS_COMPATIBILITY_LIB)
 
 #define ATRACE_TAG
 #define ATRACE_CALL(...)
@@ -41,12 +45,24 @@
 #include <vector>
 #include <algorithm>
 
+#define ALOGE(...) \
+    __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__);
+#define ALOGW(...) \
+    __android_log_print(ANDROID_LOG_WARN, LOG_TAG, __VA_ARGS__);
+#define ALOGD(...) \
+    __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, __VA_ARGS__);
+#define ALOGV(...) \
+    __android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, __VA_ARGS__);
+
 namespace android {
 
     // server has no Vector or String8 classes; implement on top of STL
     class String8: public std::string {
     public:
     String8(const char *ptr) : std::string(ptr) {
+
+        }
+    String8(const char *ptr, size_t len) : std::string(ptr, len) {
 
         }
     String8() : std::string() {
@@ -63,7 +79,16 @@ namespace android {
         void setTo(const char* str) {
             this->assign(str);
         }
+        String8 getPathDir(void) const {
+            const char* cp;
+            const char*const str = this->c_str();
 
+            cp = strrchr(str, OS_PATH_SEPARATOR);
+            if (cp == NULL)
+                return String8("");
+            else
+                return String8(str, cp - str);
+        }
     };
 
     template <class T> class Vector: public std::vector<T> {
@@ -83,11 +108,11 @@ namespace android {
         }
 
         T* editArray() {
-            return this->data();
+            return (T*)(this->begin());
         }
 
         const T* array() {
-            return this->data();
+            return (const T*)(this->begin());
         }
 
     };
@@ -109,17 +134,56 @@ namespace android {
         }
 
         bool* editArray() {
-            return (bool*)this->data();
+            return (bool*)(this->begin());
         }
 
         const bool* array() {
-            return (const bool*)this->data();
+            return (const bool*)(this->begin());
         }
     };
 
 }
 
-#endif // RS_SERVER
+typedef int64_t nsecs_t;  // nano-seconds
+
+enum {
+    SYSTEM_TIME_REALTIME = 0,  // system-wide realtime clock
+    SYSTEM_TIME_MONOTONIC = 1, // monotonic time since unspecified starting point
+    SYSTEM_TIME_PROCESS = 2,   // high-resolution per-process clock
+    SYSTEM_TIME_THREAD = 3,    // high-resolution per-thread clock
+    SYSTEM_TIME_BOOTTIME = 4   // same as SYSTEM_TIME_MONOTONIC, but including CPU suspend time
+};
+
+static inline nsecs_t systemTime(int clock)
+{
+#if defined(HAVE_POSIX_CLOCKS)
+    static const clockid_t clocks[] = {
+            CLOCK_REALTIME,
+            CLOCK_MONOTONIC,
+            CLOCK_PROCESS_CPUTIME_ID,
+            CLOCK_THREAD_CPUTIME_ID,
+            CLOCK_BOOTTIME
+    };
+    struct timespec t;
+    t.tv_sec = t.tv_nsec = 0;
+    clock_gettime(clocks[clock], &t);
+    return nsecs_t(t.tv_sec)*1000000000LL + t.tv_nsec;
+#else
+    // we don't support the clocks here.
+    struct timeval t;
+    t.tv_sec = t.tv_usec = 0;
+    gettimeofday(&t, NULL);
+    return nsecs_t(t.tv_sec)*1000000000LL + nsecs_t(t.tv_usec)*1000LL;
+#endif
+}
+
+static inline nsecs_t nanoseconds_to_milliseconds(nsecs_t secs)
+{
+    return secs/1000000;
+}
+
+
+#endif // RS_SERVER || RS_COMPATIBILITY_LIB
 
 namespace android {
 namespace renderscript {

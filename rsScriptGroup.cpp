@@ -78,7 +78,7 @@ bool ScriptGroup::calcOrderRecurse(Node *n, int depth) {
     return ret;
 }
 
-#ifndef RS_SERVER
+#if !defined(RS_SERVER) && !defined(RS_COMPATIBILITY_LIB)
 static int CompareNodeForSort(ScriptGroup::Node *const* lhs,
                               ScriptGroup::Node *const* rhs) {
     if (lhs[0]->mOrder > rhs[0]->mOrder) {
@@ -181,7 +181,7 @@ bool ScriptGroup::calcOrder() {
     }
 
     // sort
-#ifndef RS_SERVER
+#if !defined(RS_SERVER) && !defined(RS_COMPATIBILITY_LIB)
     mNodes.sort(&CompareNodeForSort);
 #else
     std::sort(mNodes.begin(), mNodes.end(), NodeCompare());

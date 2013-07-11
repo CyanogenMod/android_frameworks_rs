@@ -17,12 +17,6 @@
 #include "rsCpuCore.h"
 #include "rsCpuScript.h"
 
-#ifndef RS_SERVER
-#include "utils/Vector.h"
-#include "utils/Timers.h"
-#include "utils/StopWatch.h"
-#endif
-
 #ifdef RS_COMPATIBILITY_LIB
     #include <dlfcn.h>
     #include <stdio.h>
@@ -340,8 +334,7 @@ bool RsdCpuScriptImpl::init(char const *resName, char const *cacheDir,
 #ifndef RS_SERVER
     String8 scriptSOName(cacheDir);
     scriptSOName = scriptSOName.getPathDir();
-    scriptSOName.appendPath("lib");
-    scriptSOName.append("/librs.");
+    scriptSOName.append("/lib/librs.");
 #else
     String8 scriptSOName("lib");
 #endif
