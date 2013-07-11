@@ -21,7 +21,7 @@
 #include "rsMatrix2x2.h"
 #include "rsgApiStructs.h"
 
-#ifndef RS_SERVER
+#if !defined(RS_SERVER) && !defined(RS_COMPATIBILITY_LIB)
 #include "utils/Timers.h"
 #endif
 

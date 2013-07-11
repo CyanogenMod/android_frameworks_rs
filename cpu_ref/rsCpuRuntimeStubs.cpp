@@ -26,10 +26,6 @@
 
 #include <time.h>
 
-#ifndef RS_SERVER
-#include "utils/Timers.h"
-#endif
-
 using namespace android;
 using namespace android::renderscript;
 

@@ -17,7 +17,7 @@
 #include "rsContext.h"
 #include "rsScriptC.h"
 
-#ifndef RS_SERVER
+#if !defined(RS_SERVER) && !defined(RS_COMPATIBILITY_LIB)
 #include "utils/Timers.h"
 #endif
 

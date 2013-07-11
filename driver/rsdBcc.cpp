@@ -25,7 +25,7 @@
 #include "rsElement.h"
 #include "rsScriptC.h"
 
-#ifndef RS_SERVER
+#if !defined(RS_SERVER) && !defined(RS_COMPATIBILITY_LIB)
 #include "utils/Vector.h"
 #include "utils/Timers.h"
 #include "utils/StopWatch.h"

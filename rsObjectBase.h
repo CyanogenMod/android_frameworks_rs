@@ -42,7 +42,7 @@ public:
     static bool checkDelete(const ObjectBase *);
 
     const char * getName() const {
-        return mName.string();
+        return mName;
     }
     void setName(const char *);
     void setName(const char *, uint32_t len);
@@ -79,7 +79,7 @@ private:
     void add() const;
     void remove() const;
 
-    String8 mName;
+    const char* mName;
     mutable int32_t mSysRefCount;
     mutable int32_t mUserRefCount;
 
