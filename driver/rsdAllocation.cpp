@@ -628,7 +628,8 @@ void* rsdAllocationGetSurface(const Context *rsc, const Allocation *alloc) {
     DrvAllocation *drv = (DrvAllocation *)alloc->mHal.drv;
 
     // Configure CpuConsumer to be in asynchronous mode
-    drv->cpuConsumer = new CpuConsumer(2, false);
+    sp<BufferQueue> bq = new BufferQueue();
+    drv->cpuConsumer = new CpuConsumer(bq, 2, false);
     sp<IGraphicBufferProducer> bp = drv->cpuConsumer->getProducerInterface();
     bp->incStrong(NULL);
 
