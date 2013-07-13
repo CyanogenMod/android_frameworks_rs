@@ -40,7 +40,7 @@ LOCAL_SHARED_LIBRARIES += liblog libcutils libutils libEGL libGLESv1_CM libGLESv
 LOCAL_SHARED_LIBRARIES += libbcc libbcinfo libLLVM libui libgui libsync
 
 LOCAL_C_INCLUDES += frameworks/compile/libbcc/include
-LOCAL_C_INCLUDES += frameworks/rs/driver/linkloader/include
+LOCAL_C_INCLUDES += frameworks/rs/cpu_ref/linkloader/include
 
 LOCAL_CFLAGS += $(rs_base_CFLAGS)
 
@@ -254,17 +254,17 @@ LLVM_ROOT_PATH := external/llvm
 #-----------------------------------------------------------------------------
 
 rsloader_SRC_FILES := \
-  driver/linkloader/android/librsloader.cpp \
-  driver/linkloader/lib/ELFHeader.cpp \
-  driver/linkloader/lib/ELFSymbol.cpp \
-  driver/linkloader/lib/ELFSectionHeader.cpp \
-  driver/linkloader/lib/ELFTypes.cpp \
-  driver/linkloader/lib/GOT.cpp \
-  driver/linkloader/lib/MemChunk.cpp \
-  driver/linkloader/lib/StubLayout.cpp \
-  driver/linkloader/utils/helper.cpp \
-  driver/linkloader/utils/raw_ostream.cpp \
-  driver/linkloader/utils/rsl_assert.cpp
+  cpu_ref/linkloader/android/librsloader.cpp \
+  cpu_ref/linkloader/lib/ELFHeader.cpp \
+  cpu_ref/linkloader/lib/ELFSymbol.cpp \
+  cpu_ref/linkloader/lib/ELFSectionHeader.cpp \
+  cpu_ref/linkloader/lib/ELFTypes.cpp \
+  cpu_ref/linkloader/lib/GOT.cpp \
+  cpu_ref/linkloader/lib/MemChunk.cpp \
+  cpu_ref/linkloader/lib/StubLayout.cpp \
+  cpu_ref/linkloader/utils/helper.cpp \
+  cpu_ref/linkloader/utils/raw_ostream.cpp \
+  cpu_ref/linkloader/utils/rsl_assert.cpp
 
 include $(CLEAR_VARS)
 
@@ -279,8 +279,8 @@ LOCAL_ADDITIONAL_DEPENDENCIES := $(LOCAL_PATH)/Android.mk
 LOCAL_CFLAGS += $(rs_base_CFLAGS)
 
 LOCAL_C_INCLUDES := \
-  $(LOCAL_PATH)/driver/linkloader \
-  $(LOCAL_PATH)/driver/linkloader/include \
+  $(LOCAL_PATH)/cpu_ref/linkloader \
+  $(LOCAL_PATH)/cpu_ref/linkloader/include \
   $(LOCAL_C_INCLUDES)
 
 include $(LLVM_ROOT_PATH)/llvm-device-build.mk
@@ -305,8 +305,8 @@ LOCAL_CFLAGS += $(rs_base_CFLAGS)
 LOCAL_CFLAGS += -D__HOST__
 
 LOCAL_C_INCLUDES := \
-  $(LOCAL_PATH)/driver/linkloader \
-  $(LOCAL_PATH)/driver/linkloader/include \
+  $(LOCAL_PATH)/cpu_ref/linkloader \
+  $(LOCAL_PATH)/cpu_ref/linkloader/include \
   $(LOCAL_C_INCLUDES)
 
 include $(LLVM_ROOT_PATH)/llvm-host-build.mk
