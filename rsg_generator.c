@@ -123,9 +123,12 @@ void printFuncDecl(FILE *f, const ApiEntry *api, const char *prefix, int addCont
     fprintf(f, ")");
 }
 
-void printFuncDecls(FILE *f, const char *prefix, int addContext) {
+void printFuncDecls(FILE *f, const char *prefix, int addContext, int externC) {
     int ct;
     for (ct=0; ct < apiCount; ct++) {
+        if (externC) {
+            fprintf(f, "extern \"C\" ");
+        }
         printFuncDecl(f, &apis[ct], prefix, addContext, 0);
         fprintf(f, ";\n");
     }
@@ -400,6 +403,8 @@ void printApiCpp(FILE *f) {
         int needFlush = 0;
         const ApiEntry * api = &apis[ct];
 
+        fprintf(f, "extern \"C\" ");
+
         printFuncDecl(f, api, "rs", 0, 0);
         fprintf(f, "\n{\n");
         fprintf(f, "    ");
@@ -655,7 +660,7 @@ int main(int argc, char **argv) {
             fprintf(f, "namespace android {\n");
             fprintf(f, "namespace renderscript {\n");
             printStructures(f);
-            printFuncDecls(f, "rsi_", 1);
+            printFuncDecls(f, "rsi_", 1, 0);
             printPlaybackFuncs(f, "rsp_");
             fprintf(f, "\n\ntypedef struct RsPlaybackRemoteHeaderRec {\n");
             fprintf(f, "    uint32_t command;\n");
@@ -673,7 +678,7 @@ int main(int argc, char **argv) {
 
         case '1': // rsgApiFuncDecl.h
         {
-            printFuncDecls(f, "rs", 0);
+            printFuncDecls(f, "rs", 0, 1);
         }
         break;
 
