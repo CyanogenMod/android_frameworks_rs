@@ -250,7 +250,7 @@ void Element::updateFromNative() {
 }
 
 sp<const Element> Element::createUser(sp<RS> rs, RsDataType dt) {
-    void * id = rsElementCreate(rs->getContext(), dt, RS_KIND_USER, false, 1);
+    void * id = RS::dispatch->ElementCreate(rs->getContext(), dt, RS_KIND_USER, false, 1);
     return new Element(id, rs, dt, RS_KIND_USER, false, 1);
 }
 
@@ -258,7 +258,7 @@ sp<const Element> Element::createVector(sp<RS> rs, RsDataType dt, uint32_t size)
     if (size < 2 || size > 4) {
         rs->throwError("Vector size out of range 2-4.");
     }
-    void *id = rsElementCreate(rs->getContext(), dt, RS_KIND_USER, false, size);
+    void *id = RS::dispatch->ElementCreate(rs->getContext(), dt, RS_KIND_USER, false, size);
     return new Element(id, rs, dt, RS_KIND_USER, false, size);
 }
 
@@ -309,7 +309,7 @@ sp<const Element> Element::createPixel(sp<RS> rs, RsDataType dt, RsDataKind dk) 
         break;
     }
 
-    void * id = rsElementCreate(rs->getContext(), dt, dk, true, size);
+    void * id = RS::dispatch->ElementCreate(rs->getContext(), dt, dk, true, size);
     return new Element(id, rs, dt, dk, true, size);
 }
 
@@ -371,7 +371,7 @@ sp<const Element> Element::Builder::create() {
         sizeArray[ct] = mElementNames[ct].length();
     }
 
-    void *id = rsElementCreate2(mRS->getContext(),
+    void *id = RS::dispatch->ElementCreate2(mRS->getContext(),
                                 (RsElement *)elementArray, fieldCount,
                                 nameArray, fieldCount * sizeof(size_t),  sizeArray,
                                 (const uint32_t *)mArraySizes.array(), fieldCount);

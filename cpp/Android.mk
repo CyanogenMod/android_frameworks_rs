@@ -28,7 +28,8 @@ LOCAL_SHARED_LIBRARIES := \
 	libz \
 	libcutils \
 	libutils \
-	liblog
+	liblog \
+	libdl
 
 LOCAL_MODULE:= libRScpp
 

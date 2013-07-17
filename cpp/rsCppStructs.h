@@ -24,6 +24,8 @@
 #include "RefBase.h"
 #endif
 
+#include "rsDispatch.h"
+
 // Every row in an RS allocation is guaranteed to be aligned by this amount
 // Every row in a user-backed allocation must be aligned by this amount
 #define RS_CPU_ALLOCATION_ALIGNMENT 16
@@ -62,7 +64,13 @@ class RS : public android::LightRefBase<RS> {
 
     void finish();
 
+    static dispatchTable* dispatch;
+
  private:
+    static void* librs;
+
+    static bool initDispatch(int targetApi);
+
     bool init(int targetApi, bool forceCpu, bool synchronous);
     static void * threadProc(void *);
 
@@ -78,6 +86,7 @@ class RS : public android::LightRefBase<RS> {
 
     ErrorHandlerFunc_t mErrorFunc;
     MessageHandlerFunc_t mMessageFunc;
+    bool mInit;
 
     struct {
         Element *U8;

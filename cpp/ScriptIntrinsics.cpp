@@ -25,7 +25,7 @@ using namespace RSC;
 
 ScriptIntrinsic::ScriptIntrinsic(sp<RS> rs, int id, sp<const Element> e)
     : Script(NULL, rs) {
-    mID = rsScriptIntrinsicCreate(rs->getContext(), id, e->getID());
+    mID = RS::dispatch->ScriptIntrinsicCreate(rs->getContext(), id, e->getID());
 }
 
 ScriptIntrinsicBlend::ScriptIntrinsicBlend(sp<RS> rs, sp<const Element> e)

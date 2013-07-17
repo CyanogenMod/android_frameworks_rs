@@ -121,7 +121,7 @@ void Allocation::validateIsObject() {
 void Allocation::updateFromNative() {
     BaseObj::updateFromNative();
 
-    const void *typeID = rsaAllocationGetType(mRS->getContext(), getID());
+    const void *typeID = RS::dispatch->AllocationGetType(mRS->getContext(), getID());
     if(typeID != NULL) {
         sp<const Type> old = mType;
         sp<Type> t = new Type((void *)typeID, mRS);
@@ -141,7 +141,7 @@ void Allocation::syncAll(RsAllocationUsageType srcLocation) {
     default:
         ALOGE("Source must be exactly one usage type.");
     }
-    rsAllocationSyncAll(mRS->getContext(), getIDSafe(), srcLocation);
+    RS::dispatch->AllocationSyncAll(mRS->getContext(), getIDSafe(), srcLocation);
 }
 
 void Allocation::ioSendOutput() {
@@ -149,7 +149,7 @@ void Allocation::ioSendOutput() {
     if ((mUsage & RS_ALLOCATION_USAGE_IO_OUTPUT) == 0) {
         ALOGE("Can only send buffer if IO_OUTPUT usage specified.");
     }
-    rsAllocationIoSend(mRS->getContext(), getID());
+    RS::dispatch->AllocationIoSend(mRS->getContext(), getID());
 #endif
 }
 
@@ -158,12 +158,12 @@ void Allocation::ioGetInput() {
     if ((mUsage & RS_ALLOCATION_USAGE_IO_INPUT) == 0) {
         ALOGE("Can only send buffer if IO_OUTPUT usage specified.");
     }
-    rsAllocationIoReceive(mRS->getContext(), getID());
+    RS::dispatch->AllocationIoReceive(mRS->getContext(), getID());
 #endif
 }
 
 void Allocation::generateMipmaps() {
-    rsAllocationGenerateMipmaps(mRS->getContext(), getID());
+    RS::dispatch->AllocationGenerateMipmaps(mRS->getContext(), getID());
 }
 
 void Allocation::copy1DRangeFrom(uint32_t off, size_t count, const void *data) {
@@ -177,7 +177,7 @@ void Allocation::copy1DRangeFrom(uint32_t off, size_t count, const void *data) {
         return;
     }
 
-    rsAllocation1DData(mRS->getContext(), getIDSafe(), off, mSelectedLOD, count, data,
+    RS::dispatch->Allocation1DData(mRS->getContext(), getIDSafe(), off, mSelectedLOD, count, data,
                        count * mType->getElement()->getSizeBytes());
 }
 
@@ -191,14 +191,14 @@ void Allocation::copy1DRangeTo(uint32_t off, size_t count, void *data) {
         return;
     }
 
-    rsAllocation1DRead(mRS->getContext(), getIDSafe(), off, mSelectedLOD, count, data,
+    RS::dispatch->Allocation1DRead(mRS->getContext(), getIDSafe(), off, mSelectedLOD, count, data,
                        count * mType->getElement()->getSizeBytes());
 }
 
 void Allocation::copy1DRangeFrom(uint32_t off, size_t count, sp<const Allocation> data,
                                  uint32_t dataOff) {
 
-    rsAllocationCopy2DRange(mRS->getContext(), getIDSafe(), off, 0,
+    RS::dispatch->AllocationCopy2DRange(mRS->getContext(), getIDSafe(), off, 0,
                             mSelectedLOD, mSelectedFace,
                             count, 1, data->getIDSafe(), dataOff, 0,
                             data->mSelectedLOD, data->mSelectedFace);
@@ -226,14 +226,14 @@ void Allocation::validate2DRange(uint32_t xoff, uint32_t yoff, uint32_t w, uint3
 void Allocation::copy2DRangeFrom(uint32_t xoff, uint32_t yoff, uint32_t w, uint32_t h,
                                  const void *data) {
     validate2DRange(xoff, yoff, w, h);
-    rsAllocation2DData(mRS->getContext(), getIDSafe(), xoff, yoff, mSelectedLOD, mSelectedFace,
+    RS::dispatch->Allocation2DData(mRS->getContext(), getIDSafe(), xoff, yoff, mSelectedLOD, mSelectedFace,
                        w, h, data, w * h * mType->getElement()->getSizeBytes(), w * mType->getElement()->getSizeBytes());
 }
 
 void Allocation::copy2DRangeFrom(uint32_t xoff, uint32_t yoff, uint32_t w, uint32_t h,
                                  sp<const Allocation> data, uint32_t dataXoff, uint32_t dataYoff) {
     validate2DRange(xoff, yoff, w, h);
-    rsAllocationCopy2DRange(mRS->getContext(), getIDSafe(), xoff, yoff,
+    RS::dispatch->AllocationCopy2DRange(mRS->getContext(), getIDSafe(), xoff, yoff,
                             mSelectedLOD, mSelectedFace,
                             w, h, data->getIDSafe(), dataXoff, dataYoff,
                             data->mSelectedLOD, data->mSelectedFace);
@@ -242,14 +242,14 @@ void Allocation::copy2DRangeFrom(uint32_t xoff, uint32_t yoff, uint32_t w, uint3
 void Allocation::copy2DRangeTo(uint32_t xoff, uint32_t yoff, uint32_t w, uint32_t h,
                                void* data) {
     validate2DRange(xoff, yoff, w, h);
-    rsAllocation2DRead(mRS->getContext(), getIDSafe(), xoff, yoff, mSelectedLOD, mSelectedFace,
+    RS::dispatch->Allocation2DRead(mRS->getContext(), getIDSafe(), xoff, yoff, mSelectedLOD, mSelectedFace,
                        w, h, data, w * h * mType->getElement()->getSizeBytes(), w * mType->getElement()->getSizeBytes());
 }
 
 void Allocation::copy2DStridedFrom(uint32_t xoff, uint32_t yoff, uint32_t w, uint32_t h,
                                    const void *data, size_t stride) {
     validate2DRange(xoff, yoff, w, h);
-    rsAllocation2DData(mRS->getContext(), getIDSafe(), xoff, yoff, mSelectedLOD, mSelectedFace,
+    RS::dispatch->Allocation2DData(mRS->getContext(), getIDSafe(), xoff, yoff, mSelectedLOD, mSelectedFace,
                        w, h, data, w * h * mType->getElement()->getSizeBytes(), stride);
 }
 
@@ -260,7 +260,7 @@ void Allocation::copy2DStridedFrom(const void* data, size_t stride) {
 void Allocation::copy2DStridedTo(uint32_t xoff, uint32_t yoff, uint32_t w, uint32_t h,
                                  void *data, size_t stride) {
     validate2DRange(xoff, yoff, w, h);
-    rsAllocation2DRead(mRS->getContext(), getIDSafe(), xoff, yoff, mSelectedLOD, mSelectedFace,
+    RS::dispatch->Allocation2DRead(mRS->getContext(), getIDSafe(), xoff, yoff, mSelectedLOD, mSelectedFace,
                        w, h, data, w * h * mType->getElement()->getSizeBytes(), stride);
 }
 
@@ -268,44 +268,9 @@ void Allocation::copy2DStridedTo(void* data, size_t stride) {
     copy2DStridedTo(0, 0, mCurrentDimX, mCurrentDimY, data, stride);
 }
 
-
-/*
-void resize(int dimX) {
-    if ((mType.getY() > 0)|| (mType.getZ() > 0) || mType.hasFaces() || mType.hasMipmaps()) {
-        throw new RSInvalidStateException("Resize only support for 1D allocations at this time.");
-    }
-    mRS.nAllocationResize1D(getID(), dimX);
-    mRS.finish();  // Necessary because resize is fifoed and update is async.
-
-    int typeID = mRS.nAllocationGetType(getID());
-    mType = new Type(typeID, mRS);
-    mType.updateFromNative();
-    updateCacheInfo(mType);
-}
-
-void resize(int dimX, int dimY) {
-    if ((mType.getZ() > 0) || mType.hasFaces() || mType.hasMipmaps()) {
-        throw new RSInvalidStateException(
-            "Resize only support for 2D allocations at this time.");
-    }
-    if (mType.getY() == 0) {
-        throw new RSInvalidStateException(
-            "Resize only support for 2D allocations at this time.");
-    }
-    mRS.nAllocationResize2D(getID(), dimX, dimY);
-    mRS.finish();  // Necessary because resize is fifoed and update is async.
-
-    int typeID = mRS.nAllocationGetType(getID());
-    mType = new Type(typeID, mRS);
-    mType.updateFromNative();
-    updateCacheInfo(mType);
-}
-*/
-
-
 android::sp<Allocation> Allocation::createTyped(sp<RS> rs, sp<const Type> type,
                                                 RsAllocationMipmapControl mips, uint32_t usage) {
-    void *id = rsAllocationCreateTyped(rs->getContext(), type->getID(), mips, usage, 0);
+    void *id = RS::dispatch->AllocationCreateTyped(rs->getContext(), type->getID(), mips, usage, 0);
     if (id == 0) {
         ALOGE("Allocation creation failed.");
         return NULL;
@@ -316,7 +281,7 @@ android::sp<Allocation> Allocation::createTyped(sp<RS> rs, sp<const Type> type,
 android::sp<Allocation> Allocation::createTyped(sp<RS> rs, sp<const Type> type,
                                                 RsAllocationMipmapControl mips, uint32_t usage,
                                                 void *pointer) {
-    void *id = rsAllocationCreateTyped(rs->getContext(), type->getID(), mips, usage,
+    void *id = RS::dispatch->AllocationCreateTyped(rs->getContext(), type->getID(), mips, usage,
                                        (uintptr_t)pointer);
     if (id == 0) {
         ALOGE("Allocation creation failed.");

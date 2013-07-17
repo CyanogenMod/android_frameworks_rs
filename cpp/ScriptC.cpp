@@ -27,7 +27,7 @@ ScriptC::ScriptC(sp<RS> rs,
                  const char *cachedName, size_t cachedNameLength,
                  const char *cacheDir, size_t cacheDirLength)
 : Script(NULL, rs) {
-    mID = rsScriptCCreate(rs->getContext(), cachedName, cachedNameLength,
-                          cacheDir, cacheDirLength, (const char *)codeTxt, codeLength);
+    mID = RS::dispatch->ScriptCCreate(rs->getContext(), cachedName, cachedNameLength,
+                                      cacheDir, cacheDirLength, (const char *)codeTxt, codeLength);
 }
 

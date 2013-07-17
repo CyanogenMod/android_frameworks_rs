@@ -93,7 +93,7 @@ void Type::updateFromNative() {
 }
 
 sp<const Type> Type::create(sp<RS> rs, sp<const Element> e, uint32_t dimX, uint32_t dimY, uint32_t dimZ) {
-    void * id = rsTypeCreate(rs->getContext(), e->getID(), dimX, dimY, dimZ, false, false, 0);
+    void * id = RS::dispatch->TypeCreate(rs->getContext(), e->getID(), dimX, dimY, dimZ, false, false, 0);
     Type *t = new Type(id, rs);
 
     t->mElement = e;
@@ -160,8 +160,8 @@ sp<const Type> Type::Builder::create() {
         }
     }
 
-    void * id = rsTypeCreate(mRS->getContext(), mElement->getID(), mDimX, mDimY, mDimZ,
-            mDimMipmaps, mDimFaces, 0);
+    void * id = RS::dispatch->TypeCreate(mRS->getContext(), mElement->getID(), mDimX, mDimY, mDimZ,
+                                         mDimMipmaps, mDimFaces, 0);
     Type *t = new Type(id, mRS);
     t->mElement = mElement;
     t->mDimX = mDimX;

@@ -44,7 +44,7 @@ void BaseObj::checkValid() {
 }
 
 BaseObj::~BaseObj() {
-    rsObjDestroy(mRS->getContext(), mID);
+    RS::dispatch->ObjDestroy(mRS->getContext(), mID);
     mRS = NULL;
     mID = NULL;
 }
