@@ -868,7 +868,6 @@ void rsi_ContextDestroy(Context *rsc) {
     //ALOGV("%p rsContextDestroy done", rsc);
 }
 
-
 RsMessageToClientType rsi_ContextPeekMessage(Context *rsc,
                                            size_t * receiveLen, size_t receiveLen_length,
                                            uint32_t * subID, size_t subID_length) {
