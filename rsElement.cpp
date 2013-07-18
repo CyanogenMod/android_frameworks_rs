@@ -402,7 +402,7 @@ RsElement rsi_ElementCreate2(Context *rsc,
 }
 }
 
-void rsaElementGetNativeData(RsContext con, RsElement elem,
+extern "C" void rsaElementGetNativeData(RsContext con, RsElement elem,
                              uint32_t *elemData, uint32_t elemDataSize) {
     rsAssert(elemDataSize == 5);
     // we will pack mType; mKind; mNormalized; mVectorSize; NumSubElements
@@ -415,7 +415,7 @@ void rsaElementGetNativeData(RsContext con, RsElement elem,
     (*elemData++) = e->getFieldCount();
 }
 
-void rsaElementGetSubElements(RsContext con, RsElement elem, uintptr_t *ids,
+extern "C" void rsaElementGetSubElements(RsContext con, RsElement elem, uintptr_t *ids,
                               const char **names, size_t *arraySizes, uint32_t dataSize) {
     Element *e = static_cast<Element *>(elem);
     rsAssert(e->getFieldCount() == dataSize);

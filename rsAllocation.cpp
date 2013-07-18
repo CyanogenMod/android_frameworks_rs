@@ -690,7 +690,7 @@ void rsi_Allocation2DRead(Context *rsc, RsAllocation va, uint32_t xoff, uint32_t
 }
 }
 
-const void * rsaAllocationGetType(RsContext con, RsAllocation va) {
+extern "C" const void * rsaAllocationGetType(RsContext con, RsAllocation va) {
     Allocation *a = static_cast<Allocation *>(va);
     a->getType()->incUserRef();
 
