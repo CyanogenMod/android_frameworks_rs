@@ -43,10 +43,11 @@ uint64_t IStream::loadOffset() {
     return loadU32();
 }
 
-void IStream::loadString(String8 *s) {
+const char * IStream::loadString() {
     uint32_t len = loadU32();
-    s->setTo((const char *)&mData[mPos], len);
+    const char *s = rsuCopyString((const char *)&mData[mPos], len);
     mPos += len;
+    return s;
 }
 
 // Output stream implementation
@@ -89,17 +90,18 @@ void OStream::addOffset(uint64_t v) {
     }
 }
 
-void OStream::addString(String8 *s) {
-    uint32_t len = s->size();
+void OStream::addString(const char *s, size_t len) {
     addU32(len);
     if (mPos + len*sizeof(char) >= mLength) {
         growSize();
     }
     char *stringData = reinterpret_cast<char *>(&mData[mPos]);
-    for (uint32_t i = 0; i < len; i ++) {
-        stringData[i] = s->string()[i];
-    }
+    memcpy(stringData, s, len);
     mPos += len*sizeof(char);
+}
+
+void OStream::addString(const char *s) {
+    addString(s, strlen(s));
 }
 
 void OStream::growSize() {

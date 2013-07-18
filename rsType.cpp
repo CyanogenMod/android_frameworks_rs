@@ -188,9 +188,7 @@ void Type::dumpLOGV(const char *prefix) const {
 void Type::serialize(Context *rsc, OStream *stream) const {
     // Need to identify ourselves
     stream->addU32((uint32_t)getClassId());
-
-    String8 name(getName());
-    stream->addString(&name);
+    stream->addString(getName());
 
     mElement->serialize(rsc, stream);
 
@@ -210,8 +208,7 @@ Type *Type::createFromStream(Context *rsc, IStream *stream) {
         return NULL;
     }
 
-    String8 name;
-    stream->loadString(&name);
+    const char *name = stream->loadString();
 
     Element *elem = Element::createFromStream(rsc, stream);
     if (!elem) {
@@ -225,6 +222,8 @@ Type *Type::createFromStream(Context *rsc, IStream *stream) {
     uint8_t faces = stream->loadU8();
     Type *type = Type::getType(rsc, elem, x, y, z, lod != 0, faces !=0, 0);
     elem->decUserRef();
+
+    delete [] name;
     return type;
 }
 

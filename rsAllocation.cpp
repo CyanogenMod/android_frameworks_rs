@@ -236,13 +236,14 @@ void Allocation::removeProgramToDirty(const Program *p) {
 
 void Allocation::dumpLOGV(const char *prefix) const {
     ObjectBase::dumpLOGV(prefix);
+    char buf[1024];
 
-    String8 s(prefix);
-    s.append(" type ");
-    if (mHal.state.type) {
-        mHal.state.type->dumpLOGV(s.string());
+    if ((strlen(prefix) + 10) < sizeof(buf)) {
+        sprintf(buf, "%s type ", prefix);
+        if (mHal.state.type) {
+            mHal.state.type->dumpLOGV(buf);
+        }
     }
-
     ALOGV("%s allocation ptr=%p  mUsageFlags=0x04%x, mMipmapControl=0x%04x",
          prefix, mHal.drvState.lod[0].mallocPtr, mHal.state.usageFlags, mHal.state.mipmapControl);
 }
@@ -327,9 +328,7 @@ void Allocation::packVec3Allocation(Context *rsc, OStream *stream) const {
 void Allocation::serialize(Context *rsc, OStream *stream) const {
     // Need to identify ourselves
     stream->addU32((uint32_t)getClassId());
-
-    String8 name(getName());
-    stream->addString(&name);
+    stream->addString(getName());
 
     // First thing we need to serialize is the type object since it will be needed
     // to initialize the class
@@ -358,8 +357,7 @@ Allocation *Allocation::createFromStream(Context *rsc, IStream *stream) {
         return NULL;
     }
 
-    String8 name;
-    stream->loadString(&name);
+    const char *name = stream->loadString();
 
     Type *type = Type::createFromStream(rsc, stream);
     if (!type) {
@@ -382,8 +380,7 @@ Allocation *Allocation::createFromStream(Context *rsc, IStream *stream) {
         return NULL;
     }
 
-    alloc->setName(name.string(), name.size());
-
+    alloc->assignName(name);
     if (dataSize == type->getSizeBytes()) {
         uint32_t count = dataSize / type->getElementSizeBytes();
         // Read in all of our allocation data
