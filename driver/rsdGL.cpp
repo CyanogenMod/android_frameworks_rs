@@ -43,7 +43,6 @@
 #include "rsdFrameBufferObj.h"
 
 #include <gui/Surface.h>
-#include <gui/DummyConsumer.h>
 
 using namespace android;
 using namespace android::renderscript;
@@ -326,18 +325,13 @@ bool rsdGLInit(const Context *rsc) {
     }
     gGLContextCount++;
 
-    // Create a BufferQueue with a fake consumer
-    sp<BufferQueue> bq = new BufferQueue();
-    bq->consumerConnect(new DummyConsumer());
-    sp<Surface> stc(new Surface(static_cast<sp<IGraphicBufferProducer> >(bq)));
-
-    dc->gl.egl.surfaceDefault = eglCreateWindowSurface(dc->gl.egl.display, dc->gl.egl.config,
-                                                       static_cast<ANativeWindow*>(stc.get()),
-                                                       NULL);
-
-    checkEglError("eglCreateWindowSurface");
+    EGLint pbuffer_attribs[] = { EGL_WIDTH, 1, EGL_HEIGHT, 1, EGL_NONE };
+    rsc->setWatchdogGL("eglCreatePbufferSurface", __LINE__, __FILE__);
+    dc->gl.egl.surfaceDefault = eglCreatePbufferSurface(dc->gl.egl.display, dc->gl.egl.config,
+            pbuffer_attribs);
+    checkEglError("eglCreatePbufferSurface");
     if (dc->gl.egl.surfaceDefault == EGL_NO_SURFACE) {
-        ALOGE("eglCreateWindowSurface returned EGL_NO_SURFACE");
+        ALOGE("eglCreatePbufferSurface returned EGL_NO_SURFACE");
         rsdGLShutdown(rsc);
         rsc->setWatchdogGL(NULL, 0, NULL);
         return false;
