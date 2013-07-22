@@ -897,8 +897,8 @@ void rsi_ContextSendMessage(Context *rsc, uint32_t id, const uint8_t *data, size
 }
 }
 
-RsContext rsContextCreate(RsDevice vdev, uint32_t version, uint32_t sdkVersion,
-                          RsContextType ct, bool forceCpu, bool synchronous) {
+extern "C" RsContext rsContextCreate(RsDevice vdev, uint32_t version, uint32_t sdkVersion,
+                                     RsContextType ct, bool forceCpu, bool synchronous) {
     //ALOGV("rsContextCreate dev=%p", vdev);
     Device * dev = static_cast<Device *>(vdev);
     Context *rsc = Context::createContext(dev, NULL, ct, forceCpu, synchronous);

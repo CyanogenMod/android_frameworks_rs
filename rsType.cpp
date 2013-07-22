@@ -345,7 +345,7 @@ RsType rsi_TypeCreate(Context *rsc, RsElement _e, uint32_t dimX,
 }
 }
 
-void rsaTypeGetNativeData(RsContext con, RsType type, uintptr_t *typeData, uint32_t typeDataSize) {
+extern "C" void rsaTypeGetNativeData(RsContext con, RsType type, uintptr_t *typeData, uint32_t typeDataSize) {
     rsAssert(typeDataSize == 6);
     // Pack the data in the follofing way mHal.state.dimX; mHal.state.dimY; mHal.state.dimZ;
     // mHal.state.lodCount; mHal.state.faces; mElement; into typeData
