@@ -15,7 +15,7 @@
  */
 
 #pragma version(1)
-#pragma rs java_package_name(com.android.rs.image)
+#pragma rs java_package_name(com.android.rs.cppbasic)
 #pragma rs_fp_relaxed
 
 int g_i = 4;

@@ -51,7 +51,7 @@ BaseObj::~BaseObj() {
 
 void BaseObj::updateFromNative() {
     const char *name = NULL;
-    rsaGetName(mRS->getContext(), mID, &name);
+    RS::dispatch->GetName(mRS->getContext(), mID, &name);
     mName = name;
 }
 

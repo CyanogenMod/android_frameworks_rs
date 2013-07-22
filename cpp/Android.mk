@@ -24,7 +24,6 @@ LOCAL_SRC_FILES:= \
 	ScriptIntrinsics.cpp
 
 LOCAL_SHARED_LIBRARIES := \
-	libRS \
 	libz \
 	libcutils \
 	libutils \

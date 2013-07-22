@@ -27,6 +27,8 @@ typedef RsDevice (*DeviceCreateFnPtr) ();
 typedef void (*DeviceDestroyFnPtr) (RsDevice dev);
 typedef void (*DeviceSetConfigFnPtr) (RsDevice dev, RsDeviceParam p, int32_t value);
 typedef RsContext (*ContextCreateFnPtr)(RsDevice vdev, uint32_t version, uint32_t sdkVersion, RsContextType ct, bool forceCpu, bool synchronous);
+typedef void (*GetNameFnPtr)(RsContext, void * obj, const char **name);
+
 typedef void (*ContextDestroyFnPtr) (RsContext);
 typedef RsMessageToClientType (*ContextGetMessageFnPtr) (RsContext, void*, size_t, size_t*, size_t, uint32_t*, size_t);
 typedef RsMessageToClientType (*ContextPeekMessageFnPtr) (RsContext, size_t*, size_t, uint32_t*, size_t);
@@ -91,11 +93,11 @@ typedef struct {
     ElementGetNativeDataFnPtr ElementGetNativeData;
     ElementGetSubElementsFnPtr ElementGetSubElements;
 
-
     DeviceCreateFnPtr DeviceCreate;
     DeviceDestroyFnPtr DeviceDestroy;
     DeviceSetConfigFnPtr DeviceSetConfig;
     ContextCreateFnPtr ContextCreate;
+    GetNameFnPtr GetName;
 
     // generated from rs.spec
     ContextDestroyFnPtr ContextDestroy;

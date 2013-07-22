@@ -391,5 +391,11 @@ ScriptGroupExecute {
     param RsScriptGroup group
 }
 
+AllocationIoSend {
+    param RsAllocation alloc
+    }
 
+AllocationIoReceive {
+    param RsAllocation alloc
+    }
 

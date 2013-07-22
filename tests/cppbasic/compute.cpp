@@ -32,7 +32,7 @@ int main(int argc, char** argv)
     sp<Allocation> aout = Allocation::createTyped(rs, t);
     printf("Allocation %p %p\n", ain.get(), aout.get());
 
-    sp<ScriptC_mono> sc = new ScriptC_mono(rs, NULL, 0);
+    sp<ScriptC_mono> sc = new ScriptC_mono(rs);
     printf("new script\n");
 
     // We read back the status from the script-side via a "failed" allocation.
@@ -66,8 +66,8 @@ int main(int argc, char** argv)
     {
         sp<const Element> e = Element::I32(rs);
         Type::Builder tb(rs, e);
-        tb.setX(5);
-        tb.setY(5);
+        tb.setX(8);
+        tb.setY(8);
         sp<const Type> t = tb.create();
         sp<Allocation> kern1_in = Allocation::createTyped(rs, t);
         sp<Allocation> kern1_out = Allocation::createTyped(rs, t);

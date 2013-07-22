@@ -67,8 +67,7 @@ class RS : public android::LightRefBase<RS> {
     static dispatchTable* dispatch;
 
  private:
-    static void* librs;
-
+    static bool usingNative;
     static bool initDispatch(int targetApi);
 
     bool init(int targetApi, bool forceCpu, bool synchronous);

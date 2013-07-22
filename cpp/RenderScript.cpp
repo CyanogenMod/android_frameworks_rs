@@ -23,6 +23,10 @@
 
 #include <dlfcn.h>
 
+#if !defined(RS_SERVER) && defined(HAVE_ANDROID_OS)
+#include <cutils/properties.h>
+#endif
+
 #define LOG_NDEBUG 0
 #define LOG_TAG "rsC++"
 
@@ -30,10 +34,9 @@ using namespace android;
 using namespace RSC;
 
 bool RS::gInitialized = false;
+bool RS::usingNative = false;
 pthread_mutex_t RS::gInitMutex = PTHREAD_MUTEX_INITIALIZER;
-void* RS::librs = NULL;
 dispatchTable* RS::dispatch = NULL;
-
 static int gInitError = 0;
 
 RS::RS() {
@@ -107,6 +110,11 @@ static bool loadSymbols(void* handle) {
     RS::dispatch->ContextCreate = (ContextCreateFnPtr)dlsym(handle, "rsContextCreate");;
     if (RS::dispatch->ContextCreate == NULL) {
         ALOGE("Couldn't initialize RS::dispatch->ContextCreate");
+        return false;
+    }
+    RS::dispatch->GetName = (GetNameFnPtr)dlsym(handle, "rsaGetName");;
+    if (RS::dispatch->GetName == NULL) {
+        ALOGE("Couldn't initialize RS::dispatch->GetName");
         return false;
     }
     RS::dispatch->ContextDestroy = (ContextDestroyFnPtr)dlsym(handle, "rsContextDestroy");
@@ -393,25 +401,51 @@ static bool loadSymbols(void* handle) {
     return true;
 }
 
-bool RS::initDispatch(int targetApi) {
+static bool loadSO(const char* filename) {
+    void* handle = dlopen(filename, RTLD_LAZY | RTLD_LOCAL);
+    if (handle == NULL) {
+        ALOGE("couldn't dlopen %s, %s", filename, dlerror());
+        return false;
+    }
 
+    if (loadSymbols(handle) == false) {
+        ALOGE("%s init failed!", filename);
+        return false;
+    }
+    ALOGE("Successfully loaded %s", filename);
+    return true;
+}
+
+static uint32_t getProp(const char *str) {
+#if !defined(RS_SERVER) && defined(HAVE_ANDROID_OS)
+    char buf[256];
+    property_get(str, buf, "0");
+    return atoi(buf);
+#else
+    return 0;
+#endif
+}
+
+bool RS::initDispatch(int targetApi) {
     pthread_mutex_lock(&gInitMutex);
     if (gInitError) {
         goto error;
     } else if (gInitialized) {
         return true;
     }
-    // pick appropriate lib at some point
-    RS::librs = dlopen("libRS.so", RTLD_LAZY | RTLD_LOCAL);
-    if (RS::librs == 0) {
-        ALOGE("couldn't dlopen libRS, %s", dlerror());
-        goto error;
-    }
-    ALOGE("libRS initialized successfully");
 
     RS::dispatch = new dispatchTable;
-    if (loadSymbols(RS::librs) == false) {
-        goto error;
+
+    // attempt to load libRS, load libRSSupport on failure
+    // if property is set, proceed directly to libRSSupport
+    if (getProp("debug.rs.forcecompat") == 0) {
+        usingNative = loadSO("libRS.so");
+    }
+    if (usingNative == false) {
+        if (loadSO("libRSSupport.so") == false) {
+            ALOGE("Failed to load libRS.so and libRSSupport.so");
+            goto error;
+        }
     }
 
     gInitialized = true;
