@@ -48,6 +48,7 @@ RS::RS() {
     mInit = false;
 
     memset(&mElements, 0, sizeof(mElements));
+    memset(&mSamplers, 0, sizeof(mSamplers));
 }
 
 RS::~RS() {

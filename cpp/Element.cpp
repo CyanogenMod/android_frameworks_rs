@@ -65,8 +65,12 @@ uint32_t Element::getSubElementOffsetBytes(uint32_t index) {
 
 
 #define CREATE_USER(N, T) sp<const Element> Element::N(sp<RS> rs) { \
-    return createUser(rs, RS_TYPE_##T); \
-}
+    if (rs->mElements.N == NULL) {                                  \
+        rs->mElements.N = (createUser(rs, RS_TYPE_##T)).get();      \
+    }                                                               \
+    return rs->mElements.N;                                         \
+    }
+
 CREATE_USER(BOOLEAN, BOOLEAN);
 CREATE_USER(U8, UNSIGNED_8);
 CREATE_USER(I8, SIGNED_8);

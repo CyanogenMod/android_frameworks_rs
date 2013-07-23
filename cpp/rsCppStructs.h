@@ -43,6 +43,7 @@ class Type;
 class Allocation;
 class Script;
 class ScriptC;
+class Sampler;
 
 class RS : public android::LightRefBase<RS> {
 
@@ -88,81 +89,94 @@ class RS : public android::LightRefBase<RS> {
     bool mInit;
 
     struct {
-        Element *U8;
-        Element *I8;
-        Element *U16;
-        Element *I16;
-        Element *U32;
-        Element *I32;
-        Element *U64;
-        Element *I64;
-        Element *F32;
-        Element *F64;
-        Element *BOOLEAN;
+        const Element *U8;
+        const Element *I8;
+        const Element *U16;
+        const Element *I16;
+        const Element *U32;
+        const Element *I32;
+        const Element *U64;
+        const Element *I64;
+        const Element *F32;
+        const Element *F64;
+        const Element *BOOLEAN;
 
-        Element *ELEMENT;
-        Element *TYPE;
-        Element *ALLOCATION;
-        Element *SAMPLER;
-        Element *SCRIPT;
-        Element *MESH;
-        Element *PROGRAM_FRAGMENT;
-        Element *PROGRAM_VERTEX;
-        Element *PROGRAM_RASTER;
-        Element *PROGRAM_STORE;
+        const Element *ELEMENT;
+        const Element *TYPE;
+        const Element *ALLOCATION;
+        const Element *SAMPLER;
+        const Element *SCRIPT;
+        const Element *MESH;
+        const Element *PROGRAM_FRAGMENT;
+        const Element *PROGRAM_VERTEX;
+        const Element *PROGRAM_RASTER;
+        const Element *PROGRAM_STORE;
 
-        Element *A_8;
-        Element *RGB_565;
-        Element *RGB_888;
-        Element *RGBA_5551;
-        Element *RGBA_4444;
-        Element *RGBA_8888;
+        const Element *A_8;
+        const Element *RGB_565;
+        const Element *RGB_888;
+        const Element *RGBA_5551;
+        const Element *RGBA_4444;
+        const Element *RGBA_8888;
 
-        Element *FLOAT_2;
-        Element *FLOAT_3;
-        Element *FLOAT_4;
+        const Element *FLOAT_2;
+        const Element *FLOAT_3;
+        const Element *FLOAT_4;
 
-        Element *DOUBLE_2;
-        Element *DOUBLE_3;
-        Element *DOUBLE_4;
+        const Element *DOUBLE_2;
+        const Element *DOUBLE_3;
+        const Element *DOUBLE_4;
 
-        Element *UCHAR_2;
-        Element *UCHAR_3;
-        Element *UCHAR_4;
+        const Element *UCHAR_2;
+        const Element *UCHAR_3;
+        const Element *UCHAR_4;
 
-        Element *CHAR_2;
-        Element *CHAR_3;
-        Element *CHAR_4;
+        const Element *CHAR_2;
+        const Element *CHAR_3;
+        const Element *CHAR_4;
 
-        Element *USHORT_2;
-        Element *USHORT_3;
-        Element *USHORT_4;
+        const Element *USHORT_2;
+        const Element *USHORT_3;
+        const Element *USHORT_4;
 
-        Element *SHORT_2;
-        Element *SHORT_3;
-        Element *SHORT_4;
+        const Element *SHORT_2;
+        const Element *SHORT_3;
+        const Element *SHORT_4;
 
-        Element *UINT_2;
-        Element *UINT_3;
-        Element *UINT_4;
+        const Element *UINT_2;
+        const Element *UINT_3;
+        const Element *UINT_4;
 
-        Element *INT_2;
-        Element *INT_3;
-        Element *INT_4;
+        const Element *INT_2;
+        const Element *INT_3;
+        const Element *INT_4;
 
-        Element *ULONG_2;
-        Element *ULONG_3;
-        Element *ULONG_4;
+        const Element *ULONG_2;
+        const Element *ULONG_3;
+        const Element *ULONG_4;
 
-        Element *LONG_2;
-        Element *LONG_3;
-        Element *LONG_4;
+        const Element *LONG_2;
+        const Element *LONG_3;
+        const Element *LONG_4;
 
-        Element *MATRIX_4X4;
-        Element *MATRIX_3X3;
-        Element *MATRIX_2X2;
+        const Element *MATRIX_4X4;
+        const Element *MATRIX_3X3;
+        const Element *MATRIX_2X2;
     } mElements;
 
+    struct {
+        const Sampler* CLAMP_NEAREST;
+        const Sampler* CLAMP_LINEAR;
+        const Sampler* CLAMP_LINEAR_MIP_LINEAR;
+        const Sampler* WRAP_NEAREST;
+        const Sampler* WRAP_LINEAR;
+        const Sampler* WRAP_LINEAR_MIP_LINEAR;
+        const Sampler* MIRRORED_REPEAT_NEAREST;
+        const Sampler* MIRRORED_REPEAT_LINEAR;
+        const Sampler* MIRRORED_REPEAT_LINEAR_MIP_LINEAR;
+    } mSamplers;
+    friend class Sampler;
+    friend class Element;
 };
 
 class BaseObj : public android::LightRefBase<BaseObj> {
@@ -674,6 +688,37 @@ class ScriptIntrinsicBlur : public ScriptIntrinsic {
     ScriptIntrinsicBlur(sp<RS> rs, sp <const Element> e);
     void blur(sp<Allocation> in, sp<Allocation> out);
     void setRadius(float radius);
+};
+
+ class Sampler : public BaseObj {
+ private:
+    Sampler(sp<RS> rs, void* id);
+    RsSamplerValue mMin;
+    RsSamplerValue mMag;
+    RsSamplerValue mWrapS;
+    RsSamplerValue mWrapT;
+    RsSamplerValue mWrapR;
+    float mAniso;
+
+ public:
+    static sp<Sampler> create(sp<RS> rs, RsSamplerValue min, RsSamplerValue mag, RsSamplerValue wrapS, RsSamplerValue wrapT, float anisotropy);
+
+    RsSamplerValue getMinification();
+    RsSamplerValue getMagnification();
+    RsSamplerValue getWrapS();
+    RsSamplerValue getWrapT();
+    float getAnisotropy();
+
+    sp<const Sampler> CLAMP_NEAREST(sp<RS> rs);
+    sp<const Sampler> CLAMP_LINEAR(sp<RS> rs);
+    sp<const Sampler> CLAMP_LINEAR_MIP_LINEAR(sp<RS> rs);
+    sp<const Sampler> WRAP_NEAREST(sp<RS> rs);
+    sp<const Sampler> WRAP_LINEAR(sp<RS> rs);
+    sp<const Sampler> WRAP_LINEAR_MIP_LINEAR(sp<RS> rs);
+    sp<const Sampler> MIRRORED_REPEAT_NEAREST(sp<RS> rs);
+    sp<const Sampler> MIRRORED_REPEAT_LINEAR(sp<RS> rs);
+    sp<const Sampler> MIRRORED_REPEAT_LINEAR_MIP_LINEAR(sp<RS> rs);
+
 };
 
 }

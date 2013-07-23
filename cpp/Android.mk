@@ -21,7 +21,8 @@ LOCAL_SRC_FILES:= \
 	Allocation.cpp \
 	Script.cpp \
 	ScriptC.cpp \
-	ScriptIntrinsics.cpp
+	ScriptIntrinsics.cpp \
+	Sampler.cpp
 
 LOCAL_SHARED_LIBRARIES := \
 	libz \
