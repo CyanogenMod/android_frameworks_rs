@@ -22,7 +22,11 @@
 
 #include <llvm/Support/raw_ostream.h>
 
+#ifndef USE_MINGW       /* TODO create a proper HAVE_MMAN_H */
 #include <sys/mman.h>
+#else
+#include "mmanWindows.h"
+#endif
 
 template <unsigned Bitwidth>
 inline void ELFSectionBits<Bitwidth>::print() const {
