@@ -21,10 +21,20 @@
 #include <rsRuntime.h>
 #include <rsAllocation.h>
 
+#include "../cpu_ref/rsd_cpu.h"
+
+#ifndef RS_SERVER
 #include <GLES/gl.h>
 #include <GLES2/gl2.h>
+#endif
+
+#if !defined(RS_SERVER) && !defined(RS_COMPATIBILITY_LIB)
+#include "gui/CpuConsumer.h"
+#include "gui/GLConsumer.h"
+#endif
 
 class RsdFrameBufferObj;
+struct ANativeWindow;
 struct ANativeWindowBuffer;
 
 struct DrvAllocation {
@@ -40,32 +50,46 @@ struct DrvAllocation {
     // Is this a legal structure to be used as an FBO render target
     uint32_t renderTargetID;
 
+#ifndef RS_COMPATIBILITY_LIB
+    class NewBufferListener : public android::ConsumerBase::FrameAvailableListener {
+    public:
+        const android::renderscript::Context *rsc;
+        const android::renderscript::Allocation *alloc;
+
+        virtual void onFrameAvailable();
+    };
+    android::sp<NewBufferListener> mBufferListener;
+
+
     GLenum glTarget;
     GLenum glType;
     GLenum glFormat;
 
+    ANativeWindow *wndSurface;
+    android::GLConsumer *surfaceTexture;
+#else
+    int glTarget;
+    int glType;
+    int glFormat;
+#endif
+
+    bool useUserProvidedPtr;
     bool uploadDeferred;
 
     RsdFrameBufferObj * readBackFBO;
     ANativeWindow *wnd;
     ANativeWindowBuffer *wndBuffer;
 
-    struct LodState {
-        void * mallocPtr;
-        size_t stride;
-        uint32_t dimX;
-        uint32_t dimY;
-        uint32_t dimZ;
-    } lod[android::renderscript::Allocation::MAX_LOD];
-    size_t faceOffset;
-    uint32_t lodCount;
-    uint32_t faceCount;
-
-
+#if !defined(RS_SERVER) && !defined(RS_COMPATIBILITY_LIB)
+    android::sp< android::CpuConsumer > cpuConsumer;
+    android::CpuConsumer::LockedBuffer lb;
+#endif
 };
 
+#ifndef RS_COMPATIBILITY_LIB
 GLenum rsdTypeToGLType(RsDataType t);
 GLenum rsdKindToGLFormat(RsDataKind k);
+#endif
 
 
 bool rsdAllocationInit(const android::renderscript::Context *rsc,
@@ -82,10 +106,10 @@ void rsdAllocationSyncAll(const android::renderscript::Context *rsc,
                           RsAllocationUsageType src);
 void rsdAllocationMarkDirty(const android::renderscript::Context *rsc,
                             const android::renderscript::Allocation *alloc);
-int32_t rsdAllocationInitSurfaceTexture(const android::renderscript::Context *rsc,
-                                        const android::renderscript::Allocation *alloc);
-void rsdAllocationSetSurfaceTexture(const android::renderscript::Context *rsc,
-                                    android::renderscript::Allocation *alloc, ANativeWindow *nw);
+void* rsdAllocationGetSurface(const android::renderscript::Context *rsc,
+                              const android::renderscript::Allocation *alloc);
+void rsdAllocationSetSurface(const android::renderscript::Context *rsc,
+                            android::renderscript::Allocation *alloc, ANativeWindow *nw);
 void rsdAllocationIoSend(const android::renderscript::Context *rsc,
                          android::renderscript::Allocation *alloc);
 void rsdAllocationIoReceive(const android::renderscript::Context *rsc,
@@ -93,33 +117,33 @@ void rsdAllocationIoReceive(const android::renderscript::Context *rsc,
 
 void rsdAllocationData1D(const android::renderscript::Context *rsc,
                          const android::renderscript::Allocation *alloc,
-                         uint32_t xoff, uint32_t lod, uint32_t count,
-                         const void *data, uint32_t sizeBytes);
+                         uint32_t xoff, uint32_t lod, size_t count,
+                         const void *data, size_t sizeBytes);
 void rsdAllocationData2D(const android::renderscript::Context *rsc,
                          const android::renderscript::Allocation *alloc,
                          uint32_t xoff, uint32_t yoff, uint32_t lod, RsAllocationCubemapFace face,
                          uint32_t w, uint32_t h,
-                         const void *data, uint32_t sizeBytes);
+                         const void *data, size_t sizeBytes, size_t stride);
 void rsdAllocationData3D(const android::renderscript::Context *rsc,
                          const android::renderscript::Allocation *alloc,
-                         uint32_t xoff, uint32_t yoff, uint32_t zoff,
-                         uint32_t lod, RsAllocationCubemapFace face,
-                         uint32_t w, uint32_t h, uint32_t d, const void *data, uint32_t sizeBytes);
+                         uint32_t xoff, uint32_t yoff, uint32_t zoff, uint32_t lod,
+                         uint32_t w, uint32_t h, uint32_t d, const void *data, size_t sizeBytes,
+                         size_t stride);
 
 void rsdAllocationRead1D(const android::renderscript::Context *rsc,
                          const android::renderscript::Allocation *alloc,
-                         uint32_t xoff, uint32_t lod, uint32_t count,
-                         void *data, uint32_t sizeBytes);
+                         uint32_t xoff, uint32_t lod, size_t count,
+                         void *data, size_t sizeBytes);
 void rsdAllocationRead2D(const android::renderscript::Context *rsc,
                          const android::renderscript::Allocation *alloc,
                          uint32_t xoff, uint32_t yoff, uint32_t lod, RsAllocationCubemapFace face,
                          uint32_t w, uint32_t h,
-                         void *data, uint32_t sizeBytes);
+                         void *data, size_t sizeBytes, size_t stride);
 void rsdAllocationRead3D(const android::renderscript::Context *rsc,
                          const android::renderscript::Allocation *alloc,
-                         uint32_t xoff, uint32_t yoff, uint32_t zoff,
-                         uint32_t lod, RsAllocationCubemapFace face,
-                         uint32_t w, uint32_t h, uint32_t d, void *data, uint32_t sizeBytes);
+                         uint32_t xoff, uint32_t yoff, uint32_t zoff, uint32_t lod,
+                         uint32_t w, uint32_t h, uint32_t d, void *data, size_t sizeBytes,
+                         size_t stride);
 
 void * rsdAllocationLock1D(const android::renderscript::Context *rsc,
                           const android::renderscript::Allocation *alloc);
@@ -129,7 +153,7 @@ void rsdAllocationUnlock1D(const android::renderscript::Context *rsc,
 
 void rsdAllocationData1D_alloc(const android::renderscript::Context *rsc,
                                const android::renderscript::Allocation *dstAlloc,
-                               uint32_t dstXoff, uint32_t dstLod, uint32_t count,
+                               uint32_t dstXoff, uint32_t dstLod, size_t count,
                                const android::renderscript::Allocation *srcAlloc,
                                uint32_t srcXoff, uint32_t srcLod);
 void rsdAllocationData2D_alloc(const android::renderscript::Context *rsc,
@@ -142,20 +166,20 @@ void rsdAllocationData2D_alloc(const android::renderscript::Context *rsc,
 void rsdAllocationData3D_alloc(const android::renderscript::Context *rsc,
                                const android::renderscript::Allocation *dstAlloc,
                                uint32_t dstXoff, uint32_t dstYoff, uint32_t dstZoff,
-                               uint32_t dstLod, RsAllocationCubemapFace dstFace,
+                               uint32_t dstLod,
                                uint32_t w, uint32_t h, uint32_t d,
                                const android::renderscript::Allocation *srcAlloc,
                                uint32_t srcXoff, uint32_t srcYoff, uint32_t srcZoff,
-                               uint32_t srcLod, RsAllocationCubemapFace srcFace);
+                               uint32_t srcLod);
 
 void rsdAllocationElementData1D(const android::renderscript::Context *rsc,
                                 const android::renderscript::Allocation *alloc,
                                 uint32_t x,
-                                const void *data, uint32_t elementOff, uint32_t sizeBytes);
+                                const void *data, uint32_t elementOff, size_t sizeBytes);
 void rsdAllocationElementData2D(const android::renderscript::Context *rsc,
                                 const android::renderscript::Allocation *alloc,
                                 uint32_t x, uint32_t y,
-                                const void *data, uint32_t elementOff, uint32_t sizeBytes);
+                                const void *data, uint32_t elementOff, size_t sizeBytes);
 
 void rsdAllocationGenerateMipmaps(const android::renderscript::Context *rsc,
                                   const android::renderscript::Allocation *alloc);

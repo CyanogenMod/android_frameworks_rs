@@ -14,22 +14,20 @@
  * limitations under the License.
  */
 
-#define LOG_TAG "libRS_cpp"
-
-#include <utils/Log.h>
 #include <malloc.h>
 #include <string.h>
+#include <pthread.h>
 
 #include "RenderScript.h"
 #include "rs.h"
 
 using namespace android;
-using namespace renderscriptCpp;
+using namespace RSC;
 
-bool RenderScript::gInitialized = false;
-pthread_mutex_t RenderScript::gInitMutex = PTHREAD_MUTEX_INITIALIZER;
+bool RS::gInitialized = false;
+pthread_mutex_t RS::gInitMutex = PTHREAD_MUTEX_INITIALIZER;
 
-RenderScript::RenderScript() {
+RS::RS() {
     mDev = NULL;
     mContext = NULL;
     mErrorFunc = NULL;
@@ -39,7 +37,7 @@ RenderScript::RenderScript() {
     memset(&mElements, 0, sizeof(mElements));
 }
 
-RenderScript::~RenderScript() {
+RS::~RS() {
     mMessageRun = false;
 
     rsContextDeinitToClient(mContext);
@@ -53,25 +51,28 @@ RenderScript::~RenderScript() {
     mDev = NULL;
 }
 
-bool RenderScript::init(int targetApi) {
+bool RS::init(bool forceCpu, bool synchronous) {
+    return RS::init(RS_VERSION, forceCpu, synchronous);
+}
+
+bool RS::init(int targetApi, bool forceCpu, bool synchronous) {
     mDev = rsDeviceCreate();
     if (mDev == 0) {
         ALOGE("Device creation failed");
         return false;
     }
 
-    mContext = rsContextCreate(mDev, 0, targetApi);
+    mContext = rsContextCreate(mDev, 0, targetApi, RS_CONTEXT_TYPE_NORMAL, forceCpu, synchronous);
     if (mContext == 0) {
         ALOGE("Context creation failed");
         return false;
     }
 
-
     pid_t mNativeMessageThreadId;
 
     int status = pthread_create(&mMessageThreadId, NULL, threadProc, this);
     if (status) {
-        ALOGE("Failed to start RenderScript message thread.");
+        ALOGE("Failed to start RS message thread.");
         return false;
     }
     // Wait for the message thread to be active.
@@ -82,15 +83,15 @@ bool RenderScript::init(int targetApi) {
     return true;
 }
 
-void RenderScript::throwError(const char *err) const {
+void RS::throwError(const char *err) const {
     ALOGE("RS CPP error: %s", err);
     int * v = NULL;
     v[0] = 0;
 }
 
 
-void * RenderScript::threadProc(void *vrsc) {
-    RenderScript *rs = static_cast<RenderScript *>(vrsc);
+void * RS::threadProc(void *vrsc) {
+    RS *rs = static_cast<RS *>(vrsc);
     size_t rbuf_size = 256;
     void * rbuf = malloc(rbuf_size);
 
@@ -110,7 +111,7 @@ void * RenderScript::threadProc(void *vrsc) {
             rbuf = realloc(rbuf, rbuf_size);
         }
         if (!rbuf) {
-            ALOGE("RenderScript::message handler realloc error %zu", rbuf_size);
+            ALOGE("RS::message handler realloc error %zu", rbuf_size);
             // No clean way to recover now?
         }
         rsContextGetMessage(rs->mContext, rbuf, rbuf_size, &receiveLen, sizeof(receiveLen),
@@ -124,10 +125,13 @@ void * RenderScript::threadProc(void *vrsc) {
                 rs->mErrorFunc(usrID, (const char *)rbuf);
             }
             break;
+        case RS_MESSAGE_TO_CLIENT_NONE:
         case RS_MESSAGE_TO_CLIENT_EXCEPTION:
+        case RS_MESSAGE_TO_CLIENT_RESIZE:
             // teardown. But we want to avoid starving other threads during
             // teardown by yielding until the next line in the destructor can
-            // execute to set mRun = false
+            // execute to set mRun = false. Note that the FIFO sends an
+            // empty NONE message when it reaches its destructor.
             usleep(1000);
             break;
         case RS_MESSAGE_TO_CLIENT_USER:
@@ -139,30 +143,25 @@ void * RenderScript::threadProc(void *vrsc) {
             break;
 
         default:
-            ALOGE("RenderScript unknown message type %i", r);
+            ALOGE("RS unknown message type %i", r);
         }
     }
 
     if (rbuf) {
         free(rbuf);
     }
-    ALOGE("RenderScript Message thread exiting.");
+    ALOGE("RS Message thread exiting.");
     return NULL;
 }
 
-void RenderScript::setErrorHandler(ErrorHandlerFunc_t func) {
+void RS::setErrorHandler(ErrorHandlerFunc_t func) {
     mErrorFunc = func;
 }
 
-void RenderScript::setMessageHandler(MessageHandlerFunc_t func) {
+void RS::setMessageHandler(MessageHandlerFunc_t func) {
     mMessageFunc  = func;
 }
 
-void RenderScript::contextDump() {
+void RS::finish() {
+    rsContextFinish(mContext);
 }
-
-void RenderScript::finish() {
-
-}
-
-

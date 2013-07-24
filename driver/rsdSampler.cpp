@@ -20,18 +20,20 @@
 
 #include "rsContext.h"
 #include "rsSampler.h"
+
+#ifndef RS_COMPATIBILITY_LIB
 #include "rsProgramVertex.h"
 #include "rsProgramFragment.h"
 
 #include <GLES/gl.h>
 #include <GLES/glext.h>
-
+#endif
 
 using namespace android;
 using namespace android::renderscript;
 
-bool rsdSamplerInit(const android::renderscript::Context *,
-                    const android::renderscript::Sampler *) {
+
+bool rsdSamplerInit(const Context *, const Sampler *s) {
     return true;
 }
 

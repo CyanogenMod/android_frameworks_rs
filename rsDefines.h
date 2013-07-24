@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2012 The Android Open Source Project
+ * Copyright (C) 2013 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -76,6 +76,12 @@ enum RsDeviceParam {
     RS_DEVICE_PARAM_COUNT
 };
 
+enum RsContextType {
+    RS_CONTEXT_TYPE_NORMAL,
+    RS_CONTEXT_TYPE_DEBUG,
+    RS_CONTEXT_TYPE_PROFILE
+};
+
 typedef struct {
     uint32_t colorMin;
     uint32_t colorPref;
@@ -95,7 +101,8 @@ enum RsMessageToClientType {
     RS_MESSAGE_TO_CLIENT_EXCEPTION = 1,
     RS_MESSAGE_TO_CLIENT_RESIZE = 2,
     RS_MESSAGE_TO_CLIENT_ERROR = 3,
-    RS_MESSAGE_TO_CLIENT_USER = 4
+    RS_MESSAGE_TO_CLIENT_USER = 4,
+    RS_MESSAGE_TO_CLIENT_NEW_BUFFER = 5
 };
 
 enum RsAllocationUsageType {
@@ -106,6 +113,7 @@ enum RsAllocationUsageType {
     RS_ALLOCATION_USAGE_GRAPHICS_RENDER_TARGET = 0x0010,
     RS_ALLOCATION_USAGE_IO_INPUT = 0x0020,
     RS_ALLOCATION_USAGE_IO_OUTPUT = 0x0040,
+    RS_ALLOCATION_USAGE_SHARED = 0x0080,
 
     RS_ALLOCATION_USAGE_ALL = 0x00FF
 };
@@ -173,6 +181,7 @@ enum RsDataKind {
     RS_KIND_PIXEL_RGB,
     RS_KIND_PIXEL_RGBA,
     RS_KIND_PIXEL_DEPTH,
+    RS_KIND_PIXEL_YUV,
 
     RS_KIND_INVALID = 100,
 };
@@ -193,6 +202,7 @@ enum RsSamplerValue {
     RS_SAMPLER_WRAP,
     RS_SAMPLER_CLAMP,
     RS_SAMPLER_LINEAR_MIP_NEAREST,
+    RS_SAMPLER_MIRRORED_REPEAT,
 
     RS_SAMPLER_INVALID = 100,
 };
@@ -290,6 +300,9 @@ enum RsError {
     RS_ERROR_OUT_OF_MEMORY = 4,
     RS_ERROR_DRIVER = 5,
 
+    // Errors that only occur in the debug context.
+    RS_ERROR_FATAL_DEBUG = 0x0800,
+
     RS_ERROR_FATAL_UNKNOWN = 0x1000,
     RS_ERROR_FATAL_DRIVER = 0x1001,
     RS_ERROR_FATAL_PROGRAM_LINK = 0x1002
@@ -349,7 +362,8 @@ enum RsScriptIntrinsicID {
     RS_SCRIPT_INTRINSIC_ID_CONVOLVE_5x5 = 4,
     RS_SCRIPT_INTRINSIC_ID_BLUR = 5,
     RS_SCRIPT_INTRINSIC_ID_YUV_TO_RGB = 6,
-    RS_SCRIPT_INTRINSIC_ID_BLEND = 7
+    RS_SCRIPT_INTRINSIC_ID_BLEND = 7,
+    RS_SCRIPT_INTRINSIC_ID_3DLUT = 8
 };
 
 typedef struct {

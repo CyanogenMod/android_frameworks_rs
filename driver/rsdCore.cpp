@@ -14,19 +14,23 @@
  * limitations under the License.
  */
 
+#include "../cpu_ref/rsd_cpu.h"
+
 #include "rsdCore.h"
 #include "rsdAllocation.h"
 #include "rsdBcc.h"
-#include "rsdGL.h"
-#include "rsdPath.h"
-#include "rsdProgramStore.h"
-#include "rsdProgramRaster.h"
-#include "rsdProgramVertex.h"
-#include "rsdProgramFragment.h"
-#include "rsdMesh.h"
+#ifndef RS_COMPATIBILITY_LIB
+    #include "rsdGL.h"
+    #include "rsdPath.h"
+    #include "rsdProgramStore.h"
+    #include "rsdProgramRaster.h"
+    #include "rsdProgramVertex.h"
+    #include "rsdProgramFragment.h"
+    #include "rsdMesh.h"
+    #include "rsdFrameBuffer.h"
+#endif
 #include "rsdSampler.h"
 #include "rsdScriptGroup.h"
-#include "rsdFrameBuffer.h"
 
 #include <malloc.h>
 #include "rsContext.h"
@@ -34,9 +38,12 @@
 #include <sys/types.h>
 #include <sys/resource.h>
 #include <sched.h>
-#include <cutils/properties.h>
 #include <sys/syscall.h>
 #include <string.h>
+
+#ifndef RS_SERVER
+#include <cutils/properties.h>
+#endif
 
 using namespace android;
 using namespace android::renderscript;
@@ -44,15 +51,24 @@ using namespace android::renderscript;
 static void Shutdown(Context *rsc);
 static void SetPriority(const Context *rsc, int32_t priority);
 
+#ifndef RS_COMPATIBILITY_LIB
+    #define NATIVE_FUNC(a) a
+#else
+    #define NATIVE_FUNC(a) NULL
+#endif
+
+
 static RsdHalFunctions FunctionTable = {
-    rsdGLInit,
-    rsdGLShutdown,
-    rsdGLSetSurface,
-    rsdGLSwap,
+    NATIVE_FUNC(rsdGLInit),
+    NATIVE_FUNC(rsdGLShutdown),
+    NATIVE_FUNC(rsdGLSetSurface),
+    NATIVE_FUNC(rsdGLSwap),
 
     Shutdown,
     NULL,
     SetPriority,
+    rsdAllocRuntimeMem,
+    rsdFreeRuntimeMem,
     {
         rsdScriptInit,
         rsdInitIntrinsic,
@@ -62,6 +78,7 @@ static RsdHalFunctions FunctionTable = {
         rsdScriptInvokeInit,
         rsdScriptInvokeFreeChildren,
         rsdScriptSetGlobalVar,
+        rsdScriptGetGlobalVar,
         rsdScriptSetGlobalVarWithElemDims,
         rsdScriptSetGlobalBind,
         rsdScriptSetGlobalObj,
@@ -74,10 +91,10 @@ static RsdHalFunctions FunctionTable = {
         rsdAllocationResize,
         rsdAllocationSyncAll,
         rsdAllocationMarkDirty,
-        rsdAllocationInitSurfaceTexture,
-        rsdAllocationSetSurfaceTexture,
-        rsdAllocationIoSend,
-        rsdAllocationIoReceive,
+        NATIVE_FUNC(rsdAllocationGetSurface),
+        NATIVE_FUNC(rsdAllocationSetSurface),
+        NATIVE_FUNC(rsdAllocationIoSend),
+        NATIVE_FUNC(rsdAllocationIoReceive),
         rsdAllocationData1D,
         rsdAllocationData2D,
         rsdAllocationData3D,
@@ -96,40 +113,40 @@ static RsdHalFunctions FunctionTable = {
 
 
     {
-        rsdProgramStoreInit,
-        rsdProgramStoreSetActive,
-        rsdProgramStoreDestroy
+        NATIVE_FUNC(rsdProgramStoreInit),
+        NATIVE_FUNC(rsdProgramStoreSetActive),
+        NATIVE_FUNC(rsdProgramStoreDestroy)
     },
 
     {
-        rsdProgramRasterInit,
-        rsdProgramRasterSetActive,
-        rsdProgramRasterDestroy
+        NATIVE_FUNC(rsdProgramRasterInit),
+        NATIVE_FUNC(rsdProgramRasterSetActive),
+        NATIVE_FUNC(rsdProgramRasterDestroy)
     },
 
     {
-        rsdProgramVertexInit,
-        rsdProgramVertexSetActive,
-        rsdProgramVertexDestroy
+        NATIVE_FUNC(rsdProgramVertexInit),
+        NATIVE_FUNC(rsdProgramVertexSetActive),
+        NATIVE_FUNC(rsdProgramVertexDestroy)
     },
 
     {
-        rsdProgramFragmentInit,
-        rsdProgramFragmentSetActive,
-        rsdProgramFragmentDestroy
+        NATIVE_FUNC(rsdProgramFragmentInit),
+        NATIVE_FUNC(rsdProgramFragmentSetActive),
+        NATIVE_FUNC(rsdProgramFragmentDestroy)
     },
 
     {
-        rsdMeshInit,
-        rsdMeshDraw,
-        rsdMeshDestroy
+        NATIVE_FUNC(rsdMeshInit),
+        NATIVE_FUNC(rsdMeshDraw),
+        NATIVE_FUNC(rsdMeshDestroy)
     },
 
     {
-        rsdPathInitStatic,
-        rsdPathInitDynamic,
-        rsdPathDraw,
-        rsdPathDestroy
+        NATIVE_FUNC(rsdPathInitStatic),
+        NATIVE_FUNC(rsdPathInitDynamic),
+        NATIVE_FUNC(rsdPathDraw),
+        NATIVE_FUNC(rsdPathDestroy)
     },
 
     {
@@ -138,9 +155,9 @@ static RsdHalFunctions FunctionTable = {
     },
 
     {
-        rsdFrameBufferInit,
-        rsdFrameBufferSetActive,
-        rsdFrameBufferDestroy
+        NATIVE_FUNC(rsdFrameBufferInit),
+        NATIVE_FUNC(rsdFrameBufferSetActive),
+        NATIVE_FUNC(rsdFrameBufferDestroy)
     },
 
     {
@@ -154,71 +171,10 @@ static RsdHalFunctions FunctionTable = {
 
 };
 
-pthread_key_t rsdgThreadTLSKey = 0;
-uint32_t rsdgThreadTLSKeyCount = 0;
-pthread_mutex_t rsdgInitMutex = PTHREAD_MUTEX_INITIALIZER;
+extern const RsdCpuReference::CpuSymbol * rsdLookupRuntimeStub(Context * pContext, char const* name);
 
-
-static void * HelperThreadProc(void *vrsc) {
-    Context *rsc = static_cast<Context *>(vrsc);
-    RsdHal *dc = (RsdHal *)rsc->mHal.drv;
-
-
-    uint32_t idx = (uint32_t)android_atomic_inc(&dc->mWorkers.mLaunchCount);
-
-    //ALOGV("RS helperThread starting %p idx=%i", rsc, idx);
-
-    dc->mWorkers.mLaunchSignals[idx].init();
-    dc->mWorkers.mNativeThreadId[idx] = gettid();
-
-    int status = pthread_setspecific(rsdgThreadTLSKey, &dc->mTlsStruct);
-    if (status) {
-        ALOGE("pthread_setspecific %i", status);
-    }
-
-#if 0
-    typedef struct {uint64_t bits[1024 / 64]; } cpu_set_t;
-    cpu_set_t cpuset;
-    memset(&cpuset, 0, sizeof(cpuset));
-    cpuset.bits[idx / 64] |= 1ULL << (idx % 64);
-    int ret = syscall(241, rsc->mWorkers.mNativeThreadId[idx],
-              sizeof(cpuset), &cpuset);
-    ALOGE("SETAFFINITY ret = %i %s", ret, EGLUtils::strerror(ret));
-#endif
-
-    while (!dc->mExit) {
-        dc->mWorkers.mLaunchSignals[idx].wait();
-        if (dc->mWorkers.mLaunchCallback) {
-            // idx +1 is used because the calling thread is always worker 0.
-            dc->mWorkers.mLaunchCallback(dc->mWorkers.mLaunchData, idx+1);
-        }
-        android_atomic_dec(&dc->mWorkers.mRunningCount);
-        dc->mWorkers.mCompleteSignal.set();
-    }
-
-    //ALOGV("RS helperThread exited %p idx=%i", rsc, idx);
-    return NULL;
-}
-
-void rsdLaunchThreads(Context *rsc, WorkerCallback_t cbk, void *data) {
-    RsdHal *dc = (RsdHal *)rsc->mHal.drv;
-
-    dc->mWorkers.mLaunchData = data;
-    dc->mWorkers.mLaunchCallback = cbk;
-    android_atomic_release_store(dc->mWorkers.mCount, &dc->mWorkers.mRunningCount);
-    for (uint32_t ct = 0; ct < dc->mWorkers.mCount; ct++) {
-        dc->mWorkers.mLaunchSignals[ct].set();
-    }
-
-    // We use the calling thread as one of the workers so we can start without
-    // the delay of the thread wakeup.
-    if (dc->mWorkers.mLaunchCallback) {
-       dc->mWorkers.mLaunchCallback(dc->mWorkers.mLaunchData, 0);
-    }
-
-    while (android_atomic_acquire_load(&dc->mWorkers.mRunningCount) != 0) {
-        dc->mWorkers.mCompleteSignal.wait();
-    }
+static RsdCpuReference::CpuScript * LookupScript(Context *, const Script *s) {
+    return (RsdCpuReference::CpuScript *)s->mHal.drv;
 }
 
 extern "C" bool rsdHalInit(RsContext c, uint32_t version_major,
@@ -233,105 +189,41 @@ extern "C" bool rsdHalInit(RsContext c, uint32_t version_major,
     }
     rsc->mHal.drv = dc;
 
-    pthread_mutex_lock(&rsdgInitMutex);
-    if (!rsdgThreadTLSKeyCount) {
-        int status = pthread_key_create(&rsdgThreadTLSKey, NULL);
-        if (status) {
-            ALOGE("Failed to init thread tls key.");
-            pthread_mutex_unlock(&rsdgInitMutex);
-            return false;
-        }
-    }
-    rsdgThreadTLSKeyCount++;
-    pthread_mutex_unlock(&rsdgInitMutex);
-
-    dc->mTlsStruct.mContext = rsc;
-    dc->mTlsStruct.mScript = NULL;
-    int status = pthread_setspecific(rsdgThreadTLSKey, &dc->mTlsStruct);
-    if (status) {
-        ALOGE("pthread_setspecific %i", status);
-    }
-
-
-    int cpu = sysconf(_SC_NPROCESSORS_ONLN);
-    if(rsc->props.mDebugMaxThreads) {
-        cpu = rsc->props.mDebugMaxThreads;
-    }
-    if (cpu < 2) {
-        dc->mWorkers.mCount = 0;
-        return true;
-    }
-    ALOGV("%p Launching thread(s), CPUs %i", rsc, cpu);
-
-    // Subtract one from the cpu count because we also use the command thread as a worker.
-    dc->mWorkers.mCount = (uint32_t)(cpu - 1);
-    dc->mWorkers.mThreadId = (pthread_t *) calloc(dc->mWorkers.mCount, sizeof(pthread_t));
-    dc->mWorkers.mNativeThreadId = (pid_t *) calloc(dc->mWorkers.mCount, sizeof(pid_t));
-    dc->mWorkers.mLaunchSignals = new Signal[dc->mWorkers.mCount];
-    dc->mWorkers.mLaunchCallback = NULL;
-
-    dc->mWorkers.mCompleteSignal.init();
-
-    android_atomic_release_store(dc->mWorkers.mCount, &dc->mWorkers.mRunningCount);
-    android_atomic_release_store(0, &dc->mWorkers.mLaunchCount);
-
-    pthread_attr_t threadAttr;
-    status = pthread_attr_init(&threadAttr);
-    if (status) {
-        ALOGE("Failed to init thread attribute.");
+    dc->mCpuRef = RsdCpuReference::create((Context *)c, version_major, version_minor,
+                                          &rsdLookupRuntimeStub, &LookupScript);
+    if (!dc->mCpuRef) {
+        ALOGE("RsdCpuReference::create for driver hal failed.");
+        free(dc);
         return false;
     }
 
-    for (uint32_t ct=0; ct < dc->mWorkers.mCount; ct++) {
-        status = pthread_create(&dc->mWorkers.mThreadId[ct], &threadAttr, HelperThreadProc, rsc);
-        if (status) {
-            dc->mWorkers.mCount = ct;
-            ALOGE("Created fewer than expected number of RS threads.");
-            break;
-        }
-    }
-    while (android_atomic_acquire_load(&dc->mWorkers.mRunningCount) != 0) {
-        usleep(100);
-    }
-
-    pthread_attr_destroy(&threadAttr);
     return true;
 }
 
 
 void SetPriority(const Context *rsc, int32_t priority) {
     RsdHal *dc = (RsdHal *)rsc->mHal.drv;
-    for (uint32_t ct=0; ct < dc->mWorkers.mCount; ct++) {
-        setpriority(PRIO_PROCESS, dc->mWorkers.mNativeThreadId[ct], priority);
-    }
+
+    dc->mCpuRef->setPriority(priority);
+
+#ifndef RS_COMPATIBILITY_LIB
     if (dc->mHasGraphics) {
         rsdGLSetPriority(rsc, priority);
     }
+#endif
 }
 
 void Shutdown(Context *rsc) {
     RsdHal *dc = (RsdHal *)rsc->mHal.drv;
-
-    dc->mExit = true;
-    dc->mWorkers.mLaunchData = NULL;
-    dc->mWorkers.mLaunchCallback = NULL;
-    android_atomic_release_store(dc->mWorkers.mCount, &dc->mWorkers.mRunningCount);
-    for (uint32_t ct = 0; ct < dc->mWorkers.mCount; ct++) {
-        dc->mWorkers.mLaunchSignals[ct].set();
-    }
-    void *res;
-    for (uint32_t ct = 0; ct < dc->mWorkers.mCount; ct++) {
-        pthread_join(dc->mWorkers.mThreadId[ct], &res);
-    }
-    rsAssert(android_atomic_acquire_load(&dc->mWorkers.mRunningCount) == 0);
-
-    // Global structure cleanup.
-    pthread_mutex_lock(&rsdgInitMutex);
-    --rsdgThreadTLSKeyCount;
-    if (!rsdgThreadTLSKeyCount) {
-        pthread_key_delete(rsdgThreadTLSKey);
-    }
-    pthread_mutex_unlock(&rsdgInitMutex);
-
+    delete dc->mCpuRef;
+    rsc->mHal.drv = NULL;
 }
 
+void* rsdAllocRuntimeMem(size_t size, uint32_t flags) {
+    void* buffer = calloc(size, sizeof(char));
+    return buffer;
+}
+
+void rsdFreeRuntimeMem(void* ptr) {
+    free(ptr);
+}

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 The Android Open Source Project
+ * Copyright (C) 2013 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,10 @@
  */
 
 #include "rsContext.h"
+
+#ifndef RS_SERVER
+#include "system/graphics.h"
+#endif
 
 using namespace android;
 using namespace android::renderscript;
@@ -106,6 +110,32 @@ void Type::compute() {
     if (mHal.state.faces) {
         offset *= 6;
     }
+#ifndef RS_SERVER
+    // YUV only supports basic 2d
+    // so we can stash the plane pointers in the mipmap levels.
+    if (mHal.state.dimYuv) {
+        switch(mHal.state.dimYuv) {
+        case HAL_PIXEL_FORMAT_YV12:
+            mHal.state.lodOffset[1] = offset;
+            mHal.state.lodDimX[1] = mHal.state.lodDimX[0] / 2;
+            mHal.state.lodDimY[1] = mHal.state.lodDimY[0] / 2;
+            offset += offset / 4;
+            mHal.state.lodOffset[2] = offset;
+            mHal.state.lodDimX[2] = mHal.state.lodDimX[0] / 2;
+            mHal.state.lodDimY[2] = mHal.state.lodDimY[0] / 2;
+            offset += offset / 4;
+            break;
+        case HAL_PIXEL_FORMAT_YCrCb_420_SP:  // NV21
+            mHal.state.lodOffset[1] = offset;
+            mHal.state.lodDimX[1] = mHal.state.lodDimX[0];
+            mHal.state.lodDimY[1] = mHal.state.lodDimY[0] / 2;
+            offset += offset / 2;
+            break;
+        default:
+            rsAssert(0);
+        }
+    }
+#endif
     mTotalSizeBytes = offset;
     mHal.state.element = mElement.get();
 }
@@ -193,7 +223,7 @@ Type *Type::createFromStream(Context *rsc, IStream *stream) {
     uint32_t z = stream->loadU32();
     uint8_t lod = stream->loadU8();
     uint8_t faces = stream->loadU8();
-    Type *type = Type::getType(rsc, elem, x, y, z, lod != 0, faces !=0 );
+    Type *type = Type::getType(rsc, elem, x, y, z, lod != 0, faces !=0, 0);
     elem->decUserRef();
     return type;
 }
@@ -217,7 +247,7 @@ bool Type::getIsNp2() const {
 
 ObjectBaseRef<Type> Type::getTypeRef(Context *rsc, const Element *e,
                                      uint32_t dimX, uint32_t dimY, uint32_t dimZ,
-                                     bool dimLOD, bool dimFaces) {
+                                     bool dimLOD, bool dimFaces, uint32_t dimYuv) {
     ObjectBaseRef<Type> returnRef;
 
     TypeState * stc = &rsc->mStateType;
@@ -231,6 +261,7 @@ ObjectBaseRef<Type> Type::getTypeRef(Context *rsc, const Element *e,
         if (t->getDimZ() != dimZ) continue;
         if (t->getDimLOD() != dimLOD) continue;
         if (t->getDimFaces() != dimFaces) continue;
+        if (t->getDimYuv() != dimYuv) continue;
         returnRef.set(t);
         ObjectBase::asyncUnlock();
         return returnRef;
@@ -246,6 +277,7 @@ ObjectBaseRef<Type> Type::getTypeRef(Context *rsc, const Element *e,
     nt->mHal.state.dimY = dimY;
     nt->mHal.state.dimZ = dimZ;
     nt->mHal.state.faces = dimFaces;
+    nt->mHal.state.dimYuv = dimYuv;
     nt->compute();
 
     ObjectBase::asyncLock();
@@ -257,14 +289,14 @@ ObjectBaseRef<Type> Type::getTypeRef(Context *rsc, const Element *e,
 
 ObjectBaseRef<Type> Type::cloneAndResize1D(Context *rsc, uint32_t dimX) const {
     return getTypeRef(rsc, mElement.get(), dimX,
-                      getDimY(), getDimZ(), getDimLOD(), getDimFaces());
+                      getDimY(), getDimZ(), getDimLOD(), getDimFaces(), getDimYuv());
 }
 
 ObjectBaseRef<Type> Type::cloneAndResize2D(Context *rsc,
                               uint32_t dimX,
                               uint32_t dimY) const {
     return getTypeRef(rsc, mElement.get(), dimX, dimY,
-                      getDimZ(), getDimLOD(), getDimFaces());
+                      getDimZ(), getDimLOD(), getDimFaces(), getDimYuv());
 }
 
 
@@ -305,16 +337,16 @@ namespace android {
 namespace renderscript {
 
 RsType rsi_TypeCreate(Context *rsc, RsElement _e, uint32_t dimX,
-                     uint32_t dimY, uint32_t dimZ, bool mips, bool faces) {
+                     uint32_t dimY, uint32_t dimZ, bool mips, bool faces, uint32_t yuv) {
     Element *e = static_cast<Element *>(_e);
 
-    return Type::getType(rsc, e, dimX, dimY, dimZ, mips, faces);
+    return Type::getType(rsc, e, dimX, dimY, dimZ, mips, faces, yuv);
 }
 
 }
 }
 
-void rsaTypeGetNativeData(RsContext con, RsType type, uint32_t *typeData, uint32_t typeDataSize) {
+void rsaTypeGetNativeData(RsContext con, RsType type, uintptr_t *typeData, uint32_t typeDataSize) {
     rsAssert(typeDataSize == 6);
     // Pack the data in the follofing way mHal.state.dimX; mHal.state.dimY; mHal.state.dimZ;
     // mHal.state.lodCount; mHal.state.faces; mElement; into typeData
@@ -325,6 +357,6 @@ void rsaTypeGetNativeData(RsContext con, RsType type, uint32_t *typeData, uint32
     (*typeData++) = t->getDimZ();
     (*typeData++) = t->getDimLOD() ? 1 : 0;
     (*typeData++) = t->getDimFaces() ? 1 : 0;
-    (*typeData++) = (uint32_t)t->getElement();
+    (*typeData++) = (uintptr_t)t->getElement();
     t->getElement()->incUserRef();
 }

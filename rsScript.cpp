@@ -60,6 +60,15 @@ void Script::setVar(uint32_t slot, const void *val, size_t len) {
     mRSC->mHal.funcs.script.setGlobalVar(mRSC, this, slot, (void *)val, len);
 }
 
+void Script::getVar(uint32_t slot, const void *val, size_t len) {
+    //ALOGE("getVar %i %p %i", slot, val, len);
+    if (slot >= mHal.info.exportedVariableCount) {
+        ALOGE("Script::getVar unable to set allocation, invalid slot index");
+        return;
+    }
+    mRSC->mHal.funcs.script.getGlobalVar(mRSC, this, slot, (void *)val, len);
+}
+
 void Script::setVar(uint32_t slot, const void *val, size_t len, Element *e,
                     const size_t *dims, size_t dimLen) {
     if (slot >= mHal.info.exportedVariableCount) {
@@ -129,11 +138,15 @@ namespace android {
 namespace renderscript {
 
 RsScriptKernelID rsi_ScriptKernelIDCreate(Context *rsc, RsScript vs, int slot, int sig) {
-    return new ScriptKernelID(rsc, (Script *)vs, slot, sig);
+    ScriptKernelID *kid = new ScriptKernelID(rsc, (Script *)vs, slot, sig);
+    kid->incUserRef();
+    return kid;
 }
 
 RsScriptFieldID rsi_ScriptFieldIDCreate(Context *rsc, RsScript vs, int slot) {
-    return new ScriptFieldID(rsc, (Script *)vs, slot);
+    ScriptFieldID *fid = new ScriptFieldID(rsc, (Script *)vs, slot);
+    fid->incUserRef();
+    return fid;
 }
 
 void rsi_ScriptBindAllocation(Context * rsc, RsScript vs, RsAllocation va, uint32_t slot) {
@@ -163,11 +176,19 @@ void rsi_ScriptSetTimeZone(Context * rsc, RsScript vs, const char * timeZone, si
 
 void rsi_ScriptForEach(Context *rsc, RsScript vs, uint32_t slot,
                        RsAllocation vain, RsAllocation vaout,
-                       const void *params, size_t paramLen) {
+                       const void *params, size_t paramLen,
+                       const RsScriptCall *sc, size_t scLen) {
     Script *s = static_cast<Script *>(vs);
+    // The rs.spec generated code does not handle the absence of an actual
+    // input for sc. Instead, it retains an existing pointer value (the prior
+    // field in the packed data object). This can cause confusion because
+    // drivers might now inspect bogus sc data.
+    if (scLen == 0) {
+        sc = NULL;
+    }
     s->runForEach(rsc, slot,
                   static_cast<const Allocation *>(vain), static_cast<Allocation *>(vaout),
-                  params, paramLen);
+                  params, paramLen, sc);
 
 }
 
@@ -198,7 +219,7 @@ void rsi_ScriptSetVarObj(Context *rsc, RsScript vs, uint32_t slot, RsObjectBase 
     s->setVarObj(slot, o);
 }
 
-void rsi_ScriptSetVarJ(Context *rsc, RsScript vs, uint32_t slot, long long value) {
+void rsi_ScriptSetVarJ(Context *rsc, RsScript vs, uint32_t slot, int64_t value) {
     Script *s = static_cast<Script *>(vs);
     s->setVar(slot, &value, sizeof(value));
 }
@@ -216,6 +237,11 @@ void rsi_ScriptSetVarD(Context *rsc, RsScript vs, uint32_t slot, double value) {
 void rsi_ScriptSetVarV(Context *rsc, RsScript vs, uint32_t slot, const void *data, size_t len) {
     Script *s = static_cast<Script *>(vs);
     s->setVar(slot, data, len);
+}
+
+void rsi_ScriptGetVarV(Context *rsc, RsScript vs, uint32_t slot, void *data, size_t len) {
+    Script *s = static_cast<Script *>(vs);
+    s->getVar(slot, data, len);
 }
 
 void rsi_ScriptSetVarVE(Context *rsc, RsScript vs, uint32_t slot,

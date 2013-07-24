@@ -19,11 +19,14 @@
 
 #include "rsUtils.h"
 #include "rs_hal.h"
+#include <string.h>
 
 #include "rsThreadIO.h"
 #include "rsScriptC.h"
 #include "rsScriptGroup.h"
 #include "rsSampler.h"
+
+#ifndef RS_COMPATIBILITY_LIB
 #include "rsFont.h"
 #include "rsPath.h"
 #include "rsProgramFragment.h"
@@ -31,7 +34,8 @@
 #include "rsProgramRaster.h"
 #include "rsProgramVertex.h"
 #include "rsFBOCache.h"
-#include <string.h>
+#endif
+
 
 // ---------------------------------------------------------------------------
 namespace android {
@@ -67,10 +71,13 @@ public:
     };
     Hal mHal;
 
-    static Context * createContext(Device *, const RsSurfaceConfig *sc);
+    static Context * createContext(Device *, const RsSurfaceConfig *sc,
+            RsContextType ct = RS_CONTEXT_TYPE_NORMAL,
+            bool forceCpu = false, bool synchronous = false);
     static Context * createContextLite();
     ~Context();
 
+    static pthread_mutex_t gMessageMutex;
     static pthread_mutex_t gInitMutex;
     // Library mutex (for providing thread-safe calls from the runtime)
     static pthread_mutex_t gLibMutex;
@@ -81,11 +88,13 @@ public:
         ~PushState();
 
     private:
+#ifndef RS_COMPATIBILITY_LIB
         ObjectBaseRef<ProgramFragment> mFragment;
         ObjectBaseRef<ProgramVertex> mVertex;
         ObjectBaseRef<ProgramStore> mStore;
         ObjectBaseRef<ProgramRaster> mRaster;
         ObjectBaseRef<Font> mFont;
+#endif
         Context *mRsc;
     };
 
@@ -94,14 +103,19 @@ public:
     ElementState mStateElement;
     TypeState mStateType;
     SamplerState mStateSampler;
+
+    ScriptCState mScriptC;
+    bool isSynchronous() {return mSynchronous;}
+    bool setupCheck();
+
+#ifndef RS_COMPATIBILITY_LIB
+    FBOCache mFBOCache;
     ProgramFragmentState mStateFragment;
     ProgramStoreState mStateFragmentStore;
     ProgramRasterState mStateRaster;
     ProgramVertexState mStateVertex;
     FontState mStateFont;
 
-    ScriptCState mScriptC;
-    FBOCache mFBOCache;
 
     void swapBuffers();
     void setRootScript(Script *);
@@ -119,12 +133,13 @@ public:
     ProgramVertex * getProgramVertex() {return mVertex.get();}
     Font * getFont() {return mFont.get();}
 
-    bool setupCheck();
     void setupProgramStore();
 
     void pause();
     void resume();
     void setSurface(uint32_t w, uint32_t h, RsNativeWindow sur);
+#endif
+
     void setPriority(int32_t p);
     void destroyWorkerThreadResources();
 
@@ -139,6 +154,7 @@ public:
     void initToClient();
     void deinitToClient();
 
+#ifndef RS_COMPATIBILITY_LIB
     ProgramFragment * getDefaultProgramFragment() const {
         return mStateFragment.mDefault.get();
     }
@@ -160,6 +176,13 @@ public:
 
     uint32_t getCurrentSurfaceWidth() const;
     uint32_t getCurrentSurfaceHeight() const;
+
+    void setWatchdogGL(const char *cmd, uint32_t line, const char *file) const {
+        watchdog.command = cmd;
+        watchdog.file = file;
+        watchdog.line = line;
+    }
+#endif
 
     mutable ThreadIO mIO;
 
@@ -196,11 +219,6 @@ public:
         uint32_t line;
     } watchdog;
     static void printWatchdogInfo(void *ctx);
-    void setWatchdogGL(const char *cmd, uint32_t line, const char *file) const {
-        watchdog.command = cmd;
-        watchdog.file = file;
-        watchdog.line = line;
-    }
 
     void dumpDebug() const;
     void setError(RsError e, const char *msg = NULL) const;
@@ -213,6 +231,9 @@ public:
     uint32_t getTargetSdkVersion() const {return mTargetSdkVersion;}
     void setTargetSdkVersion(uint32_t sdkVer) {mTargetSdkVersion = sdkVer;}
 
+    RsContextType getContextType() const { return mContextType; }
+    void setContextType(RsContextType ct) { mContextType = ct; }
+
     Device *mDev;
 protected:
 
@@ -223,6 +244,10 @@ protected:
     int32_t mThreadPriority;
     bool mIsGraphicsContext;
 
+    bool mForceCpu;
+
+    RsContextType mContextType;
+
     bool mRunning;
     bool mExit;
     bool mPaused;
@@ -232,11 +257,13 @@ protected:
     pid_t mNativeThreadId;
 
     ObjectBaseRef<Script> mRootScript;
+#ifndef RS_COMPATIBILITY_LIB
     ObjectBaseRef<ProgramFragment> mFragment;
     ObjectBaseRef<ProgramVertex> mVertex;
     ObjectBaseRef<ProgramStore> mFragmentStore;
     ObjectBaseRef<ProgramRaster> mRaster;
     ObjectBaseRef<Font> mFont;
+#endif
 
     void displayDebugStats();
 
@@ -244,12 +271,13 @@ private:
     Context();
     bool initContext(Device *, const RsSurfaceConfig *sc);
 
-
+    bool mSynchronous;
     bool initGLThread();
     void deinitEGL();
 
     uint32_t runRootScript();
 
+    static bool loadRuntime(const char* filename, Context* rsc);
     static void * threadProc(void *);
     static void * helperThreadProc(void *);
 

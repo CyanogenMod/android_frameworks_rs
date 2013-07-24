@@ -16,27 +16,24 @@
 
  /*! \mainpage notitle
   *
-  * Renderscript is a high-performance runtime that provides graphics rendering and
-  * compute operations at the native level. Renderscript code is compiled on devices
+  * RenderScript is a high-performance runtime that provides
+  * compute operations at the native level. RenderScript code is compiled on devices
   * at runtime to allow platform-independence as well.
-  * This reference documentation describes the Renderscript runtime APIs, which you
-  * can utilize to write Renderscript code in C99. The Renderscript header
-  * files are automatically included for you, except for the rs_graphics.rsh header. If
-  * you are doing graphics rendering, include the graphics header file like this:
+  * This reference documentation describes the RenderScript runtime APIs, which you
+  * can utilize to write RenderScript code in C99. The RenderScript compute header
+  * files are automatically included for you.
   *
-  * <code>#include "rs_graphics.rsh"</code>
-  *
-  * To use Renderscript, you need to utilize the Renderscript runtime APIs documented here
-  * as well as the Android framework APIs for Renderscript.
+  * To use RenderScript, you need to utilize the RenderScript runtime APIs documented here
+  * as well as the Android framework APIs for RenderScript.
   * For documentation on the Android framework APIs, see the <a target="_parent" href=
   * "http://developer.android.com/reference/android/renderscript/package-summary.html">
   * android.renderscript</a> package reference.
-  * For more information on how to develop with Renderscript and how the runtime and
+  * For more information on how to develop with RenderScript and how the runtime and
   * Android framework APIs interact, see the <a target="_parent" href=
-  * "http://developer.android.com/guide/topics/renderscript/index.html">Renderscript
+  * "http://developer.android.com/guide/topics/renderscript/index.html">RenderScript
   * developer guide</a> and the <a target="_parent" href=
   * "http://developer.android.com/resources/samples/RenderScript/index.html">
-  * Renderscript samples</a>.
+  * RenderScript samples</a>.
   */
 
 /** @file rs_core.rsh

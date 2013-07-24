@@ -19,10 +19,7 @@
 
 #include "rsUtils.h"
 #include "rsDefines.h"
-
-#define RS_OBJECT_DEBUG 0
-
-#include <utils/CallStack.h>
+#include "rsDebugHelper.h"
 
 namespace android {
 namespace renderscript {
@@ -45,7 +42,7 @@ public:
     static bool checkDelete(const ObjectBase *);
 
     const char * getName() const {
-        return mName.string();
+        return mName;
     }
     void setName(const char *);
     void setName(const char *, uint32_t len);
@@ -82,17 +79,14 @@ private:
     void add() const;
     void remove() const;
 
-    String8 mName;
+    const char* mName;
     mutable int32_t mSysRefCount;
     mutable int32_t mUserRefCount;
 
     mutable const ObjectBase * mPrev;
     mutable const ObjectBase * mNext;
 
-#if RS_OBJECT_DEBUG
-    CallStack mStack;
-#endif
-
+    DebugHelper *mDH;
 };
 
 template<class T>

@@ -346,9 +346,9 @@ void RsdShader::logUniform(const Element *field, const float *fd, uint32_t array
                 rsAssert(0);
             }
         }
-        ALOGE("Element size %u data=%p", elementSize, fd);
+        ALOGV("Element size %u data=%p", elementSize, fd);
         fd += elementSize;
-        ALOGE("New data=%p", fd);
+        ALOGV("New data=%p", fd);
     }
 }
 
@@ -405,6 +405,11 @@ void RsdShader::setupSampler(const Context *rsc, const Sampler *s, const Allocat
     // This tells us the correct texture type
     DrvAllocation *drvTex = (DrvAllocation *)tex->mHal.drv;
     const GLenum target = drvTex->glTarget;
+    if (!target) {
+        // this can happen if the user set the wrong allocation flags.
+        rsc->setError(RS_ERROR_BAD_VALUE, "Allocation not compatible with sampler");
+        return;
+    }
 
     if (!dc->gl.gl.OES_texture_npot && tex->getType()->getIsNp2()) {
         if (tex->getHasGraphicsMipmaps() &&
@@ -502,7 +507,7 @@ void RsdShader::setupTextures(const Context *rsc, RsdShaderCache *sc) {
                 GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
             RSD_CALL_GL(glTexParameteri, mCurrentState->mTextureTargets[ct],
                 GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-            rsdGLCheckError(rsc, "ProgramFragment::setup tex env");
+            rsdGLCheckError(rsc, "ProgramFragment::setup basic tex env");
         }
         rsdGLCheckError(rsc, "ProgramFragment::setup uniforms");
     }
@@ -524,8 +529,7 @@ void RsdShader::setupUserConstants(const Context *rsc, RsdShaderCache *sc, bool 
             continue;
         }
 
-        DrvAllocation *adrv = (DrvAllocation *)alloc->mHal.drv;
-        const uint8_t *data = static_cast<const uint8_t *>(adrv->lod[0].mallocPtr);
+        const uint8_t *data = static_cast<const uint8_t *>(alloc->mHal.drvState.lod[0].mallocPtr);
         const Element *e = mRSProgram->mHal.state.constantTypes[ct]->getElement();
         for (uint32_t field=0; field < e->mHal.state.fieldsCount; field++) {
             const Element *f = e->mHal.state.fields[field];

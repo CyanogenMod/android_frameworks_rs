@@ -15,9 +15,9 @@
  */
 
 /** @file rs_graphics.rsh
- *  \brief Renderscript graphics API
+ *  \brief RenderScript graphics API
  *
- *  A set of graphics functions used by Renderscript.
+ *  A set of graphics functions used by RenderScript.
  *
  */
 #ifndef __RS_GRAPHICS_RSH__
@@ -63,7 +63,7 @@ extern void __attribute__((overloadable))
     rsgClearAllRenderTargets(void);
 
 /**
- * Force Renderscript to finish all rendering commands
+ * Force RenderScript to finish all rendering commands
  */
 extern uint __attribute__((overloadable))
     rsgFinish(void);

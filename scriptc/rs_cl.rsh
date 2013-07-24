@@ -447,7 +447,6 @@ FN_FUNC_FN_F(fmin);
 extern float __attribute__((overloadable)) fmod(float x, float y);
 FN_FUNC_FN_FN(fmod)
 
-
 /**
  * Return fractional part of v
  *
@@ -456,6 +455,31 @@ FN_FUNC_FN_FN(fmod)
  */
 _RS_RUNTIME float __attribute__((overloadable)) fract(float v, float *iptr);
 FN_FUNC_FN_PFN(fract)
+
+/**
+ * Return fractional part of v
+ *
+ * Supports float, float2, float3, float4.
+ */
+static inline float __attribute__((overloadable)) fract(float v) {
+    float unused;
+    return fract(v, &unused);
+}
+
+static inline float2 __attribute__((overloadable)) fract(float2 v) {
+    float2 unused;
+    return fract(v, &unused);
+}
+
+static inline float3 __attribute__((overloadable)) fract(float3 v) {
+    float3 unused;
+    return fract(v, &unused);
+}
+
+static inline float4 __attribute__((overloadable)) fract(float4 v) {
+    float4 unused;
+    return fract(v, &unused);
+}
 
 /**
  * Return the mantissa and place the exponent into iptr[0]
@@ -958,6 +982,59 @@ _RS_RUNTIME float __attribute__((overloadable)) fast_normalize(float v);
 F_FUNC_FN(fast_normalize)
 
 #endif  // (defined(RS_VERSION) && (RS_VERSION >= 17))
+
+
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 18))
+// Fast native math functions.
+
+
+/**
+ * Fast approximate exp2
+ * valid for inputs -125.f to 125.f
+ * Max 8192 ulps of error
+ *
+ * Supports 1,2,3,4 components
+ */
+_RS_RUNTIME float __attribute__((overloadable)) native_exp2(float v);
+FN_FUNC_FN(native_exp2)
+
+/**
+ * Fast approximate exp
+ * valid for inputs -86.f to 86.f
+ * Max 8192 ulps of error
+ *
+ * Supports 1,2,3,4 components
+ */
+_RS_RUNTIME float __attribute__((overloadable)) native_exp(float v);
+FN_FUNC_FN(native_exp)
+
+/**
+ * Fast approximate exp10
+ * valid for inputs -37.f to 37.f
+ * Max 8192 ulps of error
+ *
+ * Supports 1,2,3,4 components
+ */
+_RS_RUNTIME float __attribute__((overloadable)) native_exp10(float v);
+FN_FUNC_FN(native_exp10)
+
+
+_RS_RUNTIME float __attribute__((overloadable)) native_log2(float v);
+FN_FUNC_FN(native_log2)
+
+_RS_RUNTIME float __attribute__((overloadable)) native_log(float v);
+FN_FUNC_FN(native_log)
+
+_RS_RUNTIME float __attribute__((overloadable)) native_log10(float v);
+FN_FUNC_FN(native_log10)
+
+
+_RS_RUNTIME float __attribute__((overloadable)) native_powr(float v, float y);
+FN_FUNC_FN_FN(native_powr)
+
+
+#endif  // (defined(RS_VERSION) && (RS_VERSION >= 18))
 
 
 #undef CVT_FUNC

@@ -17,6 +17,8 @@
 #ifndef ANDROID_RSD_VERTEX_ARRAY_H
 #define ANDROID_RSD_VERTEX_ARRAY_H
 
+#include "rsUtils.h"
+
 namespace android {
 namespace renderscript {
 
@@ -24,8 +26,6 @@ class Context;
 
 }
 }
-
-#include <utils/String8.h>
 
 // An element is a group of Components that occupies one cell in a structure.
 class RsdVertexArray {

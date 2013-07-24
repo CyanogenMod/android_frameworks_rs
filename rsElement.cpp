@@ -420,14 +420,14 @@ void rsaElementGetNativeData(RsContext con, RsElement elem,
     (*elemData++) = e->getFieldCount();
 }
 
-void rsaElementGetSubElements(RsContext con, RsElement elem, uint32_t *ids,
-                              const char **names, uint32_t *arraySizes, uint32_t dataSize) {
+void rsaElementGetSubElements(RsContext con, RsElement elem, uintptr_t *ids,
+                              const char **names, size_t *arraySizes, uint32_t dataSize) {
     Element *e = static_cast<Element *>(elem);
     rsAssert(e->getFieldCount() == dataSize);
 
     for (uint32_t i = 0; i < dataSize; i ++) {
         e->getField(i)->incUserRef();
-        ids[i] = (uint32_t)e->getField(i);
+        ids[i] = (uintptr_t)e->getField(i);
         names[i] = e->getFieldName(i);
         arraySizes[i] = e->getFieldArraySize(i);
     }

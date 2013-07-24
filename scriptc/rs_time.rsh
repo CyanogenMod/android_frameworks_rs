@@ -15,9 +15,9 @@
  */
 
 /** @file rs_time.rsh
- *  \brief Renderscript time routines
+ *  \brief RenderScript time routines
  *
- *  This file contains Renderscript functions relating to time and date
+ *  This file contains RenderScript functions relating to time and date
  *  manipulation.
  */
 

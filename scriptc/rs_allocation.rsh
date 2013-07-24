@@ -147,19 +147,29 @@ extern const void * __attribute__((overloadable))
     rsGetElementAt(rs_allocation, uint32_t x, uint32_t y, uint32_t z);
 
 
-#define GET_ELEMENT_AT(T) \
-static inline T __attribute__((overloadable)) \
-        rsGetElementAt_##T(rs_allocation a, uint32_t x) {  \
-    return ((T *)rsGetElementAt(a, x))[0]; \
-} \
-static inline T __attribute__((overloadable)) \
-        rsGetElementAt_##T(rs_allocation a, uint32_t x, uint32_t y) {  \
-    return ((T *)rsGetElementAt(a, x, y))[0]; \
-} \
-static inline T __attribute__((overloadable)) \
-        rsGetElementAt_##T(rs_allocation a, uint32_t x, uint32_t y, uint32_t z) {  \
-    return ((T *)rsGetElementAt(a, x, y, z))[0]; \
-}
+#if (defined(RS_VERSION) && (RS_VERSION >= 18))
+    #define GET_ELEMENT_AT(T) \
+    extern T __attribute__((overloadable)) \
+            rsGetElementAt_##T(rs_allocation a, uint32_t x); \
+    extern T __attribute__((overloadable)) \
+            rsGetElementAt_##T(rs_allocation a, uint32_t x, uint32_t y);  \
+    extern T __attribute__((overloadable)) \
+            rsGetElementAt_##T(rs_allocation a, uint32_t x, uint32_t y, uint32_t z);
+#else
+    #define GET_ELEMENT_AT(T) \
+    static inline T __attribute__((overloadable)) \
+            rsGetElementAt_##T(rs_allocation a, uint32_t x) {  \
+        return ((T *)rsGetElementAt(a, x))[0]; \
+    } \
+    static inline T __attribute__((overloadable)) \
+            rsGetElementAt_##T(rs_allocation a, uint32_t x, uint32_t y) {  \
+        return ((T *)rsGetElementAt(a, x, y))[0]; \
+    } \
+    static inline T __attribute__((overloadable)) \
+            rsGetElementAt_##T(rs_allocation a, uint32_t x, uint32_t y, uint32_t z) {  \
+        return ((T *)rsGetElementAt(a, x, y, z))[0]; \
+    }
+#endif
 
 GET_ELEMENT_AT(char)
 GET_ELEMENT_AT(char2)
@@ -204,7 +214,7 @@ GET_ELEMENT_AT(double4)
 
 #undef GET_ELEMENT_AT
 
-// New API's
+// Jelly Bean
 #if (defined(RS_VERSION) && (RS_VERSION >= 16))
 
 /**
@@ -272,6 +282,97 @@ extern const float4 __attribute__((overloadable))
     rsSample(rs_allocation a, rs_sampler s, float2 location, float lod);
 
 #endif // (defined(RS_VERSION) && (RS_VERSION >= 16))
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 18))
+
+/**
+ * Set single element of an allocation.
+ */
+extern void __attribute__((overloadable))
+    rsSetElementAt(rs_allocation a, void* ptr, uint32_t x);
+
+/**
+ * \overload
+ */
+extern void __attribute__((overloadable))
+    rsSetElementAt(rs_allocation a, void* ptr, uint32_t x, uint32_t y);
+
+#define SET_ELEMENT_AT(T)                                               \
+    extern void __attribute__((overloadable))                           \
+    rsSetElementAt_##T(rs_allocation a, T val, uint32_t x);             \
+    extern void __attribute__((overloadable))                           \
+    rsSetElementAt_##T(rs_allocation a, T val, uint32_t x, uint32_t y); \
+    extern void __attribute__((overloadable))                           \
+    rsSetElementAt_##T(rs_allocation a, T val, uint32_t x, uint32_t y, uint32_t z);
+
+
+SET_ELEMENT_AT(char)
+SET_ELEMENT_AT(char2)
+SET_ELEMENT_AT(char3)
+SET_ELEMENT_AT(char4)
+SET_ELEMENT_AT(uchar)
+SET_ELEMENT_AT(uchar2)
+SET_ELEMENT_AT(uchar3)
+SET_ELEMENT_AT(uchar4)
+SET_ELEMENT_AT(short)
+SET_ELEMENT_AT(short2)
+SET_ELEMENT_AT(short3)
+SET_ELEMENT_AT(short4)
+SET_ELEMENT_AT(ushort)
+SET_ELEMENT_AT(ushort2)
+SET_ELEMENT_AT(ushort3)
+SET_ELEMENT_AT(ushort4)
+SET_ELEMENT_AT(int)
+SET_ELEMENT_AT(int2)
+SET_ELEMENT_AT(int3)
+SET_ELEMENT_AT(int4)
+SET_ELEMENT_AT(uint)
+SET_ELEMENT_AT(uint2)
+SET_ELEMENT_AT(uint3)
+SET_ELEMENT_AT(uint4)
+SET_ELEMENT_AT(long)
+SET_ELEMENT_AT(long2)
+SET_ELEMENT_AT(long3)
+SET_ELEMENT_AT(long4)
+SET_ELEMENT_AT(ulong)
+SET_ELEMENT_AT(ulong2)
+SET_ELEMENT_AT(ulong3)
+SET_ELEMENT_AT(ulong4)
+SET_ELEMENT_AT(float)
+SET_ELEMENT_AT(float2)
+SET_ELEMENT_AT(float3)
+SET_ELEMENT_AT(float4)
+SET_ELEMENT_AT(double)
+SET_ELEMENT_AT(double2)
+SET_ELEMENT_AT(double3)
+SET_ELEMENT_AT(double4)
+
+#undef SET_ELEMENT_AT
+
+
+/**
+ * Extract a single element from an allocation.
+ */
+extern const uchar __attribute__((overloadable))
+    rsGetElementAtYuv_uchar_Y(rs_allocation a, uint32_t x, uint32_t y);
+
+/**
+ * Extract a single element from an allocation.
+ *
+ * Coordinates are in the dimensions of the Y plane
+ */
+extern const uchar __attribute__((overloadable))
+    rsGetElementAtYuv_uchar_U(rs_allocation a, uint32_t x, uint32_t y);
+
+/**
+ * Extract a single element from an allocation.
+ *
+ * Coordinates are in the dimensions of the Y plane
+ */
+extern const uchar __attribute__((overloadable))
+    rsGetElementAtYuv_uchar_V(rs_allocation a, uint32_t x, uint32_t y);
+
+#endif // (defined(RS_VERSION) && (RS_VERSION >= 18))
 
 #endif
 

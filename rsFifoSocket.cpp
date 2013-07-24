@@ -15,8 +15,6 @@
  */
 
 #include "rsFifoSocket.h"
-#include "utils/Timers.h"
-#include "utils/StopWatch.h"
 
 #include <stdio.h>
 #include <stdlib.h>

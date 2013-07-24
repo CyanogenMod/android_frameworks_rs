@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2012 The Android Open Source Project
+ * Copyright (C) 2013 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +19,10 @@
 #include "rsAdapter.h"
 #include "rs_hal.h"
 
+#if !defined(RS_SERVER) && !defined(RS_COMPATIBILITY_LIB)
 #include "system/window.h"
-#include "gui/SurfaceTexture.h"
+#include "gui/GLConsumer.h"
+#endif
 
 using namespace android;
 using namespace android::renderscript;
@@ -33,14 +35,30 @@ Allocation::Allocation(Context *rsc, const Type *type, uint32_t usages,
     mHal.state.mipmapControl = RS_ALLOCATION_MIPMAP_NONE;
     mHal.state.usageFlags = usages;
     mHal.state.mipmapControl = mc;
+    mHal.state.userProvidedPtr = ptr;
 
     setType(type);
     updateCache();
 }
 
+void Allocation::operator delete(void* ptr) {
+    if (ptr) {
+        Allocation *a = (Allocation*) ptr;
+        a->getContext()->mHal.funcs.freeRuntimeMem(ptr);
+    }
+}
+
 Allocation * Allocation::createAllocation(Context *rsc, const Type *type, uint32_t usages,
                               RsAllocationMipmapControl mc, void * ptr) {
-    Allocation *a = new Allocation(rsc, type, usages, mc, ptr);
+    // Allocation objects must use allocator specified by the driver
+    void* allocMem = rsc->mHal.funcs.allocRuntimeMem(sizeof(Allocation), 0);
+
+    if (!allocMem) {
+        rsc->setError(RS_ERROR_FATAL_DRIVER, "Couldn't allocate memory for Allocation");
+        return NULL;
+    }
+
+    Allocation *a = new (allocMem) Allocation(rsc, type, usages, mc, ptr);
 
     if (!rsc->mHal.funcs.allocation.init(rsc, a, type->getElement()->getHasReferences())) {
         rsc->setError(RS_ERROR_FATAL_DRIVER, "Allocation::Allocation, alloc failure");
@@ -53,19 +71,15 @@ Allocation * Allocation::createAllocation(Context *rsc, const Type *type, uint32
 
 void Allocation::updateCache() {
     const Type *type = mHal.state.type;
-    mHal.state.dimensionX = type->getDimX();
-    mHal.state.dimensionY = type->getDimY();
-    mHal.state.dimensionZ = type->getDimZ();
+    mHal.state.yuv = type->getDimYuv();
     mHal.state.hasFaces = type->getDimFaces();
     mHal.state.hasMipmaps = type->getDimLOD();
     mHal.state.elementSizeBytes = type->getElementSizeBytes();
     mHal.state.hasReferences = mHal.state.type->getElement()->getHasReferences();
-    mHal.state.eType = mHal.state.type->getElement()->getType();
 }
 
 Allocation::~Allocation() {
     freeChildrenUnlocked();
-    setSurfaceTexture(mRSC, NULL);
     mRSC->mHal.funcs.allocation.destroy(mRSC, this);
 }
 
@@ -89,29 +103,20 @@ void Allocation::data(Context *rsc, uint32_t xoff, uint32_t lod,
 }
 
 void Allocation::data(Context *rsc, uint32_t xoff, uint32_t yoff, uint32_t lod, RsAllocationCubemapFace face,
-             uint32_t w, uint32_t h, const void *data, size_t sizeBytes) {
-    const size_t eSize = mHal.state.elementSizeBytes;
-    const size_t lineSize = eSize * w;
-
-    //ALOGE("data2d %p,  %i %i %i %i %i %i %p %i", this, xoff, yoff, lod, face, w, h, data, sizeBytes);
-
-    if ((lineSize * h) != sizeBytes) {
-        ALOGE("Allocation size mismatch, expected %zu, got %zu", (lineSize * h), sizeBytes);
-        rsAssert(!"Allocation::subData called with mismatched size");
-        return;
-    }
-
-    rsc->mHal.funcs.allocation.data2D(rsc, this, xoff, yoff, lod, face, w, h, data, sizeBytes);
+                      uint32_t w, uint32_t h, const void *data, size_t sizeBytes, size_t stride) {
+    rsc->mHal.funcs.allocation.data2D(rsc, this, xoff, yoff, lod, face, w, h, data, sizeBytes, stride);
     sendDirty(rsc);
 }
 
 void Allocation::data(Context *rsc, uint32_t xoff, uint32_t yoff, uint32_t zoff,
-                      uint32_t lod, RsAllocationCubemapFace face,
-                      uint32_t w, uint32_t h, uint32_t d, const void *data, size_t sizeBytes) {
+                      uint32_t lod,
+                      uint32_t w, uint32_t h, uint32_t d, const void *data, size_t sizeBytes, size_t stride) {
+    rsc->mHal.funcs.allocation.data3D(rsc, this, xoff, yoff, zoff, lod, w, h, d, data, sizeBytes, stride);
+    sendDirty(rsc);
 }
 
 void Allocation::read(Context *rsc, uint32_t xoff, uint32_t lod,
-                         uint32_t count, void *data, size_t sizeBytes) {
+                      uint32_t count, void *data, size_t sizeBytes) {
     const size_t eSize = mHal.state.type->getElementSizeBytes();
 
     if ((count * eSize) != sizeBytes) {
@@ -125,22 +130,32 @@ void Allocation::read(Context *rsc, uint32_t xoff, uint32_t lod,
 }
 
 void Allocation::read(Context *rsc, uint32_t xoff, uint32_t yoff, uint32_t lod, RsAllocationCubemapFace face,
-             uint32_t w, uint32_t h, void *data, size_t sizeBytes) {
+                      uint32_t w, uint32_t h, void *data, size_t sizeBytes, size_t stride) {
     const size_t eSize = mHal.state.elementSizeBytes;
     const size_t lineSize = eSize * w;
-
-    if ((lineSize * h) != sizeBytes) {
-        ALOGE("Allocation size mismatch, expected %zu, got %zu", (lineSize * h), sizeBytes);
-        rsAssert(!"Allocation::read called with mismatched size");
-        return;
+    if (!stride) {
+        stride = lineSize;
+    } else {
+        if ((lineSize * h) != sizeBytes) {
+            ALOGE("Allocation size mismatch, expected %zu, got %zu", (lineSize * h), sizeBytes);
+            rsAssert(!"Allocation::read called with mismatched size");
+            return;
+        }
     }
 
-    rsc->mHal.funcs.allocation.read2D(rsc, this, xoff, yoff, lod, face, w, h, data, sizeBytes);
+    rsc->mHal.funcs.allocation.read2D(rsc, this, xoff, yoff, lod, face, w, h, data, sizeBytes, stride);
 }
 
-void Allocation::read(Context *rsc, uint32_t xoff, uint32_t yoff, uint32_t zoff,
-                      uint32_t lod, RsAllocationCubemapFace face,
-                      uint32_t w, uint32_t h, uint32_t d, void *data, size_t sizeBytes) {
+void Allocation::read(Context *rsc, uint32_t xoff, uint32_t yoff, uint32_t zoff, uint32_t lod,
+                      uint32_t w, uint32_t h, uint32_t d, void *data, size_t sizeBytes, size_t stride) {
+    const size_t eSize = mHal.state.elementSizeBytes;
+    const size_t lineSize = eSize * w;
+    if (!stride) {
+        stride = lineSize;
+    }
+
+    rsc->mHal.funcs.allocation.read3D(rsc, this, xoff, yoff, zoff, lod, w, h, d, data, sizeBytes, stride);
+
 }
 
 void Allocation::elementData(Context *rsc, uint32_t x, const void *data,
@@ -153,7 +168,7 @@ void Allocation::elementData(Context *rsc, uint32_t x, const void *data,
         return;
     }
 
-    if (x >= mHal.state.dimensionX) {
+    if (x >= mHal.drvState.lod[0].dimX) {
         ALOGE("Error Allocation::subElementData X offset %i out of range.", x);
         rsc->setError(RS_ERROR_BAD_VALUE, "subElementData X offset out of range.");
         return;
@@ -175,13 +190,13 @@ void Allocation::elementData(Context *rsc, uint32_t x, uint32_t y,
                                 const void *data, uint32_t cIdx, size_t sizeBytes) {
     size_t eSize = mHal.state.elementSizeBytes;
 
-    if (x >= mHal.state.dimensionX) {
+    if (x >= mHal.drvState.lod[0].dimX) {
         ALOGE("Error Allocation::subElementData X offset %i out of range.", x);
         rsc->setError(RS_ERROR_BAD_VALUE, "subElementData X offset out of range.");
         return;
     }
 
-    if (y >= mHal.state.dimensionY) {
+    if (y >= mHal.drvState.lod[0].dimY) {
         ALOGE("Error Allocation::subElementData X offset %i out of range.", x);
         rsc->setError(RS_ERROR_BAD_VALUE, "subElementData X offset out of range.");
         return;
@@ -229,7 +244,7 @@ void Allocation::dumpLOGV(const char *prefix) const {
     }
 
     ALOGV("%s allocation ptr=%p  mUsageFlags=0x04%x, mMipmapControl=0x%04x",
-         prefix, mHal.drvState.mallocPtrLOD0, mHal.state.usageFlags, mHal.state.mipmapControl);
+         prefix, mHal.drvState.lod[0].mallocPtr, mHal.state.usageFlags, mHal.state.mipmapControl);
 }
 
 uint32_t Allocation::getPackedSize() const {
@@ -382,9 +397,11 @@ Allocation *Allocation::createFromStream(Context *rsc, IStream *stream) {
 }
 
 void Allocation::sendDirty(const Context *rsc) const {
+#ifndef RS_COMPATIBILITY_LIB
     for (size_t ct=0; ct < mToDirtyList.size(); ct++) {
         mToDirtyList[ct]->forceDirty();
     }
+#endif
     mRSC->mHal.funcs.allocation.markDirty(rsc, this);
 }
 
@@ -418,7 +435,7 @@ void Allocation::copyRange1D(Context *rsc, const Allocation *src, int32_t srcOff
 }
 
 void Allocation::resize1D(Context *rsc, uint32_t dimX) {
-    uint32_t oldDimX = mHal.state.dimensionX;
+    uint32_t oldDimX = mHal.drvState.lod[0].dimX;
     if (dimX == oldDimX) {
         return;
     }
@@ -437,35 +454,13 @@ void Allocation::resize2D(Context *rsc, uint32_t dimX, uint32_t dimY) {
     ALOGE("not implemented");
 }
 
-int32_t Allocation::getSurfaceTextureID(const Context *rsc) {
-    int32_t id = rsc->mHal.funcs.allocation.initSurfaceTexture(rsc, this);
-    mHal.state.surfaceTextureID = id;
-    return id;
-}
-
-void Allocation::setSurfaceTexture(const Context *rsc, SurfaceTexture *st) {
-    if(st != mHal.state.surfaceTexture) {
-        if(mHal.state.surfaceTexture != NULL) {
-            mHal.state.surfaceTexture->decStrong(NULL);
-        }
-        mHal.state.surfaceTexture = st;
-        if(mHal.state.surfaceTexture != NULL) {
-            mHal.state.surfaceTexture->incStrong(NULL);
-        }
-    }
+void * Allocation::getSurface(const Context *rsc) {
+    return rsc->mHal.funcs.allocation.getSurface(rsc, this);
 }
 
 void Allocation::setSurface(const Context *rsc, RsNativeWindow sur) {
     ANativeWindow *nw = (ANativeWindow *)sur;
-    ANativeWindow *old = mHal.state.wndSurface;
-    if (nw) {
-        nw->incStrong(NULL);
-    }
-    rsc->mHal.funcs.allocation.setSurfaceTexture(rsc, this, nw);
-    mHal.state.wndSurface = nw;
-    if (old) {
-        old->decStrong(NULL);
-    }
+    rsc->mHal.funcs.allocation.setSurface(rsc, this, nw);
 }
 
 void Allocation::ioSend(const Context *rsc) {
@@ -498,7 +493,7 @@ void rsi_AllocationCopyToBitmap(Context *rsc, RsAllocation va, void *data, size_
     Allocation *a = static_cast<Allocation *>(va);
     const Type * t = a->getType();
     a->read(rsc, 0, 0, 0, RS_ALLOCATION_CUBEMAP_FACE_POSITIVE_X,
-            t->getDimX(), t->getDimY(), data, sizeBytes);
+            t->getDimX(), t->getDimY(), data, sizeBytes, 0);
 }
 
 void rsi_Allocation1DData(Context *rsc, RsAllocation va, uint32_t xoff, uint32_t lod,
@@ -520,17 +515,24 @@ void rsi_Allocation1DElementData(Context *rsc, RsAllocation va, uint32_t x, uint
 }
 
 void rsi_Allocation2DData(Context *rsc, RsAllocation va, uint32_t xoff, uint32_t yoff, uint32_t lod, RsAllocationCubemapFace face,
-                          uint32_t w, uint32_t h, const void *data, size_t sizeBytes) {
+                          uint32_t w, uint32_t h, const void *data, size_t sizeBytes, size_t stride) {
     Allocation *a = static_cast<Allocation *>(va);
-    a->data(rsc, xoff, yoff, lod, face, w, h, data, sizeBytes);
+    a->data(rsc, xoff, yoff, lod, face, w, h, data, sizeBytes, stride);
 }
+
+void rsi_Allocation3DData(Context *rsc, RsAllocation va, uint32_t xoff, uint32_t yoff, uint32_t zoff, uint32_t lod,
+                          uint32_t w, uint32_t h, uint32_t d, const void *data, size_t sizeBytes, size_t stride) {
+    Allocation *a = static_cast<Allocation *>(va);
+    a->data(rsc, xoff, yoff, zoff, lod, w, h, d, data, sizeBytes, stride);
+}
+
 
 void rsi_AllocationRead(Context *rsc, RsAllocation va, void *data, size_t sizeBytes) {
     Allocation *a = static_cast<Allocation *>(va);
     const Type * t = a->getType();
     if(t->getDimY()) {
         a->read(rsc, 0, 0, 0, RS_ALLOCATION_CUBEMAP_FACE_POSITIVE_X,
-                t->getDimX(), t->getDimY(), data, sizeBytes);
+                t->getDimX(), t->getDimY(), data, sizeBytes, 0);
     } else {
         a->read(rsc, 0, 0, t->getDimX(), data, sizeBytes);
     }
@@ -549,8 +551,8 @@ void rsi_AllocationResize2D(Context *rsc, RsAllocation va, uint32_t dimX, uint32
 
 RsAllocation rsi_AllocationCreateTyped(Context *rsc, RsType vtype,
                                        RsAllocationMipmapControl mips,
-                                       uint32_t usages, uint32_t ptr) {
-    Allocation * alloc = Allocation::createAllocation(rsc, static_cast<Type *>(vtype), usages, mips, (void *)ptr);
+                                       uint32_t usages, uintptr_t ptr) {
+    Allocation * alloc = Allocation::createAllocation(rsc, static_cast<Type *>(vtype), usages, mips, (void*)ptr);
     if (!alloc) {
         return NULL;
     }
@@ -571,7 +573,7 @@ RsAllocation rsi_AllocationCreateFromBitmap(Context *rsc, RsType vtype,
     }
 
     texAlloc->data(rsc, 0, 0, 0, RS_ALLOCATION_CUBEMAP_FACE_POSITIVE_X,
-                   t->getDimX(), t->getDimY(), data, sizeBytes);
+                   t->getDimX(), t->getDimY(), data, sizeBytes, 0);
     if (mips == RS_ALLOCATION_MIPMAP_FULL) {
         rsc->mHal.funcs.allocation.generateMipmaps(rsc, texAlloc);
     }
@@ -603,7 +605,7 @@ RsAllocation rsi_AllocationCubeCreateFromBitmap(Context *rsc, RsType vtype,
     for (uint32_t face = 0; face < 6; face ++) {
         for (uint32_t dI = 0; dI < faceSize; dI ++) {
             texAlloc->data(rsc, 0, dI, 0, (RsAllocationCubemapFace)face,
-                           t->getDimX(), 1, sourcePtr + strideBytes * dI, copySize);
+                           t->getDimX(), 1, sourcePtr + strideBytes * dI, copySize, 0);
         }
 
         // Move the data pointer to the next cube face
@@ -635,14 +637,26 @@ void rsi_AllocationCopy2DRange(Context *rsc,
                                            (RsAllocationCubemapFace)srcFace);
 }
 
-int32_t rsi_AllocationGetSurfaceTextureID(Context *rsc, RsAllocation valloc) {
-    Allocation *alloc = static_cast<Allocation *>(valloc);
-    return alloc->getSurfaceTextureID(rsc);
+void rsi_AllocationCopy3DRange(Context *rsc,
+                               RsAllocation dstAlloc,
+                               uint32_t dstXoff, uint32_t dstYoff, uint32_t dstZoff,
+                               uint32_t dstMip,
+                               uint32_t width, uint32_t height, uint32_t depth,
+                               RsAllocation srcAlloc,
+                               uint32_t srcXoff, uint32_t srcYoff, uint32_t srcZoff,
+                               uint32_t srcMip) {
+    Allocation *dst = static_cast<Allocation *>(dstAlloc);
+    Allocation *src= static_cast<Allocation *>(srcAlloc);
+    rsc->mHal.funcs.allocation.allocData3D(rsc, dst, dstXoff, dstYoff, dstZoff, dstMip,
+                                           width, height, depth,
+                                           src, srcXoff, srcYoff, srcZoff, srcMip);
 }
 
-void rsi_AllocationGetSurfaceTextureID2(Context *rsc, RsAllocation valloc, void *vst, size_t len) {
+
+void * rsi_AllocationGetSurface(Context *rsc, RsAllocation valloc) {
     Allocation *alloc = static_cast<Allocation *>(valloc);
-    alloc->setSurfaceTexture(rsc, static_cast<SurfaceTexture *>(vst));
+    void *s = alloc->getSurface(rsc);
+    return s;
 }
 
 void rsi_AllocationSetSurface(Context *rsc, RsAllocation valloc, RsNativeWindow sur) {
@@ -658,6 +672,19 @@ void rsi_AllocationIoSend(Context *rsc, RsAllocation valloc) {
 void rsi_AllocationIoReceive(Context *rsc, RsAllocation valloc) {
     Allocation *alloc = static_cast<Allocation *>(valloc);
     alloc->ioReceive(rsc);
+}
+
+void rsi_Allocation1DRead(Context *rsc, RsAllocation va, uint32_t xoff, uint32_t lod,
+                          uint32_t count, void *data, size_t sizeBytes) {
+    Allocation *a = static_cast<Allocation *>(va);
+    rsc->mHal.funcs.allocation.read1D(rsc, a, xoff, lod, count, data, sizeBytes);
+}
+
+void rsi_Allocation2DRead(Context *rsc, RsAllocation va, uint32_t xoff, uint32_t yoff,
+                          uint32_t lod, RsAllocationCubemapFace face, uint32_t w,
+                          uint32_t h, void *data, size_t sizeBytes, size_t stride) {
+    Allocation *a = static_cast<Allocation *>(va);
+    a->read(rsc, xoff, yoff, lod, face, w, h, data, sizeBytes, stride);
 }
 
 }

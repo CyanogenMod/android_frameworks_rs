@@ -20,12 +20,6 @@
 #include <rs_hal.h>
 #include <rsRuntime.h>
 
-namespace bcc {
-    class BCCContext;
-    class RSCompilerDriver;
-    class RSExecutable;
-}
-
 bool rsdScriptInit(const android::renderscript::Context *, android::renderscript::ScriptC *,
                    char const *resName, char const *cacheDir,
                    uint8_t const *bitcode, size_t bitcodeSize, uint32_t flags);
@@ -46,7 +40,7 @@ void rsdScriptInvokeForEach(const android::renderscript::Context *rsc,
                             const android::renderscript::Allocation * ain,
                             android::renderscript::Allocation * aout,
                             const void * usr,
-                            uint32_t usrLen,
+                            size_t usrLen,
                             const RsScriptCall *sc);
 
 int rsdScriptInvokeRoot(const android::renderscript::Context *dc,
@@ -57,6 +51,9 @@ void rsdScriptInvokeFreeChildren(const android::renderscript::Context *dc,
                                  android::renderscript::Script *script);
 
 void rsdScriptSetGlobalVar(const android::renderscript::Context *,
+                           const android::renderscript::Script *,
+                           uint32_t slot, void *data, size_t dataLen);
+void rsdScriptGetGlobalVar(const android::renderscript::Context *,
                            const android::renderscript::Script *,
                            uint32_t slot, void *data, size_t dataLen);
 void rsdScriptSetGlobalVarWithElemDims(const android::renderscript::Context *,
@@ -90,95 +87,6 @@ android::renderscript::Allocation * rsdScriptGetAllocationForPointer(
                         const android::renderscript::Context *dc,
                         const android::renderscript::Script *script,
                         const void *);
-
-
-typedef void (*outer_foreach_t)(
-    const android::renderscript::RsForEachStubParamStruct *,
-    uint32_t x1, uint32_t x2,
-    uint32_t instep, uint32_t outstep);
-
-typedef struct RsdIntriniscFuncs_rec {
-
-    void (*setVarObj)(const android::renderscript::Context *dc,
-                      const android::renderscript::Script *script,
-                      void * intrinsicData,
-                      uint32_t slot, android::renderscript::Allocation *data);
-    void (*setVar)(const android::renderscript::Context *dc,
-                   const android::renderscript::Script *script,
-                   void * intrinsicData,
-                   uint32_t slot, void *data, size_t dataLength);
-    void (*root)(const android::renderscript::RsForEachStubParamStruct *,
-                 uint32_t x1, uint32_t x2, uint32_t instep, uint32_t outstep);
-
-    void (*destroy)(const android::renderscript::Context *dc,
-                    const android::renderscript::Script *script,
-                    void * intrinsicData);
-} RsdIntriniscFuncs_t;
-
-struct DrvScript {
-    RsScriptIntrinsicID mIntrinsicID;
-    int (*mRoot)();
-    int (*mRootExpand)();
-    void (*mInit)();
-    void (*mFreeChildren)();
-
-    bcc::BCCContext *mCompilerContext;
-    bcc::RSCompilerDriver *mCompilerDriver;
-    bcc::RSExecutable *mExecutable;
-
-    android::renderscript::Allocation **mBoundAllocs;
-    RsdIntriniscFuncs_t mIntrinsicFuncs;
-    void * mIntrinsicData;
-};
-
-typedef struct {
-    android::renderscript::RsForEachStubParamStruct fep;
-    uint32_t cpuIdx;
-
-} MTThreadStuct;
-
-typedef struct {
-    android::renderscript::RsForEachStubParamStruct fep;
-
-    android::renderscript::Context *rsc;
-    android::renderscript::Script *script;
-    ForEachFunc_t kernel;
-    uint32_t sig;
-    const android::renderscript::Allocation * ain;
-    android::renderscript::Allocation * aout;
-
-    uint32_t mSliceSize;
-    volatile int mSliceNum;
-
-    uint32_t xStart;
-    uint32_t xEnd;
-    uint32_t yStart;
-    uint32_t yEnd;
-    uint32_t zStart;
-    uint32_t zEnd;
-    uint32_t arrayStart;
-    uint32_t arrayEnd;
-} MTLaunchStruct;
-
-void rsdScriptLaunchThreads(const android::renderscript::Context *rsc,
-                            android::renderscript::Script *s,
-                            uint32_t slot,
-                            const android::renderscript::Allocation * ain,
-                            android::renderscript::Allocation * aout,
-                            const void * usr,
-                            uint32_t usrLen,
-                            const RsScriptCall *sc,
-                            MTLaunchStruct *mtls);
-
-void rsdScriptInvokeForEachMtlsSetup(const android::renderscript::Context *rsc,
-                                     const android::renderscript::Allocation * ain,
-                                     android::renderscript::Allocation * aout,
-                                     const void * usr,
-                                     uint32_t usrLen,
-                                     const RsScriptCall *sc,
-                                     MTLaunchStruct *mtls);
-
-
 
 
 #endif

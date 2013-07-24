@@ -14,17 +14,14 @@
  * limitations under the License.
  */
 
-#define LOG_TAG "libRS_cpp"
-
-#include <utils/Log.h>
 #include <malloc.h>
 #include <string.h>
 
 #include "RenderScript.h"
-#include "Element.h"
+#include <rs.h>
 
 using namespace android;
-using namespace renderscriptCpp;
+using namespace RSC;
 
 sp<const Element> Element::getSubElement(uint32_t index) {
     if (!mVisibleElementMap.size()) {
@@ -43,7 +40,7 @@ const char * Element::getSubElementName(uint32_t index) {
     if (index >= mVisibleElementMap.size()) {
         mRS->throwError("Illegal sub-element index");
     }
-    return mElementNames[mVisibleElementMap[index]];
+    return mElementNames[mVisibleElementMap[index]].string();
 }
 
 size_t Element::getSubElementArraySize(uint32_t index) {
@@ -67,7 +64,7 @@ uint32_t Element::getSubElementOffsetBytes(uint32_t index) {
 }
 
 
-#define CREATE_USER(N, T) sp<const Element> Element::N(RenderScript *rs) { \
+#define CREATE_USER(N, T) sp<const Element> Element::N(sp<RS> rs) { \
     return createUser(rs, RS_TYPE_##T); \
 }
 CREATE_USER(BOOLEAN, BOOLEAN);
@@ -95,7 +92,7 @@ CREATE_USER(MATRIX_4X4, MATRIX_4X4);
 CREATE_USER(MATRIX_3X3, MATRIX_3X3);
 CREATE_USER(MATRIX_2X2, MATRIX_2X2);
 
-#define CREATE_PIXEL(N, T, K) sp<const Element> Element::N(RenderScript *rs) { \
+#define CREATE_PIXEL(N, T, K) sp<const Element> Element::N(sp<RS> rs) { \
     return createPixel(rs, RS_TYPE_##T, RS_KIND_##K); \
 }
 CREATE_PIXEL(A_8, UNSIGNED_8, PIXEL_A);
@@ -104,13 +101,13 @@ CREATE_PIXEL(RGB_888, UNSIGNED_8, PIXEL_RGB);
 CREATE_PIXEL(RGBA_4444, UNSIGNED_4_4_4_4, PIXEL_RGBA);
 CREATE_PIXEL(RGBA_8888, UNSIGNED_8, PIXEL_RGBA);
 
-#define CREATE_VECTOR(N, T) sp<const Element> Element::N##_2(RenderScript *rs) { \
+#define CREATE_VECTOR(N, T) sp<const Element> Element::N##_2(sp<RS> rs) { \
     return createVector(rs, RS_TYPE_##T, 2); \
 } \
-sp<const Element> Element::N##_3(RenderScript *rs) { \
+sp<const Element> Element::N##_3(sp<RS> rs) { \
     return createVector(rs, RS_TYPE_##T, 3); \
 } \
-sp<const Element> Element::N##_4(RenderScript *rs) { \
+sp<const Element> Element::N##_4(sp<RS> rs) { \
     return createVector(rs, RS_TYPE_##T, 4); \
 }
 CREATE_VECTOR(U8, UNSIGNED_8);
@@ -148,8 +145,8 @@ void Element::updateVisibleSubElements() {
     }
 }
 
-Element::Element(void *id, RenderScript *rs,
-                 android::Vector<sp</*const*/ Element> > &elements,
+Element::Element(void *id, sp<RS> rs,
+                 android::Vector<sp<Element> > &elements,
                  android::Vector<android::String8> &elementNames,
                  android::Vector<uint32_t> &arraySizes) : BaseObj(id, rs) {
     mSizeBytes = 0;
@@ -222,7 +219,7 @@ static uint32_t GetSizeInBytesForType(RsDataType dt) {
     return 0;
 }
 
-Element::Element(void *id, RenderScript *rs,
+Element::Element(void *id, sp<RS> rs,
                  RsDataType dt, RsDataKind dk, bool norm, uint32_t size) :
     BaseObj(id, rs)
 {
@@ -247,68 +244,25 @@ Element::Element(void *id, RenderScript *rs,
 Element::~Element() {
 }
 
-   /*
-    Element(int id, RenderScript rs) {
-        super(id, rs);
-    }
-    */
-
 void Element::updateFromNative() {
     BaseObj::updateFromNative();
-/*
-    // we will pack mType; mKind; mNormalized; mVectorSize; NumSubElements
-    int[] dataBuffer = new int[5];
-    mRS.nElementGetNativeData(getID(), dataBuffer);
-
-    mNormalized = dataBuffer[2] == 1 ? true : false;
-    mVectorSize = dataBuffer[3];
-    mSize = 0;
-    for (DataType dt: DataType.values()) {
-        if(dt.mID == dataBuffer[0]){
-            mType = dt;
-            mSize = mType.mSize * mVectorSize;
-        }
-    }
-    for (DataKind dk: DataKind.values()) {
-        if(dk.mID == dataBuffer[1]){
-            mKind = dk;
-        }
-    }
-
-    int numSubElements = dataBuffer[4];
-    if(numSubElements > 0) {
-        mElements = new Element[numSubElements];
-        mElementNames = new String[numSubElements];
-        mArraySizes = new int[numSubElements];
-        mOffsetInBytes = new int[numSubElements];
-
-        int[] subElementIds = new int[numSubElements];
-        mRS.nElementGetSubElements(getID(), subElementIds, mElementNames, mArraySizes);
-        for(int i = 0; i < numSubElements; i ++) {
-            mElements[i] = new Element(subElementIds[i], mRS);
-            mElements[i].updateFromNative();
-            mOffsetInBytes[i] = mSize;
-            mSize += mElements[i].mSize * mArraySizes[i];
-        }
-    }
-    */
     updateVisibleSubElements();
 }
 
-sp<const Element> Element::createUser(RenderScript *rs, RsDataType dt) {
-    void * id = rsElementCreate(rs->mContext, dt, RS_KIND_USER, false, 1);
+sp<const Element> Element::createUser(sp<RS> rs, RsDataType dt) {
+    void * id = rsElementCreate(rs->getContext(), dt, RS_KIND_USER, false, 1);
     return new Element(id, rs, dt, RS_KIND_USER, false, 1);
 }
 
-sp<const Element> Element::createVector(RenderScript *rs, RsDataType dt, uint32_t size) {
+sp<const Element> Element::createVector(sp<RS> rs, RsDataType dt, uint32_t size) {
     if (size < 2 || size > 4) {
         rs->throwError("Vector size out of range 2-4.");
     }
-    void *id = rsElementCreate(rs->mContext, dt, RS_KIND_USER, false, size);
+    void *id = rsElementCreate(rs->getContext(), dt, RS_KIND_USER, false, size);
     return new Element(id, rs, dt, RS_KIND_USER, false, size);
 }
 
-sp<const Element> Element::createPixel(RenderScript *rs, RsDataType dt, RsDataKind dk) {
+sp<const Element> Element::createPixel(sp<RS> rs, RsDataType dt, RsDataKind dk) {
     if (!(dk == RS_KIND_PIXEL_L ||
           dk == RS_KIND_PIXEL_A ||
           dk == RS_KIND_PIXEL_LA ||
@@ -355,7 +309,7 @@ sp<const Element> Element::createPixel(RenderScript *rs, RsDataType dt, RsDataKi
         break;
     }
 
-    void * id = rsElementCreate(rs->mContext, dt, dk, true, size);
+    void * id = rsElementCreate(rs->getContext(), dt, dk, true, size);
     return new Element(id, rs, dt, dk, true, size);
 }
 
@@ -375,7 +329,7 @@ bool Element::isCompatible(sp<const Element>e) {
             (mVectorSize == e->mVectorSize));
 }
 
-Element::Builder::Builder(RenderScript *rs) {
+Element::Builder::Builder(sp<RS> rs) {
     mRS = rs;
     mSkipPadding = false;
 }
@@ -384,7 +338,7 @@ void Element::Builder::add(sp</*const*/ Element>e, android::String8 &name, uint3
     // Skip padding fields after a vector 3 type.
     if (mSkipPadding) {
         const char *s1 = "#padding_";
-        const char *s2 = name;
+        const char *s2 = name.string();
         size_t len = strlen(s1);
         if (strlen(s2) >= len) {
             if (!memcmp(s1, s2, len)) {
@@ -417,7 +371,7 @@ sp<const Element> Element::Builder::create() {
         sizeArray[ct] = mElementNames[ct].length();
     }
 
-    void *id = rsElementCreate2(mRS->mContext,
+    void *id = rsElementCreate2(mRS->getContext(),
                                 (RsElement *)elementArray, fieldCount,
                                 nameArray, fieldCount * sizeof(size_t),  sizeArray,
                                 (const uint32_t *)mArraySizes.array(), fieldCount);

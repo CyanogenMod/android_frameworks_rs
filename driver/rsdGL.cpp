@@ -42,7 +42,7 @@
 #include "rsdVertexArray.h"
 #include "rsdFrameBufferObj.h"
 
-#include <gui/SurfaceTextureClient.h>
+#include <gui/Surface.h>
 #include <gui/DummyConsumer.h>
 
 using namespace android;
@@ -267,8 +267,6 @@ bool rsdGLInit(const Context *rsc) {
         }
     }
 
-    eglSwapInterval(dc->gl.egl.display, 0);
-
     if (numConfigs) {
         EGLConfig* const configs = new EGLConfig[numConfigs];
 
@@ -331,7 +329,7 @@ bool rsdGLInit(const Context *rsc) {
     // Create a BufferQueue with a fake consumer
     sp<BufferQueue> bq = new BufferQueue();
     bq->consumerConnect(new DummyConsumer());
-    sp<SurfaceTextureClient> stc(new SurfaceTextureClient(static_cast<sp<ISurfaceTexture> >(bq)));
+    sp<Surface> stc(new Surface(static_cast<sp<IGraphicBufferProducer> >(bq)));
 
     dc->gl.egl.surfaceDefault = eglCreateWindowSurface(dc->gl.egl.display, dc->gl.egl.config,
                                                        static_cast<ANativeWindow*>(stc.get()),

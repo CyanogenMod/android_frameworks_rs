@@ -21,21 +21,12 @@ LOCAL_SRC_FILES:= \
 	driver/rsdFrameBuffer.cpp \
 	driver/rsdFrameBufferObj.cpp \
 	driver/rsdGL.cpp \
-	driver/rsdIntrinsics.cpp \
-	driver/rsdIntrinsicBlend.cpp \
-	driver/rsdIntrinsicBlur.cpp \
-	driver/rsdIntrinsicConvolve3x3.cpp \
-	driver/rsdIntrinsicConvolve5x5.cpp \
-	driver/rsdIntrinsicLUT.cpp \
-	driver/rsdIntrinsicColorMatrix.cpp \
-	driver/rsdIntrinsicYuvToRGB.cpp \
 	driver/rsdMesh.cpp \
 	driver/rsdMeshObj.cpp \
 	driver/rsdPath.cpp \
 	driver/rsdProgram.cpp \
 	driver/rsdProgramRaster.cpp \
 	driver/rsdProgramStore.cpp \
-	driver/rsdRuntimeMath.cpp \
 	driver/rsdRuntimeStubs.cpp \
 	driver/rsdSampler.cpp \
 	driver/rsdScriptGroup.cpp \
@@ -43,15 +34,10 @@ LOCAL_SRC_FILES:= \
 	driver/rsdShaderCache.cpp \
 	driver/rsdVertexArray.cpp
 
-ifeq ($(ARCH_ARM_HAVE_NEON),true)
-    LOCAL_CFLAGS += -DARCH_ARM_HAVE_NEON
-    LOCAL_SRC_FILES+= \
-        driver/rsdIntrinsics_Convolve.S
-endif
 
-LOCAL_SHARED_LIBRARIES += libRS
-LOCAL_SHARED_LIBRARIES += libcutils libutils libEGL libGLESv1_CM libGLESv2
-LOCAL_SHARED_LIBRARIES += libbcc libbcinfo libui libgui libsync
+LOCAL_SHARED_LIBRARIES += libRS libRSCpuRef
+LOCAL_SHARED_LIBRARIES += liblog libcutils libutils libEGL libGLESv1_CM libGLESv2
+LOCAL_SHARED_LIBRARIES += libbcc libbcinfo libLLVM libui libgui libsync
 
 LOCAL_C_INCLUDES += frameworks/compile/libbcc/include
 
@@ -98,8 +84,8 @@ GEN := $(addprefix $(intermediates)/, \
         )
 
 $(GEN) : PRIVATE_PATH := $(LOCAL_PATH)
-$(GEN) : PRIVATE_CUSTOM_TOOL = $(RSG_GENERATOR) $< $@ <$(PRIVATE_PATH)/rs.spec
-$(GEN) : $(RSG_GENERATOR) $(LOCAL_PATH)/rs.spec
+$(GEN) : PRIVATE_CUSTOM_TOOL = cat $(PRIVATE_PATH)/rs.spec $(PRIVATE_PATH)/rsg.spec $(PRIVATE_PATH)/rs_native.spec | $(RSG_GENERATOR) $< $@
+$(GEN) : $(RSG_GENERATOR) $(LOCAL_PATH)/rs.spec $(LOCAL_PATH)/rsg.spec $(LOCAL_PATH)/rs_native.spec
 $(GEN): $(intermediates)/%.h : $(LOCAL_PATH)/%.h.rsg
 	$(transform-generated-source)
 
@@ -115,8 +101,8 @@ GEN := $(addprefix $(intermediates)/, \
         )
 
 $(GEN) : PRIVATE_PATH := $(LOCAL_PATH)
-$(GEN) : PRIVATE_CUSTOM_TOOL = $(RSG_GENERATOR) $< $@ <$(PRIVATE_PATH)/rs.spec
-$(GEN) : $(RSG_GENERATOR) $(LOCAL_PATH)/rs.spec
+$(GEN) : PRIVATE_CUSTOM_TOOL = cat $(PRIVATE_PATH)/rs.spec $(PRIVATE_PATH)/rsg.spec $(PRIVATE_PATH)/rs_native.spec | $(RSG_GENERATOR) $< $@
+$(GEN) : $(RSG_GENERATOR) $(LOCAL_PATH)/rs.spec $(LOCAL_PATH)/rsg.spec $(LOCAL_PATH)/rs_native.spec
 $(GEN): $(intermediates)/%.cpp : $(LOCAL_PATH)/%.cpp.rsg
 	$(transform-generated-source)
 
@@ -161,8 +147,8 @@ LOCAL_SRC_FILES:= \
 	rsThreadIO.cpp \
 	rsType.cpp
 
-LOCAL_SHARED_LIBRARIES += libcutils libutils libEGL libGLESv1_CM libGLESv2 libbcc
-LOCAL_SHARED_LIBRARIES += libui libbcinfo libgui libsync libdl
+LOCAL_SHARED_LIBRARIES += liblog libcutils libutils libEGL libGLESv1_CM libGLESv2 libbcc
+LOCAL_SHARED_LIBRARIES += libui libbcinfo libLLVM libgui libsync libdl
 
 LOCAL_STATIC_LIBRARIES := libft2
 
@@ -191,8 +177,8 @@ GEN := $(addprefix $(intermediates)/, \
         )
 
 $(GEN) : PRIVATE_PATH := $(LOCAL_PATH)
-$(GEN) : PRIVATE_CUSTOM_TOOL = $(RSG_GENERATOR) $< $@ <$(PRIVATE_PATH)/rs.spec
-$(GEN) : $(RSG_GENERATOR) $(LOCAL_PATH)/rs.spec
+$(GEN) : PRIVATE_CUSTOM_TOOL = cat $(PRIVATE_PATH)/rs.spec $(PRIVATE_PATH)/rsg.spec $(PRIVATE_PATH)/rs_native.spec | $(RSG_GENERATOR) $< $@
+$(GEN) : $(RSG_GENERATOR) $(LOCAL_PATH)/rs.spec $(LOCAL_PATH)/rsg.spec $(LOCAL_PATH)/rs_native.spec
 $(GEN): $(intermediates)/%.h : $(LOCAL_PATH)/%.h.rsg
 	$(transform-generated-source)
 
@@ -206,8 +192,8 @@ GEN := $(addprefix $(intermediates)/, \
         )
 
 $(GEN) : PRIVATE_PATH := $(LOCAL_PATH)
-$(GEN) : PRIVATE_CUSTOM_TOOL = $(RSG_GENERATOR) $< $@ <$(PRIVATE_PATH)/rs.spec
-$(GEN) : $(RSG_GENERATOR) $(LOCAL_PATH)/rs.spec
+$(GEN) : PRIVATE_CUSTOM_TOOL = cat $(PRIVATE_PATH)/rs.spec $(PRIVATE_PATH)/rsg.spec $(PRIVATE_PATH)/rs_native.spec | $(RSG_GENERATOR) $< $@
+$(GEN) : $(RSG_GENERATOR) $(LOCAL_PATH)/rs.spec $(LOCAL_PATH)/rsg.spec $(LOCAL_PATH)/rs_native.spec
 $(GEN): $(intermediates)/%.cpp : $(LOCAL_PATH)/%.cpp.rsg
 	$(transform-generated-source)
 
@@ -253,8 +239,214 @@ LOCAL_SRC_FILES:= \
 	rsThreadIO.cpp \
 	rsType.cpp
 
-LOCAL_STATIC_LIBRARIES := libcutils libutils
+LOCAL_STATIC_LIBRARIES := libcutils libutils liblog
 
 LOCAL_LDLIBS := -lpthread
 
 include $(BUILD_HOST_STATIC_LIBRARY)
+
+
+LLVM_ROOT_PATH := external/llvm
+
+#=============================================================================
+# android librsloader for libbcc (Device)
+#-----------------------------------------------------------------------------
+
+rsloader_SRC_FILES := \
+  driver/linkloader/android/librsloader.cpp \
+  driver/linkloader/lib/ELFHeader.cpp \
+  driver/linkloader/lib/ELFSymbol.cpp \
+  driver/linkloader/lib/ELFSectionHeader.cpp \
+  driver/linkloader/lib/ELFTypes.cpp \
+  driver/linkloader/lib/GOT.cpp \
+  driver/linkloader/lib/MemChunk.cpp \
+  driver/linkloader/lib/StubLayout.cpp \
+  driver/linkloader/utils/helper.cpp \
+  driver/linkloader/utils/raw_ostream.cpp \
+  driver/linkloader/utils/rsl_assert.cpp
+
+include $(CLEAR_VARS)
+
+LOCAL_MODULE := librsloader
+
+LOCAL_MODULE_TAGS := optional
+
+LOCAL_SRC_FILES := $(rsloader_SRC_FILES)
+
+LOCAL_ADDITIONAL_DEPENDENCIES := $(LOCAL_PATH)/Android.mk
+
+LOCAL_CFLAGS += $(rs_base_CFLAGS)
+
+LOCAL_C_INCLUDES := \
+  $(LOCAL_PATH)/driver/linkloader \
+  $(LOCAL_PATH)/driver/linkloader/include \
+  $(LOCAL_C_INCLUDES)
+
+include $(LLVM_ROOT_PATH)/llvm-device-build.mk
+include $(BUILD_STATIC_LIBRARY)
+
+
+#=============================================================================
+# android librsloader for libbcc (Host)
+#-----------------------------------------------------------------------------
+
+include $(CLEAR_VARS)
+
+LOCAL_MODULE := librsloader
+
+LOCAL_MODULE_TAGS := optional
+
+LOCAL_SRC_FILES := $(rsloader_SRC_FILES)
+
+LOCAL_ADDITIONAL_DEPENDENCIES := $(LOCAL_PATH)/Android.mk
+
+LOCAL_CFLAGS += $(rs_base_CFLAGS)
+LOCAL_CFLAGS += -D__HOST__
+
+LOCAL_C_INCLUDES := \
+  $(LOCAL_PATH)/driver/linkloader \
+  $(LOCAL_PATH)/driver/linkloader/include \
+  $(LOCAL_C_INCLUDES)
+
+include $(LLVM_ROOT_PATH)/llvm-host-build.mk
+include $(BUILD_HOST_STATIC_LIBRARY)
+
+
+#=============================================================================
+# librsloader-test (Device)
+#-----------------------------------------------------------------------------
+
+include $(CLEAR_VARS)
+
+LOCAL_MODULE := test-librsloader
+
+LOCAL_MODULE_TAGS := tests
+
+LOCAL_SHARED_LIBRARIES := \
+  libstlport
+
+LOCAL_STATIC_LIBRARIES := \
+  librsloader \
+  libcutils \
+  liblog \
+  libLLVMSupport
+
+LOCAL_SRC_FILES := \
+  driver/linkloader/android/test-librsloader.c
+
+LOCAL_ADDITIONAL_DEPENDENCIES := $(LOCAL_PATH)/Android.mk
+
+LOCAL_CFLAGS += $(rs_base_CFLAGS)
+
+LOCAL_C_INCLUDES := \
+  $(LOCAL_PATH)/driver/linkloader \
+  $(LOCAL_PATH)/driver/linkloader/include
+
+include $(LLVM_ROOT_PATH)/llvm-device-build.mk
+include $(BUILD_EXECUTABLE)
+
+
+#=============================================================================
+# librsloader-test (Host)
+#-----------------------------------------------------------------------------
+
+include $(CLEAR_VARS)
+
+LOCAL_MODULE := test-librsloader
+
+LOCAL_MODULE_TAGS := tests
+
+LOCAL_LDLIBS := \
+  -lpthread \
+  -ldl
+
+LOCAL_STATIC_LIBRARIES := \
+  librsloader \
+  libcutils \
+  liblog \
+  libLLVMSupport
+
+LOCAL_SRC_FILES := \
+  driver/linkloader/android/test-librsloader.c
+
+LOCAL_ADDITIONAL_DEPENDENCIES := $(LOCAL_PATH)/Android.mk
+
+LOCAL_CFLAGS += $(rs_base_CFLAGS)
+
+LOCAL_C_INCLUDES := \
+  $(LOCAL_PATH)/driver/linkloader \
+  $(LOCAL_PATH)/driver/linkloader/include
+
+include $(LLVM_ROOT_PATH)/llvm-host-build.mk
+include $(BUILD_HOST_EXECUTABLE)
+
+
+#=============================================================================
+# rsloader
+#-----------------------------------------------------------------------------
+
+ifdef BUILD_RSLOADER_TOOL
+include $(CLEAR_VARS)
+
+LOCAL_MODULE := rsloader
+
+LOCAL_MODULE_TAGS := tests
+
+LOCAL_SHARED_LIBRARIES := \
+  libstlport
+
+LOCAL_STATIC_LIBRARIES := \
+  libLLVMSupport
+
+LOCAL_SRC_FILES := \
+  driver/linkloader/lib/ELFHeader.cpp \
+  driver/linkloader/lib/ELFSymbol.cpp \
+  driver/linkloader/lib/ELFSectionHeader.cpp \
+  driver/linkloader/lib/ELFTypes.cpp \
+  driver/linkloader/lib/StubLayout.cpp \
+  driver/linkloader/utils/raw_ostream.cpp \
+  driver/linkloader/utils/rsl_assert.cpp \
+  driver/linkloader/utils/helper.cpp \
+  driver/linkloader/main.cpp
+
+LOCAL_C_INCLUDES := \
+  $(LOCAL_PATH)/driver/linkloader \
+  $(LOCAL_PATH)/driver/linkloader/include \
+  $(LOCAL_C_INCLUDES)
+
+include $(LLVM_ROOT_PATH)/llvm-device-build.mk
+include $(BUILD_EXECUTABLE)
+endif
+
+
+#=============================================================================
+# stub-layout-unit-test
+#-----------------------------------------------------------------------------
+
+ifdef BUILD_STUB_LAYOUT_TEST
+include $(CLEAR_VARS)
+
+LOCAL_MODULE := stub-layout-unit-test
+
+LOCAL_MODULE_TAGS := tests
+
+LOCAL_SHARED_LIBRARIES := \
+  libstlport
+
+LOCAL_SRC_FILES := \
+  driver/linkloader/lib/StubLayout.cpp \
+  driver/linkloader/utils/raw_ostream.cpp \
+  driver/linkloader/utils/helper.cpp \
+  driver/linkloader/tests/stub-test.cpp
+
+LOCAL_C_INCLUDES := \
+  $(LOCAL_PATH)/driver/linkloader \
+  $(LOCAL_PATH)/driver/linkloader/include \
+  $(LOCAL_C_INCLUDES)
+
+include $(LLVM_ROOT_PATH)/llvm-device-build.mk
+include $(BUILD_EXECUTABLE)
+endif
+
+
+include $(call all-makefiles-under,$(LOCAL_PATH))

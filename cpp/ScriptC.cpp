@@ -14,22 +14,20 @@
  * limitations under the License.
  */
 
-#define LOG_TAG "libRS_cpp"
-
-#include <utils/Log.h>
 #include <malloc.h>
 
-#include "ScriptC.h"
+#include "RenderScript.h"
+#include <rs.h>
 
 using namespace android;
-using namespace renderscriptCpp;
+using namespace RSC;
 
-ScriptC::ScriptC(RenderScript *rs,
+ScriptC::ScriptC(sp<RS> rs,
                  const void *codeTxt, size_t codeLength,
                  const char *cachedName, size_t cachedNameLength,
                  const char *cacheDir, size_t cacheDirLength)
 : Script(NULL, rs) {
-    mID = rsScriptCCreate(rs->mContext, cachedName, cachedNameLength,
+    mID = rsScriptCCreate(rs->getContext(), cachedName, cachedNameLength,
                           cacheDir, cacheDirLength, (const char *)codeTxt, codeLength);
 }
 

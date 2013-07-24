@@ -469,7 +469,7 @@ bool FontState::cacheBitmap(FT_Bitmap *bitmap, uint32_t *retOriginX, uint32_t *r
 
     mRSC->mHal.funcs.allocation.data2D(mRSC, mTextTexture.get(), 0, 0, 0,
         RS_ALLOCATION_CUBEMAP_FACE_POSITIVE_X, mCacheWidth, mCacheHeight,
-        mCacheBuffer, mCacheWidth*mCacheHeight);
+        mCacheBuffer, mCacheWidth*mCacheHeight, mCacheWidth);
 
     mFontShaderF->bindTexture(mRSC, 0, mTextTexture.get());
 
@@ -507,7 +507,7 @@ void FontState::initRenderState() {
     builder.add(gammaElem.get(), "Gamma", 1);
     ObjectBaseRef<const Element> constInput = builder.create(mRSC);
 
-    ObjectBaseRef<Type> inputType = Type::getTypeRef(mRSC, constInput.get(), 1, 0, 0, false, false);
+    ObjectBaseRef<Type> inputType = Type::getTypeRef(mRSC, constInput.get(), 1, 0, 0, false, false, 0);
 
     uint32_t tmp[4];
     tmp[0] = RS_PROGRAM_PARAM_CONSTANT;
@@ -545,7 +545,7 @@ void FontState::initTextTexture() {
     mCacheHeight = 256;
     mCacheWidth = 1024;
     ObjectBaseRef<Type> texType = Type::getTypeRef(mRSC, alphaElem.get(),
-                                                   mCacheWidth, mCacheHeight, 0, false, false);
+                                                   mCacheWidth, mCacheHeight, 0, false, false, 0);
     mCacheBuffer = new uint8_t[mCacheWidth * mCacheHeight];
 
 
@@ -575,7 +575,7 @@ void FontState::initVertexArrayBuffers() {
     // Now lets write index data
     ObjectBaseRef<const Element> indexElem = Element::createRef(mRSC, RS_TYPE_UNSIGNED_16, RS_KIND_USER, false, 1);
     uint32_t numIndicies = mMaxNumberOfQuads * 6;
-    ObjectBaseRef<Type> indexType = Type::getTypeRef(mRSC, indexElem.get(), numIndicies, 0, 0, false, false);
+    ObjectBaseRef<Type> indexType = Type::getTypeRef(mRSC, indexElem.get(), numIndicies, 0, 0, false, false, 0);
 
     Allocation *indexAlloc = Allocation::createAllocation(mRSC, indexType.get(),
                                                           RS_ALLOCATION_USAGE_SCRIPT |
@@ -608,7 +608,7 @@ void FontState::initVertexArrayBuffers() {
 
     ObjectBaseRef<Type> vertexDataType = Type::getTypeRef(mRSC, vertexDataElem.get(),
                                                           mMaxNumberOfQuads * 4,
-                                                          0, 0, false, false);
+                                                          0, 0, false, false, 0);
 
     Allocation *vertexAlloc = Allocation::createAllocation(mRSC, vertexDataType.get(),
                                                            RS_ALLOCATION_USAGE_SCRIPT);

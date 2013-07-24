@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 The Android Open Source Project
+ * Copyright (C) 2011-2012 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,11 +21,9 @@
 #include "rsMatrix2x2.h"
 #include "rsRuntime.h"
 
-#include "utils/Timers.h"
 #include "rsdCore.h"
 #include "rsdBcc.h"
 
-#include "rsdRuntime.h"
 #include "rsdPath.h"
 #include "rsdAllocation.h"
 #include "rsdShaderCache.h"
@@ -36,14 +34,12 @@
 using namespace android;
 using namespace android::renderscript;
 
-#define GET_TLS()  ScriptTLSStruct * tls = \
-    (ScriptTLSStruct *)pthread_getspecific(rsdgThreadTLSKey); \
-    Context * rsc = tls->mContext; \
-    ScriptC * sc = (ScriptC *) tls->mScript
-
 typedef float float2 __attribute__((ext_vector_type(2)));
 typedef float float3 __attribute__((ext_vector_type(3)));
 typedef float float4 __attribute__((ext_vector_type(4)));
+typedef double double2 __attribute__((ext_vector_type(2)));
+typedef double double3 __attribute__((ext_vector_type(3)));
+typedef double double4 __attribute__((ext_vector_type(4)));
 typedef char char2 __attribute__((ext_vector_type(2)));
 typedef char char3 __attribute__((ext_vector_type(3)));
 typedef char char4 __attribute__((ext_vector_type(4)));
@@ -69,6 +65,37 @@ typedef unsigned long long ulong2 __attribute__((ext_vector_type(2)));
 typedef unsigned long long ulong3 __attribute__((ext_vector_type(3)));
 typedef unsigned long long ulong4 __attribute__((ext_vector_type(4)));
 
+typedef uint8_t uchar;
+typedef uint16_t ushort;
+typedef uint32_t uint;
+#ifndef RS_SERVER
+typedef uint64_t ulong;
+#endif
+
+#ifdef RS_COMPATIBILITY_LIB
+#define OPAQUETYPE(t) \
+    typedef struct { const int* const p; } __attribute__((packed, aligned(4))) t;
+
+OPAQUETYPE(rs_element)
+OPAQUETYPE(rs_type)
+OPAQUETYPE(rs_allocation)
+OPAQUETYPE(rs_sampler)
+OPAQUETYPE(rs_script)
+OPAQUETYPE(rs_script_call)
+#undef OPAQUETYPE
+
+typedef struct {
+    int tm_sec;     ///< seconds
+    int tm_min;     ///< minutes
+    int tm_hour;    ///< hours
+    int tm_mday;    ///< day of the month
+    int tm_mon;     ///< month
+    int tm_year;    ///< year
+    int tm_wday;    ///< day of the week
+    int tm_yday;    ///< day of the year
+    int tm_isdst;   ///< daylight savings time
+} rs_tm;
+#endif
 
 //////////////////////////////////////////////////////////////////////////////
 // Allocation
@@ -76,13 +103,13 @@ typedef unsigned long long ulong4 __attribute__((ext_vector_type(4)));
 
 
 static void SC_AllocationSyncAll2(Allocation *a, RsAllocationUsageType source) {
-    GET_TLS();
-    rsrAllocationSyncAll(rsc, sc, a, source);
+    Context *rsc = RsdCpuReference::getTlsContext();
+    rsrAllocationSyncAll(rsc, a, source);
 }
 
 static void SC_AllocationSyncAll(Allocation *a) {
-    GET_TLS();
-    rsrAllocationSyncAll(rsc, sc, a, RS_ALLOCATION_USAGE_SCRIPT);
+    Context *rsc = RsdCpuReference::getTlsContext();
+    rsrAllocationSyncAll(rsc, a, RS_ALLOCATION_USAGE_SCRIPT);
 }
 
 static void SC_AllocationCopy1DRange(Allocation *dstAlloc,
@@ -91,7 +118,7 @@ static void SC_AllocationCopy1DRange(Allocation *dstAlloc,
                                      uint32_t count,
                                      Allocation *srcAlloc,
                                      uint32_t srcOff, uint32_t srcMip) {
-    GET_TLS();
+    Context *rsc = RsdCpuReference::getTlsContext();
     rsrAllocationCopy1DRange(rsc, dstAlloc, dstOff, dstMip, count,
                              srcAlloc, srcOff, srcMip);
 }
@@ -103,7 +130,7 @@ static void SC_AllocationCopy2DRange(Allocation *dstAlloc,
                                      Allocation *srcAlloc,
                                      uint32_t srcXoff, uint32_t srcYoff,
                                      uint32_t srcMip, uint32_t srcFace) {
-    GET_TLS();
+    Context *rsc = RsdCpuReference::getTlsContext();
     rsrAllocationCopy2DRange(rsc, dstAlloc,
                              dstXoff, dstYoff, dstMip, dstFace,
                              width, height,
@@ -111,14 +138,15 @@ static void SC_AllocationCopy2DRange(Allocation *dstAlloc,
                              srcXoff, srcYoff, srcMip, srcFace);
 }
 
+#ifndef RS_COMPATIBILITY_LIB
 static void SC_AllocationIoSend(Allocation *alloc) {
-    GET_TLS();
+    Context *rsc = RsdCpuReference::getTlsContext();
     rsdAllocationIoSend(rsc, alloc);
 }
 
 
 static void SC_AllocationIoReceive(Allocation *alloc) {
-    GET_TLS();
+    Context *rsc = RsdCpuReference::getTlsContext();
     rsdAllocationIoReceive(rsc, alloc);
 }
 
@@ -129,68 +157,68 @@ static void SC_AllocationIoReceive(Allocation *alloc) {
 //////////////////////////////////////////////////////////////////////////////
 
 static void SC_BindTexture(ProgramFragment *pf, uint32_t slot, Allocation *a) {
-    GET_TLS();
-    rsrBindTexture(rsc, sc, pf, slot, a);
+    Context *rsc = RsdCpuReference::getTlsContext();
+    rsrBindTexture(rsc, pf, slot, a);
 }
 
 static void SC_BindVertexConstant(ProgramVertex *pv, uint32_t slot, Allocation *a) {
-    GET_TLS();
-    rsrBindConstant(rsc, sc, pv, slot, a);
+    Context *rsc = RsdCpuReference::getTlsContext();
+    rsrBindConstant(rsc, pv, slot, a);
 }
 
 static void SC_BindFragmentConstant(ProgramFragment *pf, uint32_t slot, Allocation *a) {
-    GET_TLS();
-    rsrBindConstant(rsc, sc, pf, slot, a);
+    Context *rsc = RsdCpuReference::getTlsContext();
+    rsrBindConstant(rsc, pf, slot, a);
 }
 
 static void SC_BindSampler(ProgramFragment *pf, uint32_t slot, Sampler *s) {
-    GET_TLS();
-    rsrBindSampler(rsc, sc, pf, slot, s);
+    Context *rsc = RsdCpuReference::getTlsContext();
+    rsrBindSampler(rsc, pf, slot, s);
 }
 
 static void SC_BindProgramStore(ProgramStore *ps) {
-    GET_TLS();
-    rsrBindProgramStore(rsc, sc, ps);
+    Context *rsc = RsdCpuReference::getTlsContext();
+    rsrBindProgramStore(rsc, ps);
 }
 
 static void SC_BindProgramFragment(ProgramFragment *pf) {
-    GET_TLS();
-    rsrBindProgramFragment(rsc, sc, pf);
+    Context *rsc = RsdCpuReference::getTlsContext();
+    rsrBindProgramFragment(rsc, pf);
 }
 
 static void SC_BindProgramVertex(ProgramVertex *pv) {
-    GET_TLS();
-    rsrBindProgramVertex(rsc, sc, pv);
+    Context *rsc = RsdCpuReference::getTlsContext();
+    rsrBindProgramVertex(rsc, pv);
 }
 
 static void SC_BindProgramRaster(ProgramRaster *pr) {
-    GET_TLS();
-    rsrBindProgramRaster(rsc, sc, pr);
+    Context *rsc = RsdCpuReference::getTlsContext();
+    rsrBindProgramRaster(rsc, pr);
 }
 
 static void SC_BindFrameBufferObjectColorTarget(Allocation *a, uint32_t slot) {
-    GET_TLS();
-    rsrBindFrameBufferObjectColorTarget(rsc, sc, a, slot);
+    Context *rsc = RsdCpuReference::getTlsContext();
+    rsrBindFrameBufferObjectColorTarget(rsc, a, slot);
 }
 
 static void SC_BindFrameBufferObjectDepthTarget(Allocation *a) {
-    GET_TLS();
-    rsrBindFrameBufferObjectDepthTarget(rsc, sc, a);
+    Context *rsc = RsdCpuReference::getTlsContext();
+    rsrBindFrameBufferObjectDepthTarget(rsc, a);
 }
 
 static void SC_ClearFrameBufferObjectColorTarget(uint32_t slot) {
-    GET_TLS();
-    rsrClearFrameBufferObjectColorTarget(rsc, sc, slot);
+    Context *rsc = RsdCpuReference::getTlsContext();
+    rsrClearFrameBufferObjectColorTarget(rsc, slot);
 }
 
 static void SC_ClearFrameBufferObjectDepthTarget(Context *, Script *) {
-    GET_TLS();
-    rsrClearFrameBufferObjectDepthTarget(rsc, sc);
+    Context *rsc = RsdCpuReference::getTlsContext();
+    rsrClearFrameBufferObjectDepthTarget(rsc);
 }
 
 static void SC_ClearFrameBufferObjectTargets(Context *, Script *) {
-    GET_TLS();
-    rsrClearFrameBufferObjectTargets(rsc, sc);
+    Context *rsc = RsdCpuReference::getTlsContext();
+    rsrClearFrameBufferObjectTargets(rsc);
 }
 
 
@@ -199,28 +227,28 @@ static void SC_ClearFrameBufferObjectTargets(Context *, Script *) {
 //////////////////////////////////////////////////////////////////////////////
 
 static void SC_VpLoadProjectionMatrix(const rsc_Matrix *m) {
-    GET_TLS();
-    rsrVpLoadProjectionMatrix(rsc, sc, m);
+    Context *rsc = RsdCpuReference::getTlsContext();
+    rsrVpLoadProjectionMatrix(rsc, m);
 }
 
 static void SC_VpLoadModelMatrix(const rsc_Matrix *m) {
-    GET_TLS();
-    rsrVpLoadModelMatrix(rsc, sc, m);
+    Context *rsc = RsdCpuReference::getTlsContext();
+    rsrVpLoadModelMatrix(rsc, m);
 }
 
 static void SC_VpLoadTextureMatrix(const rsc_Matrix *m) {
-    GET_TLS();
-    rsrVpLoadTextureMatrix(rsc, sc, m);
+    Context *rsc = RsdCpuReference::getTlsContext();
+    rsrVpLoadTextureMatrix(rsc, m);
 }
 
 static void SC_PfConstantColor(ProgramFragment *pf, float r, float g, float b, float a) {
-    GET_TLS();
-    rsrPfConstantColor(rsc, sc, pf, r, g, b, a);
+    Context *rsc = RsdCpuReference::getTlsContext();
+    rsrPfConstantColor(rsc, pf, r, g, b, a);
 }
 
 static void SC_VpGetProjectionMatrix(rsc_Matrix *m) {
-    GET_TLS();
-    rsrVpGetProjectionMatrix(rsc, sc, m);
+    Context *rsc = RsdCpuReference::getTlsContext();
+    rsrVpGetProjectionMatrix(rsc, m);
 }
 
 
@@ -232,7 +260,7 @@ static void SC_DrawQuadTexCoords(float x1, float y1, float z1, float u1, float v
                                  float x2, float y2, float z2, float u2, float v2,
                                  float x3, float y3, float z3, float u3, float v3,
                                  float x4, float y4, float z4, float u4, float v4) {
-    GET_TLS();
+    Context *rsc = RsdCpuReference::getTlsContext();
 
     if (!rsc->setupCheck()) {
         return;
@@ -266,7 +294,6 @@ static void SC_DrawQuad(float x1, float y1, float z1,
                         float x2, float y2, float z2,
                         float x3, float y3, float z3,
                         float x4, float y4, float z4) {
-    GET_TLS();
     SC_DrawQuadTexCoords(x1, y1, z1, 0, 1,
                          x2, y2, z2, 1, 1,
                          x3, y3, z3, 1, 0,
@@ -274,7 +301,7 @@ static void SC_DrawQuad(float x1, float y1, float z1,
 }
 
 static void SC_DrawSpriteScreenspace(float x, float y, float z, float w, float h) {
-    GET_TLS();
+    Context *rsc = RsdCpuReference::getTlsContext();
 
     ObjectBaseRef<const ProgramVertex> tmp(rsc->getProgramVertex());
     rsc->setProgramVertex(rsc->getDefaultProgramVertex());
@@ -292,38 +319,34 @@ static void SC_DrawSpriteScreenspace(float x, float y, float z, float w, float h
 }
 
 static void SC_DrawRect(float x1, float y1, float x2, float y2, float z) {
-    GET_TLS();
-
     SC_DrawQuad(x1, y2, z, x2, y2, z, x2, y1, z, x1, y1, z);
-
 }
 
 static void SC_DrawPath(Path *p) {
-    GET_TLS();
-    //rsrDrawPath(rsc, sc, p);
+    Context *rsc = RsdCpuReference::getTlsContext();
     rsdPathDraw(rsc, p);
 }
 
 static void SC_DrawMesh(Mesh *m) {
-    GET_TLS();
-    rsrDrawMesh(rsc, sc, m);
+    Context *rsc = RsdCpuReference::getTlsContext();
+    rsrDrawMesh(rsc, m);
 }
 
 static void SC_DrawMeshPrimitive(Mesh *m, uint32_t primIndex) {
-    GET_TLS();
-    rsrDrawMeshPrimitive(rsc, sc, m, primIndex);
+    Context *rsc = RsdCpuReference::getTlsContext();
+    rsrDrawMeshPrimitive(rsc, m, primIndex);
 }
 
 static void SC_DrawMeshPrimitiveRange(Mesh *m, uint32_t primIndex, uint32_t start, uint32_t len) {
-    GET_TLS();
-    rsrDrawMeshPrimitiveRange(rsc, sc, m, primIndex, start, len);
+    Context *rsc = RsdCpuReference::getTlsContext();
+    rsrDrawMeshPrimitiveRange(rsc, m, primIndex, start, len);
 }
 
 static void SC_MeshComputeBoundingBox(Mesh *m,
                                float *minX, float *minY, float *minZ,
                                float *maxX, float *maxY, float *maxZ) {
-    GET_TLS();
-    rsrMeshComputeBoundingBox(rsc, sc, m, minX, minY, minZ, maxX, maxY, maxZ);
+    Context *rsc = RsdCpuReference::getTlsContext();
+    rsrMeshComputeBoundingBox(rsc, m, minX, minY, minZ, maxX, maxY, maxZ);
 }
 
 
@@ -334,69 +357,69 @@ static void SC_MeshComputeBoundingBox(Mesh *m,
 
 
 static void SC_Color(float r, float g, float b, float a) {
-    GET_TLS();
-    rsrColor(rsc, sc, r, g, b, a);
+    Context *rsc = RsdCpuReference::getTlsContext();
+    rsrColor(rsc, r, g, b, a);
 }
 
 static void SC_Finish() {
-    GET_TLS();
+    Context *rsc = RsdCpuReference::getTlsContext();
     rsdGLFinish(rsc);
 }
 
 static void SC_ClearColor(float r, float g, float b, float a) {
-    GET_TLS();
-    rsrPrepareClear(rsc, sc);
+    Context *rsc = RsdCpuReference::getTlsContext();
+    rsrPrepareClear(rsc);
     rsdGLClearColor(rsc, r, g, b, a);
 }
 
 static void SC_ClearDepth(float v) {
-    GET_TLS();
-    rsrPrepareClear(rsc, sc);
+    Context *rsc = RsdCpuReference::getTlsContext();
+    rsrPrepareClear(rsc);
     rsdGLClearDepth(rsc, v);
 }
 
 static uint32_t SC_GetWidth() {
-    GET_TLS();
-    return rsrGetWidth(rsc, sc);
+    Context *rsc = RsdCpuReference::getTlsContext();
+    return rsrGetWidth(rsc);
 }
 
 static uint32_t SC_GetHeight() {
-    GET_TLS();
-    return rsrGetHeight(rsc, sc);
+    Context *rsc = RsdCpuReference::getTlsContext();
+    return rsrGetHeight(rsc);
 }
 
 static void SC_DrawTextAlloc(Allocation *a, int x, int y) {
-    GET_TLS();
-    rsrDrawTextAlloc(rsc, sc, a, x, y);
+    Context *rsc = RsdCpuReference::getTlsContext();
+    rsrDrawTextAlloc(rsc, a, x, y);
 }
 
 static void SC_DrawText(const char *text, int x, int y) {
-    GET_TLS();
-    rsrDrawText(rsc, sc, text, x, y);
+    Context *rsc = RsdCpuReference::getTlsContext();
+    rsrDrawText(rsc, text, x, y);
 }
 
 static void SC_MeasureTextAlloc(Allocation *a,
                          int32_t *left, int32_t *right, int32_t *top, int32_t *bottom) {
-    GET_TLS();
-    rsrMeasureTextAlloc(rsc, sc, a, left, right, top, bottom);
+    Context *rsc = RsdCpuReference::getTlsContext();
+    rsrMeasureTextAlloc(rsc, a, left, right, top, bottom);
 }
 
 static void SC_MeasureText(const char *text,
                     int32_t *left, int32_t *right, int32_t *top, int32_t *bottom) {
-    GET_TLS();
-    rsrMeasureText(rsc, sc, text, left, right, top, bottom);
+    Context *rsc = RsdCpuReference::getTlsContext();
+    rsrMeasureText(rsc, text, left, right, top, bottom);
 }
 
 static void SC_BindFont(Font *f) {
-    GET_TLS();
-    rsrBindFont(rsc, sc, f);
+    Context *rsc = RsdCpuReference::getTlsContext();
+    rsrBindFont(rsc, f);
 }
 
 static void SC_FontColor(float r, float g, float b, float a) {
-    GET_TLS();
-    rsrFontColor(rsc, sc, r, g, b, a);
+    Context *rsc = RsdCpuReference::getTlsContext();
+    rsrFontColor(rsc, r, g, b, a);
 }
-
+#endif
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -404,41 +427,42 @@ static void SC_FontColor(float r, float g, float b, float a) {
 //////////////////////////////////////////////////////////////////////////////
 
 static void SC_SetObject(ObjectBase **dst, ObjectBase * src) {
-    GET_TLS();
-    rsrSetObject(rsc, sc, dst, src);
+    Context *rsc = RsdCpuReference::getTlsContext();
+    rsrSetObject(rsc, dst, src);
 }
 
 static void SC_ClearObject(ObjectBase **dst) {
-    GET_TLS();
-    rsrClearObject(rsc, sc, dst);
+    Context *rsc = RsdCpuReference::getTlsContext();
+    rsrClearObject(rsc, dst);
 }
 
 static bool SC_IsObject(const ObjectBase *src) {
-    GET_TLS();
-    return rsrIsObject(rsc, sc, src);
+    Context *rsc = RsdCpuReference::getTlsContext();
+    return rsrIsObject(rsc, src);
 }
 
 
 
 
 static const Allocation * SC_GetAllocation(const void *ptr) {
-    GET_TLS();
+    Context *rsc = RsdCpuReference::getTlsContext();
+    const Script *sc = RsdCpuReference::getTlsScript();
     return rsdScriptGetAllocationForPointer(rsc, sc, ptr);
 }
 
 static void SC_ForEach_SAA(Script *target,
                             Allocation *in,
                             Allocation *out) {
-    GET_TLS();
-    rsrForEach(rsc, sc, target, in, out, NULL, 0, NULL);
+    Context *rsc = RsdCpuReference::getTlsContext();
+    rsrForEach(rsc, target, in, out, NULL, 0, NULL);
 }
 
 static void SC_ForEach_SAAU(Script *target,
                             Allocation *in,
                             Allocation *out,
                             const void *usr) {
-    GET_TLS();
-    rsrForEach(rsc, sc, target, in, out, usr, 0, NULL);
+    Context *rsc = RsdCpuReference::getTlsContext();
+    rsrForEach(rsc, target, in, out, usr, 0, NULL);
 }
 
 static void SC_ForEach_SAAUS(Script *target,
@@ -446,8 +470,8 @@ static void SC_ForEach_SAAUS(Script *target,
                              Allocation *out,
                              const void *usr,
                              const RsScriptCall *call) {
-    GET_TLS();
-    rsrForEach(rsc, sc, target, in, out, usr, 0, call);
+    Context *rsc = RsdCpuReference::getTlsContext();
+    rsrForEach(rsc, target, in, out, usr, 0, call);
 }
 
 static void SC_ForEach_SAAUL(Script *target,
@@ -455,8 +479,8 @@ static void SC_ForEach_SAAUL(Script *target,
                              Allocation *out,
                              const void *usr,
                              uint32_t usrLen) {
-    GET_TLS();
-    rsrForEach(rsc, sc, target, in, out, usr, usrLen, NULL);
+    Context *rsc = RsdCpuReference::getTlsContext();
+    rsrForEach(rsc, target, in, out, usr, usrLen, NULL);
 }
 
 static void SC_ForEach_SAAULS(Script *target,
@@ -465,8 +489,8 @@ static void SC_ForEach_SAAULS(Script *target,
                               const void *usr,
                               uint32_t usrLen,
                               const RsScriptCall *call) {
-    GET_TLS();
-    rsrForEach(rsc, sc, target, in, out, usr, usrLen, call);
+    Context *rsc = RsdCpuReference::getTlsContext();
+    rsrForEach(rsc, target, in, out, usr, usrLen, call);
 }
 
 
@@ -476,28 +500,36 @@ static void SC_ForEach_SAAULS(Script *target,
 //////////////////////////////////////////////////////////////////////////////
 
 static float SC_GetDt() {
-    GET_TLS();
+    Context *rsc = RsdCpuReference::getTlsContext();
+    const Script *sc = RsdCpuReference::getTlsScript();
     return rsrGetDt(rsc, sc);
 }
 
+#ifndef RS_COMPATIBILITY_LIB
 time_t SC_Time(time_t *timer) {
-    GET_TLS();
-    return rsrTime(rsc, sc, timer);
+    Context *rsc = RsdCpuReference::getTlsContext();
+    return rsrTime(rsc, timer);
 }
+#else
+static int SC_Time(int *timer) {
+    Context *rsc = RsdCpuReference::getTlsContext();
+    return rsrTime(rsc, (long*)timer);
+}
+#endif
 
 tm* SC_LocalTime(tm *local, time_t *timer) {
-    GET_TLS();
-    return rsrLocalTime(rsc, sc, local, timer);
+    Context *rsc = RsdCpuReference::getTlsContext();
+    return rsrLocalTime(rsc, local, timer);
 }
 
 int64_t SC_UptimeMillis() {
-    GET_TLS();
-    return rsrUptimeMillis(rsc, sc);
+    Context *rsc = RsdCpuReference::getTlsContext();
+    return rsrUptimeMillis(rsc);
 }
 
 int64_t SC_UptimeNanos() {
-    GET_TLS();
-    return rsrUptimeNanos(rsc, sc);
+    Context *rsc = RsdCpuReference::getTlsContext();
+    return rsrUptimeNanos(rsc);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -505,39 +537,752 @@ int64_t SC_UptimeNanos() {
 //////////////////////////////////////////////////////////////////////////////
 
 static uint32_t SC_ToClient2(int cmdID, void *data, int len) {
-    GET_TLS();
-    return rsrToClient(rsc, sc, cmdID, data, len);
+    Context *rsc = RsdCpuReference::getTlsContext();
+    return rsrToClient(rsc, cmdID, data, len);
 }
 
 static uint32_t SC_ToClient(int cmdID) {
-    GET_TLS();
-    return rsrToClient(rsc, sc, cmdID, NULL, 0);
+    Context *rsc = RsdCpuReference::getTlsContext();
+    return rsrToClient(rsc, cmdID, NULL, 0);
 }
 
 static uint32_t SC_ToClientBlocking2(int cmdID, void *data, int len) {
-    GET_TLS();
-    return rsrToClientBlocking(rsc, sc, cmdID, data, len);
+    Context *rsc = RsdCpuReference::getTlsContext();
+    return rsrToClientBlocking(rsc, cmdID, data, len);
 }
 
 static uint32_t SC_ToClientBlocking(int cmdID) {
-    GET_TLS();
-    return rsrToClientBlocking(rsc, sc, cmdID, NULL, 0);
+    Context *rsc = RsdCpuReference::getTlsContext();
+    return rsrToClientBlocking(rsc, cmdID, NULL, 0);
 }
 
-int SC_divsi3(int a, int b) {
-    return a / b;
+
+static void * ElementAt1D(Allocation *a, RsDataType dt, uint32_t vecSize, uint32_t x) {
+    Context *rsc = RsdCpuReference::getTlsContext();
+    const Type *t = a->getType();
+    const Element *e = t->getElement();
+
+    char buf[256];
+    if (x >= t->getLODDimX(0)) {
+        sprintf(buf, "Out range ElementAt X %i of %i", x, t->getLODDimX(0));
+        rsc->setError(RS_ERROR_FATAL_DEBUG, buf);
+        return NULL;
+    }
+
+    if (vecSize > 0) {
+        if (vecSize != e->getVectorSize()) {
+            sprintf(buf, "Vector size mismatch for ElementAt %i of %i", vecSize, e->getVectorSize());
+            rsc->setError(RS_ERROR_FATAL_DEBUG, buf);
+            return NULL;
+        }
+
+        if (dt != e->getType()) {
+            sprintf(buf, "Data type mismatch for ElementAt %i of %i", dt, e->getType());
+            rsc->setError(RS_ERROR_FATAL_DEBUG, buf);
+            return NULL;
+        }
+    }
+
+    uint8_t *p = (uint8_t *)a->mHal.drvState.lod[0].mallocPtr;
+    const uint32_t eSize = e->getSizeBytes();
+    return &p[(eSize * x)];
 }
 
-int SC_modsi3(int a, int b) {
-    return a % b;
+static void * ElementAt2D(Allocation *a, RsDataType dt, uint32_t vecSize, uint32_t x, uint32_t y) {
+    Context *rsc = RsdCpuReference::getTlsContext();
+    const Type *t = a->getType();
+    const Element *e = t->getElement();
+
+    char buf[256];
+    if (x >= t->getLODDimX(0)) {
+        sprintf(buf, "Out range ElementAt X %i of %i", x, t->getLODDimX(0));
+        rsc->setError(RS_ERROR_FATAL_DEBUG, buf);
+        return NULL;
+    }
+
+    if (y >= t->getLODDimY(0)) {
+        sprintf(buf, "Out range ElementAt Y %i of %i", y, t->getLODDimY(0));
+        rsc->setError(RS_ERROR_FATAL_DEBUG, buf);
+        return NULL;
+    }
+
+    if (vecSize > 0) {
+        if (vecSize != e->getVectorSize()) {
+            sprintf(buf, "Vector size mismatch for ElementAt %i of %i", vecSize, e->getVectorSize());
+            rsc->setError(RS_ERROR_FATAL_DEBUG, buf);
+            return NULL;
+        }
+
+        if (dt != e->getType()) {
+            sprintf(buf, "Data type mismatch for ElementAt %i of %i", dt, e->getType());
+            rsc->setError(RS_ERROR_FATAL_DEBUG, buf);
+            return NULL;
+        }
+    }
+
+    uint8_t *p = (uint8_t *)a->mHal.drvState.lod[0].mallocPtr;
+    const uint32_t eSize = e->getSizeBytes();
+    const uint32_t stride = a->mHal.drvState.lod[0].stride;
+    return &p[(eSize * x) + (y * stride)];
 }
 
-unsigned int SC_udivsi3(unsigned int a, unsigned int b) {
-    return a / b;
+static void * ElementAt3D(Allocation *a, RsDataType dt, uint32_t vecSize, uint32_t x, uint32_t y, uint32_t z) {
+    Context *rsc = RsdCpuReference::getTlsContext();
+    const Type *t = a->getType();
+    const Element *e = t->getElement();
+
+    char buf[256];
+    if (x >= t->getLODDimX(0)) {
+        sprintf(buf, "Out range ElementAt X %i of %i", x, t->getLODDimX(0));
+        rsc->setError(RS_ERROR_FATAL_DEBUG, buf);
+        return NULL;
+    }
+
+    if (y >= t->getLODDimY(0)) {
+        sprintf(buf, "Out range ElementAt Y %i of %i", y, t->getLODDimY(0));
+        rsc->setError(RS_ERROR_FATAL_DEBUG, buf);
+        return NULL;
+    }
+
+    if (z >= t->getLODDimZ(0)) {
+        sprintf(buf, "Out range ElementAt Z %i of %i", z, t->getLODDimZ(0));
+        rsc->setError(RS_ERROR_FATAL_DEBUG, buf);
+        return NULL;
+    }
+
+    if (vecSize > 0) {
+        if (vecSize != e->getVectorSize()) {
+            sprintf(buf, "Vector size mismatch for ElementAt %i of %i", vecSize, e->getVectorSize());
+            rsc->setError(RS_ERROR_FATAL_DEBUG, buf);
+            return NULL;
+        }
+
+        if (dt != e->getType()) {
+            sprintf(buf, "Data type mismatch for ElementAt %i of %i", dt, e->getType());
+            rsc->setError(RS_ERROR_FATAL_DEBUG, buf);
+            return NULL;
+        }
+    }
+
+    uint8_t *p = (uint8_t *)a->mHal.drvState.lod[0].mallocPtr;
+    const uint32_t eSize = e->getSizeBytes();
+    const uint32_t stride = a->mHal.drvState.lod[0].stride;
+    return &p[(eSize * x) + (y * stride)];
 }
 
-unsigned int SC_umodsi3(unsigned int a, unsigned int b) {
-    return a % b;
+static const void * SC_GetElementAt1D(Allocation *a, uint32_t x) {
+    return ElementAt1D(a, RS_TYPE_UNSIGNED_8, 0, x);
+}
+static const void * SC_GetElementAt2D(Allocation *a, uint32_t x, uint32_t y) {
+    return ElementAt2D(a, RS_TYPE_UNSIGNED_8, 0, x, y);
+}
+static const void * SC_GetElementAt3D(Allocation *a, uint32_t x, uint32_t y, uint32_t z) {
+    return ElementAt3D(a, RS_TYPE_UNSIGNED_8, 0, x, y, z);
+}
+
+static void SC_SetElementAt1D(Allocation *a, const void *ptr, uint32_t x) {
+    const Type *t = a->getType();
+    const Element *e = t->getElement();
+    void *tmp = ElementAt1D(a, RS_TYPE_UNSIGNED_8, 0, x);
+    if (tmp != NULL) {
+        memcpy(tmp, ptr, e->getSizeBytes());
+    }
+}
+static void SC_SetElementAt2D(Allocation *a, const void *ptr, uint32_t x, uint32_t y) {
+    const Type *t = a->getType();
+    const Element *e = t->getElement();
+    void *tmp = ElementAt2D(a, RS_TYPE_UNSIGNED_8, 0, x, y);
+    if (tmp != NULL) {
+        memcpy(tmp, ptr, e->getSizeBytes());
+    }
+}
+static void SC_SetElementAt3D(Allocation *a, const void *ptr, uint32_t x, uint32_t y, uint32_t z) {
+    const Type *t = a->getType();
+    const Element *e = t->getElement();
+    void *tmp = ElementAt3D(a, RS_TYPE_UNSIGNED_8, 0, x, y, z);
+    if (tmp != NULL) {
+        memcpy(tmp, ptr, e->getSizeBytes());
+    }
+}
+
+#define ELEMENT_AT(T, DT, VS)                                               \
+    static void SC_SetElementAt1_##T(Allocation *a, const T *val, uint32_t x) {           \
+        void *r = ElementAt1D(a, DT, VS, x);                            \
+        if (r != NULL) ((T *)r)[0] = *val;                               \
+        else ALOGE("Error from %s", __PRETTY_FUNCTION__);               \
+    }                                                                   \
+    static void SC_SetElementAt2_##T(Allocation * a, const T * val, uint32_t x, uint32_t y) { \
+        void *r = ElementAt2D(a, DT, VS, x, y);            \
+        if (r != NULL) ((T *)r)[0] = *val;                               \
+        else ALOGE("Error from %s", __PRETTY_FUNCTION__);               \
+    }                                                                   \
+    static void SC_SetElementAt3_##T(Allocation * a, const T * val, uint32_t x, uint32_t y, uint32_t z) { \
+        void *r = ElementAt3D(a, DT, VS, x, y, z);         \
+        if (r != NULL) ((T *)r)[0] = *val;                               \
+        else ALOGE("Error from %s", __PRETTY_FUNCTION__);               \
+    }                                                                   \
+    static void SC_GetElementAt1_##T(Allocation * a, T *val, uint32_t x) {                  \
+        void *r = ElementAt1D(a, DT, VS, x);               \
+        if (r != NULL) *val = ((T *)r)[0];                              \
+        else ALOGE("Error from %s", __PRETTY_FUNCTION__);                    \
+    }                                                                   \
+    static void SC_GetElementAt2_##T(Allocation * a, T *val, uint32_t x, uint32_t y) {      \
+        void *r = ElementAt2D(a, DT, VS, x, y);            \
+        if (r != NULL) *val = ((T *)r)[0];                              \
+        else ALOGE("Error from %s", __PRETTY_FUNCTION__);                    \
+    }                                                                   \
+    static void SC_GetElementAt3_##T(Allocation * a, T *val, uint32_t x, uint32_t y, uint32_t z) { \
+        void *r = ElementAt3D(a, DT, VS, x, y, z);         \
+        if (r != NULL) *val = ((T *)r)[0];                              \
+        else ALOGE("Error from %s", __PRETTY_FUNCTION__);                    \
+    }
+
+ELEMENT_AT(char, RS_TYPE_SIGNED_8, 1)
+ELEMENT_AT(char2, RS_TYPE_SIGNED_8, 2)
+ELEMENT_AT(char3, RS_TYPE_SIGNED_8, 3)
+ELEMENT_AT(char4, RS_TYPE_SIGNED_8, 4)
+ELEMENT_AT(uchar, RS_TYPE_UNSIGNED_8, 1)
+ELEMENT_AT(uchar2, RS_TYPE_UNSIGNED_8, 2)
+ELEMENT_AT(uchar3, RS_TYPE_UNSIGNED_8, 3)
+ELEMENT_AT(uchar4, RS_TYPE_UNSIGNED_8, 4)
+ELEMENT_AT(short, RS_TYPE_SIGNED_16, 1)
+ELEMENT_AT(short2, RS_TYPE_SIGNED_16, 2)
+ELEMENT_AT(short3, RS_TYPE_SIGNED_16, 3)
+ELEMENT_AT(short4, RS_TYPE_SIGNED_16, 4)
+ELEMENT_AT(ushort, RS_TYPE_UNSIGNED_16, 1)
+ELEMENT_AT(ushort2, RS_TYPE_UNSIGNED_16, 2)
+ELEMENT_AT(ushort3, RS_TYPE_UNSIGNED_16, 3)
+ELEMENT_AT(ushort4, RS_TYPE_UNSIGNED_16, 4)
+ELEMENT_AT(int, RS_TYPE_SIGNED_32, 1)
+ELEMENT_AT(int2, RS_TYPE_SIGNED_32, 2)
+ELEMENT_AT(int3, RS_TYPE_SIGNED_32, 3)
+ELEMENT_AT(int4, RS_TYPE_SIGNED_32, 4)
+ELEMENT_AT(uint, RS_TYPE_UNSIGNED_32, 1)
+ELEMENT_AT(uint2, RS_TYPE_UNSIGNED_32, 2)
+ELEMENT_AT(uint3, RS_TYPE_UNSIGNED_32, 3)
+ELEMENT_AT(uint4, RS_TYPE_UNSIGNED_32, 4)
+ELEMENT_AT(long, RS_TYPE_SIGNED_64, 1)
+ELEMENT_AT(long2, RS_TYPE_SIGNED_64, 2)
+ELEMENT_AT(long3, RS_TYPE_SIGNED_64, 3)
+ELEMENT_AT(long4, RS_TYPE_SIGNED_64, 4)
+ELEMENT_AT(ulong, RS_TYPE_UNSIGNED_64, 1)
+ELEMENT_AT(ulong2, RS_TYPE_UNSIGNED_64, 2)
+ELEMENT_AT(ulong3, RS_TYPE_UNSIGNED_64, 3)
+ELEMENT_AT(ulong4, RS_TYPE_UNSIGNED_64, 4)
+ELEMENT_AT(float, RS_TYPE_FLOAT_32, 1)
+ELEMENT_AT(float2, RS_TYPE_FLOAT_32, 2)
+ELEMENT_AT(float3, RS_TYPE_FLOAT_32, 3)
+ELEMENT_AT(float4, RS_TYPE_FLOAT_32, 4)
+ELEMENT_AT(double, RS_TYPE_FLOAT_64, 1)
+ELEMENT_AT(double2, RS_TYPE_FLOAT_64, 2)
+ELEMENT_AT(double3, RS_TYPE_FLOAT_64, 3)
+ELEMENT_AT(double4, RS_TYPE_FLOAT_64, 4)
+
+#undef ELEMENT_AT
+
+//////////////////////////////////////////////////////////////////////////////
+// Stub implementation
+//////////////////////////////////////////////////////////////////////////////
+
+// llvm name mangling ref
+//  <builtin-type> ::= v  # void
+//                 ::= b  # bool
+//                 ::= c  # char
+//                 ::= a  # signed char
+//                 ::= h  # unsigned char
+//                 ::= s  # short
+//                 ::= t  # unsigned short
+//                 ::= i  # int
+//                 ::= j  # unsigned int
+//                 ::= l  # long
+//                 ::= m  # unsigned long
+//                 ::= x  # long long, __int64
+//                 ::= y  # unsigned long long, __int64
+//                 ::= f  # float
+//                 ::= d  # double
+
+static RsdCpuReference::CpuSymbol gSyms[] = {
+    // Debug runtime
+    { "_Z14rsGetElementAt13rs_allocationj", (void *)&SC_GetElementAt1D, true },
+    { "_Z14rsGetElementAt13rs_allocationjj", (void *)&SC_GetElementAt2D, true },
+    { "_Z14rsGetElementAt13rs_allocationjjj", (void *)&SC_GetElementAt3D, true },
+    { "_Z14rsSetElementAt13rs_allocationPKvj", (void *)&SC_SetElementAt1D, true },
+    { "_Z14rsSetElementAt13rs_allocationPKvjj", (void *)&SC_SetElementAt2D, true },
+    { "_Z14rsSetElementAt13rs_allocationPKvjjj", (void *)&SC_SetElementAt3D, true },
+
+
+    { "_Z20rsGetElementAt_uchar13rs_allocationPhj", (void *)&SC_GetElementAt1_uchar, true },
+    { "_Z21rsGetElementAt_uchar213rs_allocationPDv2_hj", (void *)&SC_GetElementAt1_uchar2, true },
+    { "_Z21rsGetElementAt_uchar313rs_allocationPDv3_hj", (void *)&SC_GetElementAt1_uchar3, true },
+    { "_Z21rsGetElementAt_uchar413rs_allocationPDv4_hj", (void *)&SC_GetElementAt1_uchar4, true },
+    { "_Z20rsGetElementAt_uchar13rs_allocationPhjj", (void *)&SC_GetElementAt2_uchar, true },
+    { "_Z21rsGetElementAt_uchar213rs_allocationPDv2_hjj", (void *)&SC_GetElementAt2_uchar2, true },
+    { "_Z21rsGetElementAt_uchar313rs_allocationPDv3_hjj", (void *)&SC_GetElementAt2_uchar3, true },
+    { "_Z21rsGetElementAt_uchar413rs_allocationPDv4_hjj", (void *)&SC_GetElementAt2_uchar4, true },
+    { "_Z20rsGetElementAt_uchar13rs_allocationPhjjj", (void *)&SC_GetElementAt3_uchar, true },
+    { "_Z21rsGetElementAt_uchar213rs_allocationPDv2_hjjj", (void *)&SC_GetElementAt3_uchar2, true },
+    { "_Z21rsGetElementAt_uchar313rs_allocationPDv3_hjjj", (void *)&SC_GetElementAt3_uchar3, true },
+    { "_Z21rsGetElementAt_uchar413rs_allocationPDv4_hjjj", (void *)&SC_GetElementAt3_uchar4, true },
+
+    { "_Z19rsGetElementAt_char13rs_allocationPcj", (void *)&SC_GetElementAt1_char, true },
+    { "_Z20rsGetElementAt_char213rs_allocationPDv2_cj", (void *)&SC_GetElementAt1_char2, true },
+    { "_Z20rsGetElementAt_char313rs_allocationPDv3_cj", (void *)&SC_GetElementAt1_char3, true },
+    { "_Z20rsGetElementAt_char413rs_allocationPDv4_cj", (void *)&SC_GetElementAt1_char4, true },
+    { "_Z19rsGetElementAt_char13rs_allocationPcjj", (void *)&SC_GetElementAt2_char, true },
+    { "_Z20rsGetElementAt_char213rs_allocationPDv2_cjj", (void *)&SC_GetElementAt2_char2, true },
+    { "_Z20rsGetElementAt_char313rs_allocationPDv3_cjj", (void *)&SC_GetElementAt2_char3, true },
+    { "_Z20rsGetElementAt_char413rs_allocationPDv4_cjj", (void *)&SC_GetElementAt2_char4, true },
+    { "_Z19rsGetElementAt_char13rs_allocationPcjjj", (void *)&SC_GetElementAt3_char, true },
+    { "_Z20rsGetElementAt_char213rs_allocationPDv2_cjjj", (void *)&SC_GetElementAt3_char2, true },
+    { "_Z20rsGetElementAt_char313rs_allocationPDv3_cjjj", (void *)&SC_GetElementAt3_char3, true },
+    { "_Z20rsGetElementAt_char413rs_allocationPDv4_cjjj", (void *)&SC_GetElementAt3_char4, true },
+
+    { "_Z21rsGetElementAt_ushort13rs_allocationPtj", (void *)&SC_GetElementAt1_ushort, true },
+    { "_Z22rsGetElementAt_ushort213rs_allocationPDv2_tj", (void *)&SC_GetElementAt1_ushort2, true },
+    { "_Z22rsGetElementAt_ushort313rs_allocationPDv3_tj", (void *)&SC_GetElementAt1_ushort3, true },
+    { "_Z22rsGetElementAt_ushort413rs_allocationPDv4_tj", (void *)&SC_GetElementAt1_ushort4, true },
+    { "_Z21rsGetElementAt_ushort13rs_allocationPtjj", (void *)&SC_GetElementAt2_ushort, true },
+    { "_Z22rsGetElementAt_ushort213rs_allocationPDv2_tjj", (void *)&SC_GetElementAt2_ushort2, true },
+    { "_Z22rsGetElementAt_ushort313rs_allocationPDv3_tjj", (void *)&SC_GetElementAt2_ushort3, true },
+    { "_Z22rsGetElementAt_ushort413rs_allocationPDv4_tjj", (void *)&SC_GetElementAt2_ushort4, true },
+    { "_Z21rsGetElementAt_ushort13rs_allocationPtjjj", (void *)&SC_GetElementAt3_ushort, true },
+    { "_Z22rsGetElementAt_ushort213rs_allocationPDv2_tjjj", (void *)&SC_GetElementAt3_ushort2, true },
+    { "_Z22rsGetElementAt_ushort313rs_allocationPDv3_tjjj", (void *)&SC_GetElementAt3_ushort3, true },
+    { "_Z22rsGetElementAt_ushort413rs_allocationPDv4_tjjj", (void *)&SC_GetElementAt3_ushort4, true },
+
+    { "_Z20rsGetElementAt_short13rs_allocationPsj", (void *)&SC_GetElementAt1_short, true },
+    { "_Z21rsGetElementAt_short213rs_allocationPDv2_sj", (void *)&SC_GetElementAt1_short2, true },
+    { "_Z21rsGetElementAt_short313rs_allocationPDv3_sj", (void *)&SC_GetElementAt1_short3, true },
+    { "_Z21rsGetElementAt_short413rs_allocationPDv4_sj", (void *)&SC_GetElementAt1_short4, true },
+    { "_Z20rsGetElementAt_short13rs_allocationPsjj", (void *)&SC_GetElementAt2_short, true },
+    { "_Z21rsGetElementAt_short213rs_allocationPDv2_sjj", (void *)&SC_GetElementAt2_short2, true },
+    { "_Z21rsGetElementAt_short313rs_allocationPDv3_sjj", (void *)&SC_GetElementAt2_short3, true },
+    { "_Z21rsGetElementAt_short413rs_allocationPDv4_sjj", (void *)&SC_GetElementAt2_short4, true },
+    { "_Z20rsGetElementAt_short13rs_allocationPsjjj", (void *)&SC_GetElementAt3_short, true },
+    { "_Z21rsGetElementAt_short213rs_allocationPDv2_sjjj", (void *)&SC_GetElementAt3_short2, true },
+    { "_Z21rsGetElementAt_short313rs_allocationPDv3_sjjj", (void *)&SC_GetElementAt3_short3, true },
+    { "_Z21rsGetElementAt_short413rs_allocationPDv4_sjjj", (void *)&SC_GetElementAt3_short4, true },
+
+    { "_Z19rsGetElementAt_uint13rs_allocationPjj", (void *)&SC_GetElementAt1_uint, true },
+    { "_Z20rsGetElementAt_uint213rs_allocationPDv2_jj", (void *)&SC_GetElementAt1_uint2, true },
+    { "_Z20rsGetElementAt_uint313rs_allocationPDv3_jj", (void *)&SC_GetElementAt1_uint3, true },
+    { "_Z20rsGetElementAt_uint413rs_allocationPDv4_jj", (void *)&SC_GetElementAt1_uint4, true },
+    { "_Z19rsGetElementAt_uint13rs_allocationPjjj", (void *)&SC_GetElementAt2_uint, true },
+    { "_Z20rsGetElementAt_uint213rs_allocationPDv2_jjj", (void *)&SC_GetElementAt2_uint2, true },
+    { "_Z20rsGetElementAt_uint313rs_allocationPDv3_jjj", (void *)&SC_GetElementAt2_uint3, true },
+    { "_Z20rsGetElementAt_uint413rs_allocationPDv4_jjj", (void *)&SC_GetElementAt2_uint4, true },
+    { "_Z19rsGetElementAt_uint13rs_allocationPjjjj", (void *)&SC_GetElementAt3_uint, true },
+    { "_Z20rsGetElementAt_uint213rs_allocationPDv2_jjjj", (void *)&SC_GetElementAt3_uint2, true },
+    { "_Z20rsGetElementAt_uint313rs_allocationPDv3_jjjj", (void *)&SC_GetElementAt3_uint3, true },
+    { "_Z20rsGetElementAt_uint413rs_allocationPDv4_jjjj", (void *)&SC_GetElementAt3_uint4, true },
+
+    { "_Z18rsGetElementAt_int13rs_allocationPij", (void *)&SC_GetElementAt1_int, true },
+    { "_Z19rsGetElementAt_int213rs_allocationPDv2_ij", (void *)&SC_GetElementAt1_int2, true },
+    { "_Z19rsGetElementAt_int313rs_allocationPDv3_ij", (void *)&SC_GetElementAt1_int3, true },
+    { "_Z19rsGetElementAt_int413rs_allocationPDv4_ij", (void *)&SC_GetElementAt1_int4, true },
+    { "_Z18rsGetElementAt_int13rs_allocationPijj", (void *)&SC_GetElementAt2_int, true },
+    { "_Z19rsGetElementAt_int213rs_allocationPDv2_ijj", (void *)&SC_GetElementAt2_int2, true },
+    { "_Z19rsGetElementAt_int313rs_allocationPDv3_ijj", (void *)&SC_GetElementAt2_int3, true },
+    { "_Z19rsGetElementAt_int413rs_allocationPDv4_ijj", (void *)&SC_GetElementAt2_int4, true },
+    { "_Z18rsGetElementAt_int13rs_allocationPijjj", (void *)&SC_GetElementAt3_int, true },
+    { "_Z19rsGetElementAt_int213rs_allocationPDv2_ijjj", (void *)&SC_GetElementAt3_int2, true },
+    { "_Z19rsGetElementAt_int313rs_allocationPDv3_ijjj", (void *)&SC_GetElementAt3_int3, true },
+    { "_Z19rsGetElementAt_int413rs_allocationPDv4_ijjj", (void *)&SC_GetElementAt3_int4, true },
+
+    { "_Z20rsGetElementAt_ulong13rs_allocationPmj", (void *)&SC_GetElementAt1_ulong, true },
+    { "_Z21rsGetElementAt_ulong213rs_allocationPDv2_mj", (void *)&SC_GetElementAt1_ulong2, true },
+    { "_Z21rsGetElementAt_ulong313rs_allocationPDv3_mj", (void *)&SC_GetElementAt1_ulong3, true },
+    { "_Z21rsGetElementAt_ulong413rs_allocationPDv4_mj", (void *)&SC_GetElementAt1_ulong4, true },
+    { "_Z20rsGetElementAt_ulong13rs_allocationPmjj", (void *)&SC_GetElementAt2_ulong, true },
+    { "_Z21rsGetElementAt_ulong213rs_allocationPDv2_mjj", (void *)&SC_GetElementAt2_ulong2, true },
+    { "_Z21rsGetElementAt_ulong313rs_allocationPDv3_mjj", (void *)&SC_GetElementAt2_ulong3, true },
+    { "_Z21rsGetElementAt_ulong413rs_allocationPDv4_mjj", (void *)&SC_GetElementAt2_ulong4, true },
+    { "_Z20rsGetElementAt_ulong13rs_allocationPmjjj", (void *)&SC_GetElementAt3_ulong, true },
+    { "_Z21rsGetElementAt_ulong213rs_allocationPDv2_mjjj", (void *)&SC_GetElementAt3_ulong2, true },
+    { "_Z21rsGetElementAt_ulong313rs_allocationPDv3_mjjj", (void *)&SC_GetElementAt3_ulong3, true },
+    { "_Z21rsGetElementAt_ulong413rs_allocationPDv4_mjjj", (void *)&SC_GetElementAt3_ulong4, true },
+
+    { "_Z19rsGetElementAt_long13rs_allocationPlj", (void *)&SC_GetElementAt1_long, true },
+    { "_Z20rsGetElementAt_long213rs_allocationPDv2_lj", (void *)&SC_GetElementAt1_long2, true },
+    { "_Z20rsGetElementAt_long313rs_allocationPDv3_lj", (void *)&SC_GetElementAt1_long3, true },
+    { "_Z20rsGetElementAt_long413rs_allocationPDv4_lj", (void *)&SC_GetElementAt1_long4, true },
+    { "_Z19rsGetElementAt_long13rs_allocationPljj", (void *)&SC_GetElementAt2_long, true },
+    { "_Z20rsGetElementAt_long213rs_allocationPDv2_ljj", (void *)&SC_GetElementAt2_long2, true },
+    { "_Z20rsGetElementAt_long313rs_allocationPDv3_ljj", (void *)&SC_GetElementAt2_long3, true },
+    { "_Z20rsGetElementAt_long413rs_allocationPDv4_ljj", (void *)&SC_GetElementAt2_long4, true },
+    { "_Z19rsGetElementAt_long13rs_allocationPljjj", (void *)&SC_GetElementAt3_long, true },
+    { "_Z20rsGetElementAt_long213rs_allocationPDv2_ljjj", (void *)&SC_GetElementAt3_long2, true },
+    { "_Z20rsGetElementAt_long313rs_allocationPDv3_ljjj", (void *)&SC_GetElementAt3_long3, true },
+    { "_Z20rsGetElementAt_long413rs_allocationPDv4_ljjj", (void *)&SC_GetElementAt3_long4, true },
+
+    { "_Z20rsGetElementAt_float13rs_allocationPfj", (void *)&SC_GetElementAt1_float, true },
+    { "_Z21rsGetElementAt_float213rs_allocationPDv2_fj", (void *)&SC_GetElementAt1_float2, true },
+    { "_Z21rsGetElementAt_float313rs_allocationPDv3_fj", (void *)&SC_GetElementAt1_float3, true },
+    { "_Z21rsGetElementAt_float413rs_allocationPDv4_fj", (void *)&SC_GetElementAt1_float4, true },
+    { "_Z20rsGetElementAt_float13rs_allocationPfjj", (void *)&SC_GetElementAt2_float, true },
+    { "_Z21rsGetElementAt_float213rs_allocationPDv2_fjj", (void *)&SC_GetElementAt2_float2, true },
+    { "_Z21rsGetElementAt_float313rs_allocationPDv3_fjj", (void *)&SC_GetElementAt2_float3, true },
+    { "_Z21rsGetElementAt_float413rs_allocationPDv4_fjj", (void *)&SC_GetElementAt2_float4, true },
+    { "_Z20rsGetElementAt_float13rs_allocationPfjjj", (void *)&SC_GetElementAt3_float, true },
+    { "_Z21rsGetElementAt_float213rs_allocationPDv2_fjjj", (void *)&SC_GetElementAt3_float2, true },
+    { "_Z21rsGetElementAt_float313rs_allocationPDv3_fjjj", (void *)&SC_GetElementAt3_float3, true },
+    { "_Z21rsGetElementAt_float413rs_allocationPDv4_fjjj", (void *)&SC_GetElementAt3_float4, true },
+
+    { "_Z21rsGetElementAt_double13rs_allocationPdj", (void *)&SC_GetElementAt1_double, true },
+    { "_Z22rsGetElementAt_double213rs_allocationPDv2_dj", (void *)&SC_GetElementAt1_double2, true },
+    { "_Z22rsGetElementAt_double313rs_allocationPDv3_dj", (void *)&SC_GetElementAt1_double3, true },
+    { "_Z22rsGetElementAt_double413rs_allocationPDv4_dj", (void *)&SC_GetElementAt1_double4, true },
+    { "_Z21rsGetElementAt_double13rs_allocationPdjj", (void *)&SC_GetElementAt2_double, true },
+    { "_Z22rsGetElementAt_double213rs_allocationPDv2_djj", (void *)&SC_GetElementAt2_double2, true },
+    { "_Z22rsGetElementAt_double313rs_allocationPDv3_djj", (void *)&SC_GetElementAt2_double3, true },
+    { "_Z22rsGetElementAt_double413rs_allocationPDv4_djj", (void *)&SC_GetElementAt2_double4, true },
+    { "_Z21rsGetElementAt_double13rs_allocationPdjjj", (void *)&SC_GetElementAt3_double, true },
+    { "_Z22rsGetElementAt_double213rs_allocationPDv2_djjj", (void *)&SC_GetElementAt3_double2, true },
+    { "_Z22rsGetElementAt_double313rs_allocationPDv3_djjj", (void *)&SC_GetElementAt3_double3, true },
+    { "_Z22rsGetElementAt_double413rs_allocationPDv4_djjj", (void *)&SC_GetElementAt3_double4, true },
+
+
+
+    { "_Z20rsSetElementAt_uchar13rs_allocationPKhj", (void *)&SC_SetElementAt1_uchar, true },
+    { "_Z21rsSetElementAt_uchar213rs_allocationPKDv2_hj", (void *)&SC_SetElementAt1_uchar2, true },
+    { "_Z21rsSetElementAt_uchar313rs_allocationPKDv3_hj", (void *)&SC_SetElementAt1_uchar3, true },
+    { "_Z21rsSetElementAt_uchar413rs_allocationPKDv4_hj", (void *)&SC_SetElementAt1_uchar4, true },
+    { "_Z20rsSetElementAt_uchar13rs_allocationPKhjj", (void *)&SC_SetElementAt2_uchar, true },
+    { "_Z21rsSetElementAt_uchar213rs_allocationPKDv2_hjj", (void *)&SC_SetElementAt2_uchar2, true },
+    { "_Z21rsSetElementAt_uchar313rs_allocationPKDv3_hjj", (void *)&SC_SetElementAt2_uchar3, true },
+    { "_Z21rsSetElementAt_uchar413rs_allocationPKDv4_hjj", (void *)&SC_SetElementAt2_uchar4, true },
+    { "_Z20rsSetElementAt_uchar13rs_allocationPKhjjj", (void *)&SC_SetElementAt3_uchar, true },
+    { "_Z21rsSetElementAt_uchar213rs_allocationPKDv2_hjjj", (void *)&SC_SetElementAt3_uchar2, true },
+    { "_Z21rsSetElementAt_uchar313rs_allocationPKDv3_hjjj", (void *)&SC_SetElementAt3_uchar3, true },
+    { "_Z21rsSetElementAt_uchar413rs_allocationPKDv4_hjjj", (void *)&SC_SetElementAt3_uchar4, true },
+
+    { "_Z19rsSetElementAt_char13rs_allocationPKcj", (void *)&SC_SetElementAt1_char, true },
+    { "_Z20rsSetElementAt_char213rs_allocationPKDv2_cj", (void *)&SC_SetElementAt1_char2, true },
+    { "_Z20rsSetElementAt_char313rs_allocationPKDv3_cj", (void *)&SC_SetElementAt1_char3, true },
+    { "_Z20rsSetElementAt_char413rs_allocationPKDv4_cj", (void *)&SC_SetElementAt1_char4, true },
+    { "_Z19rsSetElementAt_char13rs_allocationPKcjj", (void *)&SC_SetElementAt2_char, true },
+    { "_Z20rsSetElementAt_char213rs_allocationPKDv2_cjj", (void *)&SC_SetElementAt2_char2, true },
+    { "_Z20rsSetElementAt_char313rs_allocationPKDv3_cjj", (void *)&SC_SetElementAt2_char3, true },
+    { "_Z20rsSetElementAt_char413rs_allocationPKDv4_cjj", (void *)&SC_SetElementAt2_char4, true },
+    { "_Z19rsSetElementAt_char13rs_allocationPKcjjj", (void *)&SC_SetElementAt3_char, true },
+    { "_Z20rsSetElementAt_char213rs_allocationPKDv2_cjjj", (void *)&SC_SetElementAt3_char2, true },
+    { "_Z20rsSetElementAt_char313rs_allocationPKDv3_cjjj", (void *)&SC_SetElementAt3_char3, true },
+    { "_Z20rsSetElementAt_char413rs_allocationPKDv4_cjjj", (void *)&SC_SetElementAt3_char4, true },
+
+    { "_Z21rsSetElementAt_ushort13rs_allocationPKht", (void *)&SC_SetElementAt1_ushort, true },
+    { "_Z22rsSetElementAt_ushort213rs_allocationPKDv2_tj", (void *)&SC_SetElementAt1_ushort2, true },
+    { "_Z22rsSetElementAt_ushort313rs_allocationPKDv3_tj", (void *)&SC_SetElementAt1_ushort3, true },
+    { "_Z22rsSetElementAt_ushort413rs_allocationPKDv4_tj", (void *)&SC_SetElementAt1_ushort4, true },
+    { "_Z21rsSetElementAt_ushort13rs_allocationPKtjj", (void *)&SC_SetElementAt2_ushort, true },
+    { "_Z22rsSetElementAt_ushort213rs_allocationPKDv2_tjj", (void *)&SC_SetElementAt2_ushort2, true },
+    { "_Z22rsSetElementAt_ushort313rs_allocationPKDv3_tjj", (void *)&SC_SetElementAt2_ushort3, true },
+    { "_Z22rsSetElementAt_ushort413rs_allocationPKDv4_tjj", (void *)&SC_SetElementAt2_ushort4, true },
+    { "_Z21rsSetElementAt_ushort13rs_allocationPKtjjj", (void *)&SC_SetElementAt3_ushort, true },
+    { "_Z22rsSetElementAt_ushort213rs_allocationPKDv2_tjjj", (void *)&SC_SetElementAt3_ushort2, true },
+    { "_Z22rsSetElementAt_ushort313rs_allocationPKDv3_tjjj", (void *)&SC_SetElementAt3_ushort3, true },
+    { "_Z22rsSetElementAt_ushort413rs_allocationPKDv4_tjjj", (void *)&SC_SetElementAt3_ushort4, true },
+
+    { "_Z20rsSetElementAt_short13rs_allocationPKsj", (void *)&SC_SetElementAt1_short, true },
+    { "_Z21rsSetElementAt_short213rs_allocationPKDv2_sj", (void *)&SC_SetElementAt1_short2, true },
+    { "_Z21rsSetElementAt_short313rs_allocationPKDv3_sj", (void *)&SC_SetElementAt1_short3, true },
+    { "_Z21rsSetElementAt_short413rs_allocationPKDv4_sj", (void *)&SC_SetElementAt1_short4, true },
+    { "_Z20rsSetElementAt_short13rs_allocationPKsjj", (void *)&SC_SetElementAt2_short, true },
+    { "_Z21rsSetElementAt_short213rs_allocationPKDv2_sjj", (void *)&SC_SetElementAt2_short2, true },
+    { "_Z21rsSetElementAt_short313rs_allocationPKDv3_sjj", (void *)&SC_SetElementAt2_short3, true },
+    { "_Z21rsSetElementAt_short413rs_allocationPKDv4_sjj", (void *)&SC_SetElementAt2_short4, true },
+    { "_Z20rsSetElementAt_short13rs_allocationPKsjjj", (void *)&SC_SetElementAt3_short, true },
+    { "_Z21rsSetElementAt_short213rs_allocationPKDv2_sjjj", (void *)&SC_SetElementAt3_short2, true },
+    { "_Z21rsSetElementAt_short313rs_allocationPKDv3_sjjj", (void *)&SC_SetElementAt3_short3, true },
+    { "_Z21rsSetElementAt_short413rs_allocationPKDv4_sjjj", (void *)&SC_SetElementAt3_short4, true },
+
+    { "_Z19rsSetElementAt_uint13rs_allocationPKjj", (void *)&SC_SetElementAt1_uint, true },
+    { "_Z20rsSetElementAt_uint213rs_allocationPKDv2_jj", (void *)&SC_SetElementAt1_uint2, true },
+    { "_Z20rsSetElementAt_uint313rs_allocationPKDv3_jj", (void *)&SC_SetElementAt1_uint3, true },
+    { "_Z20rsSetElementAt_uint413rs_allocationPKDv4_jj", (void *)&SC_SetElementAt1_uint4, true },
+    { "_Z19rsSetElementAt_uint13rs_allocationPKjjj", (void *)&SC_SetElementAt2_uint, true },
+    { "_Z20rsSetElementAt_uint213rs_allocationPKDv2_jjj", (void *)&SC_SetElementAt2_uint2, true },
+    { "_Z20rsSetElementAt_uint313rs_allocationPKDv3_jjj", (void *)&SC_SetElementAt2_uint3, true },
+    { "_Z20rsSetElementAt_uint413rs_allocationPKDv4_jjj", (void *)&SC_SetElementAt2_uint4, true },
+    { "_Z19rsSetElementAt_uint13rs_allocationPKjjjj", (void *)&SC_SetElementAt3_uint, true },
+    { "_Z20rsSetElementAt_uint213rs_allocationPKDv2_jjjj", (void *)&SC_SetElementAt3_uint2, true },
+    { "_Z20rsSetElementAt_uint313rs_allocationPKDv3_jjjj", (void *)&SC_SetElementAt3_uint3, true },
+    { "_Z20rsSetElementAt_uint413rs_allocationPKDv4_jjjj", (void *)&SC_SetElementAt3_uint4, true },
+
+    { "_Z18rsSetElementAt_int13rs_allocationPKij", (void *)&SC_SetElementAt1_int, true },
+    { "_Z19rsSetElementAt_int213rs_allocationPKDv2_ij", (void *)&SC_SetElementAt1_int2, true },
+    { "_Z19rsSetElementAt_int313rs_allocationPKDv3_ij", (void *)&SC_SetElementAt1_int3, true },
+    { "_Z19rsSetElementAt_int413rs_allocationPKDv4_ij", (void *)&SC_SetElementAt1_int4, true },
+    { "_Z18rsSetElementAt_int13rs_allocationPKijj", (void *)&SC_SetElementAt2_int, true },
+    { "_Z19rsSetElementAt_int213rs_allocationPKDv2_ijj", (void *)&SC_SetElementAt2_int2, true },
+    { "_Z19rsSetElementAt_int313rs_allocationPKDv3_ijj", (void *)&SC_SetElementAt2_int3, true },
+    { "_Z19rsSetElementAt_int413rs_allocationPKDv4_ijj", (void *)&SC_SetElementAt2_int4, true },
+    { "_Z18rsSetElementAt_int13rs_allocationPKijjj", (void *)&SC_SetElementAt3_int, true },
+    { "_Z19rsSetElementAt_int213rs_allocationPKDv2_ijjj", (void *)&SC_SetElementAt3_int2, true },
+    { "_Z19rsSetElementAt_int313rs_allocationPKDv3_ijjj", (void *)&SC_SetElementAt3_int3, true },
+    { "_Z19rsSetElementAt_int413rs_allocationPKDv4_ijjj", (void *)&SC_SetElementAt3_int4, true },
+
+    { "_Z20rsSetElementAt_ulong13rs_allocationPKmt", (void *)&SC_SetElementAt1_ulong, true },
+    { "_Z21rsSetElementAt_ulong213rs_allocationPKDv2_mj", (void *)&SC_SetElementAt1_ulong2, true },
+    { "_Z21rsSetElementAt_ulong313rs_allocationPKDv3_mj", (void *)&SC_SetElementAt1_ulong3, true },
+    { "_Z21rsSetElementAt_ulong413rs_allocationPKDv4_mj", (void *)&SC_SetElementAt1_ulong4, true },
+    { "_Z20rsSetElementAt_ulong13rs_allocationPKmjj", (void *)&SC_SetElementAt2_ulong, true },
+    { "_Z21rsSetElementAt_ulong213rs_allocationPKDv2_mjj", (void *)&SC_SetElementAt2_ulong2, true },
+    { "_Z21rsSetElementAt_ulong313rs_allocationPKDv3_mjj", (void *)&SC_SetElementAt2_ulong3, true },
+    { "_Z21rsSetElementAt_ulong413rs_allocationPKDv4_mjj", (void *)&SC_SetElementAt2_ulong4, true },
+    { "_Z20rsSetElementAt_ulong13rs_allocationPKmjjj", (void *)&SC_SetElementAt3_ulong, true },
+    { "_Z21rsSetElementAt_ulong213rs_allocationPKDv2_mjjj", (void *)&SC_SetElementAt3_ulong2, true },
+    { "_Z21rsSetElementAt_ulong313rs_allocationPKDv3_mjjj", (void *)&SC_SetElementAt3_ulong3, true },
+    { "_Z21rsSetElementAt_ulong413rs_allocationPKDv4_mjjj", (void *)&SC_SetElementAt3_ulong4, true },
+
+    { "_Z19rsSetElementAt_long13rs_allocationPKlj", (void *)&SC_SetElementAt1_long, true },
+    { "_Z20rsSetElementAt_long213rs_allocationPKDv2_lj", (void *)&SC_SetElementAt1_long2, true },
+    { "_Z20rsSetElementAt_long313rs_allocationPKDv3_lj", (void *)&SC_SetElementAt1_long3, true },
+    { "_Z20rsSetElementAt_long413rs_allocationPKDv4_lj", (void *)&SC_SetElementAt1_long4, true },
+    { "_Z19rsSetElementAt_long13rs_allocationPKljj", (void *)&SC_SetElementAt2_long, true },
+    { "_Z20rsSetElementAt_long213rs_allocationPKDv2_ljj", (void *)&SC_SetElementAt2_long2, true },
+    { "_Z20rsSetElementAt_long313rs_allocationPKDv3_ljj", (void *)&SC_SetElementAt2_long3, true },
+    { "_Z20rsSetElementAt_long413rs_allocationPKDv4_ljj", (void *)&SC_SetElementAt2_long4, true },
+    { "_Z19rsSetElementAt_long13rs_allocationPKljjj", (void *)&SC_SetElementAt3_long, true },
+    { "_Z20rsSetElementAt_long213rs_allocationPKDv2_ljjj", (void *)&SC_SetElementAt3_long2, true },
+    { "_Z20rsSetElementAt_long313rs_allocationPKDv3_ljjj", (void *)&SC_SetElementAt3_long3, true },
+    { "_Z20rsSetElementAt_long413rs_allocationPKDv4_ljjj", (void *)&SC_SetElementAt3_long4, true },
+
+    { "_Z20rsSetElementAt_float13rs_allocationPKft", (void *)&SC_SetElementAt1_float, true },
+    { "_Z21rsSetElementAt_float213rs_allocationPKDv2_fj", (void *)&SC_SetElementAt1_float2, true },
+    { "_Z21rsSetElementAt_float313rs_allocationPKDv3_fj", (void *)&SC_SetElementAt1_float3, true },
+    { "_Z21rsSetElementAt_float413rs_allocationPKDv4_fj", (void *)&SC_SetElementAt1_float4, true },
+    { "_Z20rsSetElementAt_float13rs_allocationPKfjj", (void *)&SC_SetElementAt2_float, true },
+    { "_Z21rsSetElementAt_float213rs_allocationPKDv2_fjj", (void *)&SC_SetElementAt2_float2, true },
+    { "_Z21rsSetElementAt_float313rs_allocationPKDv3_fjj", (void *)&SC_SetElementAt2_float3, true },
+    { "_Z21rsSetElementAt_float413rs_allocationPKDv4_fjj", (void *)&SC_SetElementAt2_float4, true },
+    { "_Z20rsSetElementAt_float13rs_allocationPKfjjj", (void *)&SC_SetElementAt3_float, true },
+    { "_Z21rsSetElementAt_float213rs_allocationPKDv2_fjjj", (void *)&SC_SetElementAt3_float2, true },
+    { "_Z21rsSetElementAt_float313rs_allocationPKDv3_fjjj", (void *)&SC_SetElementAt3_float3, true },
+    { "_Z21rsSetElementAt_float413rs_allocationPKDv4_fjjj", (void *)&SC_SetElementAt3_float4, true },
+
+    { "_Z21rsSetElementAt_double13rs_allocationPKdt", (void *)&SC_SetElementAt1_double, true },
+    { "_Z22rsSetElementAt_double213rs_allocationPKDv2_dj", (void *)&SC_SetElementAt1_double2, true },
+    { "_Z22rsSetElementAt_double313rs_allocationPKDv3_dj", (void *)&SC_SetElementAt1_double3, true },
+    { "_Z22rsSetElementAt_double413rs_allocationPKDv4_dj", (void *)&SC_SetElementAt1_double4, true },
+    { "_Z21rsSetElementAt_double13rs_allocationPKdjj", (void *)&SC_SetElementAt2_double, true },
+    { "_Z22rsSetElementAt_double213rs_allocationPKDv2_djj", (void *)&SC_SetElementAt2_double2, true },
+    { "_Z22rsSetElementAt_double313rs_allocationPKDv3_djj", (void *)&SC_SetElementAt2_double3, true },
+    { "_Z22rsSetElementAt_double413rs_allocationPKDv4_djj", (void *)&SC_SetElementAt2_double4, true },
+    { "_Z21rsSetElementAt_double13rs_allocationPKdjjj", (void *)&SC_SetElementAt3_double, true },
+    { "_Z22rsSetElementAt_double213rs_allocationPKDv2_djjj", (void *)&SC_SetElementAt3_double2, true },
+    { "_Z22rsSetElementAt_double313rs_allocationPKDv3_djjj", (void *)&SC_SetElementAt3_double3, true },
+    { "_Z22rsSetElementAt_double413rs_allocationPKDv4_djjj", (void *)&SC_SetElementAt3_double4, true },
+
+
+    // Refcounting
+    { "_Z11rsSetObjectP10rs_elementS_", (void *)&SC_SetObject, true },
+    { "_Z13rsClearObjectP10rs_element", (void *)&SC_ClearObject, true },
+    { "_Z10rsIsObject10rs_element", (void *)&SC_IsObject, true },
+
+    { "_Z11rsSetObjectP7rs_typeS_", (void *)&SC_SetObject, true },
+    { "_Z13rsClearObjectP7rs_type", (void *)&SC_ClearObject, true },
+    { "_Z10rsIsObject7rs_type", (void *)&SC_IsObject, true },
+
+    { "_Z11rsSetObjectP13rs_allocationS_", (void *)&SC_SetObject, true },
+    { "_Z13rsClearObjectP13rs_allocation", (void *)&SC_ClearObject, true },
+    { "_Z10rsIsObject13rs_allocation", (void *)&SC_IsObject, true },
+
+    { "_Z11rsSetObjectP10rs_samplerS_", (void *)&SC_SetObject, true },
+    { "_Z13rsClearObjectP10rs_sampler", (void *)&SC_ClearObject, true },
+    { "_Z10rsIsObject10rs_sampler", (void *)&SC_IsObject, true },
+
+    { "_Z11rsSetObjectP9rs_scriptS_", (void *)&SC_SetObject, true },
+    { "_Z13rsClearObjectP9rs_script", (void *)&SC_ClearObject, true },
+    { "_Z10rsIsObject9rs_script", (void *)&SC_IsObject, true },
+
+    { "_Z11rsSetObjectP7rs_pathS_", (void *)&SC_SetObject, true },
+    { "_Z13rsClearObjectP7rs_path", (void *)&SC_ClearObject, true },
+    { "_Z10rsIsObject7rs_path", (void *)&SC_IsObject, true },
+
+    { "_Z11rsSetObjectP7rs_meshS_", (void *)&SC_SetObject, true },
+    { "_Z13rsClearObjectP7rs_mesh", (void *)&SC_ClearObject, true },
+    { "_Z10rsIsObject7rs_mesh", (void *)&SC_IsObject, true },
+
+    { "_Z11rsSetObjectP19rs_program_fragmentS_", (void *)&SC_SetObject, true },
+    { "_Z13rsClearObjectP19rs_program_fragment", (void *)&SC_ClearObject, true },
+    { "_Z10rsIsObject19rs_program_fragment", (void *)&SC_IsObject, true },
+
+    { "_Z11rsSetObjectP17rs_program_vertexS_", (void *)&SC_SetObject, true },
+    { "_Z13rsClearObjectP17rs_program_vertex", (void *)&SC_ClearObject, true },
+    { "_Z10rsIsObject17rs_program_vertex", (void *)&SC_IsObject, true },
+
+    { "_Z11rsSetObjectP17rs_program_rasterS_", (void *)&SC_SetObject, true },
+    { "_Z13rsClearObjectP17rs_program_raster", (void *)&SC_ClearObject, true },
+    { "_Z10rsIsObject17rs_program_raster", (void *)&SC_IsObject, true },
+
+    { "_Z11rsSetObjectP16rs_program_storeS_", (void *)&SC_SetObject, true },
+    { "_Z13rsClearObjectP16rs_program_store", (void *)&SC_ClearObject, true },
+    { "_Z10rsIsObject16rs_program_store", (void *)&SC_IsObject, true },
+
+    { "_Z11rsSetObjectP7rs_fontS_", (void *)&SC_SetObject, true },
+    { "_Z13rsClearObjectP7rs_font", (void *)&SC_ClearObject, true },
+    { "_Z10rsIsObject7rs_font", (void *)&SC_IsObject, true },
+
+    // Allocation ops
+    { "_Z21rsAllocationMarkDirty13rs_allocation", (void *)&SC_AllocationSyncAll, true },
+    { "_Z20rsgAllocationSyncAll13rs_allocation", (void *)&SC_AllocationSyncAll, false },
+    { "_Z20rsgAllocationSyncAll13rs_allocationj", (void *)&SC_AllocationSyncAll2, false },
+    { "_Z20rsgAllocationSyncAll13rs_allocation24rs_allocation_usage_type", (void *)&SC_AllocationSyncAll2, false },
+    { "_Z15rsGetAllocationPKv", (void *)&SC_GetAllocation, true },
+#ifndef RS_COMPATIBILITY_LIB
+    { "_Z18rsAllocationIoSend13rs_allocation", (void *)&SC_AllocationIoSend, false },
+    { "_Z21rsAllocationIoReceive13rs_allocation", (void *)&SC_AllocationIoReceive, false },
+#endif
+    { "_Z23rsAllocationCopy1DRange13rs_allocationjjjS_jj", (void *)&SC_AllocationCopy1DRange, false },
+    { "_Z23rsAllocationCopy2DRange13rs_allocationjjj26rs_allocation_cubemap_facejjS_jjjS0_", (void *)&SC_AllocationCopy2DRange, false },
+
+    // Messaging
+
+    { "_Z14rsSendToClienti", (void *)&SC_ToClient, false },
+    { "_Z14rsSendToClientiPKvj", (void *)&SC_ToClient2, false },
+    { "_Z22rsSendToClientBlockingi", (void *)&SC_ToClientBlocking, false },
+    { "_Z22rsSendToClientBlockingiPKvj", (void *)&SC_ToClientBlocking2, false },
+#ifndef RS_COMPATIBILITY_LIB
+    { "_Z22rsgBindProgramFragment19rs_program_fragment", (void *)&SC_BindProgramFragment, false },
+    { "_Z19rsgBindProgramStore16rs_program_store", (void *)&SC_BindProgramStore, false },
+    { "_Z20rsgBindProgramVertex17rs_program_vertex", (void *)&SC_BindProgramVertex, false },
+    { "_Z20rsgBindProgramRaster17rs_program_raster", (void *)&SC_BindProgramRaster, false },
+    { "_Z14rsgBindSampler19rs_program_fragmentj10rs_sampler", (void *)&SC_BindSampler, false },
+    { "_Z14rsgBindTexture19rs_program_fragmentj13rs_allocation", (void *)&SC_BindTexture, false },
+    { "_Z15rsgBindConstant19rs_program_fragmentj13rs_allocation", (void *)&SC_BindFragmentConstant, false },
+    { "_Z15rsgBindConstant17rs_program_vertexj13rs_allocation", (void *)&SC_BindVertexConstant, false },
+
+    { "_Z36rsgProgramVertexLoadProjectionMatrixPK12rs_matrix4x4", (void *)&SC_VpLoadProjectionMatrix, false },
+    { "_Z31rsgProgramVertexLoadModelMatrixPK12rs_matrix4x4", (void *)&SC_VpLoadModelMatrix, false },
+    { "_Z33rsgProgramVertexLoadTextureMatrixPK12rs_matrix4x4", (void *)&SC_VpLoadTextureMatrix, false },
+
+    { "_Z35rsgProgramVertexGetProjectionMatrixP12rs_matrix4x4", (void *)&SC_VpGetProjectionMatrix, false },
+
+    { "_Z31rsgProgramFragmentConstantColor19rs_program_fragmentffff", (void *)&SC_PfConstantColor, false },
+
+    { "_Z11rsgGetWidthv", (void *)&SC_GetWidth, false },
+    { "_Z12rsgGetHeightv", (void *)&SC_GetHeight, false },
+
+
+    { "_Z11rsgDrawRectfffff", (void *)&SC_DrawRect, false },
+    { "_Z11rsgDrawQuadffffffffffff", (void *)&SC_DrawQuad, false },
+    { "_Z20rsgDrawQuadTexCoordsffffffffffffffffffff", (void *)&SC_DrawQuadTexCoords, false },
+    { "_Z24rsgDrawSpriteScreenspacefffff", (void *)&SC_DrawSpriteScreenspace, false },
+
+    { "_Z11rsgDrawMesh7rs_mesh", (void *)&SC_DrawMesh, false },
+    { "_Z11rsgDrawMesh7rs_meshj", (void *)&SC_DrawMeshPrimitive, false },
+    { "_Z11rsgDrawMesh7rs_meshjjj", (void *)&SC_DrawMeshPrimitiveRange, false },
+    { "_Z25rsgMeshComputeBoundingBox7rs_meshPfS0_S0_S0_S0_S0_", (void *)&SC_MeshComputeBoundingBox, false },
+
+    { "_Z11rsgDrawPath7rs_path", (void *)&SC_DrawPath, false },
+
+    { "_Z13rsgClearColorffff", (void *)&SC_ClearColor, false },
+    { "_Z13rsgClearDepthf", (void *)&SC_ClearDepth, false },
+
+    { "_Z11rsgDrawTextPKcii", (void *)&SC_DrawText, false },
+    { "_Z11rsgDrawText13rs_allocationii", (void *)&SC_DrawTextAlloc, false },
+    { "_Z14rsgMeasureTextPKcPiS1_S1_S1_", (void *)&SC_MeasureText, false },
+    { "_Z14rsgMeasureText13rs_allocationPiS0_S0_S0_", (void *)&SC_MeasureTextAlloc, false },
+
+    { "_Z11rsgBindFont7rs_font", (void *)&SC_BindFont, false },
+    { "_Z12rsgFontColorffff", (void *)&SC_FontColor, false },
+
+    { "_Z18rsgBindColorTarget13rs_allocationj", (void *)&SC_BindFrameBufferObjectColorTarget, false },
+    { "_Z18rsgBindDepthTarget13rs_allocation", (void *)&SC_BindFrameBufferObjectDepthTarget, false },
+    { "_Z19rsgClearColorTargetj", (void *)&SC_ClearFrameBufferObjectColorTarget, false },
+    { "_Z19rsgClearDepthTargetv", (void *)&SC_ClearFrameBufferObjectDepthTarget, false },
+    { "_Z24rsgClearAllRenderTargetsv", (void *)&SC_ClearFrameBufferObjectTargets, false },
+#endif // RS_COMPATIBILITY_LIB
+
+    { "_Z9rsForEach9rs_script13rs_allocationS0_", (void *)&SC_ForEach_SAA, true },
+    { "_Z9rsForEach9rs_script13rs_allocationS0_PKv", (void *)&SC_ForEach_SAAU, true },
+    { "_Z9rsForEach9rs_script13rs_allocationS0_PKvPK14rs_script_call", (void *)&SC_ForEach_SAAUS, true },
+    { "_Z9rsForEach9rs_script13rs_allocationS0_PKvj", (void *)&SC_ForEach_SAAUL, true },
+    { "_Z9rsForEach9rs_script13rs_allocationS0_PKvjPK14rs_script_call", (void *)&SC_ForEach_SAAULS, true },
+
+    // time
+    { "_Z6rsTimePi", (void *)&SC_Time, true },
+    { "_Z11rsLocaltimeP5rs_tmPKi", (void *)&SC_LocalTime, true },
+    { "_Z14rsUptimeMillisv", (void*)&SC_UptimeMillis, true },
+    { "_Z13rsUptimeNanosv", (void*)&SC_UptimeNanos, true },
+    { "_Z7rsGetDtv", (void*)&SC_GetDt, false },
+
+    // misc
+#ifndef RS_COMPATIBILITY_LIB
+    { "_Z5colorffff", (void *)&SC_Color, false },
+    { "_Z9rsgFinishv", (void *)&SC_Finish, false },
+#endif
+
+    { NULL, NULL, false }
+};
+
+#ifdef RS_COMPATIBILITY_LIB
+
+//////////////////////////////////////////////////////////////////////////////
+// Compatibility Library entry points
+//////////////////////////////////////////////////////////////////////////////
+
+bool rsIsObject(rs_element src) {
+    return SC_IsObject((ObjectBase*)src.p);
+}
+
+#define CLEAR_SET_OBJ(t) \
+    void __attribute__((overloadable)) rsClearObject(t *dst) { \
+    return SC_ClearObject((ObjectBase**) dst); \
+    } \
+    void __attribute__((overloadable)) rsSetObject(t *dst, t src) { \
+    return SC_SetObject((ObjectBase**) dst, (ObjectBase*) src.p); \
+    }
+
+CLEAR_SET_OBJ(rs_element)
+CLEAR_SET_OBJ(rs_type)
+CLEAR_SET_OBJ(rs_allocation)
+CLEAR_SET_OBJ(rs_sampler)
+CLEAR_SET_OBJ(rs_script)
+#undef CLEAR_SET_OBJ
+
+const Allocation * rsGetAllocation(const void *ptr) {
+    return SC_GetAllocation(ptr);
+}
+
+void __attribute__((overloadable)) rsForEach(rs_script script,
+                                             rs_allocation in,
+                                             rs_allocation out,
+                                             const void *usr,
+                                             const rs_script_call *call) {
+    return SC_ForEach_SAAUS((Script *)script.p, (Allocation*)in.p, (Allocation*)out.p, usr, (RsScriptCall*)call);
+}
+
+void __attribute__((overloadable)) rsForEach(rs_script script,
+                                             rs_allocation in,
+                                             rs_allocation out,
+                                             const void *usr,
+                                             uint32_t usrLen,
+                                             const rs_script_call *call) {
+    return SC_ForEach_SAAULS((Script *)script.p, (Allocation*)in.p, (Allocation*)out.p, usr, usrLen, (RsScriptCall*)call);
+}
+
+int rsTime(int *timer) {
+    return SC_Time(timer);
+}
+
+rs_tm* rsLocaltime(rs_tm* local, const int *timer) {
+    return (rs_tm*)(SC_LocalTime((tm*)local, (long*)timer));
+}
+
+int64_t rsUptimeMillis() {
+    Context *rsc = RsdCpuReference::getTlsContext();
+    return rsrUptimeMillis(rsc);
+}
+
+uint32_t rsSendToClientBlocking2(int cmdID, void *data, int len) {
+    Context *rsc = RsdCpuReference::getTlsContext();
+    return rsrToClientBlocking(rsc, cmdID, data, len);
+}
+
+uint32_t rsSendToClientBlocking(int cmdID) {
+    Context *rsc = RsdCpuReference::getTlsContext();
+    return rsrToClientBlocking(rsc, cmdID, NULL, 0);
 }
 
 static void SC_debugF(const char *s, float f) {
@@ -679,246 +1424,207 @@ static void SC_debugP(const char *s, const void *p) {
     ALOGD("%s %p", s, p);
 }
 
+// TODO: allocation ops, messaging, time
 
-//////////////////////////////////////////////////////////////////////////////
-// Stub implementation
-//////////////////////////////////////////////////////////////////////////////
+void rsDebug(const char *s, float f) {
+    SC_debugF(s, f);
+}
 
-// llvm name mangling ref
-//  <builtin-type> ::= v  # void
-//                 ::= b  # bool
-//                 ::= c  # char
-//                 ::= a  # signed char
-//                 ::= h  # unsigned char
-//                 ::= s  # short
-//                 ::= t  # unsigned short
-//                 ::= i  # int
-//                 ::= j  # unsigned int
-//                 ::= l  # long
-//                 ::= m  # unsigned long
-//                 ::= x  # long long, __int64
-//                 ::= y  # unsigned long long, __int64
-//                 ::= f  # float
-//                 ::= d  # double
+void rsDebug(const char *s, float f1, float f2) {
+    SC_debugFv2(s, f1, f2);
+}
 
-static RsdSymbolTable gSyms[] = {
-    { "memset", (void *)&memset, true },
-    { "memcpy", (void *)&memcpy, true },
+void rsDebug(const char *s, float f1, float f2, float f3) {
+    SC_debugFv3(s, f1, f2, f3);
+}
 
-    // Refcounting
-    { "_Z11rsSetObjectP10rs_elementS_", (void *)&SC_SetObject, true },
-    { "_Z13rsClearObjectP10rs_element", (void *)&SC_ClearObject, true },
-    { "_Z10rsIsObject10rs_element", (void *)&SC_IsObject, true },
+void rsDebug(const char *s, float f1, float f2, float f3, float f4) {
+    SC_debugFv4(s, f1, f2, f3, f4);
+}
 
-    { "_Z11rsSetObjectP7rs_typeS_", (void *)&SC_SetObject, true },
-    { "_Z13rsClearObjectP7rs_type", (void *)&SC_ClearObject, true },
-    { "_Z10rsIsObject7rs_type", (void *)&SC_IsObject, true },
+void rsDebug(const char *s, const float2 *f) {
+    SC_debugF2(s, *f);
+}
 
-    { "_Z11rsSetObjectP13rs_allocationS_", (void *)&SC_SetObject, true },
-    { "_Z13rsClearObjectP13rs_allocation", (void *)&SC_ClearObject, true },
-    { "_Z10rsIsObject13rs_allocation", (void *)&SC_IsObject, true },
+void rsDebug(const char *s, const float3 *f) {
+    SC_debugF3(s, *f);
+}
 
-    { "_Z11rsSetObjectP10rs_samplerS_", (void *)&SC_SetObject, true },
-    { "_Z13rsClearObjectP10rs_sampler", (void *)&SC_ClearObject, true },
-    { "_Z10rsIsObject10rs_sampler", (void *)&SC_IsObject, true },
+void rsDebug(const char *s, const float4 *f) {
+    SC_debugF4(s, *f);
+}
 
-    { "_Z11rsSetObjectP9rs_scriptS_", (void *)&SC_SetObject, true },
-    { "_Z13rsClearObjectP9rs_script", (void *)&SC_ClearObject, true },
-    { "_Z10rsIsObject9rs_script", (void *)&SC_IsObject, true },
+void rsDebug(const char *s, double d) {
+    SC_debugD(s, d);
+}
 
-    { "_Z11rsSetObjectP7rs_pathS_", (void *)&SC_SetObject, true },
-    { "_Z13rsClearObjectP7rs_path", (void *)&SC_ClearObject, true },
-    { "_Z10rsIsObject7rs_path", (void *)&SC_IsObject, true },
+void rsDebug(const char *s, const rs_matrix4x4 *m) {
+    SC_debugFM4v4(s, (float *) m);
+}
 
-    { "_Z11rsSetObjectP7rs_meshS_", (void *)&SC_SetObject, true },
-    { "_Z13rsClearObjectP7rs_mesh", (void *)&SC_ClearObject, true },
-    { "_Z10rsIsObject7rs_mesh", (void *)&SC_IsObject, true },
+void rsDebug(const char *s, const rs_matrix3x3 *m) {
+    SC_debugFM3v3(s, (float *) m);
+}
 
-    { "_Z11rsSetObjectP19rs_program_fragmentS_", (void *)&SC_SetObject, true },
-    { "_Z13rsClearObjectP19rs_program_fragment", (void *)&SC_ClearObject, true },
-    { "_Z10rsIsObject19rs_program_fragment", (void *)&SC_IsObject, true },
+void rsDebug(const char *s, const rs_matrix2x2 *m) {
+    SC_debugFM2v2(s, (float *) m);
+}
 
-    { "_Z11rsSetObjectP17rs_program_vertexS_", (void *)&SC_SetObject, true },
-    { "_Z13rsClearObjectP17rs_program_vertex", (void *)&SC_ClearObject, true },
-    { "_Z10rsIsObject17rs_program_vertex", (void *)&SC_IsObject, true },
+void rsDebug(const char *s, char c) {
+    SC_debugI8(s, c);
+}
 
-    { "_Z11rsSetObjectP17rs_program_rasterS_", (void *)&SC_SetObject, true },
-    { "_Z13rsClearObjectP17rs_program_raster", (void *)&SC_ClearObject, true },
-    { "_Z10rsIsObject17rs_program_raster", (void *)&SC_IsObject, true },
+void rsDebug(const char *s, const char2 *c) {
+    SC_debugC2(s, *c);
+}
 
-    { "_Z11rsSetObjectP16rs_program_storeS_", (void *)&SC_SetObject, true },
-    { "_Z13rsClearObjectP16rs_program_store", (void *)&SC_ClearObject, true },
-    { "_Z10rsIsObject16rs_program_store", (void *)&SC_IsObject, true },
+void rsDebug(const char *s, const char3 *c) {
+    SC_debugC3(s, *c);
+}
 
-    { "_Z11rsSetObjectP7rs_fontS_", (void *)&SC_SetObject, true },
-    { "_Z13rsClearObjectP7rs_font", (void *)&SC_ClearObject, true },
-    { "_Z10rsIsObject7rs_font", (void *)&SC_IsObject, true },
+void rsDebug(const char *s, const char4 *c) {
+    SC_debugC4(s, *c);
+}
 
-    // Allocation ops
-    { "_Z21rsAllocationMarkDirty13rs_allocation", (void *)&SC_AllocationSyncAll, true },
-    { "_Z20rsgAllocationSyncAll13rs_allocation", (void *)&SC_AllocationSyncAll, false },
-    { "_Z20rsgAllocationSyncAll13rs_allocationj", (void *)&SC_AllocationSyncAll2, false },
-    { "_Z20rsgAllocationSyncAll13rs_allocation24rs_allocation_usage_type", (void *)&SC_AllocationSyncAll2, false },
-    { "_Z15rsGetAllocationPKv", (void *)&SC_GetAllocation, true },
-    { "_Z18rsAllocationIoSend13rs_allocation", (void *)&SC_AllocationIoSend, false },
-    { "_Z21rsAllocationIoReceive13rs_allocation", (void *)&SC_AllocationIoReceive, false },
-    { "_Z23rsAllocationCopy1DRange13rs_allocationjjjS_jj", (void *)&SC_AllocationCopy1DRange, false },
-    { "_Z23rsAllocationCopy2DRange13rs_allocationjjj26rs_allocation_cubemap_facejjS_jjjS0_", (void *)&SC_AllocationCopy2DRange, false },
+void rsDebug(const char *s, unsigned char c) {
+    SC_debugU8(s, c);
+}
 
-    // Messaging
+void rsDebug(const char *s, const uchar2 *c) {
+    SC_debugUC2(s, *c);
+}
 
-    { "_Z14rsSendToClienti", (void *)&SC_ToClient, false },
-    { "_Z14rsSendToClientiPKvj", (void *)&SC_ToClient2, false },
-    { "_Z22rsSendToClientBlockingi", (void *)&SC_ToClientBlocking, false },
-    { "_Z22rsSendToClientBlockingiPKvj", (void *)&SC_ToClientBlocking2, false },
+void rsDebug(const char *s, const uchar3 *c) {
+    SC_debugUC3(s, *c);
+}
 
-    { "_Z22rsgBindProgramFragment19rs_program_fragment", (void *)&SC_BindProgramFragment, false },
-    { "_Z19rsgBindProgramStore16rs_program_store", (void *)&SC_BindProgramStore, false },
-    { "_Z20rsgBindProgramVertex17rs_program_vertex", (void *)&SC_BindProgramVertex, false },
-    { "_Z20rsgBindProgramRaster17rs_program_raster", (void *)&SC_BindProgramRaster, false },
-    { "_Z14rsgBindSampler19rs_program_fragmentj10rs_sampler", (void *)&SC_BindSampler, false },
-    { "_Z14rsgBindTexture19rs_program_fragmentj13rs_allocation", (void *)&SC_BindTexture, false },
-    { "_Z15rsgBindConstant19rs_program_fragmentj13rs_allocation", (void *)&SC_BindFragmentConstant, false },
-    { "_Z15rsgBindConstant17rs_program_vertexj13rs_allocation", (void *)&SC_BindVertexConstant, false },
+void rsDebug(const char *s, const uchar4 *c) {
+    SC_debugUC4(s, *c);
+}
 
-    { "_Z36rsgProgramVertexLoadProjectionMatrixPK12rs_matrix4x4", (void *)&SC_VpLoadProjectionMatrix, false },
-    { "_Z31rsgProgramVertexLoadModelMatrixPK12rs_matrix4x4", (void *)&SC_VpLoadModelMatrix, false },
-    { "_Z33rsgProgramVertexLoadTextureMatrixPK12rs_matrix4x4", (void *)&SC_VpLoadTextureMatrix, false },
+void rsDebug(const char *s, short c) {
+    SC_debugI16(s, c);
+}
 
-    { "_Z35rsgProgramVertexGetProjectionMatrixP12rs_matrix4x4", (void *)&SC_VpGetProjectionMatrix, false },
+void rsDebug(const char *s, const short2 *c) {
+    SC_debugS2(s, *c);
+}
 
-    { "_Z31rsgProgramFragmentConstantColor19rs_program_fragmentffff", (void *)&SC_PfConstantColor, false },
+void rsDebug(const char *s, const short3 *c) {
+    SC_debugS3(s, *c);
+}
 
-    { "_Z11rsgGetWidthv", (void *)&SC_GetWidth, false },
-    { "_Z12rsgGetHeightv", (void *)&SC_GetHeight, false },
+void rsDebug(const char *s, const short4 *c) {
+    SC_debugS4(s, *c);
+}
 
+void rsDebug(const char *s, unsigned short c) {
+    SC_debugU16(s, c);
+}
 
-    { "_Z11rsgDrawRectfffff", (void *)&SC_DrawRect, false },
-    { "_Z11rsgDrawQuadffffffffffff", (void *)&SC_DrawQuad, false },
-    { "_Z20rsgDrawQuadTexCoordsffffffffffffffffffff", (void *)&SC_DrawQuadTexCoords, false },
-    { "_Z24rsgDrawSpriteScreenspacefffff", (void *)&SC_DrawSpriteScreenspace, false },
+void rsDebug(const char *s, const ushort2 *c) {
+    SC_debugUS2(s, *c);
+}
 
-    { "_Z11rsgDrawMesh7rs_mesh", (void *)&SC_DrawMesh, false },
-    { "_Z11rsgDrawMesh7rs_meshj", (void *)&SC_DrawMeshPrimitive, false },
-    { "_Z11rsgDrawMesh7rs_meshjjj", (void *)&SC_DrawMeshPrimitiveRange, false },
-    { "_Z25rsgMeshComputeBoundingBox7rs_meshPfS0_S0_S0_S0_S0_", (void *)&SC_MeshComputeBoundingBox, false },
+void rsDebug(const char *s, const ushort3 *c) {
+    SC_debugUS3(s, *c);
+}
 
-    { "_Z11rsgDrawPath7rs_path", (void *)&SC_DrawPath, false },
+void rsDebug(const char *s, const ushort4 *c) {
+    SC_debugUS4(s, *c);
+}
 
-    { "_Z13rsgClearColorffff", (void *)&SC_ClearColor, false },
-    { "_Z13rsgClearDepthf", (void *)&SC_ClearDepth, false },
+void rsDebug(const char *s, int c) {
+    SC_debugI32(s, c);
+}
 
-    { "_Z11rsgDrawTextPKcii", (void *)&SC_DrawText, false },
-    { "_Z11rsgDrawText13rs_allocationii", (void *)&SC_DrawTextAlloc, false },
-    { "_Z14rsgMeasureTextPKcPiS1_S1_S1_", (void *)&SC_MeasureText, false },
-    { "_Z14rsgMeasureText13rs_allocationPiS0_S0_S0_", (void *)&SC_MeasureTextAlloc, false },
+void rsDebug(const char *s, const int2 *c) {
+    SC_debugI2(s, *c);
+}
 
-    { "_Z11rsgBindFont7rs_font", (void *)&SC_BindFont, false },
-    { "_Z12rsgFontColorffff", (void *)&SC_FontColor, false },
+void rsDebug(const char *s, const int3 *c) {
+    SC_debugI3(s, *c);
+}
 
-    { "_Z18rsgBindColorTarget13rs_allocationj", (void *)&SC_BindFrameBufferObjectColorTarget, false },
-    { "_Z18rsgBindDepthTarget13rs_allocation", (void *)&SC_BindFrameBufferObjectDepthTarget, false },
-    { "_Z19rsgClearColorTargetj", (void *)&SC_ClearFrameBufferObjectColorTarget, false },
-    { "_Z19rsgClearDepthTargetv", (void *)&SC_ClearFrameBufferObjectDepthTarget, false },
-    { "_Z24rsgClearAllRenderTargetsv", (void *)&SC_ClearFrameBufferObjectTargets, false },
+void rsDebug(const char *s, const int4 *c) {
+    SC_debugI4(s, *c);
+}
 
-    { "_Z9rsForEach9rs_script13rs_allocationS0_", (void *)&SC_ForEach_SAA, true },
-    { "_Z9rsForEach9rs_script13rs_allocationS0_PKv", (void *)&SC_ForEach_SAAU, true },
-    { "_Z9rsForEach9rs_script13rs_allocationS0_PKvPK14rs_script_call", (void *)&SC_ForEach_SAAUS, true },
-    { "_Z9rsForEach9rs_script13rs_allocationS0_PKvj", (void *)&SC_ForEach_SAAUL, true },
-    { "_Z9rsForEach9rs_script13rs_allocationS0_PKvjPK14rs_script_call", (void *)&SC_ForEach_SAAULS, true },
+void rsDebug(const char *s, unsigned int c) {
+    SC_debugU32(s, c);
+}
 
-    // time
-    { "_Z6rsTimePi", (void *)&SC_Time, true },
-    { "_Z11rsLocaltimeP5rs_tmPKi", (void *)&SC_LocalTime, true },
-    { "_Z14rsUptimeMillisv", (void*)&SC_UptimeMillis, true },
-    { "_Z13rsUptimeNanosv", (void*)&SC_UptimeNanos, true },
-    { "_Z7rsGetDtv", (void*)&SC_GetDt, false },
+void rsDebug(const char *s, const uint2 *c) {
+    SC_debugUI2(s, *c);
+}
 
-    // misc
-    { "_Z5colorffff", (void *)&SC_Color, false },
-    { "_Z9rsgFinishv", (void *)&SC_Finish, false },
+void rsDebug(const char *s, const uint3 *c) {
+    SC_debugUI3(s, *c);
+}
 
-    // Debug
-    { "_Z7rsDebugPKcf", (void *)&SC_debugF, true },
-    { "_Z7rsDebugPKcff", (void *)&SC_debugFv2, true },
-    { "_Z7rsDebugPKcfff", (void *)&SC_debugFv3, true },
-    { "_Z7rsDebugPKcffff", (void *)&SC_debugFv4, true },
-    { "_Z7rsDebugPKcDv2_f", (void *)&SC_debugF2, true },
-    { "_Z7rsDebugPKcDv3_f", (void *)&SC_debugF3, true },
-    { "_Z7rsDebugPKcDv4_f", (void *)&SC_debugF4, true },
-    { "_Z7rsDebugPKcd", (void *)&SC_debugD, true },
-    { "_Z7rsDebugPKcPK12rs_matrix4x4", (void *)&SC_debugFM4v4, true },
-    { "_Z7rsDebugPKcPK12rs_matrix3x3", (void *)&SC_debugFM3v3, true },
-    { "_Z7rsDebugPKcPK12rs_matrix2x2", (void *)&SC_debugFM2v2, true },
-    { "_Z7rsDebugPKcc", (void *)&SC_debugI8, true },
-    { "_Z7rsDebugPKcDv2_c", (void *)&SC_debugC2, true },
-    { "_Z7rsDebugPKcDv3_c", (void *)&SC_debugC3, true },
-    { "_Z7rsDebugPKcDv4_c", (void *)&SC_debugC4, true },
-    { "_Z7rsDebugPKch", (void *)&SC_debugU8, true },
-    { "_Z7rsDebugPKcDv2_h", (void *)&SC_debugUC2, true },
-    { "_Z7rsDebugPKcDv3_h", (void *)&SC_debugUC3, true },
-    { "_Z7rsDebugPKcDv4_h", (void *)&SC_debugUC4, true },
-    { "_Z7rsDebugPKcs", (void *)&SC_debugI16, true },
-    { "_Z7rsDebugPKcDv2_s", (void *)&SC_debugS2, true },
-    { "_Z7rsDebugPKcDv3_s", (void *)&SC_debugS3, true },
-    { "_Z7rsDebugPKcDv4_s", (void *)&SC_debugS4, true },
-    { "_Z7rsDebugPKct", (void *)&SC_debugU16, true },
-    { "_Z7rsDebugPKcDv2_t", (void *)&SC_debugUS2, true },
-    { "_Z7rsDebugPKcDv3_t", (void *)&SC_debugUS3, true },
-    { "_Z7rsDebugPKcDv4_t", (void *)&SC_debugUS4, true },
-    { "_Z7rsDebugPKci", (void *)&SC_debugI32, true },
-    { "_Z7rsDebugPKcDv2_i", (void *)&SC_debugI2, true },
-    { "_Z7rsDebugPKcDv3_i", (void *)&SC_debugI3, true },
-    { "_Z7rsDebugPKcDv4_i", (void *)&SC_debugI4, true },
-    { "_Z7rsDebugPKcj", (void *)&SC_debugU32, true },
-    { "_Z7rsDebugPKcDv2_j", (void *)&SC_debugUI2, true },
-    { "_Z7rsDebugPKcDv3_j", (void *)&SC_debugUI3, true },
-    { "_Z7rsDebugPKcDv4_j", (void *)&SC_debugUI4, true },
-    // Both "long" and "unsigned long" need to be redirected to their
-    // 64-bit counterparts, since we have hacked Slang to use 64-bit
-    // for "long" on Arm (to be similar to Java).
-    { "_Z7rsDebugPKcl", (void *)&SC_debugLL64, true },
-    { "_Z7rsDebugPKcDv2_l", (void *)&SC_debugL2, true },
-    { "_Z7rsDebugPKcDv3_l", (void *)&SC_debugL3, true },
-    { "_Z7rsDebugPKcDv4_l", (void *)&SC_debugL4, true },
-    { "_Z7rsDebugPKcm", (void *)&SC_debugULL64, true },
-    { "_Z7rsDebugPKcDv2_m", (void *)&SC_debugUL2, true },
-    { "_Z7rsDebugPKcDv3_m", (void *)&SC_debugUL3, true },
-    { "_Z7rsDebugPKcDv4_m", (void *)&SC_debugUL4, true },
-    { "_Z7rsDebugPKcx", (void *)&SC_debugLL64, true },
-    { "_Z7rsDebugPKcDv2_x", (void *)&SC_debugL2, true },
-    { "_Z7rsDebugPKcDv3_x", (void *)&SC_debugL3, true },
-    { "_Z7rsDebugPKcDv4_x", (void *)&SC_debugL4, true },
-    { "_Z7rsDebugPKcy", (void *)&SC_debugULL64, true },
-    { "_Z7rsDebugPKcDv2_y", (void *)&SC_debugUL2, true },
-    { "_Z7rsDebugPKcDv3_y", (void *)&SC_debugUL3, true },
-    { "_Z7rsDebugPKcDv4_y", (void *)&SC_debugUL4, true },
-    { "_Z7rsDebugPKcPKv", (void *)&SC_debugP, true },
+void rsDebug(const char *s, const uint4 *c) {
+    SC_debugUI4(s, *c);
+}
 
-    { NULL, NULL, false }
-};
+void rsDebug(const char *s, long c) {
+    SC_debugLL64(s, c);
+}
 
+void rsDebug(const char *s, long long c) {
+    SC_debugLL64(s, c);
+}
 
-void* rsdLookupRuntimeStub(void* pContext, char const* name) {
+void rsDebug(const char *s, const long2 *c) {
+    SC_debugL2(s, *c);
+}
+
+void rsDebug(const char *s, const long3 *c) {
+    SC_debugL3(s, *c);
+}
+
+void rsDebug(const char *s, const long4 *c) {
+    SC_debugL4(s, *c);
+}
+
+void rsDebug(const char *s, unsigned long c) {
+    SC_debugULL64(s, c);
+}
+
+void rsDebug(const char *s, unsigned long long c) {
+    SC_debugULL64(s, c);
+}
+
+void rsDebug(const char *s, const ulong2 *c) {
+    SC_debugUL2(s, *c);
+}
+
+void rsDebug(const char *s, const ulong3 *c) {
+    SC_debugUL3(s, *c);
+}
+
+void rsDebug(const char *s, const ulong4 *c) {
+    SC_debugUL4(s, *c);
+}
+
+void rsDebug(const char *s, const void *p) {
+    SC_debugP(s, p);
+}
+#endif // RS_COMPATIBILITY_LIB
+
+extern const RsdCpuReference::CpuSymbol * rsdLookupRuntimeStub(Context * pContext, char const* name) {
     ScriptC *s = (ScriptC *)pContext;
-    RsdSymbolTable *syms = gSyms;
-    const RsdSymbolTable *sym = rsdLookupSymbolMath(name);
+    const RsdCpuReference::CpuSymbol *syms = gSyms;
+    const RsdCpuReference::CpuSymbol *sym = NULL;
 
     if (!sym) {
-        while (syms->mPtr) {
-            if (!strcmp(syms->mName, name)) {
-                sym = syms;
+        while (syms->fnPtr) {
+            if (!strcmp(syms->name, name)) {
+                return syms;
             }
             syms++;
         }
     }
 
-    if (sym) {
-        s->mHal.info.isThreadable &= sym->threadable;
-        return sym->mPtr;
-    }
-    ALOGE("ScriptC sym lookup failed for %s", name);
     return NULL;
 }
 

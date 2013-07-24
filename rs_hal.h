@@ -87,7 +87,8 @@ typedef struct {
     void (*getVersion)(unsigned int *major, unsigned int *minor);
     void (*setPriority)(const Context *, int32_t priority);
 
-
+    void* (*allocRuntimeMem)(size_t size, uint32_t flags);
+    void (*freeRuntimeMem)(void* ptr);
 
     struct {
         bool (*init)(const Context *rsc, ScriptC *s,
@@ -111,12 +112,16 @@ typedef struct {
                               const Allocation * ain,
                               Allocation * aout,
                               const void * usr,
-                              uint32_t usrLen,
+                              size_t usrLen,
                               const RsScriptCall *sc);
         void (*invokeInit)(const Context *rsc, Script *s);
         void (*invokeFreeChildren)(const Context *rsc, Script *s);
 
         void (*setGlobalVar)(const Context *rsc, const Script *s,
+                             uint32_t slot,
+                             void *data,
+                             size_t dataLength);
+        void (*getGlobalVar)(const Context *rsc, const Script *s,
                              uint32_t slot,
                              void *data,
                              size_t dataLength);
@@ -146,34 +151,34 @@ typedef struct {
         void (*syncAll)(const Context *rsc, const Allocation *alloc, RsAllocationUsageType src);
         void (*markDirty)(const Context *rsc, const Allocation *alloc);
 
-        int32_t (*initSurfaceTexture)(const Context *rsc, const Allocation *alloc);
-        void (*setSurfaceTexture)(const Context *rsc, Allocation *alloc, ANativeWindow *sur);
+        void * (*getSurface)(const Context *rsc, const Allocation *alloc);
+        void (*setSurface)(const Context *rsc, Allocation *alloc, ANativeWindow *sur);
         void (*ioSend)(const Context *rsc, Allocation *alloc);
         void (*ioReceive)(const Context *rsc, Allocation *alloc);
 
         void (*data1D)(const Context *rsc, const Allocation *alloc,
-                       uint32_t xoff, uint32_t lod, uint32_t count,
+                       uint32_t xoff, uint32_t lod, size_t count,
                        const void *data, size_t sizeBytes);
         void (*data2D)(const Context *rsc, const Allocation *alloc,
                        uint32_t xoff, uint32_t yoff, uint32_t lod,
                        RsAllocationCubemapFace face, uint32_t w, uint32_t h,
-                       const void *data, size_t sizeBytes);
+                       const void *data, size_t sizeBytes, size_t stride);
         void (*data3D)(const Context *rsc, const Allocation *alloc,
-                       uint32_t xoff, uint32_t yoff, uint32_t zoff,
-                       uint32_t lod, RsAllocationCubemapFace face,
-                       uint32_t w, uint32_t h, uint32_t d, const void *data, size_t sizeBytes);
+                       uint32_t xoff, uint32_t yoff, uint32_t zoff, uint32_t lod,
+                       uint32_t w, uint32_t h, uint32_t d, const void *data, size_t sizeBytes,
+                       size_t stride);
 
         void (*read1D)(const Context *rsc, const Allocation *alloc,
-                       uint32_t xoff, uint32_t lod, uint32_t count,
+                       uint32_t xoff, uint32_t lod, size_t count,
                        void *data, size_t sizeBytes);
         void (*read2D)(const Context *rsc, const Allocation *alloc,
                        uint32_t xoff, uint32_t yoff, uint32_t lod,
                        RsAllocationCubemapFace face, uint32_t w, uint32_t h,
-                       void *data, size_t sizeBytes);
+                       void *data, size_t sizeBytes, size_t stride);
         void (*read3D)(const Context *rsc, const Allocation *alloc,
-                       uint32_t xoff, uint32_t yoff, uint32_t zoff,
-                       uint32_t lod, RsAllocationCubemapFace face,
-                       uint32_t w, uint32_t h, uint32_t d, void *data, size_t sizeBytes);
+                       uint32_t xoff, uint32_t yoff, uint32_t zoff, uint32_t lod,
+                       uint32_t w, uint32_t h, uint32_t d, void *data, size_t sizeBytes,
+                       size_t stride);
 
         // Lock and unlock make a 1D region of memory available to the CPU
         // for direct access by pointer.  Once unlock is called control is
@@ -184,7 +189,7 @@ typedef struct {
         // Allocation to allocation copies
         void (*allocData1D)(const Context *rsc,
                             const Allocation *dstAlloc,
-                            uint32_t dstXoff, uint32_t dstLod, uint32_t count,
+                            uint32_t dstXoff, uint32_t dstLod, size_t count,
                             const Allocation *srcAlloc, uint32_t srcXoff, uint32_t srcLod);
         void (*allocData2D)(const Context *rsc,
                             const Allocation *dstAlloc,
@@ -196,11 +201,11 @@ typedef struct {
         void (*allocData3D)(const Context *rsc,
                             const Allocation *dstAlloc,
                             uint32_t dstXoff, uint32_t dstYoff, uint32_t dstZoff,
-                            uint32_t dstLod, RsAllocationCubemapFace dstFace,
+                            uint32_t dstLod,
                             uint32_t w, uint32_t h, uint32_t d,
                             const Allocation *srcAlloc,
                             uint32_t srcXoff, uint32_t srcYoff, uint32_t srcZoff,
-                            uint32_t srcLod, RsAllocationCubemapFace srcFace);
+                            uint32_t srcLod);
 
         void (*elementData1D)(const Context *rsc, const Allocation *alloc, uint32_t x,
                               const void *data, uint32_t elementOff, size_t sizeBytes);
@@ -265,7 +270,7 @@ typedef struct {
     } framebuffer;
 
     struct {
-        bool (*init)(const Context *rsc, const ScriptGroup *sg);
+        bool (*init)(const Context *rsc, ScriptGroup *sg);
         void (*setInput)(const Context *rsc, const ScriptGroup *sg,
                          const ScriptKernelID *kid, Allocation *);
         void (*setOutput)(const Context *rsc, const ScriptGroup *sg,

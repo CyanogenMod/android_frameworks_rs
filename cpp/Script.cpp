@@ -14,22 +14,16 @@
  * limitations under the License.
  */
 
-#define LOG_TAG "libRS_cpp"
-
-#include <utils/Log.h>
 #include <malloc.h>
 
 #include "RenderScript.h"
-#include "Element.h"
-#include "Type.h"
-#include "Allocation.h"
-#include "Script.h"
+#include <rs.h>
 
 using namespace android;
-using namespace renderscriptCpp;
+using namespace RSC;
 
 void Script::invoke(uint32_t slot, const void *v, size_t len) const {
-    rsScriptInvokeV(mRS->mContext, getID(), slot, v, len);
+    rsScriptInvokeV(mRS->getContext(), getID(), slot, v, len);
 }
 
 void Script::forEach(uint32_t slot, sp<const Allocation> ain, sp<const Allocation> aout,
@@ -39,34 +33,28 @@ void Script::forEach(uint32_t slot, sp<const Allocation> ain, sp<const Allocatio
     }
     void *in_id = BaseObj::getObjID(ain);
     void *out_id = BaseObj::getObjID(aout);
-    rsScriptForEach(mRS->mContext, getID(), slot, in_id, out_id, usr, usrLen);
+    rsScriptForEach(mRS->getContext(), getID(), slot, in_id, out_id, usr, usrLen, NULL, 0);
 }
 
 
-Script::Script(void *id, RenderScript *rs) : BaseObj(id, rs) {
+Script::Script(void *id, sp<RS> rs) : BaseObj(id, rs) {
 }
 
 
 void Script::bindAllocation(sp<Allocation> va, uint32_t slot) const {
-    rsScriptBindAllocation(mRS->mContext, getID(), BaseObj::getObjID(va), slot);
+    rsScriptBindAllocation(mRS->getContext(), getID(), BaseObj::getObjID(va), slot);
 }
 
 
 void Script::setVar(uint32_t index, sp<const BaseObj> o) const {
-    rsScriptSetVarObj(mRS->mContext, getID(), index, (o == NULL) ? 0 : o->getID());
+    rsScriptSetVarObj(mRS->getContext(), getID(), index, (o == NULL) ? 0 : o->getID());
 }
 
 void Script::setVar(uint32_t index, const void *v, size_t len) const {
-    rsScriptSetVarV(mRS->mContext, getID(), index, v, len);
+    rsScriptSetVarV(mRS->getContext(), getID(), index, v, len);
 }
 
-
-
-void Script::FieldBase::init(RenderScript *rs, uint32_t dimx, uint32_t usages) {
+void Script::FieldBase::init(sp<RS> rs, uint32_t dimx, uint32_t usages) {
     mAllocation = Allocation::createSized(rs, mElement, dimx, RS_ALLOCATION_USAGE_SCRIPT | usages);
 }
-
-//Script::FieldBase::FieldBase() {
-//}
-
 
