@@ -725,10 +725,6 @@ void rsdAllocationSetSurface(const Context *rsc, Allocation *alloc, ANativeWindo
         switch(e->getType()) {
         case RS_TYPE_UNSIGNED_8:
             switch (e->getVectorSize()) {
-            case 1:
-                rsAssert(e->getKind() == RS_KIND_PIXEL_A);
-                format = PIXEL_FORMAT_A_8;
-                break;
             case 4:
                 rsAssert(e->getKind() == RS_KIND_PIXEL_RGBA);
                 format = PIXEL_FORMAT_RGBA_8888;
