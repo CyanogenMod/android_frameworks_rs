@@ -147,6 +147,10 @@ private:
     static void moveReferences(void* d, void const* s, size_t n,
             const ReferenceConverterBase& caster);
 
+    // jellybean mr1 compat
+    extern "C" void _ZN7android7RefBase14moveReferencesEPvPKvjRKNS_22ReferenceConverterBaseE(void* d, void const* s, unsigned int n,
+            const ReferenceConverterBase& caster);
+
 private:
     friend class weakref_type;
     class weakref_impl;
