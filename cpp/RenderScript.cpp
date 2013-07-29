@@ -19,7 +19,7 @@
 #include <pthread.h>
 
 #include "RenderScript.h"
-#include "rs.h"
+#include "rsCppStructs.h"
 
 #include <dlfcn.h>
 

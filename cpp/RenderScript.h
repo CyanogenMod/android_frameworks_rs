@@ -17,7 +17,6 @@
 #ifndef ANDROID_RENDERSCRIPT_H
 #define ANDROID_RENDERSCRIPT_H
 
-#include "rsDefines.h"
 #include "rsCppStructs.h"
 
 #ifdef RS_SERVER

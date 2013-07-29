@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 The Android Open Source Project
+ * Copyright (C) 2013 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,14 +17,12 @@
 #ifndef ANDROID_RSCPPSTRUCTS_H
 #define ANDROID_RSCPPSTRUCTS_H
 
+#include "rsDefines.h"
 #include "rsCppUtils.h"
-#ifndef RS_SERVER
-#include "utils/RefBase.h"
-#else
-#include "RefBase.h"
-#endif
-
+#include "util/RefBase.h"
 #include "rsDispatch.h"
+
+#include <vector>
 
 // Every row in an RS allocation is guaranteed to be aligned by this amount
 // Every row in a user-backed allocation must be aligned by this amount
@@ -45,7 +43,7 @@ class Script;
 class ScriptC;
 class Sampler;
 
-class RS : public android::LightRefBase<RS> {
+ class RS : public android::RSC::LightRefBase<RS> {
 
  public:
     RS();
@@ -89,97 +87,103 @@ class RS : public android::LightRefBase<RS> {
     bool mInit;
 
     struct {
-        const Element *U8;
-        const Element *I8;
-        const Element *U16;
-        const Element *I16;
-        const Element *U32;
-        const Element *I32;
-        const Element *U64;
-        const Element *I64;
-        const Element *F32;
-        const Element *F64;
-        const Element *BOOLEAN;
+        sp<const Element> U8;
+        sp<const Element> I8;
+        sp<const Element> U16;
+        sp<const Element> I16;
+        sp<const Element> U32;
+        sp<const Element> I32;
+        sp<const Element> U64;
+        sp<const Element> I64;
+        sp<const Element> F32;
+        sp<const Element> F64;
+        sp<const Element> BOOLEAN;
 
-        const Element *ELEMENT;
-        const Element *TYPE;
-        const Element *ALLOCATION;
-        const Element *SAMPLER;
-        const Element *SCRIPT;
-        const Element *MESH;
-        const Element *PROGRAM_FRAGMENT;
-        const Element *PROGRAM_VERTEX;
-        const Element *PROGRAM_RASTER;
-        const Element *PROGRAM_STORE;
+        sp<const Element> ELEMENT;
+        sp<const Element> TYPE;
+        sp<const Element> ALLOCATION;
+        sp<const Element> SAMPLER;
+        sp<const Element> SCRIPT;
+        sp<const Element> MESH;
+        sp<const Element> PROGRAM_FRAGMENT;
+        sp<const Element> PROGRAM_VERTEX;
+        sp<const Element> PROGRAM_RASTER;
+        sp<const Element> PROGRAM_STORE;
 
-        const Element *A_8;
-        const Element *RGB_565;
-        const Element *RGB_888;
-        const Element *RGBA_5551;
-        const Element *RGBA_4444;
-        const Element *RGBA_8888;
+        sp<const Element> A_8;
+        sp<const Element> RGB_565;
+        sp<const Element> RGB_888;
+        sp<const Element> RGBA_5551;
+        sp<const Element> RGBA_4444;
+        sp<const Element> RGBA_8888;
 
-        const Element *FLOAT_2;
-        const Element *FLOAT_3;
-        const Element *FLOAT_4;
+        sp<const Element> FLOAT_2;
+        sp<const Element> FLOAT_3;
+        sp<const Element> FLOAT_4;
 
-        const Element *DOUBLE_2;
-        const Element *DOUBLE_3;
-        const Element *DOUBLE_4;
+        sp<const Element> DOUBLE_2;
+        sp<const Element> DOUBLE_3;
+        sp<const Element> DOUBLE_4;
 
-        const Element *UCHAR_2;
-        const Element *UCHAR_3;
-        const Element *UCHAR_4;
+        sp<const Element> UCHAR_2;
+        sp<const Element> UCHAR_3;
+        sp<const Element> UCHAR_4;
 
-        const Element *CHAR_2;
-        const Element *CHAR_3;
-        const Element *CHAR_4;
+        sp<const Element> CHAR_2;
+        sp<const Element> CHAR_3;
+        sp<const Element> CHAR_4;
 
-        const Element *USHORT_2;
-        const Element *USHORT_3;
-        const Element *USHORT_4;
+        sp<const Element> USHORT_2;
+        sp<const Element> USHORT_3;
+        sp<const Element> USHORT_4;
 
-        const Element *SHORT_2;
-        const Element *SHORT_3;
-        const Element *SHORT_4;
+        sp<const Element> SHORT_2;
+        sp<const Element> SHORT_3;
+        sp<const Element> SHORT_4;
 
-        const Element *UINT_2;
-        const Element *UINT_3;
-        const Element *UINT_4;
+        sp<const Element> UINT_2;
+        sp<const Element> UINT_3;
+        sp<const Element> UINT_4;
 
-        const Element *INT_2;
-        const Element *INT_3;
-        const Element *INT_4;
+        sp<const Element> INT_2;
+        sp<const Element> INT_3;
+        sp<const Element> INT_4;
 
-        const Element *ULONG_2;
-        const Element *ULONG_3;
-        const Element *ULONG_4;
+        sp<const Element> ULONG_2;
+        sp<const Element> ULONG_3;
+        sp<const Element> ULONG_4;
 
-        const Element *LONG_2;
-        const Element *LONG_3;
-        const Element *LONG_4;
+        sp<const Element> LONG_2;
+        sp<const Element> LONG_3;
+        sp<const Element> LONG_4;
 
-        const Element *MATRIX_4X4;
-        const Element *MATRIX_3X3;
-        const Element *MATRIX_2X2;
+        sp<const Element> MATRIX_4X4;
+        sp<const Element> MATRIX_3X3;
+        sp<const Element> MATRIX_2X2;
     } mElements;
 
     struct {
-        const Sampler* CLAMP_NEAREST;
-        const Sampler* CLAMP_LINEAR;
-        const Sampler* CLAMP_LINEAR_MIP_LINEAR;
-        const Sampler* WRAP_NEAREST;
-        const Sampler* WRAP_LINEAR;
-        const Sampler* WRAP_LINEAR_MIP_LINEAR;
-        const Sampler* MIRRORED_REPEAT_NEAREST;
-        const Sampler* MIRRORED_REPEAT_LINEAR;
-        const Sampler* MIRRORED_REPEAT_LINEAR_MIP_LINEAR;
+        sp<const Sampler> CLAMP_NEAREST;
+        sp<const Sampler> CLAMP_LINEAR;
+        sp<const Sampler> CLAMP_LINEAR_MIP_LINEAR;
+        sp<const Sampler> WRAP_NEAREST;
+        sp<const Sampler> WRAP_LINEAR;
+        sp<const Sampler> WRAP_LINEAR_MIP_LINEAR;
+        sp<const Sampler> MIRRORED_REPEAT_NEAREST;
+        sp<const Sampler> MIRRORED_REPEAT_LINEAR;
+        sp<const Sampler> MIRRORED_REPEAT_LINEAR_MIP_LINEAR;
     } mSamplers;
     friend class Sampler;
     friend class Element;
 };
 
-class BaseObj : public android::LightRefBase<BaseObj> {
+class BaseObj : public android::RSC::LightRefBase<BaseObj> {
+public:
+    void * getID() const;
+    virtual ~BaseObj();
+    virtual void updateFromNative();
+    virtual bool equals(sp<const BaseObj> obj);
+
 protected:
     void *mID;
     sp<RS> mRS;
@@ -190,20 +194,14 @@ protected:
 
     static void * getObjID(sp<const BaseObj> o);
 
-public:
-
-    void * getID() const;
-    virtual ~BaseObj();
-    virtual void updateFromNative();
-    virtual bool equals(const BaseObj *obj);
 };
 
 
 class Allocation : public BaseObj {
 protected:
-    android::sp<const Type> mType;
+    sp<const Type> mType;
     uint32_t mUsage;
-    android::sp<Allocation> mAdaptedAllocation;
+    sp<Allocation> mAdaptedAllocation;
 
     bool mConstrainedLOD;
     bool mConstrainedFace;
@@ -237,7 +235,7 @@ protected:
     void validate2DRange(uint32_t xoff, uint32_t yoff, uint32_t w, uint32_t h);
 
 public:
-    android::sp<const Type> getType() {
+    sp<const Type> getType() {
         return mType;
     }
 
@@ -377,43 +375,44 @@ public:
     static sp<const Element> MATRIX_3X3(sp<RS> rs);
     static sp<const Element> MATRIX_2X2(sp<RS> rs);
 
-    Element(void *id, sp<RS> rs,
-            android::Vector<sp<Element> > &elements,
-            android::Vector<android::String8> &elementNames,
-            android::Vector<uint32_t> &arraySizes);
-    Element(void *id, sp<RS> rs, RsDataType dt, RsDataKind dk, bool norm, uint32_t size);
-    Element(sp<RS> rs);
-    virtual ~Element();
-
     void updateFromNative();
     static sp<const Element> createUser(sp<RS> rs, RsDataType dt);
     static sp<const Element> createVector(sp<RS> rs, RsDataType dt, uint32_t size);
     static sp<const Element> createPixel(sp<RS> rs, RsDataType dt, RsDataKind dk);
     bool isCompatible(sp<const Element>e);
 
+    Element(void *id, sp<RS> rs,
+            std::vector<sp<Element> > &elements,
+            std::vector<android::String8> &elementNames,
+            std::vector<uint32_t> &arraySizes);
+    Element(void *id, sp<RS> rs, RsDataType dt, RsDataKind dk, bool norm, uint32_t size);
+    Element(sp<RS> rs);
+    virtual ~Element();
+
+ protected:
     class Builder {
     private:
         sp<RS> mRS;
-        android::Vector<sp<Element> > mElements;
-        android::Vector<android::String8> mElementNames;
-        android::Vector<uint32_t> mArraySizes;
+        std::vector<sp<Element> > mElements;
+        std::vector<android::String8> mElementNames;
+        std::vector<uint32_t> mArraySizes;
         bool mSkipPadding;
 
     public:
         Builder(sp<RS> rs);
         ~Builder();
-        void add(sp<Element>, android::String8 &name, uint32_t arraySize = 1);
+        void add(sp<Element> e, android::String8 &name, uint32_t arraySize = 1);
         sp<const Element> create();
     };
 
 private:
     void updateVisibleSubElements();
 
-    android::Vector<sp</*const*/ Element> > mElements;
-    android::Vector<android::String8> mElementNames;
-    android::Vector<uint32_t> mArraySizes;
-    android::Vector<uint32_t> mVisibleElementMap;
-    android::Vector<uint32_t> mOffsetInBytes;
+    std::vector<sp<Element> > mElements;
+    std::vector<android::String8> mElementNames;
+    std::vector<uint32_t> mArraySizes;
+    std::vector<uint32_t> mVisibleElementMap;
+    std::vector<uint32_t> mOffsetInBytes;
 
     RsDataType mType;
     RsDataKind mKind;
@@ -430,10 +429,9 @@ protected:
 
 public:
     FieldPacker(size_t len)
-        : mPos(0),
-          mLen(len) {
-        mData = new unsigned char[len];
-    }
+        : mPos(0), mLen(len) {
+            mData = new unsigned char[len];
+        }
 
     virtual ~FieldPacker() {
         delete [] mData;
@@ -480,7 +478,7 @@ public:
     }
 
     template <typename T>
-    void add(T t) {
+        void add(T t) {
         align(sizeof(t));
         if (mPos + sizeof(t) <= mLen) {
             memcpy(&mData[mPos], &t, sizeof(t));
@@ -489,26 +487,26 @@ public:
     }
 
     /*
-    void add(rs_matrix4x4 m) {
-        for (size_t i = 0; i < 16; i++) {
-            add(m.m[i]);
-        }
-    }
+      void add(rs_matrix4x4 m) {
+      for (size_t i = 0; i < 16; i++) {
+      add(m.m[i]);
+      }
+      }
 
-    void add(rs_matrix3x3 m) {
-        for (size_t i = 0; i < 9; i++) {
-            add(m.m[i]);
-        }
-    }
+      void add(rs_matrix3x3 m) {
+      for (size_t i = 0; i < 9; i++) {
+      add(m.m[i]);
+      }
+      }
 
-    void add(rs_matrix2x2 m) {
-        for (size_t i = 0; i < 4; i++) {
-            add(m.m[i]);
-        }
-    }
+      void add(rs_matrix2x2 m) {
+      for (size_t i = 0; i < 4; i++) {
+      add(m.m[i]);
+      }
+      }
     */
 
-    void add(BaseObj* obj) {
+    void add(sp<BaseObj> obj) {
         if (obj != NULL) {
             add((uint32_t) (uintptr_t) obj->getID());
         } else {
@@ -516,6 +514,7 @@ public:
         }
     }
 };
+
 
 class Type : public BaseObj {
 protected:
@@ -663,9 +662,16 @@ class ScriptIntrinsic : public Script {
     ScriptIntrinsic(sp<RS> rs, int id, sp<const Element> e);
 };
 
+class ScriptIntrinsic3DLUT : public ScriptIntrinsic {
+ public:
+    ScriptIntrinsic3DLUT(sp<RS> rs, sp<const Element> e);
+    void forEach(sp<Allocation> ain, sp<Allocation> aout);
+    void setLUT(sp<Allocation> lut);
+};
+
 class ScriptIntrinsicBlend : public ScriptIntrinsic {
  public:
-    ScriptIntrinsicBlend(sp<RS> rs, sp <const Element> e);
+    ScriptIntrinsicBlend(sp<RS> rs, sp<const Element> e);
     void blendClear(sp<Allocation> in, sp<Allocation> out);
     void blendSrc(sp<Allocation> in, sp<Allocation> out);
     void blendDst(sp<Allocation> in, sp<Allocation> out);
@@ -685,10 +691,49 @@ class ScriptIntrinsicBlend : public ScriptIntrinsic {
 
 class ScriptIntrinsicBlur : public ScriptIntrinsic {
  public:
-    ScriptIntrinsicBlur(sp<RS> rs, sp <const Element> e);
+    ScriptIntrinsicBlur(sp<RS> rs, sp<const Element> e);
     void blur(sp<Allocation> in, sp<Allocation> out);
     void setRadius(float radius);
 };
+
+class ScriptIntrinsicColorMatrix : public ScriptIntrinsic {
+ public:
+    ScriptIntrinsicColorMatrix(sp<RS> rs, sp<const Element> e);
+    void forEach(sp<Allocation> in, sp<Allocation> out);
+    void setColorMatrix3(float* m);
+    void setColorMatrix4(float* m);
+    void setGreyscale();
+    void setRGBtoYUV();
+    void setYUVtoRGB();
+};
+
+class ScriptIntrinsicConvolve3x3 : public ScriptIntrinsic {
+ public:
+    ScriptIntrinsicConvolve3x3(sp<RS> rs, sp<const Element> e);
+    void setInput(sp<Allocation> in);
+    void forEach(sp<Allocation> out);
+    void setCoefficients(float* v);
+};
+
+class ScriptIntrinsicConvolve5x5 : public ScriptIntrinsic {
+ public:
+    ScriptIntrinsicConvolve5x5(sp<RS> rs, sp<const Element> e);
+    void setInput(sp<Allocation> in);
+    void forEach(sp<Allocation> out);
+    void setCoefficients(float* v);
+};
+
+/*class ScriptIntrinsicLUT : public ScriptIntrinsic {
+ public:
+    ScriptIntrinsicLUT(sp<RS> rs, sp<const Element> e);
+    void forEach(sp<Allocation> ain, sp<Allocation> aout);
+    void setLUT(sp<Allocation> lut);
+    };*/
+/*
+class ScriptIntrinsicYuvToRGB : public ScriptIntrinsic {
+
+};
+*/
 
  class Sampler : public BaseObj {
  private:

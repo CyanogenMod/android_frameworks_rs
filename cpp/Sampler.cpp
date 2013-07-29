@@ -15,7 +15,6 @@
  */
 
 #include "RenderScript.h"
-#include <rs.h>
 
 using namespace android;
 using namespace RSC;
@@ -58,7 +57,7 @@ sp<Sampler> Sampler::create(sp<RS> rs, RsSamplerValue min, RsSamplerValue mag, R
 
 #define CREATE_SAMPLER(N, MIN, MAG, WRAPS, WRAPT) sp<const Sampler> Sampler::N(sp<RS> rs) { \
         if (rs->mSamplers.N == NULL) {                                  \
-            rs->mSamplers.N = (create(rs, MIN, MAG, WRAPS, WRAPT, 0.f)).get(); \
+            rs->mSamplers.N = (create(rs, MIN, MAG, WRAPS, WRAPT, 0.f)); \
         }                                                               \
         return rs->mSamplers.N;                                         \
     }
