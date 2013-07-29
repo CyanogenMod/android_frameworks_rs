@@ -40,7 +40,7 @@ public class RSTest extends ListActivity {
 
     private static final String LOG_TAG = "RSTest_Compat";
     private static final boolean DEBUG  = false;
-    private static final boolean LOG_ENABLED = false;
+    private static final boolean LOG_ENABLED = true;
 
     private RenderScript mRS;
     private RSTestCore RSTC;
@@ -54,10 +54,6 @@ public class RSTest extends ListActivity {
 
         RSTC = new RSTestCore(this);
         RSTC.init(mRS, getResources());
-
-
-
-
     }
 
     static void log(String message) {
