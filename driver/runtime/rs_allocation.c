@@ -102,7 +102,7 @@ static void memcpy(void* dst, void* src, size_t size) {
 
 #else
 
-static uint8_t*
+uint8_t*
 rsOffset(rs_allocation a, uint32_t sizeOf, uint32_t x, uint32_t y,
          uint32_t z) {
     Allocation_t *alloc = (Allocation_t *)a.p;
@@ -116,11 +116,9 @@ rsOffset(rs_allocation a, uint32_t sizeOf, uint32_t x, uint32_t y,
 
 #define ELEMENT_AT(T)                                                   \
                                                                         \
-    static void                                                         \
+    void                                                                \
     rsSetElementAtImpl_##T(rs_allocation a, T val, uint32_t x,          \
-                           uint32_t y, uint32_t z) {                    \
-        *(T*)rsOffset(a, sizeof(T), x, y, z) = val;                     \
-    }                                                                   \
+                           uint32_t y, uint32_t z);                     \
                                                                         \
     extern void __attribute__((overloadable))                           \
     rsSetElementAt_##T(rs_allocation a, T val, uint32_t x) {            \
@@ -139,11 +137,9 @@ rsOffset(rs_allocation a, uint32_t sizeOf, uint32_t x, uint32_t y,
         rsSetElementAtImpl_##T(a, val, x, y, z);                        \
     }                                                                   \
                                                                         \
-    static T                                                            \
+    T                                                                   \
     rsGetElementAtImpl_##T(rs_allocation a, uint32_t x, uint32_t y,     \
-                       uint32_t z) {                                    \
-        return *(T*)rsOffset(a, sizeof(T), x, y, z);                    \
-    }                                                                   \
+                       uint32_t z);                                     \
                                                                         \
     extern T __attribute__((overloadable))                              \
     rsGetElementAt_##T(rs_allocation a, uint32_t x) {                   \
