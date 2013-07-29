@@ -432,6 +432,7 @@ bool RS::initDispatch(int targetApi) {
     if (gInitError) {
         goto error;
     } else if (gInitialized) {
+        pthread_mutex_unlock(&gInitMutex);
         return true;
     }
 
