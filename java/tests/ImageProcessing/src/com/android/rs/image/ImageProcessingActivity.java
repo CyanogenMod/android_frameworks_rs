@@ -99,6 +99,7 @@ public class ImageProcessingActivity extends Activity
         COLOR_CUBE ("Color Cube"),
         COLOR_CUBE_3D_INTRINSIC ("Color Cube (3D LUT intrinsic)"),
         USAGE_IO ("Usage io"),
+        ARTISTIC_1("Artistic 1"),
         HISTOGRAM ("Histogram");
 
 
@@ -359,6 +360,9 @@ public class ImageProcessingActivity extends Activity
             break;
         case USAGE_IO:
             mTest = new UsageIO();
+            break;
+        case ARTISTIC_1:
+            mTest = new Artistic1();
             break;
         case HISTOGRAM:
             mTest = new Histogram();
