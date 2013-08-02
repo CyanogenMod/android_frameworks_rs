@@ -17,7 +17,6 @@
 #include <malloc.h>
 
 #include "RenderScript.h"
-#include <rs.h>
 
 using namespace android;
 using namespace RSC;

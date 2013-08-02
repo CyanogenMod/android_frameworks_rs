@@ -6,18 +6,18 @@ LOCAL_SRC_FILES:= \
 	compute.cpp
 
 LOCAL_SHARED_LIBRARIES := \
-	libRS \
-	libRScpp \
 	libz \
-	libcutils \
-	libutils \
 	libEGL \
 	libGLESv1_CM \
 	libGLESv2 \
 	libui \
 	libbcc \
 	libbcinfo \
-	libgui
+	libgui \
+	libdl \
+	libRScpp \
+	libstlport
+
 
 LOCAL_MODULE:= rstest-compute
 
@@ -25,6 +25,7 @@ LOCAL_MODULE_TAGS := tests
 
 intermediates := $(call intermediates-dir-for,STATIC_LIBRARIES,libRS,TARGET,)
 
+LOCAL_C_INCLUDES += external/stlport/stlport bionic/ bionic/libstdc++/include
 LOCAL_C_INCLUDES += frameworks/rs/cpp
 LOCAL_C_INCLUDES += frameworks/rs
 LOCAL_C_INCLUDES += $(intermediates)

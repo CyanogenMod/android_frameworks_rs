@@ -32,7 +32,7 @@ int main(int argc, char** argv)
     sp<Allocation> aout = Allocation::createTyped(rs, t);
     printf("Allocation %p %p\n", ain.get(), aout.get());
 
-    sp<ScriptC_mono> sc = new ScriptC_mono(rs);
+    ScriptC_mono* sc = new ScriptC_mono(rs);
     printf("new script\n");
 
     // We read back the status from the script-side via a "failed" allocation.
@@ -84,21 +84,10 @@ int main(int argc, char** argv)
 
         rs->finish();
         failed_alloc->copy1DTo(&failed);
-
-        e.clear();
-        t.clear();
-        kern1_in.clear();
-        kern1_out.clear();
     }
 
     printf("Deleting stuff\n");
-    sc.clear();
-    t.clear();
-    a1.clear();
-    e.clear();
-    ain.clear();
-    aout.clear();
-    //    delete rs;
+    delete sc;
     printf("Delete OK\n");
 
     if (failed) {

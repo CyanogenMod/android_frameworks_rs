@@ -284,4 +284,3 @@ bool ObjectBase::isValid(const Context *rsc, const ObjectBase *obj) {
     asyncUnlock();
     return false;
 }
-
