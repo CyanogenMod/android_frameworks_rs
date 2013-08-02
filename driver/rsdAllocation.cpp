@@ -722,20 +722,10 @@ void rsdAllocationSetSurface(const Context *rsc, Allocation *alloc, ANativeWindo
 
         int format = 0;
         const Element *e = alloc->mHal.state.type->getElement();
-        switch(e->getType()) {
-        case RS_TYPE_UNSIGNED_8:
-            switch (e->getVectorSize()) {
-            case 4:
-                rsAssert(e->getKind() == RS_KIND_PIXEL_RGBA);
-                format = PIXEL_FORMAT_RGBA_8888;
-                break;
-            default:
-                rsAssert(0);
-            }
-            break;
-        default:
-            rsAssert(0);
-        }
+        rsAssert(e->getType() == RS_TYPE_UNSIGNED_8);
+        rsAssert(e->getVectorSize() == 4);
+        rsAssert(e->getKind() == RS_KIND_PIXEL_RGBA);
+        format = PIXEL_FORMAT_RGBA_8888;
 
         r = native_window_set_buffers_format(nw, format);
         if (r) {
