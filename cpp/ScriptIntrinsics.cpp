@@ -26,6 +26,10 @@ ScriptIntrinsic::ScriptIntrinsic(sp<RS> rs, int id, sp<const Element> e)
     mID = RS::dispatch->ScriptIntrinsicCreate(rs->getContext(), id, e->getID());
 }
 
+ScriptIntrinsic::~ScriptIntrinsic() {
+
+}
+
 ScriptIntrinsic3DLUT::ScriptIntrinsic3DLUT(sp<RS> rs, sp<const Element> e)
     : ScriptIntrinsic(rs, RS_SCRIPT_INTRINSIC_ID_3DLUT, e) {
 
@@ -193,16 +197,100 @@ void ScriptIntrinsicConvolve5x5::setCoefficients(float* v) {
     Script::setVar(0, (void*)v, sizeof(float) * 25);
 }
 
-/*ScriptIntrinsicLUT::ScriptIntrinsicLUT(sp<RS> rs, sp<const Element> e)
-    : ScriptIntrinsic(rs, RS_SCRIPT_INTRINSIC_ID_LUT, e) {
+ScriptIntrinsicHistogram::ScriptIntrinsicHistogram(sp<RS> rs, sp<const Element> e)
+    : ScriptIntrinsic(rs, RS_SCRIPT_INTRINSIC_ID_HISTOGRAM, e) {
 
+}
+
+void ScriptIntrinsicHistogram::setOutput(sp<Allocation> aout) {
+    Script::setVar(1, aout);
+}
+
+void ScriptIntrinsicHistogram::setDotCoefficients(float r, float g, float b, float a) {
+    if ((r < 0.f) || (g < 0.f) || (b < 0.f) || (a < 0.f)) {
+        return;
+    }
+    if ((r + g + b + a) > 1.f) {
+        return;
+    }
+
+    FieldPacker fp(16);
+    fp.add(r);
+    fp.add(g);
+    fp.add(b);
+    fp.add(a);
+    Script::setVar(0, fp.getData(), fp.getLength());
+
+}
+
+void ScriptIntrinsicHistogram::forEach(sp<Allocation> ain) {
+    Script::forEach(0, ain, NULL, NULL, 0);
+}
+
+
+void ScriptIntrinsicHistogram::forEach_dot(sp<Allocation> ain) {
+    Script::forEach(1, ain, NULL, NULL, 0);
+}
+
+ScriptIntrinsicLUT::ScriptIntrinsicLUT(sp<RS> rs, sp<const Element> e)
+    : ScriptIntrinsic(rs, RS_SCRIPT_INTRINSIC_ID_LUT, e), mDirty(true) {
+    LUT = Allocation::createSized(rs, e, 1024);
+    for (int i = 0; i < 256; i++) {
+        mCache[i] = i;
+        mCache[i+256] = i;
+        mCache[i+512] = i;
+        mCache[i+768] = i;
+    }
 }
 
 void ScriptIntrinsicLUT::forEach(sp<Allocation> ain, sp<Allocation> aout) {
+    if (mDirty) {
+        LUT->copy1DFrom((void*)mCache);
+        mDirty = false;
+    }
+    Script::forEach(0, ain, aout, NULL, 0);
 
 }
 
-void ScriptIntrinsicLUT::setLUT(sp<Allocation> lut) {
+void ScriptIntrinsicLUT::setTable(unsigned int offset, unsigned char base, unsigned char length, unsigned char* lutValues) {
+    if ((base + length) >= 256 || length == 0) {
+        return;
+    }
+    mDirty = true;
+    for (int i = 0; i < length; i++) {
+        mCache[offset + base + i] = lutValues[i];
+    }
+}
 
-}*/
+void ScriptIntrinsicLUT::setRed(unsigned char base, unsigned char length, unsigned char* lutValues) {
+    setTable(0, base, length, lutValues);
+}
 
+void ScriptIntrinsicLUT::setGreen(unsigned char base, unsigned char length, unsigned char* lutValues) {
+    setTable(256, base, length, lutValues);
+}
+
+void ScriptIntrinsicLUT::setBlue(unsigned char base, unsigned char length, unsigned char* lutValues) {
+    setTable(512, base, length, lutValues);
+}
+
+void ScriptIntrinsicLUT::setAlpha(unsigned char base, unsigned char length, unsigned char* lutValues) {
+    setTable(768, base, length, lutValues);
+}
+
+ScriptIntrinsicLUT::~ScriptIntrinsicLUT() {
+
+}
+
+ScriptIntrinsicYuvToRGB::ScriptIntrinsicYuvToRGB(sp<RS> rs, sp<const Element> e)
+    : ScriptIntrinsic(rs, RS_SCRIPT_INTRINSIC_ID_YUV_TO_RGB, e) {
+
+}
+
+void ScriptIntrinsicYuvToRGB::setInput(sp<Allocation> in) {
+    Script::setVar(0, in);
+}
+
+void ScriptIntrinsicYuvToRGB::forEach(sp<Allocation> out) {
+    Script::forEach(0, NULL, out, NULL, 0);
+}

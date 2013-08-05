@@ -660,6 +660,7 @@ protected:
 class ScriptIntrinsic : public Script {
  protected:
     ScriptIntrinsic(sp<RS> rs, int id, sp<const Element> e);
+    virtual ~ScriptIntrinsic();
 };
 
 class ScriptIntrinsic3DLUT : public ScriptIntrinsic {
@@ -723,17 +724,40 @@ class ScriptIntrinsicConvolve5x5 : public ScriptIntrinsic {
     void setCoefficients(float* v);
 };
 
-/*class ScriptIntrinsicLUT : public ScriptIntrinsic {
+class ScriptIntrinsicHistogram : public ScriptIntrinsic {
+ public:
+    ScriptIntrinsicHistogram(sp<RS> rs, sp<const Element> e);
+    void setOutput(sp<Allocation> aout);
+    void setDotCoefficients(float r, float g, float b, float a);
+    void forEach(sp<Allocation> ain);
+    void forEach_dot(sp<Allocation> ain);
+};
+
+class ScriptIntrinsicLUT : public ScriptIntrinsic {
+ private:
+    sp<Allocation> LUT;
+    bool mDirty;
+    unsigned char mCache[1024];
+    void setTable(unsigned int offset, unsigned char base, unsigned char length, unsigned char* lutValues);
+
  public:
     ScriptIntrinsicLUT(sp<RS> rs, sp<const Element> e);
     void forEach(sp<Allocation> ain, sp<Allocation> aout);
-    void setLUT(sp<Allocation> lut);
-    };*/
-/*
+    void setRed(unsigned char base, unsigned char length, unsigned char* lutValues);
+    void setGreen(unsigned char base, unsigned char length, unsigned char* lutValues);
+    void setBlue(unsigned char base, unsigned char length, unsigned char* lutValues);
+    void setAlpha(unsigned char base, unsigned char length, unsigned char* lutValues);
+    virtual ~ScriptIntrinsicLUT();
+};
+
 class ScriptIntrinsicYuvToRGB : public ScriptIntrinsic {
+ public:
+    ScriptIntrinsicYuvToRGB(sp<RS> rs, sp<const Element> e);
+    void setInput(sp<Allocation> in);
+    void forEach(sp<Allocation> out);
 
 };
-*/
+
 
  class Sampler : public BaseObj {
  private:
