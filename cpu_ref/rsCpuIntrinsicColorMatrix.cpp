@@ -118,13 +118,15 @@ void RsdCpuScriptIntrinsicColorMatrix::kernel4x4(const RsForEachStubParamStruct 
     uint32_t x2 = xend;
 
     if(x2 > x1) {
-#if defined(ARCH_ARM_HAVE_NEON)
-        int32_t len = (x2 - x1) >> 2;
-        if(len > 0) {
-            rsdIntrinsicColorMatrix4x4_K(out, in, cp->ip, len);
-            x1 += len << 2;
-            out += len << 2;
-            in += len << 2;
+#if defined(ARCH_ARM_HAVE_VFP)
+        if (gArchUseSIMD) {
+            int32_t len = (x2 - x1) >> 2;
+            if(len > 0) {
+                rsdIntrinsicColorMatrix4x4_K(out, in, cp->ip, len);
+                x1 += len << 2;
+                out += len << 2;
+                in += len << 2;
+            }
         }
 #endif
 
@@ -145,13 +147,15 @@ void RsdCpuScriptIntrinsicColorMatrix::kernel3x3(const RsForEachStubParamStruct 
     uint32_t x2 = xend;
 
     if(x2 > x1) {
-#if defined(ARCH_ARM_HAVE_NEON)
-        int32_t len = (x2 - x1) >> 2;
-        if(len > 0) {
-            rsdIntrinsicColorMatrix3x3_K(out, in, cp->ip, len);
-            x1 += len << 2;
-            out += len << 2;
-            in += len << 2;
+#if defined(ARCH_ARM_HAVE_VFP)
+        if (gArchUseSIMD) {
+            int32_t len = (x2 - x1) >> 2;
+            if(len > 0) {
+                rsdIntrinsicColorMatrix3x3_K(out, in, cp->ip, len);
+                x1 += len << 2;
+                out += len << 2;
+                in += len << 2;
+            }
         }
 #endif
 
@@ -172,13 +176,15 @@ void RsdCpuScriptIntrinsicColorMatrix::kernelDot(const RsForEachStubParamStruct 
     uint32_t x2 = xend;
 
     if(x2 > x1) {
-#if defined(ARCH_ARM_HAVE_NEON)
-        int32_t len = (x2 - x1) >> 2;
-        if(len > 0) {
-            rsdIntrinsicColorMatrixDot_K(out, in, cp->ip, len);
-            x1 += len << 2;
-            out += len << 2;
-            in += len << 2;
+#if defined(ARCH_ARM_HAVE_VFP)
+        if (gArchUseSIMD) {
+            int32_t len = (x2 - x1) >> 2;
+            if(len > 0) {
+                rsdIntrinsicColorMatrixDot_K(out, in, cp->ip, len);
+                x1 += len << 2;
+                out += len << 2;
+                in += len << 2;
+            }
         }
 #endif
 
