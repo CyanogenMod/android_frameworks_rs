@@ -26,7 +26,6 @@ import android.renderscript.ScriptIntrinsicConvolve3x3;
 import android.renderscript.ScriptIntrinsicColorMatrix;
 import android.renderscript.Type;
 import android.renderscript.Matrix4f;
-import android.renderscript.ScriptGroup;
 import android.util.Log;
 
 public class UsageIO extends TestBase {
