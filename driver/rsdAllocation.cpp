@@ -617,35 +617,6 @@ void rsdAllocationMarkDirty(const Context *rsc, const Allocation *alloc) {
 }
 
 #ifndef RS_COMPATIBILITY_LIB
-void DrvAllocation::NewBufferListener::onFrameAvailable() {
-    intptr_t ip = (intptr_t)alloc;
-    rsc->sendMessageToClient(NULL, RS_MESSAGE_TO_CLIENT_NEW_BUFFER, ip, 0, true);
-}
-#endif
-
-void* rsdAllocationGetSurface(const Context *rsc, const Allocation *alloc) {
-#ifndef RS_COMPATIBILITY_LIB
-    DrvAllocation *drv = (DrvAllocation *)alloc->mHal.drv;
-
-    // Configure CpuConsumer to be in asynchronous mode
-    sp<BufferQueue> bq = new BufferQueue();
-    drv->cpuConsumer = new CpuConsumer(bq, 2, false);
-    sp<IGraphicBufferProducer> bp = bq;
-    bp->incStrong(NULL);
-
-    drv->mBufferListener = new DrvAllocation::NewBufferListener();
-    drv->mBufferListener->rsc = rsc;
-    drv->mBufferListener->alloc = alloc;
-
-    drv->cpuConsumer->setFrameAvailableListener(drv->mBufferListener);
-
-    return bp.get();
-#else
-    return NULL;
-#endif
-}
-
-#ifndef RS_COMPATIBILITY_LIB
 static bool IoGetBuffer(const Context *rsc, Allocation *alloc, ANativeWindow *nw) {
     DrvAllocation *drv = (DrvAllocation *)alloc->mHal.drv;
 
@@ -780,33 +751,9 @@ void rsdAllocationIoSend(const Context *rsc, Allocation *alloc) {
 void rsdAllocationIoReceive(const Context *rsc, Allocation *alloc) {
 #ifndef RS_COMPATIBILITY_LIB
     DrvAllocation *drv = (DrvAllocation *)alloc->mHal.drv;
-
-    if (alloc->mHal.state.usageFlags & RS_ALLOCATION_USAGE_SCRIPT) {
-        CpuConsumer::LockedBuffer lb;
-        status_t ret = drv->cpuConsumer->lockNextBuffer(&lb);
-        if (ret == OK) {
-            if (drv->lb.data != NULL) {
-                drv->cpuConsumer->unlockBuffer(drv->lb);
-            }
-            drv->lb = lb;
-            alloc->mHal.drvState.lod[0].mallocPtr = drv->lb.data;
-            alloc->mHal.drvState.lod[0].stride = drv->lb.stride *
-                    alloc->mHal.state.elementSizeBytes;
-
-            if (alloc->mHal.state.yuv) {
-                DeriveYUVLayout(alloc->mHal.state.yuv, &alloc->mHal.drvState);
-            }
-        } else if (ret == BAD_VALUE) {
-            // No new frame, don't do anything
-        } else {
-            rsc->setError(RS_ERROR_DRIVER, "Error receiving IO input buffer.");
-        }
-
-    } else {
+    if (!(alloc->mHal.state.usageFlags & RS_ALLOCATION_USAGE_SCRIPT)) {
         drv->surfaceTexture->updateTexImage();
     }
-
-
 #endif
 }
 
@@ -1200,3 +1147,10 @@ void rsdAllocationGenerateMipmaps(const Context *rsc, const Allocation *alloc) {
         }
     }
 }
+
+uint32_t rsdAllocationGrallocBits(const android::renderscript::Context *rsc,
+                                  android::renderscript::Allocation *alloc)
+{
+    return 0;
+}
+

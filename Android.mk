@@ -125,6 +125,7 @@ LOCAL_SRC_FILES:= \
 	rsFifoSocket.cpp \
 	rsFileA3D.cpp \
 	rsFont.cpp \
+	rsGrallocConsumer.cpp \
 	rsObjectBase.cpp \
 	rsMatrix2x2.cpp \
 	rsMatrix3x3.cpp \

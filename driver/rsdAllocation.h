@@ -29,7 +29,6 @@
 #endif
 
 #if !defined(RS_SERVER) && !defined(RS_COMPATIBILITY_LIB)
-#include "gui/CpuConsumer.h"
 #include "gui/GLConsumer.h"
 #endif
 
@@ -51,16 +50,6 @@ struct DrvAllocation {
     uint32_t renderTargetID;
 
 #ifndef RS_COMPATIBILITY_LIB
-    class NewBufferListener : public android::ConsumerBase::FrameAvailableListener {
-    public:
-        const android::renderscript::Context *rsc;
-        const android::renderscript::Allocation *alloc;
-
-        virtual void onFrameAvailable();
-    };
-    android::sp<NewBufferListener> mBufferListener;
-
-
     GLenum glTarget;
     GLenum glType;
     GLenum glFormat;
@@ -79,11 +68,6 @@ struct DrvAllocation {
     RsdFrameBufferObj * readBackFBO;
     ANativeWindow *wnd;
     ANativeWindowBuffer *wndBuffer;
-
-#if !defined(RS_SERVER) && !defined(RS_COMPATIBILITY_LIB)
-    android::sp< android::CpuConsumer > cpuConsumer;
-    android::CpuConsumer::LockedBuffer lb;
-#endif
 };
 
 #ifndef RS_COMPATIBILITY_LIB
@@ -92,6 +76,8 @@ GLenum rsdKindToGLFormat(RsDataKind k);
 #endif
 
 
+uint32_t rsdAllocationGrallocBits(const android::renderscript::Context *rsc,
+                                  android::renderscript::Allocation *alloc);
 bool rsdAllocationInit(const android::renderscript::Context *rsc,
                        android::renderscript::Allocation *alloc,
                        bool forceZero);
@@ -106,8 +92,6 @@ void rsdAllocationSyncAll(const android::renderscript::Context *rsc,
                           RsAllocationUsageType src);
 void rsdAllocationMarkDirty(const android::renderscript::Context *rsc,
                             const android::renderscript::Allocation *alloc);
-void* rsdAllocationGetSurface(const android::renderscript::Context *rsc,
-                              const android::renderscript::Allocation *alloc);
 void rsdAllocationSetSurface(const android::renderscript::Context *rsc,
                             android::renderscript::Allocation *alloc, ANativeWindow *nw);
 void rsdAllocationIoSend(const android::renderscript::Context *rsc,

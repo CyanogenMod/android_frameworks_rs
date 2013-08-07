@@ -79,6 +79,13 @@ void Allocation::updateCache() {
 }
 
 Allocation::~Allocation() {
+#if !defined(RS_SERVER) && !defined(RS_COMPATIBILITY_LIB)
+    if (mGrallocConsumer.get()) {
+        mGrallocConsumer->unlockBuffer();
+        mGrallocConsumer = NULL;
+    }
+#endif
+
     freeChildrenUnlocked();
     mRSC->mHal.funcs.allocation.destroy(mRSC, this);
 }
@@ -451,8 +458,31 @@ void Allocation::resize2D(Context *rsc, uint32_t dimX, uint32_t dimY) {
     ALOGE("not implemented");
 }
 
+#ifndef RS_COMPATIBILITY_LIB
+void Allocation::NewBufferListener::onFrameAvailable() {
+    intptr_t ip = (intptr_t)alloc;
+    rsc->sendMessageToClient(NULL, RS_MESSAGE_TO_CLIENT_NEW_BUFFER, ip, 0, true);
+}
+#endif
+
 void * Allocation::getSurface(const Context *rsc) {
-    return rsc->mHal.funcs.allocation.getSurface(rsc, this);
+#ifndef RS_COMPATIBILITY_LIB
+    // Configure GrallocConsumer to be in asynchronous mode
+    sp<BufferQueue> bq = new BufferQueue();
+    mGrallocConsumer = new GrallocConsumer(this, bq);
+    sp<IGraphicBufferProducer> bp = bq;
+    bp->incStrong(NULL);
+
+    mBufferListener = new NewBufferListener();
+    mBufferListener->rsc = rsc;
+    mBufferListener->alloc = this;
+
+    mGrallocConsumer->setFrameAvailableListener(mBufferListener);
+    return bp.get();
+#else
+    return NULL;
+#endif
+    //return rsc->mHal.funcs.allocation.getSurface(rsc, this);
 }
 
 void Allocation::setSurface(const Context *rsc, RsNativeWindow sur) {
@@ -465,7 +495,22 @@ void Allocation::ioSend(const Context *rsc) {
 }
 
 void Allocation::ioReceive(const Context *rsc) {
-    rsc->mHal.funcs.allocation.ioReceive(rsc, this);
+    void *ptr = NULL;
+    size_t stride = 0;
+#ifndef RS_COMPATIBILITY_LIB
+    if (mHal.state.usageFlags & RS_ALLOCATION_USAGE_SCRIPT) {
+        status_t ret = mGrallocConsumer->lockNextBuffer();
+
+        if (ret == OK) {
+            rsc->mHal.funcs.allocation.ioReceive(rsc, this);
+        } else if (ret == BAD_VALUE) {
+            // No new frame, don't do anything
+        } else {
+            rsc->setError(RS_ERROR_DRIVER, "Error receiving IO input buffer.");
+        }
+
+    }
+#endif
 }
 
 

@@ -729,11 +729,11 @@ void RsdCpuScriptImpl::forEachMtlsSetup(const Allocation * ain, Allocation * aou
 
     // possible for this to occur if IO_OUTPUT/IO_INPUT with no bound surface
     if (ain && (const uint8_t *)ain->mHal.drvState.lod[0].mallocPtr == NULL) {
-        mCtx->getContext()->setError(RS_ERROR_BAD_SCRIPT, "rsForEach called with null allocations");
+        mCtx->getContext()->setError(RS_ERROR_BAD_SCRIPT, "rsForEach called with null in allocations");
         return;
     }
     if (aout && (const uint8_t *)aout->mHal.drvState.lod[0].mallocPtr == NULL) {
-        mCtx->getContext()->setError(RS_ERROR_BAD_SCRIPT, "rsForEach called with null allocations");
+        mCtx->getContext()->setError(RS_ERROR_BAD_SCRIPT, "rsForEach called with null out allocations");
         return;
     }
 

@@ -39,8 +39,8 @@ typedef struct Allocation {
             bool hasReferences;
             void * usrPtr;
             int32_t surfaceTextureID;
-            void * wndSurface;
-            void * surfaceTexture;
+            void * nativeBuffer;
+            int64_t timestamp;
         } state;
 
         struct DrvState {

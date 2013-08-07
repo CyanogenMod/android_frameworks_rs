@@ -141,13 +141,13 @@ static void SC_AllocationCopy2DRange(Allocation *dstAlloc,
 #ifndef RS_COMPATIBILITY_LIB
 static void SC_AllocationIoSend(Allocation *alloc) {
     Context *rsc = RsdCpuReference::getTlsContext();
-    rsdAllocationIoSend(rsc, alloc);
+    rsrAllocationIoSend(rsc, alloc);
 }
 
 
 static void SC_AllocationIoReceive(Allocation *alloc) {
     Context *rsc = RsdCpuReference::getTlsContext();
-    rsdAllocationIoReceive(rsc, alloc);
+    rsrAllocationIoReceive(rsc, alloc);
 }
 
 
