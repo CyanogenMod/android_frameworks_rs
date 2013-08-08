@@ -153,8 +153,8 @@ void RsdCpuScriptIntrinsicConvolve5x5::kernel(const RsForEachStubParamStruct *p,
         x1++;
     }
 
-#if defined(ARCH_ARM_HAVE_NEON)
-    if((x1 + 3) < x2) {
+#if defined(ARCH_ARM_HAVE_VFP)
+    if(gArchUseSIMD && ((x1 + 3) < x2)) {
         uint32_t len = (x2 - x1 - 3) >> 1;
         rsdIntrinsicConvolve5x5_K(out, py0, py1, py2, py3, py4, cp->ip, len);
         out += len << 1;

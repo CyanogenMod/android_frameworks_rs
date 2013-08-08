@@ -32,6 +32,7 @@ namespace bcc {
 namespace android {
 namespace renderscript {
 
+extern bool gArchUseSIMD;
 
 typedef void (* InvokeFunc_t)(void);
 typedef void (* ForEachFunc_t)(void);

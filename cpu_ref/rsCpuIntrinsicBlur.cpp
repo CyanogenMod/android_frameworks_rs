@@ -155,8 +155,8 @@ static void OneVFU4(float4 *out,
                     const uchar *ptrIn, int iStride, const float* gPtr, int ct,
                     int x1, int x2) {
 
-#if defined(ARCH_ARM_HAVE_NEON)
-    {
+#if defined(ARCH_ARM_HAVE_VFP)
+    if (gArchUseSIMD) {
         int t = (x2 - x1);
         t &= ~1;
         if(t) {
@@ -207,8 +207,8 @@ static void OneVFU1(float *out,
         len--;
     }
 
-#if defined(ARCH_ARM_HAVE_NEON)
-    if (x2 > x1) {
+#if defined(ARCH_ARM_HAVE_VFP)
+    if (gArchUseSIMD && (x2 > x1)) {
         int t = (x2 - x1) >> 2;
         t &= ~1;
         if(t) {
@@ -313,12 +313,14 @@ void RsdCpuScriptIntrinsicBlur::kernelU4(const RsForEachStubParamStruct *p,
         out++;
         x1++;
     }
-#if defined(ARCH_ARM_HAVE_NEON)
-    if ((x1 + cp->mIradius) < x2) {
-        rsdIntrinsicBlurHFU4_K(out, buf - cp->mIradius, cp->mFp,
-                               cp->mIradius * 2 + 1, x1, x2 - cp->mIradius);
-        out += (x2 - cp->mIradius) - x1;
-        x1 = x2 - cp->mIradius;
+#if defined(ARCH_ARM_HAVE_VFP)
+    if (gArchUseSIMD) {
+        if ((x1 + cp->mIradius) < x2) {
+            rsdIntrinsicBlurHFU4_K(out, buf - cp->mIradius, cp->mFp,
+                                   cp->mIradius * 2 + 1, x1, x2 - cp->mIradius);
+            out += (x2 - cp->mIradius) - x1;
+            x1 = x2 - cp->mIradius;
+        }
     }
 #endif
     while(x2 > x1) {
@@ -364,15 +366,17 @@ void RsdCpuScriptIntrinsicBlur::kernelU1(const RsForEachStubParamStruct *p,
         out++;
         x1++;
     }
-#if defined(ARCH_ARM_HAVE_NEON)
-    if ((x1 + cp->mIradius) < x2) {
-        uint32_t len = x2 - (x1 + cp->mIradius);
-        len &= ~3;
-        if (len > 0) {
-            rsdIntrinsicBlurHFU1_K(out, ((float *)buf) - cp->mIradius, cp->mFp,
-                                   cp->mIradius * 2 + 1, x1, x1 + len);
-            out += len;
-            x1 += len;
+#if defined(ARCH_ARM_HAVE_VFP)
+    if (gArchUseSIMD) {
+        if ((x1 + cp->mIradius) < x2) {
+            uint32_t len = x2 - (x1 + cp->mIradius);
+            len &= ~3;
+            if (len > 0) {
+                rsdIntrinsicBlurHFU1_K(out, ((float *)buf) - cp->mIradius, cp->mFp,
+                                       cp->mIradius * 2 + 1, x1, x1 + len);
+                out += len;
+                x1 += len;
+            }
         }
     }
 #endif
