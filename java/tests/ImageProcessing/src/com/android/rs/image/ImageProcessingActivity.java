@@ -55,6 +55,59 @@ public class ImageProcessingActivity extends Activity
     Allocation mInPixelsAllocation2;
     Allocation mOutPixelsAllocation;
 
+    static class DVFSWorkaround {
+        static class spinner extends Thread {
+            boolean mRun = true;
+            long mNextSleep;
+
+            spinner() {
+                setPriority(MIN_PRIORITY);
+                start();
+            }
+
+            public void run() {
+                while (mRun) {
+                    Thread.yield();
+                    synchronized(this) {
+                        long t = java.lang.System.currentTimeMillis();
+                        if (t > mNextSleep) {
+                            try {
+                                this.wait();
+                            } catch(InterruptedException e) {
+                            }
+                        }
+                    }
+                }
+            }
+
+            public void go(long t) {
+                synchronized(this) {
+                    mNextSleep = t;
+                    notifyAll();
+                }
+            }
+        }
+
+        spinner s1;
+        DVFSWorkaround() {
+            s1 = new spinner();
+        }
+
+        void go() {
+            long t = java.lang.System.currentTimeMillis() + 2000;
+            s1.go(t);
+        }
+
+        void destroy() {
+            synchronized(this) {
+                s1.mRun = false;
+                notifyAll();
+            }
+        }
+    }
+    DVFSWorkaround mDvfsWar = new DVFSWorkaround();
+
+
     /**
      * Define enum type for test names
      */
@@ -544,6 +597,7 @@ public class ImageProcessingActivity extends Activity
         }
         mDoingBenchmark = true;
 
+        mDvfsWar.go();
         mTest.setupBenchmark();
         long result = 0;
 
