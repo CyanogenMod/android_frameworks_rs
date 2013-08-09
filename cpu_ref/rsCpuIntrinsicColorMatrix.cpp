@@ -28,12 +28,101 @@
 //#include <utils/StopWatch.h>
 
 
+/*  uint kernel
+ *  Q0  D0:  Load slot for R
+ *      D1:  Load slot for G
+ *  Q1  D2:  Load slot for B
+ *      D3:  Load slot for A
+ *  Q2  D4:  Matrix
+ *      D5:  =
+ *  Q3  D6:  =
+ *      D7:  =
+ *  Q4  D8:  Add R
+ *      D9:
+ *  Q5  D10: Add G
+ *      D11:
+ *  Q6  D12: Add B
+ *      D13:
+ *  Q7  D14: Add A
+ *      D15:
+ *  Q8  D16:  I32: R Sum
+ *      D17:
+ *  Q9  D18:  I32: G Sum
+ *      D19:
+ *  Q10 D20:  I32: B Sum
+ *      D21:
+ *  Q11 D22:  I32: A Sum
+ *      D23:
+ *  Q12 D24:  U16: expanded R
+ *      D25:
+ *  Q13 D26:  U16: expanded G
+ *      D27:
+ *  Q14 D28:  U16: expanded B
+ *      D29:
+ *  Q15 D30:  U16: expanded A
+ *      D31:
+ *
+ */
+
+/*  float kernel
+ *  Q0  D0:  Load slot for R
+ *      D1:  =
+ *  Q1  D2:  Load slot for G
+ *      D3:  =
+ *  Q2  D4:  Load slot for B
+ *      D5:  =
+ *  Q3  D6:  Load slot for A
+ *      D7:  =
+ *  Q4  D8:  Matrix
+ *      D9:  =
+ *  Q5  D10: =
+ *      D11: =
+ *  Q6  D12: =
+ *      D13: =
+ *  Q7  D14: =
+ *      D15: =
+ *  Q8  D16: Add R
+ *      D17: =
+ *  Q9  D18: Add G
+ *      D19: =
+ *  Q10 D20: Add B
+ *      D21: =
+ *  Q11 D22: Add A
+ *      D23: =
+ *  Q12 D24: Sum R
+ *      D25: =
+ *  Q13 D26: Sum G
+ *      D27: =
+ *  Q14 D28: Sum B
+ *      D29: =
+ *  Q15 D30: Sum A
+ *      D31: =
+ *
+ */
+
+
+
 using namespace android;
 using namespace android::renderscript;
 
 namespace android {
 namespace renderscript {
 
+typedef union {
+    uint64_t key;
+    struct {
+        uint32_t inVecSize          :2;  // [0 - 1]
+        uint32_t outVecSize         :2;  // [2 - 3]
+        uint32_t inType             :4;  // [4 - 7]
+        uint32_t outType            :4;  // [8 - 11]
+        uint32_t dot                :1;  // [12]
+        uint32_t _unused1           :1;  // [13]
+        uint32_t copyAlpha          :1;  // [14]
+        uint32_t _unused2           :1;  // [15]
+        uint32_t coeffMask          :16; // [16-31]
+        uint32_t addMask            :4;  // [32-35]
+    } u;
+} Key_t;
 
 class RsdCpuScriptIntrinsicColorMatrix : public RsdCpuScriptIntrinsic {
 public:
@@ -51,21 +140,22 @@ public:
 
 protected:
     float fp[16];
-    float fpa[4];
+    float fpa[16];
+
     short ip[16];
-    int ipa[4];
+    int ipa[16];
 
     static void kernel(const RsForEachStubParamStruct *p,
                        uint32_t xstart, uint32_t xend,
                        uint32_t instep, uint32_t outstep);
 
-    int64_t mLastKey;
+    Key_t mLastKey;
     unsigned char *mBuf;
     size_t mBufSize;
 
-    int64_t computeKey(const Element *ein, const Element *eout);
+    Key_t computeKey(const Element *ein, const Element *eout);
 
-    bool build(int64_t key);
+    bool build(Key_t key);
 
     void (*mOptKernel)(void *dst, const void *src, const short *coef, uint32_t count);
 
@@ -75,35 +165,25 @@ protected:
 }
 
 
-#define CM_IN_VEC_SIZE_MASK         0x00000003
-#define CM_OUT_VEC_SIZE_MASK        0x0000000c
-#define CM_IN_TYPE_SIZE_MASK        0x000000F0
-#define CM_OUT_TYPE_SIZE_MASK       0x00000F00
-#define CM_DOT_MASK                 0x00001000
-#define CM_ADD_MASK                 0x00002000
-#define CM_COPY_ALPHA               0x00004000
-#define CM_MATRIX_MASK              0xFFFF0000
-
-
-int64_t RsdCpuScriptIntrinsicColorMatrix::computeKey(
+Key_t RsdCpuScriptIntrinsicColorMatrix::computeKey(
         const Element *ein, const Element *eout) {
 
-    int64_t key = 0;
+    Key_t key;
+    key.key = 0;
 
     // Compute a unique code key for this operation
 
     // Add to the key the input and output types
-    key |= (ein->getVectorSize() - 1);
-    key |= (eout->getVectorSize() - 1) << 2;
-
     bool hasFloat = false;
     if (ein->getType() == RS_TYPE_FLOAT_32) {
         hasFloat = true;
-        key |= 1 << 4;
+        key.u.inType = RS_TYPE_FLOAT_32;
+        rsAssert(key.u.inType == RS_TYPE_FLOAT_32);
     }
     if (eout->getType() == RS_TYPE_FLOAT_32) {
         hasFloat = true;
-        key |= 1 << 8;
+        key.u.outType = RS_TYPE_FLOAT_32;
+        rsAssert(key.u.outType == RS_TYPE_FLOAT_32);
     }
 
     // Mask in the bits indicating which coefficients in the
@@ -111,15 +191,24 @@ int64_t RsdCpuScriptIntrinsicColorMatrix::computeKey(
     if (hasFloat) {
         for (uint32_t i=0; i < 16; i++) {
             if (fabs(fp[i]) != 0.f) {
-                key |= (uint32_t)(1 << (i + 16));
+                key.u.coeffMask |= 1 << i;
             }
         }
+        if (fabs(fpa[0]) != 0.f) key.u.addMask |= 0x1;
+        if (fabs(fpa[4]) != 0.f) key.u.addMask |= 0x2;
+        if (fabs(fpa[8]) != 0.f) key.u.addMask |= 0x4;
+        if (fabs(fpa[12]) != 0.f) key.u.addMask |= 0x8;
+
     } else {
         for (uint32_t i=0; i < 16; i++) {
             if (ip[i] != 0) {
-                key |= (uint32_t)(1 << (i + 16));
+                key.u.coeffMask |= 1 << i;
             }
         }
+        if (ipa[0] != 0) key.u.addMask |= 0x1;
+        if (ipa[4] != 0) key.u.addMask |= 0x2;
+        if (ipa[8] != 0) key.u.addMask |= 0x4;
+        if (ipa[12] != 0) key.u.addMask |= 0x8;
     }
 
     // Look for a dot product where the r,g,b colums are the same
@@ -128,15 +217,51 @@ int64_t RsdCpuScriptIntrinsicColorMatrix::computeKey(
         (ip[8] == ip[9]) && (ip[8] == ip[10]) &&
         (ip[12] == ip[13]) && (ip[12] == ip[14])) {
 
-        key |= CM_DOT_MASK;
+        if (!key.u.addMask) key.u.dot = 1;
     }
 
     // Is alpha a simple copy
-    if (!(key & 0x08880000) && (ip[15] == 256)) {
-        key |= CM_COPY_ALPHA;
+    if (!(key.u.coeffMask & 0x0888) && (ip[15] == 256) && !(key.u.addMask & 0x8)) {
+        key.u.copyAlpha = 1;
     }
 
-    //ALOGE("build key %08x, %08x", (int32_t)(key >> 32), (int32_t)key);
+    //ALOGE("build key %08x, %08x", (int32_t)(key.key >> 32), (int32_t)key.key);
+
+    switch (ein->getVectorSize()) {
+    case 4:
+        key.u.inVecSize = 3;
+        break;
+    case 3:
+        key.u.inVecSize = 2;
+        key.u.coeffMask &= ~0xF000;
+        break;
+    case 2:
+        key.u.inVecSize = 1;
+        key.u.coeffMask &= ~0xFF00;
+        break;
+    default:
+        key.u.coeffMask &= ~0xFFF0;
+        break;
+    }
+
+    switch (eout->getVectorSize()) {
+    case 4:
+        key.u.outVecSize = 3;
+        break;
+    case 3:
+        key.u.outVecSize = 2;
+        key.u.coeffMask &= ~0x8888;
+        break;
+    case 2:
+        key.u.outVecSize = 1;
+        key.u.coeffMask &= ~0xCCCC;
+        break;
+    default:
+        key.u.coeffMask &= ~0xEEEE;
+        break;
+    }
+
+    //ALOGE("build key %08x, %08x", (int32_t)(key.key >> 32), (int32_t)key.key);
     return key;
 }
 
@@ -147,15 +272,30 @@ int64_t RsdCpuScriptIntrinsicColorMatrix::computeKey(
     extern "C" uint32_t _N_ColorMatrix_##x##_end;  \
     extern "C" uint32_t _N_ColorMatrix_##x##_len;
 
-DEF_SYM(prefix)
+DEF_SYM(prefix_i)
+DEF_SYM(prefix_f)
 DEF_SYM(postfix1)
 DEF_SYM(postfix2)
+
 DEF_SYM(load_u8_4)
 DEF_SYM(load_u8_2)
 DEF_SYM(load_u8_1)
+DEF_SYM(load_u8f_4)
+DEF_SYM(load_u8f_2)
+DEF_SYM(load_u8f_1)
+DEF_SYM(load_f32_4)
+DEF_SYM(load_f32_2)
+DEF_SYM(load_f32_1)
+
 DEF_SYM(store_u8_4)
 DEF_SYM(store_u8_2)
 DEF_SYM(store_u8_1)
+DEF_SYM(load_f32_4)
+DEF_SYM(load_f32_2)
+DEF_SYM(load_f32_1)
+DEF_SYM(store_f32_4)
+DEF_SYM(store_f32_2)
+DEF_SYM(store_f32_1)
 DEF_SYM(unpack_u8_4)
 DEF_SYM(unpack_u8_3)
 DEF_SYM(unpack_u8_2)
@@ -213,10 +353,38 @@ static uint8_t * addVMULL_S16(uint8_t *buf, uint32_t dest_q, uint32_t src_d1, ui
     ((uint32_t *)buf)[0] = op;
     return buf + 4;
 }
+
+static uint8_t * addVQADD_S32(uint8_t *buf, uint32_t dest_q, uint32_t src_q1, uint32_t src_q2) {
+    //vqadd.s32 Q#1, D#1, D#2
+    uint32_t op = 0xf2200050 | encodeSIMDRegs(dest_q << 1, src_q1 << 1, src_q2 << 1, false, false);
+    ((uint32_t *)buf)[0] = op;
+    return buf + 4;
+}
+
+static uint8_t * addVMLAL_F32(uint8_t *buf, uint32_t dest_q, uint32_t src_d1, uint32_t src_d2, uint32_t src_d2_s) {
+    //vmlal.f32 Q#1, D#1, D#2[#]
+    uint32_t op = 0xf2900240 | encodeSIMDRegs(dest_q << 1, src_d1, src_d2 | (src_d2_s << 3), false, false);
+    ((uint32_t *)buf)[0] = op;
+    return buf + 4;
+}
+
+static uint8_t * addVMULL_F32(uint8_t *buf, uint32_t dest_q, uint32_t src_d1, uint32_t src_d2, uint32_t src_d2_s) {
+    //vmull.f32 Q#1, D#1, D#2[#]
+    uint32_t op = 0xf2900A40 | encodeSIMDRegs(dest_q << 1, src_d1, src_d2 | (src_d2_s << 3), false, false);
+    ((uint32_t *)buf)[0] = op;
+    return buf + 4;
+}
+
+static uint8_t * addVADD_F32(uint8_t *buf, uint32_t dest_q, uint32_t src_q1, uint32_t src_q2) {
+    //vadd.f32 Q#1, D#1, D#2
+    uint32_t op = 0xf2000d40 | encodeSIMDRegs(dest_q << 1, src_q1 << 1, src_q2 << 1, false, false);
+    ((uint32_t *)buf)[0] = op;
+    return buf + 4;
+}
 #endif
 
 
-bool RsdCpuScriptIntrinsicColorMatrix::build(int64_t key) {
+bool RsdCpuScriptIntrinsicColorMatrix::build(Key_t key) {
 #if defined(ARCH_ARM_HAVE_NEON)
     mBufSize = 4096;
     //StopWatch build_time("rs cm: build time");
@@ -227,199 +395,185 @@ bool RsdCpuScriptIntrinsicColorMatrix::build(int64_t key) {
     }
 
     uint8_t *buf = mBuf;
+    uint8_t *buf2 = NULL;
 
-    // Add the function prefix
-    // Store the address for the loop return
-    ADD_CHUNK(prefix);
-    uint8_t *buf2 = buf;
+    int ops[5][4];  // 0=unused, 1 = set, 2 = accumulate, 3 = final
+    int opInit[4] = {0, 0, 0, 0};
 
-    // Load the incoming r,g,b,a as needed
-    switch(key & CM_IN_VEC_SIZE_MASK) {
-    case 3:
-        ADD_CHUNK(load_u8_4);
-        if (key & CM_COPY_ALPHA) {
-            ADD_CHUNK(unpack_u8_3);
+    memset(ops, 0, sizeof(ops));
+    for (int i=0; i < 4; i++) {
+        if (key.u.coeffMask & (1 << (i*4))) {
+            ops[i][0] = opInit[0] + 1;
+            opInit[0] = 1;
+        }
+        if (!key.u.dot) {
+            if (key.u.coeffMask & (1 << (1 + i*4))) {
+                ops[i][1] = opInit[1] + 1;
+                opInit[1] = 1;
+            }
+            if (key.u.coeffMask & (1 << (2 + i*4))) {
+                ops[i][2] = opInit[2] + 1;
+                opInit[2] = 1;
+            }
+        }
+        if (!key.u.copyAlpha) {
+            if (key.u.coeffMask & (1 << (3 + i*4))) {
+                ops[i][3] = opInit[3] + 1;
+                opInit[3] = 1;
+            }
+        }
+    }
+    for (int i=0; i < 4; i++) {
+        if (key.u.addMask & (1 << i)) {
+            ops[4][i] = opInit[i] + 1;
+            opInit[i] = 1;
+        }
+    }
+
+
+    if (key.u.inType || key.u.outType) {
+        ADD_CHUNK(prefix_f);
+        buf2 = buf;
+
+        // Load the incoming r,g,b,a as needed
+        if (key.u.inType) {
+            switch(key.u.inVecSize) {
+            case 3:
+            case 2:
+                ADD_CHUNK(load_f32_4);
+                break;
+            case 1:
+                ADD_CHUNK(load_f32_2);
+                break;
+            case 0:
+                ADD_CHUNK(load_f32_1);
+                break;
+            }
         } else {
-            ADD_CHUNK(unpack_u8_4);
+            switch(key.u.inVecSize) {
+            case 3:
+            case 2:
+                ADD_CHUNK(load_u8f_4);
+                break;
+            case 1:
+                ADD_CHUNK(load_u8f_2);
+                break;
+            case 0:
+                ADD_CHUNK(load_u8f_1);
+                break;
+            }
         }
-        break;
-    case 2:
-        ADD_CHUNK(load_u8_4);
-        ADD_CHUNK(unpack_u8_3);
-        break;
-    case 1:
-        ADD_CHUNK(load_u8_2);
-        ADD_CHUNK(unpack_u8_2);
-        break;
-    case 0:
-        ADD_CHUNK(load_u8_1);
-        ADD_CHUNK(unpack_u8_1);
-        break;
-    }
 
-    // Add multiply and accumulate
-    // use MULL to init the output register,
-    // use MLAL from there
-    bool linit[4] = {false, false, false, false};
-    if (key & (1 << 16)) {
-        buf = addVMULL_S16(buf, 8, 24, 4, 0);
-        linit[0] = true;
-    }
-    if (!(key & CM_DOT_MASK)) {
-        if (key & (1 << 17)) {
-            buf = addVMULL_S16(buf, 9, 24, 4, 1);
-            linit[1] = true;
+        for (int i=0; i < 4; i++) {
+            for (int j=0; j < 4; j++) {
+                //ALOGE("op %i %i   %i", i, j, ops[i][j]);
+                switch(ops[i][j]) {
+                case 0:
+                    break;
+                case 1:
+                    buf = addVMULL_F32(buf, 12+j, i*2, 8+i, j);
+                    break;
+                case 2:
+                    buf = addVMLAL_F32(buf, 12+j, i*2, 8+i, j);
+                    break;
+                }
+            }
         }
-        if (key & (1 << 18)) {
-            buf = addVMULL_S16(buf, 10, 24, 4, 2);
-            linit[2] = true;
+        for (int j=0; j < 4; j++) {
+            if (key.u.addMask & (1 << j)) {
+                buf = addVADD_F32(buf, 12+j, 12+j, 8+j);
+            }
         }
-    }
-    if (key & (1 << 19)) {
-        buf = addVMULL_S16(buf, 11, 24, 4, 3);
-        linit[3] = true;
-    }
 
-    if (key & (1 << 20)) {
-        if (linit[0]) {
-            buf = addVMLAL_S16(buf, 8, 26, 5, 0);
-        } else {
-            buf = addVMULL_S16(buf, 8, 26, 5, 0);
-            linit[0] = true;
-        }
-    }
-    if (!(key & CM_DOT_MASK)) {
-        if (key & (1 << 21)) {
-            if (linit[1]) {
-                buf = addVMLAL_S16(buf, 9, 26, 5, 1);
-            } else {
-                buf = addVMULL_S16(buf, 9, 26, 5, 1);
-                linit[1] = true;
-            }
-        }
-        if (key & (1 << 22)) {
-            if (linit[2]) {
-                buf = addVMLAL_S16(buf, 10, 26, 5, 2);
-            } else {
-                buf = addVMULL_S16(buf, 10, 26, 5, 2);
-                linit[2] = true;
-            }
-        }
-    }
-    if (key & (1 << 23)) {
-        if (linit[3]) {
-            buf = addVMLAL_S16(buf, 11, 26, 5, 3);
-        } else {
-            buf = addVMULL_S16(buf, 11, 26, 5, 3);
-            linit[3] = true;
-        }
-    }
 
-    if (key & (1 << 24)) {
-        if (linit[0]) {
-            buf = addVMLAL_S16(buf, 8, 28, 6, 0);
-        } else {
-            buf = addVMULL_S16(buf, 8, 28, 6, 0);
-            linit[0] = true;
-        }
-    }
-    if (!(key & CM_DOT_MASK)) {
-        if (key & (1 << 25)) {
-            if (linit[1]) {
-                buf = addVMLAL_S16(buf, 9, 28, 6, 1);
-            } else {
-                buf = addVMULL_S16(buf, 9, 28, 6, 1);
-                linit[1] = true;
-            }
-        }
-        if (key & (1 << 26)) {
-            if (linit[2]) {
-                buf = addVMLAL_S16(buf, 10, 28, 6, 2);
-            } else {
-                buf = addVMULL_S16(buf, 10, 28, 6, 2);
-                linit[2] = true;
-            }
-        }
-    }
-    if (key & (1 << 27)) {
-        if (linit[3]) {
-            buf = addVMLAL_S16(buf, 11, 28, 6, 3);
-        } else {
-            buf = addVMULL_S16(buf, 11, 28, 6, 3);
-            linit[3] = true;
-        }
-    }
-
-    if (key & (1 << 28)) {
-        if (linit[0]) {
-            buf = addVMLAL_S16(buf, 8, 30, 7, 0);
-        } else {
-            buf = addVMULL_S16(buf, 8, 30, 7, 0);
-            linit[0] = true;
-        }
-    }
-    if (!(key & CM_DOT_MASK)) {
-        if (key & (1 << 29)) {
-            if (linit[1]) {
-                buf = addVMLAL_S16(buf, 9, 30, 7, 1);
-            } else {
-                buf = addVMULL_S16(buf, 9, 30, 7, 1);
-                linit[1] = true;
-            }
-        }
-        if (key & (1 << 30)) {
-            if (linit[2]) {
-                buf = addVMLAL_S16(buf, 10, 30, 7, 2);
-            } else {
-                buf = addVMULL_S16(buf, 10, 30, 7, 2);
-                linit[2] = true;
-            }
-        }
-    }
-    if (!(key & CM_COPY_ALPHA)) {
-        if (key & (1 << 31)) {
-            if (linit[3]) {
-                buf = addVMLAL_S16(buf, 11, 30, 7, 3);
-            } else {
-                buf = addVMULL_S16(buf, 11, 30, 7, 3);
-                linit[3] = true;
-            }
-        }
-    }
-
-    // If we have a dot product, perform the special pack.
-    if (key & CM_DOT_MASK) {
-        ADD_CHUNK(pack_u8_1);
-        ADD_CHUNK(dot);
     } else {
-        switch(key & CM_IN_VEC_SIZE_MASK) {
+        // Add the function prefix
+        // Store the address for the loop return
+        ADD_CHUNK(prefix_i);
+        buf2 = buf;
+
+        // Load the incoming r,g,b,a as needed
+        switch(key.u.inVecSize) {
         case 3:
-            ADD_CHUNK(pack_u8_4);
+            ADD_CHUNK(load_u8_4);
+            if (key.u.copyAlpha) {
+                ADD_CHUNK(unpack_u8_3);
+            } else {
+                ADD_CHUNK(unpack_u8_4);
+            }
             break;
         case 2:
-            ADD_CHUNK(pack_u8_3);
+            ADD_CHUNK(load_u8_4);
+            ADD_CHUNK(unpack_u8_3);
             break;
         case 1:
-            ADD_CHUNK(pack_u8_2);
+            ADD_CHUNK(load_u8_2);
+            ADD_CHUNK(unpack_u8_2);
             break;
         case 0:
-            ADD_CHUNK(pack_u8_1);
+            ADD_CHUNK(load_u8_1);
+            ADD_CHUNK(unpack_u8_1);
             break;
         }
-    }
 
-    // Write out result
-    switch(key & CM_IN_VEC_SIZE_MASK) {
-    case 3:
-    case 2:
-        ADD_CHUNK(store_u8_4);
-        break;
-    case 1:
-        ADD_CHUNK(store_u8_2);
-        break;
-    case 0:
-        ADD_CHUNK(store_u8_1);
-        break;
+        // Add multiply and accumulate
+        // use MULL to init the output register,
+        // use MLAL from there
+        for (int i=0; i < 4; i++) {
+            for (int j=0; j < 4; j++) {
+                //ALOGE("op %i %i   %i", i, j, ops[i][j]);
+                switch(ops[i][j]) {
+                case 0:
+                    break;
+                case 1:
+                    buf = addVMULL_S16(buf, 8+j, 24+i*2, 4+i, j);
+                    break;
+                case 2:
+                    buf = addVMLAL_S16(buf, 8+j, 24+i*2, 4+i, j);
+                    break;
+                }
+            }
+        }
+        for (int j=0; j < 4; j++) {
+            if (key.u.addMask & (1 << j)) {
+                buf = addVQADD_S32(buf, 8+j, 8+j, 4+j);
+            }
+        }
+
+        // If we have a dot product, perform the special pack.
+        if (key.u.dot) {
+            ADD_CHUNK(pack_u8_1);
+            ADD_CHUNK(dot);
+        } else {
+            switch(key.u.outVecSize) {
+            case 3:
+                ADD_CHUNK(pack_u8_4);
+                break;
+            case 2:
+                ADD_CHUNK(pack_u8_3);
+                break;
+            case 1:
+                ADD_CHUNK(pack_u8_2);
+                break;
+            case 0:
+                ADD_CHUNK(pack_u8_1);
+                break;
+            }
+        }
+
+        // Write out result
+        switch(key.u.outVecSize) {
+        case 3:
+        case 2:
+            ADD_CHUNK(store_u8_4);
+            break;
+        case 1:
+            ADD_CHUNK(store_u8_2);
+            break;
+        case 0:
+            ADD_CHUNK(store_u8_1);
+            break;
+        }
     }
 
     // Loop, branch, and cleanup
@@ -446,13 +600,21 @@ void RsdCpuScriptIntrinsicColorMatrix::setGlobalVar(uint32_t slot, const void *d
     case 0:
         memcpy (fp, data, dataLength);
         for(int ct=0; ct < 16; ct++) {
+            //ALOGE("mat %i %f", ct, fp[ct]);
             ip[ct] = (short)(fp[ct] * 256.f + 0.5f);
         }
         break;
     case 1:
-        memcpy (fpa, data, dataLength);
-        for(int ct=0; ct < 4; ct++) {
-            ipa[ct] = (int)(fpa[ct] * 256.f + 0.5f);
+        {
+            const float *f = (const float *)data;
+            fpa[0] = fpa[1] = fpa[2] = fpa[3] = f[0];
+            fpa[4] = fpa[5] = fpa[6] = fpa[7] = f[1];
+            fpa[8] = fpa[9] = fpa[10] = fpa[11] = f[2];
+            fpa[12] = fpa[13] = fpa[14] = fpa[15] = f[3];
+
+            for(int ct=0; ct < 16; ct++) {
+                ipa[ct] = (int)(fpa[ct] * 65536.f + 0.5f);
+            }
         }
         break;
     default:
@@ -464,34 +626,89 @@ void RsdCpuScriptIntrinsicColorMatrix::setGlobalVar(uint32_t slot, const void *d
 }
 
 
-static void One(const RsForEachStubParamStruct *p, uchar4 *out,
-                const uchar4 *py, const float* coeff) {
-    float4 i = convert_float4(py[0]);
+static void One(const RsForEachStubParamStruct *p, void *out,
+                const void *py, const float* coeff,
+                uint32_t vsin, uint32_t vsout, bool fin, bool fout) {
+
+    float4 f = 0.f;
+    if (fin) {
+        switch(vsin) {
+        case 3:
+        case 2:
+            f = ((const float4 *)py)[0];
+            break;
+        case 1:
+            f.xy = ((const float2 *)py)[0];
+            break;
+        case 0:
+            f.x = ((const float *)py)[0];
+            break;
+        }
+    } else {
+        switch(vsin) {
+        case 3:
+        case 2:
+            f = convert_float4(((const uchar4 *)py)[0]);
+            break;
+        case 1:
+            f.xy = convert_float2(((const float2 *)py)[0]);
+            break;
+        case 0:
+            f.x = (float)(((const float *)py)[0]);
+            break;
+        }
+    }
 
     float4 sum;
-    sum.x = i.x * coeff[0] +
-            i.y * coeff[4] +
-            i.z * coeff[8] +
-            i.w * coeff[12];
-    sum.y = i.x * coeff[1] +
-            i.y * coeff[5] +
-            i.z * coeff[9] +
-            i.w * coeff[13];
-    sum.z = i.x * coeff[2] +
-            i.y * coeff[6] +
-            i.z * coeff[10] +
-            i.w * coeff[14];
-    sum.w = i.x * coeff[3] +
-            i.y * coeff[7] +
-            i.z * coeff[11] +
-            i.w * coeff[15];
+    sum.x = f.x * coeff[0] +
+            f.y * coeff[4] +
+            f.z * coeff[8] +
+            f.w * coeff[12];
+    sum.y = f.x * coeff[1] +
+            f.y * coeff[5] +
+            f.z * coeff[9] +
+            f.w * coeff[13];
+    sum.z = f.x * coeff[2] +
+            f.y * coeff[6] +
+            f.z * coeff[10] +
+            f.w * coeff[14];
+    sum.w = f.x * coeff[3] +
+            f.y * coeff[7] +
+            f.z * coeff[11] +
+            f.w * coeff[15];
 
     sum.x = sum.x < 0 ? 0 : (sum.x > 255 ? 255 : sum.x);
     sum.y = sum.y < 0 ? 0 : (sum.y > 255 ? 255 : sum.y);
     sum.z = sum.z < 0 ? 0 : (sum.z > 255 ? 255 : sum.z);
     sum.w = sum.w < 0 ? 0 : (sum.w > 255 ? 255 : sum.w);
 
-    *out = convert_uchar4(sum);
+    if (fout) {
+        switch(vsout) {
+        case 3:
+        case 2:
+            ((float4 *)out)[0] = sum;
+            break;
+        case 1:
+            ((float2 *)out)[0] = sum.xy;
+            break;
+        case 0:
+            ((float *)out)[0] = sum.x;
+            break;
+        }
+    } else {
+        switch(vsout) {
+        case 3:
+        case 2:
+            ((uchar4 *)out)[0] = convert_uchar4(sum);
+            break;
+        case 1:
+            ((uchar2 *)out)[0] = convert_uchar2(sum.xy);
+            break;
+        case 0:
+            ((uchar *)out)[0] = sum.x;
+            break;
+        }
+    }
 }
 
 void RsdCpuScriptIntrinsicColorMatrix::kernel(const RsForEachStubParamStruct *p,
@@ -503,9 +720,16 @@ void RsdCpuScriptIntrinsicColorMatrix::kernel(const RsForEachStubParamStruct *p,
     uint32_t x1 = xstart;
     uint32_t x2 = xend;
 
+    uint32_t vsin = cp->mLastKey.u.inVecSize;
+    uint32_t vsout = cp->mLastKey.u.outVecSize;
+    bool floatIn = !!cp->mLastKey.u.inType;
+    bool floatOut = !!cp->mLastKey.u.outType;
+
+
     if(x2 > x1) {
         int32_t len = (x2 - x1) >> 2;
         if((cp->mOptKernel != NULL) && (len > 0)) {
+            //ALOGE("%p %p %i", out, in, len);
             cp->mOptKernel(out, in, cp->ip, len);
             x1 += len << 2;
             out += len << 2;
@@ -513,7 +737,7 @@ void RsdCpuScriptIntrinsicColorMatrix::kernel(const RsForEachStubParamStruct *p,
         }
 
         while(x1 != x2) {
-            One(p, out++, in++, cp->fp);
+            One(p, out++, in++, cp->fp, vsin, vsout, floatIn, floatOut);
             x1++;
         }
     }
@@ -523,9 +747,9 @@ void RsdCpuScriptIntrinsicColorMatrix::preLaunch(
         uint32_t slot, const Allocation * ain, Allocation * aout,
         const void * usr, uint32_t usrLen, const RsScriptCall *sc) {
 
-    int64_t key = computeKey(ain->mHal.state.type->getElement(),
+    Key_t key = computeKey(ain->mHal.state.type->getElement(),
                              aout->mHal.state.type->getElement());
-    if ((mOptKernel == NULL) || (mLastKey != key)) {
+    if ((mOptKernel == NULL) || (mLastKey.key != key.key)) {
         if (mBuf) munmap(mBuf, mBufSize);
         mBuf = NULL;
         mOptKernel = NULL;
@@ -546,7 +770,7 @@ RsdCpuScriptIntrinsicColorMatrix::RsdCpuScriptIntrinsicColorMatrix(
             RsdCpuReferenceImpl *ctx, const Script *s, const Element *e)
             : RsdCpuScriptIntrinsic(ctx, s, e, RS_SCRIPT_INTRINSIC_ID_COLOR_MATRIX) {
 
-    mLastKey = 0;
+    mLastKey.key = 0;
     mBuf = NULL;
     mBufSize = 0;
     mOptKernel = NULL;

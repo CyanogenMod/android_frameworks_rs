@@ -23,7 +23,9 @@ import android.renderscript.Allocation;
 import android.renderscript.Element;
 import android.renderscript.RenderScript;
 import android.renderscript.ScriptIntrinsicBlur;
+import android.renderscript.ScriptIntrinsicColorMatrix;
 import android.renderscript.Type;
+import android.renderscript.Matrix4f;
 import android.util.Log;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -34,7 +36,7 @@ public class Blur25G extends TestBase {
 
     private ScriptIntrinsicBlur mIntrinsic;
 
-    private ScriptC_greyscale mScript;
+    private ScriptIntrinsicColorMatrix mCM;
     private Allocation mScratchPixelsAllocation1;
     private Allocation mScratchPixelsAllocation2;
 
@@ -68,8 +70,8 @@ public class Blur25G extends TestBase {
         mScratchPixelsAllocation1 = Allocation.createTyped(mRS, tb.create());
         mScratchPixelsAllocation2 = Allocation.createTyped(mRS, tb.create());
 
-        mScript = new ScriptC_greyscale(mRS);
-        mScript.forEach_toU8(mInPixelsAllocation, mScratchPixelsAllocation1);
+        mCM = ScriptIntrinsicColorMatrix.create(mRS);
+        mCM.forEach(mInPixelsAllocation, mScratchPixelsAllocation1);
 
         mIntrinsic = ScriptIntrinsicBlur.create(mRS, Element.U8(mRS));
         mIntrinsic.setRadius(MAX_RADIUS);
@@ -89,7 +91,18 @@ public class Blur25G extends TestBase {
     }
 
     public void updateBitmap(Bitmap b) {
-        mScript.forEach_toU8_4(mScratchPixelsAllocation2, mOutPixelsAllocation);
+        Matrix4f m = new Matrix4f();
+        m.set(0, 0, 1.f);
+        m.set(0, 1, 1.f);
+        m.set(0, 2, 1.f);
+
+        m.set(1, 1, 0.f);
+        m.set(2, 2, 0.f);
+        m.set(3, 3, 0.f);
+        mCM.setColorMatrix(m);
+        mCM.setAdd(0.f, 0.f, 0.f, 1.f);
+
+        mCM.forEach(mScratchPixelsAllocation2, mOutPixelsAllocation);
         mOutPixelsAllocation.copyTo(b);
     }
 
