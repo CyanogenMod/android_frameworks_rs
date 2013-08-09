@@ -540,7 +540,6 @@ void RsdCpuScriptIntrinsicColorMatrix::postLaunch(
         uint32_t slot, const Allocation * ain, Allocation * aout,
         const void * usr, uint32_t usrLen, const RsScriptCall *sc) {
 
-
 }
 
 RsdCpuScriptIntrinsicColorMatrix::RsdCpuScriptIntrinsicColorMatrix(

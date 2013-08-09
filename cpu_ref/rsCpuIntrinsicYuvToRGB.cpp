@@ -151,15 +151,17 @@ void RsdCpuScriptIntrinsicYuvToRGB::kernel(const RsForEachStubParamStruct *p,
             }
 
             if(x2 > x1) {
-        #if defined(ARCH_ARM_HAVE_NEON)
-                int32_t len = (x2 - x1 - 1) >> 3;
-                if(len > 0) {
-                    //                    ALOGE("%p, %p, %p, %d, %p", out, Y, uv, len, YuvCoeff);
-                    rsdIntrinsicYuv_K(out, Y, uv, len, YuvCoeff);
-                    x1 += len << 3;
-                    out += len << 3;
+                if (gArchUseSIMD) {
+            #if defined(ARCH_ARM_HAVE_VFP)
+                    int32_t len = (x2 - x1 - 1) >> 3;
+                    if(len > 0) {
+                        //                    ALOGE("%p, %p, %p, %d, %p", out, Y, uv, len, YuvCoeff);
+                        rsdIntrinsicYuv_K(out, Y, uv, len, YuvCoeff);
+                        x1 += len << 3;
+                        out += len << 3;
+                    }
+            #endif
                 }
-        #endif
 
                // ALOGE("y %i  %i  %i", p->y, x1, x2);
                 while(x1 < x2) {
@@ -188,12 +190,14 @@ void RsdCpuScriptIntrinsicYuvToRGB::kernel(const RsForEachStubParamStruct *p,
             const uchar *v = pinV + ((p->y >> 1) * strideV);
 
             if(x2 > x1) {
-        #if defined(ARCH_ARM_HAVE_NEON)
-                int32_t len = (x2 - x1 - 1) >> 3;
-                if(len > 0) {
-                    rsdIntrinsicYuv2_K(out, Y, u, v, len, YuvCoeff);
-                    x1 += len << 3;
-                    out += len << 3;
+        #if defined(ARCH_ARM_HAVE_VFP)
+                if (gArchUseSIMD) {
+                    int32_t len = (x2 - x1 - 1) >> 3;
+                    if(len > 0) {
+                        rsdIntrinsicYuv2_K(out, Y, u, v, len, YuvCoeff);
+                        x1 += len << 3;
+                        out += len << 3;
+                    }
                 }
         #endif
 

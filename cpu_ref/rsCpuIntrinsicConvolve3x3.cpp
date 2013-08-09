@@ -211,12 +211,14 @@ void RsdCpuScriptIntrinsicConvolve3x3::kernelU4(const RsForEachStubParamStruct *
     }
 
     if(x2 > x1) {
-#if defined(ARCH_ARM_HAVE_NEON)
-        int32_t len = (x2 - x1 - 1) >> 1;
-        if(len > 0) {
-            rsdIntrinsicConvolve3x3_K(out, &py0[x1-1], &py1[x1-1], &py2[x1-1], cp->mIp, len);
-            x1 += len << 1;
-            out += len << 1;
+#if defined(ARCH_ARM_HAVE_VFP)
+        if (gArchUseSIMD) {
+            int32_t len = (x2 - x1 - 1) >> 1;
+            if(len > 0) {
+                rsdIntrinsicConvolve3x3_K(out, &py0[x1-1], &py1[x1-1], &py2[x1-1], cp->mIp, len);
+                x1 += len << 1;
+                out += len << 1;
+            }
         }
 #endif
 
