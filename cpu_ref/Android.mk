@@ -33,13 +33,14 @@ LOCAL_SRC_FILES:= \
 
 ifeq ($(ARCH_ARM_HAVE_NEON),true)
     LOCAL_CFLAGS += -DARCH_ARM_HAVE_NEON
-    LOCAL_SRC_FILES+= \
-        rsCpuIntrinsics_neon.S \
-        rsCpuIntrinsics_neon_ColorMatrix.S
 endif
 
 ifeq ($(ARCH_ARM_HAVE_VFP),true)
     LOCAL_CFLAGS += -DARCH_ARM_HAVE_VFP
+    LOCAL_SRC_FILES+= \
+        rsCpuIntrinsics_neon.S \
+        rsCpuIntrinsics_neon_ColorMatrix.S
+    LOCAL_ASFLAGS := -mfpu=neon
 endif
 
 ifeq ($(ARCH_X86_HAVE_SSE2), true)
