@@ -39,7 +39,7 @@ const char * Element::getSubElementName(uint32_t index) {
     if (index >= mVisibleElementMap.size()) {
         mRS->throwError("Illegal sub-element index");
     }
-    return mElementNames[mVisibleElementMap[index]].string();
+    return mElementNames[mVisibleElementMap[index]].c_str();
 }
 
 size_t Element::getSubElementArraySize(uint32_t index) {
@@ -135,14 +135,14 @@ void Element::updateVisibleSubElements() {
     size_t fieldCount = mElementNames.size();
     // Find out how many elements are not padding
     for (size_t ct = 0; ct < fieldCount; ct ++) {
-        if (mElementNames[ct].string()[0] != '#') {
+        if (mElementNames[ct].c_str()[0] != '#') {
             noPaddingFieldCount ++;
         }
     }
 
     // Make a map that points us at non-padding elements
     for (size_t ct = 0; ct < fieldCount; ct ++) {
-        if (mElementNames[ct].string()[0] != '#') {
+        if (mElementNames[ct].c_str()[0] != '#') {
             mVisibleElementMap.push_back((uint32_t)ct);
         }
     }
@@ -150,7 +150,7 @@ void Element::updateVisibleSubElements() {
 
 Element::Element(void *id, android::RSC::sp<RS> rs,
                  std::vector<android::RSC::sp<Element> > &elements,
-                 std::vector<android::String8> &elementNames,
+                 std::vector<std::string> &elementNames,
                  std::vector<uint32_t> &arraySizes) : BaseObj(id, rs) {
     mSizeBytes = 0;
     mVectorSize = 1;
@@ -337,11 +337,11 @@ Element::Builder::Builder(android::RSC::sp<RS> rs) {
     mSkipPadding = false;
 }
 
-void Element::Builder::add(android::RSC::sp</*const*/ Element>e, android::String8 &name, uint32_t arraySize) {
+void Element::Builder::add(android::RSC::sp</*const*/ Element>e, std::string &name, uint32_t arraySize) {
     // Skip padding fields after a vector 3 type.
     if (mSkipPadding) {
         const char *s1 = "#padding_";
-        const char *s2 = name.string();
+        const char *s2 = name.c_str();
         size_t len = strlen(s1);
         if (strlen(s2) >= len) {
             if (!memcmp(s1, s2, len)) {
@@ -369,7 +369,7 @@ android::RSC::sp<const Element> Element::Builder::create() {
     size_t* sizeArray = (size_t*)calloc(fieldCount, sizeof(size_t));
 
     for (size_t ct = 0; ct < fieldCount; ct++) {
-        nameArray[ct] = mElementNames[ct].string();
+        nameArray[ct] = mElementNames[ct].c_str();
         elementArray[ct] = mElements[ct].get();
         sizeArray[ct] = mElementNames[ct].length();
     }

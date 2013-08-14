@@ -23,6 +23,7 @@
 #include "rsDispatch.h"
 
 #include <vector>
+#include <string>
 
 // Every row in an RS allocation is guaranteed to be aligned by this amount
 // Every row in a user-backed allocation must be aligned by this amount
@@ -187,7 +188,7 @@ public:
 protected:
     void *mID;
     sp<RS> mRS;
-    String8 mName;
+    std::string mName;
 
     BaseObj(void *id, sp<RS> rs);
     void checkValid();
@@ -383,7 +384,7 @@ public:
 
     Element(void *id, sp<RS> rs,
             std::vector<sp<Element> > &elements,
-            std::vector<android::String8> &elementNames,
+            std::vector<std::string> &elementNames,
             std::vector<uint32_t> &arraySizes);
     Element(void *id, sp<RS> rs, RsDataType dt, RsDataKind dk, bool norm, uint32_t size);
     Element(sp<RS> rs);
@@ -394,14 +395,14 @@ public:
     private:
         sp<RS> mRS;
         std::vector<sp<Element> > mElements;
-        std::vector<android::String8> mElementNames;
+        std::vector<std::string> mElementNames;
         std::vector<uint32_t> mArraySizes;
         bool mSkipPadding;
 
     public:
         Builder(sp<RS> rs);
         ~Builder();
-        void add(sp<Element> e, android::String8 &name, uint32_t arraySize = 1);
+        void add(sp<Element> e, std::string &name, uint32_t arraySize = 1);
         sp<const Element> create();
     };
 
@@ -409,7 +410,7 @@ private:
     void updateVisibleSubElements();
 
     std::vector<sp<Element> > mElements;
-    std::vector<android::String8> mElementNames;
+    std::vector<std::string> mElementNames;
     std::vector<uint32_t> mArraySizes;
     std::vector<uint32_t> mVisibleElementMap;
     std::vector<uint32_t> mOffsetInBytes;
@@ -439,7 +440,7 @@ public:
 
     void align(size_t v) {
         if ((v & (v - 1)) != 0) {
-            ALOGE("Non-power-of-two alignment: %zu", v);
+            //            ALOGE("Non-power-of-two alignment: %zu", v);
             return;
         }
 
@@ -454,7 +455,7 @@ public:
 
     void reset(size_t i) {
         if (i >= mLen) {
-            ALOGE("Out of bounds: i (%zu) >= len (%zu)", i, mLen);
+            //            ALOGE("Out of bounds: i (%zu) >= len (%zu)", i, mLen);
             return;
         }
         mPos = i;
@@ -463,7 +464,7 @@ public:
     void skip(size_t i) {
         size_t res = mPos + i;
         if (res > mLen) {
-            ALOGE("Exceeded buffer length: i (%zu) > len (%zu)", i, mLen);
+            //            ALOGE("Exceeded buffer length: i (%zu) > len (%zu)", i, mLen);
             return;
         }
         mPos = res;
