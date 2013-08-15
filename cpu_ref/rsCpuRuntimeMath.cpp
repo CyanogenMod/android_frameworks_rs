@@ -46,7 +46,11 @@ using namespace android::renderscript;
 
 // Handle missing Gingerbread functions like tgammaf.
 float SC_tgammaf(float x) {
+#ifdef RS_COMPATIBILITY_LIB
     return tgamma(x);
+#else
+    return tgammaf(x);
+#endif
 }
 
 uint32_t SC_abs_i32(int32_t v) {return abs(v);}
@@ -225,7 +229,7 @@ static RsdCpuReference::CpuSymbol gSyms[] = {
     { "_Z4sqrtf", (void *)&sqrtf, true },
     { "_Z3tanf", (void *)&tanf, true },
     { "_Z4tanhf", (void *)&tanhf, true },
-    { "_Z6tgammaf", (void *)&tgammaf, true },
+    { "_Z6tgammaf", (void *)&SC_tgammaf, true },
     { "_Z5truncf", (void *)&truncf, true },
 
     //{ "smoothstep", (void *)&, true },
