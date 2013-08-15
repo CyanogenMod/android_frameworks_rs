@@ -15,6 +15,7 @@
  */
 
 #include "rsSignal.h"
+#include <errno.h>
 
 using namespace android;
 using namespace android::renderscript;
