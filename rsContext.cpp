@@ -34,8 +34,12 @@
 #include <dlfcn.h>
 #include <unistd.h>
 
-#if !defined(RS_SERVER)
+#if !defined(RS_SERVER) && !defined(RS_COMPATIBILITY_LIB)
 #include <cutils/properties.h>
+#endif
+
+#ifdef RS_COMPATIBILITY_LIB
+#include "rsCompatibilityLib.h"
 #endif
 
 #ifdef RS_SERVER
