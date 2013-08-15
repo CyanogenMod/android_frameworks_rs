@@ -46,6 +46,7 @@ RS::RS() {
     mMessageFunc = NULL;
     mMessageRun = false;
     mInit = false;
+    mCurrentError = RS_SUCCESS;
 
     memset(&mElements, 0, sizeof(mElements));
     memset(&mSamplers, 0, sizeof(mSamplers));
@@ -496,10 +497,13 @@ bool RS::init(int targetApi, bool forceCpu, bool synchronous) {
     return true;
 }
 
-void RS::throwError(const char *err) const {
-    ALOGE("RS CPP error: %s", err);
-    int * v = NULL;
-    v[0] = 0;
+void RS::throwError(RSError error, const char *errMsg) {
+    if (mCurrentError == RS_SUCCESS) {
+        mCurrentError = error;
+        ALOGE("RS CPP error: %s", errMsg);
+    } else {
+        ALOGE("RS CPP error (masked by previous error): %s", errMsg);
+    }
 }
 
 
@@ -533,7 +537,7 @@ void * RS::threadProc(void *vrsc) {
         switch(r) {
         case RS_MESSAGE_TO_CLIENT_ERROR:
             ALOGE("RS Error %s", (const char *)rbuf);
-
+            rs->throwError(RS_ERROR_RUNTIME_ERROR, "Error returned from runtime");
             if(rs->mMessageFunc != NULL) {
                 rs->mErrorFunc(usrID, (const char *)rbuf);
             }
