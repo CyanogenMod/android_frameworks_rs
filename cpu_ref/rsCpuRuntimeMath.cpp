@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#ifndef RS_SERVER
+#if !defined(RS_SERVER) && !defined(RS_COMPATIBILITY_LIB)
 #include <cutils/compiler.h>
 #endif
 
