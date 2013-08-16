@@ -42,10 +42,6 @@
 #include <sys/syscall.h>
 #include <string.h>
 
-#ifndef RS_SERVER
-#include <cutils/properties.h>
-#endif
-
 using namespace android;
 using namespace android::renderscript;
 
