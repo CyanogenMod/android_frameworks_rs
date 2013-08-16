@@ -34,7 +34,8 @@
 #include <dlfcn.h>
 #include <unistd.h>
 
-#if !defined(RS_SERVER) && !defined(RS_COMPATIBILITY_LIB)
+#if !defined(RS_SERVER) && !defined(RS_COMPATIBILITY_LIB) && \
+        defined(HAVE_ANDROID_OS)
 #include <cutils/properties.h>
 #endif
 
