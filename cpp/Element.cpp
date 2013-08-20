@@ -24,40 +24,48 @@ using namespace RSC;
 
 android::RSC::sp<const Element> Element::getSubElement(uint32_t index) {
     if (!mVisibleElementMap.size()) {
-        mRS->throwError("Element contains no sub-elements");
+        mRS->throwError(RS_ERROR_INVALID_PARAMETER, "Element contains no sub-elements");
+        return NULL;
     }
     if (index >= mVisibleElementMap.size()) {
-        mRS->throwError("Illegal sub-element index");
+        mRS->throwError(RS_ERROR_INVALID_PARAMETER, "Illegal sub-element index");
+        return NULL;
     }
     return mElements[mVisibleElementMap[index]];
 }
 
 const char * Element::getSubElementName(uint32_t index) {
     if (!mVisibleElementMap.size()) {
-        mRS->throwError("Element contains no sub-elements");
+        mRS->throwError(RS_ERROR_INVALID_PARAMETER, "Element contains no sub-elements");
+        return NULL;
     }
     if (index >= mVisibleElementMap.size()) {
-        mRS->throwError("Illegal sub-element index");
+        mRS->throwError(RS_ERROR_INVALID_PARAMETER, "Illegal sub-element index");
+        return NULL;
     }
     return mElementNames[mVisibleElementMap[index]].c_str();
 }
 
 size_t Element::getSubElementArraySize(uint32_t index) {
     if (!mVisibleElementMap.size()) {
-        mRS->throwError("Element contains no sub-elements");
+        mRS->throwError(RS_ERROR_INVALID_PARAMETER, "Element contains no sub-elements");
+        return 0;
     }
     if (index >= mVisibleElementMap.size()) {
-        mRS->throwError("Illegal sub-element index");
+        mRS->throwError(RS_ERROR_INVALID_PARAMETER, "Illegal sub-element index");
+        return 0;
     }
     return mArraySizes[mVisibleElementMap[index]];
 }
 
 uint32_t Element::getSubElementOffsetBytes(uint32_t index) {
     if (mVisibleElementMap.size()) {
-        mRS->throwError("Element contains no sub-elements");
+        mRS->throwError(RS_ERROR_INVALID_PARAMETER, "Element contains no sub-elements");
+        return 0;
     }
     if (index >= mVisibleElementMap.size()) {
-        mRS->throwError("Illegal sub-element index");
+        mRS->throwError(RS_ERROR_INVALID_PARAMETER, "Illegal sub-element index");
+        return 0;
     }
     return mOffsetInBytes[mVisibleElementMap[index]];
 }
@@ -259,7 +267,8 @@ android::RSC::sp<const Element> Element::createUser(android::RSC::sp<RS> rs, RsD
 
 android::RSC::sp<const Element> Element::createVector(android::RSC::sp<RS> rs, RsDataType dt, uint32_t size) {
     if (size < 2 || size > 4) {
-        rs->throwError("Vector size out of range 2-4.");
+        rs->throwError(RS_ERROR_INVALID_PARAMETER, "Vector size out of range 2-4.");
+        return NULL;
     }
     void *id = RS::dispatch->ElementCreate(rs->getContext(), dt, RS_KIND_USER, false, size);
     return new Element(id, rs, dt, RS_KIND_USER, false, size);
@@ -272,26 +281,32 @@ android::RSC::sp<const Element> Element::createPixel(android::RSC::sp<RS> rs, Rs
           dk == RS_KIND_PIXEL_RGB ||
           dk == RS_KIND_PIXEL_RGBA ||
           dk == RS_KIND_PIXEL_DEPTH)) {
-        rs->throwError("Unsupported DataKind");
+        rs->throwError(RS_ERROR_INVALID_PARAMETER, "Unsupported DataKind");
+        return NULL;
     }
     if (!(dt == RS_TYPE_UNSIGNED_8 ||
           dt == RS_TYPE_UNSIGNED_16 ||
           dt == RS_TYPE_UNSIGNED_5_6_5 ||
           dt == RS_TYPE_UNSIGNED_4_4_4_4 ||
           dt == RS_TYPE_UNSIGNED_5_5_5_1)) {
-        rs->throwError("Unsupported DataType");
+        rs->throwError(RS_ERROR_INVALID_PARAMETER, "Unsupported DataType");
+        return NULL;
     }
     if (dt == RS_TYPE_UNSIGNED_5_6_5 && dk != RS_KIND_PIXEL_RGB) {
-        rs->throwError("Bad kind and type combo");
+        rs->throwError(RS_ERROR_INVALID_PARAMETER, "Bad kind and type combo");
+        return NULL;
     }
     if (dt == RS_TYPE_UNSIGNED_5_5_5_1 && dk != RS_KIND_PIXEL_RGBA) {
-        rs->throwError("Bad kind and type combo");
+        rs->throwError(RS_ERROR_INVALID_PARAMETER, "Bad kind and type combo");
+        return NULL;
     }
     if (dt == RS_TYPE_UNSIGNED_4_4_4_4 && dk != RS_KIND_PIXEL_RGBA) {
-        rs->throwError("Bad kind and type combo");
+        rs->throwError(RS_ERROR_INVALID_PARAMETER, "Bad kind and type combo");
+        return NULL;
     }
     if (dt == RS_TYPE_UNSIGNED_16 && dk != RS_KIND_PIXEL_DEPTH) {
-        rs->throwError("Bad kind and type combo");
+        rs->throwError(RS_ERROR_INVALID_PARAMETER, "Bad kind and type combo");
+        return NULL;
     }
 
     int size = 1;

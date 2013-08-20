@@ -28,7 +28,7 @@ void Script::invoke(uint32_t slot, const void *v, size_t len) const {
 void Script::forEach(uint32_t slot, sp<const Allocation> ain, sp<const Allocation> aout,
                        const void *usr, size_t usrLen) const {
     if ((ain == NULL) && (aout == NULL)) {
-        mRS->throwError("At least one of ain or aout is required to be non-null.");
+        mRS->throwError(RS_ERROR_INVALID_PARAMETER, "At least one of ain or aout is required to be non-null.");
     }
     void *in_id = BaseObj::getObjID(ain);
     void *out_id = BaseObj::getObjID(aout);
