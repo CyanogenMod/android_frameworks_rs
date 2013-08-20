@@ -44,6 +44,14 @@ class Script;
 class ScriptC;
 class Sampler;
 
+ enum RSError {
+     RS_SUCCESS = 0,
+     RS_ERROR_INVALID_PARAMETER = 1,
+     RS_ERROR_RUNTIME_ERROR = 2,
+     RS_ERROR_MAX = 9999
+
+ };
+
  class RS : public android::RSC::LightRefBase<RS> {
 
  public:
@@ -58,7 +66,7 @@ class Sampler;
     void setMessageHandler(MessageHandlerFunc_t func);
     MessageHandlerFunc_t getMessageHandler() { return mMessageFunc; }
 
-    void throwError(const char *err) const;
+    void throwError(RSError error, const char *errMsg);
 
     RsContext getContext() { return mContext; }
 
@@ -82,6 +90,7 @@ class Sampler;
 
     RsDevice mDev;
     RsContext mContext;
+    RSError mCurrentError;
 
     ErrorHandlerFunc_t mErrorFunc;
     MessageHandlerFunc_t mMessageFunc;
@@ -665,15 +674,19 @@ class ScriptIntrinsic : public Script {
 };
 
 class ScriptIntrinsic3DLUT : public ScriptIntrinsic {
- public:
+ private:
     ScriptIntrinsic3DLUT(sp<RS> rs, sp<const Element> e);
+ public:
+    static sp<ScriptIntrinsic3DLUT> create(sp<RS> rs, sp<const Element> e);
     void forEach(sp<Allocation> ain, sp<Allocation> aout);
     void setLUT(sp<Allocation> lut);
 };
 
 class ScriptIntrinsicBlend : public ScriptIntrinsic {
- public:
+ private:
     ScriptIntrinsicBlend(sp<RS> rs, sp<const Element> e);
+ public:
+    static sp<ScriptIntrinsicBlend> create(sp<RS> rs, sp<const Element> e);
     void blendClear(sp<Allocation> in, sp<Allocation> out);
     void blendSrc(sp<Allocation> in, sp<Allocation> out);
     void blendDst(sp<Allocation> in, sp<Allocation> out);
@@ -692,15 +705,20 @@ class ScriptIntrinsicBlend : public ScriptIntrinsic {
 };
 
 class ScriptIntrinsicBlur : public ScriptIntrinsic {
- public:
+ private:
     ScriptIntrinsicBlur(sp<RS> rs, sp<const Element> e);
-    void blur(sp<Allocation> in, sp<Allocation> out);
+ public:
+    static sp<ScriptIntrinsicBlur> create(sp<RS> rs, sp<const Element> e);
+    void setInput(sp<Allocation> in);
+    void forEach(sp<Allocation> out);
     void setRadius(float radius);
 };
 
 class ScriptIntrinsicColorMatrix : public ScriptIntrinsic {
- public:
+ private:
     ScriptIntrinsicColorMatrix(sp<RS> rs, sp<const Element> e);
+ public:
+    static sp<ScriptIntrinsicColorMatrix> create(sp<RS> rs, sp<const Element> e);
     void forEach(sp<Allocation> in, sp<Allocation> out);
     void setColorMatrix3(float* m);
     void setColorMatrix4(float* m);
@@ -710,24 +728,30 @@ class ScriptIntrinsicColorMatrix : public ScriptIntrinsic {
 };
 
 class ScriptIntrinsicConvolve3x3 : public ScriptIntrinsic {
- public:
+ private:
     ScriptIntrinsicConvolve3x3(sp<RS> rs, sp<const Element> e);
+ public:
+    static sp<ScriptIntrinsicConvolve3x3> create(sp<RS> rs, sp<const Element> e);
     void setInput(sp<Allocation> in);
     void forEach(sp<Allocation> out);
     void setCoefficients(float* v);
 };
 
 class ScriptIntrinsicConvolve5x5 : public ScriptIntrinsic {
- public:
+ private:
     ScriptIntrinsicConvolve5x5(sp<RS> rs, sp<const Element> e);
+ public:
+    static sp<ScriptIntrinsicConvolve5x5> create(sp<RS> rs, sp<const Element> e);
     void setInput(sp<Allocation> in);
     void forEach(sp<Allocation> out);
     void setCoefficients(float* v);
 };
 
 class ScriptIntrinsicHistogram : public ScriptIntrinsic {
- public:
+ private:
     ScriptIntrinsicHistogram(sp<RS> rs, sp<const Element> e);
+ public:
+    static sp<ScriptIntrinsicHistogram> create(sp<RS> rs, sp<const Element> e);
     void setOutput(sp<Allocation> aout);
     void setDotCoefficients(float r, float g, float b, float a);
     void forEach(sp<Allocation> ain);
@@ -740,9 +764,10 @@ class ScriptIntrinsicLUT : public ScriptIntrinsic {
     bool mDirty;
     unsigned char mCache[1024];
     void setTable(unsigned int offset, unsigned char base, unsigned char length, unsigned char* lutValues);
+    ScriptIntrinsicLUT(sp<RS> rs, sp<const Element> e);
 
  public:
-    ScriptIntrinsicLUT(sp<RS> rs, sp<const Element> e);
+    static sp<ScriptIntrinsicLUT> create(sp<RS> rs, sp<const Element> e);
     void forEach(sp<Allocation> ain, sp<Allocation> aout);
     void setRed(unsigned char base, unsigned char length, unsigned char* lutValues);
     void setGreen(unsigned char base, unsigned char length, unsigned char* lutValues);
@@ -752,8 +777,10 @@ class ScriptIntrinsicLUT : public ScriptIntrinsic {
 };
 
 class ScriptIntrinsicYuvToRGB : public ScriptIntrinsic {
- public:
+ private:
     ScriptIntrinsicYuvToRGB(sp<RS> rs, sp<const Element> e);
+ public:
+    static sp<ScriptIntrinsicYuvToRGB> create(sp<RS> rs, sp<const Element> e);
     void setInput(sp<Allocation> in);
     void forEach(sp<Allocation> out);
 

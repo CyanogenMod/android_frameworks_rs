@@ -30,6 +30,10 @@ ScriptIntrinsic::~ScriptIntrinsic() {
 
 }
 
+sp<ScriptIntrinsic3DLUT> ScriptIntrinsic3DLUT::create(sp<RS> rs, sp<const Element> e) {
+    return new ScriptIntrinsic3DLUT(rs, e);
+}
+
 ScriptIntrinsic3DLUT::ScriptIntrinsic3DLUT(sp<RS> rs, sp<const Element> e)
     : ScriptIntrinsic(rs, RS_SCRIPT_INTRINSIC_ID_3DLUT, e) {
 
@@ -39,6 +43,10 @@ void ScriptIntrinsic3DLUT::forEach(sp<Allocation> ain, sp<Allocation> aout) {
 }
 void ScriptIntrinsic3DLUT::setLUT(sp<Allocation> lut) {
     Script::setVar(0, lut);
+}
+
+sp<ScriptIntrinsicBlend> ScriptIntrinsicBlend::create(sp<RS> rs, sp<const Element> e) {
+    return new ScriptIntrinsicBlend(rs, e);
 }
 
 ScriptIntrinsicBlend::ScriptIntrinsicBlend(sp<RS> rs, sp<const Element> e)
@@ -110,13 +118,20 @@ void ScriptIntrinsicBlend::blendSubtract(sp<Allocation> in, sp<Allocation> out) 
 
 
 
+sp<ScriptIntrinsicBlur> ScriptIntrinsicBlur::create(sp<RS> rs, sp<const Element> e) {
+    return new ScriptIntrinsicBlur(rs, e);
+}
+
 ScriptIntrinsicBlur::ScriptIntrinsicBlur(sp<RS> rs, sp<const Element> e)
     : ScriptIntrinsic(rs, RS_SCRIPT_INTRINSIC_ID_BLUR, e) {
 
 }
 
-void ScriptIntrinsicBlur::blur(sp<Allocation> in, sp<Allocation> out) {
+void ScriptIntrinsicBlur::setInput(sp<Allocation> in) {
     Script::setVar(1, in);
+}
+
+void ScriptIntrinsicBlur::forEach(sp<Allocation> out) {
     Script::forEach(0, NULL, out, NULL, 0);
 }
 
@@ -125,6 +140,10 @@ void ScriptIntrinsicBlur::setRadius(float radius) {
 }
 
 
+
+sp<ScriptIntrinsicColorMatrix> ScriptIntrinsicColorMatrix::create(sp<RS> rs, sp<const Element> e) {
+    return new ScriptIntrinsicColorMatrix(rs, e);
+}
 
 ScriptIntrinsicColorMatrix::ScriptIntrinsicColorMatrix(sp<RS> rs, sp<const Element> e)
     : ScriptIntrinsic(rs, RS_SCRIPT_INTRINSIC_ID_COLOR_MATRIX, e) {
@@ -163,6 +182,12 @@ void ScriptIntrinsicColorMatrix::setYUVtoRGB() {
     setColorMatrix3(matrix);
 }
 
+
+
+sp<ScriptIntrinsicConvolve3x3> ScriptIntrinsicConvolve3x3::create(sp<RS> rs, sp<const Element> e) {
+    return new ScriptIntrinsicConvolve3x3(rs, e);
+}
+
 ScriptIntrinsicConvolve3x3::ScriptIntrinsicConvolve3x3(sp<RS> rs, sp<const Element> e)
     : ScriptIntrinsic(rs, RS_SCRIPT_INTRINSIC_ID_CONVOLVE_3x3, e) {
 
@@ -180,6 +205,10 @@ void ScriptIntrinsicConvolve3x3::setCoefficients(float* v) {
     Script::setVar(0, (void*)v, sizeof(float) * 9);
 }
 
+sp<ScriptIntrinsicConvolve5x5> ScriptIntrinsicConvolve5x5::create(sp<RS> rs, sp<const Element> e) {
+    return new ScriptIntrinsicConvolve5x5(rs, e);
+}
+
 ScriptIntrinsicConvolve5x5::ScriptIntrinsicConvolve5x5(sp<RS> rs, sp<const Element> e)
     : ScriptIntrinsic(rs, RS_SCRIPT_INTRINSIC_ID_CONVOLVE_5x5, e) {
 
@@ -195,6 +224,10 @@ void ScriptIntrinsicConvolve5x5::forEach(sp<Allocation> out) {
 
 void ScriptIntrinsicConvolve5x5::setCoefficients(float* v) {
     Script::setVar(0, (void*)v, sizeof(float) * 25);
+}
+
+sp<ScriptIntrinsicHistogram> ScriptIntrinsicHistogram::create(sp<RS> rs, sp<const Element> e) {
+    return new ScriptIntrinsicHistogram(rs, e);
 }
 
 ScriptIntrinsicHistogram::ScriptIntrinsicHistogram(sp<RS> rs, sp<const Element> e)
@@ -230,6 +263,10 @@ void ScriptIntrinsicHistogram::forEach(sp<Allocation> ain) {
 
 void ScriptIntrinsicHistogram::forEach_dot(sp<Allocation> ain) {
     Script::forEach(1, ain, NULL, NULL, 0);
+}
+
+sp<ScriptIntrinsicLUT> ScriptIntrinsicLUT::create(sp<RS> rs, sp<const Element> e) {
+    return new ScriptIntrinsicLUT(rs, e);
 }
 
 ScriptIntrinsicLUT::ScriptIntrinsicLUT(sp<RS> rs, sp<const Element> e)
@@ -280,6 +317,10 @@ void ScriptIntrinsicLUT::setAlpha(unsigned char base, unsigned char length, unsi
 
 ScriptIntrinsicLUT::~ScriptIntrinsicLUT() {
 
+}
+
+sp<ScriptIntrinsicYuvToRGB> ScriptIntrinsicYuvToRGB::create(sp<RS> rs, sp<const Element> e) {
+    return new ScriptIntrinsicYuvToRGB(rs, e);
 }
 
 ScriptIntrinsicYuvToRGB::ScriptIntrinsicYuvToRGB(sp<RS> rs, sp<const Element> e)
