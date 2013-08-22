@@ -397,15 +397,6 @@ public:
     static sp<const Element> createPixel(sp<RS> rs, RsDataType dt, RsDataKind dk);
     bool isCompatible(sp<const Element>e) const;
 
-    Element(void *id, sp<RS> rs,
-            std::vector<sp<Element> > &elements,
-            std::vector<std::string> &elementNames,
-            std::vector<uint32_t> &arraySizes);
-    Element(void *id, sp<RS> rs, RsDataType dt, RsDataKind dk, bool norm, uint32_t size);
-    Element(sp<RS> rs);
-    virtual ~Element();
-
- protected:
     class Builder {
     private:
         sp<RS> mRS;
@@ -420,6 +411,15 @@ public:
         void add(sp<Element> e, std::string &name, uint32_t arraySize = 1);
         sp<const Element> create();
     };
+
+protected:
+    Element(void *id, sp<RS> rs,
+            std::vector<sp<Element> > &elements,
+            std::vector<std::string> &elementNames,
+            std::vector<uint32_t> &arraySizes);
+    Element(void *id, sp<RS> rs, RsDataType dt, RsDataKind dk, bool norm, uint32_t size);
+    Element(sp<RS> rs);
+    virtual ~Element();
 
 private:
     void updateVisibleSubElements();
@@ -544,6 +544,8 @@ protected:
     size_t mElementCount;
     sp<const Element> mElement;
 
+    Type(void *id, sp<RS> rs);
+
     void calcElementCount();
     virtual void updateFromNative();
 
@@ -581,8 +583,6 @@ public:
         return mElementCount * mElement->getSizeBytes();
     }
 
-    Type(void *id, sp<RS> rs);
-
     static sp<const Type> create(sp<RS> rs, sp<const Element> e, uint32_t dimX, uint32_t dimY, uint32_t dimZ);
 
     class Builder {
@@ -599,7 +599,7 @@ public:
         Builder(sp<RS> rs, sp<const Element> e);
 
         void setX(uint32_t value);
-        void setY(int value);
+        void setY(uint32_t value);
         void setMipmaps(bool value);
         void setFaces(bool value);
         sp<const Type> create();
