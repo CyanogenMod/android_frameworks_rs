@@ -651,10 +651,10 @@ static void One(const RsForEachStubParamStruct *p, void *out,
             f = convert_float4(((const uchar4 *)py)[0]);
             break;
         case 1:
-            f.xy = convert_float2(((const float2 *)py)[0]);
+            f.xy = convert_float2(((const uchar2 *)py)[0]);
             break;
         case 0:
-            f.x = (float)(((const float *)py)[0]);
+            f.x = (float)(((const uchar *)py)[0]);
             break;
         }
     }
@@ -715,8 +715,8 @@ void RsdCpuScriptIntrinsicColorMatrix::kernel(const RsForEachStubParamStruct *p,
                                               uint32_t xstart, uint32_t xend,
                                               uint32_t instep, uint32_t outstep) {
     RsdCpuScriptIntrinsicColorMatrix *cp = (RsdCpuScriptIntrinsicColorMatrix *)p->usr;
-    uchar4 *out = (uchar4 *)p->out;
-    uchar4 *in = (uchar4 *)p->in;
+    uchar *out = (uchar *)p->out;
+    uchar *in = (uchar *)p->in;
     uint32_t x1 = xstart;
     uint32_t x2 = xend;
 
@@ -724,7 +724,6 @@ void RsdCpuScriptIntrinsicColorMatrix::kernel(const RsForEachStubParamStruct *p,
     uint32_t vsout = cp->mLastKey.u.outVecSize;
     bool floatIn = !!cp->mLastKey.u.inType;
     bool floatOut = !!cp->mLastKey.u.outType;
-
 
     if(x2 > x1) {
         int32_t len = (x2 - x1) >> 2;
@@ -737,7 +736,9 @@ void RsdCpuScriptIntrinsicColorMatrix::kernel(const RsForEachStubParamStruct *p,
         }
 
         while(x1 != x2) {
-            One(p, out++, in++, cp->fp, vsin, vsout, floatIn, floatOut);
+            One(p, out, in, cp->fp, vsin, vsout, floatIn, floatOut);
+            out += outstep;
+            in += instep;
             x1++;
         }
     }
