@@ -247,7 +247,7 @@ protected:
     void validate2DRange(uint32_t xoff, uint32_t yoff, uint32_t w, uint32_t h);
 
 public:
-    sp<const Type> getType() {
+    sp<const Type> getType() const {
         return mType;
     }
 
