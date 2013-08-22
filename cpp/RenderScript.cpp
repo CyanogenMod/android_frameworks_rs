@@ -506,6 +506,10 @@ void RS::throwError(RSError error, const char *errMsg) {
     }
 }
 
+RSError RS::getError() {
+    return mCurrentError;
+}
+
 
 void * RS::threadProc(void *vrsc) {
     RS *rs = static_cast<RS *>(vrsc);

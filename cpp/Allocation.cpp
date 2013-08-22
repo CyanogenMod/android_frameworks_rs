@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 The Android Open Source Project
+ * Copyright (C) 2013 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  */
 
 #include "RenderScript.h"
+#include "rsCppInternal.h"
 
 using namespace android;
 using namespace RSC;
@@ -139,71 +140,77 @@ void Allocation::syncAll(RsAllocationUsageType srcLocation) {
     case RS_ALLOCATION_USAGE_GRAPHICS_CONSTANTS:
     case RS_ALLOCATION_USAGE_GRAPHICS_TEXTURE:
     case RS_ALLOCATION_USAGE_GRAPHICS_VERTEX:
+    case RS_ALLOCATION_USAGE_SHARED:
         break;
     default:
-        ALOGE("Source must be exactly one usage type.");
+        mRS->throwError(RS_ERROR_INVALID_PARAMETER, "Source must be exactly one usage type.");
+        return;
     }
-    RS::dispatch->AllocationSyncAll(mRS->getContext(), getIDSafe(), srcLocation);
+    tryDispatch(mRS, RS::dispatch->AllocationSyncAll(mRS->getContext(), getIDSafe(), srcLocation));
 }
 
 void Allocation::ioSendOutput() {
 #ifndef RS_COMPATIBILITY_LIB
     if ((mUsage & RS_ALLOCATION_USAGE_IO_OUTPUT) == 0) {
-        ALOGE("Can only send buffer if IO_OUTPUT usage specified.");
+        mRS->throwError(RS_ERROR_INVALID_PARAMETER, "Can only send buffer if IO_OUTPUT usage specified.");
+        return;
     }
-    RS::dispatch->AllocationIoSend(mRS->getContext(), getID());
+    tryDispatch(mRS, RS::dispatch->AllocationIoSend(mRS->getContext(), getID()));
 #endif
 }
 
 void Allocation::ioGetInput() {
 #ifndef RS_COMPATIBILITY_LIB
     if ((mUsage & RS_ALLOCATION_USAGE_IO_INPUT) == 0) {
-        ALOGE("Can only send buffer if IO_OUTPUT usage specified.");
+        mRS->throwError(RS_ERROR_INVALID_PARAMETER, "Can only send buffer if IO_OUTPUT usage specified.");
+        return;
     }
-    RS::dispatch->AllocationIoReceive(mRS->getContext(), getID());
+    tryDispatch(mRS, RS::dispatch->AllocationIoReceive(mRS->getContext(), getID()));
 #endif
 }
 
 void Allocation::generateMipmaps() {
-    RS::dispatch->AllocationGenerateMipmaps(mRS->getContext(), getID());
+    tryDispatch(mRS, RS::dispatch->AllocationGenerateMipmaps(mRS->getContext(), getID()));
 }
 
 void Allocation::copy1DRangeFrom(uint32_t off, size_t count, const void *data) {
 
     if(count < 1) {
-        ALOGE("Count must be >= 1.");
+        mRS->throwError(RS_ERROR_INVALID_PARAMETER, "Count must be >= 1.");
         return;
     }
     if((off + count) > mCurrentCount) {
         ALOGE("Overflow, Available count %zu, got %zu at offset %zu.", mCurrentCount, count, off);
+        mRS->throwError(RS_ERROR_INVALID_PARAMETER, "Invalid copy specified");
         return;
     }
 
-    RS::dispatch->Allocation1DData(mRS->getContext(), getIDSafe(), off, mSelectedLOD, count, data,
-                                   count * mType->getElement()->getSizeBytes());
+    tryDispatch(mRS, RS::dispatch->Allocation1DData(mRS->getContext(), getIDSafe(), off, mSelectedLOD,
+                                                    count, data, count * mType->getElement()->getSizeBytes()));
 }
 
 void Allocation::copy1DRangeTo(uint32_t off, size_t count, void *data) {
     if(count < 1) {
-        ALOGE("Count must be >= 1.");
+        mRS->throwError(RS_ERROR_INVALID_PARAMETER, "Count must be >= 1.");
         return;
     }
     if((off + count) > mCurrentCount) {
         ALOGE("Overflow, Available count %zu, got %zu at offset %zu.", mCurrentCount, count, off);
+        mRS->throwError(RS_ERROR_INVALID_PARAMETER, "Invalid copy specified");
         return;
     }
 
-    RS::dispatch->Allocation1DRead(mRS->getContext(), getIDSafe(), off, mSelectedLOD, count, data,
-                                   count * mType->getElement()->getSizeBytes());
+    tryDispatch(mRS, RS::dispatch->Allocation1DRead(mRS->getContext(), getIDSafe(), off, mSelectedLOD,
+                                                    count, data, count * mType->getElement()->getSizeBytes()));
 }
 
 void Allocation::copy1DRangeFrom(uint32_t off, size_t count, sp<const Allocation> data,
                                  uint32_t dataOff) {
 
-    RS::dispatch->AllocationCopy2DRange(mRS->getContext(), getIDSafe(), off, 0,
-                                        mSelectedLOD, mSelectedFace,
-                                        count, 1, data->getIDSafe(), dataOff, 0,
-                                        data->mSelectedLOD, data->mSelectedFace);
+    tryDispatch(mRS, RS::dispatch->AllocationCopy2DRange(mRS->getContext(), getIDSafe(), off, 0,
+                                                         mSelectedLOD, mSelectedFace,
+                                                         count, 1, data->getIDSafe(), dataOff, 0,
+                                                         data->mSelectedLOD, data->mSelectedFace));
 }
 
 void Allocation::copy1DFrom(const void* data) {
@@ -220,7 +227,7 @@ void Allocation::validate2DRange(uint32_t xoff, uint32_t yoff, uint32_t w, uint3
 
     } else {
         if (((xoff + w) > mCurrentDimX) || ((yoff + h) > mCurrentDimY)) {
-            ALOGE("Updated region larger than allocation.");
+            mRS->throwError(RS_ERROR_INVALID_PARAMETER, "Updated region larger than allocation.");
         }
     }
 }
@@ -228,31 +235,36 @@ void Allocation::validate2DRange(uint32_t xoff, uint32_t yoff, uint32_t w, uint3
 void Allocation::copy2DRangeFrom(uint32_t xoff, uint32_t yoff, uint32_t w, uint32_t h,
                                  const void *data) {
     validate2DRange(xoff, yoff, w, h);
-    RS::dispatch->Allocation2DData(mRS->getContext(), getIDSafe(), xoff, yoff, mSelectedLOD, mSelectedFace,
-                                   w, h, data, w * h * mType->getElement()->getSizeBytes(), w * mType->getElement()->getSizeBytes());
+    tryDispatch(mRS, RS::dispatch->Allocation2DData(mRS->getContext(), getIDSafe(), xoff,
+                                                    yoff, mSelectedLOD, mSelectedFace,
+                                                    w, h, data, w * h * mType->getElement()->getSizeBytes(),
+                                                    w * mType->getElement()->getSizeBytes()));
 }
 
 void Allocation::copy2DRangeFrom(uint32_t xoff, uint32_t yoff, uint32_t w, uint32_t h,
                                  sp<const Allocation> data, uint32_t dataXoff, uint32_t dataYoff) {
     validate2DRange(xoff, yoff, w, h);
-    RS::dispatch->AllocationCopy2DRange(mRS->getContext(), getIDSafe(), xoff, yoff,
-                                        mSelectedLOD, mSelectedFace,
-                                        w, h, data->getIDSafe(), dataXoff, dataYoff,
-                                        data->mSelectedLOD, data->mSelectedFace);
+    tryDispatch(mRS, RS::dispatch->AllocationCopy2DRange(mRS->getContext(), getIDSafe(), xoff, yoff,
+                                                         mSelectedLOD, mSelectedFace,
+                                                         w, h, data->getIDSafe(), dataXoff, dataYoff,
+                                                         data->mSelectedLOD, data->mSelectedFace));
 }
 
 void Allocation::copy2DRangeTo(uint32_t xoff, uint32_t yoff, uint32_t w, uint32_t h,
                                void* data) {
     validate2DRange(xoff, yoff, w, h);
-    RS::dispatch->Allocation2DRead(mRS->getContext(), getIDSafe(), xoff, yoff, mSelectedLOD, mSelectedFace,
-                                   w, h, data, w * h * mType->getElement()->getSizeBytes(), w * mType->getElement()->getSizeBytes());
+    tryDispatch(mRS, RS::dispatch->Allocation2DRead(mRS->getContext(), getIDSafe(), xoff, yoff,
+                                                    mSelectedLOD, mSelectedFace, w, h, data,
+                                                    w * h * mType->getElement()->getSizeBytes(),
+                                                    w * mType->getElement()->getSizeBytes()));
 }
 
 void Allocation::copy2DStridedFrom(uint32_t xoff, uint32_t yoff, uint32_t w, uint32_t h,
                                    const void *data, size_t stride) {
     validate2DRange(xoff, yoff, w, h);
-    RS::dispatch->Allocation2DData(mRS->getContext(), getIDSafe(), xoff, yoff, mSelectedLOD, mSelectedFace,
-                                   w, h, data, w * h * mType->getElement()->getSizeBytes(), stride);
+    tryDispatch(mRS, RS::dispatch->Allocation2DData(mRS->getContext(), getIDSafe(), xoff, yoff,
+                                                    mSelectedLOD, mSelectedFace, w, h, data,
+                                                    w * h * mType->getElement()->getSizeBytes(), stride));
 }
 
 void Allocation::copy2DStridedFrom(const void* data, size_t stride) {
@@ -262,8 +274,9 @@ void Allocation::copy2DStridedFrom(const void* data, size_t stride) {
 void Allocation::copy2DStridedTo(uint32_t xoff, uint32_t yoff, uint32_t w, uint32_t h,
                                  void *data, size_t stride) {
     validate2DRange(xoff, yoff, w, h);
-    RS::dispatch->Allocation2DRead(mRS->getContext(), getIDSafe(), xoff, yoff, mSelectedLOD, mSelectedFace,
-                                   w, h, data, w * h * mType->getElement()->getSizeBytes(), stride);
+    tryDispatch(mRS, RS::dispatch->Allocation2DRead(mRS->getContext(), getIDSafe(), xoff, yoff,
+                                                    mSelectedLOD, mSelectedFace, w, h, data,
+                                                    w * h * mType->getElement()->getSizeBytes(), stride));
 }
 
 void Allocation::copy2DStridedTo(void* data, size_t stride) {
@@ -272,9 +285,12 @@ void Allocation::copy2DStridedTo(void* data, size_t stride) {
 
 sp<Allocation> Allocation::createTyped(sp<RS> rs, sp<const Type> type,
                                     RsAllocationMipmapControl mips, uint32_t usage) {
-    void *id = RS::dispatch->AllocationCreateTyped(rs->getContext(), type->getID(), mips, usage, 0);
+    void *id = 0;
+    if (rs->getError() == RS_SUCCESS) {
+        id = RS::dispatch->AllocationCreateTyped(rs->getContext(), type->getID(), mips, usage, 0);
+    }
     if (id == 0) {
-        ALOGE("Allocation creation failed.");
+        rs->throwError(RS_ERROR_RUNTIME_ERROR, "Allocation creation failed");
         return NULL;
     }
     return new Allocation(id, rs, type, usage);
@@ -283,10 +299,14 @@ sp<Allocation> Allocation::createTyped(sp<RS> rs, sp<const Type> type,
 sp<Allocation> Allocation::createTyped(sp<RS> rs, sp<const Type> type,
                                     RsAllocationMipmapControl mips, uint32_t usage,
                                     void *pointer) {
-    void *id = RS::dispatch->AllocationCreateTyped(rs->getContext(), type->getID(), mips, usage,
-                                                   (uintptr_t)pointer);
+    void *id = 0;
+    if (rs->getError() == RS_SUCCESS) {
+        id = RS::dispatch->AllocationCreateTyped(rs->getContext(), type->getID(), mips, usage,
+                                                 (uintptr_t)pointer);
+    }
     if (id == 0) {
-        ALOGE("Allocation creation failed.");
+        rs->throwError(RS_ERROR_RUNTIME_ERROR, "Allocation creation failed");
+        return NULL;
     }
     return new Allocation(id, rs, type, usage);
 }
