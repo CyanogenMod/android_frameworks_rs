@@ -66,7 +66,7 @@ int main(int argc, char** argv)
     sp<Allocation> ain = Allocation::createTyped(rs, t);
     sp<Allocation> aout = Allocation::createTyped(rs, t);
 
-    sp<ScriptC_latency> sc = new ScriptC_latency(rs, NULL, 0);
+    sp<ScriptC_latency> sc = new ScriptC_latency(rs);
 
     struct timeval start, stop;
 
