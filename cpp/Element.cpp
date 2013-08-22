@@ -331,7 +331,7 @@ android::RSC::sp<const Element> Element::createPixel(android::RSC::sp<RS> rs, Rs
     return new Element(id, rs, dt, dk, true, size);
 }
 
-bool Element::isCompatible(android::RSC::sp<const Element>e) {
+bool Element::isCompatible(android::RSC::sp<const Element>e) const {
     // Try strict BaseObj equality to start with.
     if (this == e.get()) {
         return true;

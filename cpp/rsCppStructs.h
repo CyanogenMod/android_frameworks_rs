@@ -48,6 +48,7 @@ class Sampler;
      RS_SUCCESS = 0,
      RS_ERROR_INVALID_PARAMETER = 1,
      RS_ERROR_RUNTIME_ERROR = 2,
+     RS_ERROR_INVALID_ELEMENT = 3,
      RS_ERROR_MAX = 9999
 
  };
@@ -67,6 +68,7 @@ class Sampler;
     MessageHandlerFunc_t getMessageHandler() { return mMessageFunc; }
 
     void throwError(RSError error, const char *errMsg);
+    RSError getError();
 
     RsContext getContext() { return mContext; }
 
@@ -322,6 +324,10 @@ public:
         return mSizeBytes;
     }
 
+    uint32_t getVectorSize() const {
+        return mVectorSize;
+    }
+
     static sp<const Element> BOOLEAN(sp<RS> rs);
     static sp<const Element> U8(sp<RS> rs);
     static sp<const Element> I8(sp<RS> rs);
@@ -389,7 +395,7 @@ public:
     static sp<const Element> createUser(sp<RS> rs, RsDataType dt);
     static sp<const Element> createVector(sp<RS> rs, RsDataType dt, uint32_t size);
     static sp<const Element> createPixel(sp<RS> rs, RsDataType dt, RsDataKind dk);
-    bool isCompatible(sp<const Element>e);
+    bool isCompatible(sp<const Element>e) const;
 
     Element(void *id, sp<RS> rs,
             std::vector<sp<Element> > &elements,
@@ -669,6 +675,7 @@ protected:
 
 class ScriptIntrinsic : public Script {
  protected:
+    sp<const Element> mElement;
     ScriptIntrinsic(sp<RS> rs, int id, sp<const Element> e);
     virtual ~ScriptIntrinsic();
 };
@@ -720,6 +727,7 @@ class ScriptIntrinsicColorMatrix : public ScriptIntrinsic {
  public:
     static sp<ScriptIntrinsicColorMatrix> create(sp<RS> rs, sp<const Element> e);
     void forEach(sp<Allocation> in, sp<Allocation> out);
+    void setAdd(float* add);
     void setColorMatrix3(float* m);
     void setColorMatrix4(float* m);
     void setGreyscale();
@@ -750,8 +758,9 @@ class ScriptIntrinsicConvolve5x5 : public ScriptIntrinsic {
 class ScriptIntrinsicHistogram : public ScriptIntrinsic {
  private:
     ScriptIntrinsicHistogram(sp<RS> rs, sp<const Element> e);
+    sp<Allocation> mOut;
  public:
-    static sp<ScriptIntrinsicHistogram> create(sp<RS> rs, sp<const Element> e);
+    static sp<ScriptIntrinsicHistogram> create(sp<RS> rs);
     void setOutput(sp<Allocation> aout);
     void setDotCoefficients(float r, float g, float b, float a);
     void forEach(sp<Allocation> ain);
