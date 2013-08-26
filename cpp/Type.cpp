@@ -124,7 +124,7 @@ void Type::Builder::setX(uint32_t value) {
     mDimX = value;
 }
 
-void Type::Builder::setY(int value) {
+void Type::Builder::setY(uint32_t value) {
     if(value < 1) {
         ALOGE("Values of less than 1 for Dimension Y are not valid.");
     }
