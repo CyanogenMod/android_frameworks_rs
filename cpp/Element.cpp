@@ -73,7 +73,7 @@ uint32_t Element::getSubElementOffsetBytes(uint32_t index) {
 
 #define CREATE_USER(N, T) android::RSC::sp<const Element> Element::N(android::RSC::sp<RS> rs) { \
     if (rs->mElements.N == NULL) {                                  \
-        rs->mElements.N = (createUser(rs, RS_TYPE_##T)).get();      \
+        rs->mElements.N = (createUser(rs, RS_TYPE_##T));            \
     }                                                               \
     return rs->mElements.N;                                         \
     }
@@ -104,22 +104,36 @@ CREATE_USER(MATRIX_3X3, MATRIX_3X3);
 CREATE_USER(MATRIX_2X2, MATRIX_2X2);
 
 #define CREATE_PIXEL(N, T, K) android::RSC::sp<const Element> Element::N(android::RSC::sp<RS> rs) { \
-    return createPixel(rs, RS_TYPE_##T, RS_KIND_##K); \
+    if (rs->mElements.N == NULL) {                                  \
+        rs->mElements.N = createPixel(rs, RS_TYPE_##T, RS_KIND_##K);    \
+    }                                                                   \
+    return rs->mElements.N;                                             \
 }
+
 CREATE_PIXEL(A_8, UNSIGNED_8, PIXEL_A);
 CREATE_PIXEL(RGB_565, UNSIGNED_5_6_5, PIXEL_RGB);
 CREATE_PIXEL(RGB_888, UNSIGNED_8, PIXEL_RGB);
 CREATE_PIXEL(RGBA_4444, UNSIGNED_4_4_4_4, PIXEL_RGBA);
 CREATE_PIXEL(RGBA_8888, UNSIGNED_8, PIXEL_RGBA);
+CREATE_PIXEL(YUV, UNSIGNED_8, PIXEL_YUV);
 
 #define CREATE_VECTOR(N, T) android::RSC::sp<const Element> Element::N##_2(android::RSC::sp<RS> rs) { \
-    return createVector(rs, RS_TYPE_##T, 2); \
-} \
+    if (rs->mElements.N##_2 == NULL) {                                  \
+        rs->mElements.N##_2 = createVector(rs, RS_TYPE_##T, 2);         \
+    }                                                                   \
+    return rs->mElements.N##_2;                                         \
+}                                                                       \
 android::RSC::sp<const Element> Element::N##_3(android::RSC::sp<RS> rs) { \
-    return createVector(rs, RS_TYPE_##T, 3); \
+    if (rs->mElements.N##_3 == NULL) {                                  \
+        rs->mElements.N##_3 = createVector(rs, RS_TYPE_##T, 3);         \
+    }                                                                   \
+    return rs->mElements.N##_3;                                         \
 } \
 android::RSC::sp<const Element> Element::N##_4(android::RSC::sp<RS> rs) { \
-    return createVector(rs, RS_TYPE_##T, 4); \
+    if (rs->mElements.N##_4 == NULL) {                                  \
+        rs->mElements.N##_4 = createVector(rs, RS_TYPE_##T, 4);         \
+    }                                                                   \
+    return rs->mElements.N##_4;                                         \
 }
 CREATE_VECTOR(U8, UNSIGNED_8);
 CREATE_VECTOR(I8, SIGNED_8);
