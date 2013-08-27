@@ -18,12 +18,22 @@
 #define MEM_CHUNK_H
 
 #include <stddef.h>
+#include <stdint.h>
 #include <stdlib.h>
+
+typedef void *(*AllocFunc) (size_t, uint32_t);
+typedef void (*FreeFunc) (void *);
 
 class MemChunk {
 private:
   unsigned char *buf;
   size_t buf_size;
+  bool bVendorBuf;
+
+  static AllocFunc VendorAlloc;
+  static FreeFunc VendorFree;
+
+  bool invalidBuf() const;
 
 public:
   MemChunk();
@@ -56,6 +66,12 @@ public:
     return buf_size;
   }
 
+  // The allocation function must return page-aligned memory or we will be
+  // unable to mprotect the region appropriately.
+  static void registerAllocFreeCallbacks(AllocFunc a, FreeFunc f) {
+    VendorAlloc = a;
+    VendorFree = f;
+  }
 };
 
 #endif // MEM_CHUNK_H
