@@ -573,7 +573,7 @@ ScriptIntrinsicYuvToRGB::ScriptIntrinsicYuvToRGB(sp<RS> rs, sp<const Element> e)
 }
 
 void ScriptIntrinsicYuvToRGB::setInput(sp<Allocation> in) {
-    if (!(in->getType()->getElement()->isCompatible(mElement))) {
+    if (!(in->getType()->getElement()->isCompatible(Element::YUV(mRS)))) {
         mRS->throwError(RS_ERROR_INVALID_ELEMENT, "Invalid element for input in YuvToRGB");
         return;
     }

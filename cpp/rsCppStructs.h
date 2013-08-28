@@ -53,6 +53,13 @@ class Sampler;
 
  };
 
+ enum RSYuvFormat {
+     RS_YUV_NONE = 0,
+     RS_YUV_YV12 = 1,
+     RS_YUV_NV21 = 2,
+     RS_YUV_MAX = 3
+ };
+
  class RS : public android::RSC::LightRefBase<RS> {
 
  public:
@@ -100,15 +107,45 @@ class Sampler;
 
     struct {
         sp<const Element> U8;
+        sp<const Element> U8_2;
+        sp<const Element> U8_3;
+        sp<const Element> U8_4;
         sp<const Element> I8;
+        sp<const Element> I8_2;
+        sp<const Element> I8_3;
+        sp<const Element> I8_4;
         sp<const Element> U16;
+        sp<const Element> U16_2;
+        sp<const Element> U16_3;
+        sp<const Element> U16_4;
         sp<const Element> I16;
+        sp<const Element> I16_2;
+        sp<const Element> I16_3;
+        sp<const Element> I16_4;
         sp<const Element> U32;
+        sp<const Element> U32_2;
+        sp<const Element> U32_3;
+        sp<const Element> U32_4;
         sp<const Element> I32;
+        sp<const Element> I32_2;
+        sp<const Element> I32_3;
+        sp<const Element> I32_4;
         sp<const Element> U64;
+        sp<const Element> U64_2;
+        sp<const Element> U64_3;
+        sp<const Element> U64_4;
         sp<const Element> I64;
+        sp<const Element> I64_2;
+        sp<const Element> I64_3;
+        sp<const Element> I64_4;
         sp<const Element> F32;
+        sp<const Element> F32_2;
+        sp<const Element> F32_3;
+        sp<const Element> F32_4;
         sp<const Element> F64;
+        sp<const Element> F64_2;
+        sp<const Element> F64_3;
+        sp<const Element> F64_4;
         sp<const Element> BOOLEAN;
 
         sp<const Element> ELEMENT;
@@ -129,45 +166,7 @@ class Sampler;
         sp<const Element> RGBA_4444;
         sp<const Element> RGBA_8888;
 
-        sp<const Element> FLOAT_2;
-        sp<const Element> FLOAT_3;
-        sp<const Element> FLOAT_4;
-
-        sp<const Element> DOUBLE_2;
-        sp<const Element> DOUBLE_3;
-        sp<const Element> DOUBLE_4;
-
-        sp<const Element> UCHAR_2;
-        sp<const Element> UCHAR_3;
-        sp<const Element> UCHAR_4;
-
-        sp<const Element> CHAR_2;
-        sp<const Element> CHAR_3;
-        sp<const Element> CHAR_4;
-
-        sp<const Element> USHORT_2;
-        sp<const Element> USHORT_3;
-        sp<const Element> USHORT_4;
-
-        sp<const Element> SHORT_2;
-        sp<const Element> SHORT_3;
-        sp<const Element> SHORT_4;
-
-        sp<const Element> UINT_2;
-        sp<const Element> UINT_3;
-        sp<const Element> UINT_4;
-
-        sp<const Element> INT_2;
-        sp<const Element> INT_3;
-        sp<const Element> INT_4;
-
-        sp<const Element> ULONG_2;
-        sp<const Element> ULONG_3;
-        sp<const Element> ULONG_4;
-
-        sp<const Element> LONG_2;
-        sp<const Element> LONG_3;
-        sp<const Element> LONG_4;
+        sp<const Element> YUV;
 
         sp<const Element> MATRIX_4X4;
         sp<const Element> MATRIX_3X3;
@@ -387,6 +386,7 @@ public:
     static sp<const Element> I64_2(sp<RS> rs);
     static sp<const Element> I64_3(sp<RS> rs);
     static sp<const Element> I64_4(sp<RS> rs);
+    static sp<const Element> YUV(sp<RS> rs);
     static sp<const Element> MATRIX_4X4(sp<RS> rs);
     static sp<const Element> MATRIX_3X3(sp<RS> rs);
     static sp<const Element> MATRIX_2X2(sp<RS> rs);
@@ -539,6 +539,7 @@ protected:
     uint32_t mDimX;
     uint32_t mDimY;
     uint32_t mDimZ;
+    RSYuvFormat mYuvFormat;
     bool mDimMipmaps;
     bool mDimFaces;
     size_t mElementCount;
@@ -550,6 +551,10 @@ protected:
     virtual void updateFromNative();
 
 public:
+
+    RSYuvFormat getYuvFormat() const {
+        return mYuvFormat;
+    }
 
     sp<const Element> getElement() const {
         return mElement;
@@ -591,6 +596,7 @@ public:
         uint32_t mDimX;
         uint32_t mDimY;
         uint32_t mDimZ;
+        RSYuvFormat mYuvFormat;
         bool mDimMipmaps;
         bool mDimFaces;
         sp<const Element> mElement;
@@ -600,6 +606,8 @@ public:
 
         void setX(uint32_t value);
         void setY(uint32_t value);
+        void setZ(uint32_t value);
+        void setYuvFormat(RSYuvFormat format);
         void setMipmaps(bool value);
         void setFaces(bool value);
         sp<const Type> create();
