@@ -490,13 +490,14 @@ sp<ScriptIntrinsicLUT> ScriptIntrinsicLUT::create(sp<RS> rs, sp<const Element> e
 
 ScriptIntrinsicLUT::ScriptIntrinsicLUT(sp<RS> rs, sp<const Element> e)
     : ScriptIntrinsic(rs, RS_SCRIPT_INTRINSIC_ID_LUT, e), mDirty(true) {
-    LUT = Allocation::createSized(rs, e, 1024);
+    LUT = Allocation::createSized(rs, Element::U8(rs), 1024);
     for (int i = 0; i < 256; i++) {
         mCache[i] = i;
         mCache[i+256] = i;
         mCache[i+512] = i;
         mCache[i+768] = i;
     }
+    setVar(0, LUT);
 }
 
 void ScriptIntrinsicLUT::forEach(sp<Allocation> ain, sp<Allocation> aout) {
@@ -513,45 +514,30 @@ void ScriptIntrinsicLUT::forEach(sp<Allocation> ain, sp<Allocation> aout) {
 
 }
 
-void ScriptIntrinsicLUT::setTable(unsigned int offset, unsigned char base, unsigned char length, unsigned char* lutValues) {
-    if ((base + length) >= 256 || length == 0) {
+void ScriptIntrinsicLUT::setTable(unsigned int offset, unsigned char base, unsigned int length, unsigned char* lutValues) {
+    if ((base + length) > 256 || length == 0) {
+        mRS->throwError(RS_ERROR_INVALID_PARAMETER, "LUT out of range");
         return;
     }
     mDirty = true;
-    for (int i = 0; i < length; i++) {
+    for (unsigned int i = 0; i < length; i++) {
         mCache[offset + base + i] = lutValues[i];
     }
 }
 
-void ScriptIntrinsicLUT::setRed(unsigned char base, unsigned char length, unsigned char* lutValues) {
-    if (base + length >= 256) {
-        mRS->throwError(RS_ERROR_INVALID_PARAMETER, "LUT out of range");
-        return;
-    }
+void ScriptIntrinsicLUT::setRed(unsigned char base, unsigned int length, unsigned char* lutValues) {
     setTable(0, base, length, lutValues);
 }
 
-void ScriptIntrinsicLUT::setGreen(unsigned char base, unsigned char length, unsigned char* lutValues) {
-    if (base + length >= 256) {
-        mRS->throwError(RS_ERROR_INVALID_PARAMETER, "LUT out of range");
-        return;
-    }
+void ScriptIntrinsicLUT::setGreen(unsigned char base, unsigned int length, unsigned char* lutValues) {
     setTable(256, base, length, lutValues);
 }
 
-void ScriptIntrinsicLUT::setBlue(unsigned char base, unsigned char length, unsigned char* lutValues) {
-    if (base + length >= 256) {
-        mRS->throwError(RS_ERROR_INVALID_PARAMETER, "LUT out of range");
-        return;
-    }
+void ScriptIntrinsicLUT::setBlue(unsigned char base, unsigned int length, unsigned char* lutValues) {
     setTable(512, base, length, lutValues);
 }
 
-void ScriptIntrinsicLUT::setAlpha(unsigned char base, unsigned char length, unsigned char* lutValues) {
-    if (base + length >= 256) {
-        mRS->throwError(RS_ERROR_INVALID_PARAMETER, "LUT out of range");
-        return;
-    }
+void ScriptIntrinsicLUT::setAlpha(unsigned char base, unsigned int length, unsigned char* lutValues) {
     setTable(768, base, length, lutValues);
 }
 
