@@ -41,6 +41,7 @@ SNIP_END(_N_ColorMatrix_prefix_i)
 SNIP_START(_N_ColorMatrix_prefix_f)
     stmfd           sp!, {r4, lr}
     vpush           {q4-q7}
+    add r2, #96
     vld1.32 {q4}, [r2]!
     vld1.32 {q5}, [r2]!
     vld1.32 {q6}, [r2]!
@@ -66,6 +67,9 @@ SNIP_START(_N_ColorMatrix_postfix2)
 
     #vqadd.s32 q0,q0,q0
     #vadd.f32 q0,q0,q0
+    #vmul.f32 q0,q0,d0[0]
+    #vmla.f32 q0,q0,d0[0]
+    #vmov q0, q0
 
 
     vpop            {q4-q7}
@@ -100,9 +104,9 @@ SNIP_START(_N_ColorMatrix_load_u8f_4)
     vmovl.u8 q2, d2
     vmovl.u8 q1, d1
     vmovl.u8 q0, d0
-    vmovl.u16 q3, d3
-    vmovl.u16 q2, d2
-    vmovl.u16 q1, d1
+    vmovl.u16 q3, d6
+    vmovl.u16 q2, d4
+    vmovl.u16 q1, d2
     vmovl.u16 q0, d0
     vcvt.f32.s32 q3, q3
     vcvt.f32.s32 q2, q2
@@ -117,7 +121,7 @@ SNIP_START(_N_ColorMatrix_load_u8f_2)
     vld2.8 {d0[3],d1[3]}, [r1]!
     vmovl.u8 q1, d1
     vmovl.u8 q0, d0
-    vmovl.u16 q1, d1
+    vmovl.u16 q1, d2
     vmovl.u16 q0, d0
     vcvt.f32.s32 q1, q1
     vcvt.f32.s32 q0, q0
@@ -175,10 +179,9 @@ SNIP_START(_N_ColorMatrix_store_f32u_4)
     vcvt.s32.f32 q2, q2
     vcvt.s32.f32 q3, q3
     vqmovn.s32 d0, q0
-    vqmovn.s32 d1, q1
-    vqmovn.s32 d2, q2
-    vqmovn.s32 d3, q3
-    vqmovn.s16 d0, q0
+    vqmovn.s32 d2, q1
+    vqmovn.s32 d4, q2
+    vqmovn.s32 d6, q3
     vqmovun.s16 d0, q0
     vqmovun.s16 d1, q1
     vqmovun.s16 d2, q2
@@ -187,14 +190,17 @@ SNIP_START(_N_ColorMatrix_store_f32u_4)
     vst4.8 {d0[1],d1[1],d2[1],d3[1]}, [r0]!
     vst4.8 {d0[2],d1[2],d2[2],d3[2]}, [r0]!
     vst4.8 {d0[3],d1[3],d2[3],d3[3]}, [r0]!
+
+    #mov r0, #0
+    #ldr r0, [r0]
+
 SNIP_END(_N_ColorMatrix_store_f32u_4)
 
 SNIP_START(_N_ColorMatrix_store_f32u_2)
     vcvt.s32.f32 q0, q0
     vcvt.s32.f32 q1, q1
     vqmovn.s32 d0, q0
-    vqmovn.s32 d1, q1
-    vqmovn.s16 d0, q0
+    vqmovn.s32 d2, q1
     vqmovun.s16 d0, q0
     vqmovun.s16 d1, q1
     vst4.8 {d0[0],d1[0],d2[0],d3[0]}, [r0]!
@@ -207,7 +213,6 @@ SNIP_END(_N_ColorMatrix_store_f32u_2)
 SNIP_START(_N_ColorMatrix_store_f32u_1)
     vcvt.s32.f32 q0, q0
     vqmovn.s32 d0, q0
-    vqmovn.s16 d0, q0
     vqmovun.s16 d0, q0
     vst1.32 {d0[0]}, [r0]!
 SNIP_END(_N_ColorMatrix_store_f32u_1)
