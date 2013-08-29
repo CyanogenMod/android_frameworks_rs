@@ -64,7 +64,7 @@ public class Histogram extends TestBase {
         //mScript.forEach_pass2(mSum);
 
         mHist.setOutput(mSum);
-        mHist.forEach_dot(mInPixelsAllocation);
+        mHist.forEach_Dot(mInPixelsAllocation);
 
         mScript.invoke_rescale();
 
