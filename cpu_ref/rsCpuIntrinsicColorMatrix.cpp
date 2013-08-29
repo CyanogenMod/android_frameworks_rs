@@ -140,14 +140,19 @@ public:
 
 protected:
     float fp[16];
-    float fpa[16];
+    float fpa[4];
 
+    // The following four fields are read as constants
+    // by the SIMD assembly code.
     short ip[16];
     int ipa[16];
+    float tmpFp[16];
+    float tmpFpa[16];
 
     static void kernel(const RsForEachStubParamStruct *p,
                        uint32_t xstart, uint32_t xend,
                        uint32_t instep, uint32_t outstep);
+    void updateCoeffCache(float fpMul);
 
     Key_t mLastKey;
     unsigned char *mBuf;
@@ -195,9 +200,9 @@ Key_t RsdCpuScriptIntrinsicColorMatrix::computeKey(
             }
         }
         if (fabs(fpa[0]) != 0.f) key.u.addMask |= 0x1;
-        if (fabs(fpa[4]) != 0.f) key.u.addMask |= 0x2;
-        if (fabs(fpa[8]) != 0.f) key.u.addMask |= 0x4;
-        if (fabs(fpa[12]) != 0.f) key.u.addMask |= 0x8;
+        if (fabs(fpa[1]) != 0.f) key.u.addMask |= 0x2;
+        if (fabs(fpa[2]) != 0.f) key.u.addMask |= 0x4;
+        if (fabs(fpa[3]) != 0.f) key.u.addMask |= 0x8;
 
     } else {
         for (uint32_t i=0; i < 16; i++) {
@@ -290,12 +295,13 @@ DEF_SYM(load_f32_1)
 DEF_SYM(store_u8_4)
 DEF_SYM(store_u8_2)
 DEF_SYM(store_u8_1)
-DEF_SYM(load_f32_4)
-DEF_SYM(load_f32_2)
-DEF_SYM(load_f32_1)
 DEF_SYM(store_f32_4)
 DEF_SYM(store_f32_2)
 DEF_SYM(store_f32_1)
+DEF_SYM(store_f32u_4)
+DEF_SYM(store_f32u_2)
+DEF_SYM(store_f32u_1)
+
 DEF_SYM(unpack_u8_4)
 DEF_SYM(unpack_u8_3)
 DEF_SYM(unpack_u8_2)
@@ -327,7 +333,7 @@ static uint8_t * addBranch(uint8_t *buf, const uint8_t *target, uint32_t conditi
     return buf + 4;
 }
 
-static uint32_t encodeSIMDRegs(uint32_t vd, uint32_t vn, uint32_t vm, bool q, bool sz) {
+static uint32_t encodeSIMDRegs(uint32_t vd, uint32_t vn, uint32_t vm) {
     rsAssert(vd < 32);
     rsAssert(vm < 32);
     rsAssert(vn < 32);
@@ -335,49 +341,54 @@ static uint32_t encodeSIMDRegs(uint32_t vd, uint32_t vn, uint32_t vm, bool q, bo
     uint32_t op = ((vd & 0xf) << 12) | (((vd & 0x10) >> 4) << 22);
     op |= (vm & 0xf) | (((vm & 0x10) >> 4) << 5);
     op |= ((vn & 0xf) << 16) | (((vn & 0x10) >> 4) << 7);
-    if (q) op |= 1 << 6;
-    if (sz) op |= 1 << 8;
     return op;
 }
 
 static uint8_t * addVMLAL_S16(uint8_t *buf, uint32_t dest_q, uint32_t src_d1, uint32_t src_d2, uint32_t src_d2_s) {
     //vmlal.s16 Q#1, D#1, D#2[#]
-    uint32_t op = 0xf2900240 | encodeSIMDRegs(dest_q << 1, src_d1, src_d2 | (src_d2_s << 3), false, false);
+    uint32_t op = 0xf2900240 | encodeSIMDRegs(dest_q << 1, src_d1, src_d2 | (src_d2_s << 3));
     ((uint32_t *)buf)[0] = op;
     return buf + 4;
 }
 
 static uint8_t * addVMULL_S16(uint8_t *buf, uint32_t dest_q, uint32_t src_d1, uint32_t src_d2, uint32_t src_d2_s) {
     //vmull.s16 Q#1, D#1, D#2[#]
-    uint32_t op = 0xf2900A40 | encodeSIMDRegs(dest_q << 1, src_d1, src_d2 | (src_d2_s << 3), false, false);
+    uint32_t op = 0xf2900A40 | encodeSIMDRegs(dest_q << 1, src_d1, src_d2 | (src_d2_s << 3));
     ((uint32_t *)buf)[0] = op;
     return buf + 4;
 }
 
 static uint8_t * addVQADD_S32(uint8_t *buf, uint32_t dest_q, uint32_t src_q1, uint32_t src_q2) {
     //vqadd.s32 Q#1, D#1, D#2
-    uint32_t op = 0xf2200050 | encodeSIMDRegs(dest_q << 1, src_q1 << 1, src_q2 << 1, false, false);
+    uint32_t op = 0xf2200050 | encodeSIMDRegs(dest_q << 1, src_q1 << 1, src_q2 << 1);
     ((uint32_t *)buf)[0] = op;
     return buf + 4;
 }
 
 static uint8_t * addVMLAL_F32(uint8_t *buf, uint32_t dest_q, uint32_t src_d1, uint32_t src_d2, uint32_t src_d2_s) {
     //vmlal.f32 Q#1, D#1, D#2[#]
-    uint32_t op = 0xf2900240 | encodeSIMDRegs(dest_q << 1, src_d1, src_d2 | (src_d2_s << 3), false, false);
+    uint32_t op = 0xf3a00140 | encodeSIMDRegs(dest_q << 1, src_d1, src_d2 | (src_d2_s << 4));
     ((uint32_t *)buf)[0] = op;
     return buf + 4;
 }
 
 static uint8_t * addVMULL_F32(uint8_t *buf, uint32_t dest_q, uint32_t src_d1, uint32_t src_d2, uint32_t src_d2_s) {
     //vmull.f32 Q#1, D#1, D#2[#]
-    uint32_t op = 0xf2900A40 | encodeSIMDRegs(dest_q << 1, src_d1, src_d2 | (src_d2_s << 3), false, false);
+    uint32_t op = 0xf3a00940 | encodeSIMDRegs(dest_q << 1, src_d1, src_d2 | (src_d2_s << 4));
+    ((uint32_t *)buf)[0] = op;
+    return buf + 4;
+}
+
+static uint8_t * addVORR_32(uint8_t *buf, uint32_t dest_q, uint32_t src_q1, uint32_t src_q2) {
+    //vadd.f32 Q#1, D#1, D#2
+    uint32_t op = 0xf2200150 | encodeSIMDRegs(dest_q << 1, src_q1 << 1, src_q2 << 1);
     ((uint32_t *)buf)[0] = op;
     return buf + 4;
 }
 
 static uint8_t * addVADD_F32(uint8_t *buf, uint32_t dest_q, uint32_t src_q1, uint32_t src_q2) {
     //vadd.f32 Q#1, D#1, D#2
-    uint32_t op = 0xf2000d40 | encodeSIMDRegs(dest_q << 1, src_q1 << 1, src_q2 << 1, false, false);
+    uint32_t op = 0xf2000d40 | encodeSIMDRegs(dest_q << 1, src_q1 << 1, src_q2 << 1);
     ((uint32_t *)buf)[0] = op;
     return buf + 4;
 }
@@ -403,33 +414,32 @@ bool RsdCpuScriptIntrinsicColorMatrix::build(Key_t key) {
     memset(ops, 0, sizeof(ops));
     for (int i=0; i < 4; i++) {
         if (key.u.coeffMask & (1 << (i*4))) {
-            ops[i][0] = opInit[0] + 1;
+            ops[i][0] = 0x2 | opInit[0];
             opInit[0] = 1;
         }
         if (!key.u.dot) {
             if (key.u.coeffMask & (1 << (1 + i*4))) {
-                ops[i][1] = opInit[1] + 1;
+                ops[i][1] = 0x2 | opInit[1];
                 opInit[1] = 1;
             }
             if (key.u.coeffMask & (1 << (2 + i*4))) {
-                ops[i][2] = opInit[2] + 1;
+                ops[i][2] = 0x2 | opInit[2];
                 opInit[2] = 1;
             }
         }
         if (!key.u.copyAlpha) {
             if (key.u.coeffMask & (1 << (3 + i*4))) {
-                ops[i][3] = opInit[3] + 1;
+                ops[i][3] = 0x2 | opInit[3];
                 opInit[3] = 1;
             }
         }
     }
     for (int i=0; i < 4; i++) {
         if (key.u.addMask & (1 << i)) {
-            ops[4][i] = opInit[i] + 1;
+            ops[4][i] = 0x2 | opInit[i];
             opInit[i] = 1;
         }
     }
-
 
     if (key.u.inType || key.u.outType) {
         ADD_CHUNK(prefix_f);
@@ -466,22 +476,57 @@ bool RsdCpuScriptIntrinsicColorMatrix::build(Key_t key) {
 
         for (int i=0; i < 4; i++) {
             for (int j=0; j < 4; j++) {
-                //ALOGE("op %i %i   %i", i, j, ops[i][j]);
                 switch(ops[i][j]) {
                 case 0:
                     break;
-                case 1:
-                    buf = addVMULL_F32(buf, 12+j, i*2, 8+i, j);
-                    break;
                 case 2:
-                    buf = addVMLAL_F32(buf, 12+j, i*2, 8+i, j);
+                    buf = addVMULL_F32(buf, 12+j, i*2, 8+i*2 + (j >> 1), j & 1);
+                    break;
+                case 3:
+                    buf = addVMLAL_F32(buf, 12+j, i*2, 8+i*2 + (j >> 1), j & 1);
                     break;
                 }
             }
         }
         for (int j=0; j < 4; j++) {
-            if (key.u.addMask & (1 << j)) {
-                buf = addVADD_F32(buf, 12+j, 12+j, 8+j);
+            if (opInit[j]) {
+                if (key.u.addMask & (1 << j)) {
+                    buf = addVADD_F32(buf, j, 12+j, 8+j);
+                } else {
+                    buf = addVORR_32(buf, j, 12+j, 12+j);
+                }
+            } else {
+                if (key.u.addMask & (1 << j)) {
+                    buf = addVADD_F32(buf, j, j, 8+j);
+                }
+            }
+        }
+
+        if (key.u.outType) {
+            switch(key.u.outVecSize) {
+            case 3:
+            case 2:
+                ADD_CHUNK(store_f32_4);
+                break;
+            case 1:
+                ADD_CHUNK(store_f32_2);
+                break;
+            case 0:
+                ADD_CHUNK(store_f32_1);
+                break;
+            }
+        } else {
+            switch(key.u.outVecSize) {
+            case 3:
+            case 2:
+                ADD_CHUNK(store_f32u_4);
+                break;
+            case 1:
+                ADD_CHUNK(store_f32u_2);
+                break;
+            case 0:
+                ADD_CHUNK(store_f32u_1);
+                break;
             }
         }
 
@@ -521,14 +566,13 @@ bool RsdCpuScriptIntrinsicColorMatrix::build(Key_t key) {
         // use MLAL from there
         for (int i=0; i < 4; i++) {
             for (int j=0; j < 4; j++) {
-                //ALOGE("op %i %i   %i", i, j, ops[i][j]);
                 switch(ops[i][j]) {
                 case 0:
                     break;
-                case 1:
+                case 2:
                     buf = addVMULL_S16(buf, 8+j, 24+i*2, 4+i, j);
                     break;
-                case 2:
+                case 3:
                     buf = addVMLAL_S16(buf, 8+j, 24+i*2, 4+i, j);
                     break;
                 }
@@ -576,6 +620,11 @@ bool RsdCpuScriptIntrinsicColorMatrix::build(Key_t key) {
         }
     }
 
+    if (key.u.inType != key.u.outType) {
+        key.u.copyAlpha = 0;
+        key.u.dot = 0;
+    }
+
     // Loop, branch, and cleanup
     ADD_CHUNK(postfix1);
     buf = addBranch(buf, buf2, 0x01);
@@ -594,33 +643,40 @@ bool RsdCpuScriptIntrinsicColorMatrix::build(Key_t key) {
 #endif
 }
 
+void RsdCpuScriptIntrinsicColorMatrix::updateCoeffCache(float fpMul) {
+    for(int ct=0; ct < 16; ct++) {
+        //ALOGE("mat %i %f", ct, fp[ct]);
+        ip[ct] = (short)(fp[ct] * 256.f + 0.5f);
+        tmpFp[ct] = fp[ct] * fpMul;
+    }
+
+    for(int ct=0; ct < 4; ct++) {
+        tmpFpa[ct * 4 + 0] = fpa[ct] * fpMul;
+        tmpFpa[ct * 4 + 1] = tmpFpa[ct * 4];
+        tmpFpa[ct * 4 + 2] = tmpFpa[ct * 4];
+        tmpFpa[ct * 4 + 3] = tmpFpa[ct * 4];
+    }
+
+    for(int ct=0; ct < 16; ct++) {
+        ipa[ct] = (int)(fpa[ct] * 65536.f + 0.5f);
+    }
+
+}
+
 void RsdCpuScriptIntrinsicColorMatrix::setGlobalVar(uint32_t slot, const void *data,
                                                     size_t dataLength) {
     switch(slot) {
     case 0:
-        memcpy (fp, data, dataLength);
-        for(int ct=0; ct < 16; ct++) {
-            //ALOGE("mat %i %f", ct, fp[ct]);
-            ip[ct] = (short)(fp[ct] * 256.f + 0.5f);
-        }
+        memcpy (fp, data, sizeof(fp));
         break;
     case 1:
-        {
-            const float *f = (const float *)data;
-            fpa[0] = fpa[1] = fpa[2] = fpa[3] = f[0];
-            fpa[4] = fpa[5] = fpa[6] = fpa[7] = f[1];
-            fpa[8] = fpa[9] = fpa[10] = fpa[11] = f[2];
-            fpa[12] = fpa[13] = fpa[14] = fpa[15] = f[3];
-
-            for(int ct=0; ct < 16; ct++) {
-                ipa[ct] = (int)(fpa[ct] * 65536.f + 0.5f);
-            }
-        }
+        memcpy (fpa, data, sizeof(fpa));
         break;
     default:
         rsAssert(0);
         break;
     }
+    updateCoeffCache(1.f);
 
     mRootPtr = &kernel;
 }
@@ -658,6 +714,7 @@ static void One(const RsForEachStubParamStruct *p, void *out,
             break;
         }
     }
+    //ALOGE("f1  %f %f %f %f", f.x, f.y, f.z, f.w);
 
     float4 sum;
     sum.x = f.x * coeff[0] +
@@ -676,12 +733,14 @@ static void One(const RsForEachStubParamStruct *p, void *out,
             f.y * coeff[7] +
             f.z * coeff[11] +
             f.w * coeff[15];
+    //ALOGE("f2  %f %f %f %f", sum.x, sum.y, sum.z, sum.w);
 
     sum.x = sum.x < 0 ? 0 : (sum.x > 255 ? 255 : sum.x);
     sum.y = sum.y < 0 ? 0 : (sum.y > 255 ? 255 : sum.y);
     sum.z = sum.z < 0 ? 0 : (sum.z > 255 ? 255 : sum.z);
     sum.w = sum.w < 0 ? 0 : (sum.w > 255 ? 255 : sum.w);
 
+    //ALOGE("fout %i vs %i, sum %f %f %f %f", fout, vsout, sum.x, sum.y, sum.z, sum.w);
     if (fout) {
         switch(vsout) {
         case 3:
@@ -709,6 +768,7 @@ static void One(const RsForEachStubParamStruct *p, void *out,
             break;
         }
     }
+    //ALOGE("out %p %f %f %f %f", out, ((float *)out)[0], ((float *)out)[1], ((float *)out)[2], ((float *)out)[3]);
 }
 
 void RsdCpuScriptIntrinsicColorMatrix::kernel(const RsForEachStubParamStruct *p,
@@ -720,10 +780,13 @@ void RsdCpuScriptIntrinsicColorMatrix::kernel(const RsForEachStubParamStruct *p,
     uint32_t x1 = xstart;
     uint32_t x2 = xend;
 
+   // if (p->y > 2) return;
+
     uint32_t vsin = cp->mLastKey.u.inVecSize;
     uint32_t vsout = cp->mLastKey.u.outVecSize;
     bool floatIn = !!cp->mLastKey.u.inType;
     bool floatOut = !!cp->mLastKey.u.outType;
+
 
     if(x2 > x1) {
         int32_t len = (x2 - x1) >> 2;
@@ -731,12 +794,12 @@ void RsdCpuScriptIntrinsicColorMatrix::kernel(const RsForEachStubParamStruct *p,
             //ALOGE("%p %p %i", out, in, len);
             cp->mOptKernel(out, in, cp->ip, len);
             x1 += len << 2;
-            out += len << 2;
-            in += len << 2;
+            out += outstep * (len << 2);
+            in += instep * (len << 2);
         }
 
         while(x1 != x2) {
-            One(p, out, in, cp->fp, vsin, vsout, floatIn, floatOut);
+            One(p, out, in, cp->tmpFp, vsin, vsout, floatIn, floatOut);
             out += outstep;
             in += instep;
             x1++;
@@ -757,6 +820,16 @@ void RsdCpuScriptIntrinsicColorMatrix::preLaunch(
         if (build(key)) {
             mOptKernel = (void (*)(void *, const void *, const short *, uint32_t)) mBuf;
             mLastKey = key;
+        }
+    }
+
+    if (key.u.inType == key.u.outType) {
+        updateCoeffCache(1.f);
+    } else {
+        if (key.u.inType) {
+            updateCoeffCache(255.f);
+        } else {
+            updateCoeffCache(1.f / 255.f);
         }
     }
 }
