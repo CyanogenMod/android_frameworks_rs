@@ -780,16 +780,16 @@ class ScriptIntrinsicLUT : public ScriptIntrinsic {
     sp<Allocation> LUT;
     bool mDirty;
     unsigned char mCache[1024];
-    void setTable(unsigned int offset, unsigned char base, unsigned char length, unsigned char* lutValues);
+    void setTable(unsigned int offset, unsigned char base, unsigned int length, unsigned char* lutValues);
     ScriptIntrinsicLUT(sp<RS> rs, sp<const Element> e);
 
  public:
     static sp<ScriptIntrinsicLUT> create(sp<RS> rs, sp<const Element> e);
     void forEach(sp<Allocation> ain, sp<Allocation> aout);
-    void setRed(unsigned char base, unsigned char length, unsigned char* lutValues);
-    void setGreen(unsigned char base, unsigned char length, unsigned char* lutValues);
-    void setBlue(unsigned char base, unsigned char length, unsigned char* lutValues);
-    void setAlpha(unsigned char base, unsigned char length, unsigned char* lutValues);
+    void setRed(unsigned char base, unsigned int length, unsigned char* lutValues);
+    void setGreen(unsigned char base, unsigned int length, unsigned char* lutValues);
+    void setBlue(unsigned char base, unsigned int length, unsigned char* lutValues);
+    void setAlpha(unsigned char base, unsigned int length, unsigned char* lutValues);
     virtual ~ScriptIntrinsicLUT();
 };
 
