@@ -827,6 +827,276 @@ class ScriptIntrinsicYuvToRGB : public ScriptIntrinsic {
 
 };
 
+class Byte2 {
+ public:
+  int8_t x, y;
+
+  Byte2(int8_t initX, int8_t initY)
+    : x(initX), y(initY) {}
+  Byte2() : x(0), y(0) {}
+};
+
+class Byte3 {
+ public:
+  int8_t x, y, z;
+
+  Byte3(int8_t initX, int8_t initY, int8_t initZ)
+    : x(initX), y(initY), z(initZ) {}
+  Byte3() : x(0), y(0), z(0) {}
+};
+
+class Byte4 {
+ public:
+  int8_t x, y, z, w;
+
+  Byte4(int8_t initX, int8_t initY, int8_t initZ, int8_t initW)
+    : x(initX), y(initY), z(initZ), w(initW) {}
+  Byte4() : x(0), y(0), z(0), w(0) {}
+};
+
+class UByte2 {
+ public:
+  uint8_t x, y;
+
+  UByte2(uint8_t initX, uint8_t initY)
+    : x(initX), y(initY) {}
+  UByte2() : x(0), y(0) {}
+};
+
+class UByte3 {
+ public:
+  uint8_t x, y, z;
+
+  UByte3(uint8_t initX, uint8_t initY, uint8_t initZ)
+    : x(initX), y(initY), z(initZ) {}
+  UByte3() : x(0), y(0), z(0) {}
+};
+
+class UByte4 {
+ public:
+  uint8_t x, y, z, w;
+
+  UByte4(uint8_t initX, uint8_t initY, uint8_t initZ, uint8_t initW)
+    : x(initX), y(initY), z(initZ), w(initW) {}
+  UByte4() : x(0), y(0), z(0), w(0) {}
+};
+
+class Short2 {
+ public:
+  short x, y;
+
+  Short2(short initX, short initY)
+    : x(initX), y(initY) {}
+  Short2() : x(0), y(0) {}
+};
+
+class Short3 {
+ public:
+  short x, y, z;
+
+  Short3(short initX, short initY, short initZ)
+    : x(initX), y(initY), z(initZ) {}
+  Short3() : x(0), y(0), z(0) {}
+};
+
+class Short4 {
+ public:
+  short x, y, z, w;
+
+  Short4(short initX, short initY, short initZ, short initW)
+    : x(initX), y(initY), z(initZ), w(initW) {}
+  Short4() : x(0), y(0), z(0), w(0) {}
+};
+
+class UShort2 {
+ public:
+  uint16_t x, y;
+
+  UShort2(uint16_t initX, uint16_t initY)
+    : x(initX), y(initY) {}
+  UShort2() : x(0), y(0) {}
+};
+
+class UShort3 {
+ public:
+  uint16_t x, y, z;
+
+  UShort3(uint16_t initX, uint16_t initY, uint16_t initZ)
+    : x(initX), y(initY), z(initZ) {}
+  UShort3() : x(0), y(0), z(0) {}
+};
+
+class UShort4 {
+ public:
+  uint16_t x, y, z, w;
+
+  UShort4(uint16_t initX, uint16_t initY, uint16_t initZ, uint16_t initW)
+    : x(initX), y(initY), z(initZ), w(initW) {}
+  UShort4() : x(0), y(0), z(0), w(0) {}
+};
+
+class Int2 {
+ public:
+  int x, y;
+
+  Int2(int initX, int initY)
+    : x(initX), y(initY) {}
+  Int2() : x(0), y(0) {}
+};
+
+class Int3 {
+ public:
+  int x, y, z;
+
+  Int3(int initX, int initY, int initZ)
+    : x(initX), y(initY), z(initZ) {}
+  Int3() : x(0), y(0), z(0) {}
+};
+
+class Int4 {
+ public:
+  int x, y, z, w;
+
+  Int4(int initX, int initY, int initZ, int initW)
+    : x(initX), y(initY), z(initZ), w(initW) {}
+  Int4() : x(0), y(0), z(0), w(0) {}
+};
+
+class UInt2 {
+ public:
+  uint32_t x, y;
+
+  UInt2(uint32_t initX, uint32_t initY)
+    : x(initX), y(initY) {}
+  UInt2() : x(0), y(0) {}
+};
+
+class UInt3 {
+ public:
+  uint32_t x, y, z;
+
+  UInt3(uint32_t initX, uint32_t initY, uint32_t initZ)
+    : x(initX), y(initY), z(initZ) {}
+  UInt3() : x(0), y(0), z(0) {}
+};
+
+class UInt4 {
+ public:
+  uint32_t x, y, z, w;
+
+  UInt4(uint32_t initX, uint32_t initY, uint32_t initZ, uint32_t initW)
+    : x(initX), y(initY), z(initZ), w(initW) {}
+  UInt4() : x(0), y(0), z(0), w(0) {}
+};
+
+class Long2 {
+ public:
+  int64_t x, y;
+
+  Long2(int64_t initX, int64_t initY)
+    : x(initX), y(initY) {}
+  Long2() : x(0), y(0) {}
+};
+
+class Long3 {
+ public:
+  int64_t x, y, z;
+
+  Long3(int64_t initX, int64_t initY, int64_t initZ)
+    : x(initX), y(initY), z(initZ) {}
+  Long3() : x(0), y(0), z(0) {}
+};
+
+class Long4 {
+ public:
+  int64_t x, y, z, w;
+
+  Long4(int64_t initX, int64_t initY, int64_t initZ, int64_t initW)
+    : x(initX), y(initY), z(initZ), w(initW) {}
+  Long4() : x(0), y(0), z(0), w(0) {}
+};
+
+class ULong2 {
+ public:
+  uint64_t x, y;
+
+  ULong2(uint64_t initX, uint64_t initY)
+    : x(initX), y(initY) {}
+  ULong2() : x(0), y(0) {}
+};
+
+class ULong3 {
+ public:
+  uint64_t x, y, z;
+
+  ULong3(uint64_t initX, uint64_t initY, uint64_t initZ)
+    : x(initX), y(initY), z(initZ) {}
+  ULong3() : x(0), y(0), z(0) {}
+};
+
+class ULong4 {
+ public:
+  uint64_t x, y, z, w;
+
+  ULong4(uint64_t initX, uint64_t initY, uint64_t initZ, uint64_t initW)
+    : x(initX), y(initY), z(initZ), w(initW) {}
+  ULong4() : x(0), y(0), z(0), w(0) {}
+};
+
+class Float2 {
+ public:
+  float x, y;
+
+  Float2(float initX, float initY)
+    : x(initX), y(initY) {}
+  Float2() : x(0), y(0) {}
+};
+
+class Float3 {
+ public:
+  float x, y, z;
+
+  Float3(float initX, float initY, float initZ)
+    : x(initX), y(initY), z(initZ) {}
+  Float3() : x(0.f), y(0.f), z(0.f) {}
+};
+
+class Float4 {
+ public:
+  float x, y, z, w;
+
+  Float4(float initX, float initY, float initZ, float initW)
+    : x(initX), y(initY), z(initZ), w(initW) {}
+  Float4() : x(0.f), y(0.f), z(0.f), w(0.f) {}
+};
+
+class Double2 {
+ public:
+  double x, y;
+
+  Double2(double initX, double initY)
+    : x(initX), y(initY) {}
+  Double2() : x(0), y(0) {}
+};
+
+class Double3 {
+ public:
+  double x, y, z;
+
+  Double3(double initX, double initY, double initZ)
+    : x(initX), y(initY), z(initZ) {}
+  Double3() : x(0), y(0), z(0) {}
+};
+
+class Double4 {
+ public:
+  double x, y, z, w;
+
+  Double4(double initX, double initY, double initZ, double initW)
+    : x(initX), y(initY), z(initZ), w(initW) {}
+  Double4() : x(0), y(0), z(0), w(0) {}
+};
+
 }
 
 }
