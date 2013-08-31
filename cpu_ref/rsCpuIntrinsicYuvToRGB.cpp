@@ -18,6 +18,10 @@
 #include "rsCpuIntrinsic.h"
 #include "rsCpuIntrinsicInlines.h"
 
+#ifdef RS_COMPATIBILITY_LIB
+#include "rsCompatibilityLib.h"
+#endif
+
 #ifndef RS_COMPATIBILITY_LIB
 #include "hardware/gralloc.h"
 #endif
@@ -134,7 +138,7 @@ void RsdCpuScriptIntrinsicYuvToRGB::kernel(const RsForEachStubParamStruct *p,
     switch (cp->alloc->mHal.state.yuv) {
     // In API 17 there was no yuv format and the intrinsic treated everything as NV21
     case 0:
-#if !defined(RS_SERVER) && !defined(RS_COMPATIBILITY_LIB)
+#if !defined(RS_SERVER)
     case HAL_PIXEL_FORMAT_YCrCb_420_SP:  // NV21
 #endif
         {
@@ -178,7 +182,7 @@ void RsdCpuScriptIntrinsicYuvToRGB::kernel(const RsForEachStubParamStruct *p,
         }
         break;
 
-#if !defined(RS_SERVER) && !defined(RS_COMPATIBILITY_LIB)
+#if !defined(RS_SERVER)
     case HAL_PIXEL_FORMAT_YV12:
         {
             const uchar *pinU = (const uchar *)cp->alloc->mHal.drvState.lod[1].mallocPtr;
