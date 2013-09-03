@@ -41,7 +41,9 @@ GrallocConsumer::GrallocConsumer(Allocation *a, const sp<IGraphicBufferConsumer>
     if (y < 1) y = 1;
     mConsumer->setDefaultBufferSize(a->mHal.drvState.lod[0].dimX, y);
 
-    //mBufferQueue->setDefaultBufferFormat(defaultFormat);
+    if (a->mHal.state.yuv) {
+        bq->setDefaultBufferFormat(a->mHal.state.yuv);
+    }
     //mBufferQueue->setConsumerName(name);
 }
 
@@ -146,6 +148,9 @@ status_t GrallocConsumer::lockNextBuffer() {
         mAlloc->mHal.drvState.lod[0].stride = ycbcr.ystride;
         mAlloc->mHal.drvState.lod[1].stride = ycbcr.cstride;
         mAlloc->mHal.drvState.lod[2].stride = ycbcr.cstride;
+
+        mAlloc->mHal.drvState.yuv.shift = 1;
+        mAlloc->mHal.drvState.yuv.step = ycbcr.chroma_step;
     }
 
     return OK;

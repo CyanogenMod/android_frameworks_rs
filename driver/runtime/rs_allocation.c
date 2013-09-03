@@ -266,53 +266,27 @@ extern const uchar __attribute__((overloadable))
         rsGetElementAtYuv_uchar_U(rs_allocation a, uint32_t x, uint32_t y) {
 
     Allocation_t *alloc = (Allocation_t *)a.p;
-    const uint32_t yuvID = alloc->mHal.state.yuv;
-    const uint8_t *p = (const uint8_t *)alloc->mHal.drvState.lod[1].mallocPtr;
-    const uint32_t stride = alloc->mHal.drvState.lod[1].stride;
 
-    switch(yuvID) {
-    case 0x32315659: //HAL_PIXEL_FORMAT_YV12:
-        x >>= 1;
-        y >>= 1;
-        return p[x + (y * stride)];
-    case 11: //HAL_PIXEL_FORMAT_YCrCb_420_SP:  // NV21
-        x >>= 1;
-        y >>= 1;
-        return p[(x<<1) + (y * stride)];
-    default:
-        break;
-    }
+    const size_t cstep = alloc->mHal.drvState.yuv.step;
+    const size_t shift = alloc->mHal.drvState.yuv.shift;
+    const size_t stride = alloc->mHal.drvState.lod[2].stride;
 
-    return 0;
+    const uchar *pin = (const uchar *)alloc->mHal.drvState.lod[2].mallocPtr;
+
+    return pin[((x >> shift) * cstep) + ((y >> shift) * stride)];
 }
 
 extern const uchar __attribute__((overloadable))
         rsGetElementAtYuv_uchar_V(rs_allocation a, uint32_t x, uint32_t y) {
 
     Allocation_t *alloc = (Allocation_t *)a.p;
-    const uint32_t yuvID = alloc->mHal.state.yuv;
 
-    switch(yuvID) {
-    case 0x32315659: //HAL_PIXEL_FORMAT_YV12:
-        {
-        const uint8_t *p = (const uint8_t *)alloc->mHal.drvState.lod[2].mallocPtr;
-        const uint32_t stride = alloc->mHal.drvState.lod[2].stride;
-        x >>= 1;
-        y >>= 1;
-        return p[x + (y * stride)];
-        }
-    case 11: //HAL_PIXEL_FORMAT_YCrCb_420_SP:  // NV21
-        {
-        const uint8_t *p = (const uint8_t *)alloc->mHal.drvState.lod[1].mallocPtr;
-        const uint32_t stride = alloc->mHal.drvState.lod[1].stride;
-        x >>= 1;
-        y >>= 1;
-        return p[(x<<1) + (y * stride) + 1];
-        }
-    default:
-            break;
-    }
+    const size_t cstep = alloc->mHal.drvState.yuv.step;
+    const size_t shift = alloc->mHal.drvState.yuv.shift;
+    const size_t stride = alloc->mHal.drvState.lod[1].stride;
 
-    return 0;
+    const uchar *pin = (const uchar *)alloc->mHal.drvState.lod[1].mallocPtr;
+
+    return pin[((x >> shift) * cstep) + ((y >> shift) * stride)];
 }
 
