@@ -243,8 +243,9 @@ static void UploadToBufferObject(const Context *rsc, const Allocation *alloc) {
         return;
     }
     RSD_CALL_GL(glBindBuffer, drv->glTarget, drv->bufferID);
-    RSD_CALL_GL(glBufferData, drv->glTarget, alloc->mHal.state.type->getSizeBytes(),
-                 alloc->mHal.drvState.lod[0].mallocPtr, GL_DYNAMIC_DRAW);
+    RSD_CALL_GL(glBufferData, drv->glTarget,
+                alloc->mHal.state.type->getPackedSizeBytes(),
+                alloc->mHal.drvState.lod[0].mallocPtr, GL_DYNAMIC_DRAW);
     RSD_CALL_GL(glBindBuffer, drv->glTarget, 0);
     rsdGLCheckError(rsc, "UploadToBufferObject");
 #endif
@@ -255,34 +256,42 @@ static size_t DeriveYUVLayout(int yuv, Allocation::Hal::DrvState *state) {
     // YUV only supports basic 2d
     // so we can stash the plane pointers in the mipmap levels.
     size_t uvSize = 0;
+    state->lod[1].dimX = state->lod[0].dimX / 2;
+    state->lod[1].dimY = state->lod[0].dimY / 2;
+    state->lod[2].dimX = state->lod[0].dimX / 2;
+    state->lod[2].dimY = state->lod[0].dimY / 2;
+    state->yuv.shift = 1;
+    state->yuv.step = 1;
+    state->lodCount = 3;
+
 #ifndef RS_SERVER
     switch(yuv) {
     case HAL_PIXEL_FORMAT_YV12:
-        state->lod[2].dimX = state->lod[0].dimX / 2;
-        state->lod[2].dimY = state->lod[0].dimY / 2;
         state->lod[2].stride = rsRound(state->lod[0].stride >> 1, 16);
         state->lod[2].mallocPtr = ((uint8_t *)state->lod[0].mallocPtr) +
                 (state->lod[0].stride * state->lod[0].dimY);
         uvSize += state->lod[2].stride * state->lod[2].dimY;
 
-        state->lod[1].dimX = state->lod[2].dimX;
-        state->lod[1].dimY = state->lod[2].dimY;
         state->lod[1].stride = state->lod[2].stride;
         state->lod[1].mallocPtr = ((uint8_t *)state->lod[2].mallocPtr) +
                 (state->lod[2].stride * state->lod[2].dimY);
         uvSize += state->lod[1].stride * state->lod[2].dimY;
-
-        state->lodCount = 3;
         break;
     case HAL_PIXEL_FORMAT_YCrCb_420_SP:  // NV21
-        state->lod[1].dimX = state->lod[0].dimX;
-        state->lod[1].dimY = state->lod[0].dimY / 2;
+        //state->lod[1].dimX = state->lod[0].dimX;
         state->lod[1].stride = state->lod[0].stride;
-        state->lod[1].mallocPtr = ((uint8_t *)state->lod[0].mallocPtr) +
+        state->lod[2].stride = state->lod[0].stride;
+        state->lod[2].mallocPtr = ((uint8_t *)state->lod[0].mallocPtr) +
                 (state->lod[0].stride * state->lod[0].dimY);
+        state->lod[1].mallocPtr = ((uint8_t *)state->lod[2].mallocPtr) + 1;
         uvSize += state->lod[1].stride * state->lod[1].dimY;
-        state->lodCount = 2;
+        state->yuv.step = 2;
         break;
+#ifndef RS_COMPATIBILITY_LIB
+    case HAL_PIXEL_FORMAT_YCbCr_420_888:
+        // This will be filled in by ioReceive()
+        break;
+#endif
     default:
         rsAssert(0);
     }
@@ -766,7 +775,6 @@ void rsdAllocationData1D(const Context *rsc, const Allocation *alloc,
     const size_t eSize = alloc->mHal.state.type->getElementSizeBytes();
     uint8_t * ptr = GetOffsetPtr(alloc, xoff, 0, 0, 0, RS_ALLOCATION_CUBEMAP_FACE_POSITIVE_X);
     size_t size = count * eSize;
-
     if (ptr != data) {
         // Skip the copy if we are the same allocation. This can arise from
         // our Bitmap optimization, where we share the same storage.
@@ -811,13 +819,20 @@ void rsdAllocationData2D(const Context *rsc, const Allocation *alloc,
         }
         if (alloc->mHal.state.yuv) {
             int lod = 1;
-            while (alloc->mHal.drvState.lod[lod].mallocPtr) {
-                size_t lineSize = alloc->mHal.drvState.lod[lod].dimX;
+            int maxLod = 2;
+            if (alloc->mHal.state.yuv == HAL_PIXEL_FORMAT_YV12) {
+                maxLod = 3;
+            } else if (alloc->mHal.state.yuv == HAL_PIXEL_FORMAT_YCrCb_420_SP) {
+                lod = 2;
+                maxLod = 3;
+            }
+
+            while (lod < maxLod) {
                 uint8_t *dst = GetOffsetPtr(alloc, xoff, yoff, 0, lod, face);
 
                 for (uint32_t line=(yoff >> 1); line < ((yoff+h)>>1); line++) {
                     memcpy(dst, src, lineSize);
-                    src += lineSize;
+                    src += alloc->mHal.drvState.lod[lod].stride;
                     dst += alloc->mHal.drvState.lod[lod].stride;
                 }
                 lod++;
