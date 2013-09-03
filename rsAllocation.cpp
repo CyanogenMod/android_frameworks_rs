@@ -256,7 +256,7 @@ void Allocation::dumpLOGV(const char *prefix) const {
 }
 
 uint32_t Allocation::getPackedSize() const {
-    uint32_t numItems = mHal.state.type->getSizeBytes() / mHal.state.type->getElementSizeBytes();
+    uint32_t numItems = mHal.state.type->getCellCount();
     return numItems * mHal.state.type->getElement()->getSizeBytesUnpadded();
 }
 
@@ -265,7 +265,7 @@ void Allocation::writePackedData(Context *rsc, const Type *type,
     const Element *elem = type->getElement();
     uint32_t unpaddedBytes = elem->getSizeBytesUnpadded();
     uint32_t paddedBytes = elem->getSizeBytes();
-    uint32_t numItems = type->getSizeBytes() / paddedBytes;
+    uint32_t numItems = type->getPackedSizeBytes() / paddedBytes;
 
     uint32_t srcInc = !dstPadded ? paddedBytes : unpaddedBytes;
     uint32_t dstInc =  dstPadded ? paddedBytes : unpaddedBytes;
@@ -320,7 +320,7 @@ void Allocation::unpackVec3Allocation(Context *rsc, const void *data, size_t dat
 void Allocation::packVec3Allocation(Context *rsc, OStream *stream) const {
     uint32_t paddedBytes = getType()->getElement()->getSizeBytes();
     uint32_t unpaddedBytes = getType()->getElement()->getSizeBytesUnpadded();
-    uint32_t numItems = mHal.state.type->getSizeBytes() / paddedBytes;
+    uint32_t numItems = mHal.state.type->getCellCount();
 
     const uint8_t *src = (const uint8_t*)rsc->mHal.funcs.allocation.lock1D(rsc, this);
     uint8_t *dst = new uint8_t[numItems * unpaddedBytes];
@@ -341,7 +341,7 @@ void Allocation::serialize(Context *rsc, OStream *stream) const {
     // to initialize the class
     mHal.state.type->serialize(rsc, stream);
 
-    uint32_t dataSize = mHal.state.type->getSizeBytes();
+    uint32_t dataSize = mHal.state.type->getPackedSizeBytes();
     // 3 element vectors are padded to 4 in memory, but padding isn't serialized
     uint32_t packedSize = getPackedSize();
     // Write how much data we are storing
@@ -379,7 +379,7 @@ Allocation *Allocation::createFromStream(Context *rsc, IStream *stream) {
     uint32_t dataSize = stream->loadU32();
     // 3 element vectors are padded to 4 in memory, but padding isn't serialized
     uint32_t packedSize = alloc->getPackedSize();
-    if (dataSize != type->getSizeBytes() &&
+    if (dataSize != type->getPackedSizeBytes() &&
         dataSize != packedSize) {
         ALOGE("failed to read allocation because numbytes written is not the same loaded type wants\n");
         ObjectBase::checkDelete(alloc);
@@ -388,7 +388,7 @@ Allocation *Allocation::createFromStream(Context *rsc, IStream *stream) {
     }
 
     alloc->assignName(name);
-    if (dataSize == type->getSizeBytes()) {
+    if (dataSize == type->getPackedSizeBytes()) {
         uint32_t count = dataSize / type->getElementSizeBytes();
         // Read in all of our allocation data
         alloc->data(rsc, 0, 0, count, stream->getPtr() + stream->getPos(), dataSize);
@@ -422,7 +422,7 @@ void Allocation::decRefs(const void *ptr, size_t ct, size_t startOff) const {
 
 void Allocation::freeChildrenUnlocked () {
     void *ptr = mRSC->mHal.funcs.allocation.lock1D(mRSC, this);
-    decRefs(ptr, mHal.state.type->getSizeBytes() / mHal.state.type->getElementSizeBytes(), 0);
+    decRefs(ptr, mHal.state.type->getCellCount(), 0);
     mRSC->mHal.funcs.allocation.unlock1D(mRSC, this);
 }
 

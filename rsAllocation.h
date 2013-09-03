@@ -83,6 +83,11 @@ public:
             size_t faceOffset;
             uint32_t lodCount;
             uint32_t faceCount;
+
+            struct YuvState {
+                uint32_t shift;
+                uint32_t step;
+            } yuv;
         };
         mutable DrvState drvState;
 

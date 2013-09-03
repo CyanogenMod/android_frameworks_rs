@@ -220,7 +220,7 @@ uint32_t rsrGetHeight(Context *rsc) {
 
 void rsrDrawTextAlloc(Context *rsc, Allocation *a, int x, int y) {
     const char *text = (const char *)rsc->mHal.funcs.allocation.lock1D(rsc, a);
-    size_t allocSize = a->getType()->getSizeBytes();
+    size_t allocSize = a->getType()->getPackedSizeBytes();
     rsc->mStateFont.renderText(text, allocSize, x, y);
     rsc->mHal.funcs.allocation.unlock1D(rsc, a);
 }
@@ -250,7 +250,7 @@ void rsrMeasureTextAlloc(Context *rsc, Allocation *a,
                          int32_t *left, int32_t *right, int32_t *top, int32_t *bottom) {
     CHECK_OBJ(a);
     const char *text = (const char *)rsc->mHal.funcs.allocation.lock1D(rsc, a);
-    size_t textLen = a->getType()->getSizeBytes();
+    size_t textLen = a->getType()->getPackedSizeBytes();
     Font::Rect metrics;
     rsc->mStateFont.measureText(text, textLen, &metrics);
     SetMetrics(&metrics, left, right, top, bottom);

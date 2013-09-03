@@ -47,7 +47,7 @@ public:
             uint32_t *lodDimX;
             uint32_t *lodDimY;
             uint32_t *lodDimZ;
-            uint32_t *lodOffset;
+            uint32_t *_unused;
             uint32_t lodCount;
             uint32_t dimYuv;
             bool faces;
@@ -58,10 +58,9 @@ public:
 
     Type * createTex2D(const Element *, size_t w, size_t h, bool mip);
 
-    size_t getOffsetForFace(uint32_t face) const;
-
-    size_t getSizeBytes() const {return mTotalSizeBytes;}
+    size_t getCellCount() const {return mCellCount;}
     size_t getElementSizeBytes() const {return mElement->getSizeBytes();}
+    size_t getPackedSizeBytes() const {return mCellCount * mElement->getSizeBytes();}
     const Element * getElement() const {return mElement.get();}
 
     uint32_t getDimX() const {return mHal.state.dimX;}
@@ -83,16 +82,6 @@ public:
         rsAssert(lod < mHal.state.lodCount);
         return mHal.state.lodDimZ[lod];
     }
-    uint32_t getLODOffset(uint32_t lod) const {
-        rsAssert(lod < mHal.state.lodCount);
-        return mHal.state.lodOffset[lod];
-    }
-    uint32_t getLODOffset(uint32_t lod, uint32_t x) const;
-    uint32_t getLODOffset(uint32_t lod, uint32_t x, uint32_t y) const;
-    uint32_t getLODOffset(uint32_t lod, uint32_t x, uint32_t y, uint32_t z) const;
-
-    uint32_t getLODFaceOffset(uint32_t lod, RsAllocationCubemapFace face,
-                              uint32_t x, uint32_t y) const;
 
     uint32_t getLODCount() const {return mHal.state.lodCount;}
     bool getIsNp2() const;
@@ -137,8 +126,7 @@ protected:
 
     // count of mipmap levels, 0 indicates no mipmapping
 
-    size_t mMipChainSizeBytes;
-    size_t mTotalSizeBytes;
+    size_t mCellCount;
 protected:
     virtual void preDestroy() const;
     virtual ~Type();
