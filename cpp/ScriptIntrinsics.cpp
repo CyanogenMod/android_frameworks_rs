@@ -17,13 +17,14 @@
 #include <malloc.h>
 
 #include "RenderScript.h"
+#include "rsCppInternal.h"
 
 using namespace android;
 using namespace RSC;
 
 ScriptIntrinsic::ScriptIntrinsic(sp<RS> rs, int id, sp<const Element> e)
     : Script(NULL, rs) {
-    mID = RS::dispatch->ScriptIntrinsicCreate(rs->getContext(), id, e->getID());
+    mID = createDispatch(rs, RS::dispatch->ScriptIntrinsicCreate(rs->getContext(), id, e->getID()));
     mElement = e;
 }
 

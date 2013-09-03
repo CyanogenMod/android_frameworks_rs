@@ -22,4 +22,7 @@
         dispatch;                               \
     }
 
+#define createDispatch(rs, dispatch) \
+    rs->getError() == RS_SUCCESS ? dispatch : NULL
+
 #endif
