@@ -283,6 +283,35 @@ void Allocation::copy2DStridedTo(void* data, size_t stride) {
     copy2DStridedTo(0, 0, mCurrentDimX, mCurrentDimY, data, stride);
 }
 
+void Allocation::validate3DRange(uint32_t xoff, uint32_t yoff, uint32_t zoff, uint32_t w,
+                                 uint32_t h, uint32_t d) {
+    if (mAdaptedAllocation != NULL) {
+
+    } else {
+        if (((xoff + w) > mCurrentDimX) || ((yoff + h) > mCurrentDimY) || ((zoff + d) > mCurrentDimZ)) {
+            mRS->throwError(RS_ERROR_INVALID_PARAMETER, "Updated region larger than allocation.");
+        }
+    }
+}
+
+void Allocation::copy3DRangeFrom(uint32_t xoff, uint32_t yoff, uint32_t zoff, uint32_t w,
+                                 uint32_t h, uint32_t d, const void* data) {
+    validate3DRange(xoff, yoff, zoff, w, h, d);
+    tryDispatch(mRS, RS::dispatch->Allocation3DData(mRS->getContext(), getIDSafe(), xoff, yoff, zoff,
+                                                    mSelectedLOD, w, h, d, data,
+                                                    w * h * d * mType->getElement()->getSizeBytes(),
+                                                    w * mType->getElement()->getSizeBytes()));
+}
+
+void Allocation::copy3DRangeFrom(uint32_t xoff, uint32_t yoff, uint32_t zoff, uint32_t w, uint32_t h, uint32_t d,
+                                 sp<const Allocation> data, uint32_t dataXoff, uint32_t dataYoff, uint32_t dataZoff) {
+    validate3DRange(xoff, yoff, zoff, dataXoff, dataYoff, dataZoff);
+    tryDispatch(mRS, RS::dispatch->AllocationCopy3DRange(mRS->getContext(), getIDSafe(), xoff, yoff, zoff,
+                                                         mSelectedLOD, w, h, d, data->getIDSafe(),
+                                                         dataXoff, dataYoff, dataZoff, data->mSelectedLOD));
+}
+
+
 sp<Allocation> Allocation::createTyped(sp<RS> rs, sp<const Type> type,
                                     RsAllocationMipmapControl mips, uint32_t usage) {
     void *id = 0;

@@ -244,6 +244,8 @@ protected:
     virtual void updateFromNative();
 
     void validate2DRange(uint32_t xoff, uint32_t yoff, uint32_t w, uint32_t h);
+    void validate3DRange(uint32_t xoff, uint32_t yoff, uint32_t zoff,
+                         uint32_t w, uint32_t h, uint32_t d);
 
 public:
     sp<const Type> getType() const {
@@ -281,8 +283,13 @@ public:
                          void *data, size_t stride);
     void copy2DStridedTo(void *data, size_t stride);
 
-    void resize(int dimX);
-    void resize(int dimX, int dimY);
+    void copy3DRangeFrom(uint32_t xoff, uint32_t yoff, uint32_t zoff, uint32_t w,
+                         uint32_t h, uint32_t d, const void* data);
+
+    void copy3DRangeFrom(uint32_t xoff, uint32_t yoff, uint32_t zoff,
+                         uint32_t w, uint32_t h, uint32_t d,
+                         sp<const Allocation> data,
+                         uint32_t dataXoff, uint32_t dataYoff, uint32_t dataZoff);
 
     static sp<Allocation> createTyped(sp<RS> rs, sp<const Type> type,
                                    RsAllocationMipmapControl mips, uint32_t usage);
