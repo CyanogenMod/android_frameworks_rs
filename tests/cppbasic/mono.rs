@@ -70,7 +70,7 @@ int __attribute__((kernel)) kern1(int i, uint32_t x, uint32_t y) {
 }
 
 void __attribute__((kernel)) verify_kern1(int i, uint32_t x, uint32_t y) {
-    _RS_ASSERT(i == (10 * x + 100 * y));
+    _RS_ASSERT(i == (5 + 10 * x + 100 * y));
     rsDebug("i ", i);
 }
 
