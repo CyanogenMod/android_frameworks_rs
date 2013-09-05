@@ -740,7 +740,7 @@ class ScriptIntrinsicColorMatrix : public ScriptIntrinsic {
  private:
     ScriptIntrinsicColorMatrix(sp<RS> rs, sp<const Element> e);
  public:
-    static sp<ScriptIntrinsicColorMatrix> create(sp<RS> rs, sp<const Element> e);
+    static sp<ScriptIntrinsicColorMatrix> create(sp<RS> rs);
     void forEach(sp<Allocation> in, sp<Allocation> out);
     void setAdd(float* add);
     void setColorMatrix3(float* m);
