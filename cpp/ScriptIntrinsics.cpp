@@ -243,12 +243,14 @@ void ScriptIntrinsicBlur::setRadius(float radius) {
 
 
 
-sp<ScriptIntrinsicColorMatrix> ScriptIntrinsicColorMatrix::create(sp<RS> rs, sp<const Element> e) {
-    return new ScriptIntrinsicColorMatrix(rs, e);
+sp<ScriptIntrinsicColorMatrix> ScriptIntrinsicColorMatrix::create(sp<RS> rs) {
+    return new ScriptIntrinsicColorMatrix(rs, Element::RGBA_8888(rs));
 }
 
 ScriptIntrinsicColorMatrix::ScriptIntrinsicColorMatrix(sp<RS> rs, sp<const Element> e)
     : ScriptIntrinsic(rs, RS_SCRIPT_INTRINSIC_ID_COLOR_MATRIX, e) {
+    float add[4] = {0.f, 0.f, 0.f, 0.f};
+    setAdd(add);
 
 }
 
@@ -285,7 +287,28 @@ void ScriptIntrinsicColorMatrix::setAdd(float* add) {
 }
 
 void ScriptIntrinsicColorMatrix::setColorMatrix3(float* m) {
-    Script::setVar(0, (void*)m, sizeof(float) * 9);
+    float temp[16];
+    temp[0] = m[0];
+    temp[1] = m[1];
+    temp[2] = m[2];
+    temp[3] = 0.f;
+
+    temp[4] = m[3];
+    temp[5] = m[4];
+    temp[6] = m[5];
+    temp[7] = 0.f;
+
+    temp[8] = m[6];
+    temp[9] = m[7];
+    temp[10] = m[8];
+    temp[11] = 0.f;
+
+    temp[12] = 0.f;
+    temp[13] = 0.f;
+    temp[14] = 0.f;
+    temp[15] = 1.f;
+
+    setColorMatrix4(temp);
 }
 
 
@@ -295,19 +318,19 @@ void ScriptIntrinsicColorMatrix::setColorMatrix4(float* m) {
 
 
 void ScriptIntrinsicColorMatrix::setGreyscale() {
-    float matrix[] = {0.299f, 0.587f,  0.114f, 0.299f, 0.587f, 0.114f, 0.299f, 0.587f, 0.114f};
+    float matrix[] = {0.299f, 0.299f, 0.299f,0.587f,0.587f,0.587f,0.114f,0.114f, 0.114f};
     setColorMatrix3(matrix);
 }
 
 
 void ScriptIntrinsicColorMatrix::setRGBtoYUV() {
-    float matrix[] = {0.299f,0.587f,0.114f,-0.14713f,-0.28886f,0.436f,0.615f,-0.51499f,-0.10001f};
+    float matrix[] = { 0.299f, -0.14713f, 0.615f, 0.587f, -0.28886f, -0.51499f, 0.114f, 0.436f, -0.10001f};
     setColorMatrix3(matrix);
 }
 
 
 void ScriptIntrinsicColorMatrix::setYUVtoRGB() {
-    float matrix[] = {1.f,0.f,1.13983f,1.f,-0.39465f,-0.5806f,1.f,2.03211f,0.f};
+    float matrix[] = {1.f, 1.f, 1.f, 0.f, -0.39465f, 2.03211f, 1.13983f, -0.5806f, 0.f};
     setColorMatrix3(matrix);
 }
 
