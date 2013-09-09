@@ -59,13 +59,20 @@ class Sampler;
      RS_YUV_MAX = 3
  };
 
+ enum RSInitFlags {
+     RS_INIT_SYNCHRONOUS = 1,
+     RS_INIT_LOW_LATENCY = 2,
+     RS_INIT_MAX = 4
+ };
+
+
  class RS : public android::RSC::LightRefBase<RS> {
 
  public:
     RS();
     virtual ~RS();
 
-    bool init(bool forceCpu = false, bool synchronous = false);
+    bool init(uint32_t flags);
 
     void setErrorHandler(ErrorHandlerFunc_t func);
     ErrorHandlerFunc_t getErrorHandler() { return mErrorFunc; }
@@ -86,7 +93,7 @@ class Sampler;
     static bool usingNative;
     static bool initDispatch(int targetApi);
 
-    bool init(int targetApi, bool forceCpu, bool synchronous);
+    bool init(int targetApi, uint32_t flags);
     static void * threadProc(void *);
 
     static bool gInitialized;

@@ -85,7 +85,7 @@ public:
 
     static Context * createContext(Device *, const RsSurfaceConfig *sc,
             RsContextType ct = RS_CONTEXT_TYPE_NORMAL,
-            bool forceCpu = false, bool synchronous = false);
+            uint32_t flags = 0);
     static Context * createContextLite();
     ~Context();
 
