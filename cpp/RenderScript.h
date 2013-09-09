@@ -20,7 +20,7 @@
 #include "rsCppStructs.h"
 
 #ifdef RS_SERVER
-#define RS_VERSION 18
+#define RS_VERSION 19
 #endif
 
 #endif

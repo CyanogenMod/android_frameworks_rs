@@ -26,7 +26,7 @@ typedef void (*ElementGetSubElementsFnPtr)(RsContext, RsElement, uint32_t *ids, 
 typedef RsDevice (*DeviceCreateFnPtr) ();
 typedef void (*DeviceDestroyFnPtr) (RsDevice dev);
 typedef void (*DeviceSetConfigFnPtr) (RsDevice dev, RsDeviceParam p, int32_t value);
-typedef RsContext (*ContextCreateFnPtr)(RsDevice vdev, uint32_t version, uint32_t sdkVersion, RsContextType ct, bool forceCpu, bool synchronous);
+typedef RsContext (*ContextCreateFnPtr)(RsDevice vdev, uint32_t version, uint32_t sdkVersion, RsContextType ct, uint32_t flags);
 typedef void (*GetNameFnPtr)(RsContext, void * obj, const char **name);
 
 typedef void (*ContextDestroyFnPtr) (RsContext);
