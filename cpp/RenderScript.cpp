@@ -20,15 +20,13 @@
 
 #include "RenderScript.h"
 #include "rsCppStructs.h"
+#include "rsCppInternal.h"
 
 #include <dlfcn.h>
 
 #if !defined(RS_SERVER) && defined(HAVE_ANDROID_OS)
 #include <cutils/properties.h>
 #endif
-
-#define LOG_NDEBUG 0
-#define LOG_TAG "rsC++"
 
 using namespace android;
 using namespace RSC;
