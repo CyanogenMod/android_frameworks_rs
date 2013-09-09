@@ -516,12 +516,15 @@ Context::Context() {
 }
 
 Context * Context::createContext(Device *dev, const RsSurfaceConfig *sc,
-                                 RsContextType ct, bool forceCpu,
-                                 bool synchronous) {
+                                 RsContextType ct, uint32_t flags) {
     Context * rsc = new Context();
 
-    rsc->mForceCpu = forceCpu;
-    rsc->mSynchronous = synchronous;
+    if (flags & RS_CONTEXT_LOW_LATENCY) {
+        rsc->mForceCpu = true;
+    }
+    if (flags & RS_CONTEXT_SYNCHRONOUS) {
+        rsc->mSynchronous = true;
+    }
     rsc->mContextType = ct;
 
     if (!rsc->initContext(dev, sc)) {
@@ -903,10 +906,10 @@ void rsi_ContextSendMessage(Context *rsc, uint32_t id, const uint8_t *data, size
 }
 
 extern "C" RsContext rsContextCreate(RsDevice vdev, uint32_t version, uint32_t sdkVersion,
-                                     RsContextType ct, bool forceCpu, bool synchronous) {
+                                     RsContextType ct, uint32_t flags) {
     //ALOGV("rsContextCreate dev=%p", vdev);
     Device * dev = static_cast<Device *>(vdev);
-    Context *rsc = Context::createContext(dev, NULL, ct, forceCpu, synchronous);
+    Context *rsc = Context::createContext(dev, NULL, ct, flags);
     if (rsc) {
         rsc->setTargetSdkVersion(sdkVersion);
     }

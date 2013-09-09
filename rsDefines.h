@@ -395,6 +395,13 @@ typedef struct {
 
 } RsScriptCall;
 
+enum RsContextFlags {
+    RS_CONTEXT_SYNCHRONOUS = 1,
+    RS_CONTEXT_LOW_LATENCY = 2,
+    RS_CONTEXT_MAX = 4
+};
+
+
 #ifdef __cplusplus
 };
 #endif

@@ -66,8 +66,8 @@ RS::~RS() {
     }
 }
 
-bool RS::init(bool forceCpu, bool synchronous) {
-    return RS::init(RS_VERSION, forceCpu, synchronous);
+bool RS::init(uint32_t flags) {
+    return RS::init(RS_VERSION, flags);
 }
 
 static bool loadSymbols(void* handle) {
@@ -412,7 +412,7 @@ static bool loadSO(const char* filename) {
         ALOGE("%s init failed!", filename);
         return false;
     }
-    ALOGE("Successfully loaded %s", filename);
+    //ALOGE("Successfully loaded %s", filename);
     return true;
 }
 
@@ -460,7 +460,7 @@ bool RS::initDispatch(int targetApi) {
     return false;
 }
 
-bool RS::init(int targetApi, bool forceCpu, bool synchronous) {
+bool RS::init(int targetApi, uint32_t flags) {
     if (initDispatch(targetApi) == false) {
         ALOGE("Couldn't initialize dispatch table");
         return false;
@@ -472,7 +472,12 @@ bool RS::init(int targetApi, bool forceCpu, bool synchronous) {
         return false;
     }
 
-    mContext = RS::dispatch->ContextCreate(mDev, 0, targetApi, RS_CONTEXT_TYPE_NORMAL, forceCpu, synchronous);
+    if (flags >= RS_CONTEXT_MAX) {
+        ALOGE("Invalid flags passed");
+        return false;
+    }
+
+    mContext = RS::dispatch->ContextCreate(mDev, 0, targetApi, RS_CONTEXT_TYPE_NORMAL, flags);
     if (mContext == 0) {
         ALOGE("Context creation failed");
         return false;

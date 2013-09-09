@@ -55,7 +55,7 @@ extern "C" {
     void rsDeviceDestroy(RsDevice dev);
     void rsDeviceSetConfig(RsDevice dev, RsDeviceParam p, int32_t value);
     RsContext rsContextCreate(RsDevice dev, uint32_t version, uint32_t sdkVersion,
-                              RsContextType ct, bool forceCpu, bool synchronous);
+                              RsContextType ct, uint32_t flags);
 }
 #include "rsgApiFuncDecl.h"
 
