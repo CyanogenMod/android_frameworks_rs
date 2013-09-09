@@ -18,6 +18,7 @@
 #include <string.h>
 
 #include "RenderScript.h"
+#include "rsCppInternal.h"
 
 // from system/graphics.h
 enum {
