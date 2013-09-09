@@ -18,7 +18,6 @@
 #define ANDROID_RSCPPSTRUCTS_H
 
 #include "rsDefines.h"
-#include "rsCppUtils.h"
 #include "util/RefBase.h"
 #include "rsDispatch.h"
 
