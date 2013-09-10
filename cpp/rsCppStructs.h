@@ -72,7 +72,7 @@ class Sampler;
     RS();
     virtual ~RS();
 
-    bool init(uint32_t flags);
+    bool init(uint32_t flags = 0);
 
     void setErrorHandler(ErrorHandlerFunc_t func);
     ErrorHandlerFunc_t getErrorHandler() { return mErrorFunc; }
