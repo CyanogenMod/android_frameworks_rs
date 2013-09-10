@@ -1097,6 +1097,18 @@ Allocation * RsdCpuScriptImpl::getAllocationForPointer(const void *ptr) const {
     return NULL;
 }
 
+void RsdCpuScriptImpl::preLaunch(uint32_t slot, const Allocation * ain,
+                       Allocation * aout, const void * usr,
+                       uint32_t usrLen, const RsScriptCall *sc)
+{
+}
+
+void RsdCpuScriptImpl::postLaunch(uint32_t slot, const Allocation * ain,
+                        Allocation * aout, const void * usr,
+                        uint32_t usrLen, const RsScriptCall *sc)
+{
+}
+
 
 }
 }

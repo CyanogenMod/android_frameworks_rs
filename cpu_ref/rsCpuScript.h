@@ -52,6 +52,12 @@ public:
 
     virtual void invokeFunction(uint32_t slot, const void *params, size_t paramLength);
     virtual int invokeRoot();
+    virtual void preLaunch(uint32_t slot, const Allocation * ain,
+                           Allocation * aout, const void * usr,
+                           uint32_t usrLen, const RsScriptCall *sc);
+    virtual void postLaunch(uint32_t slot, const Allocation * ain,
+                            Allocation * aout, const void * usr,
+                            uint32_t usrLen, const RsScriptCall *sc);
     virtual void invokeForEach(uint32_t slot,
                        const Allocation * ain,
                        Allocation * aout,
