@@ -591,7 +591,11 @@ bool RsdCpuScriptIntrinsicColorMatrix::build(Key_t key) {
         } else {
             switch(key.u.outVecSize) {
             case 3:
-                ADD_CHUNK(pack_u8_4);
+                if (key.u.copyAlpha) {
+                    ADD_CHUNK(pack_u8_3);
+                } else {
+                    ADD_CHUNK(pack_u8_4);
+                }
                 break;
             case 2:
                 ADD_CHUNK(pack_u8_3);
@@ -676,14 +680,12 @@ void RsdCpuScriptIntrinsicColorMatrix::setGlobalVar(uint32_t slot, const void *d
         rsAssert(0);
         break;
     }
-    updateCoeffCache(1.f);
-
     mRootPtr = &kernel;
 }
 
 
 static void One(const RsForEachStubParamStruct *p, void *out,
-                const void *py, const float* coeff,
+                const void *py, const float* coeff, const float *add,
                 uint32_t vsin, uint32_t vsout, bool fin, bool fout) {
 
     float4 f = 0.f;
@@ -735,10 +737,11 @@ static void One(const RsForEachStubParamStruct *p, void *out,
             f.w * coeff[15];
     //ALOGE("f2  %f %f %f %f", sum.x, sum.y, sum.z, sum.w);
 
-    sum.x = sum.x < 0 ? 0 : (sum.x > 255 ? 255 : sum.x);
-    sum.y = sum.y < 0 ? 0 : (sum.y > 255 ? 255 : sum.y);
-    sum.z = sum.z < 0 ? 0 : (sum.z > 255 ? 255 : sum.z);
-    sum.w = sum.w < 0 ? 0 : (sum.w > 255 ? 255 : sum.w);
+    sum.x += add[0];
+    sum.y += add[1];
+    sum.z += add[2];
+    sum.w += add[3];
+
 
     //ALOGE("fout %i vs %i, sum %f %f %f %f", fout, vsout, sum.x, sum.y, sum.z, sum.w);
     if (fout) {
@@ -755,6 +758,11 @@ static void One(const RsForEachStubParamStruct *p, void *out,
             break;
         }
     } else {
+        sum.x = sum.x < 0 ? 0 : (sum.x > 255 ? 255 : sum.x);
+        sum.y = sum.y < 0 ? 0 : (sum.y > 255 ? 255 : sum.y);
+        sum.z = sum.z < 0 ? 0 : (sum.z > 255 ? 255 : sum.z);
+        sum.w = sum.w < 0 ? 0 : (sum.w > 255 ? 255 : sum.w);
+
         switch(vsout) {
         case 3:
         case 2:
@@ -780,18 +788,14 @@ void RsdCpuScriptIntrinsicColorMatrix::kernel(const RsForEachStubParamStruct *p,
     uint32_t x1 = xstart;
     uint32_t x2 = xend;
 
-   // if (p->y > 2) return;
-
     uint32_t vsin = cp->mLastKey.u.inVecSize;
     uint32_t vsout = cp->mLastKey.u.outVecSize;
     bool floatIn = !!cp->mLastKey.u.inType;
     bool floatOut = !!cp->mLastKey.u.outType;
 
-
     if(x2 > x1) {
         int32_t len = (x2 - x1) >> 2;
         if((cp->mOptKernel != NULL) && (len > 0)) {
-            //ALOGE("%p %p %i", out, in, len);
             cp->mOptKernel(out, in, cp->ip, len);
             x1 += len << 2;
             out += outstep * (len << 2);
@@ -799,7 +803,7 @@ void RsdCpuScriptIntrinsicColorMatrix::kernel(const RsForEachStubParamStruct *p,
         }
 
         while(x1 != x2) {
-            One(p, out, in, cp->tmpFp, vsin, vsout, floatIn, floatOut);
+            One(p, out, in, cp->tmpFp, cp->fpa, vsin, vsout, floatIn, floatOut);
             out += outstep;
             in += instep;
             x1++;
@@ -811,8 +815,21 @@ void RsdCpuScriptIntrinsicColorMatrix::preLaunch(
         uint32_t slot, const Allocation * ain, Allocation * aout,
         const void * usr, uint32_t usrLen, const RsScriptCall *sc) {
 
+    const Element *ein = ain->mHal.state.type->getElement();
+    const Element *eout = aout->mHal.state.type->getElement();
+
+    if (ein->getType() == eout->getType()) {
+        updateCoeffCache(1.f);
+    } else {
+        if (eout->getType() == RS_TYPE_UNSIGNED_8) {
+            updateCoeffCache(255.f);
+        } else {
+            updateCoeffCache(1.f / 255.f);
+        }
+    }
+
     Key_t key = computeKey(ain->mHal.state.type->getElement(),
-                             aout->mHal.state.type->getElement());
+                           aout->mHal.state.type->getElement());
     if ((mOptKernel == NULL) || (mLastKey.key != key.key)) {
         if (mBuf) munmap(mBuf, mBufSize);
         mBuf = NULL;
@@ -820,16 +837,6 @@ void RsdCpuScriptIntrinsicColorMatrix::preLaunch(
         if (build(key)) {
             mOptKernel = (void (*)(void *, const void *, const short *, uint32_t)) mBuf;
             mLastKey = key;
-        }
-    }
-
-    if (key.u.inType == key.u.outType) {
-        updateCoeffCache(1.f);
-    } else {
-        if (key.u.inType) {
-            updateCoeffCache(255.f);
-        } else {
-            updateCoeffCache(1.f / 255.f);
         }
     }
 }
