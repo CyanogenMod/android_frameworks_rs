@@ -67,8 +67,12 @@ void CpuScriptGroupImpl::scriptGroupRoot(const RsForEachStubParamStruct *p,
         mp->ptrOut = NULL;
         mp->out = NULL;
 
+        uint32_t istep = 0;
+        uint32_t ostep = 0;
+
         if (sl->ins[ct]) {
             mp->ptrIn = (const uint8_t *)sl->ins[ct]->mHal.drvState.lod[0].mallocPtr;
+            istep = sl->ins[ct]->mHal.state.elementSizeBytes;
             mp->in = mp->ptrIn;
             if (sl->inExts[ct]) {
                 mp->in = mp->ptrIn + sl->ins[ct]->mHal.drvState.lod[0].stride * p->y;
@@ -82,6 +86,7 @@ void CpuScriptGroupImpl::scriptGroupRoot(const RsForEachStubParamStruct *p,
         if (sl->outs[ct]) {
             mp->ptrOut = (uint8_t *)sl->outs[ct]->mHal.drvState.lod[0].mallocPtr;
             mp->out = mp->ptrOut;
+            ostep = sl->outs[ct]->mHal.state.elementSizeBytes;
             if (sl->outExts[ct]) {
                 mp->out = mp->ptrOut + sl->outs[ct]->mHal.drvState.lod[0].stride * p->y;
             } else {
@@ -92,7 +97,7 @@ void CpuScriptGroupImpl::scriptGroupRoot(const RsForEachStubParamStruct *p,
         }
 
         //ALOGE("kernel %i %p,%p  %p,%p", ct, mp->ptrIn, mp->in, mp->ptrOut, mp->out);
-        func(p, xstart, xend, instep, outstep);
+        func(p, xstart, xend, istep, ostep);
     }
     //ALOGE("script group root");
 
@@ -204,6 +209,7 @@ void CpuScriptGroupImpl::execute() {
             fnPtrs.add((void *)mtls.kernel);
             usrPtrs.add(mtls.fep.usr);
             sigs.add(mtls.fep.usrLen);
+            si->preLaunch(kernels[ct]->mSlot, ins[ct], outs[ct], mtls.fep.usr, mtls.fep.usrLen, NULL);
         }
         sl.sigs = sigs.array();
         sl.usrPtrs = usrPtrs.array();
@@ -218,6 +224,12 @@ void CpuScriptGroupImpl::execute() {
         mtls.kernel = (void (*)())&scriptGroupRoot;
         mtls.fep.usr = &sl;
         mCtx->launchThreads(ins[0], outs[0], NULL, &mtls);
+
+        for (size_t ct=0; ct < kernels.size(); ct++) {
+            Script *s = kernels[ct]->mScript;
+            RsdCpuScriptImpl *si = (RsdCpuScriptImpl *)mCtx->lookupScript(s);
+            si->postLaunch(kernels[ct]->mSlot, ins[ct], outs[ct], NULL, 0, NULL);
+        }
     }
 }
 
