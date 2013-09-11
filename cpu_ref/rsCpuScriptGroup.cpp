@@ -119,6 +119,11 @@ void CpuScriptGroupImpl::execute() {
     for (size_t ct=0; ct < mSG->mNodes.size(); ct++) {
         ScriptGroup::Node *n = mSG->mNodes[ct];
         Script *s = n->mKernels[0]->mScript;
+        if (s->hasObjectSlots()) {
+            // Disable the ScriptGroup optimization if we have global RS
+            // objects that might interfere between kernels.
+            fieldDep = true;
+        }
 
         //ALOGE("node %i, order %i, in %i out %i", (int)ct, n->mOrder, (int)n->mInputs.size(), (int)n->mOutputs.size());
 
@@ -135,6 +140,12 @@ void CpuScriptGroupImpl::execute() {
             Allocation *aout = NULL;
             bool inExt = false;
             bool outExt = false;
+
+            if (k->mScript->hasObjectSlots()) {
+                // Disable the ScriptGroup optimization if we have global RS
+                // objects that might interfere between kernels.
+                fieldDep = true;
+            }
 
             for (size_t ct3=0; ct3 < n->mInputs.size(); ct3++) {
                 if (n->mInputs[ct3]->mDstKernel.get() == k) {
@@ -189,7 +200,9 @@ void CpuScriptGroupImpl::execute() {
 
             si->forEachMtlsSetup(ins[ct], outs[ct], NULL, 0, NULL, &mtls);
             si->forEachKernelSetup(slot, &mtls);
+            si->preLaunch(slot, ins[ct], outs[ct], mtls.fep.usr, mtls.fep.usrLen, NULL);
             mCtx->launchThreads(ins[ct], outs[ct], NULL, &mtls);
+            si->postLaunch(slot, ins[ct], outs[ct], NULL, 0, NULL);
         }
     } else {
         ScriptList sl;

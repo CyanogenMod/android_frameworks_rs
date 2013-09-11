@@ -27,6 +27,7 @@ Script::Script(Context *rsc) : ObjectBase(rsc) {
     mSlots = NULL;
     mTypes = NULL;
     mInitialized = false;
+    mHasObjectSlots = false;
 }
 
 Script::~Script() {
@@ -48,6 +49,7 @@ void Script::setSlot(uint32_t slot, Allocation *a) {
     }
 
     mSlots[slot].set(a);
+    mHasObjectSlots = true;
     mRSC->mHal.funcs.script.setGlobalBind(mRSC, this, slot, a);
 }
 
@@ -85,6 +87,7 @@ void Script::setVarObj(uint32_t slot, ObjectBase *val) {
         ALOGE("Script::setVarObj unable to set allocation, invalid slot index");
         return;
     }
+    mHasObjectSlots = true;
     //ALOGE("setvarobj  %i %p", slot, val);
     mRSC->mHal.funcs.script.setGlobalObj(mRSC, this, slot, val);
 }
