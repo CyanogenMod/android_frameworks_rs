@@ -84,15 +84,28 @@ SNIP_START(_N_ColorMatrix_load_u8_4)
     vld4.8 {d0[3],d1[3],d2[3],d3[3]}, [r1]!
 SNIP_END(_N_ColorMatrix_load_u8_4)
 
+SNIP_START(_N_ColorMatrix_load_u8_3)
+    vld4.8 {d0[0],d1[0],d2[0],d3[0]}, [r1]!
+    vld4.8 {d0[1],d1[1],d2[1],d3[1]}, [r1]!
+    vld4.8 {d0[2],d1[2],d2[2],d3[2]}, [r1]!
+    vld4.8 {d0[3],d1[3],d2[3],d3[3]}, [r1]!
+    veor d3, d3
+SNIP_END(_N_ColorMatrix_load_u8_3)
+
 SNIP_START(_N_ColorMatrix_load_u8_2)
     vld2.8 {d0[0],d1[0]}, [r1]!
     vld2.8 {d0[1],d1[1]}, [r1]!
     vld2.8 {d0[2],d1[2]}, [r1]!
     vld2.8 {d0[3],d1[3]}, [r1]!
+    veor d2, d2
+    veor d3, d3
 SNIP_END(_N_ColorMatrix_load_u8_2)
 
 SNIP_START(_N_ColorMatrix_load_u8_1)
     vld1.32 {d0[0]}, [r1]!
+    veor d1, d1
+    veor d2, d2
+    veor d3, d3
 SNIP_END(_N_ColorMatrix_load_u8_1)
 
 SNIP_START(_N_ColorMatrix_load_u8f_4)
@@ -114,6 +127,23 @@ SNIP_START(_N_ColorMatrix_load_u8f_4)
     vcvt.f32.s32 q0, q0
 SNIP_END(_N_ColorMatrix_load_u8f_4)
 
+SNIP_START(_N_ColorMatrix_load_u8f_3)
+    vld4.8 {d0[0],d1[0],d2[0],d3[0]}, [r1]!
+    vld4.8 {d0[1],d1[1],d2[1],d3[1]}, [r1]!
+    vld4.8 {d0[2],d1[2],d2[2],d3[2]}, [r1]!
+    vld4.8 {d0[3],d1[3],d2[3],d3[3]}, [r1]!
+    vmovl.u8 q2, d2
+    vmovl.u8 q1, d1
+    vmovl.u8 q0, d0
+    vmovl.u16 q2, d4
+    vmovl.u16 q1, d2
+    vmovl.u16 q0, d0
+    vcvt.f32.s32 q2, q2
+    vcvt.f32.s32 q1, q1
+    vcvt.f32.s32 q0, q0
+    veor q3, q3
+SNIP_END(_N_ColorMatrix_load_u8f_3)
+
 SNIP_START(_N_ColorMatrix_load_u8f_2)
     vld2.8 {d0[0],d1[0]}, [r1]!
     vld2.8 {d0[1],d1[1]}, [r1]!
@@ -125,13 +155,18 @@ SNIP_START(_N_ColorMatrix_load_u8f_2)
     vmovl.u16 q0, d0
     vcvt.f32.s32 q1, q1
     vcvt.f32.s32 q0, q0
+    veor q2, q2
+    veor q3, q3
 SNIP_END(_N_ColorMatrix_load_u8f_2)
 
 SNIP_START(_N_ColorMatrix_load_u8f_1)
-    vld1.32 {d0}, [r1]!
+    vld1.32 {d0[0]}, [r1]!
     vmovl.u8 q0, d0
     vmovl.u16 q0, d0
     vcvt.f32.s32 q0, q0
+    veor q1, q1
+    veor q2, q2
+    veor q3, q3
 SNIP_END(_N_ColorMatrix_load_u8f_1)
 
 SNIP_START(_N_ColorMatrix_load_f32_4)
@@ -141,15 +176,32 @@ SNIP_START(_N_ColorMatrix_load_f32_4)
     vld4.32 {d1[1],d3[1],d5[1],d7[1]}, [r1]!
 SNIP_END(_N_ColorMatrix_load_f32_4)
 
+SNIP_START(_N_ColorMatrix_load_f32_3)
+    vld3.32 {d0[0],d2[0],d4[0]}, [r1]!
+    add r1, r1, #4
+    vld3.32 {d0[1],d2[1],d4[1]}, [r1]!
+    add r1, r1, #4
+    vld3.32 {d1[0],d3[0],d5[0]}, [r1]!
+    add r1, r1, #4
+    vld3.32 {d1[1],d3[1],d5[1]}, [r1]!
+    add r1, r1, #4
+    veor q3, q3
+SNIP_END(_N_ColorMatrix_load_f32_3)
+
 SNIP_START(_N_ColorMatrix_load_f32_2)
     vld2.32 {d0[0],d2[0]}, [r1]!
     vld2.32 {d0[1],d2[1]}, [r1]!
     vld2.32 {d1[0],d3[0]}, [r1]!
     vld2.32 {d1[1],d3[1]}, [r1]!
+    veor q2, q2
+    veor q3, q3
 SNIP_END(_N_ColorMatrix_load_f32_2)
 
 SNIP_START(_N_ColorMatrix_load_f32_1)
     vld1.32 {q0}, [r1]!
+    veor q1, q1
+    veor q2, q2
+    veor q3, q3
 SNIP_END(_N_ColorMatrix_load_f32_1)
 
 
@@ -203,7 +255,6 @@ SNIP_START(_N_ColorMatrix_store_f32u_2)
     vqmovn.s32 d2, q1
     vqmovun.s16 d0, q0
     vqmovun.s16 d1, q1
-    vst4.8 {d0[0],d1[0],d2[0],d3[0]}, [r0]!
     vst2.8 {d0[0],d1[0]}, [r0]!
     vst2.8 {d0[1],d1[1]}, [r0]!
     vst2.8 {d0[2],d1[2]}, [r0]!
@@ -223,6 +274,13 @@ SNIP_START(_N_ColorMatrix_store_f32_4)
     vst4.32 {d1[0],d3[0],d5[0],d7[0]}, [r0]!
     vst4.32 {d1[1],d3[1],d5[1],d7[1]}, [r0]!
 SNIP_END(_N_ColorMatrix_store_f32_4)
+
+SNIP_START(_N_ColorMatrix_store_f32_3)
+    vst4.32 {d0[0],d2[0],d4[0],d6[0]}, [r0]!
+    vst4.32 {d0[1],d2[1],d4[1],d6[1]}, [r0]!
+    vst4.32 {d1[0],d3[0],d5[0],d7[0]}, [r0]!
+    vst4.32 {d1[1],d3[1],d5[1],d7[1]}, [r0]!
+SNIP_END(_N_ColorMatrix_store_f32_3)
 
 SNIP_START(_N_ColorMatrix_store_f32_2)
     vst2.32 {d0[0],d2[0]}, [r0]!
@@ -259,10 +317,10 @@ SNIP_START(_N_ColorMatrix_unpack_u8_1)
 SNIP_END(_N_ColorMatrix_unpack_u8_1)
 
 SNIP_START(_N_ColorMatrix_pack_u8_4)
-    vshrn.i32 d24, q8, #8
-    vshrn.i32 d26, q9, #8
-    vshrn.i32 d28, q10, #8
-    vshrn.i32 d30, q11, #8
+    vrshrn.i32 d24, q8, #8
+    vrshrn.i32 d26, q9, #8
+    vrshrn.i32 d28, q10, #8
+    vrshrn.i32 d30, q11, #8
     vqmovun.s16 d0, q12
     vqmovun.s16 d1, q13
     vqmovun.s16 d2, q14
@@ -270,23 +328,23 @@ SNIP_START(_N_ColorMatrix_pack_u8_4)
 SNIP_END(_N_ColorMatrix_pack_u8_4)
 
 SNIP_START(_N_ColorMatrix_pack_u8_3)
-    vshrn.i32 d24, q8, #8
-    vshrn.i32 d26, q9, #8
-    vshrn.i32 d28, q10, #8
+    vrshrn.i32 d24, q8, #8
+    vrshrn.i32 d26, q9, #8
+    vrshrn.i32 d28, q10, #8
     vqmovun.s16 d0, q12
     vqmovun.s16 d1, q13
     vqmovun.s16 d2, q14
 SNIP_END(_N_ColorMatrix_pack_u8_3)
 
 SNIP_START(_N_ColorMatrix_pack_u8_2)
-    vshrn.i32 d24, q8, #8
-    vshrn.i32 d26, q9, #8
+    vrshrn.i32 d24, q8, #8
+    vrshrn.i32 d26, q9, #8
     vqmovun.s16 d0, q12
     vqmovun.s16 d1, q13
 SNIP_END(_N_ColorMatrix_pack_u8_2)
 
 SNIP_START(_N_ColorMatrix_pack_u8_1)
-    vshrn.i32 d24, q8, #8
+    vrshrn.i32 d24, q8, #8
     vqmovun.s16 d0, q12
 SNIP_END(_N_ColorMatrix_pack_u8_1)
 
