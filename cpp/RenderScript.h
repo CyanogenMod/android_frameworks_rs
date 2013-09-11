@@ -14,6 +14,17 @@
  * limitations under the License.
  */
 
+ /*! \mainpage notitle
+  *
+  * RenderScript is a high-performance runtime that provides
+  * compute operations at the native level. RenderScript code is compiled on devices
+  * at runtime to allow platform-independence as well.
+  * This reference documentation describes the RenderScript runtime APIs, which you
+  * can utilize to write RenderScript code in C99. The RenderScript compute header
+  * files are automatically included for you.
+  *
+  */
+
 #ifndef ANDROID_RENDERSCRIPT_H
 #define ANDROID_RENDERSCRIPT_H
 

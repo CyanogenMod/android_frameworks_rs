@@ -401,6 +401,8 @@ static bool loadSymbols(void* handle) {
     return true;
 }
 
+// this will only open API 19+ libRS
+// because that's when we changed libRS to extern "C" entry points
 static bool loadSO(const char* filename) {
     void* handle = dlopen(filename, RTLD_LAZY | RTLD_LOCAL);
     if (handle == NULL) {
