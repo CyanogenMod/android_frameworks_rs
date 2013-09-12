@@ -152,7 +152,7 @@ protected:
     static void kernel(const RsForEachStubParamStruct *p,
                        uint32_t xstart, uint32_t xend,
                        uint32_t instep, uint32_t outstep);
-    void updateCoeffCache(float fpMul);
+    void updateCoeffCache(float fpMul, float addMul);
 
     Key_t mLastKey;
     unsigned char *mBuf;
@@ -227,7 +227,7 @@ Key_t RsdCpuScriptIntrinsicColorMatrix::computeKey(
 
     // Is alpha a simple copy
     if (!(key.u.coeffMask & 0x0888) && (ip[15] == 256) && !(key.u.addMask & 0x8)) {
-        key.u.copyAlpha = 1;
+        key.u.copyAlpha = !(key.u.inType || key.u.outType);
     }
 
     //ALOGE("build key %08x, %08x", (int32_t)(key.key >> 32), (int32_t)key.key);
@@ -266,6 +266,13 @@ Key_t RsdCpuScriptIntrinsicColorMatrix::computeKey(
         break;
     }
 
+    if (key.u.inType && !key.u.outType) {
+        key.u.addMask |= 1;
+        if (key.u.outVecSize > 0) key.u.addMask |= 2;
+        if (key.u.outVecSize > 1) key.u.addMask |= 4;
+        if (key.u.outVecSize > 2) key.u.addMask |= 8;
+    }
+
     //ALOGE("build key %08x, %08x", (int32_t)(key.key >> 32), (int32_t)key.key);
     return key;
 }
@@ -283,12 +290,15 @@ DEF_SYM(postfix1)
 DEF_SYM(postfix2)
 
 DEF_SYM(load_u8_4)
+DEF_SYM(load_u8_3)
 DEF_SYM(load_u8_2)
 DEF_SYM(load_u8_1)
 DEF_SYM(load_u8f_4)
+DEF_SYM(load_u8f_3)
 DEF_SYM(load_u8f_2)
 DEF_SYM(load_u8f_1)
 DEF_SYM(load_f32_4)
+DEF_SYM(load_f32_3)
 DEF_SYM(load_f32_2)
 DEF_SYM(load_f32_1)
 
@@ -296,6 +306,7 @@ DEF_SYM(store_u8_4)
 DEF_SYM(store_u8_2)
 DEF_SYM(store_u8_1)
 DEF_SYM(store_f32_4)
+DEF_SYM(store_f32_3)
 DEF_SYM(store_f32_2)
 DEF_SYM(store_f32_1)
 DEF_SYM(store_f32u_4)
@@ -434,14 +445,9 @@ bool RsdCpuScriptIntrinsicColorMatrix::build(Key_t key) {
             }
         }
     }
-    for (int i=0; i < 4; i++) {
-        if (key.u.addMask & (1 << i)) {
-            ops[4][i] = 0x2 | opInit[i];
-            opInit[i] = 1;
-        }
-    }
 
     if (key.u.inType || key.u.outType) {
+        key.u.copyAlpha = 0;
         ADD_CHUNK(prefix_f);
         buf2 = buf;
 
@@ -449,8 +455,10 @@ bool RsdCpuScriptIntrinsicColorMatrix::build(Key_t key) {
         if (key.u.inType) {
             switch(key.u.inVecSize) {
             case 3:
-            case 2:
                 ADD_CHUNK(load_f32_4);
+                break;
+            case 2:
+                ADD_CHUNK(load_f32_3);
                 break;
             case 1:
                 ADD_CHUNK(load_f32_2);
@@ -462,8 +470,10 @@ bool RsdCpuScriptIntrinsicColorMatrix::build(Key_t key) {
         } else {
             switch(key.u.inVecSize) {
             case 3:
-            case 2:
                 ADD_CHUNK(load_u8f_4);
+                break;
+            case 2:
+                ADD_CHUNK(load_u8f_3);
                 break;
             case 1:
                 ADD_CHUNK(load_u8f_2);
@@ -505,8 +515,10 @@ bool RsdCpuScriptIntrinsicColorMatrix::build(Key_t key) {
         if (key.u.outType) {
             switch(key.u.outVecSize) {
             case 3:
-            case 2:
                 ADD_CHUNK(store_f32_4);
+                break;
+            case 2:
+                ADD_CHUNK(store_f32_3);
                 break;
             case 1:
                 ADD_CHUNK(store_f32_2);
@@ -548,7 +560,7 @@ bool RsdCpuScriptIntrinsicColorMatrix::build(Key_t key) {
             }
             break;
         case 2:
-            ADD_CHUNK(load_u8_4);
+            ADD_CHUNK(load_u8_3);
             ADD_CHUNK(unpack_u8_3);
             break;
         case 1:
@@ -647,15 +659,18 @@ bool RsdCpuScriptIntrinsicColorMatrix::build(Key_t key) {
 #endif
 }
 
-void RsdCpuScriptIntrinsicColorMatrix::updateCoeffCache(float fpMul) {
+void RsdCpuScriptIntrinsicColorMatrix::updateCoeffCache(float fpMul, float adMul) {
     for(int ct=0; ct < 16; ct++) {
-        //ALOGE("mat %i %f", ct, fp[ct]);
         ip[ct] = (short)(fp[ct] * 256.f + 0.5f);
         tmpFp[ct] = fp[ct] * fpMul;
+        //ALOGE("mat %i %f  %f", ct, fp[ct], tmpFp[ct]);
     }
 
+    float ad = 0.f;
+    if (fpMul > 254.f) ad = 0.5f;
     for(int ct=0; ct < 4; ct++) {
-        tmpFpa[ct * 4 + 0] = fpa[ct] * fpMul;
+        tmpFpa[ct * 4 + 0] = fpa[ct] * adMul + ad;
+        //ALOGE("fpa %i %f  %f", ct, fpa[ct], tmpFpa[ct * 4 + 0]);
         tmpFpa[ct * 4 + 1] = tmpFpa[ct * 4];
         tmpFpa[ct * 4 + 2] = tmpFpa[ct * 4];
         tmpFpa[ct * 4 + 3] = tmpFpa[ct * 4];
@@ -692,8 +707,11 @@ static void One(const RsForEachStubParamStruct *p, void *out,
     if (fin) {
         switch(vsin) {
         case 3:
+            f = ((const float4 *)py)[0];
+            break;
         case 2:
             f = ((const float4 *)py)[0];
+            f.w = 0.f;
             break;
         case 1:
             f.xy = ((const float2 *)py)[0];
@@ -705,8 +723,11 @@ static void One(const RsForEachStubParamStruct *p, void *out,
     } else {
         switch(vsin) {
         case 3:
+            f = convert_float4(((const uchar4 *)py)[0]);
+            break;
         case 2:
             f = convert_float4(((const uchar4 *)py)[0]);
+            f.w = 0.f;
             break;
         case 1:
             f.xy = convert_float2(((const uchar2 *)py)[0]);
@@ -758,10 +779,11 @@ static void One(const RsForEachStubParamStruct *p, void *out,
             break;
         }
     } else {
-        sum.x = sum.x < 0 ? 0 : (sum.x > 255 ? 255 : sum.x);
-        sum.y = sum.y < 0 ? 0 : (sum.y > 255 ? 255 : sum.y);
-        sum.z = sum.z < 0 ? 0 : (sum.z > 255 ? 255 : sum.z);
-        sum.w = sum.w < 0 ? 0 : (sum.w > 255 ? 255 : sum.w);
+        sum += 0.5f;
+        sum.x = sum.x < 0 ? 0 : (sum.x > 255.5 ? 255.5 : sum.x);
+        sum.y = sum.y < 0 ? 0 : (sum.y > 255.5 ? 255.5 : sum.y);
+        sum.z = sum.z < 0 ? 0 : (sum.z > 255.5 ? 255.5 : sum.z);
+        sum.w = sum.w < 0 ? 0 : (sum.w > 255.5 ? 255.5 : sum.w);
 
         switch(vsout) {
         case 3:
@@ -793,6 +815,8 @@ void RsdCpuScriptIntrinsicColorMatrix::kernel(const RsForEachStubParamStruct *p,
     bool floatIn = !!cp->mLastKey.u.inType;
     bool floatOut = !!cp->mLastKey.u.outType;
 
+    //if (!p->y) ALOGE("steps %i %i   %i %i", instep, outstep, vsin, vsout);
+
     if(x2 > x1) {
         int32_t len = (x2 - x1) >> 2;
         if((cp->mOptKernel != NULL) && (len > 0)) {
@@ -819,12 +843,12 @@ void RsdCpuScriptIntrinsicColorMatrix::preLaunch(
     const Element *eout = aout->mHal.state.type->getElement();
 
     if (ein->getType() == eout->getType()) {
-        updateCoeffCache(1.f);
+        updateCoeffCache(1.f, 1.f);
     } else {
         if (eout->getType() == RS_TYPE_UNSIGNED_8) {
-            updateCoeffCache(255.f);
+            updateCoeffCache(255.f, 255.f);
         } else {
-            updateCoeffCache(1.f / 255.f);
+            updateCoeffCache(1.f / 255.f, 1.f);
         }
     }
 
