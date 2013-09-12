@@ -64,19 +64,21 @@ int main(int argc, char** argv)
 
     // Verify a simple kernel.
     {
+        static const uint32_t xDim = 7;
+        static const uint32_t yDim = 7;
         sp<const Element> e = Element::I32(rs);
         Type::Builder tb(rs, e);
-        tb.setX(8);
-        tb.setY(8);
+        tb.setX(xDim);
+        tb.setY(yDim);
         sp<const Type> t = tb.create();
         sp<Allocation> kern1_in = Allocation::createTyped(rs, t);
         sp<Allocation> kern1_out = Allocation::createTyped(rs, t);
 
         int *buf = new int[t->getCount()];
         for (uint32_t ct=0; ct < t->getCount(); ct++) {
-            buf[ct] = 0;
+            buf[ct] = 5;
         }
-        kern1_in->copy1DFrom(buf);
+        kern1_in->copy2DRangeFrom(0, 0, xDim, yDim, buf);
         delete [] buf;
 
         sc->forEach_kern1(kern1_in, kern1_out);

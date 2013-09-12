@@ -15,7 +15,7 @@
  */
 
 #pragma version(1)
-#pragma rs java_package_name(com.android.rs.cppbasic)
+#pragma rs java_package_name(com.android.rs.typecheck)
 #pragma rs_fp_relaxed
 
 // Test initialized and uninitialized variables
