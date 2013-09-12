@@ -119,8 +119,13 @@ public:
     virtual void Invoke(Context *rsc, uint32_t slot, const void *data, size_t len) = 0;
     virtual void setupScript(Context *rsc) = 0;
     virtual uint32_t run(Context *) = 0;
+
+    bool hasObjectSlots() const {
+        return mHasObjectSlots;
+    }
 protected:
     bool mInitialized;
+    bool mHasObjectSlots;
     ObjectBaseRef<Allocation> *mSlots;
     ObjectBaseRef<const Type> *mTypes;
 
