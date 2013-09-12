@@ -36,6 +36,9 @@ SNIP_START(_N_ColorMatrix_prefix_i)
     vld1.32 {q7}, [r2]!
     veor q0, q0
     veor q1, q1
+    veor q9, q9
+    veor q10, q10
+    veor q11, q11
 SNIP_END(_N_ColorMatrix_prefix_i)
 
 SNIP_START(_N_ColorMatrix_prefix_f)
@@ -305,15 +308,21 @@ SNIP_START(_N_ColorMatrix_unpack_u8_3)
     vmovl.u8 q12, d0  /* R */
     vmovl.u8 q13, d1  /* G */
     vmovl.u8 q14, d2  /* B */
+    veor q15, q15
 SNIP_END(_N_ColorMatrix_unpack_u8_3)
 
 SNIP_START(_N_ColorMatrix_unpack_u8_2)
     vmovl.u8 q12, d0  /* R */
     vmovl.u8 q13, d1  /* G */
+    veor q14, q14
+    veor q15, q15
 SNIP_END(_N_ColorMatrix_unpack_u8_2)
 
 SNIP_START(_N_ColorMatrix_unpack_u8_1)
     vmovl.u8 q12, d0  /* R */
+    veor q13, q13
+    veor q14, q14
+    veor q15, q15
 SNIP_END(_N_ColorMatrix_unpack_u8_1)
 
 SNIP_START(_N_ColorMatrix_pack_u8_4)
