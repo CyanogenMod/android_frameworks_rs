@@ -119,6 +119,10 @@ void RsdCpuScriptIntrinsicYuvToRGB::kernel(const RsForEachStubParamStruct *p,
         return;
     }
     const uchar *pinY = (const uchar *)cp->alloc->mHal.drvState.lod[0].mallocPtr;
+    if (pinY == NULL) {
+        ALOGE("YuvToRGB executed without data, skipping");
+        return;
+    }
 
     size_t strideY = cp->alloc->mHal.drvState.lod[0].stride;
 
