@@ -53,7 +53,11 @@ int main(int argc, char** argv)
 
     sp<RS> rs = new RS();
 
-    bool r = rs->init(forceCpu, synchronous);
+    uint32_t flags = 0;
+    if (forceCpu) flags |= RS_INIT_LOW_LATENCY;
+    if (synchronous) flags |= RS_INIT_SYNCHRONOUS;
+
+    bool r = rs->init(flags);
 
     sp<const Element> e = Element::U32(rs);
 

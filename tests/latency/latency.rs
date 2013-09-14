@@ -18,7 +18,7 @@
 #pragma rs java_package_name(com.android.rs.cpptests)
 #pragma rs_fp_relaxed
 
-void root(const uchar4 *v_in, uchar4 *v_out) {
+void root(const uint32_t *v_in, uint32_t *v_out) {
 
 }
 
