@@ -298,6 +298,10 @@ LOCAL_MODULE_TAGS := optional
 
 LOCAL_SRC_FILES := $(rsloader_SRC_FILES)
 
+ifdef USE_MINGW
+LOCAL_SRC_FILES += driver/linkloader/lib/mmanWindows.cpp
+endif
+
 LOCAL_ADDITIONAL_DEPENDENCIES := $(LOCAL_PATH)/Android.mk
 
 LOCAL_CFLAGS += $(rs_base_CFLAGS)
