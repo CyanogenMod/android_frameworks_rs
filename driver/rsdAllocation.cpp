@@ -818,10 +818,12 @@ void rsdAllocationData2D(const Context *rsc, const Allocation *alloc,
             dst += alloc->mHal.drvState.lod[lod].stride;
         }
         if (alloc->mHal.state.yuv) {
+            size_t clineSize = lineSize;
             int lod = 1;
             int maxLod = 2;
             if (alloc->mHal.state.yuv == HAL_PIXEL_FORMAT_YV12) {
                 maxLod = 3;
+                clineSize >>= 1;
             } else if (alloc->mHal.state.yuv == HAL_PIXEL_FORMAT_YCrCb_420_SP) {
                 lod = 2;
                 maxLod = 3;
@@ -831,7 +833,7 @@ void rsdAllocationData2D(const Context *rsc, const Allocation *alloc,
                 uint8_t *dst = GetOffsetPtr(alloc, xoff, yoff, 0, lod, face);
 
                 for (uint32_t line=(yoff >> 1); line < ((yoff+h)>>1); line++) {
-                    memcpy(dst, src, lineSize);
+                    memcpy(dst, src, clineSize);
                     src += alloc->mHal.drvState.lod[lod].stride;
                     dst += alloc->mHal.drvState.lod[lod].stride;
                 }
