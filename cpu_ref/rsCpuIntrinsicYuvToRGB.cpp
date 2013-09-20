@@ -132,15 +132,11 @@ void RsdCpuScriptIntrinsicYuvToRGB::kernel(const RsForEachStubParamStruct *p,
     }
     const uchar *Y = pinY + (p->y * strideY);
 
-    //    ALOGE("pinY, %p, Y, %p, p->y, %d, strideY, %d", pinY, Y, p->y, strideY);
-    //    ALOGE("dimX, %d, dimY, %d", cp->alloc->mHal.drvState.lod[0].dimX, cp->alloc->mHal.drvState.lod[0].dimY);
-    //    ALOGE("p->dimX, %d, p->dimY, %d", p->dimX, p->dimY);
-
     uchar4 *out = (uchar4 *)p->out;
     uint32_t x1 = xstart;
     uint32_t x2 = xend;
 
-    const size_t cstep = cp->alloc->mHal.drvState.yuv.step;
+    size_t cstep = cp->alloc->mHal.drvState.yuv.step;
 
     const uchar *pinU = (const uchar *)cp->alloc->mHal.drvState.lod[1].mallocPtr;
     const size_t strideU = cp->alloc->mHal.drvState.lod[1].stride;
@@ -150,17 +146,24 @@ void RsdCpuScriptIntrinsicYuvToRGB::kernel(const RsForEachStubParamStruct *p,
     const size_t strideV = cp->alloc->mHal.drvState.lod[2].stride;
     const uchar *v = pinV + ((p->y >> 1) * strideV);
 
+    //ALOGE("pinY, %p, Y, %p, p->y, %d, strideY, %d", pinY, Y, p->y, strideY);
+    //ALOGE("pinU, %p, U, %p, p->y, %d, strideU, %d", pinU, u, p->y, strideU);
+    //ALOGE("pinV, %p, V, %p, p->y, %d, strideV, %d", pinV, v, p->y, strideV);
+    //ALOGE("dimX, %d, dimY, %d", cp->alloc->mHal.drvState.lod[0].dimX, cp->alloc->mHal.drvState.lod[0].dimY);
+    //ALOGE("p->dimX, %d, p->dimY, %d", p->dimX, p->dimY);
+
     if (pinU == NULL) {
         // Legacy yuv support didn't fill in uv
         v = ((uint8_t *)cp->alloc->mHal.drvState.lod[0].mallocPtr) +
             (strideY * p->dimY) +
             ((p->y >> 1) * strideY);
         u = v + 1;
+        cstep = 2;
     }
 
 #if defined(ARCH_ARM_HAVE_VFP)
     if((x2 > x1) && gArchUseSIMD) {
-        int32_t len = (x2 - x1 - 1) >> 3;
+        int32_t len = (x2 - x1) >> 3;
         if(len > 0) {
             if (cstep == 1) {
                 rsdIntrinsicYuv2_K(out, Y, u, v, len, YuvCoeff);

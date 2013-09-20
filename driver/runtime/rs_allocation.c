@@ -269,9 +269,9 @@ extern const uchar __attribute__((overloadable))
 
     const size_t cstep = alloc->mHal.drvState.yuv.step;
     const size_t shift = alloc->mHal.drvState.yuv.shift;
-    const size_t stride = alloc->mHal.drvState.lod[2].stride;
+    const size_t stride = alloc->mHal.drvState.lod[1].stride;
 
-    const uchar *pin = (const uchar *)alloc->mHal.drvState.lod[2].mallocPtr;
+    const uchar *pin = (const uchar *)alloc->mHal.drvState.lod[1].mallocPtr;
 
     return pin[((x >> shift) * cstep) + ((y >> shift) * stride)];
 }
@@ -283,9 +283,9 @@ extern const uchar __attribute__((overloadable))
 
     const size_t cstep = alloc->mHal.drvState.yuv.step;
     const size_t shift = alloc->mHal.drvState.yuv.shift;
-    const size_t stride = alloc->mHal.drvState.lod[1].stride;
+    const size_t stride = alloc->mHal.drvState.lod[2].stride;
 
-    const uchar *pin = (const uchar *)alloc->mHal.drvState.lod[1].mallocPtr;
+    const uchar *pin = (const uchar *)alloc->mHal.drvState.lod[2].mallocPtr;
 
     return pin[((x >> shift) * cstep) + ((y >> shift) * stride)];
 }
