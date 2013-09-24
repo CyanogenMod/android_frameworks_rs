@@ -31,6 +31,7 @@ import android.renderscript.Sampler;
 import android.renderscript.Type;
 import android.renderscript.Type.Builder;
 import android.util.Log;
+import android.view.Surface;
 import android.view.TextureView;
 import android.view.TextureView.SurfaceTextureListener;
 import android.view.View;
@@ -52,16 +53,20 @@ public class SampleRSActivity extends Activity {
         }
 
         public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
-            mOutPixelsAllocation.setSurfaceTexture(surface);
+            if (surface != null) {
+                mOutPixelsAllocation.setSurface(new Surface(surface));
+            }
         }
 
         public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
-            mOutPixelsAllocation.setSurfaceTexture(surface);
+            if (surface != null) {
+                mOutPixelsAllocation.setSurface(new Surface(surface));
+            }
             filterAlloc(mOutPixelsAllocation, mSampler);
         }
 
         public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
-            mOutPixelsAllocation.setSurfaceTexture(null);
+            mOutPixelsAllocation.setSurface(null);
             return true;
         }
     }
