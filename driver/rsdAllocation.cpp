@@ -673,6 +673,8 @@ void rsdAllocationSetSurface(const Context *rsc, Allocation *alloc, ANativeWindo
         mapper.unlock(drv->wndBuffer->handle);
         old->cancelBuffer(old, drv->wndBuffer, -1);
         drv->wndSurface = NULL;
+
+        native_window_api_disconnect(old, NATIVE_WINDOW_API_CPU);
         old->decStrong(NULL);
     }
 
@@ -685,6 +687,12 @@ void rsdAllocationSetSurface(const Context *rsc, Allocation *alloc, ANativeWindo
         }
         if (alloc->mHal.state.usageFlags & RS_ALLOCATION_USAGE_GRAPHICS_RENDER_TARGET) {
             flags |= GRALLOC_USAGE_HW_RENDER;
+        }
+
+        r = native_window_api_connect(nw, NATIVE_WINDOW_API_CPU);
+        if (r) {
+            rsc->setError(RS_ERROR_DRIVER, "Error setting IO output buffer usage.");
+            goto error;
         }
 
         r = native_window_set_usage(nw, flags);
