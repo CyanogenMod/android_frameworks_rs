@@ -163,7 +163,8 @@ void RsdCpuScriptIntrinsicYuvToRGB::kernel(const RsForEachStubParamStruct *p,
 
 #if defined(ARCH_ARM_HAVE_VFP)
     if((x2 > x1) && gArchUseSIMD) {
-        int32_t len = (x2 - x1) >> 3;
+        // The neon paths may over-read by up to 8 bytes
+        int32_t len = (x2 - x1 - 8) >> 3;
         if(len > 0) {
             if (cstep == 1) {
                 rsdIntrinsicYuv2_K(out, Y, u, v, len, YuvCoeff);
