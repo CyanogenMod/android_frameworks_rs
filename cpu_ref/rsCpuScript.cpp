@@ -396,8 +396,8 @@ bool RsdCpuScriptImpl::init(char const *resName, char const *cacheDir,
         return false;
     }
 
-#if defined(ARCH_X86_HAVE_SSE2)
-    // SSE2- or above capable devices will use an optimized library.
+#if defined(__i386__)
+    // x86 devices will use an optimized library.
     core_lib = bcc::RSInfo::LibCLCoreX86Path;
 #endif
 
