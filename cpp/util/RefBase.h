@@ -185,8 +185,8 @@ protected:
 
 private:
     friend class ReferenceMover;
-    inline static void moveReferences(void* d, void const* s, size_t n,
-            const ReferenceConverterBase& caster) { }
+    inline static void moveReferences(void*, void const*, size_t,
+            const ReferenceConverterBase&) { }
 
 private:
     mutable volatile int32_t mCount;
