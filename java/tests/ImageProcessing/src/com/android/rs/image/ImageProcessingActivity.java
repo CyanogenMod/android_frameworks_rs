@@ -184,12 +184,9 @@ public class ImageProcessingActivity extends Activity
     private TextView mText4;
     private TextView mText5;
 
-    private float mSaturation = 1.0f;
-
     private TextView mBenchmarkResult;
     private Spinner mTestSpinner;
 
-    private SurfaceView mSurfaceView;
     private ImageView mDisplayView;
 
     private boolean mDoingBenchmark;
@@ -452,8 +449,6 @@ public class ImageProcessingActivity extends Activity
         mBitmapOut = Bitmap.createBitmap(mBitmapIn.getWidth(), mBitmapIn.getHeight(),
                                          mBitmapIn.getConfig());
 
-        mSurfaceView = (SurfaceView) findViewById(R.id.surface);
-
         mDisplayView = (ImageView) findViewById(R.id.display);
         mDisplayView.setImageBitmap(mBitmapOut);
 
@@ -622,6 +617,7 @@ public class ImageProcessingActivity extends Activity
 
         mTest.exitBenchmark();
         mDoingBenchmark = false;
+
         return ft;
     }
 }

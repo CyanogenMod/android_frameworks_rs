@@ -45,8 +45,6 @@ public class TestBase  {
     protected Allocation mInPixelsAllocation;
     protected Allocation mInPixelsAllocation2;
     protected Allocation mOutPixelsAllocation;
-    protected ScriptC_msg mMessageScript;
-
     protected ImageProcessingActivityJB act;
 
     private class MessageProcessor extends RenderScript.RSMessageHandler {
@@ -106,14 +104,14 @@ public class TestBase  {
         return false;
     }
 
-    public final void createBaseTest(ImageProcessingActivityJB ipact, Bitmap b, Bitmap b2, Bitmap outb) {
+    public final void createBaseTest(ImageProcessingActivityJB ipact) {
         act = ipact;
-        mRS = ipact.mRS;
+        mRS = ipact.mProcessor.mRS;
         mRS.setMessageHandler(new MessageProcessor(act));
 
-        mInPixelsAllocation = ipact.mInPixelsAllocation;
-        mInPixelsAllocation2 = ipact.mInPixelsAllocation2;
-        mOutPixelsAllocation = ipact.mOutPixelsAllocation;
+        mInPixelsAllocation = ipact.mProcessor.mInPixelsAllocation;
+        mInPixelsAllocation2 = ipact.mProcessor.mInPixelsAllocation2;
+        mOutPixelsAllocation = ipact.mProcessor.mOutPixelsAllocation;
 
         createTest(act.getResources());
     }
@@ -128,7 +126,7 @@ public class TestBase  {
 
     final public void runTestSendMessage() {
         runTest();
-        mMessageScript.invoke_sendMsg();
+        mRS.sendMessage(0, null);
     }
 
     public void finish() {
@@ -150,4 +148,5 @@ public class TestBase  {
     // Override to reset after benchmark.
     public void exitBenchmark() {
     }
+
 }
