@@ -15,7 +15,7 @@
  */
 
 #include "ip.rsh"
-//#pragma rs_fp_relaxed
+#pragma rs_fp_relaxed
 
 static double shadowFilterMap[] = {
     -0.00591,  0.0001,

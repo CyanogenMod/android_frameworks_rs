@@ -15,7 +15,7 @@
  */
 
 #include "ip.rsh"
-//#pragma rs_fp_relaxed
+#pragma rs_fp_relaxed
 
 static int histR[256] = {0}, histG[256] = {0}, histB[256] = {0};
 
