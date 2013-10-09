@@ -21,13 +21,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.graphics.BitmapFactory;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.view.SurfaceView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -43,20 +38,12 @@ import android.renderscript.Allocation;
 import android.renderscript.Element;
 import android.renderscript.Script;
 
-import android.os.Environment;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 
 public class ImageProcessingActivityJB extends Activity
                                        implements SeekBar.OnSeekBarChangeListener,
                                                   TextureView.SurfaceTextureListener {
     private final String TAG = "Img";
     public final String RESULT_FILE = "image_processing_result.csv";
-
-    Bitmap mBitmapIn;
-    Bitmap mBitmapIn2;
 
     private Spinner mSpinner;
     private SeekBar mBar1;
@@ -78,6 +65,8 @@ public class ImageProcessingActivityJB extends Activity
     private boolean mToggleDVFS;
     private boolean mToggleLong;
     private boolean mTogglePause;
+    private int mBitmapWidth;
+    private int mBitmapHeight;
 
 
     /////////////////////////////////////////////////////////////////////////
@@ -103,8 +92,12 @@ public class ImageProcessingActivityJB extends Activity
         Processor(RenderScript rs, TextureView v, boolean benchmarkMode) {
             mRS = rs;
             mDisplayView = v;
-            mInPixelsAllocation = Allocation.createFromBitmap(mRS, mBitmapIn);
-            mInPixelsAllocation2 = Allocation.createFromBitmap(mRS, mBitmapIn2);
+
+            mInPixelsAllocation = Allocation.createFromBitmapResource(
+                    mRS, getResources(), R.drawable.img1600x1067);
+            mInPixelsAllocation2 = Allocation.createFromBitmapResource(
+                    mRS, getResources(), R.drawable.img1600x1067b);
+
             mOutDisplayAllocation = Allocation.createTyped(mRS, mInPixelsAllocation.getType(),
                                                                Allocation.MipmapControl.MIPMAP_NONE,
                                                                Allocation.USAGE_SCRIPT |
@@ -413,18 +406,12 @@ public class ImageProcessingActivityJB extends Activity
         synchronized(this) {
             mProcessor.exit();
         }
-
-        mBitmapIn = null;
-        mBitmapIn2 = null;
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-
-        mBitmapIn = loadBitmap(R.drawable.img1600x1067);
-        mBitmapIn2 = loadBitmap(R.drawable.img1600x1067b);
 
         mDisplayView = (TextureView) findViewById(R.id.display);
 
@@ -474,8 +461,11 @@ public class ImageProcessingActivityJB extends Activity
         mToggleDVFS = i.getBooleanExtra("enable dvfs", true);
         mToggleLong = i.getBooleanExtra("enable long", false);
         mTogglePause = i.getBooleanExtra("enable pause", false);
+        mBitmapWidth = i.getIntExtra("resolution X", 0);
+        mBitmapHeight = i.getIntExtra("resolution Y", 0);
 
         mTestResults = new float[mTestList.length];
+
 
         mProcessor = new Processor(RenderScript.create(this), mDisplayView, true);
         mDisplayView.setSurfaceTextureListener(this);
@@ -484,13 +474,6 @@ public class ImageProcessingActivityJB extends Activity
     protected void onDestroy() {
         super.onDestroy();
     }
-
-    private Bitmap loadBitmap(int resource) {
-        final BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inPreferredConfig = Bitmap.Config.ARGB_8888;
-        return BitmapFactory.decodeResource(getResources(), resource, options);
-    }
-
 
 
     @Override

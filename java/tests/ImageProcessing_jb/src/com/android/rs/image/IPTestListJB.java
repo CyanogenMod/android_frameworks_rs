@@ -32,13 +32,12 @@ public class IPTestListJB {
      * Define enum type for test names
      */
     public enum TestName {
-        // totally there are 38 test cases
         LEVELS_VEC3_RELAXED ("Levels Vec3 Relaxed", RELAXED_FP),
         LEVELS_VEC4_RELAXED ("Levels Vec4 Relaxed", RELAXED_FP),
         LEVELS_VEC3_FULL ("Levels Vec3 Full", FULL_FP),
         LEVELS_VEC4_FULL ("Levels Vec4 Full", FULL_FP),
         BLUR_RADIUS_25 ("Blur radius 25", RELAXED_FP),
-        INTRINSIC_BLUE_RADIUS_25 ("Intrinsic Blur radius 25", INTRINSIC),
+        INTRINSIC_BLUR_RADIUS_25 ("Intrinsic Blur radius 25", INTRINSIC),
         GREYSCALE ("Greyscale", RELAXED_FP),
         GRAIN ("Grain", RELAXED_FP),
         FISHEYE_FULL ("Fisheye Full", FULL_FP),
@@ -62,12 +61,15 @@ public class IPTestListJB {
         INTRINSICS_CONVOLVE_5X5 ("Intrinsics Convolve 5x5", INTRINSIC),
         MANDELBROT ("Mandelbrot", FULL_FP),
         INTRINSICS_BLEND ("Intrinsics Blend", INTRINSIC),
+        INTRINSICS_BLUR_25G ("Intrinsics Blur 25 uchar", INTRINSIC),
         VIBRANCE ("Vibrance", RELAXED_FP),
         BW_FILTER ("BW Filter", RELAXED_FP),
         SHADOWS ("Shadows", RELAXED_FP),
         CONTRAST ("Contrast", RELAXED_FP),
         EXPOSURE ("Exposure", RELAXED_FP),
-        WHITE_BALANCE ("White Balance", RELAXED_FP);
+        WHITE_BALANCE ("White Balance", RELAXED_FP),
+        COLOR_CUBE ("Color Cube", RELAXED_FP),
+        COLOR_CUBE_3D_INTRINSIC ("Color Cube (3D LUT intrinsic)", INTRINSIC);
 
 
         private final String name;
@@ -96,7 +98,7 @@ public class IPTestListJB {
             return new LevelsV4(true, true);
         case BLUR_RADIUS_25:
             return new Blur25(false);
-        case INTRINSIC_BLUE_RADIUS_25:
+        case INTRINSIC_BLUR_RADIUS_25:
             return new Blur25(true);
         case GREYSCALE:
             return new Greyscale();
@@ -144,6 +146,8 @@ public class IPTestListJB {
             return new Mandelbrot();
         case INTRINSICS_BLEND:
             return new Blend();
+        case INTRINSICS_BLUR_25G:
+            return new Blur25G();
         case VIBRANCE:
             return new Vibrance();
         case BW_FILTER:
@@ -156,9 +160,12 @@ public class IPTestListJB {
             return new Exposure();
         case WHITE_BALANCE:
             return new WhiteBalance();
+        case COLOR_CUBE:
+            return new ColorCube(false);
+        case COLOR_CUBE_3D_INTRINSIC:
+            return new ColorCube(true);
         }
         return null;
     }
-
 }
 
