@@ -109,7 +109,7 @@ public class LevelsV4 extends TestBase {
     public boolean onBar4Setup(SeekBar b, TextView t) {
         b.setMax(128);
         b.setProgress(128);
-        t.setText("Out White");
+        t.setText("In White");
         return true;
     }
     public boolean onBar5Setup(SeekBar b, TextView t) {
