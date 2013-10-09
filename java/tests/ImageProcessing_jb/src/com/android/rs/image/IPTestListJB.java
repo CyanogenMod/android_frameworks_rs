@@ -24,46 +24,50 @@ public class IPTestListJB {
     private final String TAG = "Img";
     public final String RESULT_FILE = "image_processing_result.csv";
 
+    public static final int FULL_FP = 0;
+    public static final int RELAXED_FP = 1;
+    public static final int INTRINSIC = 2;
+
     /**
      * Define enum type for test names
      */
     public enum TestName {
         // totally there are 38 test cases
-        LEVELS_VEC3_RELAXED ("Levels Vec3 Relaxed", 1),
-        LEVELS_VEC4_RELAXED ("Levels Vec4 Relaxed", 1),
-        LEVELS_VEC3_FULL ("Levels Vec3 Full", 0),
-        LEVELS_VEC4_FULL ("Levels Vec4 Full", 0),
-        BLUR_RADIUS_25 ("Blur radius 25", 1),
-        INTRINSIC_BLUE_RADIUS_25 ("Intrinsic Blur radius 25", 2),
-        GREYSCALE ("Greyscale", 1),
-        GRAIN ("Grain", 1),
-        FISHEYE_FULL ("Fisheye Full", 0),
-        FISHEYE_RELAXED ("Fisheye Relaxed", 1),
-        FISHEYE_APPROXIMATE_FULL ("Fisheye Approximate Full", 0),
-        FISHEYE_APPROXIMATE_RELAXED ("Fisheye Approximate Relaxed", 1),
-        VIGNETTE_FULL ("Vignette Full", 0),
-        VIGNETTE_RELAXED ("Vignette Relaxed", 1),
-        VIGNETTE_APPROXIMATE_FULL ("Vignette Approximate Full", 0),
-        VIGNETTE_APPROXIMATE_RELAXED ("Vignette Approximate Relaxed", 1),
-        GROUP_TEST_EMULATED ("Group Test (emulated)", 2),
-        GROUP_TEST_NATIVE ("Group Test (native)", 2),
-        CONVOLVE_3X3 ("Convolve 3x3", 1),
-        INTRINSICS_CONVOLVE_3X3 ("Intrinsics Convolve 3x3", 2),
-        COLOR_MATRIX ("ColorMatrix", 1),
-        INTRINSICS_COLOR_MATRIX ("Intrinsics ColorMatrix", 2),
-        INTRINSICS_COLOR_MATRIX_GREY ("Intrinsics ColorMatrix Grey", 2),
-        COPY ("Copy", 1),
-        CROSS_PROCESS_USING_LUT ("CrossProcess (using LUT)", 2),
-        CONVOLVE_5X5 ("Convolve 5x5", 1),
-        INTRINSICS_CONVOLVE_5X5 ("Intrinsics Convolve 5x5", 2),
-        MANDELBROT ("Mandelbrot", 0),
-        INTRINSICS_BLEND ("Intrinsics Blend", 2),
-        VIBRANCE ("Vibrance", 1),
-        BW_FILTER ("BW Filter", 1),
-        SHADOWS ("Shadows", 1),
-        CONTRAST ("Contrast", 1),
-        EXPOSURE ("Exposure", 1),
-        WHITE_BALANCE ("White Balance", 1);
+        LEVELS_VEC3_RELAXED ("Levels Vec3 Relaxed", RELAXED_FP),
+        LEVELS_VEC4_RELAXED ("Levels Vec4 Relaxed", RELAXED_FP),
+        LEVELS_VEC3_FULL ("Levels Vec3 Full", FULL_FP),
+        LEVELS_VEC4_FULL ("Levels Vec4 Full", FULL_FP),
+        BLUR_RADIUS_25 ("Blur radius 25", RELAXED_FP),
+        INTRINSIC_BLUE_RADIUS_25 ("Intrinsic Blur radius 25", INTRINSIC),
+        GREYSCALE ("Greyscale", RELAXED_FP),
+        GRAIN ("Grain", RELAXED_FP),
+        FISHEYE_FULL ("Fisheye Full", FULL_FP),
+        FISHEYE_RELAXED ("Fisheye Relaxed", RELAXED_FP),
+        FISHEYE_APPROXIMATE_FULL ("Fisheye Approximate Full", FULL_FP),
+        FISHEYE_APPROXIMATE_RELAXED ("Fisheye Approximate Relaxed", RELAXED_FP),
+        VIGNETTE_FULL ("Vignette Full", FULL_FP),
+        VIGNETTE_RELAXED ("Vignette Relaxed", RELAXED_FP),
+        VIGNETTE_APPROXIMATE_FULL ("Vignette Approximate Full", FULL_FP),
+        VIGNETTE_APPROXIMATE_RELAXED ("Vignette Approximate Relaxed", RELAXED_FP),
+        GROUP_TEST_EMULATED ("Group Test (emulated)", INTRINSIC),
+        GROUP_TEST_NATIVE ("Group Test (native)", INTRINSIC),
+        CONVOLVE_3X3 ("Convolve 3x3", RELAXED_FP),
+        INTRINSICS_CONVOLVE_3X3 ("Intrinsics Convolve 3x3", INTRINSIC),
+        COLOR_MATRIX ("ColorMatrix", RELAXED_FP),
+        INTRINSICS_COLOR_MATRIX ("Intrinsics ColorMatrix", INTRINSIC),
+        INTRINSICS_COLOR_MATRIX_GREY ("Intrinsics ColorMatrix Grey", INTRINSIC),
+        COPY ("Copy", RELAXED_FP),
+        CROSS_PROCESS_USING_LUT ("CrossProcess (using LUT)", INTRINSIC),
+        CONVOLVE_5X5 ("Convolve 5x5", RELAXED_FP),
+        INTRINSICS_CONVOLVE_5X5 ("Intrinsics Convolve 5x5", INTRINSIC),
+        MANDELBROT ("Mandelbrot", FULL_FP),
+        INTRINSICS_BLEND ("Intrinsics Blend", INTRINSIC),
+        VIBRANCE ("Vibrance", RELAXED_FP),
+        BW_FILTER ("BW Filter", RELAXED_FP),
+        SHADOWS ("Shadows", RELAXED_FP),
+        CONTRAST ("Contrast", RELAXED_FP),
+        EXPOSURE ("Exposure", RELAXED_FP),
+        WHITE_BALANCE ("White Balance", RELAXED_FP);
 
 
         private final String name;
