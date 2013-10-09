@@ -86,6 +86,7 @@ public class ImageProcessingActivityJB extends Activity
         RenderScript mRS;
         Allocation mInPixelsAllocation;
         Allocation mInPixelsAllocation2;
+        Allocation mOutDisplayAllocation;
         Allocation mOutPixelsAllocation;
 
         private Surface mOutSurface;
@@ -104,10 +105,19 @@ public class ImageProcessingActivityJB extends Activity
             mDisplayView = v;
             mInPixelsAllocation = Allocation.createFromBitmap(mRS, mBitmapIn);
             mInPixelsAllocation2 = Allocation.createFromBitmap(mRS, mBitmapIn2);
-            mOutPixelsAllocation = Allocation.createTyped(mRS, mInPixelsAllocation.getType(),
+            mOutDisplayAllocation = Allocation.createTyped(mRS, mInPixelsAllocation.getType(),
                                                                Allocation.MipmapControl.MIPMAP_NONE,
                                                                Allocation.USAGE_SCRIPT |
                                                                Allocation.USAGE_IO_OUTPUT);
+            mOutPixelsAllocation = mOutDisplayAllocation;
+
+            if (!mToggleIO) {
+                // Not using USAGE_IO for the script so create a non-io kernel to copy from
+                mOutPixelsAllocation = Allocation.createTyped(mRS, mInPixelsAllocation.getType(),
+                                                              Allocation.MipmapControl.MIPMAP_NONE,
+                                                              Allocation.USAGE_SCRIPT);
+            }
+
             mBenchmarkMode = benchmarkMode;
             start();
         }
@@ -164,7 +174,10 @@ public class ImageProcessingActivityJB extends Activity
                     if (mRS == null || mOutPixelsAllocation == null) {
                         return;
                     }
-                    mOutPixelsAllocation.ioSend();
+                    if (mOutDisplayAllocation != mOutPixelsAllocation) {
+                        mOutDisplayAllocation.copyFrom(mOutPixelsAllocation);
+                    }
+                    mOutDisplayAllocation.ioSend();
                     mDisplayView.invalidate();
                     //mTest.runTestSendMessage();
                 }
@@ -186,7 +199,7 @@ public class ImageProcessingActivityJB extends Activity
                     }
 
                     if (lastSurface != mOutSurface) {
-                        mOutPixelsAllocation.setSurface(mOutSurface);
+                        mOutDisplayAllocation.setSurface(mOutSurface);
                         lastSurface = mOutSurface;
                     }
                 }
@@ -252,12 +265,16 @@ public class ImageProcessingActivityJB extends Activity
 
             mInPixelsAllocation.destroy();
             mInPixelsAllocation2.destroy();
-            mOutPixelsAllocation.destroy();
+            if (mOutPixelsAllocation != mOutDisplayAllocation) {
+                mOutPixelsAllocation.destroy();
+            }
+            mOutDisplayAllocation.destroy();
             mRS.destroy();
 
             mInPixelsAllocation = null;
             mInPixelsAllocation2 = null;
             mOutPixelsAllocation = null;
+            mOutDisplayAllocation = null;
             mRS = null;
         }
     }
