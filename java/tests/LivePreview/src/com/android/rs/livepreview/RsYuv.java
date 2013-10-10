@@ -117,7 +117,7 @@ public class RsYuv implements TextureView.SurfaceTextureListener
 
             //mYuv.forEach(mAllocationOut);
             //mScript.forEach_root(mAllocationOut, mAllocationOut);
-            mAllocationOut.ioSendOutput();
+            mAllocationOut.ioSend();
         }
     }
 

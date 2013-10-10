@@ -112,7 +112,6 @@ public class ImageProcessingActivity extends Activity
      * Define enum type for test names
      */
     public enum TestName {
-        // totally there are 38 test cases
         LEVELS_VEC3_RELAXED ("Levels Vec3 Relaxed"),
         LEVELS_VEC4_RELAXED ("Levels Vec4 Relaxed"),
         LEVELS_VEC3_FULL ("Levels Vec3 Full"),
@@ -168,8 +167,6 @@ public class ImageProcessingActivity extends Activity
         }
     }
 
-    Bitmap mBitmapIn;
-    Bitmap mBitmapIn2;
     Bitmap mBitmapOut;
 
     private Spinner mSpinner;
@@ -419,7 +416,7 @@ public class ImageProcessingActivity extends Activity
             break;
         }
 
-        mTest.createBaseTest(this, mBitmapIn, mBitmapIn2, mBitmapOut);
+        mTest.createBaseTest(this);
         setupBars();
 
         mTest.runTest();
@@ -444,10 +441,15 @@ public class ImageProcessingActivity extends Activity
             };
 
     void init() {
-        mBitmapIn = loadBitmap(R.drawable.img1600x1067);
-        mBitmapIn2 = loadBitmap(R.drawable.img1600x1067b);
-        mBitmapOut = Bitmap.createBitmap(mBitmapIn.getWidth(), mBitmapIn.getHeight(),
-                                         mBitmapIn.getConfig());
+        mRS = RenderScript.create(this);
+        mInPixelsAllocation = Allocation.createFromBitmapResource(
+                mRS, getResources(), R.drawable.img1600x1067);
+        mInPixelsAllocation2 = Allocation.createFromBitmapResource(
+                mRS, getResources(), R.drawable.img1600x1067b);
+        mBitmapOut = Bitmap.createBitmap(mInPixelsAllocation.getType().getX(),
+                                         mInPixelsAllocation.getType().getY(),
+                                         Bitmap.Config.ARGB_8888);
+        mOutPixelsAllocation = Allocation.createFromBitmap(mRS, mBitmapOut);
 
         mDisplayView = (ImageView) findViewById(R.id.display);
         mDisplayView.setImageBitmap(mBitmapOut);
@@ -478,21 +480,6 @@ public class ImageProcessingActivity extends Activity
         mBenchmarkResult = (TextView) findViewById(R.id.benchmarkText);
         mBenchmarkResult.setText("Result: not run");
 
-
-        mRS = RenderScript.create(this);
-        mInPixelsAllocation = Allocation.createFromBitmap(mRS, mBitmapIn,
-                                                          Allocation.MipmapControl.MIPMAP_NONE,
-                                                          Allocation.USAGE_SHARED |
-                                                          Allocation.USAGE_GRAPHICS_TEXTURE |
-                                                          Allocation.USAGE_SCRIPT);
-        mInPixelsAllocation2 = Allocation.createFromBitmap(mRS, mBitmapIn2,
-                                                           Allocation.MipmapControl.MIPMAP_NONE,
-                                                           Allocation.USAGE_SHARED |
-                                                           Allocation.USAGE_GRAPHICS_TEXTURE |
-                                                           Allocation.USAGE_SCRIPT);
-        mOutPixelsAllocation = Allocation.createFromBitmap(mRS, mBitmapOut);
-
-
         setupTests();
         changeTest(TestName.LEVELS_VEC3_RELAXED);
     }
@@ -514,8 +501,6 @@ public class ImageProcessingActivity extends Activity
         mInPixelsAllocation = null;
         mInPixelsAllocation2 = null;
         mOutPixelsAllocation = null;
-        mBitmapIn = null;
-        mBitmapIn2 = null;
         mBitmapOut = null;
     }
 
@@ -540,12 +525,6 @@ public class ImageProcessingActivity extends Activity
         super.onResume();
 
         init();
-    }
-
-    private Bitmap loadBitmap(int resource) {
-        final BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inPreferredConfig = Bitmap.Config.ARGB_8888;
-        return BitmapFactory.decodeResource(getResources(), resource, options);
     }
 
     // button hook
