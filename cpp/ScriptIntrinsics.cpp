@@ -78,7 +78,7 @@ ScriptIntrinsicBlend::ScriptIntrinsicBlend(sp<RS> rs, sp<const Element> e)
     : ScriptIntrinsic(rs, RS_SCRIPT_INTRINSIC_ID_BLEND, e) {
 }
 
-void ScriptIntrinsicBlend::blendClear(sp<Allocation> in, sp<Allocation> out) {
+void ScriptIntrinsicBlend::forEachClear(sp<Allocation> in, sp<Allocation> out) {
     if (in->getType()->getElement()->isCompatible(mElement) == false ||
         out->getType()->getElement()->isCompatible(mElement) == false) {
         mRS->throwError(RS_ERROR_INVALID_ELEMENT, "Invalid element in blend");
@@ -86,7 +86,7 @@ void ScriptIntrinsicBlend::blendClear(sp<Allocation> in, sp<Allocation> out) {
     Script::forEach(0, in, out, NULL, 0);
 }
 
-void ScriptIntrinsicBlend::blendSrc(sp<Allocation> in, sp<Allocation> out) {
+void ScriptIntrinsicBlend::forEachSrc(sp<Allocation> in, sp<Allocation> out) {
     if (in->getType()->getElement()->isCompatible(mElement) == false ||
         out->getType()->getElement()->isCompatible(mElement) == false) {
         mRS->throwError(RS_ERROR_INVALID_ELEMENT, "Invalid element in blend");
@@ -94,7 +94,7 @@ void ScriptIntrinsicBlend::blendSrc(sp<Allocation> in, sp<Allocation> out) {
     Script::forEach(1, in, out, NULL, 0);
 }
 
-void ScriptIntrinsicBlend::blendDst(sp<Allocation> in, sp<Allocation> out) {
+void ScriptIntrinsicBlend::forEachDst(sp<Allocation> in, sp<Allocation> out) {
     if (in->getType()->getElement()->isCompatible(mElement) == false ||
         out->getType()->getElement()->isCompatible(mElement) == false) {
         mRS->throwError(RS_ERROR_INVALID_ELEMENT, "Invalid element in blend");
@@ -102,7 +102,7 @@ void ScriptIntrinsicBlend::blendDst(sp<Allocation> in, sp<Allocation> out) {
     Script::forEach(2, in, out, NULL, 0);
 }
 
-void ScriptIntrinsicBlend::blendSrcOver(sp<Allocation> in, sp<Allocation> out) {
+void ScriptIntrinsicBlend::forEachSrcOver(sp<Allocation> in, sp<Allocation> out) {
     if (in->getType()->getElement()->isCompatible(mElement) == false ||
         out->getType()->getElement()->isCompatible(mElement) == false) {
         mRS->throwError(RS_ERROR_INVALID_ELEMENT, "Invalid element in blend");
@@ -110,7 +110,7 @@ void ScriptIntrinsicBlend::blendSrcOver(sp<Allocation> in, sp<Allocation> out) {
     Script::forEach(3, in, out, NULL, 0);
 }
 
-void ScriptIntrinsicBlend::blendDstOver(sp<Allocation> in, sp<Allocation> out) {
+void ScriptIntrinsicBlend::forEachDstOver(sp<Allocation> in, sp<Allocation> out) {
     if (in->getType()->getElement()->isCompatible(mElement) == false ||
         out->getType()->getElement()->isCompatible(mElement) == false) {
         mRS->throwError(RS_ERROR_INVALID_ELEMENT, "Invalid element in blend");
@@ -118,7 +118,7 @@ void ScriptIntrinsicBlend::blendDstOver(sp<Allocation> in, sp<Allocation> out) {
     Script::forEach(4, in, out, NULL, 0);
 }
 
-void ScriptIntrinsicBlend::blendSrcIn(sp<Allocation> in, sp<Allocation> out) {
+void ScriptIntrinsicBlend::forEachSrcIn(sp<Allocation> in, sp<Allocation> out) {
     if (in->getType()->getElement()->isCompatible(mElement) == false ||
         out->getType()->getElement()->isCompatible(mElement) == false) {
         mRS->throwError(RS_ERROR_INVALID_ELEMENT, "Invalid element in blend");
@@ -126,7 +126,7 @@ void ScriptIntrinsicBlend::blendSrcIn(sp<Allocation> in, sp<Allocation> out) {
     Script::forEach(5, in, out, NULL, 0);
 }
 
-void ScriptIntrinsicBlend::blendDstIn(sp<Allocation> in, sp<Allocation> out) {
+void ScriptIntrinsicBlend::forEachDstIn(sp<Allocation> in, sp<Allocation> out) {
     if (in->getType()->getElement()->isCompatible(mElement) == false ||
         out->getType()->getElement()->isCompatible(mElement) == false) {
         mRS->throwError(RS_ERROR_INVALID_ELEMENT, "Invalid element in blend");
@@ -134,7 +134,7 @@ void ScriptIntrinsicBlend::blendDstIn(sp<Allocation> in, sp<Allocation> out) {
     Script::forEach(6, in, out, NULL, 0);
 }
 
-void ScriptIntrinsicBlend::blendSrcOut(sp<Allocation> in, sp<Allocation> out) {
+void ScriptIntrinsicBlend::forEachSrcOut(sp<Allocation> in, sp<Allocation> out) {
     if (in->getType()->getElement()->isCompatible(mElement) == false ||
         out->getType()->getElement()->isCompatible(mElement) == false) {
         mRS->throwError(RS_ERROR_INVALID_ELEMENT, "Invalid element in blend");
@@ -142,7 +142,7 @@ void ScriptIntrinsicBlend::blendSrcOut(sp<Allocation> in, sp<Allocation> out) {
     Script::forEach(7, in, out, NULL, 0);
 }
 
-void ScriptIntrinsicBlend::blendDstOut(sp<Allocation> in, sp<Allocation> out) {
+void ScriptIntrinsicBlend::forEachDstOut(sp<Allocation> in, sp<Allocation> out) {
     if (in->getType()->getElement()->isCompatible(mElement) == false ||
         out->getType()->getElement()->isCompatible(mElement) == false) {
         mRS->throwError(RS_ERROR_INVALID_ELEMENT, "Invalid element in blend");
@@ -150,7 +150,7 @@ void ScriptIntrinsicBlend::blendDstOut(sp<Allocation> in, sp<Allocation> out) {
     Script::forEach(8, in, out, NULL, 0);
 }
 
-void ScriptIntrinsicBlend::blendSrcAtop(sp<Allocation> in, sp<Allocation> out) {
+void ScriptIntrinsicBlend::forEachSrcAtop(sp<Allocation> in, sp<Allocation> out) {
     if (in->getType()->getElement()->isCompatible(mElement) == false ||
         out->getType()->getElement()->isCompatible(mElement) == false) {
         mRS->throwError(RS_ERROR_INVALID_ELEMENT, "Invalid element in blend");
@@ -158,7 +158,7 @@ void ScriptIntrinsicBlend::blendSrcAtop(sp<Allocation> in, sp<Allocation> out) {
     Script::forEach(9, in, out, NULL, 0);
 }
 
-void ScriptIntrinsicBlend::blendDstAtop(sp<Allocation> in, sp<Allocation> out) {
+void ScriptIntrinsicBlend::forEachDstAtop(sp<Allocation> in, sp<Allocation> out) {
     if (in->getType()->getElement()->isCompatible(mElement) == false ||
         out->getType()->getElement()->isCompatible(mElement) == false) {
         mRS->throwError(RS_ERROR_INVALID_ELEMENT, "Invalid element in blend");
@@ -166,7 +166,7 @@ void ScriptIntrinsicBlend::blendDstAtop(sp<Allocation> in, sp<Allocation> out) {
     Script::forEach(10, in, out, NULL, 0);
 }
 
-void ScriptIntrinsicBlend::blendXor(sp<Allocation> in, sp<Allocation> out) {
+void ScriptIntrinsicBlend::forEachXor(sp<Allocation> in, sp<Allocation> out) {
     if (in->getType()->getElement()->isCompatible(mElement) == false ||
         out->getType()->getElement()->isCompatible(mElement) == false) {
         mRS->throwError(RS_ERROR_INVALID_ELEMENT, "Invalid element in blend");
@@ -175,7 +175,7 @@ void ScriptIntrinsicBlend::blendXor(sp<Allocation> in, sp<Allocation> out) {
 }
 
 // Numbering jumps here
-void ScriptIntrinsicBlend::blendMultiply(sp<Allocation> in, sp<Allocation> out) {
+void ScriptIntrinsicBlend::forEachMultiply(sp<Allocation> in, sp<Allocation> out) {
     if (in->getType()->getElement()->isCompatible(mElement) == false ||
         out->getType()->getElement()->isCompatible(mElement) == false) {
         mRS->throwError(RS_ERROR_INVALID_ELEMENT, "Invalid element in blend");
@@ -184,7 +184,7 @@ void ScriptIntrinsicBlend::blendMultiply(sp<Allocation> in, sp<Allocation> out) 
 }
 
 // Numbering jumps here
-void ScriptIntrinsicBlend::blendAdd(sp<Allocation> in, sp<Allocation> out) {
+void ScriptIntrinsicBlend::forEachAdd(sp<Allocation> in, sp<Allocation> out) {
     if (in->getType()->getElement()->isCompatible(mElement) == false ||
         out->getType()->getElement()->isCompatible(mElement) == false) {
         mRS->throwError(RS_ERROR_INVALID_ELEMENT, "Invalid element in blend");
@@ -192,7 +192,7 @@ void ScriptIntrinsicBlend::blendAdd(sp<Allocation> in, sp<Allocation> out) {
     Script::forEach(34, in, out, NULL, 0);
 }
 
-void ScriptIntrinsicBlend::blendSubtract(sp<Allocation> in, sp<Allocation> out) {
+void ScriptIntrinsicBlend::forEachSubtract(sp<Allocation> in, sp<Allocation> out) {
     if (in->getType()->getElement()->isCompatible(mElement) == false ||
         out->getType()->getElement()->isCompatible(mElement) == false) {
         mRS->throwError(RS_ERROR_INVALID_ELEMENT, "Invalid element in blend");
