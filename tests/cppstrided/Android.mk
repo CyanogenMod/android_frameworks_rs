@@ -30,6 +30,7 @@ LOCAL_C_INCLUDES += frameworks/rs/cpp
 LOCAL_C_INCLUDES += frameworks/rs
 LOCAL_C_INCLUDES += $(intermediates)
 
+LOCAL_CLANG := true
 
 include $(BUILD_EXECUTABLE)
 
