@@ -30,6 +30,8 @@ import android.view.View;
 import android.view.TextureView;
 import android.view.Surface;
 import android.graphics.SurfaceTexture;
+import android.graphics.Point;
+
 import android.util.Log;
 import android.renderscript.ScriptC;
 import android.renderscript.RenderScript;
@@ -43,7 +45,6 @@ public class ImageProcessingActivityJB extends Activity
                                        implements SeekBar.OnSeekBarChangeListener,
                                                   TextureView.SurfaceTextureListener {
     private final String TAG = "Img";
-    public final String RESULT_FILE = "image_processing_result.csv";
 
     private Spinner mSpinner;
     private SeekBar mBar1;
@@ -56,7 +57,7 @@ public class ImageProcessingActivityJB extends Activity
     private TextView mText3;
     private TextView mText4;
     private TextView mText5;
-    private TextureView mDisplayView;
+    private SizedTV mDisplayView;
 
     private int mTestList[];
     private float mTestResults[];
@@ -68,6 +69,32 @@ public class ImageProcessingActivityJB extends Activity
     private int mBitmapWidth;
     private int mBitmapHeight;
 
+    static public class SizedTV extends TextureView {
+        int mWidth;
+        int mHeight;
+
+        public SizedTV(android.content.Context c) {
+            super(c);
+            mWidth = 800;
+            mHeight = 450;
+        }
+
+        public SizedTV(android.content.Context c, android.util.AttributeSet attrs) {
+            super(c, attrs);
+            mWidth = 800;
+            mHeight = 450;
+        }
+
+        public SizedTV(android.content.Context c, android.util.AttributeSet attrs, int f) {
+            super(c, attrs, f);
+            mWidth = 800;
+            mHeight = 450;
+        }
+
+        protected void onMeasure(int w, int h) {
+            setMeasuredDimension(mWidth, mHeight);
+        }
+    }
 
     /////////////////////////////////////////////////////////////////////////
 
@@ -88,15 +115,36 @@ public class ImageProcessingActivityJB extends Activity
 
         private boolean mBenchmarkMode;
 
-
         Processor(RenderScript rs, TextureView v, boolean benchmarkMode) {
             mRS = rs;
             mDisplayView = v;
 
-            mInPixelsAllocation = Allocation.createFromBitmapResource(
-                    mRS, getResources(), R.drawable.img1600x1067);
-            mInPixelsAllocation2 = Allocation.createFromBitmapResource(
-                    mRS, getResources(), R.drawable.img1600x1067b);
+            switch(mBitmapWidth) {
+            case 3840:
+                mInPixelsAllocation = Allocation.createFromBitmapResource(
+                        mRS, getResources(), R.drawable.img3840x2160a);
+                mInPixelsAllocation2 = Allocation.createFromBitmapResource(
+                        mRS, getResources(), R.drawable.img3840x2160b);
+                break;
+            case 1920:
+                mInPixelsAllocation = Allocation.createFromBitmapResource(
+                        mRS, getResources(), R.drawable.img1920x1080a);
+                mInPixelsAllocation2 = Allocation.createFromBitmapResource(
+                        mRS, getResources(), R.drawable.img1920x1080b);
+                break;
+            case 1280:
+                mInPixelsAllocation = Allocation.createFromBitmapResource(
+                        mRS, getResources(), R.drawable.img1280x720a);
+                mInPixelsAllocation2 = Allocation.createFromBitmapResource(
+                        mRS, getResources(), R.drawable.img1280x720b);
+                break;
+            case 800:
+                mInPixelsAllocation = Allocation.createFromBitmapResource(
+                        mRS, getResources(), R.drawable.img800x450a);
+                mInPixelsAllocation2 = Allocation.createFromBitmapResource(
+                        mRS, getResources(), R.drawable.img800x450b);
+                break;
+            }
 
             mOutDisplayAllocation = Allocation.createTyped(mRS, mInPixelsAllocation.getType(),
                                                                Allocation.MipmapControl.MIPMAP_NONE,
@@ -129,7 +177,7 @@ public class ImageProcessingActivityJB extends Activity
                 mDvfsWar.go();
             }
 
-            Log.v("rs", "Warming");
+            //Log.v("rs", "Warming");
             long t = java.lang.System.currentTimeMillis() + 250;
             do {
                 mTest.runTest();
@@ -137,7 +185,7 @@ public class ImageProcessingActivityJB extends Activity
             } while (t > java.lang.System.currentTimeMillis());
             //mHandler.sendMessage(Message.obtain());
 
-            Log.v("rs", "Benchmarking");
+            //Log.v("rs", "Benchmarking");
             int ct = 0;
             t = java.lang.System.currentTimeMillis();
             do {
@@ -401,6 +449,24 @@ public class ImageProcessingActivityJB extends Activity
         t.onBar5Setup(mBar5, mText5);
     }
 
+    void hideBars() {
+        mSpinner.setVisibility(View.INVISIBLE);
+
+        mBar1.setVisibility(View.INVISIBLE);
+        mText1.setVisibility(View.INVISIBLE);
+
+        mBar2.setVisibility(View.INVISIBLE);
+        mText2.setVisibility(View.INVISIBLE);
+
+        mBar3.setVisibility(View.INVISIBLE);
+        mText3.setVisibility(View.INVISIBLE);
+
+        mBar4.setVisibility(View.INVISIBLE);
+        mText4.setVisibility(View.INVISIBLE);
+
+        mBar5.setVisibility(View.INVISIBLE);
+        mText5.setVisibility(View.INVISIBLE);
+    }
 
     void cleanup() {
         synchronized(this) {
@@ -413,7 +479,7 @@ public class ImageProcessingActivityJB extends Activity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
 
-        mDisplayView = (TextureView) findViewById(R.id.display);
+        mDisplayView = (SizedTV) findViewById(R.id.display);
 
         mSpinner = (Spinner) findViewById(R.id.spinner1);
 
@@ -466,6 +532,35 @@ public class ImageProcessingActivityJB extends Activity
 
         mTestResults = new float[mTestList.length];
 
+        hideBars();
+
+        Point size = new Point();
+        getWindowManager().getDefaultDisplay().getSize(size);
+
+        int mScreenWidth = size.x;
+        int mScreenHeight = size.y;
+
+        int tw = mBitmapWidth;
+        int th = mBitmapHeight;
+
+        if (tw > mScreenWidth || th > mScreenHeight) {
+            float s1 = (float)tw / (float)mScreenWidth;
+            float s2 = (float)th / (float)mScreenHeight;
+
+            if (s1 > s2) {
+                tw /= s1;
+                th /= s1;
+            } else {
+                tw /= s2;
+                th /= s2;
+            }
+        }
+
+        android.util.Log.v("rs", "TV sizes " + tw + ", " + th);
+
+        mDisplayView.mWidth = tw;
+        mDisplayView.mHeight = th;
+        //mDisplayView.setTransform(new android.graphics.Matrix());
 
         mProcessor = new Processor(RenderScript.create(this), mDisplayView, true);
         mDisplayView.setSurfaceTextureListener(this);

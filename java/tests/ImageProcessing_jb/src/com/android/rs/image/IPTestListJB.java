@@ -32,52 +32,59 @@ public class IPTestListJB {
      * Define enum type for test names
      */
     public enum TestName {
-        LEVELS_VEC3_RELAXED ("Levels Vec3 Relaxed", RELAXED_FP),
-        LEVELS_VEC4_RELAXED ("Levels Vec4 Relaxed", RELAXED_FP),
-        LEVELS_VEC3_FULL ("Levels Vec3 Full", FULL_FP),
-        LEVELS_VEC4_FULL ("Levels Vec4 Full", FULL_FP),
-        BLUR_RADIUS_25 ("Blur radius 25", RELAXED_FP),
-        INTRINSIC_BLUR_RADIUS_25 ("Intrinsic Blur radius 25", INTRINSIC),
-        GREYSCALE ("Greyscale", RELAXED_FP),
-        GRAIN ("Grain", RELAXED_FP),
-        FISHEYE_FULL ("Fisheye Full", FULL_FP),
-        FISHEYE_RELAXED ("Fisheye Relaxed", RELAXED_FP),
-        FISHEYE_APPROXIMATE_FULL ("Fisheye Approximate Full", FULL_FP),
-        FISHEYE_APPROXIMATE_RELAXED ("Fisheye Approximate Relaxed", RELAXED_FP),
-        VIGNETTE_FULL ("Vignette Full", FULL_FP),
-        VIGNETTE_RELAXED ("Vignette Relaxed", RELAXED_FP),
-        VIGNETTE_APPROXIMATE_FULL ("Vignette Approximate Full", FULL_FP),
-        VIGNETTE_APPROXIMATE_RELAXED ("Vignette Approximate Relaxed", RELAXED_FP),
-        GROUP_TEST_EMULATED ("Group Test (emulated)", INTRINSIC),
-        GROUP_TEST_NATIVE ("Group Test (native)", INTRINSIC),
-        CONVOLVE_3X3 ("Convolve 3x3", RELAXED_FP),
-        INTRINSICS_CONVOLVE_3X3 ("Intrinsics Convolve 3x3", INTRINSIC),
-        COLOR_MATRIX ("ColorMatrix", RELAXED_FP),
-        INTRINSICS_COLOR_MATRIX ("Intrinsics ColorMatrix", INTRINSIC),
-        INTRINSICS_COLOR_MATRIX_GREY ("Intrinsics ColorMatrix Grey", INTRINSIC),
-        COPY ("Copy", RELAXED_FP),
-        CROSS_PROCESS_USING_LUT ("CrossProcess (using LUT)", INTRINSIC),
-        CONVOLVE_5X5 ("Convolve 5x5", RELAXED_FP),
-        INTRINSICS_CONVOLVE_5X5 ("Intrinsics Convolve 5x5", INTRINSIC),
-        MANDELBROT ("Mandelbrot", FULL_FP),
-        INTRINSICS_BLEND ("Intrinsics Blend", INTRINSIC),
-        INTRINSICS_BLUR_25G ("Intrinsics Blur 25 uchar", INTRINSIC),
-        VIBRANCE ("Vibrance", RELAXED_FP),
-        BW_FILTER ("BW Filter", RELAXED_FP),
-        SHADOWS ("Shadows", RELAXED_FP),
-        CONTRAST ("Contrast", RELAXED_FP),
-        EXPOSURE ("Exposure", RELAXED_FP),
-        WHITE_BALANCE ("White Balance", RELAXED_FP),
-        COLOR_CUBE ("Color Cube", RELAXED_FP),
-        COLOR_CUBE_3D_INTRINSIC ("Color Cube (3D LUT intrinsic)", INTRINSIC);
+        LEVELS_VEC3_RELAXED ("Levels Vec3 Relaxed", RELAXED_FP, 55.6f),
+        LEVELS_VEC4_RELAXED ("Levels Vec4 Relaxed", RELAXED_FP, 39.1f),
+        LEVELS_VEC3_FULL ("Levels Vec3 Full", FULL_FP, 57.4f),
+        LEVELS_VEC4_FULL ("Levels Vec4 Full", FULL_FP, 68.1f),
+        BLUR_RADIUS_25 ("Blur radius 25", RELAXED_FP, 1045.f),
+        INTRINSIC_BLUR_RADIUS_25 ("Intrinsic Blur radius 25", INTRINSIC, 643.f),
+        GREYSCALE ("Greyscale", RELAXED_FP, 38.3f),
+        GRAIN ("Grain", RELAXED_FP, 57.8f),
+        FISHEYE_FULL ("Fisheye Full", FULL_FP, 211.2f),
+        FISHEYE_RELAXED ("Fisheye Relaxed", RELAXED_FP, 198.1f),
+        FISHEYE_APPROXIMATE_FULL ("Fisheye Approximate Full", FULL_FP, 211.0f),
+        FISHEYE_APPROXIMATE_RELAXED ("Fisheye Approximate Relaxed", RELAXED_FP, 190.1f),
+        VIGNETTE_FULL ("Vignette Full", FULL_FP, 98.6f),
+        VIGNETTE_RELAXED ("Vignette Relaxed", RELAXED_FP, 110.7f),
+        VIGNETTE_APPROXIMATE_FULL ("Vignette Approximate Full", FULL_FP, 80.6f),
+        VIGNETTE_APPROXIMATE_RELAXED ("Vignette Approximate Relaxed", RELAXED_FP, 87.9f),
+        GROUP_TEST_EMULATED ("Group Test (emulated)", INTRINSIC, 37.81f),
+        GROUP_TEST_NATIVE ("Group Test (native)", INTRINSIC, 37.8f),
+        CONVOLVE_3X3 ("Convolve 3x3", RELAXED_FP, 62.1f),
+        INTRINSICS_CONVOLVE_3X3 ("Intrinsics Convolve 3x3", INTRINSIC, 24.5f),
+        COLOR_MATRIX ("ColorMatrix", RELAXED_FP, 25.5f),
+        INTRINSICS_COLOR_MATRIX ("Intrinsics ColorMatrix", INTRINSIC, 13.3f),
+        INTRINSICS_COLOR_MATRIX_GREY ("Intrinsics ColorMatrix Grey", INTRINSIC, 13.4f),
+        COPY ("Copy", RELAXED_FP, 25.6f),
+        CROSS_PROCESS_USING_LUT ("CrossProcess (using LUT)", INTRINSIC, 18.6f),
+        CONVOLVE_5X5 ("Convolve 5x5", RELAXED_FP, 215.8f),
+        INTRINSICS_CONVOLVE_5X5 ("Intrinsics Convolve 5x5", INTRINSIC, 29.8f),
+        MANDELBROT ("Mandelbrot", FULL_FP, 108.1f),
+        INTRINSICS_BLEND ("Intrinsics Blend", INTRINSIC, 94.2f),
+        INTRINSICS_BLUR_25G ("Intrinsics Blur 25 uchar", INTRINSIC, 173.3f),
+        VIBRANCE ("Vibrance", RELAXED_FP, 88.3f),
+        BW_FILTER ("BW Filter", RELAXED_FP, 69.7f),
+        SHADOWS ("Shadows", RELAXED_FP, 155.3f),
+        CONTRAST ("Contrast", RELAXED_FP, 27.0f),
+        EXPOSURE ("Exposure", RELAXED_FP, 64.7f),
+        WHITE_BALANCE ("White Balance", RELAXED_FP, 160.1f),
+        COLOR_CUBE ("Color Cube", RELAXED_FP, 85.3f),
+        COLOR_CUBE_3D_INTRINSIC ("Color Cube (3D LUT intrinsic)", INTRINSIC, 49.5f);
 
 
         private final String name;
         public final int group;
+        public final float baseline;
 
+        private TestName(String s, int g, float base) {
+            name = s;
+            group = g;
+            baseline = base;
+        }
         private TestName(String s, int g) {
             name = s;
             group = g;
+            baseline = 1.f;
         }
 
         // return quoted string as displayed test name
