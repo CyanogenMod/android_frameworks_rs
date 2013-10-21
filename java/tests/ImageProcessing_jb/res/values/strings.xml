@@ -29,7 +29,8 @@
     <string name="gamma">Gamma</string>
     <string name="saturation">Saturation</string>
     <string name="benchmark">Benchmark</string>
-    <string name="benchmark_all">Benchmark All</string>
+
+    <string name="results">Results: not run</string>
 
     <string name="io_control_on">USAGE_IO</string>
     <string name="io_control_off">USAGE_IO</string>
