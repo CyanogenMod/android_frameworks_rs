@@ -63,8 +63,9 @@
 
     <ListView
         android:id="@+id/test_list"
+        android:layout_weight="0.2"
         android:layout_width="fill_parent"
-        android:layout_height="300sp"/>
+        android:layout_height="wrap_content"/>
 
     <LinearLayout
         android:orientation="horizontal"
@@ -110,9 +111,17 @@
          android:id="@+id/run"
          android:layout_width="wrap_content"
          android:layout_height="wrap_content"
-         android:text="@string/run_all"
+         android:text="@string/benchmark"
          android:onClick="btnRun"/>
 
+    <TextView
+        android:id="@+id/results"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="8pt"
+        android:layout_marginLeft="10sp"
+        android:layout_marginTop="15sp"
+        android:text="@string/results"/>
 
 </LinearLayout>
 
