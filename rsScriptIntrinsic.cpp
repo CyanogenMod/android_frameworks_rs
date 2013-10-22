@@ -22,9 +22,13 @@ using namespace android;
 using namespace android::renderscript;
 
 ScriptIntrinsic::ScriptIntrinsic(Context *rsc) : Script(rsc) {
+    mIntrinsicID = 0;
 }
 
 ScriptIntrinsic::~ScriptIntrinsic() {
+    if (mIntrinsicID != 0) {
+        mRSC->mHal.funcs.script.destroy(mRSC, this);
+    }
 }
 
 bool ScriptIntrinsic::init(Context *rsc, RsScriptIntrinsicID iid, Element *e) {
