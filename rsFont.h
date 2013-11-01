@@ -18,7 +18,6 @@
 #define ANDROID_RS_FONT_H
 
 #include "rsStream.h"
-#include <utils/String8.h>
 #include <utils/Vector.h>
 #include <utils/KeyedVector.h>
 
@@ -113,7 +112,7 @@ protected:
         int32_t mBitmapTop;
     };
 
-    String8 mFontName;
+    const char *mFontName;
     float mFontSize;
     uint32_t mDpi;
 
@@ -183,7 +182,7 @@ protected:
     uint32_t getRemainingCacheCapacity();
 
     void precacheLatin(Font *font);
-    String8 mLatinPrecache;
+    const char *mLatinPrecache;
 
     Context *mRSC;
 

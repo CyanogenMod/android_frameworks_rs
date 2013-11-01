@@ -27,17 +27,24 @@ LOCAL_SRC_FILES:= \
 	rsCpuIntrinsicColorMatrix.cpp \
 	rsCpuIntrinsicConvolve3x3.cpp \
 	rsCpuIntrinsicConvolve5x5.cpp \
+	rsCpuIntrinsicHistogram.cpp \
 	rsCpuIntrinsicLUT.cpp \
 	rsCpuIntrinsicYuvToRGB.cpp
 
 ifeq ($(ARCH_ARM_HAVE_NEON),true)
     LOCAL_CFLAGS += -DARCH_ARM_HAVE_NEON
-    LOCAL_SRC_FILES+= \
-        rsCpuIntrinsics_neon.S
 endif
 
 ifeq ($(ARCH_ARM_HAVE_VFP),true)
     LOCAL_CFLAGS += -DARCH_ARM_HAVE_VFP
+    LOCAL_SRC_FILES+= \
+        rsCpuIntrinsics_neon.S \
+        rsCpuIntrinsics_neon_ColorMatrix.S
+    LOCAL_ASFLAGS := -mfpu=neon
+endif
+
+ifeq ($(ARCH_X86_HAVE_SSE2), true)
+    LOCAL_CFLAGS += -DARCH_X86_HAVE_SSE2
 endif
 
 LOCAL_SHARED_LIBRARIES += libRS libcutils libutils liblog libsync

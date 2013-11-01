@@ -363,7 +363,8 @@ enum RsScriptIntrinsicID {
     RS_SCRIPT_INTRINSIC_ID_BLUR = 5,
     RS_SCRIPT_INTRINSIC_ID_YUV_TO_RGB = 6,
     RS_SCRIPT_INTRINSIC_ID_BLEND = 7,
-    RS_SCRIPT_INTRINSIC_ID_3DLUT = 8
+    RS_SCRIPT_INTRINSIC_ID_3DLUT = 8,
+    RS_SCRIPT_INTRINSIC_ID_HISTOGRAM = 9
 };
 
 typedef struct {
@@ -393,6 +394,13 @@ typedef struct {
     uint32_t arrayEnd;
 
 } RsScriptCall;
+
+enum RsContextFlags {
+    RS_CONTEXT_SYNCHRONOUS = 1,
+    RS_CONTEXT_LOW_LATENCY = 2,
+    RS_CONTEXT_MAX = 4
+};
+
 
 #ifdef __cplusplus
 };

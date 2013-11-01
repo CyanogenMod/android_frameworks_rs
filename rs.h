@@ -22,9 +22,8 @@
 
 #include "rsDefines.h"
 
-//
-// A3D loading and object update code.
-// Should only be called at object creation, not thread safe
+// Legacy graphics functions
+// Not extern C because not used from C++ API
 RsObjectBase rsaFileA3DGetEntryByIndex(RsContext, uint32_t idx, RsFile);
 RsFile rsaFileA3DCreateFromMemory(RsContext, const void *data, uint32_t len);
 RsFile rsaFileA3DCreateFromAsset(RsContext, void *asset);
@@ -32,30 +31,32 @@ RsFile rsaFileA3DCreateFromFile(RsContext, const char *path);
 void rsaFileA3DGetNumIndexEntries(RsContext, int32_t *numEntries, RsFile);
 void rsaFileA3DGetIndexEntries(RsContext, RsFileIndexEntry *fileEntries,
                                uint32_t numEntries, RsFile);
-void rsaGetName(RsContext, void * obj, const char **name);
 // Mesh update functions
 void rsaMeshGetVertexBufferCount(RsContext, RsMesh, int32_t *vtxCount);
 void rsaMeshGetIndexCount(RsContext, RsMesh, int32_t *idxCount);
 void rsaMeshGetVertices(RsContext, RsMesh, RsAllocation *vtxData, uint32_t vtxDataCount);
 void rsaMeshGetIndices(RsContext, RsMesh, RsAllocation *va,
                        uint32_t *primType, uint32_t idxDataCount);
-// Allocation update
-const void* rsaAllocationGetType(RsContext con, RsAllocation va);
-// Type update
-void rsaTypeGetNativeData(RsContext, RsType, uint32_t *typeData, uint32_t typeDataSize);
-// Element update
-void rsaElementGetNativeData(RsContext, RsElement, uint32_t *elemData, uint32_t elemDataSize);
-void rsaElementGetSubElements(RsContext, RsElement, uint32_t *ids, const char **names,
-                              uint32_t *arraySizes, uint32_t dataSize);
-
-RsDevice rsDeviceCreate();
-void rsDeviceDestroy(RsDevice dev);
-void rsDeviceSetConfig(RsDevice dev, RsDeviceParam p, int32_t value);
-RsContext rsContextCreate(RsDevice dev, uint32_t version, uint32_t sdkVersion,
-                          RsContextType ct, bool forceCpu, bool synchronous);
 RsContext rsContextCreateGL(RsDevice dev, uint32_t version, uint32_t sdkVersion,
                             RsSurfaceConfig sc, uint32_t dpi);
 
+extern "C" {
+    void rsaGetName(RsContext, void * obj, const char **name);
+    // Allocation update
+    const void* rsaAllocationGetType(RsContext con, RsAllocation va);
+    // Type update
+    void rsaTypeGetNativeData(RsContext, RsType, uint32_t *typeData, uint32_t typeDataSize);
+    // Element update
+    void rsaElementGetNativeData(RsContext, RsElement, uint32_t *elemData, uint32_t elemDataSize);
+    void rsaElementGetSubElements(RsContext, RsElement, uint32_t *ids, const char **names,
+                                  uint32_t *arraySizes, uint32_t dataSize);
+
+    RsDevice rsDeviceCreate();
+    void rsDeviceDestroy(RsDevice dev);
+    void rsDeviceSetConfig(RsDevice dev, RsDeviceParam p, int32_t value);
+    RsContext rsContextCreate(RsDevice dev, uint32_t version, uint32_t sdkVersion,
+                              RsContextType ct, uint32_t flags);
+}
 #include "rsgApiFuncDecl.h"
 
 #endif // RENDER_SCRIPT_H

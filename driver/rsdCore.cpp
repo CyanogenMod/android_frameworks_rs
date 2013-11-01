@@ -20,6 +20,7 @@
 #include "rsdAllocation.h"
 #include "rsdBcc.h"
 #ifndef RS_COMPATIBILITY_LIB
+    #include "MemChunk.h"
     #include "rsdGL.h"
     #include "rsdPath.h"
     #include "rsdProgramStore.h"
@@ -40,10 +41,6 @@
 #include <sched.h>
 #include <sys/syscall.h>
 #include <string.h>
-
-#ifndef RS_SERVER
-#include <cutils/properties.h>
-#endif
 
 using namespace android;
 using namespace android::renderscript;
@@ -88,10 +85,10 @@ static RsdHalFunctions FunctionTable = {
     {
         rsdAllocationInit,
         rsdAllocationDestroy,
+        rsdAllocationGrallocBits,
         rsdAllocationResize,
         rsdAllocationSyncAll,
         rsdAllocationMarkDirty,
-        NATIVE_FUNC(rsdAllocationGetSurface),
         NATIVE_FUNC(rsdAllocationSetSurface),
         NATIVE_FUNC(rsdAllocationIoSend),
         NATIVE_FUNC(rsdAllocationIoReceive),
@@ -189,13 +186,30 @@ extern "C" bool rsdHalInit(RsContext c, uint32_t version_major,
     }
     rsc->mHal.drv = dc;
 
-    dc->mCpuRef = RsdCpuReference::create((Context *)c, version_major, version_minor,
+    dc->mCpuRef = RsdCpuReference::create(rsc, version_major, version_minor,
                                           &rsdLookupRuntimeStub, &LookupScript);
     if (!dc->mCpuRef) {
         ALOGE("RsdCpuReference::create for driver hal failed.");
         free(dc);
         return false;
     }
+
+#ifndef RS_COMPATIBILITY_LIB
+    // Set a callback for compiler setup here.
+    if (false) {
+        dc->mCpuRef->setSetupCompilerCallback(NULL);
+    }
+
+    // Set a callback for switching MemChunk's allocator here.
+    // Note that the allocation function must return page-aligned memory, so
+    // that it can be mprotected properly (i.e. code should be written and
+    // later switched to read+execute only).
+    if (false) {
+        MemChunk::registerAllocFreeCallbacks(
+                rsc->mHal.funcs.allocRuntimeMem,
+                rsc->mHal.funcs.freeRuntimeMem);
+    }
+#endif
 
     return true;
 }

@@ -18,6 +18,10 @@
 #include "rsCpuIntrinsic.h"
 #include "rsCpuIntrinsicInlines.h"
 
+#ifdef RS_COMPATIBILITY_LIB
+#include "rsCompatibilityLib.h"
+#endif
+
 #ifndef RS_COMPATIBILITY_LIB
 #include "hardware/gralloc.h"
 #endif
@@ -103,6 +107,7 @@ static short YuvCoeff[] = {
 };
 
 extern "C" void rsdIntrinsicYuv_K(void *dst, const uchar *Y, const uchar *uv, uint32_t count, const short *param);
+extern "C" void rsdIntrinsicYuvR_K(void *dst, const uchar *Y, const uchar *uv, uint32_t count, const short *param);
 extern "C" void rsdIntrinsicYuv2_K(void *dst, const uchar *Y, const uchar *u, const uchar *v, uint32_t count, const short *param);
 
 void RsdCpuScriptIntrinsicYuvToRGB::kernel(const RsForEachStubParamStruct *p,
@@ -114,6 +119,10 @@ void RsdCpuScriptIntrinsicYuvToRGB::kernel(const RsForEachStubParamStruct *p,
         return;
     }
     const uchar *pinY = (const uchar *)cp->alloc->mHal.drvState.lod[0].mallocPtr;
+    if (pinY == NULL) {
+        ALOGE("YuvToRGB executed without data, skipping");
+        return;
+    }
 
     size_t strideY = cp->alloc->mHal.drvState.lod[0].stride;
 
@@ -123,95 +132,75 @@ void RsdCpuScriptIntrinsicYuvToRGB::kernel(const RsForEachStubParamStruct *p,
     }
     const uchar *Y = pinY + (p->y * strideY);
 
-    //    ALOGE("pinY, %p, Y, %p, p->y, %d, strideY, %d", pinY, Y, p->y, strideY);
-    //    ALOGE("dimX, %d, dimY, %d", cp->alloc->mHal.drvState.lod[0].dimX, cp->alloc->mHal.drvState.lod[0].dimY);
-    //    ALOGE("p->dimX, %d, p->dimY, %d", p->dimX, p->dimY);
-
     uchar4 *out = (uchar4 *)p->out;
     uint32_t x1 = xstart;
     uint32_t x2 = xend;
 
-    switch (cp->alloc->mHal.state.yuv) {
-    // In API 17 there was no yuv format and the intrinsic treated everything as NV21
-    case 0:
-#if !defined(RS_SERVER) && !defined(RS_COMPATIBILITY_LIB)
-    case HAL_PIXEL_FORMAT_YCrCb_420_SP:  // NV21
-#endif
-        {
-            const uchar *pinUV = (const uchar *)cp->alloc->mHal.drvState.lod[1].mallocPtr;
-            size_t strideUV = cp->alloc->mHal.drvState.lod[1].stride;
-            const uchar *uv = pinUV + ((p->y >> 1) * strideUV);
+    size_t cstep = cp->alloc->mHal.drvState.yuv.step;
 
-            if (pinUV == NULL) {
-                // Legacy yuv support didn't fill in uv
-                strideUV = strideY;
-                uv = ((uint8_t *)cp->alloc->mHal.drvState.lod[0].mallocPtr) +
-                    (strideY * p->dimY) +
-                    ((p->y >> 1) * strideUV);
-            }
+    const uchar *pinU = (const uchar *)cp->alloc->mHal.drvState.lod[1].mallocPtr;
+    const size_t strideU = cp->alloc->mHal.drvState.lod[1].stride;
+    const uchar *u = pinU + ((p->y >> 1) * strideU);
 
-            if(x2 > x1) {
-        #if defined(ARCH_ARM_HAVE_NEON)
-                int32_t len = (x2 - x1 - 1) >> 3;
-                if(len > 0) {
-                    //                    ALOGE("%p, %p, %p, %d, %p", out, Y, uv, len, YuvCoeff);
-                    rsdIntrinsicYuv_K(out, Y, uv, len, YuvCoeff);
+    const uchar *pinV = (const uchar *)cp->alloc->mHal.drvState.lod[2].mallocPtr;
+    const size_t strideV = cp->alloc->mHal.drvState.lod[2].stride;
+    const uchar *v = pinV + ((p->y >> 1) * strideV);
+
+    //ALOGE("pinY, %p, Y, %p, p->y, %d, strideY, %d", pinY, Y, p->y, strideY);
+    //ALOGE("pinU, %p, U, %p, p->y, %d, strideU, %d", pinU, u, p->y, strideU);
+    //ALOGE("pinV, %p, V, %p, p->y, %d, strideV, %d", pinV, v, p->y, strideV);
+    //ALOGE("dimX, %d, dimY, %d", cp->alloc->mHal.drvState.lod[0].dimX, cp->alloc->mHal.drvState.lod[0].dimY);
+    //ALOGE("p->dimX, %d, p->dimY, %d", p->dimX, p->dimY);
+
+    if (pinU == NULL) {
+        // Legacy yuv support didn't fill in uv
+        v = ((uint8_t *)cp->alloc->mHal.drvState.lod[0].mallocPtr) +
+            (strideY * p->dimY) +
+            ((p->y >> 1) * strideY);
+        u = v + 1;
+        cstep = 2;
+    }
+
+#if defined(ARCH_ARM_HAVE_VFP)
+    if((x2 > x1) && gArchUseSIMD) {
+        // The neon paths may over-read by up to 8 bytes
+        int32_t len = (x2 - x1 - 8) >> 3;
+        if(len > 0) {
+            if (cstep == 1) {
+                rsdIntrinsicYuv2_K(out, Y, u, v, len, YuvCoeff);
+                x1 += len << 3;
+                out += len << 3;
+            } else if (cstep == 2) {
+                // Check for proper interleave
+                intptr_t ipu = (intptr_t)u;
+                intptr_t ipv = (intptr_t)v;
+
+                if (ipu == (ipv + 1)) {
+                    rsdIntrinsicYuv_K(out, Y, v, len, YuvCoeff);
+                    x1 += len << 3;
+                    out += len << 3;
+                } else if (ipu == (ipv - 1)) {
+                    rsdIntrinsicYuvR_K(out, Y, u, len, YuvCoeff);
                     x1 += len << 3;
                     out += len << 3;
                 }
-        #endif
 
-               // ALOGE("y %i  %i  %i", p->y, x1, x2);
-                while(x1 < x2) {
-                    uchar u = uv[(x1 & 0xffffe) + 1];
-                    uchar v = uv[(x1 & 0xffffe) + 0];
-                    *out = rsYuvToRGBA_uchar4(Y[x1], u, v);
-                    out++;
-                    x1++;
-                    *out = rsYuvToRGBA_uchar4(Y[x1], u, v);
-                    out++;
-                    x1++;
-                }
             }
         }
-        break;
-
-#if !defined(RS_SERVER) && !defined(RS_COMPATIBILITY_LIB)
-    case HAL_PIXEL_FORMAT_YV12:
-        {
-            const uchar *pinU = (const uchar *)cp->alloc->mHal.drvState.lod[1].mallocPtr;
-            const size_t strideU = cp->alloc->mHal.drvState.lod[1].stride;
-            const uchar *u = pinU + ((p->y >> 1) * strideU);
-
-            const uchar *pinV = (const uchar *)cp->alloc->mHal.drvState.lod[2].mallocPtr;
-            const size_t strideV = cp->alloc->mHal.drvState.lod[2].stride;
-            const uchar *v = pinV + ((p->y >> 1) * strideV);
-
-            if(x2 > x1) {
-        #if defined(ARCH_ARM_HAVE_NEON)
-                int32_t len = (x2 - x1 - 1) >> 3;
-                if(len > 0) {
-                    rsdIntrinsicYuv2_K(out, Y, u, v, len, YuvCoeff);
-                    x1 += len << 3;
-                    out += len << 3;
-                }
-        #endif
-
-               // ALOGE("y %i  %i  %i", p->y, x1, x2);
-                while(x1 < x2) {
-                    uchar ut = u[x1];
-                    uchar vt = v[x1];
-                    *out = rsYuvToRGBA_uchar4(Y[x1], ut, vt);
-                    out++;
-                    x1++;
-                    *out = rsYuvToRGBA_uchar4(Y[x1], ut, vt);
-                    out++;
-                    x1++;
-                }
-            }
-        }
-        break;
+    }
 #endif
+
+    if(x2 > x1) {
+       // ALOGE("y %i  %i  %i", p->y, x1, x2);
+        while(x1 < x2) {
+            int cx = (x1 >> 1) * cstep;
+            *out = rsYuvToRGBA_uchar4(Y[x1], u[cx], v[cx]);
+            out++;
+            x1++;
+            *out = rsYuvToRGBA_uchar4(Y[x1], u[cx], v[cx]);
+            out++;
+            x1++;
+        }
     }
 
 }

@@ -73,7 +73,8 @@ void FileA3D::parseHeader(IStream *headerStream) {
     uint32_t numIndexEntries = headerStream->loadU32();
     for (uint32_t i = 0; i < numIndexEntries; i ++) {
         A3DIndexEntry *entry = new A3DIndexEntry();
-        headerStream->loadString(&entry->mObjectName);
+        entry->mObjectName = headerStream->loadString();
+
         //ALOGV("Header data, entry name = %s", entry->mObjectName.string());
         entry->mType = (RsA3DClassID)headerStream->loadU32();
         if (mUse64BitOffsets){
@@ -214,6 +215,10 @@ size_t FileA3D::getNumIndexEntries() const {
     return mIndex.size();
 }
 
+FileA3D::A3DIndexEntry::~A3DIndexEntry() {
+    delete[] mObjectName;
+}
+
 const FileA3D::A3DIndexEntry *FileA3D::getIndexEntry(size_t index) const {
     if (index < mIndex.size()) {
         return mIndex[index];
@@ -320,7 +325,7 @@ bool FileA3D::writeFile(const char *filename) {
     uint32_t writeIndexSize = mWriteIndex.size();
     headerStream.addU32(writeIndexSize);
     for (uint32_t i = 0; i < writeIndexSize; i ++) {
-        headerStream.addString(&mWriteIndex[i]->mObjectName);
+        headerStream.addString(mWriteIndex[i]->mObjectName);
         headerStream.addU32((uint32_t)mWriteIndex[i]->mType);
         if (mUse64BitOffsets){
             headerStream.addOffset(mWriteIndex[i]->mOffset);
@@ -334,8 +339,7 @@ bool FileA3D::writeFile(const char *filename) {
     }
 
     // Write our magic string so we know we are reading the right file
-    String8 magicString(A3D_MAGIC_KEY);
-    fwrite(magicString.string(), sizeof(char), magicString.size(), writeHandle);
+    fwrite(A3D_MAGIC_KEY, sizeof(char), strlen(A3D_MAGIC_KEY), writeHandle);
 
     // Store the size of the header to make it easier to parse when we read it
     uint64_t headerSize = headerStream.getPos();
@@ -369,7 +373,7 @@ void FileA3D::appendToFile(Context *con, ObjectBase *obj) {
         mWriteStream = new OStream(initialStreamSize, false);
     }
     A3DIndexEntry *indexEntry = new A3DIndexEntry();
-    indexEntry->mObjectName.setTo(obj->getName());
+    indexEntry->mObjectName = rsuCopyString(obj->getName());
     indexEntry->mType = obj->getClassId();
     indexEntry->mOffset = mWriteStream->getPos();
     indexEntry->mRsObj = obj;
@@ -420,7 +424,7 @@ void rsaFileA3DGetIndexEntries(RsContext con, RsFileIndexEntry *fileEntries, uin
     for (uint32_t i = 0; i < numFileEntries; i ++) {
         const FileA3D::A3DIndexEntry *entry = fa3d->getIndexEntry(i);
         fileEntries[i].classID = entry->getType();
-        fileEntries[i].objectName = entry->getObjectName().string();
+        fileEntries[i].objectName = rsuCopyString(entry->getObjectName());
     }
 }
 

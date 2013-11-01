@@ -28,6 +28,10 @@
 #include <string.h>
 #include <unistd.h>
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <fcntl.h>
+
 #if !defined(RS_SERVER) && !defined(RS_COMPATIBILITY_LIB)
 #include <cutils/properties.h>
 #include "utils/StopWatch.h"
@@ -52,6 +56,8 @@ typedef void (*outer_foreach_t)(
 static pthread_key_t gThreadTLSKey = 0;
 static uint32_t gThreadTLSKeyCount = 0;
 static pthread_mutex_t gInitMutex = PTHREAD_MUTEX_INITIALIZER;
+
+bool android::renderscript::gArchUseSIMD = false;
 
 RsdCpuReference::~RsdCpuReference() {
 }
@@ -109,6 +115,7 @@ RsdCpuReferenceImpl::RsdCpuReferenceImpl(Context *rsc) {
 #ifndef RS_COMPATIBILITY_LIB
     mLinkRuntimeCallback = NULL;
     mSelectRTCallback = NULL;
+    mSetupCompilerCallback = NULL;
 #endif
 }
 
@@ -193,6 +200,38 @@ void RsdCpuReferenceImpl::unlockMutex() {
     pthread_mutex_unlock(&gInitMutex);
 }
 
+#if defined(ARCH_ARM_HAVE_VFP)
+static int
+read_file(const char*  pathname, char*  buffer, size_t  buffsize)
+{
+    int  fd, len;
+
+    fd = open(pathname, O_RDONLY);
+    if (fd < 0)
+        return -1;
+
+    do {
+        len = read(fd, buffer, buffsize);
+    } while (len < 0 && errno == EINTR);
+
+    close(fd);
+
+    return len;
+}
+
+static void GetCpuInfo() {
+    char cpuinfo[4096];
+    int  cpuinfo_len;
+
+    cpuinfo_len = read_file("/proc/cpuinfo", cpuinfo, sizeof cpuinfo);
+    if (cpuinfo_len < 0)  /* should not happen */ {
+        return;
+    }
+
+    gArchUseSIMD = !!strstr(cpuinfo, " neon");
+}
+#endif // ARCH_ARM_HAVE_VFP
+
 bool RsdCpuReferenceImpl::init(uint32_t version_major, uint32_t version_minor,
                                sym_lookup_t lfn, script_lookup_t slfn) {
 
@@ -217,6 +256,10 @@ bool RsdCpuReferenceImpl::init(uint32_t version_major, uint32_t version_minor,
     if (status) {
         ALOGE("pthread_setspecific %i", status);
     }
+
+#if defined(ARCH_ARM_HAVE_VFP)
+    GetCpuInfo();
+#endif
 
     int cpu = sysconf(_SC_NPROCESSORS_ONLN);
     if(mRSC->props.mDebugMaxThreads) {
@@ -477,6 +520,8 @@ extern RsdCpuScriptImpl * rsdIntrinsic_YuvToRGB(RsdCpuReferenceImpl *ctx,
                                                 const Script *s, const Element *e);
 extern RsdCpuScriptImpl * rsdIntrinsic_Blend(RsdCpuReferenceImpl *ctx,
                                              const Script *s, const Element *e);
+extern RsdCpuScriptImpl * rsdIntrinsic_Histogram(RsdCpuReferenceImpl *ctx,
+                                                 const Script *s, const Element *e);
 
 RsdCpuReference::CpuScript * RsdCpuReferenceImpl::createIntrinsic(const Script *s,
                                     RsScriptIntrinsicID iid, Element *e) {
@@ -506,6 +551,9 @@ RsdCpuReference::CpuScript * RsdCpuReferenceImpl::createIntrinsic(const Script *
         break;
     case RS_SCRIPT_INTRINSIC_ID_BLEND:
         i = rsdIntrinsic_Blend(this, s, e);
+        break;
+    case RS_SCRIPT_INTRINSIC_ID_HISTOGRAM:
+        i = rsdIntrinsic_Histogram(this, s, e);
         break;
 
     default:

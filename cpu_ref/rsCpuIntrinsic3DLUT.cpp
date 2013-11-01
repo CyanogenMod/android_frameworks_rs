@@ -83,19 +83,21 @@ void RsdCpuScriptIntrinsic3DLUT::kernel(const RsForEachStubParamStruct *p,
     //ALOGE("strides %zu %zu", stride_y, stride_z);
 
     while (x1 < x2) {
-#if defined(ARCH_ARM_HAVE_NEON)
-        int32_t len = (x2 - x1 - 1) >> 1;
-        if(len > 0) {
-            const short neon_constants[] = {
-                coordMul.x, coordMul.y, coordMul.z, 0,
-                0, 0, 0, 0xffff,
+#if defined(ARCH_ARM_HAVE_VFP)
+        if (gArchUseSIMD) {
+            int32_t len = (x2 - x1 - 1) >> 1;
+            if(len > 0) {
+                const short neon_constants[] = {
+                    coordMul.x, coordMul.y, coordMul.z, 0,
+                    0, 0, 0, 0xffff,
 
-            };
+                };
 
-            rsdIntrinsic3DLUT_K(out, in, bp, stride_y, stride_z, len, neon_constants);
-            x1 += len << 1;
-            out += len << 1;
-            in += len << 1;
+                rsdIntrinsic3DLUT_K(out, in, bp, stride_y, stride_z, len, neon_constants);
+                x1 += len << 1;
+                out += len << 1;
+                in += len << 1;
+            }
         }
 
 #endif

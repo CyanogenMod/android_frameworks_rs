@@ -16,8 +16,12 @@
 
 #include "rsContext.h"
 
-#ifndef RS_SERVER
+#if !defined(RS_SERVER) && !defined(RS_COMPATIBILITY_LIB)
 #include "system/graphics.h"
+#endif
+
+#ifdef RS_COMPATIBILITY_LIB
+#include "rsCompatibilityLib.h"
 #endif
 
 using namespace android;
@@ -46,7 +50,6 @@ void Type::clear() {
         delete [] mHal.state.lodDimX;
         delete [] mHal.state.lodDimY;
         delete [] mHal.state.lodDimZ;
-        delete [] mHal.state.lodOffset;
     }
     mElement.clear();
     memset(&mHal, 0, sizeof(mHal));
@@ -57,11 +60,6 @@ TypeState::TypeState() {
 
 TypeState::~TypeState() {
     rsAssert(!mTypes.size());
-}
-
-size_t Type::getOffsetForFace(uint32_t face) const {
-    rsAssert(mHal.state.faces);
-    return 0;
 }
 
 void Type::compute() {
@@ -81,95 +79,56 @@ void Type::compute() {
             delete [] mHal.state.lodDimX;
             delete [] mHal.state.lodDimY;
             delete [] mHal.state.lodDimZ;
-            delete [] mHal.state.lodOffset;
         }
         mHal.state.lodDimX = new uint32_t[mHal.state.lodCount];
         mHal.state.lodDimY = new uint32_t[mHal.state.lodCount];
         mHal.state.lodDimZ = new uint32_t[mHal.state.lodCount];
-        mHal.state.lodOffset = new uint32_t[mHal.state.lodCount];
     }
 
     uint32_t tx = mHal.state.dimX;
     uint32_t ty = mHal.state.dimY;
     uint32_t tz = mHal.state.dimZ;
-    size_t offset = 0;
+    mCellCount = 0;
     for (uint32_t lod=0; lod < mHal.state.lodCount; lod++) {
         mHal.state.lodDimX[lod] = tx;
         mHal.state.lodDimY[lod] = ty;
         mHal.state.lodDimZ[lod]  = tz;
-        mHal.state.lodOffset[lod] = offset;
-        offset += tx * rsMax(ty, 1u) * rsMax(tz, 1u) * mElement->getSizeBytes();
+        mCellCount += tx * rsMax(ty, 1u) * rsMax(tz, 1u);
         if (tx > 1) tx >>= 1;
         if (ty > 1) ty >>= 1;
         if (tz > 1) tz >>= 1;
     }
 
-    // At this point the offset is the size of a mipmap chain;
-    mMipChainSizeBytes = offset;
-
     if (mHal.state.faces) {
-        offset *= 6;
+        mCellCount *= 6;
     }
 #ifndef RS_SERVER
     // YUV only supports basic 2d
     // so we can stash the plane pointers in the mipmap levels.
     if (mHal.state.dimYuv) {
+        mHal.state.lodDimX[1] = mHal.state.lodDimX[0] / 2;
+        mHal.state.lodDimY[1] = mHal.state.lodDimY[0] / 2;
+        mHal.state.lodDimX[2] = mHal.state.lodDimX[0] / 2;
+        mHal.state.lodDimY[2] = mHal.state.lodDimY[0] / 2;
+        mCellCount += mHal.state.lodDimX[1] * mHal.state.lodDimY[1];
+        mCellCount += mHal.state.lodDimX[2] * mHal.state.lodDimY[2];
+
         switch(mHal.state.dimYuv) {
         case HAL_PIXEL_FORMAT_YV12:
-            mHal.state.lodOffset[1] = offset;
-            mHal.state.lodDimX[1] = mHal.state.lodDimX[0] / 2;
-            mHal.state.lodDimY[1] = mHal.state.lodDimY[0] / 2;
-            offset += offset / 4;
-            mHal.state.lodOffset[2] = offset;
-            mHal.state.lodDimX[2] = mHal.state.lodDimX[0] / 2;
-            mHal.state.lodDimY[2] = mHal.state.lodDimY[0] / 2;
-            offset += offset / 4;
             break;
         case HAL_PIXEL_FORMAT_YCrCb_420_SP:  // NV21
-            mHal.state.lodOffset[1] = offset;
             mHal.state.lodDimX[1] = mHal.state.lodDimX[0];
-            mHal.state.lodDimY[1] = mHal.state.lodDimY[0] / 2;
-            offset += offset / 2;
             break;
+#ifndef RS_COMPATIBILITY_LIB
+        case HAL_PIXEL_FORMAT_YCbCr_420_888:
+            break;
+#endif
         default:
             rsAssert(0);
         }
     }
 #endif
-    mTotalSizeBytes = offset;
     mHal.state.element = mElement.get();
-}
-
-uint32_t Type::getLODOffset(uint32_t lod, uint32_t x) const {
-    uint32_t offset = mHal.state.lodOffset[lod];
-    offset += x * mElement->getSizeBytes();
-    return offset;
-}
-
-uint32_t Type::getLODOffset(uint32_t lod, uint32_t x, uint32_t y) const {
-    uint32_t offset = mHal.state.lodOffset[lod];
-    offset += (x + y * mHal.state.lodDimX[lod]) * mElement->getSizeBytes();
-    return offset;
-}
-
-uint32_t Type::getLODOffset(uint32_t lod, uint32_t x, uint32_t y, uint32_t z) const {
-    uint32_t offset = mHal.state.lodOffset[lod];
-    offset += (x +
-               y * mHal.state.lodDimX[lod] +
-               z * mHal.state.lodDimX[lod] * mHal.state.lodDimY[lod]) * mElement->getSizeBytes();
-    return offset;
-}
-
-uint32_t Type::getLODFaceOffset(uint32_t lod, RsAllocationCubemapFace face,
-                                uint32_t x, uint32_t y) const {
-    uint32_t offset = mHal.state.lodOffset[lod];
-    offset += (x + y * mHal.state.lodDimX[lod]) * mElement->getSizeBytes();
-
-    if (face != 0) {
-        uint32_t faceOffset = getSizeBytes() / 6;
-        offset += faceOffset * face;
-    }
-    return offset;
 }
 
 void Type::dumpLOGV(const char *prefix) const {
@@ -188,9 +147,7 @@ void Type::dumpLOGV(const char *prefix) const {
 void Type::serialize(Context *rsc, OStream *stream) const {
     // Need to identify ourselves
     stream->addU32((uint32_t)getClassId());
-
-    String8 name(getName());
-    stream->addString(&name);
+    stream->addString(getName());
 
     mElement->serialize(rsc, stream);
 
@@ -210,8 +167,7 @@ Type *Type::createFromStream(Context *rsc, IStream *stream) {
         return NULL;
     }
 
-    String8 name;
-    stream->loadString(&name);
+    const char *name = stream->loadString();
 
     Element *elem = Element::createFromStream(rsc, stream);
     if (!elem) {
@@ -225,6 +181,8 @@ Type *Type::createFromStream(Context *rsc, IStream *stream) {
     uint8_t faces = stream->loadU8();
     Type *type = Type::getType(rsc, elem, x, y, z, lod != 0, faces !=0, 0);
     elem->decUserRef();
+
+    delete [] name;
     return type;
 }
 
@@ -346,7 +304,7 @@ RsType rsi_TypeCreate(Context *rsc, RsElement _e, uint32_t dimX,
 }
 }
 
-void rsaTypeGetNativeData(RsContext con, RsType type, uintptr_t *typeData, uint32_t typeDataSize) {
+extern "C" void rsaTypeGetNativeData(RsContext con, RsType type, uintptr_t *typeData, uint32_t typeDataSize) {
     rsAssert(typeDataSize == 6);
     // Pack the data in the follofing way mHal.state.dimX; mHal.state.dimY; mHal.state.dimZ;
     // mHal.state.lodCount; mHal.state.faces; mElement; into typeData

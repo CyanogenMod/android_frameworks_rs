@@ -77,7 +77,9 @@ Program::Program(Context *rsc, const char * shaderText, size_t shaderLength,
         shaderText += internalTokenLen;
         shaderLength -= internalTokenLen;
     }
-    mUserShader.setTo(shaderText, shaderLength);
+
+    mUserShader = rsuCopyString(shaderText, shaderLength);
+    mUserShaderLen = shaderLength;
 }
 
 Program::~Program() {
@@ -98,6 +100,12 @@ Program::~Program() {
     mHal.state.inputElementsCount = 0;
     mHal.state.constantsCount = 0;
     mHal.state.texturesCount = 0;
+
+    if (mUserShader != NULL) {
+        delete[] mUserShader;
+        mUserShader = NULL;
+    }
+    mUserShaderLen = 0;
 }
 
 bool Program::freeChildren() {
@@ -134,6 +142,9 @@ void Program::initMemberVars() {
     mConstants = NULL;
 
     mIsInternal = false;
+
+    mUserShader = NULL;
+    mUserShaderLen = 0;
 }
 
 void Program::bindAllocation(Context *rsc, Allocation *alloc, uint32_t slot) {

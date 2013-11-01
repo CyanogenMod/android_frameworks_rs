@@ -32,6 +32,7 @@ namespace bcc {
 namespace android {
 namespace renderscript {
 
+extern bool gArchUseSIMD;
 
 typedef void (* InvokeFunc_t)(void);
 typedef void (* ForEachFunc_t)(void);
@@ -125,6 +126,14 @@ public:
     RSSelectRTCallback getSelectRTCallback() {
         return mSelectRTCallback;
     }
+
+    virtual void setSetupCompilerCallback(
+            RSSetupCompilerCallback pSetupCompilerCallback) {
+        mSetupCompilerCallback = pSetupCompilerCallback;
+    }
+    virtual RSSetupCompilerCallback getSetupCompilerCallback() const {
+        return mSetupCompilerCallback;
+    }
 #endif
     virtual bool getInForEach() { return mInForEach; }
 
@@ -156,6 +165,7 @@ protected:
 #ifndef RS_COMPATIBILITY_LIB
     bcc::RSLinkRuntimeCallback mLinkRuntimeCallback;
     RSSelectRTCallback mSelectRTCallback;
+    RSSetupCompilerCallback mSetupCompilerCallback;
 #endif
 };
 

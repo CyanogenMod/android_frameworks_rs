@@ -32,7 +32,7 @@ int main(int argc, char** argv)
     sp<Allocation> aout = Allocation::createTyped(rs, t);
     printf("Allocation %p %p\n", ain.get(), aout.get());
 
-    sp<ScriptC_mono> sc = new ScriptC_mono(rs, NULL, 0);
+    ScriptC_mono* sc = new ScriptC_mono(rs);
     printf("new script\n");
 
     // We read back the status from the script-side via a "failed" allocation.
@@ -64,19 +64,21 @@ int main(int argc, char** argv)
 
     // Verify a simple kernel.
     {
+        static const uint32_t xDim = 7;
+        static const uint32_t yDim = 7;
         sp<const Element> e = Element::I32(rs);
         Type::Builder tb(rs, e);
-        tb.setX(5);
-        tb.setY(5);
+        tb.setX(xDim);
+        tb.setY(yDim);
         sp<const Type> t = tb.create();
         sp<Allocation> kern1_in = Allocation::createTyped(rs, t);
         sp<Allocation> kern1_out = Allocation::createTyped(rs, t);
 
         int *buf = new int[t->getCount()];
         for (uint32_t ct=0; ct < t->getCount(); ct++) {
-            buf[ct] = 0;
+            buf[ct] = 5;
         }
-        kern1_in->copy1DFrom(buf);
+        kern1_in->copy2DRangeFrom(0, 0, xDim, yDim, buf);
         delete [] buf;
 
         sc->forEach_kern1(kern1_in, kern1_out);
@@ -84,21 +86,10 @@ int main(int argc, char** argv)
 
         rs->finish();
         failed_alloc->copy1DTo(&failed);
-
-        e.clear();
-        t.clear();
-        kern1_in.clear();
-        kern1_out.clear();
     }
 
     printf("Deleting stuff\n");
-    sc.clear();
-    t.clear();
-    a1.clear();
-    e.clear();
-    ain.clear();
-    aout.clear();
-    //    delete rs;
+    delete sc;
     printf("Delete OK\n");
 
     if (failed) {

@@ -78,7 +78,8 @@ protected:
     ObjectBaseRef<Element> *mInputElements;
 
     bool mIsInternal;
-    String8 mUserShader;
+    const char *mUserShader;
+    size_t mUserShaderLen;
     void initMemberVars();
 };
 

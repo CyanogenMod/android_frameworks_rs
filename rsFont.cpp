@@ -20,7 +20,9 @@
 #include "rsFont.h"
 #include "rsProgramFragment.h"
 #include "rsMesh.h"
+#ifdef HAVE_ANDROID_OS
 #include <cutils/properties.h>
+#endif
 
 #ifndef ANDROID_RS_SERIALIZE
 #include <ft2build.h>
@@ -56,7 +58,7 @@ bool Font::init(const char *name, float fontSize, uint32_t dpi, const void *data
         return false;
     }
 
-    mFontName = name;
+    mFontName = rsuCopyString(name);
     mFontSize = fontSize;
     mDpi = dpi;
 
@@ -337,27 +339,31 @@ FontState::FontState() {
     mLibrary = NULL;
 #endif //ANDROID_RS_SERIALIZE
 
+    float gamma = DEFAULT_TEXT_GAMMA;
+    int32_t blackThreshold = DEFAULT_TEXT_BLACK_GAMMA_THRESHOLD;
+    int32_t whiteThreshold = DEFAULT_TEXT_WHITE_GAMMA_THRESHOLD;
+
+#ifdef HAVE_ANDROID_OS
     // Get the renderer properties
     char property[PROPERTY_VALUE_MAX];
 
     // Get the gamma
-    float gamma = DEFAULT_TEXT_GAMMA;
     if (property_get(PROPERTY_TEXT_GAMMA, property, NULL) > 0) {
         gamma = atof(property);
     }
 
     // Get the black gamma threshold
-    int32_t blackThreshold = DEFAULT_TEXT_BLACK_GAMMA_THRESHOLD;
     if (property_get(PROPERTY_TEXT_BLACK_GAMMA_THRESHOLD, property, NULL) > 0) {
         blackThreshold = atoi(property);
     }
-    mBlackThreshold = (float)(blackThreshold) / 255.0f;
 
     // Get the white gamma threshold
-    int32_t whiteThreshold = DEFAULT_TEXT_WHITE_GAMMA_THRESHOLD;
     if (property_get(PROPERTY_TEXT_WHITE_GAMMA_THRESHOLD, property, NULL) > 0) {
         whiteThreshold = atoi(property);
     }
+#endif
+
+    mBlackThreshold = (float)(blackThreshold) / 255.0f;
     mWhiteThreshold = (float)(whiteThreshold) / 255.0f;
 
     // Compute the gamma tables
@@ -486,13 +492,13 @@ bool FontState::cacheBitmap(FT_Bitmap *bitmap, uint32_t *retOriginX, uint32_t *r
 #endif //ANDROID_RS_SERIALIZE
 
 void FontState::initRenderState() {
-    String8 shaderString("varying vec2 varTex0;\n");
-    shaderString.append("void main() {\n");
-    shaderString.append("  lowp vec4 col = UNI_Color;\n");
-    shaderString.append("  col.a = texture2D(UNI_Tex0, varTex0.xy).a;\n");
-    shaderString.append("  col.a = pow(col.a, UNI_Gamma);\n");
-    shaderString.append("  gl_FragColor = col;\n");
-    shaderString.append("}\n");
+    const char *shaderString = "varying vec2 varTex0;\n"
+                               "void main() {\n"
+                               "  lowp vec4 col = UNI_Color;\n"
+                               "  col.a = texture2D(UNI_Tex0, varTex0.xy).a;\n"
+                               "  col.a = pow(col.a, UNI_Gamma);\n"
+                               "  gl_FragColor = col;\n"
+                               "}\n";
 
     const char *textureNames[] = { "Tex0" };
     const size_t textureNamesLengths[] = { 4 };
@@ -502,10 +508,10 @@ void FontState::initRenderState() {
                                                                 RS_KIND_USER, false, 4);
     ObjectBaseRef<const Element> gammaElem = Element::createRef(mRSC, RS_TYPE_FLOAT_32,
                                                                 RS_KIND_USER, false, 1);
-    Element::Builder builder;
-    builder.add(colorElem.get(), "Color", 1);
-    builder.add(gammaElem.get(), "Gamma", 1);
-    ObjectBaseRef<const Element> constInput = builder.create(mRSC);
+
+    const char *ebn1[] = { "Color", "Gamma" };
+    const Element *ebe1[] = {colorElem.get(), gammaElem.get()};
+    ObjectBaseRef<const Element> constInput = Element::create(mRSC, 2, ebe1, ebn1);
 
     ObjectBaseRef<Type> inputType = Type::getTypeRef(mRSC, constInput.get(), 1, 0, 0, false, false, 0);
 
@@ -518,7 +524,7 @@ void FontState::initRenderState() {
     mFontShaderFConstant.set(Allocation::createAllocation(mRSC, inputType.get(),
                                                           RS_ALLOCATION_USAGE_SCRIPT |
                                                           RS_ALLOCATION_USAGE_GRAPHICS_CONSTANTS));
-    ProgramFragment *pf = new ProgramFragment(mRSC, shaderString.string(), shaderString.length(),
+    ProgramFragment *pf = new ProgramFragment(mRSC, shaderString, strlen(shaderString),
                                               textureNames, numTextures, textureNamesLengths,
                                               tmp, 4);
     mFontShaderF.set(pf);
@@ -601,10 +607,9 @@ void FontState::initVertexArrayBuffers() {
     ObjectBaseRef<const Element> posElem = Element::createRef(mRSC, RS_TYPE_FLOAT_32, RS_KIND_USER, false, 3);
     ObjectBaseRef<const Element> texElem = Element::createRef(mRSC, RS_TYPE_FLOAT_32, RS_KIND_USER, false, 2);
 
-    Element::Builder builder;
-    builder.add(posElem.get(), "position", 1);
-    builder.add(texElem.get(), "texture0", 1);
-    ObjectBaseRef<const Element> vertexDataElem = builder.create(mRSC);
+    const char *ebn1[] = { "position", "texture0" };
+    const Element *ebe1[] = {posElem.get(), texElem.get()};
+    ObjectBaseRef<const Element> vertexDataElem = Element::create(mRSC, 2, ebe1, ebn1);
 
     ObjectBaseRef<Type> vertexDataType = Type::getTypeRef(mRSC, vertexDataElem.get(),
                                                           mMaxNumberOfQuads * 4,
@@ -634,11 +639,9 @@ void FontState::checkInit() {
     initVertexArrayBuffers();
 
     // We store a string with letters in a rough frequency of occurrence
-    mLatinPrecache = String8(" eisarntolcdugpmhbyfvkwzxjq");
-    mLatinPrecache += String8("EISARNTOLCDUGPMHBYFVKWZXJQ");
-    mLatinPrecache += String8(",.?!()-+@;:`'");
-    mLatinPrecache += String8("0123456789");
-
+    mLatinPrecache = " eisarntolcdugpmhbyfvkwzxjq"
+                     "EISARNTOLCDUGPMHBYFVKWZXJQ"
+                     ",.?!()-+@;:`'0123456789";
     mInitialized = true;
 }
 
@@ -734,7 +737,8 @@ void FontState::precacheLatin(Font *font) {
     // Remaining capacity is measured in %
     uint32_t remainingCapacity = getRemainingCacheCapacity();
     uint32_t precacheIdx = 0;
-    while (remainingCapacity > 25 && precacheIdx < mLatinPrecache.size()) {
+    const size_t l = strlen(mLatinPrecache);
+    while ((remainingCapacity > 25) && (precacheIdx < l)) {
         font->getCachedUTFChar((int32_t)mLatinPrecache[precacheIdx]);
         remainingCapacity = getRemainingCacheCapacity();
         precacheIdx ++;
@@ -753,11 +757,12 @@ void FontState::renderText(const char *text, uint32_t len, int32_t x, int32_t y,
     Font *currentFont = mRSC->getFont();
     if (!currentFont) {
         if (!mDefault.get()) {
-            String8 fontsDir("/fonts/Roboto-Regular.ttf");
-            String8 fullPath(getenv("ANDROID_ROOT"));
-            fullPath += fontsDir;
-
-            mDefault.set(Font::create(mRSC, fullPath.string(), 8, mRSC->getDPI()));
+            char fullPath[1024];
+            const char * root = getenv("ANDROID_ROOT");
+            rsAssert(strlen(root) < 256);
+            strcpy(fullPath, root);
+            strcat(fullPath, "/fonts/Roboto-Regular.ttf");
+            mDefault.set(Font::create(mRSC, fullPath, 8, mRSC->getDPI()));
         }
         currentFont = mDefault.get();
     }

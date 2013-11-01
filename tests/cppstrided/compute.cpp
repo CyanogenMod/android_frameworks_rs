@@ -35,7 +35,7 @@ int main(int argc, char** argv)
     sp<Allocation> ain = Allocation::createTyped(rs, t);
     sp<Allocation> aout = Allocation::createTyped(rs, t);
 
-    sp<ScriptC_multiply> sc = new ScriptC_multiply(rs, NULL, 0);
+    sp<ScriptC_multiply> sc = new ScriptC_multiply(rs);
 
     uint32_t* buf = (uint32_t*) malloc(stride * numElems * sizeof(uint32_t));
     if (!buf) {

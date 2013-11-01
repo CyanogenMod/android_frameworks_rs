@@ -95,7 +95,7 @@ ContextSetPriority {
     }
 
 ContextDestroyWorker {
-        sync
+    sync
 }
 
 AssignName {
@@ -171,16 +171,6 @@ Allocation3DData {
     param size_t stride
     }
 
-Allocation2DElementData {
-    param RsAllocation va
-    param uint32_t x
-    param uint32_t y
-    param uint32_t lod
-    param RsAllocationCubemapFace face
-    param const void *data
-    param size_t element_offset
-    }
-
 AllocationGenerateMipmaps {
     param RsAllocation va
 }
@@ -210,11 +200,11 @@ Allocation2DRead {
     param size_t stride
 }
 
+
 AllocationSyncAll {
     param RsAllocation va
     param RsAllocationUsageType src
 }
-
 
 AllocationResize1D {
     param RsAllocation va
@@ -401,5 +391,11 @@ ScriptGroupExecute {
     param RsScriptGroup group
 }
 
+AllocationIoSend {
+    param RsAllocation alloc
+    }
 
+AllocationIoReceive {
+    param RsAllocation alloc
+    }
 

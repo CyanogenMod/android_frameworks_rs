@@ -79,6 +79,13 @@ void Allocation::updateCache() {
 }
 
 Allocation::~Allocation() {
+#if !defined(RS_SERVER) && !defined(RS_COMPATIBILITY_LIB)
+    if (mGrallocConsumer.get()) {
+        mGrallocConsumer->unlockBuffer();
+        mGrallocConsumer = NULL;
+    }
+#endif
+
     freeChildrenUnlocked();
     mRSC->mHal.funcs.allocation.destroy(mRSC, this);
 }
@@ -236,19 +243,20 @@ void Allocation::removeProgramToDirty(const Program *p) {
 
 void Allocation::dumpLOGV(const char *prefix) const {
     ObjectBase::dumpLOGV(prefix);
+    char buf[1024];
 
-    String8 s(prefix);
-    s.append(" type ");
-    if (mHal.state.type) {
-        mHal.state.type->dumpLOGV(s.string());
+    if ((strlen(prefix) + 10) < sizeof(buf)) {
+        sprintf(buf, "%s type ", prefix);
+        if (mHal.state.type) {
+            mHal.state.type->dumpLOGV(buf);
+        }
     }
-
     ALOGV("%s allocation ptr=%p  mUsageFlags=0x04%x, mMipmapControl=0x%04x",
          prefix, mHal.drvState.lod[0].mallocPtr, mHal.state.usageFlags, mHal.state.mipmapControl);
 }
 
 uint32_t Allocation::getPackedSize() const {
-    uint32_t numItems = mHal.state.type->getSizeBytes() / mHal.state.type->getElementSizeBytes();
+    uint32_t numItems = mHal.state.type->getCellCount();
     return numItems * mHal.state.type->getElement()->getSizeBytesUnpadded();
 }
 
@@ -257,7 +265,7 @@ void Allocation::writePackedData(Context *rsc, const Type *type,
     const Element *elem = type->getElement();
     uint32_t unpaddedBytes = elem->getSizeBytesUnpadded();
     uint32_t paddedBytes = elem->getSizeBytes();
-    uint32_t numItems = type->getSizeBytes() / paddedBytes;
+    uint32_t numItems = type->getPackedSizeBytes() / paddedBytes;
 
     uint32_t srcInc = !dstPadded ? paddedBytes : unpaddedBytes;
     uint32_t dstInc =  dstPadded ? paddedBytes : unpaddedBytes;
@@ -312,7 +320,7 @@ void Allocation::unpackVec3Allocation(Context *rsc, const void *data, size_t dat
 void Allocation::packVec3Allocation(Context *rsc, OStream *stream) const {
     uint32_t paddedBytes = getType()->getElement()->getSizeBytes();
     uint32_t unpaddedBytes = getType()->getElement()->getSizeBytesUnpadded();
-    uint32_t numItems = mHal.state.type->getSizeBytes() / paddedBytes;
+    uint32_t numItems = mHal.state.type->getCellCount();
 
     const uint8_t *src = (const uint8_t*)rsc->mHal.funcs.allocation.lock1D(rsc, this);
     uint8_t *dst = new uint8_t[numItems * unpaddedBytes];
@@ -327,15 +335,13 @@ void Allocation::packVec3Allocation(Context *rsc, OStream *stream) const {
 void Allocation::serialize(Context *rsc, OStream *stream) const {
     // Need to identify ourselves
     stream->addU32((uint32_t)getClassId());
-
-    String8 name(getName());
-    stream->addString(&name);
+    stream->addString(getName());
 
     // First thing we need to serialize is the type object since it will be needed
     // to initialize the class
     mHal.state.type->serialize(rsc, stream);
 
-    uint32_t dataSize = mHal.state.type->getSizeBytes();
+    uint32_t dataSize = mHal.state.type->getPackedSizeBytes();
     // 3 element vectors are padded to 4 in memory, but padding isn't serialized
     uint32_t packedSize = getPackedSize();
     // Write how much data we are storing
@@ -358,8 +364,7 @@ Allocation *Allocation::createFromStream(Context *rsc, IStream *stream) {
         return NULL;
     }
 
-    String8 name;
-    stream->loadString(&name);
+    const char *name = stream->loadString();
 
     Type *type = Type::createFromStream(rsc, stream);
     if (!type) {
@@ -374,7 +379,7 @@ Allocation *Allocation::createFromStream(Context *rsc, IStream *stream) {
     uint32_t dataSize = stream->loadU32();
     // 3 element vectors are padded to 4 in memory, but padding isn't serialized
     uint32_t packedSize = alloc->getPackedSize();
-    if (dataSize != type->getSizeBytes() &&
+    if (dataSize != type->getPackedSizeBytes() &&
         dataSize != packedSize) {
         ALOGE("failed to read allocation because numbytes written is not the same loaded type wants\n");
         ObjectBase::checkDelete(alloc);
@@ -382,9 +387,8 @@ Allocation *Allocation::createFromStream(Context *rsc, IStream *stream) {
         return NULL;
     }
 
-    alloc->setName(name.string(), name.size());
-
-    if (dataSize == type->getSizeBytes()) {
+    alloc->assignName(name);
+    if (dataSize == type->getPackedSizeBytes()) {
         uint32_t count = dataSize / type->getElementSizeBytes();
         // Read in all of our allocation data
         alloc->data(rsc, 0, 0, count, stream->getPtr() + stream->getPos(), dataSize);
@@ -418,7 +422,7 @@ void Allocation::decRefs(const void *ptr, size_t ct, size_t startOff) const {
 
 void Allocation::freeChildrenUnlocked () {
     void *ptr = mRSC->mHal.funcs.allocation.lock1D(mRSC, this);
-    decRefs(ptr, mHal.state.type->getSizeBytes() / mHal.state.type->getElementSizeBytes(), 0);
+    decRefs(ptr, mHal.state.type->getCellCount(), 0);
     mRSC->mHal.funcs.allocation.unlock1D(mRSC, this);
 }
 
@@ -454,8 +458,31 @@ void Allocation::resize2D(Context *rsc, uint32_t dimX, uint32_t dimY) {
     ALOGE("not implemented");
 }
 
+#ifndef RS_COMPATIBILITY_LIB
+void Allocation::NewBufferListener::onFrameAvailable() {
+    intptr_t ip = (intptr_t)alloc;
+    rsc->sendMessageToClient(NULL, RS_MESSAGE_TO_CLIENT_NEW_BUFFER, ip, 0, true);
+}
+#endif
+
 void * Allocation::getSurface(const Context *rsc) {
-    return rsc->mHal.funcs.allocation.getSurface(rsc, this);
+#ifndef RS_COMPATIBILITY_LIB
+    // Configure GrallocConsumer to be in asynchronous mode
+    sp<BufferQueue> bq = new BufferQueue();
+    mGrallocConsumer = new GrallocConsumer(this, bq);
+    sp<IGraphicBufferProducer> bp = bq;
+    bp->incStrong(NULL);
+
+    mBufferListener = new NewBufferListener();
+    mBufferListener->rsc = rsc;
+    mBufferListener->alloc = this;
+
+    mGrallocConsumer->setFrameAvailableListener(mBufferListener);
+    return bp.get();
+#else
+    return NULL;
+#endif
+    //return rsc->mHal.funcs.allocation.getSurface(rsc, this);
 }
 
 void Allocation::setSurface(const Context *rsc, RsNativeWindow sur) {
@@ -468,7 +495,22 @@ void Allocation::ioSend(const Context *rsc) {
 }
 
 void Allocation::ioReceive(const Context *rsc) {
-    rsc->mHal.funcs.allocation.ioReceive(rsc, this);
+    void *ptr = NULL;
+    size_t stride = 0;
+#ifndef RS_COMPATIBILITY_LIB
+    if (mHal.state.usageFlags & RS_ALLOCATION_USAGE_SCRIPT) {
+        status_t ret = mGrallocConsumer->lockNextBuffer();
+
+        if (ret == OK) {
+            rsc->mHal.funcs.allocation.ioReceive(rsc, this);
+        } else if (ret == BAD_VALUE) {
+            // No new frame, don't do anything
+        } else {
+            rsc->setError(RS_ERROR_DRIVER, "Error receiving IO input buffer.");
+        }
+
+    }
+#endif
 }
 
 
@@ -690,7 +732,7 @@ void rsi_Allocation2DRead(Context *rsc, RsAllocation va, uint32_t xoff, uint32_t
 }
 }
 
-const void * rsaAllocationGetType(RsContext con, RsAllocation va) {
+extern "C" const void * rsaAllocationGetType(RsContext con, RsAllocation va) {
     Allocation *a = static_cast<Allocation *>(va);
     a->getType()->incUserRef();
 

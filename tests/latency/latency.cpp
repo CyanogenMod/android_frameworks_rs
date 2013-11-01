@@ -53,7 +53,11 @@ int main(int argc, char** argv)
 
     sp<RS> rs = new RS();
 
-    bool r = rs->init(forceCpu, synchronous);
+    uint32_t flags = 0;
+    if (forceCpu) flags |= RS_INIT_LOW_LATENCY;
+    if (synchronous) flags |= RS_INIT_SYNCHRONOUS;
+
+    bool r = rs->init(flags);
 
     sp<const Element> e = Element::U32(rs);
 
@@ -66,7 +70,7 @@ int main(int argc, char** argv)
     sp<Allocation> ain = Allocation::createTyped(rs, t);
     sp<Allocation> aout = Allocation::createTyped(rs, t);
 
-    sp<ScriptC_latency> sc = new ScriptC_latency(rs, NULL, 0);
+    sp<ScriptC_latency> sc = new ScriptC_latency(rs);
 
     struct timeval start, stop;
 

@@ -30,7 +30,7 @@ ProgramFragment::ProgramFragment(Context *rsc, const char * shaderText, size_t s
     mConstantColor[2] = 1.f;
     mConstantColor[3] = 1.f;
 
-    mRSC->mHal.funcs.fragment.init(mRSC, this, mUserShader.string(), mUserShader.length(),
+    mRSC->mHal.funcs.fragment.init(mRSC, this, mUserShader, mUserShaderLen,
                                    textureNames, textureNamesCount, textureNamesLength);
 }
 
@@ -93,18 +93,20 @@ ProgramFragmentState::~ProgramFragmentState() {
 }
 
 void ProgramFragmentState::init(Context *rsc) {
-    String8 shaderString(RS_SHADER_INTERNAL);
-    shaderString.append("varying lowp vec4 varColor;\n");
-    shaderString.append("varying vec2 varTex0;\n");
-    shaderString.append("void main() {\n");
-    shaderString.append("  lowp vec4 col = UNI_Color;\n");
-    shaderString.append("  gl_FragColor = col;\n");
-    shaderString.append("}\n");
+    const char *shaderString =
+            RS_SHADER_INTERNAL
+            "varying lowp vec4 varColor;\n"
+            "varying vec2 varTex0;\n"
+            "void main() {\n"
+            "  lowp vec4 col = UNI_Color;\n"
+            "  gl_FragColor = col;\n"
+            "}\n";
 
     ObjectBaseRef<const Element> colorElem = Element::createRef(rsc, RS_TYPE_FLOAT_32, RS_KIND_USER, false, 4);
-    Element::Builder builder;
-    builder.add(colorElem.get(), "Color", 1);
-    ObjectBaseRef<const Element> constInput = builder.create(rsc);
+
+    const char *enames[] = { "Color" };
+    const Element *eins[] = {colorElem.get()};
+    ObjectBaseRef<const Element> constInput = Element::create(rsc, 1, eins, enames);
 
     ObjectBaseRef<Type> inputType = Type::getTypeRef(rsc, constInput.get(), 1, 0, 0, false, false, 0);
 
@@ -114,7 +116,7 @@ void ProgramFragmentState::init(Context *rsc) {
 
     Allocation *constAlloc = Allocation::createAllocation(rsc, inputType.get(),
                               RS_ALLOCATION_USAGE_SCRIPT | RS_ALLOCATION_USAGE_GRAPHICS_CONSTANTS);
-    ProgramFragment *pf = new ProgramFragment(rsc, shaderString.string(), shaderString.length(),
+    ProgramFragment *pf = new ProgramFragment(rsc, shaderString, strlen(shaderString),
                                               NULL, 0, NULL, tmp, 2);
     pf->bindAllocation(rsc, constAlloc, 0);
     pf->setConstantColor(rsc, 1.0f, 1.0f, 1.0f, 1.0f);

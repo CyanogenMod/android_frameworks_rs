@@ -17,23 +17,23 @@
 #include <malloc.h>
 
 #include "RenderScript.h"
-#include <rs.h>
+#include "rsCppInternal.h"
 
 using namespace android;
 using namespace RSC;
 
 void Script::invoke(uint32_t slot, const void *v, size_t len) const {
-    rsScriptInvokeV(mRS->getContext(), getID(), slot, v, len);
+    tryDispatch(mRS, RS::dispatch->ScriptInvokeV(mRS->getContext(), getID(), slot, v, len));
 }
 
 void Script::forEach(uint32_t slot, sp<const Allocation> ain, sp<const Allocation> aout,
                        const void *usr, size_t usrLen) const {
     if ((ain == NULL) && (aout == NULL)) {
-        mRS->throwError("At least one of ain or aout is required to be non-null.");
+        mRS->throwError(RS_ERROR_INVALID_PARAMETER, "At least one of ain or aout is required to be non-null.");
     }
     void *in_id = BaseObj::getObjID(ain);
     void *out_id = BaseObj::getObjID(aout);
-    rsScriptForEach(mRS->getContext(), getID(), slot, in_id, out_id, usr, usrLen, NULL, 0);
+    tryDispatch(mRS, RS::dispatch->ScriptForEach(mRS->getContext(), getID(), slot, in_id, out_id, usr, usrLen, NULL, 0));
 }
 
 
@@ -42,16 +42,16 @@ Script::Script(void *id, sp<RS> rs) : BaseObj(id, rs) {
 
 
 void Script::bindAllocation(sp<Allocation> va, uint32_t slot) const {
-    rsScriptBindAllocation(mRS->getContext(), getID(), BaseObj::getObjID(va), slot);
+    tryDispatch(mRS, RS::dispatch->ScriptBindAllocation(mRS->getContext(), getID(), BaseObj::getObjID(va), slot));
 }
 
 
 void Script::setVar(uint32_t index, sp<const BaseObj> o) const {
-    rsScriptSetVarObj(mRS->getContext(), getID(), index, (o == NULL) ? 0 : o->getID());
+    tryDispatch(mRS, RS::dispatch->ScriptSetVarObj(mRS->getContext(), getID(), index, (o == NULL) ? 0 : o->getID()));
 }
 
 void Script::setVar(uint32_t index, const void *v, size_t len) const {
-    rsScriptSetVarV(mRS->getContext(), getID(), index, v, len);
+    tryDispatch(mRS, RS::dispatch->ScriptSetVarV(mRS->getContext(), getID(), index, v, len));
 }
 
 void Script::FieldBase::init(sp<RS> rs, uint32_t dimx, uint32_t usages) {

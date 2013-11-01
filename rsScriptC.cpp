@@ -26,6 +26,7 @@
 
 #if !defined(RS_SERVER) && !defined(RS_COMPATIBILITY_LIB)
 #include "utils/Timers.h"
+#include "cutils/trace.h"
 #endif
 
 #include <sys/stat.h>
@@ -166,15 +167,32 @@ void ScriptC::runForEach(Context *rsc,
                          const void * usr,
                          size_t usrBytes,
                          const RsScriptCall *sc) {
+    // Trace this function call.
+    // To avoid overhead, we only build the string, if tracing is actually
+    // enabled.
+    String8 *AString = NULL;
+    const char *String = "";
+    if (ATRACE_ENABLED()) {
+        AString = new String8("runForEach_");
+        AString->append(mHal.info.exportedForeachFuncList[slot].first);
+        String = AString->string();
+    }
+    ATRACE_NAME(String);
+    (void)String;
 
     Context::PushState ps(rsc);
 
     setupGLState(rsc);
     setupScript(rsc);
     rsc->mHal.funcs.script.invokeForEach(rsc, this, slot, ain, aout, usr, usrBytes, sc);
+
+    if (AString)
+        delete AString;
 }
 
 void ScriptC::Invoke(Context *rsc, uint32_t slot, const void *data, size_t len) {
+    ATRACE_CALL();
+
     if (slot >= mHal.info.exportedFunctionCount) {
         rsc->setError(RS_ERROR_BAD_SCRIPT, "Calling invoke on bad script");
         return;
@@ -229,7 +247,7 @@ bool ScriptC::runCompiler(Context *rsc,
                           const char *cacheDir,
                           const uint8_t *bitcode,
                           size_t bitcodeLen) {
-
+    ATRACE_CALL();
     //ALOGE("runCompiler %p %p %p %p %p %i", rsc, this, resName, cacheDir, bitcode, bitcodeLen);
 #ifndef RS_COMPATIBILITY_LIB
 #ifndef ANDROID_RS_SERIALIZE

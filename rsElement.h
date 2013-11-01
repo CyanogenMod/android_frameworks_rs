@@ -57,18 +57,6 @@ public:
     };
     Hal mHal;
 
-    class Builder {
-    public:
-        Builder();
-        void add(const Element *e, const char *nameStr, uint32_t arraySize);
-        ObjectBaseRef<const Element> create(Context *rsc);
-    private:
-        Vector<ObjectBaseRef<const Element> > mBuilderElementRefs;
-        Vector<const Element *> mBuilderElements;
-        Vector<const char*> mBuilderNameStrings;
-        Vector<size_t> mBuilderNameLengths;
-        Vector<uint32_t> mBuilderArrays;
-    };
     uint32_t getGLType() const;
     uint32_t getGLFormat() const;
 
@@ -95,7 +83,7 @@ public:
 
     uint32_t getFieldCount() const {return mFieldCount;}
     const Element * getField(uint32_t idx) const {return mFields[idx].e.get();}
-    const char * getFieldName(uint32_t idx) const {return mFields[idx].name.string();}
+    const char * getFieldName(uint32_t idx) const {return mFields[idx].name;}
     uint32_t getFieldArraySize(uint32_t idx) const {return mFields[idx].arraySize;}
 
     const Component & getComponent() const {return mComponent;}
@@ -133,8 +121,8 @@ public:
     static const Element* create(Context *rsc, size_t count,
                                  const Element **ein,
                                  const char **nin,
-                                 const size_t * lengths,
-                                 const uint32_t *asin) {
+                                 const size_t * lengths = NULL,
+                                 const uint32_t *asin = NULL) {
         ObjectBaseRef<const Element> elem = createRef(rsc, count, ein, nin, lengths, asin);
         elem->incUserRef();
         return elem.get();
@@ -149,7 +137,7 @@ protected:
     void clear();
 
     typedef struct {
-        String8 name;
+        const char *name;
         ObjectBaseRef<const Element> e;
         uint32_t offsetBits;
         uint32_t offsetBitsUnpadded;

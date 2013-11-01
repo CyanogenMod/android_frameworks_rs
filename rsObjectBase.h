@@ -44,6 +44,7 @@ public:
     const char * getName() const {
         return mName;
     }
+    void assignName(const char *s) {mName = s;}
     void setName(const char *);
     void setName(const char *, uint32_t len);
 

@@ -1,3 +1,14 @@
+rs_cpp_SRC_FILES := \
+	RenderScript.cpp \
+	BaseObj.cpp \
+	Element.cpp \
+	Type.cpp \
+	Allocation.cpp \
+	Script.cpp \
+	ScriptC.cpp \
+	ScriptIntrinsics.cpp \
+	Sampler.cpp
+
 LOCAL_PATH:= $(call my-dir)
 include $(CLEAR_VARS)
 
@@ -11,37 +22,50 @@ else
 endif
 local_cflags_for_rs_cpp += -DRS_VERSION=$(RS_VERSION)
 
+LOCAL_SRC_FILES := $(rs_cpp_SRC_FILES)
+
 LOCAL_CFLAGS += $(local_cflags_for_rs_cpp)
 
-LOCAL_SRC_FILES:= \
-	RenderScript.cpp \
-	BaseObj.cpp \
-	Element.cpp \
-	Type.cpp \
-	Allocation.cpp \
-	Script.cpp \
-	ScriptC.cpp \
-	ScriptIntrinsics.cpp
-
 LOCAL_SHARED_LIBRARIES := \
-	libRS \
 	libz \
 	libcutils \
 	libutils \
-	liblog
+	liblog \
+	libdl \
+	libstlport
 
 LOCAL_MODULE:= libRScpp
 
 LOCAL_MODULE_TAGS := optional
 
-intermediates := $(call intermediates-dir-for,STATIC_LIBRARIES,libRS,TARGET,)
-librs_generated_headers := \
-    $(intermediates)/rsgApiStructs.h \
-    $(intermediates)/rsgApiFuncDecl.h
-LOCAL_GENERATED_SOURCES := $(librs_generated_headers)
-
 LOCAL_C_INCLUDES += frameworks/rs
+LOCAL_C_INCLUDES += external/stlport/stlport bionic/ bionic/libstdc++/include
 LOCAL_C_INCLUDES += $(intermediates)
 
-
 include $(BUILD_SHARED_LIBRARY)
+
+
+include $(CLEAR_VARS)
+
+LOCAL_CFLAGS += $(local_cflags_for_rs_cpp)
+
+LOCAL_SRC_FILES := $(rs_cpp_SRC_FILES)
+
+LOCAL_STATIC_LIBRARIES := \
+	libz \
+	libcutils \
+	libutils \
+	liblog \
+	libstlport_static
+
+LOCAL_SHARED_LIBRARIES := libdl
+
+LOCAL_MODULE:= libRScpp_static
+
+LOCAL_MODULE_TAGS := optional
+
+LOCAL_C_INCLUDES += frameworks/rs
+LOCAL_C_INCLUDES += external/stlport/stlport bionic/ bionic/libstdc++/include
+LOCAL_C_INCLUDES += $(intermediates)
+
+include $(BUILD_STATIC_LIBRARY)

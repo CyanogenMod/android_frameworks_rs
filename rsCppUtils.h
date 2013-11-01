@@ -38,6 +38,9 @@
 
 #if defined(RS_SERVER) || defined(RS_COMPATIBILITY_LIB)
 
+#define ATRACE_TAG
+#define ATRACE_CALL(...)
+
 #include <string>
 #include <vector>
 #include <algorithm>
@@ -148,7 +151,6 @@ enum {
     SYSTEM_TIME_MONOTONIC = 1, // monotonic time since unspecified starting point
     SYSTEM_TIME_PROCESS = 2,   // high-resolution per-process clock
     SYSTEM_TIME_THREAD = 3,    // high-resolution per-thread clock
-    SYSTEM_TIME_BOOTTIME = 4   // same as SYSTEM_TIME_MONOTONIC, but including CPU suspend time
 };
 
 static inline nsecs_t systemTime(int clock)
@@ -158,8 +160,7 @@ static inline nsecs_t systemTime(int clock)
             CLOCK_REALTIME,
             CLOCK_MONOTONIC,
             CLOCK_PROCESS_CPUTIME_ID,
-            CLOCK_THREAD_CPUTIME_ID,
-            CLOCK_BOOTTIME
+            CLOCK_THREAD_CPUTIME_ID
     };
     struct timespec t;
     t.tv_sec = t.tv_nsec = 0;
@@ -184,6 +185,9 @@ static inline nsecs_t nanoseconds_to_milliseconds(nsecs_t secs)
 
 namespace android {
 namespace renderscript {
+
+const char * rsuCopyString(const char *name);
+const char * rsuCopyString(const char *name, size_t len);
 
 #if 1
 #define rsAssert(v) do {if(!(v)) ALOGE("rsAssert failed: %s, in %s at %i", #v, __FILE__, __LINE__);} while (0)

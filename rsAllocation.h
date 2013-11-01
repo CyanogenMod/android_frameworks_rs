@@ -19,6 +19,15 @@
 
 #include "rsType.h"
 
+#if !defined(RS_SERVER) && !defined(RS_COMPATIBILITY_LIB)
+#include <ui/GraphicBuffer.h>
+#include "rsGrallocConsumer.h"
+#include "gui/CpuConsumer.h"
+#include "gui/GLConsumer.h"
+#else
+struct ANativeWindowBuffer;
+#endif
+
 // ---------------------------------------------------------------------------
 namespace android {
 
@@ -58,8 +67,8 @@ public:
             bool hasReferences;
             void * userProvidedPtr;
             int32_t surfaceTextureID;
-            void *deprecated01;
-            void *deprecated02;
+            ANativeWindowBuffer *nativeBuffer;
+            int64_t timestamp;
         };
         State state;
 
@@ -74,6 +83,11 @@ public:
             size_t faceOffset;
             uint32_t lodCount;
             uint32_t faceCount;
+
+            struct YuvState {
+                uint32_t shift;
+                uint32_t step;
+            } yuv;
         };
         mutable DrvState drvState;
 
@@ -156,6 +170,20 @@ protected:
         mType.set(t);
         mHal.state.type = t;
     }
+
+#if !defined(RS_SERVER) && !defined(RS_COMPATIBILITY_LIB)
+    class NewBufferListener : public android::ConsumerBase::FrameAvailableListener {
+    public:
+        const android::renderscript::Context *rsc;
+        const android::renderscript::Allocation *alloc;
+
+        virtual void onFrameAvailable();
+    };
+
+    sp<NewBufferListener> mBufferListener;
+    sp< GrallocConsumer > mGrallocConsumer;
+#endif
+
 
 private:
     void freeChildrenUnlocked();

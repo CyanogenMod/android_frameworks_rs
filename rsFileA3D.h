@@ -19,7 +19,6 @@
 
 #include "rsMesh.h"
 
-#include <utils/String8.h>
 #include "rsStream.h"
 #include <stdio.h>
 
@@ -43,19 +42,21 @@ public:
     bool mUse64BitOffsets;
 
     class A3DIndexEntry {
-        String8 mObjectName;
+        const char *mObjectName;
         RsA3DClassID mType;
         uint64_t mOffset;
         uint64_t mLength;
         ObjectBase *mRsObj;
     public:
         friend class FileA3D;
-        const String8 &getObjectName() const {
+        const char *getObjectName() const {
             return mObjectName;
         }
         RsA3DClassID getType() const {
             return mType;
         }
+
+        ~A3DIndexEntry();
     };
 
     bool load(FILE *f);

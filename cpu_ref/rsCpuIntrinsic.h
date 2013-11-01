@@ -40,6 +40,13 @@ public:
     virtual void invokeInit();
     virtual void invokeFreeChildren();
 
+    virtual void preLaunch(uint32_t slot, const Allocation * ain,
+                           Allocation * aout, const void * usr,
+                           uint32_t usrLen, const RsScriptCall *sc);
+    virtual void postLaunch(uint32_t slot, const Allocation * ain,
+                            Allocation * aout, const void * usr,
+                            uint32_t usrLen, const RsScriptCall *sc);
+
     virtual void setGlobalVar(uint32_t slot, const void *data, size_t dataLength);
     virtual void setGlobalVarWithElemDims(uint32_t slot, const void *data, size_t dataLength,
                                   const Element *e, const size_t *dims, size_t dimLength);

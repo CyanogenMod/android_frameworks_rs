@@ -104,173 +104,6 @@ ENTRY(rsdIntrinsicConvolve3x3_K)
         bx              lr
 END(rsdIntrinsicConvolve3x3_K)
 
-/*
-        r0 = dst
-        r1 = src
-        r2 = matrix
-        r3 = length
-*/
-ENTRY(rsdIntrinsicColorMatrix4x4_K)
-        stmfd           sp!, {r4, lr}
-        vpush           {q4-q7}
-
-        vld1.16 {q2}, [r2]!
-        vld1.16 {q3}, [r2]!
-
-1:
-        vld4.8 {d0[0],d1[0],d2[0],d3[0]}, [r1]!
-        vld4.8 {d0[1],d1[1],d2[1],d3[1]}, [r1]!
-        vld4.8 {d0[2],d1[2],d2[2],d3[2]}, [r1]!
-        vld4.8 {d0[3],d1[3],d2[3],d3[3]}, [r1]!
-
-        vmovl.u8 q12, d0  /* R */
-        vmovl.u8 q13, d1  /* G */
-        vmovl.u8 q14, d2  /* B */
-        vmovl.u8 q15, d3  /* A */
-
-        vmull.s16 q8,  d24, d4[0]
-        vmull.s16 q9,  d24, d4[1]
-        vmull.s16 q10, d24, d4[2]
-        vmull.s16 q11, d24, d4[3]
-
-        vmlal.s16 q8,  d26, d5[0]
-        vmlal.s16 q9,  d26, d5[1]
-        vmlal.s16 q10, d26, d5[2]
-        vmlal.s16 q11, d26, d5[3]
-
-        vmlal.s16 q8,  d28, d6[0]
-        vmlal.s16 q9,  d28, d6[1]
-        vmlal.s16 q10, d28, d6[2]
-        vmlal.s16 q11, d28, d6[3]
-
-        vmlal.s16 q8,  d30, d7[0]
-        vmlal.s16 q9,  d30, d7[1]
-        vmlal.s16 q10, d30, d7[2]
-        vmlal.s16 q11, d30, d7[3]
-
-        vshrn.i32 d24, q8, #8
-        vshrn.i32 d26, q9, #8
-        vshrn.i32 d28, q10, #8
-        vshrn.i32 d30, q11, #8
-
-        vqmovun.s16 d0, q12
-        vqmovun.s16 d1, q13
-        vqmovun.s16 d2, q14
-        vqmovun.s16 d3, q15
-
-        vst4.8 {d0[0],d1[0],d2[0],d3[0]}, [r0]!
-        vst4.8 {d0[1],d1[1],d2[1],d3[1]}, [r0]!
-        vst4.8 {d0[2],d1[2],d2[2],d3[2]}, [r0]!
-        vst4.8 {d0[3],d1[3],d2[3],d3[3]}, [r0]!
-
-        subs r3, r3, #1
-        bne 1b
-
-        vpop            {q4-q7}
-        ldmfd           sp!, {r4, lr}
-        bx              lr
-END(rsdIntrinsicColorMatrix4x4_K)
-
-/*
-        r0 = dst
-        r1 = src
-        r2 = matrix
-        r3 = length
-*/
-ENTRY(rsdIntrinsicColorMatrix3x3_K)
-        stmfd           sp!, {r4, lr}
-        vpush           {q4-q7}
-
-        vld1.16 {q2}, [r2]!
-        vld1.16 {q3}, [r2]!
-
-1:
-        vld4.8 {d0[0],d1[0],d2[0],d3[0]}, [r1]!
-        vld4.8 {d0[1],d1[1],d2[1],d3[1]}, [r1]!
-        vld4.8 {d0[2],d1[2],d2[2],d3[2]}, [r1]!
-        vld4.8 {d0[3],d1[3],d2[3],d3[3]}, [r1]!
-
-        vmovl.u8 q12, d0
-        vmovl.u8 q13, d1
-        vmovl.u8 q14, d2
-
-        vmull.s16 q8,  d24, d4[0]
-        vmull.s16 q9,  d24, d4[1]
-        vmull.s16 q10, d24, d4[2]
-
-        vmlal.s16 q8,  d26, d5[0]
-        vmlal.s16 q9,  d26, d5[1]
-        vmlal.s16 q10, d26, d5[2]
-
-        vmlal.s16 q8,  d28, d6[0]
-        vmlal.s16 q9,  d28, d6[1]
-        vmlal.s16 q10, d28, d6[2]
-
-        vshrn.i32 d24, q8, #8
-        vshrn.i32 d26, q9, #8
-        vshrn.i32 d28, q10, #8
-
-        vqmovun.s16 d0, q12
-        vqmovun.s16 d1, q13
-        vqmovun.s16 d2, q14
-
-        vst4.8 {d0[0],d1[0],d2[0],d3[0]}, [r0]!
-        vst4.8 {d0[1],d1[1],d2[1],d3[1]}, [r0]!
-        vst4.8 {d0[2],d1[2],d2[2],d3[2]}, [r0]!
-        vst4.8 {d0[3],d1[3],d2[3],d3[3]}, [r0]!
-
-        subs r3, r3, #1
-        bne 1b
-
-        vpop            {q4-q7}
-        ldmfd           sp!, {r4, lr}
-        bx              lr
-END(rsdIntrinsicColorMatrix3x3_K)
-
-/*
-        r0 = dst
-        r1 = src
-        r2 = matrix
-        r3 = length
-*/
-ENTRY(rsdIntrinsicColorMatrixDot_K)
-        stmfd           sp!, {r4, lr}
-        vpush           {q4-q7}
-
-        vld1.16 {q2}, [r2]!
-        vld1.16 {q3}, [r2]!
-
-1:
-        vld4.8 {d0[0],d1[0],d2[0],d3[0]}, [r1]!
-        vld4.8 {d0[1],d1[1],d2[1],d3[1]}, [r1]!
-        vld4.8 {d0[2],d1[2],d2[2],d3[2]}, [r1]!
-        vld4.8 {d0[3],d1[3],d2[3],d3[3]}, [r1]!
-
-        vmovl.u8 q12, d0
-        vmovl.u8 q13, d1
-        vmovl.u8 q14, d2
-
-        vmull.s16 q8,  d24, d4[0]
-        vmlal.s16 q8,  d26, d5[0]
-        vmlal.s16 q8,  d28, d6[0]
-        vshrn.i32 d24, q8, #8
-        vqmovun.s16 d0, q12
-        vmov.u8 d1, d0
-        vmov.u8 d2, d0
-
-        vst4.8 {d0[0],d1[0],d2[0],d3[0]}, [r0]!
-        vst4.8 {d0[1],d1[1],d2[1],d3[1]}, [r0]!
-        vst4.8 {d0[2],d1[2],d2[2],d3[2]}, [r0]!
-        vst4.8 {d0[3],d1[3],d2[3],d3[3]}, [r0]!
-
-        subs r3, r3, #1
-        bne 1b
-
-        vpop            {q4-q7}
-        ldmfd           sp!, {r4, lr}
-        bx              lr
-END(rsdIntrinsicColorMatrixDot_K)
-
 
 /*
 static void OneVF(float4 *out, const uchar *ptrIn, int iStride,
@@ -503,6 +336,97 @@ ENTRY(rsdIntrinsicYuv_K)
         pop         {r4, r5, lr}            @ Restore int registers
         bx          lr
 END(rsdIntrinsicYuv_K)
+
+/*
+    Function called with the following arguments: dst, Y, vu, len, YuvCoeff
+        r0 = dst
+        r1 = Y
+        r2 = UV
+        r3 = length (pixels / 8)
+        ---- Args below will be in the stack ----
+        sp = YuvCoeff
+
+        This function converts 8 pixels per iteration
+*/
+ENTRY(rsdIntrinsicYuvR_K)
+        push        {r4, r5, lr}            @ preserve clobbered int registers
+        vpush       {Q4-Q7}                 @ preserve Vregisters we clobber
+
+        mov  r5, #16                        @ Integer 16 in r5; used as an incrementing value
+
+        ldr         r4, [sp, #64+12]        @ load the coeffs address in memory in r4 (16*4 + 4*3)
+        vld1.16     {Q2}, [r4]!             @ load the multipliers from the coeffs matrix (r4) in Q2
+        vld1.8      {d6[]}, [r4], r5        @ load y offset 16 from the coeffs matrix (r4) in d6
+        vld1.8      {d8[]}, [r4], r5        @ load V and U offset of 128 from the coeffs matrix (r4) in d8
+
+        mov         r4, #8                  @ Integer 8 in r4; used as an incrementing value
+
+        vdup.8      d3, d5[1]               @ d3 = 255 (alpha) from the multipliers line in
+                                            @ the coeffs matrix (Q2)
+
+        1:
+        vld1.8      {d10}, [r1]!            @ get Y (r1->Y)
+        vld2.8      {d12, d14}, [r2], r4    @ split V from U (r2 -> VU) and increase pointer by 8 (in r4)
+        pld         [r1, #64]               @ preloading data from address y(r1) + 64 for subsequent loops
+        pld         [r2, #64]               @ preloading data from address vu(r2) + 64 for subsequent loops
+
+        vsubl.u8    Q5, d10, d6             @ Y to 16 bit - 16 (in 16bit) (n to n+7)
+        vmull.s16   Q8, d10, d4[0]          @ Y(n,n+1,n+2,n+3) * 298 = Q8 (to 32bit)
+        vmull.s16   Q11, d11, d4[0]         @ Y(n+4,n+5,n+6,n+7) * 298 = Q11 (to 32bit)
+
+        vsubl.u8    Q5, d14, d8             @ V to 16 bit - 128 = Q5 // V(n, n+1, n+2,n+3)
+        vsubl.u8    Q6, d12, d8             @ U to 16 bit - 128 = Q6 // U(n, n+1, n+2,n+3)
+        vmov.u16    d11, d10                @ Copying V to d11
+        vmov.u16    d13, d12                @ Copying U to d13
+        vzip.u16    d10, d11                @ Q5 = V (n,n n+1, n+1) V(n+2, n+2, n+3, n+3)
+        vzip.u16    d12, d13                @ Q5 = U (n,n n+1, n+1) U(n+2, n+2, n+3, n+3)
+
+
+        vmov        Q9, Q8                  @ Copy Q8(Y: n, n+1, n+2, n+3) to Q9
+        vmov        Q10, Q8                 @ Copy Q8(Y: n, n+1, n+2, n+3) to Q10
+        vmov        Q12, Q11                @ Copy Q11(Y: n+5, n+6, n+6, n+7) to Q12
+        vmov        Q13, Q11                @ Copy Q11(Y: n+5, n+6, n+6, n+7) to Q13
+
+                                            @                  R    G    B
+                                            @     Pixel(0-3)  Q8,  Q9, Q10
+                                            @     Pixel(4-7) Q11, Q12, Q13
+                                            @
+
+                                            @ Pixel(0-3)
+        vmlal.s16   Q8,  d10, d4[1]         @ R : Q8  = Q8(Y-16)  + (V-128) * 409
+        vmlal.s16   Q9,  d10, d5[0]         @ G : Q9  = Q9(Y-16)  + (V-128) * (-208)
+        vmlal.s16   Q9,  d12, d4[2]         @                     + (U-128) * (-100)
+        vmlal.s16   Q10, d12, d4[3]         @ B : Q10 = Q10(Y-16) + (U-128) * 516
+
+                                            @ Pixel(4-7)
+        vmlal.s16   Q11, d11, d4[1]         @ R : Q11 = Q11(Y-16) + (V-128) * 409
+        vmlal.s16   Q12, d11, d5[0]         @ G : Q12 = Q12(Y-16) + (V-128) * (-208)
+        vmlal.s16   Q12, d13, d4[2]         @                     + (U-128) * (-100)
+        vmlal.s16   Q13, d13, d4[3]         @ B : Q13 = Q13(Y-16) + (U-128) * 516
+
+                                            @ Pixel(0-3)
+        vrshrn.i32  d16, Q8, #8             @ d16 : R shifted right by 8 rounded'n narrowed to 16bit
+        vrshrn.i32  d18, Q9, #8             @ d18 : G shifted right by 8 rounded'n narrowed to 16bit
+        vrshrn.i32  d20, Q10, #8            @ d20 : B shifted right by 8 rounded'n narrowed to 16bit
+
+                                            @ Pixel(4-7)
+        vrshrn.i32  d17, Q11, #8            @ d17 : R shifted right by 8 rounded'n narrowed to 16bit
+        vrshrn.i32  d19, Q12, #8            @ d19 : G shifted right by 8 rounded'n narrowed to 16bit
+        vrshrn.i32  d21, Q13, #8            @ d21 : B shifted right by 8 rounded'n narrowed to 16bit
+
+        vqmovun.s16 d0, Q8                  @ r = d0 (saturated, unsigned and narrowed to 8bit)
+        vqmovun.s16 d1, Q9                  @ g = d1 (saturated, unsigned and narrowed to 8bit)
+        vqmovun.s16 d2, Q10                 @ b = d2 (saturated, unsigned and narrowed to 8bit)
+
+        subs        r3, r3, #1              @ Checking length (r3)
+        vst4.8      {d0, d1, d2, d3}, [r0]! @ Writing out 8 RGBA values to dst (r0)
+
+        bne 1b                              @ if not done with length, loop
+
+        vpop        {Q4-Q7}                 @ Restore Vregisters
+        pop         {r4, r5, lr}            @ Restore int registers
+        bx          lr
+END(rsdIntrinsicYuvR_K)
 
 /*
     Function called with the following arguments: dst, Y, v, u, len, YuvCoeff

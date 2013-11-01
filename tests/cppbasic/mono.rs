@@ -15,7 +15,7 @@
  */
 
 #pragma version(1)
-#pragma rs java_package_name(com.android.rs.image)
+#pragma rs java_package_name(com.android.rs.cppbasic)
 #pragma rs_fp_relaxed
 
 int g_i = 4;
@@ -70,7 +70,7 @@ int __attribute__((kernel)) kern1(int i, uint32_t x, uint32_t y) {
 }
 
 void __attribute__((kernel)) verify_kern1(int i, uint32_t x, uint32_t y) {
-    _RS_ASSERT(i == (10 * x + 100 * y));
+    _RS_ASSERT(i == (5 + 10 * x + 100 * y));
     rsDebug("i ", i);
 }
 

@@ -27,7 +27,7 @@ ProgramVertex::ProgramVertex(Context *rsc, const char * shaderText, size_t shade
 
                              const uint32_t * params, size_t paramLength)
     : Program(rsc, shaderText, shaderLength, params, paramLength) {
-    mRSC->mHal.funcs.vertex.init(mRSC, this, mUserShader.string(), mUserShader.length(),
+    mRSC->mHal.funcs.vertex.init(mRSC, this, mUserShader, mUserShaderLen,
                                  textureNames, textureNamesCount, textureNamesLength);
 }
 
@@ -174,31 +174,27 @@ void ProgramVertexState::init(Context *rsc) {
     ObjectBaseRef<const Element> f4Elem = Element::createRef(rsc, RS_TYPE_FLOAT_32,
                                                              RS_KIND_USER, false, 4);
 
-    Element::Builder constBuilder;
-    constBuilder.add(matrixElem.get(), "MV", 1);
-    constBuilder.add(matrixElem.get(), "P", 1);
-    constBuilder.add(matrixElem.get(), "TexMatrix", 1);
-    constBuilder.add(matrixElem.get(), "MVP", 1);
-    ObjectBaseRef<const Element> constInput = constBuilder.create(rsc);
+    const char *ebn1[] = { "MV", "P", "TexMatrix", "MVP" };
+    const Element *ebe1[] = {matrixElem.get(), matrixElem.get(),
+            matrixElem.get(), matrixElem.get()};
+    ObjectBaseRef<const Element> constInput = Element::create(rsc, 4, ebe1, ebn1);
 
-    Element::Builder inputBuilder;
-    inputBuilder.add(f4Elem.get(), "position", 1);
-    inputBuilder.add(f4Elem.get(), "color", 1);
-    inputBuilder.add(f3Elem.get(), "normal", 1);
-    inputBuilder.add(f2Elem.get(), "texture0", 1);
-    ObjectBaseRef<const Element> attrElem = inputBuilder.create(rsc);
+    const char *ebn2[] = { "position", "color", "normal", "texture0" };
+    const Element *ebe2[] = {f4Elem.get(), f4Elem.get(), f3Elem.get(), f2Elem.get()};
+    ObjectBaseRef<const Element> attrElem = Element::create(rsc, 4, ebe2, ebn2);
 
     ObjectBaseRef<Type> inputType = Type::getTypeRef(rsc, constInput.get(), 1, 0, 0, false, false, 0);
 
-    String8 shaderString(RS_SHADER_INTERNAL);
-    shaderString.append("varying vec4 varColor;\n");
-    shaderString.append("varying vec2 varTex0;\n");
-    shaderString.append("void main() {\n");
-    shaderString.append("  gl_Position = UNI_MVP * ATTRIB_position;\n");
-    shaderString.append("  gl_PointSize = 1.0;\n");
-    shaderString.append("  varColor = ATTRIB_color;\n");
-    shaderString.append("  varTex0 = ATTRIB_texture0;\n");
-    shaderString.append("}\n");
+    const char *shaderString =
+            RS_SHADER_INTERNAL
+            "varying vec4 varColor;\n"
+            "varying vec2 varTex0;\n"
+            "void main() {\n"
+            "  gl_Position = UNI_MVP * ATTRIB_position;\n"
+            "  gl_PointSize = 1.0;\n"
+            "  varColor = ATTRIB_color;\n"
+            "  varTex0 = ATTRIB_texture0;\n"
+            "}\n";
 
     uint32_t tmp[4];
     tmp[0] = RS_PROGRAM_PARAM_CONSTANT;
@@ -206,7 +202,7 @@ void ProgramVertexState::init(Context *rsc) {
     tmp[2] = RS_PROGRAM_PARAM_INPUT;
     tmp[3] = (uint32_t)attrElem.get();
 
-    ProgramVertex *pv = new ProgramVertex(rsc, shaderString.string(), shaderString.length(),
+    ProgramVertex *pv = new ProgramVertex(rsc, shaderString, strlen(shaderString),
                                           NULL, 0, NULL, tmp, 4);
     Allocation *alloc = Allocation::createAllocation(rsc, inputType.get(),
                               RS_ALLOCATION_USAGE_SCRIPT | RS_ALLOCATION_USAGE_GRAPHICS_CONSTANTS);

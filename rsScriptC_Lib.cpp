@@ -171,6 +171,13 @@ uint32_t rsrToClientBlocking(Context *rsc, int cmdID, void *data, int len) {
     return rsc->sendMessageToClient(data, RS_MESSAGE_TO_CLIENT_USER, cmdID, len, true);
 }
 
+void rsrAllocationIoSend(Context *rsc, Allocation *src) {
+    src->ioSend(rsc);
+}
+
+void rsrAllocationIoReceive(Context *rsc, Allocation *src) {
+    src->ioReceive(rsc);
+}
 
 void rsrForEach(Context *rsc,
                 Script *target,

@@ -108,6 +108,10 @@ void rsrMeasureText(Context *, const char *text,
                     int32_t *left, int32_t *right, int32_t *top, int32_t *bottom);
 void rsrBindFont(Context *, Font *);
 void rsrFontColor(Context *, float r, float g, float b, float a);
+
+void rsrAllocationIoSend(Context *, Allocation *);
+void rsrAllocationIoReceive(Context *, Allocation *);
+
 #endif
 
 //////////////////////////////////////////////////////////////////////////////

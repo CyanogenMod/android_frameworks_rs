@@ -26,6 +26,15 @@
 #include "rsScriptGroup.h"
 #include "rsSampler.h"
 
+#if !defined(RS_SERVER) && !defined(RS_COMPATIBILITY_LIB)
+#define ATRACE_TAG ATRACE_TAG_RS
+#include "utils/Trace.h"
+#else
+#define ATRACE_ENABLED(...) false
+#define ATRACE_NAME(...)
+#define ATRACE_CALL(...)
+#endif
+
 #ifndef RS_COMPATIBILITY_LIB
 #include "rsFont.h"
 #include "rsPath.h"
@@ -34,6 +43,7 @@
 #include "rsProgramRaster.h"
 #include "rsProgramVertex.h"
 #include "rsFBOCache.h"
+
 #endif
 
 
@@ -62,6 +72,8 @@ class Device;
 #define CHECK_OBJ_OR_NULL(o)
 #endif
 
+
+
 class Context {
 public:
     struct Hal {
@@ -73,7 +85,7 @@ public:
 
     static Context * createContext(Device *, const RsSurfaceConfig *sc,
             RsContextType ct = RS_CONTEXT_TYPE_NORMAL,
-            bool forceCpu = false, bool synchronous = false);
+            uint32_t flags = 0);
     static Context * createContextLite();
     ~Context();
 
