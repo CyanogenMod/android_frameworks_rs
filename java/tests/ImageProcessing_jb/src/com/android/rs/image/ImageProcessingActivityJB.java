@@ -246,11 +246,11 @@ public class ImageProcessingActivityJB extends Activity
                 }
 
                 if (mBenchmarkMode) {
-                    for (int ct=0; ct < mTestList.length; ct++) {
+                    for (int ct=0; (ct < mTestList.length) && mRun; ct++) {
                         mRS.finish();
 
                         try {
-                            sleep(1000);
+                            sleep(250);
                         } catch(InterruptedException e) {
                         }
 
@@ -260,16 +260,18 @@ public class ImageProcessingActivityJB extends Activity
 
                         mTest = changeTest(mTestList[ct]);
                         if (mTogglePause) {
-                            try {
-                                sleep(10000);
-                            } catch(InterruptedException e) {
+                            for (int i=0; (i < 100) && mRun; i++) {
+                                try {
+                                    sleep(100);
+                                } catch(InterruptedException e) {
+                                }
                             }
                         }
 
                         mTestResults[ct] = getBenchmark();
                         mHandler.sendMessage(Message.obtain());
                     }
-                    onBenchmarkFinish();
+                    onBenchmarkFinish(mRun);
                 }
             }
 
@@ -468,12 +470,6 @@ public class ImageProcessingActivityJB extends Activity
         mText5.setVisibility(View.INVISIBLE);
     }
 
-    void cleanup() {
-        synchronized(this) {
-            mProcessor.exit();
-        }
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -505,15 +501,18 @@ public class ImageProcessingActivityJB extends Activity
     @Override
     protected void onPause() {
         super.onPause();
-
-        cleanup();
+        mProcessor.exit();
     }
 
-    public void onBenchmarkFinish() {
-        Intent intent = new Intent();
-        intent.putExtra("tests", mTestList);
-        intent.putExtra("results", mTestResults);
-        setResult(RESULT_OK, intent);
+    public void onBenchmarkFinish(boolean ok) {
+        if (ok) {
+            Intent intent = new Intent();
+            intent.putExtra("tests", mTestList);
+            intent.putExtra("results", mTestResults);
+            setResult(RESULT_OK, intent);
+        } else {
+            setResult(RESULT_CANCELED);
+        }
         finish();
     }
 
