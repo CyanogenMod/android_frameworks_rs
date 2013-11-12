@@ -60,11 +60,11 @@ void root(Ball_t *ball, uint32_t x) {
             float2 vec2 = vec * vec;
             float len2 = vec2.x + vec2.y;
 
-            if ((len2 < 10000.f) && (len2 > 0.f)) {
-                float t = native_powr(len2, 1.5f) + 16.0f;
-                float2 pfv = (vec / t) * 16000.f;
-                pressure += length(pfv);
-                fv -= pfv;
+            if ((len2 < 10000.f) && (len2 > 0.001f)) {
+                float len = rsqrt(len2 + 4.f);
+                float f = (len * len * len) * 20000.f;
+                fv -= vec * f;
+                pressure += f;
             }
         }
     }
@@ -137,7 +137,7 @@ void root(Ball_t *ball, uint32_t x) {
     }
 
     // low pressure ~500, high ~2500
-    pressure = max(pressure - 400.f, 0.f);
+    pressure *= 12.f;
     ball->pressure = pressure;
 
     //rsDebug("p ", pressure);
