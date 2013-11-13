@@ -522,7 +522,7 @@ public class ImageProcessingActivityJB extends Activity
         Intent i = getIntent();
         mTestList = i.getIntArrayExtra("tests");
 
-        mToggleIO = i.getBooleanExtra("enable io", true);
+        mToggleIO = i.getBooleanExtra("enable io", false);
         mToggleDVFS = i.getBooleanExtra("enable dvfs", true);
         mToggleLong = i.getBooleanExtra("enable long", false);
         mTogglePause = i.getBooleanExtra("enable pause", false);
