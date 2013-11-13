@@ -6,7 +6,7 @@
 using namespace android;
 using namespace RSC;
 
-int main(int argc, char** argv)
+int main()
 {
 
     sp<RS> rs = new RS();
