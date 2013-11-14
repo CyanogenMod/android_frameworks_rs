@@ -155,7 +155,7 @@ void RsdCpuScriptIntrinsicHistogram::postLaunch(uint32_t slot, const Allocation 
     for (uint32_t ct=0; ct < (256 * vSize); ct++) {
         o[ct] = mSums[ct];
         for (uint32_t t=1; t < threads; t++) {
-            o[ct] += mSums[ct + 256 * vSize];
+            o[ct] += mSums[ct + (256 * vSize * t)];
         }
     }
 }
@@ -291,7 +291,7 @@ void RsdCpuScriptIntrinsicHistogram::kernelP1U1(const RsForEachStubParamStruct *
 
 RsdCpuScriptIntrinsicHistogram::RsdCpuScriptIntrinsicHistogram(RsdCpuReferenceImpl *ctx,
                                                      const Script *s, const Element *e)
-            : RsdCpuScriptIntrinsic(ctx, s, e, RS_SCRIPT_INTRINSIC_ID_BLUR) {
+            : RsdCpuScriptIntrinsic(ctx, s, e, RS_SCRIPT_INTRINSIC_ID_HISTOGRAM) {
 
     mRootPtr = NULL;
     mSums = new int[256 * 4 * mCtx->getThreadCount()];
