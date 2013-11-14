@@ -183,9 +183,9 @@ void prepareShadows(float scale) {
     }
 }
 
-void shadowsKernel(const uchar4 *in, uchar4 *out) {
-    ushort3 hsv = rgb2hsv(*in);
+uchar4 __attribute__((kernel)) shadowsKernel(uchar4 in) {
+    ushort3 hsv = rgb2hsv(in);
     float v = (fastevalPoly(poly, 5, hsv.x * (1.f / 4080.f)) * 4080.f);
     hsv.x = (unsigned short) clamp(v, 0.f, 4080.f);
-    *out = hsv2rgb(hsv);
+    return hsv2rgb(hsv);
 }
