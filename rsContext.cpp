@@ -319,14 +319,14 @@ void * Context::threadProc(void *vrsc) {
 #define OVERRIDE_RS_DRIVER_STRING STR(OVERRIDE_RS_DRIVER)
 
     if (getProp("debug.rs.default-CPU-driver") != 0) {
-        ALOGE("Skipping override driver and loading default CPU driver");
+        ALOGD("Skipping override driver and loading default CPU driver");
     } else if (rsc->mForceCpu) {
         ALOGV("Application requested CPU execution");
     } else if (rsc->getContextType() == RS_CONTEXT_TYPE_DEBUG) {
         ALOGV("Application requested debug context");
     } else {
         if (loadRuntime(OVERRIDE_RS_DRIVER_STRING, rsc)) {
-            ALOGE("Successfully loaded runtime: %s", OVERRIDE_RS_DRIVER_STRING);
+            ALOGV("Successfully loaded runtime: %s", OVERRIDE_RS_DRIVER_STRING);
             loadDefault = false;
         } else {
             ALOGE("Failed to load runtime %s, loading default", OVERRIDE_RS_DRIVER_STRING);
