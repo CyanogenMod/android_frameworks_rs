@@ -33,7 +33,7 @@ void init_filter(uint32_t dim_x, uint32_t dim_y, float center_x, float center_y,
         axis_scale.y = (float)dim_y / (float)dim_x;
     else
         axis_scale.x = (float)dim_x / (float)dim_y;
-    
+
     const float bound2 = 0.25f * (axis_scale.x*axis_scale.x + axis_scale.y*axis_scale.y);
     const float bound = sqrt(bound2);
     const float radius = 1.15f * bound;

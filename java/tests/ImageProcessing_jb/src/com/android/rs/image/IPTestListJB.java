@@ -59,7 +59,8 @@ public class IPTestListJB {
         CROSS_PROCESS_USING_LUT ("CrossProcess (using LUT)", INTRINSIC, 18.6f),
         CONVOLVE_5X5 ("Convolve 5x5", RELAXED_FP, 215.8f),
         INTRINSICS_CONVOLVE_5X5 ("Intrinsics Convolve 5x5", INTRINSIC, 29.8f),
-        MANDELBROT ("Mandelbrot", FULL_FP, 108.1f),
+        MANDELBROT_FLOAT ("Mandelbrot (fp32)", FULL_FP, 108.1f),
+        MANDELBROT_DOUBLE ("Mandelbrot (fp64)", FULL_FP, 108.1f),
         INTRINSICS_BLEND ("Intrinsics Blend", INTRINSIC, 94.2f),
         INTRINSICS_BLUR_25G ("Intrinsics Blur 25 uchar", INTRINSIC, 173.3f),
         VIBRANCE ("Vibrance", RELAXED_FP, 88.3f),
@@ -69,7 +70,8 @@ public class IPTestListJB {
         EXPOSURE ("Exposure", RELAXED_FP, 64.7f),
         WHITE_BALANCE ("White Balance", RELAXED_FP, 160.1f),
         COLOR_CUBE ("Color Cube", RELAXED_FP, 85.3f),
-        COLOR_CUBE_3D_INTRINSIC ("Color Cube (3D LUT intrinsic)", INTRINSIC, 49.5f);
+        COLOR_CUBE_3D_INTRINSIC ("Color Cube (3D LUT intrinsic)", INTRINSIC, 49.5f),
+        ARTISTIC1 ("Artistic 1", RELAXED_FP, 120.f);
 
 
         private final String name;
@@ -149,8 +151,10 @@ public class IPTestListJB {
             return new Convolve5x5(false);
         case INTRINSICS_CONVOLVE_5X5:
             return new Convolve5x5(true);
-        case MANDELBROT:
-            return new Mandelbrot();
+        case MANDELBROT_FLOAT:
+            return new Mandelbrot(false);
+        case MANDELBROT_DOUBLE:
+            return new Mandelbrot(true);
         case INTRINSICS_BLEND:
             return new Blend();
         case INTRINSICS_BLUR_25G:
@@ -171,6 +175,8 @@ public class IPTestListJB {
             return new ColorCube(false);
         case COLOR_CUBE_3D_INTRINSIC:
             return new ColorCube(true);
+        case ARTISTIC1:
+            return new Artistic1();
         }
         return null;
     }
