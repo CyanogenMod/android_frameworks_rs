@@ -303,8 +303,8 @@ public class ImageProcessingTest extends ActivityInstrumentationTestCase2<ImageP
     // Test case 27: Mandelbrot
     @LargeTest
     public void testMandelbrot() {
-        TestAction ta = new TestAction(TestName.MANDELBROT);
-        runTest(ta, TestName.MANDELBROT.name());
+        TestAction ta = new TestAction(TestName.MANDELBROT_FLOAT);
+        runTest(ta, TestName.MANDELBROT_FLOAT.name());
     }
 
     // Test case 28: Intrinsics Blend

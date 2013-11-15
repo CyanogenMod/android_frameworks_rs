@@ -139,7 +139,7 @@ public class ImageProcessingActivity extends Activity
         CROSS_PROCESS_USING_LUT ("CrossProcess (using LUT)"),
         CONVOLVE_5X5 ("Convolve 5x5"),
         INTRINSICS_CONVOLVE_5X5 ("Intrinsics Convolve 5x5"),
-        MANDELBROT ("Mandelbrot"),
+        MANDELBROT_FLOAT ("Mandelbrot fp32"),
         INTRINSICS_BLEND ("Intrinsics Blend"),
         INTRINSICS_BLUR_25G ("Intrinsics Blur 25 uchar"),
         VIBRANCE ("Vibrance"),
@@ -152,7 +152,8 @@ public class ImageProcessingActivity extends Activity
         COLOR_CUBE_3D_INTRINSIC ("Color Cube (3D LUT intrinsic)"),
         USAGE_IO ("Usage io"),
         ARTISTIC_1("Artistic 1"),
-        HISTOGRAM ("Histogram");
+        HISTOGRAM ("Histogram"),
+        MANDELBROT_DOUBLE ("Mandelbrot fp64");
 
 
         private final String name;
@@ -372,8 +373,8 @@ public class ImageProcessingActivity extends Activity
         case INTRINSICS_CONVOLVE_5X5:
             mTest = new Convolve5x5(true);
             break;
-        case MANDELBROT:
-            mTest = new Mandelbrot();
+        case MANDELBROT_FLOAT:
+            mTest = new Mandelbrot(false);
             break;
         case INTRINSICS_BLEND:
             mTest = new Blend();
@@ -413,6 +414,9 @@ public class ImageProcessingActivity extends Activity
             break;
         case HISTOGRAM:
             mTest = new Histogram();
+            break;
+        case MANDELBROT_DOUBLE:
+            mTest = new Mandelbrot(true);
             break;
         }
 
