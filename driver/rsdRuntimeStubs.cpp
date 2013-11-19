@@ -1222,24 +1222,23 @@ static RsdCpuReference::CpuSymbol gSyms[] = {
 // Compatibility Library entry points
 //////////////////////////////////////////////////////////////////////////////
 
-bool rsIsObject(rs_element src) {
-    return SC_IsObject((ObjectBase*)src.p);
-}
-
-#define CLEAR_SET_OBJ(t) \
+#define IS_CLEAR_SET_OBJ(t) \
+    bool rsIsObject(t src) { \
+        return SC_IsObject((ObjectBase*)src.p); \
+    } \
     void __attribute__((overloadable)) rsClearObject(t *dst) { \
-    return SC_ClearObject((ObjectBase**) dst); \
+        return SC_ClearObject((ObjectBase**) dst); \
     } \
     void __attribute__((overloadable)) rsSetObject(t *dst, t src) { \
-    return SC_SetObject((ObjectBase**) dst, (ObjectBase*) src.p); \
+        return SC_SetObject((ObjectBase**) dst, (ObjectBase*) src.p); \
     }
 
-CLEAR_SET_OBJ(rs_element)
-CLEAR_SET_OBJ(rs_type)
-CLEAR_SET_OBJ(rs_allocation)
-CLEAR_SET_OBJ(rs_sampler)
-CLEAR_SET_OBJ(rs_script)
-#undef CLEAR_SET_OBJ
+IS_CLEAR_SET_OBJ(rs_element)
+IS_CLEAR_SET_OBJ(rs_type)
+IS_CLEAR_SET_OBJ(rs_allocation)
+IS_CLEAR_SET_OBJ(rs_sampler)
+IS_CLEAR_SET_OBJ(rs_script)
+#undef IS_CLEAR_SET_OBJ
 
 const Allocation * rsGetAllocation(const void *ptr) {
     return SC_GetAllocation(ptr);
