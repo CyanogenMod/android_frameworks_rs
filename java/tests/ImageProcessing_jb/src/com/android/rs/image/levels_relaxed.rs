@@ -15,6 +15,7 @@
  */
 
 #include "ip.rsh"
+#pragma rs_fp_relaxed
 
-#include "fisheye.rsh"
+#include "levels.rsh"
 
