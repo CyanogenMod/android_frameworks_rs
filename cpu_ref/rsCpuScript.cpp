@@ -24,6 +24,7 @@
     #include <stdio.h>
     #include <stdlib.h>
     #include <string.h>
+    #include <sys/stat.h>
     #include <unistd.h>
 #else
     #include <bcc/BCCContext.h>
@@ -62,6 +63,18 @@ static std::string getRandomString(size_t len) {
     return std::string(buf);
 }
 
+// Check if a path exists and attempt to create it if it doesn't.
+static bool ensureCacheDirExists(const char *path) {
+    if (access(path, R_OK | W_OK | X_OK) == 0) {
+        // Done if we can rwx the directory
+        return true;
+    }
+    if (mkdir(path, 0700) == 0) {
+        return true;
+    }
+    return false;
+}
+
 // Attempt to load the shared library from origName, but then fall back to
 // creating the symlinked shared library if necessary (to ensure instancing).
 // This function returns the dlopen()-ed handle if successful.
@@ -91,9 +104,16 @@ static void *loadSOHelper(const char *origName, const char *cacheDir,
         return loaded;
     }
 
-    // Construct an appropriately randomized filename for the symlink.
     std::string newName(cacheDir);
-    newName.append("/com.android.renderscript.cache/librs.");
+    newName.append("/com.android.renderscript.cache/");
+
+    if (!ensureCacheDirExists(newName.c_str())) {
+        ALOGE("Could not verify or create cache dir: %s", cacheDir);
+        return NULL;
+    }
+
+    // Construct an appropriately randomized filename for the symlink.
+    newName.append("librs.");
     newName.append(resName);
     newName.append("#");
     newName.append(getRandomString(6));  // 62^6 potential filename variants.
