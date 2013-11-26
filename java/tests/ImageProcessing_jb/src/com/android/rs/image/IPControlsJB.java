@@ -21,6 +21,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.graphics.Canvas;
+import android.graphics.Point;
 import android.view.SurfaceView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -50,6 +51,7 @@ public class IPControlsJB extends Activity {
     private ToggleButton mIOButton;
     private Spinner mResSpinner;
     private ListView mTestListView;
+    private TextView mResultView;
 
     private ArrayAdapter<String> mTestListAdapter;
     private ArrayList<String> mTestList = new ArrayList<String>();
@@ -59,6 +61,7 @@ public class IPControlsJB extends Activity {
     private boolean mToggleLong = false;
     private boolean mTogglePause = false;
 
+    private float mResults[];
 
     public enum Resolutions {
         RES_4K(3840, 2160, "4k (3840x2160)"),
@@ -148,7 +151,18 @@ public class IPControlsJB extends Activity {
         });
         toggle.setChecked(mTogglePause);
 
+        mResultView = (TextView) findViewById(R.id.results);
 
+
+        Point size = new Point();
+        getWindowManager().getDefaultDisplay().getSize(size);
+        int md = (size.x > size.y) ? size.x : size.y;
+        for (int ct=0; ct < Resolutions.values().length; ct++) {
+            if (Resolutions.values()[ct].width <= (int)(md * 1.2)) {
+                mResSpinner.setSelection(ct);
+                break;
+            }
+        }
     }
 
     @Override
@@ -212,22 +226,76 @@ public class IPControlsJB extends Activity {
         startActivityForResult(intent, 0);
     }
 
+    float rebase(float v, IPTestListJB.TestName t) {
+        if (v > 0.001) {
+            v = t.baseline / v;
+        }
+        float pr = (1920.f / mRes.width) * (1080.f / mRes.height);
+        return v / pr;
+    }
+
+    private void writeResults() {
+        // write result into a file
+        File externalStorage = Environment.getExternalStorageDirectory();
+        if (!externalStorage.canWrite()) {
+            Log.v(TAG, "sdcard is not writable");
+            return;
+        }
+        File resultFile = new File(externalStorage, RESULT_FILE);
+        resultFile.setWritable(true, false);
+        try {
+            BufferedWriter rsWriter = new BufferedWriter(new FileWriter(resultFile));
+            Log.v(TAG, "Saved results in: " + resultFile.getAbsolutePath());
+            java.text.DecimalFormat df = new java.text.DecimalFormat("######.##");
+
+            for (int ct=0; ct < IPTestListJB.TestName.values().length; ct++) {
+                IPTestListJB.TestName t = IPTestListJB.TestName.values()[ct];
+                final float r = mResults[ct];
+                float r2 = rebase(r, t);
+                String s = new String("" + t.toString() + ", " + df.format(r) + ", " + df.format(r2));
+                rsWriter.write(s + "\n");
+            }
+            rsWriter.close();
+        } catch (IOException e) {
+            Log.v(TAG, "Unable to write result file " + e.getMessage());
+        }
+    }
+
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == 0) {
             if (resultCode == RESULT_OK) {
+                java.text.DecimalFormat df = new java.text.DecimalFormat("######.#");
+                mResults = new float[IPTestListJB.TestName.values().length];
+
                 float r[] = data.getFloatArrayExtra("results");
                 int id[] = data.getIntArrayExtra("tests");
 
                 for (int ct=0; ct < id.length; ct++) {
                     IPTestListJB.TestName t = IPTestListJB.TestName.values()[id[ct]];
 
-                    String s = IPTestListJB.TestName.values()[id[ct]].toString();
-                    s += "  " + r[ct] + "ms";
+                    String s = t.toString() + "   " + df.format(rebase(r[ct], t)) +
+                            "X,   " + df.format(r[ct]) + "ms";
                     mTestList.set(id[ct], s);
                     mTestListAdapter.notifyDataSetChanged();
+                    mResults[id[ct]] = r[ct];
                 }
 
-                android.util.Log.v("rs", "result " + r);
+                double gm[] = {1.0, 1.0, 1.0};
+                double count[] = {0, 0, 0};
+                for (int ct=0; ct < IPTestListJB.TestName.values().length; ct++) {
+                    IPTestListJB.TestName t = IPTestListJB.TestName.values()[ct];
+                    gm[t.group] *= rebase(mResults[ct], t);
+                    count[t.group] += 1.0;
+                }
+                gm[0] = java.lang.Math.pow(gm[0], 1.0 / count[0]);
+                gm[1] = java.lang.Math.pow(gm[1], 1.0 / count[1]);
+                gm[2] = java.lang.Math.pow(gm[2], 1.0 / count[2]);
+
+                String s = "Results:  fp full=" + df.format(gm[0]) +
+                        ",  fp relaxed=" +df.format(gm[1]) +
+                        ",  intrinsics=" + df.format(gm[2]);
+                mResultView.setText(s);
+                writeResults();
             }
         }
     }

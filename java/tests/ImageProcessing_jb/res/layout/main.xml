@@ -30,13 +30,24 @@
                 android:orientation="vertical"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent">
-            <TextureView
-                android:id="@+id/display"
-                android:layout_width="800sp"
-                android:layout_height="423sp" />
+
+            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+		    <view class="com.android.rs.imagejb.ImageProcessingActivityJB$SizedTV"
+		        android:id="@+id/display"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content" />
+		    <ImageView
+		        android:id="@+id/display2"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content" />
+            </LinearLayout>
+
             <Spinner
                 android:id="@+id/spinner1"
-                android:layout_width="fill_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
             <TextView
                 android:id="@+id/slider1Text"
