@@ -1917,7 +1917,7 @@ class ScriptIntrinsicYuvToRGB : public ScriptIntrinsic {
      *
      * @return Sampler
      */
-    sp<const Sampler> CLAMP_NEAREST(sp<RS> rs);
+    static sp<const Sampler> CLAMP_NEAREST(sp<RS> rs);
     /**
      * Retrieve a sampler with min and mag set to linear and wrap modes set to
      * clamp.
@@ -1926,7 +1926,7 @@ class ScriptIntrinsicYuvToRGB : public ScriptIntrinsic {
      *
      * @return Sampler
      */
-    sp<const Sampler> CLAMP_LINEAR(sp<RS> rs);
+    static sp<const Sampler> CLAMP_LINEAR(sp<RS> rs);
     /**
      * Retrieve a sampler with mag set to linear, min linear mipmap linear, and
      * wrap modes set to clamp.
@@ -1935,7 +1935,7 @@ class ScriptIntrinsicYuvToRGB : public ScriptIntrinsic {
      *
      * @return Sampler
      */
-    sp<const Sampler> CLAMP_LINEAR_MIP_LINEAR(sp<RS> rs);
+    static sp<const Sampler> CLAMP_LINEAR_MIP_LINEAR(sp<RS> rs);
     /**
      * Retrieve a sampler with min and mag set to nearest and wrap modes set to
      * wrap.
@@ -1944,7 +1944,7 @@ class ScriptIntrinsicYuvToRGB : public ScriptIntrinsic {
      *
      * @return Sampler
      */
-    sp<const Sampler> WRAP_NEAREST(sp<RS> rs);
+    static sp<const Sampler> WRAP_NEAREST(sp<RS> rs);
     /**
      * Retrieve a sampler with min and mag set to linear and wrap modes set to
      * wrap.
@@ -1953,7 +1953,7 @@ class ScriptIntrinsicYuvToRGB : public ScriptIntrinsic {
      *
      * @return Sampler
      */
-    sp<const Sampler> WRAP_LINEAR(sp<RS> rs);
+    static sp<const Sampler> WRAP_LINEAR(sp<RS> rs);
     /**
      * Retrieve a sampler with mag set to linear, min linear mipmap linear, and
      * wrap modes set to wrap.
@@ -1962,7 +1962,7 @@ class ScriptIntrinsicYuvToRGB : public ScriptIntrinsic {
      *
      * @return Sampler
      */
-    sp<const Sampler> WRAP_LINEAR_MIP_LINEAR(sp<RS> rs);
+    static sp<const Sampler> WRAP_LINEAR_MIP_LINEAR(sp<RS> rs);
     /**
      * Retrieve a sampler with min and mag set to nearest and wrap modes set to
      * mirrored repeat.
@@ -1971,7 +1971,7 @@ class ScriptIntrinsicYuvToRGB : public ScriptIntrinsic {
      *
      * @return Sampler
      */
-    sp<const Sampler> MIRRORED_REPEAT_NEAREST(sp<RS> rs);
+    static sp<const Sampler> MIRRORED_REPEAT_NEAREST(sp<RS> rs);
     /**
      * Retrieve a sampler with min and mag set to linear and wrap modes set to
      * mirrored repeat.
@@ -1980,7 +1980,7 @@ class ScriptIntrinsicYuvToRGB : public ScriptIntrinsic {
      *
      * @return Sampler
      */
-    sp<const Sampler> MIRRORED_REPEAT_LINEAR(sp<RS> rs);
+    static sp<const Sampler> MIRRORED_REPEAT_LINEAR(sp<RS> rs);
     /**
      * Retrieve a sampler with min and mag set to linear and wrap modes set to
      * mirrored repeat.
@@ -1989,7 +1989,7 @@ class ScriptIntrinsicYuvToRGB : public ScriptIntrinsic {
      *
      * @return Sampler
      */
-    sp<const Sampler> MIRRORED_REPEAT_LINEAR_MIP_LINEAR(sp<RS> rs);
+    static sp<const Sampler> MIRRORED_REPEAT_LINEAR_MIP_LINEAR(sp<RS> rs);
 
 };
 
