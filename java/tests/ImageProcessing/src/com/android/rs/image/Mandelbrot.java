@@ -30,6 +30,11 @@ import android.widget.TextView;
 
 public class Mandelbrot extends TestBase {
     private ScriptC_mandelbrot mScript;
+    private boolean mUseDouble = false;
+
+    public Mandelbrot(boolean useDouble) {
+        mUseDouble = useDouble;
+    }
 
     public boolean onBar1Setup(SeekBar b, TextView t) {
         t.setText("Iterations");
@@ -90,7 +95,11 @@ public class Mandelbrot extends TestBase {
     }
 
     public void runTest() {
-        mScript.forEach_root(mOutPixelsAllocation);
+        if (mUseDouble) {
+            mScript.forEach_rootD(mOutPixelsAllocation);
+        } else {
+            mScript.forEach_root(mOutPixelsAllocation);
+        }
         mRS.finish();
     }
 
