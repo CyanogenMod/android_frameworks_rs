@@ -148,5 +148,4 @@ public class TestBase  {
     // Override to reset after benchmark.
     public void exitBenchmark() {
     }
-
 }
