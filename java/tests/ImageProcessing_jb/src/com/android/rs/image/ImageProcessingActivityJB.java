@@ -55,60 +55,6 @@ public class ImageProcessingActivityJB extends Activity
     Allocation mInPixelsAllocation2;
     Allocation mOutPixelsAllocation;
 
-    /**
-     * Define enum type for test names
-     */
-    public enum TestName {
-        // totally there are 38 test cases
-        LEVELS_VEC3_RELAXED ("Levels Vec3 Relaxed"),
-        LEVELS_VEC4_RELAXED ("Levels Vec4 Relaxed"),
-        LEVELS_VEC3_FULL ("Levels Vec3 Full"),
-        LEVELS_VEC4_FULL ("Levels Vec4 Full"),
-        BLUR_RADIUS_25 ("Blur radius 25"),
-        INTRINSIC_BLUE_RADIUS_25 ("Intrinsic Blur radius 25"),
-        GREYSCALE ("Greyscale"),
-        GRAIN ("Grain"),
-        FISHEYE_FULL ("Fisheye Full"),
-        FISHEYE_RELAXED ("Fisheye Relaxed"),
-        FISHEYE_APPROXIMATE_FULL ("Fisheye Approximate Full"),
-        FISHEYE_APPROXIMATE_RELAXED ("Fisheye Approximate Relaxed"),
-        VIGNETTE_FULL ("Vignette Full"),
-        VIGNETTE_RELAXED ("Vignette Relaxed"),
-        VIGNETTE_APPROXIMATE_FULL ("Vignette Approximate Full"),
-        VIGNETTE_APPROXIMATE_RELAXED ("Vignette Approximate Relaxed"),
-        GROUP_TEST_EMULATED ("Group Test (emulated)"),
-        GROUP_TEST_NATIVE ("Group Test (native)"),
-        CONVOLVE_3X3 ("Convolve 3x3"),
-        INTRINSICS_CONVOLVE_3X3 ("Intrinsics Convolve 3x3"),
-        COLOR_MATRIX ("ColorMatrix"),
-        INTRINSICS_COLOR_MATRIX ("Intrinsics ColorMatrix"),
-        INTRINSICS_COLOR_MATRIX_GREY ("Intrinsics ColorMatrix Grey"),
-        COPY ("Copy"),
-        CROSS_PROCESS_USING_LUT ("CrossProcess (using LUT)"),
-        CONVOLVE_5X5 ("Convolve 5x5"),
-        INTRINSICS_CONVOLVE_5X5 ("Intrinsics Convolve 5x5"),
-        MANDELBROT ("Mandelbrot"),
-        INTRINSICS_BLEND ("Intrinsics Blend"),
-        VIBRANCE ("Vibrance"),
-        BW_FILTER ("BW Filter"),
-        SHADOWS ("Shadows"),
-        CONTRAST ("Contrast"),
-        EXPOSURE ("Exposure"),
-        WHITE_BALANCE ("White Balance");
-
-
-        private final String name;
-
-        private TestName(String s) {
-            name = s;
-        }
-
-        // return quoted string as displayed test name
-        public String toString() {
-            return name;
-        }
-    }
-
     Bitmap mBitmapIn;
     Bitmap mBitmapIn2;
     Bitmap mBitmapOut;
@@ -125,12 +71,9 @@ public class ImageProcessingActivityJB extends Activity
     private TextView mText4;
     private TextView mText5;
 
-    private float mSaturation = 1.0f;
-
     private TextView mBenchmarkResult;
     private Spinner mTestSpinner;
 
-    private SurfaceView mSurfaceView;
     private ImageView mDisplayView;
 
     private boolean mDoingBenchmark;
@@ -230,117 +173,11 @@ public class ImageProcessingActivityJB extends Activity
     }
 
 
-    void changeTest(TestName testName) {
+    void changeTest(IPTestListJB.TestName testName) {
         if (mTest != null) {
             mTest.destroy();
         }
-        switch(testName) {
-        case LEVELS_VEC3_RELAXED:
-            mTest = new LevelsV4(false, false);
-            break;
-        case LEVELS_VEC4_RELAXED:
-            mTest = new LevelsV4(false, true);
-            break;
-        case LEVELS_VEC3_FULL:
-            mTest = new LevelsV4(true, false);
-            break;
-        case LEVELS_VEC4_FULL:
-            mTest = new LevelsV4(true, true);
-            break;
-        case BLUR_RADIUS_25:
-            mTest = new Blur25(false);
-            break;
-        case INTRINSIC_BLUE_RADIUS_25:
-            mTest = new Blur25(true);
-            break;
-        case GREYSCALE:
-            mTest = new Greyscale();
-            break;
-        case GRAIN:
-            mTest = new Grain();
-            break;
-        case FISHEYE_FULL:
-            mTest = new Fisheye(false, false);
-            break;
-        case FISHEYE_RELAXED:
-            mTest = new Fisheye(false, true);
-            break;
-        case FISHEYE_APPROXIMATE_FULL:
-            mTest = new Fisheye(true, false);
-            break;
-        case FISHEYE_APPROXIMATE_RELAXED:
-            mTest = new Fisheye(true, true);
-            break;
-        case VIGNETTE_FULL:
-            mTest = new Vignette(false, false);
-            break;
-        case VIGNETTE_RELAXED:
-            mTest = new Vignette(false, true);
-            break;
-        case VIGNETTE_APPROXIMATE_FULL:
-            mTest = new Vignette(true, false);
-            break;
-        case VIGNETTE_APPROXIMATE_RELAXED:
-            mTest = new Vignette(true, true);
-            break;
-        case GROUP_TEST_EMULATED:
-            mTest = new GroupTest(false);
-            break;
-        case GROUP_TEST_NATIVE:
-            mTest = new GroupTest(true);
-            break;
-        case CONVOLVE_3X3:
-            mTest = new Convolve3x3(false);
-            break;
-        case INTRINSICS_CONVOLVE_3X3:
-            mTest = new Convolve3x3(true);
-            break;
-        case COLOR_MATRIX:
-            mTest = new ColorMatrix(false, false);
-            break;
-        case INTRINSICS_COLOR_MATRIX:
-            mTest = new ColorMatrix(true, false);
-            break;
-        case INTRINSICS_COLOR_MATRIX_GREY:
-            mTest = new ColorMatrix(true, true);
-            break;
-        case COPY:
-            mTest = new Copy();
-            break;
-        case CROSS_PROCESS_USING_LUT:
-            mTest = new CrossProcess();
-            break;
-        case CONVOLVE_5X5:
-            mTest = new Convolve5x5(false);
-            break;
-        case INTRINSICS_CONVOLVE_5X5:
-            mTest = new Convolve5x5(true);
-            break;
-        case MANDELBROT:
-            mTest = new Mandelbrot();
-            break;
-        case INTRINSICS_BLEND:
-            mTest = new Blend();
-            break;
-        case VIBRANCE:
-            mTest = new Vibrance();
-            break;
-        case BW_FILTER:
-            mTest = new BWFilter();
-            break;
-        case SHADOWS:
-            mTest = new Shadows();
-            break;
-        case CONTRAST:
-            mTest = new Contrast();
-            break;
-        case EXPOSURE:
-            mTest = new Exposure();
-            break;
-        case WHITE_BALANCE:
-            mTest = new WhiteBalance();
-            break;
-        }
+        mTest = IPTestListJB.newTest(testName);
 
         mTest.createBaseTest(this, mBitmapIn, mBitmapIn2, mBitmapOut);
         setupBars();
@@ -351,14 +188,14 @@ public class ImageProcessingActivityJB extends Activity
     }
 
     void setupTests() {
-        mTestSpinner.setAdapter(new ArrayAdapter<TestName>(
-            this, R.layout.spinner_layout, TestName.values()));
+        mTestSpinner.setAdapter(new ArrayAdapter<IPTestListJB.TestName>(
+            this, R.layout.spinner_layout, IPTestListJB.TestName.values()));
     }
 
     private AdapterView.OnItemSelectedListener mTestSpinnerListener =
             new AdapterView.OnItemSelectedListener() {
                 public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-                    changeTest(TestName.values()[pos]);
+                    changeTest(IPTestListJB.TestName.values()[pos]);
                 }
 
                 public void onNothingSelected(AdapterView parent) {
@@ -375,8 +212,6 @@ public class ImageProcessingActivityJB extends Activity
         mBitmapIn2 = loadBitmap(R.drawable.img1600x1067b);
         mBitmapOut = Bitmap.createBitmap(mBitmapIn.getWidth(), mBitmapIn.getHeight(),
                                          mBitmapIn.getConfig());
-
-        mSurfaceView = (SurfaceView) findViewById(R.id.surface);
 
         mDisplayView = (ImageView) findViewById(R.id.display);
         mDisplayView.setImageBitmap(mBitmapOut);
@@ -415,7 +250,7 @@ public class ImageProcessingActivityJB extends Activity
 
 
         setupTests();
-        changeTest(TestName.LEVELS_VEC3_RELAXED);
+        changeTest(IPTestListJB.TestName.LEVELS_VEC3_RELAXED);
     }
 
 
@@ -446,7 +281,7 @@ public class ImageProcessingActivityJB extends Activity
         try {
             BufferedWriter rsWriter = new BufferedWriter(new FileWriter(resultFile));
             Log.v(TAG, "Saved results in: " + resultFile.getAbsolutePath());
-            for (TestName tn: TestName.values()) {
+            for (IPTestListJB.TestName tn: IPTestListJB.TestName.values()) {
                 changeTest(tn);
                 float t = getBenchmark();
                 String s = new String("" + tn.toString() + ", " + t);
@@ -457,7 +292,7 @@ public class ImageProcessingActivityJB extends Activity
         } catch (IOException e) {
             Log.v(TAG, "Unable to write result file " + e.getMessage());
         }
-        changeTest(TestName.LEVELS_VEC3_RELAXED);
+        changeTest(IPTestListJB.TestName.LEVELS_VEC3_RELAXED);
     }
 
     // For benchmark test
