@@ -56,7 +56,7 @@ public class IPControlsJB extends Activity {
     private ArrayAdapter<String> mTestListAdapter;
     private ArrayList<String> mTestList = new ArrayList<String>();
 
-    private boolean mToggleIO = true;
+    private boolean mToggleIO = false;
     private boolean mToggleDVFS = true;
     private boolean mToggleLong = false;
     private boolean mTogglePause = false;
