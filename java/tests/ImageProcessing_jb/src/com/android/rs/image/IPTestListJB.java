@@ -29,47 +29,49 @@ public class IPTestListJB {
      */
     public enum TestName {
         // totally there are 38 test cases
-        LEVELS_VEC3_RELAXED ("Levels Vec3 Relaxed"),
-        LEVELS_VEC4_RELAXED ("Levels Vec4 Relaxed"),
-        LEVELS_VEC3_FULL ("Levels Vec3 Full"),
-        LEVELS_VEC4_FULL ("Levels Vec4 Full"),
-        BLUR_RADIUS_25 ("Blur radius 25"),
-        INTRINSIC_BLUE_RADIUS_25 ("Intrinsic Blur radius 25"),
-        GREYSCALE ("Greyscale"),
-        GRAIN ("Grain"),
-        FISHEYE_FULL ("Fisheye Full"),
-        FISHEYE_RELAXED ("Fisheye Relaxed"),
-        FISHEYE_APPROXIMATE_FULL ("Fisheye Approximate Full"),
-        FISHEYE_APPROXIMATE_RELAXED ("Fisheye Approximate Relaxed"),
-        VIGNETTE_FULL ("Vignette Full"),
-        VIGNETTE_RELAXED ("Vignette Relaxed"),
-        VIGNETTE_APPROXIMATE_FULL ("Vignette Approximate Full"),
-        VIGNETTE_APPROXIMATE_RELAXED ("Vignette Approximate Relaxed"),
-        GROUP_TEST_EMULATED ("Group Test (emulated)"),
-        GROUP_TEST_NATIVE ("Group Test (native)"),
-        CONVOLVE_3X3 ("Convolve 3x3"),
-        INTRINSICS_CONVOLVE_3X3 ("Intrinsics Convolve 3x3"),
-        COLOR_MATRIX ("ColorMatrix"),
-        INTRINSICS_COLOR_MATRIX ("Intrinsics ColorMatrix"),
-        INTRINSICS_COLOR_MATRIX_GREY ("Intrinsics ColorMatrix Grey"),
-        COPY ("Copy"),
-        CROSS_PROCESS_USING_LUT ("CrossProcess (using LUT)"),
-        CONVOLVE_5X5 ("Convolve 5x5"),
-        INTRINSICS_CONVOLVE_5X5 ("Intrinsics Convolve 5x5"),
-        MANDELBROT ("Mandelbrot"),
-        INTRINSICS_BLEND ("Intrinsics Blend"),
-        VIBRANCE ("Vibrance"),
-        BW_FILTER ("BW Filter"),
-        SHADOWS ("Shadows"),
-        CONTRAST ("Contrast"),
-        EXPOSURE ("Exposure"),
-        WHITE_BALANCE ("White Balance");
+        LEVELS_VEC3_RELAXED ("Levels Vec3 Relaxed", 1),
+        LEVELS_VEC4_RELAXED ("Levels Vec4 Relaxed", 1),
+        LEVELS_VEC3_FULL ("Levels Vec3 Full", 0),
+        LEVELS_VEC4_FULL ("Levels Vec4 Full", 0),
+        BLUR_RADIUS_25 ("Blur radius 25", 1),
+        INTRINSIC_BLUE_RADIUS_25 ("Intrinsic Blur radius 25", 2),
+        GREYSCALE ("Greyscale", 1),
+        GRAIN ("Grain", 1),
+        FISHEYE_FULL ("Fisheye Full", 0),
+        FISHEYE_RELAXED ("Fisheye Relaxed", 1),
+        FISHEYE_APPROXIMATE_FULL ("Fisheye Approximate Full", 0),
+        FISHEYE_APPROXIMATE_RELAXED ("Fisheye Approximate Relaxed", 1),
+        VIGNETTE_FULL ("Vignette Full", 0),
+        VIGNETTE_RELAXED ("Vignette Relaxed", 1),
+        VIGNETTE_APPROXIMATE_FULL ("Vignette Approximate Full", 0),
+        VIGNETTE_APPROXIMATE_RELAXED ("Vignette Approximate Relaxed", 1),
+        GROUP_TEST_EMULATED ("Group Test (emulated)", 2),
+        GROUP_TEST_NATIVE ("Group Test (native)", 2),
+        CONVOLVE_3X3 ("Convolve 3x3", 1),
+        INTRINSICS_CONVOLVE_3X3 ("Intrinsics Convolve 3x3", 2),
+        COLOR_MATRIX ("ColorMatrix", 1),
+        INTRINSICS_COLOR_MATRIX ("Intrinsics ColorMatrix", 2),
+        INTRINSICS_COLOR_MATRIX_GREY ("Intrinsics ColorMatrix Grey", 2),
+        COPY ("Copy", 1),
+        CROSS_PROCESS_USING_LUT ("CrossProcess (using LUT)", 2),
+        CONVOLVE_5X5 ("Convolve 5x5", 1),
+        INTRINSICS_CONVOLVE_5X5 ("Intrinsics Convolve 5x5", 2),
+        MANDELBROT ("Mandelbrot", 0),
+        INTRINSICS_BLEND ("Intrinsics Blend", 2),
+        VIBRANCE ("Vibrance", 1),
+        BW_FILTER ("BW Filter", 1),
+        SHADOWS ("Shadows", 1),
+        CONTRAST ("Contrast", 1),
+        EXPOSURE ("Exposure", 1),
+        WHITE_BALANCE ("White Balance", 1);
 
 
         private final String name;
+        public final int group;
 
-        private TestName(String s) {
+        private TestName(String s, int g) {
             name = s;
+            group = g;
         }
 
         // return quoted string as displayed test name
