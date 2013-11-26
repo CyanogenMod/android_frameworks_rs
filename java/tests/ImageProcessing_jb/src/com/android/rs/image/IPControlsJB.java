@@ -81,12 +81,13 @@ public class IPControlsJB extends Activity {
             return name;
         }
     }
+    private Resolutions mRes;
 
 
     private AdapterView.OnItemSelectedListener mResSpinnerListener =
             new AdapterView.OnItemSelectedListener() {
                 public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-                    //changeTest(IPTestListJB.TestName.values()[pos]);
+                    mRes = Resolutions.values()[pos];
                 }
 
                 public void onNothingSelected(AdapterView parent) {
@@ -206,6 +207,8 @@ public class IPControlsJB extends Activity {
         intent.putExtra("enable dvfs", mToggleDVFS);
         intent.putExtra("enable long", mToggleLong);
         intent.putExtra("enable pause", mTogglePause);
+        intent.putExtra("resolution X", mRes.width);
+        intent.putExtra("resolution Y", mRes.height);
         startActivityForResult(intent, 0);
     }
 
