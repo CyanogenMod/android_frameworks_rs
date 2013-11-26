@@ -17,6 +17,7 @@
 package com.android.rs.imagejb;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -31,6 +32,9 @@ import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.view.View;
+import android.view.TextureView;
+import android.view.Surface;
+import android.graphics.SurfaceTexture;
 import android.util.Log;
 import android.renderscript.ScriptC;
 import android.renderscript.RenderScript;
@@ -46,18 +50,13 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 public class ImageProcessingActivityJB extends Activity
-                                       implements SeekBar.OnSeekBarChangeListener {
+                                       implements SeekBar.OnSeekBarChangeListener,
+                                                  TextureView.SurfaceTextureListener {
     private final String TAG = "Img";
     public final String RESULT_FILE = "image_processing_result.csv";
 
-    RenderScript mRS;
-    Allocation mInPixelsAllocation;
-    Allocation mInPixelsAllocation2;
-    Allocation mOutPixelsAllocation;
-
     Bitmap mBitmapIn;
     Bitmap mBitmapIn2;
-    Bitmap mBitmapOut;
 
     private Spinner mSpinner;
     private SeekBar mBar1;
@@ -70,74 +69,294 @@ public class ImageProcessingActivityJB extends Activity
     private TextView mText3;
     private TextView mText4;
     private TextView mText5;
+    private TextureView mDisplayView;
 
-    private TextView mBenchmarkResult;
-    private Spinner mTestSpinner;
+    private int mTestList[];
+    private float mTestResults[];
 
-    private ImageView mDisplayView;
+    private boolean mToggleIO;
+    private boolean mToggleDVFS;
+    private boolean mToggleLong;
+    private boolean mTogglePause;
 
-    private boolean mDoingBenchmark;
 
-    private TestBase mTest;
-    private int mRunCount;
+    /////////////////////////////////////////////////////////////////////////
 
-    public void updateDisplay() {
-        mHandler.sendMessage(Message.obtain());
-    }
+    class Processor extends Thread {
+        RenderScript mRS;
+        Allocation mInPixelsAllocation;
+        Allocation mInPixelsAllocation2;
+        Allocation mOutPixelsAllocation;
 
-    private Handler mHandler = new Handler() {
-        // Allow the filter to complete without blocking the UI
-        // thread.  When the message arrives that the op is complete
-        // we will either mark completion or start a new filter if
-        // more work is ready.  Either way, display the result.
-        @Override
-        public void handleMessage(Message msg) {
-            mTest.updateBitmap(mBitmapOut);
-            mDisplayView.invalidate();
+        private Surface mOutSurface;
+        private float mLastResult;
+        private boolean mRun = true;
+        private int mOp = 0;
+        private boolean mDoingBenchmark;
+        private TestBase mTest;
+        private TextureView mDisplayView;
 
-            boolean doTest = false;
-            synchronized(this) {
-                if (mRunCount > 0) {
-                    mRunCount--;
-                    if (mRunCount > 0) {
-                        doTest = true;
+        private boolean mBenchmarkMode;
+
+
+        Processor(RenderScript rs, TextureView v, boolean benchmarkMode) {
+            mRS = rs;
+            mDisplayView = v;
+            mInPixelsAllocation = Allocation.createFromBitmap(mRS, mBitmapIn);
+            mInPixelsAllocation2 = Allocation.createFromBitmap(mRS, mBitmapIn2);
+            mOutPixelsAllocation = Allocation.createTyped(mRS, mInPixelsAllocation.getType(),
+                                                               Allocation.MipmapControl.MIPMAP_NONE,
+                                                               Allocation.USAGE_SCRIPT |
+                                                               Allocation.USAGE_IO_OUTPUT);
+            mBenchmarkMode = benchmarkMode;
+            start();
+        }
+
+        private float getBenchmark() {
+            mDoingBenchmark = true;
+
+            mTest.setupBenchmark();
+            long result = 0;
+            long runtime = 1000;
+            if (mToggleLong) {
+                runtime = 10000;
+            }
+
+            if (mToggleDVFS) {
+                mDvfsWar.go();
+            }
+
+            Log.v("rs", "Warming");
+            long t = java.lang.System.currentTimeMillis() + 250;
+            do {
+                mTest.runTest();
+                mTest.finish();
+            } while (t > java.lang.System.currentTimeMillis());
+            //mHandler.sendMessage(Message.obtain());
+
+            Log.v("rs", "Benchmarking");
+            int ct = 0;
+            t = java.lang.System.currentTimeMillis();
+            do {
+                mTest.runTest();
+                mTest.finish();
+                ct++;
+            } while ((t + runtime) > java.lang.System.currentTimeMillis());
+            t = java.lang.System.currentTimeMillis() - t;
+            float ft = (float)t;
+            ft /= ct;
+
+            mTest.exitBenchmark();
+            mDoingBenchmark = false;
+
+            android.util.Log.v("rs", "bench " + ft);
+            return ft;
+        }
+
+        private Handler mHandler = new Handler() {
+            // Allow the filter to complete without blocking the UI
+            // thread.  When the message arrives that the op is complete
+            // we will either mark completion or start a new filter if
+            // more work is ready.  Either way, display the result.
+            @Override
+            public void handleMessage(Message msg) {
+                synchronized(this) {
+                    if (mRS == null || mOutPixelsAllocation == null) {
+                        return;
                     }
+                    mOutPixelsAllocation.ioSend();
+                    mDisplayView.invalidate();
+                    //mTest.runTestSendMessage();
                 }
             }
-            if (doTest) {
-                mTest.runTestSendMessage();
+        };
+
+        public void run() {
+            Surface lastSurface = null;
+            while (mRun) {
+                synchronized(this) {
+                    try {
+                        this.wait();
+                    } catch(InterruptedException e) {
+                    }
+                    if (!mRun) return;
+
+                    if ((mOutSurface == null) || (mOutPixelsAllocation == null)) {
+                        continue;
+                    }
+
+                    if (lastSurface != mOutSurface) {
+                        mOutPixelsAllocation.setSurface(mOutSurface);
+                        lastSurface = mOutSurface;
+                    }
+                }
+
+                if (mBenchmarkMode) {
+                    for (int ct=0; ct < mTestList.length; ct++) {
+                        mRS.finish();
+
+                        try {
+                            sleep(1000);
+                        } catch(InterruptedException e) {
+                        }
+
+                        if (mTest != null) {
+                            mTest.destroy();
+                        }
+
+                        mTest = changeTest(mTestList[ct]);
+                        if (mTogglePause) {
+                            try {
+                                sleep(10000);
+                            } catch(InterruptedException e) {
+                            }
+                        }
+
+                        mTestResults[ct] = getBenchmark();
+                        mHandler.sendMessage(Message.obtain());
+                    }
+                    onBenchmarkFinish();
+                }
+            }
+
+        }
+
+        public void update() {
+            synchronized(this) {
+                if (mOp == 0) {
+                    mOp = 2;
+                }
+                notifyAll();
             }
         }
 
+        public void setSurface(Surface s) {
+            synchronized(this) {
+                mOutSurface = s;
+                notifyAll();
+            }
+            //update();
+        }
+
+        public void exit() {
+            mRun = false;
+
+            synchronized(this) {
+                notifyAll();
+            }
+
+            try {
+                this.join();
+            } catch(InterruptedException e) {
+            }
+
+            mInPixelsAllocation.destroy();
+            mInPixelsAllocation2.destroy();
+            mOutPixelsAllocation.destroy();
+            mRS.destroy();
+
+            mInPixelsAllocation = null;
+            mInPixelsAllocation2 = null;
+            mOutPixelsAllocation = null;
+            mRS = null;
+        }
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////////////
+
+    static class DVFSWorkaround {
+        static class spinner extends Thread {
+            boolean mRun = true;
+            long mNextSleep;
+
+            spinner() {
+                setPriority(MIN_PRIORITY);
+                start();
+            }
+
+            public void run() {
+                while (mRun) {
+                    Thread.yield();
+                    synchronized(this) {
+                        long t = java.lang.System.currentTimeMillis();
+                        if (t > mNextSleep) {
+                            try {
+                                this.wait();
+                            } catch(InterruptedException e) {
+                            }
+                        }
+                    }
+                }
+            }
+
+            public void go(long t) {
+                synchronized(this) {
+                    mNextSleep = t;
+                    notifyAll();
+                }
+            }
+        }
+
+        spinner s1;
+        DVFSWorkaround() {
+            s1 = new spinner();
+        }
+
+        void go() {
+            long t = java.lang.System.currentTimeMillis() + 2000;
+            s1.go(t);
+        }
+
+        void destroy() {
+            synchronized(this) {
+                s1.mRun = false;
+                notifyAll();
+            }
+        }
+    }
+    DVFSWorkaround mDvfsWar = new DVFSWorkaround();
+
+    ///////////////////////////////////////////////////////////
+
+
+    private boolean mDoingBenchmark;
+    public Processor mProcessor;
+
+
+    private Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            mDisplayView.invalidate();
+        }
     };
+
+    public void updateDisplay() {
+        mHandler.sendMessage(Message.obtain());
+        //mProcessor.update();
+    }
+
+    TestBase changeTest(int id) {
+        IPTestListJB.TestName t = IPTestListJB.TestName.values()[id];
+        TestBase tb = IPTestListJB.newTest(t);
+        tb.createBaseTest(this);
+        //setupBars(tb);
+        return tb;
+    }
 
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
         if (fromUser) {
-
             if (seekBar == mBar1) {
-                mTest.onBar1Changed(progress);
+                mProcessor.mTest.onBar1Changed(progress);
             } else if (seekBar == mBar2) {
-                mTest.onBar2Changed(progress);
+                mProcessor.mTest.onBar2Changed(progress);
             } else if (seekBar == mBar3) {
-                mTest.onBar3Changed(progress);
+                mProcessor.mTest.onBar3Changed(progress);
             } else if (seekBar == mBar4) {
-                mTest.onBar4Changed(progress);
+                mProcessor.mTest.onBar4Changed(progress);
             } else if (seekBar == mBar5) {
-                mTest.onBar5Changed(progress);
+                mProcessor.mTest.onBar5Changed(progress);
             }
-
-            boolean doTest = false;
-            synchronized(this) {
-                if (mRunCount == 0) {
-                    doTest = true;
-                    mRunCount = 1;
-                } else {
-                    mRunCount = 2;
-                }
-            }
-            if (doTest) {
-                mTest.runTestSendMessage();
-            }
+            mProcessor.update();
         }
     }
 
@@ -147,61 +366,40 @@ public class ImageProcessingActivityJB extends Activity
     public void onStopTrackingTouch(SeekBar seekBar) {
     }
 
-    void setupBars() {
+    void setupBars(TestBase t) {
         mSpinner.setVisibility(View.VISIBLE);
-        mTest.onSpinner1Setup(mSpinner);
+        t.onSpinner1Setup(mSpinner);
 
         mBar1.setVisibility(View.VISIBLE);
         mText1.setVisibility(View.VISIBLE);
-        mTest.onBar1Setup(mBar1, mText1);
+        t.onBar1Setup(mBar1, mText1);
 
         mBar2.setVisibility(View.VISIBLE);
         mText2.setVisibility(View.VISIBLE);
-        mTest.onBar2Setup(mBar2, mText2);
+        t.onBar2Setup(mBar2, mText2);
 
         mBar3.setVisibility(View.VISIBLE);
         mText3.setVisibility(View.VISIBLE);
-        mTest.onBar3Setup(mBar3, mText3);
+        t.onBar3Setup(mBar3, mText3);
 
         mBar4.setVisibility(View.VISIBLE);
         mText4.setVisibility(View.VISIBLE);
-        mTest.onBar4Setup(mBar4, mText4);
+        t.onBar4Setup(mBar4, mText4);
 
         mBar5.setVisibility(View.VISIBLE);
         mText5.setVisibility(View.VISIBLE);
-        mTest.onBar5Setup(mBar5, mText5);
+        t.onBar5Setup(mBar5, mText5);
     }
 
 
-    void changeTest(IPTestListJB.TestName testName) {
-        if (mTest != null) {
-            mTest.destroy();
+    void cleanup() {
+        synchronized(this) {
+            mProcessor.exit();
         }
-        mTest = IPTestListJB.newTest(testName);
 
-        mTest.createBaseTest(this, mBitmapIn, mBitmapIn2, mBitmapOut);
-        setupBars();
-
-        mTest.runTest();
-        updateDisplay();
-        mBenchmarkResult.setText("Result: not run");
+        mBitmapIn = null;
+        mBitmapIn2 = null;
     }
-
-    void setupTests() {
-        mTestSpinner.setAdapter(new ArrayAdapter<IPTestListJB.TestName>(
-            this, R.layout.spinner_layout, IPTestListJB.TestName.values()));
-    }
-
-    private AdapterView.OnItemSelectedListener mTestSpinnerListener =
-            new AdapterView.OnItemSelectedListener() {
-                public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-                    changeTest(IPTestListJB.TestName.values()[pos]);
-                }
-
-                public void onNothingSelected(AdapterView parent) {
-
-                }
-            };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -210,11 +408,8 @@ public class ImageProcessingActivityJB extends Activity
 
         mBitmapIn = loadBitmap(R.drawable.img1600x1067);
         mBitmapIn2 = loadBitmap(R.drawable.img1600x1067b);
-        mBitmapOut = Bitmap.createBitmap(mBitmapIn.getWidth(), mBitmapIn.getHeight(),
-                                         mBitmapIn.getConfig());
 
-        mDisplayView = (ImageView) findViewById(R.id.display);
-        mDisplayView.setImageBitmap(mBitmapOut);
+        mDisplayView = (TextureView) findViewById(R.id.display);
 
         mSpinner = (Spinner) findViewById(R.id.spinner1);
 
@@ -235,24 +430,43 @@ public class ImageProcessingActivityJB extends Activity
         mText3 = (TextView) findViewById(R.id.slider3Text);
         mText4 = (TextView) findViewById(R.id.slider4Text);
         mText5 = (TextView) findViewById(R.id.slider5Text);
-
-        mTestSpinner = (Spinner) findViewById(R.id.filterselection);
-        mTestSpinner.setOnItemSelectedListener(mTestSpinnerListener);
-
-        mBenchmarkResult = (TextView) findViewById(R.id.benchmarkText);
-        mBenchmarkResult.setText("Result: not run");
-
-
-        mRS = RenderScript.create(this);
-        mInPixelsAllocation = Allocation.createFromBitmap(mRS, mBitmapIn);
-        mInPixelsAllocation2 = Allocation.createFromBitmap(mRS, mBitmapIn2);
-        mOutPixelsAllocation = Allocation.createFromBitmap(mRS, mBitmapOut);
-
-
-        setupTests();
-        changeTest(IPTestListJB.TestName.LEVELS_VEC3_RELAXED);
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        cleanup();
+    }
+
+    public void onBenchmarkFinish() {
+        Intent intent = new Intent();
+        intent.putExtra("tests", mTestList);
+        intent.putExtra("results", mTestResults);
+        setResult(RESULT_OK, intent);
+        finish();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Intent i = getIntent();
+        mTestList = i.getIntArrayExtra("tests");
+
+        mToggleIO = i.getBooleanExtra("enable io", true);
+        mToggleDVFS = i.getBooleanExtra("enable dvfs", true);
+        mToggleLong = i.getBooleanExtra("enable long", false);
+        mTogglePause = i.getBooleanExtra("enable pause", false);
+
+        mTestResults = new float[mTestList.length];
+
+        mProcessor = new Processor(RenderScript.create(this), mDisplayView, true);
+        mDisplayView.setSurfaceTextureListener(this);
+    }
+
+    protected void onDestroy() {
+        super.onDestroy();
+    }
 
     private Bitmap loadBitmap(int resource) {
         final BitmapFactory.Options options = new BitmapFactory.Options();
@@ -260,70 +474,25 @@ public class ImageProcessingActivityJB extends Activity
         return BitmapFactory.decodeResource(getResources(), resource, options);
     }
 
-    // button hook
-    public void benchmark(View v) {
-        float t = getBenchmark();
-        //long javaTime = javaFilter();
-        //mBenchmarkResult.setText("RS: " + t + " ms  Java: " + javaTime + " ms");
-        mBenchmarkResult.setText("Result: " + t + " ms");
-        Log.v(TAG, "getBenchmark: Renderscript frame time core ms " + t);
+
+
+    @Override
+    public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
+        mProcessor.setSurface(new Surface(surface));
     }
 
-    public void benchmark_all(View v) {
-        // write result into a file
-        File externalStorage = Environment.getExternalStorageDirectory();
-        if (!externalStorage.canWrite()) {
-            Log.v(TAG, "sdcard is not writable");
-            return;
-        }
-        File resultFile = new File(externalStorage, RESULT_FILE);
-        resultFile.setWritable(true, false);
-        try {
-            BufferedWriter rsWriter = new BufferedWriter(new FileWriter(resultFile));
-            Log.v(TAG, "Saved results in: " + resultFile.getAbsolutePath());
-            for (IPTestListJB.TestName tn: IPTestListJB.TestName.values()) {
-                changeTest(tn);
-                float t = getBenchmark();
-                String s = new String("" + tn.toString() + ", " + t);
-                rsWriter.write(s + "\n");
-                Log.v(TAG, "Test " + s + "ms\n");
-            }
-            rsWriter.close();
-        } catch (IOException e) {
-            Log.v(TAG, "Unable to write result file " + e.getMessage());
-        }
-        changeTest(IPTestListJB.TestName.LEVELS_VEC3_RELAXED);
+    @Override
+    public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
+        mProcessor.setSurface(new Surface(surface));
     }
 
-    // For benchmark test
-    public float getBenchmark() {
-        mDoingBenchmark = true;
+    @Override
+    public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
+        mProcessor.setSurface(null);
+        return true;
+    }
 
-        mTest.setupBenchmark();
-        long result = 0;
-
-        //Log.v(TAG, "Warming");
-        long t = java.lang.System.currentTimeMillis() + 250;
-        do {
-            mTest.runTest();
-            mTest.finish();
-        } while (t > java.lang.System.currentTimeMillis());
-
-        //Log.v(TAG, "Benchmarking");
-        int ct = 0;
-        t = java.lang.System.currentTimeMillis();
-        do {
-            mTest.runTest();
-            mTest.finish();
-            ct++;
-        } while ((t+1000) > java.lang.System.currentTimeMillis());
-        t = java.lang.System.currentTimeMillis() - t;
-        float ft = (float)t;
-        ft /= ct;
-
-        mTest.exitBenchmark();
-        mDoingBenchmark = false;
-
-        return ft;
+    @Override
+    public void onSurfaceTextureUpdated(SurfaceTexture surface) {
     }
 }

@@ -31,4 +31,20 @@
     <string name="benchmark">Benchmark</string>
     <string name="benchmark_all">Benchmark All</string>
 
+    <string name="io_control_on">USAGE_IO</string>
+    <string name="io_control_off">USAGE_IO</string>
+    <string name="length_long">Long run</string>
+    <string name="length_short">Long run</string>
+    <string name="dvfs_on">Background work</string>
+    <string name="dvfs_off">Background work</string>
+    <string name="run_all">Benchmark All</string>
+    <string name="run_one">Benchmark One</string>
+    <string name="select_all">All</string>
+    <string name="select_none">None</string>
+    <string name="select_hp">Full FP</string>
+    <string name="select_lp">Relaxed FP</string>
+    <string name="pause_on">Pause</string>
+    <string name="pause_off">Pause</string>
+    <string name="select_intrinsics">Intrinsics</string>
+
 </resources>
