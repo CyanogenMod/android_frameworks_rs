@@ -24,38 +24,56 @@ import android.renderscript.Matrix4f;
 import android.renderscript.RenderScript;
 import android.renderscript.Script;
 import android.renderscript.ScriptC;
+import android.renderscript.ScriptIntrinsic3DLUT;
 import android.renderscript.ScriptIntrinsicColorMatrix;
 import android.renderscript.Type;
 import android.util.Log;
 
-public class ColorMatrix extends TestBase {
-    private ScriptC_colormatrix mScript;
-    private ScriptIntrinsicColorMatrix mIntrinsic;
+public class ColorCube extends TestBase {
+    private Allocation mCube;
+    private ScriptC_colorcube mScript;
+    private ScriptIntrinsic3DLUT mIntrinsic;
     private boolean mUseIntrinsic;
-    private boolean mUseGrey;
 
-    public ColorMatrix(boolean useIntrinsic, boolean useGrey) {
+    public ColorCube(boolean useIntrinsic) {
         mUseIntrinsic = useIntrinsic;
-        mUseGrey = useGrey;
+    }
+
+    private void initCube() {
+        final int sx = 32;
+        final int sy = 32;
+        final int sz = 16;
+
+        Type.Builder tb = new Type.Builder(mRS, Element.U8_4(mRS));
+        tb.setX(sx);
+        tb.setY(sy);
+        tb.setZ(sz);
+        Type t = tb.create();
+        mCube = Allocation.createTyped(mRS, t);
+
+        int dat[] = new int[sx * sy * sz];
+        for (int z = 0; z < sz; z++) {
+            for (int y = 0; y < sy; y++) {
+                for (int x = 0; x < sx; x++ ) {
+                    int v = 0xff000000;
+                    v |= (0xff * x / (sx - 1));
+                    v |= (0xff * y / (sy - 1)) << 8;
+                    v |= (0xff * z / (sz - 1)) << 16;
+                    dat[z*sy*sx + y*sx + x] = v;
+                }
+            }
+        }
+
+        mCube.copyFromUnchecked(dat);
     }
 
     public void createTest(android.content.res.Resources res) {
-        Matrix4f m = new Matrix4f();
-        m.set(1, 0, 0.2f);
-        m.set(1, 1, 0.9f);
-        m.set(1, 2, 0.2f);
+        mScript = new ScriptC_colorcube(mRS, res, R.raw.colorcube);
+        mIntrinsic = ScriptIntrinsic3DLUT.create(mRS, Element.U8_4(mRS));
 
-        if (mUseIntrinsic) {
-            mIntrinsic = ScriptIntrinsicColorMatrix.create(mRS, Element.U8_4(mRS));
-            if (mUseGrey) {
-                mIntrinsic.setGreyscale();
-            } else {
-                mIntrinsic.setColorMatrix(m);
-            }
-        } else {
-            mScript = new ScriptC_colormatrix(mRS, res, R.raw.colormatrix);
-            mScript.invoke_setMatrix(m);
-        }
+        initCube();
+        mScript.invoke_setCube(mCube);
+        mIntrinsic.setLUT(mCube);
     }
 
     public void runTest() {
