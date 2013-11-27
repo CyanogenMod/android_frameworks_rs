@@ -510,6 +510,7 @@ Context::Context() {
     mDPI = 96;
     mIsContextLite = false;
     memset(&watchdog, 0, sizeof(watchdog));
+    memset(&mHal, 0, sizeof(mHal));
     mForceCpu = false;
     mContextType = RS_CONTEXT_TYPE_NORMAL;
     mSynchronous = false;
@@ -721,6 +722,12 @@ void Context::setFont(Font *f) {
 }
 #endif
 
+void Context::finish() {
+    if (mHal.funcs.finish) {
+        mHal.funcs.finish(this);
+    }
+}
+
 void Context::assignName(ObjectBase *obj, const char *name, uint32_t len) {
     rsAssert(!obj->getName());
     obj->setName(name, len);
@@ -785,6 +792,7 @@ namespace android {
 namespace renderscript {
 
 void rsi_ContextFinish(Context *rsc) {
+    rsc->finish();
 }
 
 void rsi_ContextBindRootScript(Context *rsc, RsScript vs) {
