@@ -42,6 +42,12 @@ struct myStruct {
     char c[3];
 };
 
+rs_allocation alloc;
+rs_element elem;
+rs_type type;
+rs_sampler sampler;
+rs_script script;
+
 void root(const uchar4 *v_in, uchar4 *v_out) {
     float4 f4 = rsUnpackColor8888(*v_in);
 
