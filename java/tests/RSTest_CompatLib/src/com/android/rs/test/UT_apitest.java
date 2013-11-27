@@ -34,15 +34,25 @@ public class UT_apitest extends UnitTest {
         pRS.setMessageHandler(mRsMessage);
         Element elem = Element.I8(pRS);
         Type.Builder typeBuilder = new Type.Builder(pRS, elem);
-        typeBuilder.setX(1);
+
+        int x = 5;
+        int y = 7;
+        int z = 0;  // Don't actually setZ()
+        s.set_x(x);
+        s.set_y(y);
+        s.set_z(z);
+        typeBuilder.setX(x).setY(y);
         Type type = typeBuilder.create();
         Allocation alloc = Allocation.createTyped(pRS, type);
+        Allocation allocDst = Allocation.createTyped(pRS, type);
         Sampler sampler = Sampler.CLAMP_NEAREST(pRS);
         s.set_elemNonNull(elem);
         s.set_typeNonNull(type);
         s.set_allocNonNull(alloc);
+        s.set_allocDst(allocDst);
         s.set_samplerNonNull(sampler);
         s.set_scriptNonNull(s);
+        s.bind_allocPtr(alloc);
 
         s.invoke_api_test();
         pRS.finish();
