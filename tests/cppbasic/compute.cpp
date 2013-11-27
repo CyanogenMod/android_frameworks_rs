@@ -6,9 +6,8 @@
 using namespace android;
 using namespace RSC;
 
-int main()
+int test_compute()
 {
-
     sp<RS> rs = new RS();
     printf("New RS %p\n", rs.get());
 
@@ -32,8 +31,16 @@ int main()
     sp<Allocation> aout = Allocation::createTyped(rs, t);
     printf("Allocation %p %p\n", ain.get(), aout.get());
 
-    ScriptC_mono* sc = new ScriptC_mono(rs);
+    sp<ScriptC_mono> sc = new ScriptC_mono(rs);
     printf("new script\n");
+
+    sc->set_alloc(a1);
+    sc->set_elem(e);
+    sc->set_type(t);
+    sc->set_script(sc);
+    sc->set_script(NULL);
+    sp<const Sampler> samp = Sampler::CLAMP_NEAREST(rs);
+    sc->set_sampler(samp);
 
     // We read back the status from the script-side via a "failed" allocation.
     sp<const Element> failed_e = Element::BOOLEAN(rs);
@@ -88,9 +95,11 @@ int main()
         failed_alloc->copy1DTo(&failed);
     }
 
-    printf("Deleting stuff\n");
-    delete sc;
-    printf("Delete OK\n");
+    return failed;
+}
+
+int main() {
+    bool failed = test_compute();
 
     if (failed) {
         printf("TEST FAILED!\n");
