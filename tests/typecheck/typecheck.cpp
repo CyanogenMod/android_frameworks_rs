@@ -71,7 +71,7 @@ TEST_ELEM_ALL(U64)
 TEST_ELEM_ALL(F32)
 TEST_ELEM_ALL(F64)
 
-int main(int argc, char** argv)
+int main()
 {
     bool failed = false;
 
