@@ -161,8 +161,10 @@ static void OneVFU4(float4 *out,
         t &= ~1;
         if(t) {
             rsdIntrinsicBlurVFU4_K(out, ptrIn, iStride, gPtr, ct, x1, x1 + t);
+            x1 += t;
+            ptrIn += t << 2;
+            out += t;
         }
-        x1 += t;
     }
 #endif
 
