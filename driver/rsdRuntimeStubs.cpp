@@ -84,6 +84,10 @@ OPAQUETYPE(rs_script)
 OPAQUETYPE(rs_script_call)
 #undef OPAQUETYPE
 
+typedef enum {
+    // Empty to avoid conflicting definitions with RsAllocationCubemapFace
+} rs_allocation_cubemap_face;
+
 typedef struct {
     int tm_sec;     ///< seconds
     int tm_min;     ///< minutes
@@ -138,7 +142,6 @@ static void SC_AllocationCopy2DRange(Allocation *dstAlloc,
                              srcXoff, srcYoff, srcMip, srcFace);
 }
 
-#ifndef RS_COMPATIBILITY_LIB
 static void SC_AllocationIoSend(Allocation *alloc) {
     Context *rsc = RsdCpuReference::getTlsContext();
     rsrAllocationIoSend(rsc, alloc);
@@ -150,7 +153,7 @@ static void SC_AllocationIoReceive(Allocation *alloc) {
     rsrAllocationIoReceive(rsc, alloc);
 }
 
-
+#ifndef RS_COMPATIBILITY_LIB
 
 //////////////////////////////////////////////////////////////////////////////
 // Context
@@ -1242,6 +1245,38 @@ IS_CLEAR_SET_OBJ(rs_script)
 
 const Allocation * rsGetAllocation(const void *ptr) {
     return SC_GetAllocation(ptr);
+}
+
+void __attribute__((overloadable)) rsAllocationIoSend(rs_allocation a) {
+    SC_AllocationIoSend((Allocation *)a.p);
+}
+
+void __attribute__((overloadable)) rsAllocationIoReceive(rs_allocation a) {
+    SC_AllocationIoReceive((Allocation *)a.p);
+}
+
+
+void __attribute__((overloadable)) rsAllocationCopy1DRange(
+        rs_allocation dstAlloc,
+        uint32_t dstOff, uint32_t dstMip, uint32_t count,
+        rs_allocation srcAlloc,
+        uint32_t srcOff, uint32_t srcMip) {
+    SC_AllocationCopy1DRange((Allocation *)dstAlloc.p, dstOff, dstMip, count,
+                             (Allocation *)srcAlloc.p, srcOff, srcMip);
+}
+
+void __attribute__((overloadable)) rsAllocationCopy2DRange(
+        rs_allocation dstAlloc,
+        uint32_t dstXoff, uint32_t dstYoff,
+        uint32_t dstMip, rs_allocation_cubemap_face dstFace,
+        uint32_t width, uint32_t height,
+        rs_allocation srcAlloc,
+        uint32_t srcXoff, uint32_t srcYoff,
+        uint32_t srcMip, rs_allocation_cubemap_face srcFace) {
+    SC_AllocationCopy2DRange((Allocation *)dstAlloc.p, dstXoff, dstYoff,
+                             dstMip, dstFace, width, height,
+                             (Allocation *)srcAlloc.p, srcXoff, srcYoff,
+                             srcMip, srcFace);
 }
 
 void __attribute__((overloadable)) rsForEach(rs_script script,
