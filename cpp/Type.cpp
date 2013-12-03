@@ -116,7 +116,7 @@ sp<const Type> Type::create(sp<RS> rs, sp<const Element> e, uint32_t dimX, uint3
 }
 
 Type::Builder::Builder(sp<RS> rs, sp<const Element> e) {
-    mRS = rs;
+    mRS = rs.get();
     mElement = e;
     mDimX = 0;
     mDimY = 0;
