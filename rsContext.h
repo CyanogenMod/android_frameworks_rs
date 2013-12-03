@@ -151,6 +151,7 @@ public:
     void resume();
     void setSurface(uint32_t w, uint32_t h, RsNativeWindow sur);
 #endif
+    void finish();
 
     void setPriority(int32_t p);
     void destroyWorkerThreadResources();

@@ -287,6 +287,7 @@ typedef struct {
         void (*destroy)(const Context *rsc, const ScriptGroup *sg);
     } scriptgroup;
 
+    void (*finish)(const Context *rsc);
 } RsdHalFunctions;
 
 
