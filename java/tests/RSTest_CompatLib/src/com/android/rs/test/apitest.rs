@@ -108,6 +108,7 @@ void check_api_presence() {
      ********************************/
     rsSendToClientBlocking(RS_MSG_TEST_FAILED);
 
+    // rs_allocation.rsh
     c = rsGetElementAt_char(aChar, 0);
     rsSetElementAt_char(aChar, c, 0);
     c = rsGetElementAt_char(aChar, 0, 0);
@@ -379,6 +380,724 @@ void check_api_presence() {
     f4 += rsSample(allocDst, samplerNonNull, f, f);
     f4 += rsSample(allocDst, samplerNonNull, f2);
     f4 += rsSample(allocDst, samplerNonNull, f2, f);
+
+    // rs_atomic.rsh
+    rsAtomicInc(&i);
+    rsAtomicDec(&i);
+    rsAtomicAdd(&i, 1);
+    rsAtomicSub(&i, 2);
+    rsAtomicAnd(&i, 3);
+    rsAtomicOr(&i, 4);
+    rsAtomicXor(&i, 5);
+    rsAtomicMin(&i, 6);
+    rsAtomicMin(&ui, 6);
+    rsAtomicMax(&i, 7);
+    rsAtomicMax(&ui, 7);
+    rsAtomicCas(&i, 8, 9);
+    rsAtomicCas(&ui, 8, 9);
+
+    // rs_cl.rsh
+    c2 = convert_char2(c2);
+    c2 = convert_char2(uc2);
+    c2 = convert_char2(s2);
+    c2 = convert_char2(us2);
+    c2 = convert_char2(i2);
+    c2 = convert_char2(ui2);
+    c2 = convert_char2(f2);
+    c3 = convert_char3(c3);
+    c3 = convert_char3(uc3);
+    c3 = convert_char3(s3);
+    c3 = convert_char3(us3);
+    c3 = convert_char3(i3);
+    c3 = convert_char3(ui3);
+    c3 = convert_char3(f3);
+    c4 = convert_char4(c4);
+    c4 = convert_char4(uc4);
+    c4 = convert_char4(s4);
+    c4 = convert_char4(us4);
+    c4 = convert_char4(i4);
+    c4 = convert_char4(ui4);
+    c4 = convert_char4(f4);
+
+    uc2 = convert_uchar2(c2);
+    uc2 = convert_uchar2(uc2);
+    uc2 = convert_uchar2(s2);
+    uc2 = convert_uchar2(us2);
+    uc2 = convert_uchar2(i2);
+    uc2 = convert_uchar2(ui2);
+    uc2 = convert_uchar2(f2);
+    uc3 = convert_uchar3(c3);
+    uc3 = convert_uchar3(uc3);
+    uc3 = convert_uchar3(s3);
+    uc3 = convert_uchar3(us3);
+    uc3 = convert_uchar3(i3);
+    uc3 = convert_uchar3(ui3);
+    uc3 = convert_uchar3(f3);
+    uc4 = convert_uchar4(c4);
+    uc4 = convert_uchar4(uc4);
+    uc4 = convert_uchar4(s4);
+    uc4 = convert_uchar4(us4);
+    uc4 = convert_uchar4(i4);
+    uc4 = convert_uchar4(ui4);
+    uc4 = convert_uchar4(f4);
+
+    s2 = convert_short2(c2);
+    s2 = convert_short2(uc2);
+    s2 = convert_short2(s2);
+    s2 = convert_short2(us2);
+    s2 = convert_short2(i2);
+    s2 = convert_short2(ui2);
+    s2 = convert_short2(f2);
+    s3 = convert_short3(c3);
+    s3 = convert_short3(uc3);
+    s3 = convert_short3(s3);
+    s3 = convert_short3(us3);
+    s3 = convert_short3(i3);
+    s3 = convert_short3(ui3);
+    s3 = convert_short3(f3);
+    s4 = convert_short4(c4);
+    s4 = convert_short4(uc4);
+    s4 = convert_short4(s4);
+    s4 = convert_short4(us4);
+    s4 = convert_short4(i4);
+    s4 = convert_short4(ui4);
+    s4 = convert_short4(f4);
+
+    us2 = convert_ushort2(c2);
+    us2 = convert_ushort2(uc2);
+    us2 = convert_ushort2(s2);
+    us2 = convert_ushort2(us2);
+    us2 = convert_ushort2(i2);
+    us2 = convert_ushort2(ui2);
+    us2 = convert_ushort2(f2);
+    us3 = convert_ushort3(c3);
+    us3 = convert_ushort3(uc3);
+    us3 = convert_ushort3(s3);
+    us3 = convert_ushort3(us3);
+    us3 = convert_ushort3(i3);
+    us3 = convert_ushort3(ui3);
+    us3 = convert_ushort3(f3);
+    us4 = convert_ushort4(c4);
+    us4 = convert_ushort4(uc4);
+    us4 = convert_ushort4(s4);
+    us4 = convert_ushort4(us4);
+    us4 = convert_ushort4(i4);
+    us4 = convert_ushort4(ui4);
+    us4 = convert_ushort4(f4);
+
+    i2 = convert_int2(c2);
+    i2 = convert_int2(uc2);
+    i2 = convert_int2(s2);
+    i2 = convert_int2(us2);
+    i2 = convert_int2(i2);
+    i2 = convert_int2(ui2);
+    i2 = convert_int2(f2);
+    i3 = convert_int3(c3);
+    i3 = convert_int3(uc3);
+    i3 = convert_int3(s3);
+    i3 = convert_int3(us3);
+    i3 = convert_int3(i3);
+    i3 = convert_int3(ui3);
+    i3 = convert_int3(f3);
+    i4 = convert_int4(c4);
+    i4 = convert_int4(uc4);
+    i4 = convert_int4(s4);
+    i4 = convert_int4(us4);
+    i4 = convert_int4(i4);
+    i4 = convert_int4(ui4);
+    i4 = convert_int4(f4);
+
+    ui2 = convert_uint2(c2);
+    ui2 = convert_uint2(uc2);
+    ui2 = convert_uint2(s2);
+    ui2 = convert_uint2(us2);
+    ui2 = convert_uint2(i2);
+    ui2 = convert_uint2(ui2);
+    ui2 = convert_uint2(f2);
+    ui3 = convert_uint3(c3);
+    ui3 = convert_uint3(uc3);
+    ui3 = convert_uint3(s3);
+    ui3 = convert_uint3(us3);
+    ui3 = convert_uint3(i3);
+    ui3 = convert_uint3(ui3);
+    ui3 = convert_uint3(f3);
+    ui4 = convert_uint4(c4);
+    ui4 = convert_uint4(uc4);
+    ui4 = convert_uint4(s4);
+    ui4 = convert_uint4(us4);
+    ui4 = convert_uint4(i4);
+    ui4 = convert_uint4(ui4);
+    ui4 = convert_uint4(f4);
+
+    f2 = convert_float2(c2);
+    f2 = convert_float2(uc2);
+    f2 = convert_float2(s2);
+    f2 = convert_float2(us2);
+    f2 = convert_float2(i2);
+    f2 = convert_float2(ui2);
+    f2 = convert_float2(f2);
+    f3 = convert_float3(c3);
+    f3 = convert_float3(uc3);
+    f3 = convert_float3(s3);
+    f3 = convert_float3(us3);
+    f3 = convert_float3(i3);
+    f3 = convert_float3(ui3);
+    f3 = convert_float3(f3);
+    f4 = convert_float4(c4);
+    f4 = convert_float4(uc4);
+    f4 = convert_float4(s4);
+    f4 = convert_float4(us4);
+    f4 = convert_float4(i4);
+    f4 = convert_float4(ui4);
+    f4 = convert_float4(f4);
+
+    // FIXME: No support for long/double (either from/to).
+
+    // math
+    f = acos(f);
+    f2 = acos(f2);
+    f3 = acos(f3);
+    f4 = acos(f4);
+    f = acosh(f);
+    f2 = acosh(f2);
+    f3 = acosh(f3);
+    f4 = acosh(f4);
+    f = acospi(f);
+    f2 = acospi(f2);
+    f3 = acospi(f3);
+    f4 = acospi(f4);
+
+    f = asin(f);
+    f2 = asin(f2);
+    f3 = asin(f3);
+    f4 = asin(f4);
+    f = asinh(f);
+    f2 = asinh(f2);
+    f3 = asinh(f3);
+    f4 = asinh(f4);
+    f = asinpi(f);
+    f2 = asinpi(f2);
+    f3 = asinpi(f3);
+    f4 = asinpi(f4);
+
+    f = atan(f);
+    f2 = atan(f2);
+    f3 = atan(f3);
+    f4 = atan(f4);
+    f = atanh(f);
+    f2 = atanh(f2);
+    f3 = atanh(f3);
+    f4 = atanh(f4);
+    f = atanpi(f);
+    f2 = atanpi(f2);
+    f3 = atanpi(f3);
+    f4 = atanpi(f4);
+
+    f = atan2(f, f);
+    f2 = atan2(f2, f2);
+    f3 = atan2(f3, f3);
+    f4 = atan2(f4, f4);
+    f = atan2pi(f, f);
+    f2 = atan2pi(f2, f2);
+    f3 = atan2pi(f3, f3);
+    f4 = atan2(f4, f4);
+
+    f = cbrt(f);
+    f2 = cbrt(f2);
+    f3 = cbrt(f3);
+    f4 = cbrt(f4);
+
+    f = ceil(f);
+    f2 = ceil(f2);
+    f3 = ceil(f3);
+    f4 = ceil(f4);
+
+    f = copysign(f, f);
+    f2 = copysign(f2, f2);
+    f3 = copysign(f3, f3);
+    f4 = copysign(f4, f4);
+
+    f = cos(f);
+    f2 = cos(f2);
+    f3 = cos(f3);
+    f4 = cos(f4);
+    f = cosh(f);
+    f2 = cosh(f2);
+    f3 = cosh(f3);
+    f4 = cosh(f4);
+    f = cospi(f);
+    f2 = cospi(f2);
+    f3 = cospi(f3);
+    f4 = cospi(f4);
+
+    f = erfc(f);
+    f2 = erfc(f2);
+    f3 = erfc(f3);
+    f4 = erfc(f4);
+    f = erf(f);
+    f2 = erf(f2);
+    f3 = erf(f3);
+    f4 = erf(f4);
+
+    f = exp(f);
+    f2 = exp(f2);
+    f3 = exp(f3);
+    f4 = exp(f4);
+    f = exp2(f);
+    f2 = exp2(f2);
+    f3 = exp2(f3);
+    f4 = exp2(f4);
+
+    f = pow(f, f);
+    f2 = pow(f2, f2);
+    f3 = pow(f3, f3);
+    f4 = pow(f4, f4);
+
+    f = exp10(f);
+    f2 = exp10(f2);
+    f3 = exp10(f3);
+    f4 = exp10(f4);
+
+    f = expm1(f);
+    f2 = expm1(f2);
+    f3 = expm1(f3);
+    f4 = expm1(f4);
+
+    f = fabs(f);
+    f2 = fabs(f2);
+    f3 = fabs(f3);
+    f4 = fabs(f4);
+
+    f = fabs(f);
+    f2 = fabs(f2);
+    f3 = fabs(f3);
+    f4 = fabs(f4);
+
+    f = fdim(f, f);
+    f2 = fdim(f2, f2);
+    f3 = fdim(f3, f3);
+    f4 = fdim(f4, f4);
+
+    f = floor(f);
+    f2 = floor(f2);
+    f3 = floor(f3);
+    f4 = floor(f4);
+
+    f = fma(f, f, f);
+    f2 = fma(f2, f2, f2);
+    f3 = fma(f3, f3, f3);
+    f4 = fma(f4, f4, f4);
+
+    f = fmax(f, f);
+    f2 = fmax(f2, f2);
+    f3 = fmax(f3, f3);
+    f4 = fmax(f4, f4);
+
+    f = fmin(f, f);
+    f2 = fmin(f2, f2);
+    f3 = fmin(f3, f3);
+    f4 = fmin(f4, f4);
+
+    f = fmod(f, f);
+    f2 = fmod(f2, f2);
+    f3 = fmod(f3, f3);
+    f4 = fmod(f4, f4);
+
+    f = fract(f, (float *)&f);
+    f2 = fract(f2, (float2 *)&f2);
+    f3 = fract(f3, (float3 *)&f3);
+    f4 = fract(f4, (float4 *)&f4);
+    f = fract(f);
+    f2 = fract(f2);
+    f3 = fract(f3);
+    f4 = fract(f4);
+
+    f = frexp(f, (int *)&i);
+    f2 = frexp(f2, (int2 *)&i2);
+    f3 = frexp(f3, (int3 *)&i3);
+    f4 = frexp(f4, (int4 *)&i4);
+
+    f = hypot(f, f);
+    f2 = hypot(f2, f2);
+    f3 = hypot(f3, f3);
+    f4 = hypot(f4, f4);
+
+    i = ilogb(f);
+    i2 = ilogb(f2);
+    i3 = ilogb(f3);
+    i4 = ilogb(f4);
+
+    f = ldexp(f, i);
+    f2 = ldexp(f2, i2);
+    f3 = ldexp(f3, i3);
+    f4 = ldexp(f4, i4);
+    f2 = ldexp(f2, i);
+    f3 = ldexp(f3, i);
+    f4 = ldexp(f4, i);
+
+    f = lgamma(f);
+    f2 = lgamma(f2);
+    f3 = lgamma(f3);
+    f4 = lgamma(f4);
+    f = lgamma(f, (int *)&i);
+    f2 = lgamma(f2, (int2 *)&i2);
+    f3 = lgamma(f3, (int3 *)&i3);
+    f4 = lgamma(f4, (int4 *)&i4);
+
+    f = log(f);
+    f2 = log(f2);
+    f3 = log(f3);
+    f4 = log(f4);
+
+    f = log10(f);
+    f2 = log10(f2);
+    f3 = log10(f3);
+    f4 = log10(f4);
+
+    f = log2(f);
+    f2 = log2(f2);
+    f3 = log2(f3);
+    f4 = log2(f4);
+
+    f = log1p(f);
+    f2 = log1p(f2);
+    f3 = log1p(f3);
+    f4 = log1p(f4);
+
+    f = logb(f);
+    f2 = logb(f2);
+    f3 = logb(f3);
+    f4 = logb(f4);
+
+    f = mad(f, f, f);
+    f2 = mad(f2, f2, f2);
+    f3 = mad(f3, f3, f3);
+    f4 = mad(f4, f4, f4);
+
+    f = modf(f, (float *)&f);
+    f2 = modf(f2, (float2 *)&f2);
+    f3 = modf(f3, (float3 *)&f3);
+    f4 = modf(f4, (float4 *)&f4);
+
+    f = nan(ui);
+
+    f = nextafter(f, f);
+    f2 = nextafter(f2, f2);
+    f3 = nextafter(f3, f3);
+    f4 = nextafter(f4, f4);
+
+    f = pown(f, i);
+    f2 = pown(f2, i2);
+    f3 = pown(f3, i3);
+    f4 = pown(f4, i4);
+
+    f = powr(f, f);
+    f2 = powr(f2, f2);
+    f3 = powr(f3, f3);
+    f4 = powr(f4, f4);
+
+    f = remainder(f, f);
+    f2 = remainder(f2, f2);
+    f3 = remainder(f3, f3);
+    f4 = remainder(f4, f4);
+
+    f = remquo(f, f, (int *)&i);
+    f2 = remquo(f2, f2, (int2 *)&i2);
+    f3 = remquo(f3, f3, (int3 *)&i3);
+    f4 = remquo(f4, f4, (int4 *)&i4);
+
+    f = rint(f);
+    f2 = rint(f2);
+    f3 = rint(f3);
+    f4 = rint(f4);
+
+    f = rootn(f, i);
+    f2 = rootn(f2, i2);
+    f3 = rootn(f3, i3);
+    f4 = rootn(f4, i4);
+
+    f = round(f);
+    f2 = round(f2);
+    f3 = round(f3);
+    f4 = round(f4);
+
+    f = rsqrt(f);
+    f2 = rsqrt(f2);
+    f3 = rsqrt(f3);
+    f4 = rsqrt(f4);
+
+    f = sin(f);
+    f2 = sin(f2);
+    f3 = sin(f3);
+    f4 = sin(f4);
+    f = sinh(f);
+    f2 = sinh(f2);
+    f3 = sinh(f3);
+    f4 = sinh(f4);
+    f = sinpi(f);
+    f2 = sinpi(f2);
+    f3 = sinpi(f3);
+    f4 = sinpi(f4);
+
+    f = sincos(f, (float *)&f);
+    f2 = sincos(f2, (float2 *)&f2);
+    f3 = sincos(f3, (float3 *)&f3);
+    f4 = sincos(f4, (float4 *)&f4);
+
+    f = tan(f);
+    f2 = tan(f2);
+    f3 = tan(f3);
+    f4 = tan(f4);
+    f = tanh(f);
+    f2 = tanh(f2);
+    f3 = tanh(f3);
+    f4 = tanh(f4);
+    f = tanpi(f);
+    f2 = tanpi(f2);
+    f3 = tanpi(f3);
+    f4 = tanpi(f4);
+
+    f = tgamma(f);
+    f2 = tgamma(f2);
+    f3 = tgamma(f3);
+    f4 = tgamma(f4);
+
+    f = trunc(f);
+    f2 = trunc(f2);
+    f3 = trunc(f3);
+    f4 = trunc(f4);
+
+    uc = abs(c);
+    uc2 = abs(c2);
+    uc3 = abs(c3);
+    uc4 = abs(c4);
+    us = abs(s);
+    us2 = abs(s2);
+    us3 = abs(s3);
+    us4 = abs(s4);
+    ui = abs(i);
+    ui2 = abs(i2);
+    ui3 = abs(i3);
+    ui4 = abs(i4);
+
+    c = clz(c);
+    c2 = clz(c2);
+    c3 = clz(c3);
+    c4 = clz(c4);
+    uc = clz(uc);
+    uc2 = clz(uc2);
+    uc3 = clz(uc3);
+    uc4 = clz(uc4);
+    s = clz(s);
+    s2 = clz(s2);
+    s3 = clz(s3);
+    s4 = clz(s4);
+    us = clz(us);
+    us2 = clz(us2);
+    us3 = clz(us3);
+    us4 = clz(us4);
+    i = clz(i);
+    i2 = clz(i2);
+    i3 = clz(i3);
+    i4 = clz(i4);
+    ui = clz(ui);
+    ui2 = clz(ui2);
+    ui3 = clz(ui3);
+    ui4 = clz(ui4);
+
+    c = min(c, c);
+    c2 = min(c2, c2);
+    c3 = min(c3, c3);
+    c4 = min(c4, c4);
+    uc = min(uc, uc);
+    uc2 = min(uc2, uc2);
+    uc3 = min(uc3, uc3);
+    uc4 = min(uc4, uc4);
+    s = min(s, s);
+    s2 = min(s2, s2);
+    s3 = min(s3, s3);
+    s4 = min(s4, s4);
+    us = min(us, us);
+    us2 = min(us2, us2);
+    us3 = min(us3, us3);
+    us4 = min(us4, us4);
+    i = min(i, i);
+    i2 = min(i2, i2);
+    i3 = min(i3, i3);
+    i4 = min(i4, i4);
+    ui = min(ui, ui);
+    ui2 = min(ui2, ui2);
+    ui3 = min(ui3, ui3);
+    ui4 = min(ui4, ui4);
+    f = min(f, f);
+    f2 = min(f2, f2);
+    f3 = min(f3, f3);
+    f4 = min(f4, f4);
+    f2 = min(f2, f);
+    f3 = min(f3, f);
+    f4 = min(f4, f);
+
+    c = max(c, c);
+    c2 = max(c2, c2);
+    c3 = max(c3, c3);
+    c4 = max(c4, c4);
+    uc = max(uc, uc);
+    uc2 = max(uc2, uc2);
+    uc3 = max(uc3, uc3);
+    uc4 = max(uc4, uc4);
+    s = max(s, s);
+    s2 = max(s2, s2);
+    s3 = max(s3, s3);
+    s4 = max(s4, s4);
+    us = max(us, us);
+    us2 = max(us2, us2);
+    us3 = max(us3, us3);
+    us4 = max(us4, us4);
+    i = max(i, i);
+    i2 = max(i2, i2);
+    i3 = max(i3, i3);
+    i4 = max(i4, i4);
+    ui = max(ui, ui);
+    ui2 = max(ui2, ui2);
+    ui3 = max(ui3, ui3);
+    ui4 = max(ui4, ui4);
+    f = max(f, f);
+    f2 = max(f2, f2);
+    f3 = max(f3, f3);
+    f4 = max(f4, f4);
+    f2 = max(f2, f);
+    f3 = max(f3, f);
+    f4 = max(f4, f);
+
+    f = clamp(f, f, f);
+    f2 = clamp(f2, f2, f2);
+    f3 = clamp(f3, f3, f3);
+    f4 = clamp(f4, f4, f4);
+    f2 = clamp(f2, f, f);
+    f3 = clamp(f3, f, f);
+    f4 = clamp(f4, f, f);
+    // FIXME: other clamps only in 19+
+
+    f = degrees(f);
+    f2 = degrees(f2);
+    f3 = degrees(f3);
+    f4 = degrees(f4);
+
+    f = mix(f, f, f);
+    f2 = mix(f2, f2, f2);
+    f3 = mix(f3, f3, f3);
+    f4 = mix(f4, f4, f4);
+    f2 = mix(f2, f2, f);
+    f3 = mix(f3, f3, f);
+    f4 = mix(f4, f4, f);
+
+    f = radians(f);
+    f2 = radians(f2);
+    f3 = radians(f3);
+    f4 = radians(f4);
+
+    f = step(f, f);
+    f2 = step(f2, f2);
+    f3 = step(f3, f3);
+    f4 = step(f4, f4);
+    f2 = step(f2, f);
+    f3 = step(f3, f);
+    f4 = step(f4, f);
+
+    f = sign(f);
+    f2 = sign(f2);
+    f3 = sign(f3);
+    f4 = sign(f4);
+
+    f3 = cross(f3, f3);
+    f4 = cross(f4, f4);
+
+    f = dot(f, f);
+    f = dot(f2, f2);
+    f = dot(f3, f3);
+    f = dot(f4, f4);
+
+    f = length(f);
+    f = length(f2);
+    f = length(f3);
+    f = length(f4);
+
+    f = distance(f, f);
+    f = distance(f2, f2);
+    f = distance(f3, f3);
+    f = distance(f4, f4);
+
+    f = normalize(f);
+    f2 = normalize(f2);
+    f3 = normalize(f3);
+    f4 = normalize(f4);
+
+    f = half_recip(f);
+    f2 = half_recip(f2);
+    f3 = half_recip(f3);
+    f4 = half_recip(f4);
+
+    f = half_sqrt(f);
+    f2 = half_sqrt(f2);
+    f3 = half_sqrt(f3);
+    f4 = half_sqrt(f4);
+
+    f = half_rsqrt(f);
+    f2 = half_rsqrt(f2);
+    f3 = half_rsqrt(f3);
+    f4 = half_rsqrt(f4);
+
+    f = fast_length(f);
+    f = fast_length(f2);
+    f = fast_length(f3);
+    f = fast_length(f4);
+
+    f = fast_distance(f, f);
+    f = fast_distance(f2, f2);
+    f = fast_distance(f3, f3);
+    f = fast_distance(f4, f4);
+
+    f = fast_normalize(f);
+    f2 = fast_normalize(f2);
+    f3 = fast_normalize(f3);
+    f4 = fast_normalize(f4);
+
+    f = native_exp2(f);
+    f2 = native_exp2(f2);
+    f3 = native_exp2(f3);
+    f4 = native_exp2(f4);
+
+    f = native_exp(f);
+    f2 = native_exp(f2);
+    f3 = native_exp(f3);
+    f4 = native_exp(f4);
+
+    f = native_exp10(f);
+    f2 = native_exp10(f2);
+    f3 = native_exp10(f3);
+    f4 = native_exp10(f4);
+
+    f = native_log2(f);
+    f2 = native_log2(f2);
+    f3 = native_log2(f3);
+    f4 = native_log2(f4);
+
+    f = native_log(f);
+    f2 = native_log(f2);
+    f3 = native_log(f3);
+    f4 = native_log(f4);
+
+    f = native_log10(f);
+    f2 = native_log10(f2);
+    f3 = native_log10(f3);
+    f4 = native_log10(f4);
+
+    f = native_powr(f, f);
+    f2 = native_powr(f2, f2);
+    f3 = native_powr(f3, f3);
+    f4 = native_powr(f4, f4);
+
+
     /********************************
      * DO NOT EXECUTE THIS FUNCTION *
      ********************************/
