@@ -18,6 +18,7 @@ rs_script scriptNonNull;
 char *allocPtr;
 rs_allocation allocDst;
 
+volatile bool b;
 volatile char c;
 volatile char2 c2;
 volatile char3 c3;
@@ -1097,6 +1098,16 @@ void check_api_presence() {
     f3 = native_powr(f3, f3);
     f4 = native_powr(f4, f4);
 
+    // rs_core.rsh
+    b = rsSendToClient(0);
+    b = rsSendToClient(0, NULL, 0);
+    rsSendToClientBlocking(0);
+    rsSendToClientBlocking(0, NULL, 0);
+
+    rs_script_call_t sc;
+    rsForEach(scriptNonNull, allocNonNull, allocNonNull, NULL, 0, &sc);
+    rsForEach(scriptNonNull, allocNonNull, allocNonNull, NULL, 0);
+    rsForEach(scriptNonNull, allocNonNull, allocNonNull);
 
     /********************************
      * DO NOT EXECUTE THIS FUNCTION *
