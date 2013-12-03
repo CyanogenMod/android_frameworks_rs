@@ -539,7 +539,7 @@ int64_t SC_UptimeNanos() {
 // Message routines
 //////////////////////////////////////////////////////////////////////////////
 
-static uint32_t SC_ToClient2(int cmdID, void *data, int len) {
+static uint32_t SC_ToClient2(int cmdID, const void *data, uint32_t len) {
     Context *rsc = RsdCpuReference::getTlsContext();
     return rsrToClient(rsc, cmdID, data, len);
 }
@@ -549,7 +549,7 @@ static uint32_t SC_ToClient(int cmdID) {
     return rsrToClient(rsc, cmdID, NULL, 0);
 }
 
-static uint32_t SC_ToClientBlocking2(int cmdID, void *data, int len) {
+static uint32_t SC_ToClientBlocking2(int cmdID, const void *data, uint32_t len) {
     Context *rsc = RsdCpuReference::getTlsContext();
     return rsrToClientBlocking(rsc, cmdID, data, len);
 }
@@ -1289,6 +1289,20 @@ void __attribute__((overloadable)) rsForEach(rs_script script,
 
 void __attribute__((overloadable)) rsForEach(rs_script script,
                                              rs_allocation in,
+                                             rs_allocation out) {
+    return SC_ForEach_SAA((Script *)script.p, (Allocation*)in.p, (Allocation*)out.p);
+}
+
+void __attribute__((overloadable)) rsForEach(rs_script script,
+                                             rs_allocation in,
+                                             rs_allocation out,
+                                             const void *usr,
+                                             uint32_t usrLen) {
+    return SC_ForEach_SAAUL((Script *)script.p, (Allocation*)in.p, (Allocation*)out.p, usr, usrLen);
+}
+
+void __attribute__((overloadable)) rsForEach(rs_script script,
+                                             rs_allocation in,
                                              rs_allocation out,
                                              const void *usr,
                                              uint32_t usrLen,
@@ -1309,14 +1323,20 @@ int64_t rsUptimeMillis() {
     return rsrUptimeMillis(rsc);
 }
 
-uint32_t rsSendToClientBlocking2(int cmdID, void *data, int len) {
-    Context *rsc = RsdCpuReference::getTlsContext();
-    return rsrToClientBlocking(rsc, cmdID, data, len);
+uint32_t rsSendToClient(int cmdID) {
+    return SC_ToClient(cmdID);
+}
+
+uint32_t rsSendToClient(int cmdID, const void *data, uint32_t len) {
+    return SC_ToClient2(cmdID, data, len);
 }
 
 uint32_t rsSendToClientBlocking(int cmdID) {
-    Context *rsc = RsdCpuReference::getTlsContext();
-    return rsrToClientBlocking(rsc, cmdID, NULL, 0);
+    return SC_ToClientBlocking(cmdID);
+}
+
+uint32_t rsSendToClientBlocking(int cmdID, const void *data, uint32_t len) {
+    return SC_ToClientBlocking2(cmdID, data, len);
 }
 
 static void SC_debugF(const char *s, float f) {
