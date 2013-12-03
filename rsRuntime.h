@@ -128,8 +128,8 @@ int64_t rsrUptimeNanos(Context *);
 // Message routines
 //////////////////////////////////////////////////////////////////////////////
 
-uint32_t rsrToClient(Context *, int cmdID, void *data, int len);
-uint32_t rsrToClientBlocking(Context *, int cmdID, void *data, int len);
+uint32_t rsrToClient(Context *, int cmdID, const void *data, int len);
+uint32_t rsrToClientBlocking(Context *, int cmdID, const void *data, int len);
 
 //////////////////////////////////////////////////////////////////////////////
 //

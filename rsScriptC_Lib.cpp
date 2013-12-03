@@ -161,12 +161,12 @@ bool rsrIsObject(const Context *rsc, const ObjectBase *src) {
 }
 
 
-uint32_t rsrToClient(Context *rsc, int cmdID, void *data, int len) {
+uint32_t rsrToClient(Context *rsc, int cmdID, const void *data, int len) {
     //ALOGE("SC_toClient %i %i %i", cmdID, len);
     return rsc->sendMessageToClient(data, RS_MESSAGE_TO_CLIENT_USER, cmdID, len, false);
 }
 
-uint32_t rsrToClientBlocking(Context *rsc, int cmdID, void *data, int len) {
+uint32_t rsrToClientBlocking(Context *rsc, int cmdID, const void *data, int len) {
     //ALOGE("SC_toClientBlocking %i %i", cmdID, len);
     return rsc->sendMessageToClient(data, RS_MESSAGE_TO_CLIENT_USER, cmdID, len, true);
 }
