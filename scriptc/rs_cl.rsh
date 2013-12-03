@@ -926,7 +926,8 @@ _RS_RUNTIME float __attribute__((const, overloadable)) step(float edge, float v)
 FN_FUNC_FN_FN(step)
 FN_FUNC_FN_F(step)
 
-// not implemented
+// FIXME: not implemented
+#if 0
 extern float __attribute__((const, overloadable)) smoothstep(float, float, float);
 extern float2 __attribute__((const, overloadable)) smoothstep(float2, float2, float2);
 extern float3 __attribute__((const, overloadable)) smoothstep(float3, float3, float3);
@@ -934,6 +935,7 @@ extern float4 __attribute__((const, overloadable)) smoothstep(float4, float4, fl
 extern float2 __attribute__((const, overloadable)) smoothstep(float, float, float2);
 extern float3 __attribute__((const, overloadable)) smoothstep(float, float, float3);
 extern float4 __attribute__((const, overloadable)) smoothstep(float, float, float4);
+#endif
 
 /**
  * Return the sign of a value.
