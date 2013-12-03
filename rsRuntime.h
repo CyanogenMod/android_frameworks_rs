@@ -109,10 +109,10 @@ void rsrMeasureText(Context *, const char *text,
 void rsrBindFont(Context *, Font *);
 void rsrFontColor(Context *, float r, float g, float b, float a);
 
+#endif
+
 void rsrAllocationIoSend(Context *, Allocation *);
 void rsrAllocationIoReceive(Context *, Allocation *);
-
-#endif
 
 //////////////////////////////////////////////////////////////////////////////
 // Time routines
