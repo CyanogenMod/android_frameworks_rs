@@ -358,7 +358,7 @@ bool Element::isCompatible(android::RSC::sp<const Element>e) const {
 }
 
 Element::Builder::Builder(android::RSC::sp<RS> rs) {
-    mRS = rs;
+    mRS = rs.get();
     mSkipPadding = false;
 }
 
