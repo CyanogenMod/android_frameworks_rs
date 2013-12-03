@@ -74,327 +74,327 @@ static bool loadSymbols(void* handle) {
 
     RS::dispatch->AllocationGetType = (AllocationGetTypeFnPtr)dlsym(handle, "rsaAllocationGetType");
     if (RS::dispatch->AllocationGetType == NULL) {
-        ALOGE("Couldn't initialize RS::dispatch->AllocationGetType");
+        ALOGV("Couldn't initialize RS::dispatch->AllocationGetType");
         return false;
     }
     RS::dispatch->TypeGetNativeData = (TypeGetNativeDataFnPtr)dlsym(handle, "rsaTypeGetNativeData");
     if (RS::dispatch->TypeGetNativeData == NULL) {
-        ALOGE("Couldn't initialize RS::dispatch->TypeGetNativeData");
+        ALOGV("Couldn't initialize RS::dispatch->TypeGetNativeData");
         return false;
     }
     RS::dispatch->ElementGetNativeData = (ElementGetNativeDataFnPtr)dlsym(handle, "rsaElementGetNativeData");
     if (RS::dispatch->ElementGetNativeData == NULL) {
-        ALOGE("Couldn't initialize RS::dispatch->ElementGetNativeData");
+        ALOGV("Couldn't initialize RS::dispatch->ElementGetNativeData");
         return false;
     }
     RS::dispatch->ElementGetSubElements = (ElementGetSubElementsFnPtr)dlsym(handle, "rsaElementGetSubElements");
     if (RS::dispatch->ElementGetSubElements == NULL) {
-        ALOGE("Couldn't initialize RS::dispatch->ElementGetSubElements");
+        ALOGV("Couldn't initialize RS::dispatch->ElementGetSubElements");
         return false;
     }
     RS::dispatch->DeviceCreate = (DeviceCreateFnPtr)dlsym(handle, "rsDeviceCreate");
     if (RS::dispatch->DeviceCreate == NULL) {
-        ALOGE("Couldn't initialize RS::dispatch->DeviceCreate");
+        ALOGV("Couldn't initialize RS::dispatch->DeviceCreate");
         return false;
     }
     RS::dispatch->DeviceDestroy = (DeviceDestroyFnPtr)dlsym(handle, "rsDeviceDestroy");
     if (RS::dispatch->DeviceDestroy == NULL) {
-        ALOGE("Couldn't initialize RS::dispatch->DeviceDestroy");
+        ALOGV("Couldn't initialize RS::dispatch->DeviceDestroy");
         return false;
     }
     RS::dispatch->DeviceSetConfig = (DeviceSetConfigFnPtr)dlsym(handle, "rsDeviceSetConfig");
     if (RS::dispatch->DeviceSetConfig == NULL) {
-        ALOGE("Couldn't initialize RS::dispatch->DeviceSetConfig");
+        ALOGV("Couldn't initialize RS::dispatch->DeviceSetConfig");
         return false;
     }
     RS::dispatch->ContextCreate = (ContextCreateFnPtr)dlsym(handle, "rsContextCreate");;
     if (RS::dispatch->ContextCreate == NULL) {
-        ALOGE("Couldn't initialize RS::dispatch->ContextCreate");
+        ALOGV("Couldn't initialize RS::dispatch->ContextCreate");
         return false;
     }
     RS::dispatch->GetName = (GetNameFnPtr)dlsym(handle, "rsaGetName");;
     if (RS::dispatch->GetName == NULL) {
-        ALOGE("Couldn't initialize RS::dispatch->GetName");
+        ALOGV("Couldn't initialize RS::dispatch->GetName");
         return false;
     }
     RS::dispatch->ContextDestroy = (ContextDestroyFnPtr)dlsym(handle, "rsContextDestroy");
     if (RS::dispatch->ContextDestroy == NULL) {
-        ALOGE("Couldn't initialize RS::dispatch->ContextDestroy");
+        ALOGV("Couldn't initialize RS::dispatch->ContextDestroy");
         return false;
     }
     RS::dispatch->ContextGetMessage = (ContextGetMessageFnPtr)dlsym(handle, "rsContextGetMessage");
     if (RS::dispatch->ContextGetMessage == NULL) {
-        ALOGE("Couldn't initialize RS::dispatch->ContextGetMessage");
+        ALOGV("Couldn't initialize RS::dispatch->ContextGetMessage");
         return false;
     }
     RS::dispatch->ContextPeekMessage = (ContextPeekMessageFnPtr)dlsym(handle, "rsContextPeekMessage");
     if (RS::dispatch->ContextPeekMessage == NULL) {
-        ALOGE("Couldn't initialize RS::dispatch->ContextPeekMessage");
+        ALOGV("Couldn't initialize RS::dispatch->ContextPeekMessage");
         return false;
     }
     RS::dispatch->ContextSendMessage = (ContextSendMessageFnPtr)dlsym(handle, "rsContextSendMessage");
     if (RS::dispatch->ContextSendMessage == NULL) {
-        ALOGE("Couldn't initialize RS::dispatch->ContextSendMessage");
+        ALOGV("Couldn't initialize RS::dispatch->ContextSendMessage");
         return false;
     }
     RS::dispatch->ContextInitToClient = (ContextInitToClientFnPtr)dlsym(handle, "rsContextInitToClient");
     if (RS::dispatch->ContextInitToClient == NULL) {
-        ALOGE("Couldn't initialize RS::dispatch->ContextInitToClient");
+        ALOGV("Couldn't initialize RS::dispatch->ContextInitToClient");
         return false;
     }
     RS::dispatch->ContextDeinitToClient = (ContextDeinitToClientFnPtr)dlsym(handle, "rsContextDeinitToClient");
     if (RS::dispatch->ContextDeinitToClient == NULL) {
-        ALOGE("Couldn't initialize RS::dispatch->ContextDeinitToClient");
+        ALOGV("Couldn't initialize RS::dispatch->ContextDeinitToClient");
         return false;
     }
     RS::dispatch->TypeCreate = (TypeCreateFnPtr)dlsym(handle, "rsTypeCreate");
     if (RS::dispatch->TypeCreate == NULL) {
-        ALOGE("Couldn't initialize RS::dispatch->TypeCreate");
+        ALOGV("Couldn't initialize RS::dispatch->TypeCreate");
         return false;
     }
     RS::dispatch->AllocationCreateTyped = (AllocationCreateTypedFnPtr)dlsym(handle, "rsAllocationCreateTyped");
     if (RS::dispatch->AllocationCreateTyped == NULL) {
-        ALOGE("Couldn't initialize RS::dispatch->AllocationCreateTyped");
+        ALOGV("Couldn't initialize RS::dispatch->AllocationCreateTyped");
         return false;
     }
     RS::dispatch->AllocationCreateFromBitmap = (AllocationCreateFromBitmapFnPtr)dlsym(handle, "rsAllocationCreateFromBitmap");
     if (RS::dispatch->AllocationCreateFromBitmap == NULL) {
-        ALOGE("Couldn't initialize RS::dispatch->AllocationCreateFromBitmap");
+        ALOGV("Couldn't initialize RS::dispatch->AllocationCreateFromBitmap");
         return false;
     }
     RS::dispatch->AllocationCubeCreateFromBitmap = (AllocationCubeCreateFromBitmapFnPtr)dlsym(handle, "rsAllocationCubeCreateFromBitmap");
     if (RS::dispatch->AllocationCubeCreateFromBitmap == NULL) {
-        ALOGE("Couldn't initialize RS::dispatch->AllocationCubeCreateFromBitmap");
+        ALOGV("Couldn't initialize RS::dispatch->AllocationCubeCreateFromBitmap");
         return false;
     }
     RS::dispatch->AllocationGetSurface = (AllocationGetSurfaceFnPtr)dlsym(handle, "rsAllocationGetSurface");
     if (RS::dispatch->AllocationGetSurface == NULL) {
-        ALOGE("Couldn't initialize RS::dispatch->AllocationGetSurface");
+        ALOGV("Couldn't initialize RS::dispatch->AllocationGetSurface");
         return false;
     }
     RS::dispatch->AllocationSetSurface = (AllocationSetSurfaceFnPtr)dlsym(handle, "rsAllocationSetSurface");
     if (RS::dispatch->AllocationSetSurface == NULL) {
-        ALOGE("Couldn't initialize RS::dispatch->AllocationSetSurface");
+        ALOGV("Couldn't initialize RS::dispatch->AllocationSetSurface");
         return false;
     }
     RS::dispatch->ContextFinish = (ContextFinishFnPtr)dlsym(handle, "rsContextFinish");
     if (RS::dispatch->ContextFinish == NULL) {
-        ALOGE("Couldn't initialize RS::dispatch->ContextFinish");
+        ALOGV("Couldn't initialize RS::dispatch->ContextFinish");
         return false;
     }
     RS::dispatch->ContextDump = (ContextDumpFnPtr)dlsym(handle, "rsContextDump");
     if (RS::dispatch->ContextDump == NULL) {
-        ALOGE("Couldn't initialize RS::dispatch->ContextDump");
+        ALOGV("Couldn't initialize RS::dispatch->ContextDump");
         return false;
     }
     RS::dispatch->ContextSetPriority = (ContextSetPriorityFnPtr)dlsym(handle, "rsContextSetPriority");
     if (RS::dispatch->ContextSetPriority == NULL) {
-        ALOGE("Couldn't initialize RS::dispatch->ContextSetPriority");
+        ALOGV("Couldn't initialize RS::dispatch->ContextSetPriority");
         return false;
     }
     RS::dispatch->AssignName = (AssignNameFnPtr)dlsym(handle, "rsAssignName");
     if (RS::dispatch->AssignName == NULL) {
-        ALOGE("Couldn't initialize RS::dispatch->AssignName");
+        ALOGV("Couldn't initialize RS::dispatch->AssignName");
         return false;
     }
     RS::dispatch->ObjDestroy = (ObjDestroyFnPtr)dlsym(handle, "rsObjDestroy");
     if (RS::dispatch->ObjDestroy == NULL) {
-        ALOGE("Couldn't initialize RS::dispatch->ObjDestroy");
+        ALOGV("Couldn't initialize RS::dispatch->ObjDestroy");
         return false;
     }
     RS::dispatch->ElementCreate = (ElementCreateFnPtr)dlsym(handle, "rsElementCreate");
     if (RS::dispatch->ElementCreate == NULL) {
-        ALOGE("Couldn't initialize RS::dispatch->ElementCreate");
+        ALOGV("Couldn't initialize RS::dispatch->ElementCreate");
         return false;
     }
     RS::dispatch->ElementCreate2 = (ElementCreate2FnPtr)dlsym(handle, "rsElementCreate2");
     if (RS::dispatch->ElementCreate2 == NULL) {
-        ALOGE("Couldn't initialize RS::dispatch->ElementCreate2");
+        ALOGV("Couldn't initialize RS::dispatch->ElementCreate2");
         return false;
     }
     RS::dispatch->AllocationCopyToBitmap = (AllocationCopyToBitmapFnPtr)dlsym(handle, "rsAllocationCopyToBitmap");
     if (RS::dispatch->AllocationCopyToBitmap == NULL) {
-        ALOGE("Couldn't initialize RS::dispatch->AllocationCopyToBitmap");
+        ALOGV("Couldn't initialize RS::dispatch->AllocationCopyToBitmap");
         return false;
     }
     RS::dispatch->Allocation1DData = (Allocation1DDataFnPtr)dlsym(handle, "rsAllocation1DData");
     if (RS::dispatch->Allocation1DData == NULL) {
-        ALOGE("Couldn't initialize RS::dispatch->Allocation1DData");
+        ALOGV("Couldn't initialize RS::dispatch->Allocation1DData");
         return false;
     }
     RS::dispatch->Allocation1DElementData = (Allocation1DElementDataFnPtr)dlsym(handle, "rsAllocation1DElementData");
     if (RS::dispatch->Allocation1DElementData == NULL) {
-        ALOGE("Couldn't initialize RS::dispatch->Allocation1DElementData");
+        ALOGV("Couldn't initialize RS::dispatch->Allocation1DElementData");
         return false;
     }
     RS::dispatch->Allocation2DData = (Allocation2DDataFnPtr)dlsym(handle, "rsAllocation2DData");
     if (RS::dispatch->Allocation2DData == NULL) {
-        ALOGE("Couldn't initialize RS::dispatch->Allocation2DData");
+        ALOGV("Couldn't initialize RS::dispatch->Allocation2DData");
         return false;
     }
     RS::dispatch->Allocation3DData = (Allocation3DDataFnPtr)dlsym(handle, "rsAllocation3DData");
     if (RS::dispatch->Allocation3DData == NULL) {
-        ALOGE("Couldn't initialize RS::dispatch->Allocation3DData");
+        ALOGV("Couldn't initialize RS::dispatch->Allocation3DData");
         return false;
     }
     RS::dispatch->AllocationGenerateMipmaps = (AllocationGenerateMipmapsFnPtr)dlsym(handle, "rsAllocationGenerateMipmaps");
     if (RS::dispatch->AllocationGenerateMipmaps == NULL) {
-        ALOGE("Couldn't initialize RS::dispatch->AllocationGenerateMipmaps");
+        ALOGV("Couldn't initialize RS::dispatch->AllocationGenerateMipmaps");
         return false;
     }
     RS::dispatch->AllocationRead = (AllocationReadFnPtr)dlsym(handle, "rsAllocationRead");
     if (RS::dispatch->AllocationRead == NULL) {
-        ALOGE("Couldn't initialize RS::dispatch->AllocationRead");
+        ALOGV("Couldn't initialize RS::dispatch->AllocationRead");
         return false;
     }
     RS::dispatch->Allocation1DRead = (Allocation1DReadFnPtr)dlsym(handle, "rsAllocation1DRead");
     if (RS::dispatch->Allocation1DRead == NULL) {
-        ALOGE("Couldn't initialize RS::dispatch->Allocation1DRead");
+        ALOGV("Couldn't initialize RS::dispatch->Allocation1DRead");
         return false;
     }
     RS::dispatch->Allocation2DRead = (Allocation2DReadFnPtr)dlsym(handle, "rsAllocation2DRead");
     if (RS::dispatch->Allocation2DRead == NULL) {
-        ALOGE("Couldn't initialize RS::dispatch->Allocation2DRead");
+        ALOGV("Couldn't initialize RS::dispatch->Allocation2DRead");
         return false;
     }
     RS::dispatch->AllocationSyncAll = (AllocationSyncAllFnPtr)dlsym(handle, "rsAllocationSyncAll");
     if (RS::dispatch->AllocationSyncAll == NULL) {
-        ALOGE("Couldn't initialize RS::dispatch->AllocationSyncAll");
+        ALOGV("Couldn't initialize RS::dispatch->AllocationSyncAll");
         return false;
     }
     RS::dispatch->AllocationResize1D = (AllocationResize1DFnPtr)dlsym(handle, "rsAllocationResize1D");
     if (RS::dispatch->AllocationResize1D == NULL) {
-        ALOGE("Couldn't initialize RS::dispatch->AllocationResize1D");
+        ALOGV("Couldn't initialize RS::dispatch->AllocationResize1D");
         return false;
     }
     RS::dispatch->AllocationCopy2DRange = (AllocationCopy2DRangeFnPtr)dlsym(handle, "rsAllocationCopy2DRange");
     if (RS::dispatch->AllocationCopy2DRange == NULL) {
-        ALOGE("Couldn't initialize RS::dispatch->AllocationCopy2DRange");
+        ALOGV("Couldn't initialize RS::dispatch->AllocationCopy2DRange");
         return false;
     }
     RS::dispatch->AllocationCopy3DRange = (AllocationCopy3DRangeFnPtr)dlsym(handle, "rsAllocationCopy3DRange");
     if (RS::dispatch->AllocationCopy3DRange == NULL) {
-        ALOGE("Couldn't initialize RS::dispatch->AllocationCopy3DRange");
+        ALOGV("Couldn't initialize RS::dispatch->AllocationCopy3DRange");
         return false;
     }
     RS::dispatch->SamplerCreate = (SamplerCreateFnPtr)dlsym(handle, "rsSamplerCreate");
     if (RS::dispatch->SamplerCreate == NULL) {
-        ALOGE("Couldn't initialize RS::dispatch->SamplerCreate");
+        ALOGV("Couldn't initialize RS::dispatch->SamplerCreate");
         return false;
     }
     RS::dispatch->ScriptBindAllocation = (ScriptBindAllocationFnPtr)dlsym(handle, "rsScriptBindAllocation");
     if (RS::dispatch->ScriptBindAllocation == NULL) {
-        ALOGE("Couldn't initialize RS::dispatch->ScriptBindAllocation");
+        ALOGV("Couldn't initialize RS::dispatch->ScriptBindAllocation");
         return false;
     }
     RS::dispatch->ScriptSetTimeZone = (ScriptSetTimeZoneFnPtr)dlsym(handle, "rsScriptSetTimeZone");
     if (RS::dispatch->ScriptSetTimeZone == NULL) {
-        ALOGE("Couldn't initialize RS::dispatch->ScriptSetTimeZone");
+        ALOGV("Couldn't initialize RS::dispatch->ScriptSetTimeZone");
         return false;
     }
     RS::dispatch->ScriptInvoke = (ScriptInvokeFnPtr)dlsym(handle, "rsScriptInvoke");
     if (RS::dispatch->ScriptInvoke == NULL) {
-        ALOGE("Couldn't initialize RS::dispatch->ScriptInvoke");
+        ALOGV("Couldn't initialize RS::dispatch->ScriptInvoke");
         return false;
     }
     RS::dispatch->ScriptInvokeV = (ScriptInvokeVFnPtr)dlsym(handle, "rsScriptInvokeV");
     if (RS::dispatch->ScriptInvokeV == NULL) {
-        ALOGE("Couldn't initialize RS::dispatch->ScriptInvokeV");
+        ALOGV("Couldn't initialize RS::dispatch->ScriptInvokeV");
         return false;
     }
     RS::dispatch->ScriptForEach = (ScriptForEachFnPtr)dlsym(handle, "rsScriptForEach");
     if (RS::dispatch->ScriptForEach == NULL) {
-        ALOGE("Couldn't initialize RS::dispatch->ScriptForEach");
+        ALOGV("Couldn't initialize RS::dispatch->ScriptForEach");
         return false;
     }
     RS::dispatch->ScriptSetVarI = (ScriptSetVarIFnPtr)dlsym(handle, "rsScriptSetVarI");
     if (RS::dispatch->ScriptSetVarI == NULL) {
-        ALOGE("Couldn't initialize RS::dispatch->ScriptSetVarI");
+        ALOGV("Couldn't initialize RS::dispatch->ScriptSetVarI");
         return false;
     }
     RS::dispatch->ScriptSetVarObj = (ScriptSetVarObjFnPtr)dlsym(handle, "rsScriptSetVarObj");
     if (RS::dispatch->ScriptSetVarObj == NULL) {
-        ALOGE("Couldn't initialize RS::dispatch->ScriptSetVarObj");
+        ALOGV("Couldn't initialize RS::dispatch->ScriptSetVarObj");
         return false;
     }
     RS::dispatch->ScriptSetVarJ = (ScriptSetVarJFnPtr)dlsym(handle, "rsScriptSetVarJ");
     if (RS::dispatch->ScriptSetVarJ == NULL) {
-        ALOGE("Couldn't initialize RS::dispatch->ScriptSetVarJ");
+        ALOGV("Couldn't initialize RS::dispatch->ScriptSetVarJ");
         return false;
     }
     RS::dispatch->ScriptSetVarF = (ScriptSetVarFFnPtr)dlsym(handle, "rsScriptSetVarF");
     if (RS::dispatch->ScriptSetVarF == NULL) {
-        ALOGE("Couldn't initialize RS::dispatch->ScriptSetVarF");
+        ALOGV("Couldn't initialize RS::dispatch->ScriptSetVarF");
         return false;
     }
     RS::dispatch->ScriptSetVarD = (ScriptSetVarDFnPtr)dlsym(handle, "rsScriptSetVarD");
     if (RS::dispatch->ScriptSetVarD == NULL) {
-        ALOGE("Couldn't initialize RS::dispatch->ScriptSetVarD");
+        ALOGV("Couldn't initialize RS::dispatch->ScriptSetVarD");
         return false;
     }
     RS::dispatch->ScriptSetVarV = (ScriptSetVarVFnPtr)dlsym(handle, "rsScriptSetVarV");
     if (RS::dispatch->ScriptSetVarV == NULL) {
-        ALOGE("Couldn't initialize RS::dispatch->ScriptSetVarV");
+        ALOGV("Couldn't initialize RS::dispatch->ScriptSetVarV");
         return false;
     }
     RS::dispatch->ScriptGetVarV = (ScriptGetVarVFnPtr)dlsym(handle, "rsScriptGetVarV");
     if (RS::dispatch->ScriptGetVarV == NULL) {
-        ALOGE("Couldn't initialize RS::dispatch->ScriptGetVarV");
+        ALOGV("Couldn't initialize RS::dispatch->ScriptGetVarV");
         return false;
     }
     RS::dispatch->ScriptSetVarVE = (ScriptSetVarVEFnPtr)dlsym(handle, "rsScriptSetVarVE");
     if (RS::dispatch->ScriptSetVarVE == NULL) {
-        ALOGE("Couldn't initialize RS::dispatch->ScriptSetVarVE");
+        ALOGV("Couldn't initialize RS::dispatch->ScriptSetVarVE");
         return false;
     }
     RS::dispatch->ScriptCCreate = (ScriptCCreateFnPtr)dlsym(handle, "rsScriptCCreate");
     if (RS::dispatch->ScriptCCreate == NULL) {
-        ALOGE("Couldn't initialize RS::dispatch->ScriptCCreate");
+        ALOGV("Couldn't initialize RS::dispatch->ScriptCCreate");
         return false;
     }
     RS::dispatch->ScriptIntrinsicCreate = (ScriptIntrinsicCreateFnPtr)dlsym(handle, "rsScriptIntrinsicCreate");
     if (RS::dispatch->ScriptIntrinsicCreate == NULL) {
-        ALOGE("Couldn't initialize RS::dispatch->ScriptIntrinsicCreate");
+        ALOGV("Couldn't initialize RS::dispatch->ScriptIntrinsicCreate");
         return false;
     }
     RS::dispatch->ScriptKernelIDCreate = (ScriptKernelIDCreateFnPtr)dlsym(handle, "rsScriptKernelIDCreate");
     if (RS::dispatch->ScriptKernelIDCreate == NULL) {
-        ALOGE("Couldn't initialize RS::dispatch->ScriptKernelIDCreate");
+        ALOGV("Couldn't initialize RS::dispatch->ScriptKernelIDCreate");
         return false;
     }
     RS::dispatch->ScriptFieldIDCreate = (ScriptFieldIDCreateFnPtr)dlsym(handle, "rsScriptFieldIDCreate");
     if (RS::dispatch->ScriptFieldIDCreate == NULL) {
-        ALOGE("Couldn't initialize RS::dispatch->ScriptFieldIDCreate");
+        ALOGV("Couldn't initialize RS::dispatch->ScriptFieldIDCreate");
         return false;
     }
     RS::dispatch->ScriptGroupCreate = (ScriptGroupCreateFnPtr)dlsym(handle, "rsScriptGroupCreate");
     if (RS::dispatch->ScriptGroupCreate == NULL) {
-        ALOGE("Couldn't initialize RS::dispatch->ScriptGroupCreate");
+        ALOGV("Couldn't initialize RS::dispatch->ScriptGroupCreate");
         return false;
     }
     RS::dispatch->ScriptGroupSetOutput = (ScriptGroupSetOutputFnPtr)dlsym(handle, "rsScriptGroupSetOutput");
     if (RS::dispatch->ScriptGroupSetOutput == NULL) {
-        ALOGE("Couldn't initialize RS::dispatch->ScriptGroupSetOutput");
+        ALOGV("Couldn't initialize RS::dispatch->ScriptGroupSetOutput");
         return false;
     }
     RS::dispatch->ScriptGroupSetInput = (ScriptGroupSetInputFnPtr)dlsym(handle, "rsScriptGroupSetInput");
     if (RS::dispatch->ScriptGroupSetInput == NULL) {
-        ALOGE("Couldn't initialize RS::dispatch->ScriptGroupSetInput");
+        ALOGV("Couldn't initialize RS::dispatch->ScriptGroupSetInput");
         return false;
     }
     RS::dispatch->ScriptGroupExecute = (ScriptGroupExecuteFnPtr)dlsym(handle, "rsScriptGroupExecute");
     if (RS::dispatch->ScriptGroupExecute == NULL) {
-        ALOGE("Couldn't initialize RS::dispatch->ScriptGroupExecute");
+        ALOGV("Couldn't initialize RS::dispatch->ScriptGroupExecute");
         return false;
     }
     RS::dispatch->AllocationIoSend = (AllocationIoSendFnPtr)dlsym(handle, "rsAllocationIoSend");
     if (RS::dispatch->AllocationIoSend == NULL) {
-        ALOGE("Couldn't initialize RS::dispatch->AllocationIoSend");
+        ALOGV("Couldn't initialize RS::dispatch->AllocationIoSend");
         return false;
     }
     RS::dispatch->AllocationIoReceive = (AllocationIoReceiveFnPtr)dlsym(handle, "rsAllocationIoReceive");
     if (RS::dispatch->AllocationIoReceive == NULL) {
-        ALOGE("Couldn't initialize RS::dispatch->AllocationIoReceive");
+        ALOGV("Couldn't initialize RS::dispatch->AllocationIoReceive");
         return false;
     }
 
@@ -406,12 +406,12 @@ static bool loadSymbols(void* handle) {
 static bool loadSO(const char* filename) {
     void* handle = dlopen(filename, RTLD_LAZY | RTLD_LOCAL);
     if (handle == NULL) {
-        ALOGE("couldn't dlopen %s, %s", filename, dlerror());
+        ALOGV("couldn't dlopen %s, %s", filename, dlerror());
         return false;
     }
 
     if (loadSymbols(handle) == false) {
-        ALOGE("%s init failed!", filename);
+        ALOGV("%s init failed!", filename);
         return false;
     }
     //ALOGE("Successfully loaded %s", filename);
@@ -576,7 +576,7 @@ void * RS::threadProc(void *vrsc) {
     if (rbuf) {
         free(rbuf);
     }
-    ALOGE("RS Message thread exiting.");
+    ALOGV("RS Message thread exiting.");
     return NULL;
 }
 
