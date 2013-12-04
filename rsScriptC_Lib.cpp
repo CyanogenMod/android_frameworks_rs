@@ -171,6 +171,16 @@ uint32_t rsrToClientBlocking(Context *rsc, int cmdID, const void *data, int len)
     return rsc->sendMessageToClient(data, RS_MESSAGE_TO_CLIENT_USER, cmdID, len, true);
 }
 
+// Keep these two routines (using non-const void pointers) so that we can
+// still use existing GPU drivers.
+uint32_t rsrToClient(Context *rsc, int cmdID, void *data, int len) {
+    return rsrToClient(rsc, cmdID, (const void *)data, len);
+}
+
+uint32_t rsrToClientBlocking(Context *rsc, int cmdID, void *data, int len) {
+    return rsrToClientBlocking(rsc, cmdID, (const void *)data, len);
+}
+
 void rsrAllocationIoSend(Context *rsc, Allocation *src) {
     src->ioSend(rsc);
 }
