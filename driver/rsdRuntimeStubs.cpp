@@ -546,7 +546,7 @@ static uint32_t SC_ToClient2(int cmdID, const void *data, uint32_t len) {
 
 static uint32_t SC_ToClient(int cmdID) {
     Context *rsc = RsdCpuReference::getTlsContext();
-    return rsrToClient(rsc, cmdID, NULL, 0);
+    return rsrToClient(rsc, cmdID, (const void *)NULL, 0);
 }
 
 static uint32_t SC_ToClientBlocking2(int cmdID, const void *data, uint32_t len) {
@@ -556,7 +556,7 @@ static uint32_t SC_ToClientBlocking2(int cmdID, const void *data, uint32_t len) 
 
 static uint32_t SC_ToClientBlocking(int cmdID) {
     Context *rsc = RsdCpuReference::getTlsContext();
-    return rsrToClientBlocking(rsc, cmdID, NULL, 0);
+    return rsrToClientBlocking(rsc, cmdID, (const void *)NULL, 0);
 }
 
 
