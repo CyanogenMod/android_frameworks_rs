@@ -70,9 +70,9 @@ void RsdCpuScriptIntrinsic3DLUT::kernel(const RsForEachStubParamStruct *p,
     const uchar *bp = (const uchar *)cp->mLUT->mHal.drvState.lod[0].mallocPtr;
 
     int4 dims = {
-        cp->mLUT->mHal.drvState.lod[0].dimX - 1,
-        cp->mLUT->mHal.drvState.lod[0].dimY - 1,
-        cp->mLUT->mHal.drvState.lod[0].dimZ - 1,
+        static_cast<int>(cp->mLUT->mHal.drvState.lod[0].dimX - 1),
+        static_cast<int>(cp->mLUT->mHal.drvState.lod[0].dimY - 1),
+        static_cast<int>(cp->mLUT->mHal.drvState.lod[0].dimZ - 1),
         -1
     };
     const float4 m = (float4)(1.f / 255.f) * convert_float4(dims);
@@ -88,8 +88,8 @@ void RsdCpuScriptIntrinsic3DLUT::kernel(const RsForEachStubParamStruct *p,
             int32_t len = (x2 - x1 - 1) >> 1;
             if(len > 0) {
                 const short neon_constants[] = {
-                    coordMul.x, coordMul.y, coordMul.z, 0,
-                    0, 0, 0, 0xffff,
+                    static_cast<short>(coordMul.x), static_cast<short>(coordMul.y),
+                    static_cast<short>(coordMul.z), 0, 0, 0, 0, static_cast<short>(0xffff),
 
                 };
 
