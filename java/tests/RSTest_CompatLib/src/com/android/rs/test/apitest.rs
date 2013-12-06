@@ -51,6 +51,8 @@ volatile ulong ul;
 volatile ulong2 ul2;
 volatile ulong3 ul3;
 volatile ulong4 ul4;
+volatile long long ll;
+volatile unsigned long long ull;
 volatile float f;
 volatile float2 f2;
 volatile float3 f3;
@@ -100,6 +102,10 @@ rs_allocation aDouble;
 rs_allocation aDouble2;
 rs_allocation aDouble3;
 rs_allocation aDouble4;
+
+rs_matrix2x2 m2x2;
+rs_matrix3x3 m3x3;
+rs_matrix4x4 m4x4;
 
 // This function just checks that all of the called functions are
 // able to be linked. It is not intended to be executed!
@@ -1108,6 +1114,54 @@ void check_api_presence() {
     rsForEach(scriptNonNull, allocNonNull, allocNonNull, NULL, 0, &sc);
     rsForEach(scriptNonNull, allocNonNull, allocNonNull, NULL, 0);
     rsForEach(scriptNonNull, allocNonNull, allocNonNull);
+
+    // rs_debug.rsh
+    rsDebug("", f);
+    rsDebug("", f, f);
+    rsDebug("", f, f, f);
+    rsDebug("", f, f, f, f);
+    rsDebug("", f2);
+    rsDebug("", f3);
+    rsDebug("", f4);
+    rsDebug("", d);
+    rsDebug("", &m4x4);
+    rsDebug("", &m3x3);
+    rsDebug("", &m2x2);
+    rsDebug("", i);
+    rsDebug("", ui);
+    rsDebug("", l);
+    rsDebug("", ul);
+    rsDebug("", ll);
+    rsDebug("", ull);
+    rsDebug("", (const void *)&i);
+    rsDebug("", c);
+    rsDebug("", c2);
+    rsDebug("", c3);
+    rsDebug("", c4);
+    rsDebug("", uc);
+    rsDebug("", uc2);
+    rsDebug("", uc3);
+    rsDebug("", uc4);
+    rsDebug("", s);
+    rsDebug("", s2);
+    rsDebug("", s3);
+    rsDebug("", s4);
+    rsDebug("", us);
+    rsDebug("", us2);
+    rsDebug("", us3);
+    rsDebug("", us4);
+    rsDebug("", i2);
+    rsDebug("", i3);
+    rsDebug("", i4);
+    rsDebug("", ui2);
+    rsDebug("", ui3);
+    rsDebug("", ui4);
+    rsDebug("", l2);
+    rsDebug("", l3);
+    rsDebug("", l4);
+    rsDebug("", ul2);
+    rsDebug("", ul3);
+    rsDebug("", ul4);
 
     /********************************
      * DO NOT EXECUTE THIS FUNCTION *

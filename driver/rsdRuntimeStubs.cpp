@@ -1660,6 +1660,41 @@ void rsDebug(const char *s, const ulong4 *c) {
     SC_debugUL4(s, *c);
 }
 
+// FIXME: We need to export these function signatures for the compatibility
+// library. The C++ name mangling that LLVM uses for ext_vector_type requires
+// different versions for "long" vs. "long long". Note that the called
+// functions are still using the appropriate 64-bit sizes.
+typedef long l2 __attribute__((ext_vector_type(2)));
+typedef long l3 __attribute__((ext_vector_type(3)));
+typedef long l4 __attribute__((ext_vector_type(4)));
+typedef unsigned long ul2 __attribute__((ext_vector_type(2)));
+typedef unsigned long ul3 __attribute__((ext_vector_type(3)));
+typedef unsigned long ul4 __attribute__((ext_vector_type(4)));
+
+void rsDebug(const char *s, const l2 *c) {
+    SC_debugL2(s, *(const long2 *)c);
+}
+
+void rsDebug(const char *s, const l3 *c) {
+    SC_debugL3(s, *(const long3 *)c);
+}
+
+void rsDebug(const char *s, const l4 *c) {
+    SC_debugL4(s, *(const long4 *)c);
+}
+
+void rsDebug(const char *s, const ul2 *c) {
+    SC_debugUL2(s, *(const ulong2 *)c);
+}
+
+void rsDebug(const char *s, const ul3 *c) {
+    SC_debugUL3(s, *(const ulong3 *)c);
+}
+
+void rsDebug(const char *s, const ul4 *c) {
+    SC_debugUL4(s, *(const ulong4 *)c);
+}
+
 void rsDebug(const char *s, const void *p) {
     SC_debugP(s, p);
 }
