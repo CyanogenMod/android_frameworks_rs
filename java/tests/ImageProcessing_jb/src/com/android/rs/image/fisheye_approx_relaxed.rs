@@ -16,5 +16,6 @@
 
 #include "ip.rsh"
 
+#pragma rs_fp_relaxed
 #include "fisheye_approx.rsh"
 
