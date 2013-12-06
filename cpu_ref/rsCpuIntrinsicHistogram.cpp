@@ -58,12 +58,22 @@ protected:
     static void kernelP1U2(const RsForEachStubParamStruct *p,
                           uint32_t xstart, uint32_t xend,
                           uint32_t instep, uint32_t outstep);
-    static void kernelP1L(const RsForEachStubParamStruct *p,
-                          uint32_t xstart, uint32_t xend,
-                          uint32_t instep, uint32_t outstep);
     static void kernelP1U1(const RsForEachStubParamStruct *p,
                           uint32_t xstart, uint32_t xend,
                           uint32_t instep, uint32_t outstep);
+
+    static void kernelP1L4(const RsForEachStubParamStruct *p,
+                           uint32_t xstart, uint32_t xend,
+                           uint32_t instep, uint32_t outstep);
+    static void kernelP1L3(const RsForEachStubParamStruct *p,
+                           uint32_t xstart, uint32_t xend,
+                           uint32_t instep, uint32_t outstep);
+    static void kernelP1L2(const RsForEachStubParamStruct *p,
+                           uint32_t xstart, uint32_t xend,
+                           uint32_t instep, uint32_t outstep);
+    static void kernelP1L1(const RsForEachStubParamStruct *p,
+                           uint32_t xstart, uint32_t xend,
+                           uint32_t instep, uint32_t outstep);
 
 };
 
@@ -92,11 +102,11 @@ void RsdCpuScriptIntrinsicHistogram::preLaunch(uint32_t slot, const Allocation *
                                       uint32_t usrLen, const RsScriptCall *sc) {
 
     const uint32_t threads = mCtx->getThreadCount();
-    const uint32_t vSize = mAllocOut->getType()->getElement()->getVectorSize();
+    uint32_t vSize = mAllocOut->getType()->getElement()->getVectorSize();
 
     switch (slot) {
     case 0:
-        switch(mAllocOut->getType()->getElement()->getVectorSize()) {
+        switch(vSize) {
         case 1:
             mRootPtr = &kernelP1U1;
             break;
@@ -105,6 +115,7 @@ void RsdCpuScriptIntrinsicHistogram::preLaunch(uint32_t slot, const Allocation *
             break;
         case 3:
             mRootPtr = &kernelP1U3;
+            vSize = 4;
             break;
         case 4:
             mRootPtr = &kernelP1U4;
@@ -112,10 +123,23 @@ void RsdCpuScriptIntrinsicHistogram::preLaunch(uint32_t slot, const Allocation *
         }
         break;
     case 1:
-        mRootPtr = &kernelP1L;
+        switch(ain->getType()->getElement()->getVectorSize()) {
+        case 1:
+            mRootPtr = &kernelP1L1;
+            break;
+        case 2:
+            mRootPtr = &kernelP1L2;
+            break;
+        case 3:
+            mRootPtr = &kernelP1L3;
+            break;
+        case 4:
+            mRootPtr = &kernelP1L4;
+            break;
+        }
         break;
     }
-    memset(mSums, 0, 256 * 4 * threads * vSize);
+    memset(mSums, 0, 256 * sizeof(int32_t) * threads * vSize);
 }
 
 void RsdCpuScriptIntrinsicHistogram::postLaunch(uint32_t slot, const Allocation * ain,
@@ -126,10 +150,12 @@ void RsdCpuScriptIntrinsicHistogram::postLaunch(uint32_t slot, const Allocation 
     uint32_t threads = mCtx->getThreadCount();
     uint32_t vSize = mAllocOut->getType()->getElement()->getVectorSize();
 
+    if (vSize == 3) vSize = 4;
+
     for (uint32_t ct=0; ct < (256 * vSize); ct++) {
         o[ct] = mSums[ct];
         for (uint32_t t=1; t < threads; t++) {
-            o[ct] += mSums[ct + 256 * vSize];
+            o[ct] += mSums[ct + (256 * vSize * t)];
         }
     }
 }
@@ -147,7 +173,7 @@ void RsdCpuScriptIntrinsicHistogram::kernelP1U4(const RsForEachStubParamStruct *
         sums[(in[1] << 2) + 1] ++;
         sums[(in[2] << 2) + 2] ++;
         sums[(in[3] << 2) + 3] ++;
-        in += 4;
+        in += instep;
     }
 }
 
@@ -163,7 +189,7 @@ void RsdCpuScriptIntrinsicHistogram::kernelP1U3(const RsForEachStubParamStruct *
         sums[(in[0] << 2)    ] ++;
         sums[(in[1] << 2) + 1] ++;
         sums[(in[2] << 2) + 2] ++;
-        in += 4;
+        in += instep;
     }
 }
 
@@ -176,15 +202,15 @@ void RsdCpuScriptIntrinsicHistogram::kernelP1U2(const RsForEachStubParamStruct *
     int * sums = &cp->mSums[256 * 2 * p->lid];
 
     for (uint32_t x = xstart; x < xend; x++) {
-        sums[(in[0] << 2)    ] ++;
-        sums[(in[1] << 2) + 1] ++;
-        in += 2;
+        sums[(in[0] << 1)    ] ++;
+        sums[(in[1] << 1) + 1] ++;
+        in += instep;
     }
 }
 
-void RsdCpuScriptIntrinsicHistogram::kernelP1L(const RsForEachStubParamStruct *p,
-                                               uint32_t xstart, uint32_t xend,
-                                               uint32_t instep, uint32_t outstep) {
+void RsdCpuScriptIntrinsicHistogram::kernelP1L4(const RsForEachStubParamStruct *p,
+                                                uint32_t xstart, uint32_t xend,
+                                                uint32_t instep, uint32_t outstep) {
 
     RsdCpuScriptIntrinsicHistogram *cp = (RsdCpuScriptIntrinsicHistogram *)p->usr;
     uchar *in = (uchar *)p->in;
@@ -195,8 +221,56 @@ void RsdCpuScriptIntrinsicHistogram::kernelP1L(const RsForEachStubParamStruct *p
                 (cp->mDotI[1] * in[1]) +
                 (cp->mDotI[2] * in[2]) +
                 (cp->mDotI[3] * in[3]);
-        sums[t >> 8] ++;
-        in += 4;
+        sums[(t + 0x7f) >> 8] ++;
+        in += instep;
+    }
+}
+
+void RsdCpuScriptIntrinsicHistogram::kernelP1L3(const RsForEachStubParamStruct *p,
+                                                uint32_t xstart, uint32_t xend,
+                                                uint32_t instep, uint32_t outstep) {
+
+    RsdCpuScriptIntrinsicHistogram *cp = (RsdCpuScriptIntrinsicHistogram *)p->usr;
+    uchar *in = (uchar *)p->in;
+    int * sums = &cp->mSums[256 * p->lid];
+
+    for (uint32_t x = xstart; x < xend; x++) {
+        int t = (cp->mDotI[0] * in[0]) +
+                (cp->mDotI[1] * in[1]) +
+                (cp->mDotI[2] * in[2]);
+        sums[(t + 0x7f) >> 8] ++;
+        in += instep;
+    }
+}
+
+void RsdCpuScriptIntrinsicHistogram::kernelP1L2(const RsForEachStubParamStruct *p,
+                                                uint32_t xstart, uint32_t xend,
+                                                uint32_t instep, uint32_t outstep) {
+
+    RsdCpuScriptIntrinsicHistogram *cp = (RsdCpuScriptIntrinsicHistogram *)p->usr;
+    uchar *in = (uchar *)p->in;
+    int * sums = &cp->mSums[256 * p->lid];
+
+    for (uint32_t x = xstart; x < xend; x++) {
+        int t = (cp->mDotI[0] * in[0]) +
+                (cp->mDotI[1] * in[1]);
+        sums[(t + 0x7f) >> 8] ++;
+        in += instep;
+    }
+}
+
+void RsdCpuScriptIntrinsicHistogram::kernelP1L1(const RsForEachStubParamStruct *p,
+                                                uint32_t xstart, uint32_t xend,
+                                                uint32_t instep, uint32_t outstep) {
+
+    RsdCpuScriptIntrinsicHistogram *cp = (RsdCpuScriptIntrinsicHistogram *)p->usr;
+    uchar *in = (uchar *)p->in;
+    int * sums = &cp->mSums[256 * p->lid];
+
+    for (uint32_t x = xstart; x < xend; x++) {
+        int t = (cp->mDotI[0] * in[0]);
+        sums[(t + 0x7f) >> 8] ++;
+        in += instep;
     }
 }
 
@@ -204,12 +278,20 @@ void RsdCpuScriptIntrinsicHistogram::kernelP1U1(const RsForEachStubParamStruct *
                                                 uint32_t xstart, uint32_t xend,
                                                 uint32_t instep, uint32_t outstep) {
 
+    RsdCpuScriptIntrinsicHistogram *cp = (RsdCpuScriptIntrinsicHistogram *)p->usr;
+    uchar *in = (uchar *)p->in;
+    int * sums = &cp->mSums[256 * p->lid];
+
+    for (uint32_t x = xstart; x < xend; x++) {
+        sums[in[0]] ++;
+        in += instep;
+    }
 }
 
 
 RsdCpuScriptIntrinsicHistogram::RsdCpuScriptIntrinsicHistogram(RsdCpuReferenceImpl *ctx,
                                                      const Script *s, const Element *e)
-            : RsdCpuScriptIntrinsic(ctx, s, e, RS_SCRIPT_INTRINSIC_ID_BLUR) {
+            : RsdCpuScriptIntrinsic(ctx, s, e, RS_SCRIPT_INTRINSIC_ID_HISTOGRAM) {
 
     mRootPtr = NULL;
     mSums = new int[256 * 4 * mCtx->getThreadCount()];
