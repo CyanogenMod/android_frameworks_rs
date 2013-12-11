@@ -112,6 +112,7 @@ CREATE_PIXEL(RGB_888, UNSIGNED_8, PIXEL_RGB);
 CREATE_PIXEL(RGBA_4444, UNSIGNED_4_4_4_4, PIXEL_RGBA);
 CREATE_PIXEL(RGBA_8888, UNSIGNED_8, PIXEL_RGBA);
 CREATE_PIXEL(YUV, UNSIGNED_8, PIXEL_YUV);
+CREATE_PIXEL(RGBA_5551, UNSIGNED_5_5_5_1, PIXEL_RGBA);
 
 #define CREATE_VECTOR(N, T) android::RSC::sp<const Element> Element::N##_2(android::RSC::sp<RS> rs) { \
     if (rs->mElements.N##_2 == NULL) {                                  \
