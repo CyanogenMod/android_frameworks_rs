@@ -163,9 +163,9 @@ static RsdHalFunctions FunctionTable = {
         rsdScriptGroupSetOutput,
         rsdScriptGroupExecute,
         rsdScriptGroupDestroy
-    }
+    },
 
-
+    NULL // finish
 };
 
 extern const RsdCpuReference::CpuSymbol * rsdLookupRuntimeStub(Context * pContext, char const* name);
