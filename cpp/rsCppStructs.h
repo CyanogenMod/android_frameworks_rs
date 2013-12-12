@@ -260,7 +260,7 @@ public:
 
 protected:
     void *mID;
-    sp<RS> mRS;
+    RS* mRS;
     std::string mName;
 
     BaseObj(void *id, sp<RS> rs);
@@ -1031,7 +1031,7 @@ public:
      */
     class Builder {
     private:
-        sp<RS> mRS;
+        RS* mRS;
         std::vector<sp<Element> > mElements;
         std::vector<std::string> mElementNames;
         std::vector<uint32_t> mArraySizes;
@@ -1285,7 +1285,7 @@ public:
 
     class Builder {
     protected:
-        sp<RS> mRS;
+        RS* mRS;
         uint32_t mDimX;
         uint32_t mDimY;
         uint32_t mDimZ;
