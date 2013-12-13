@@ -15,6 +15,14 @@ rs_sampler samplerNonNull;
 rs_script scriptNull;
 rs_script scriptNonNull;
 
+volatile rs_data_type dt;
+volatile rs_data_kind dk;
+
+volatile rs_sampler_value rsv;
+
+volatile rs_time_t rst;
+volatile static rs_tm rstm;
+
 char *allocPtr;
 rs_allocation allocDst;
 
@@ -61,6 +69,7 @@ volatile double d;
 volatile double2 d2;
 volatile double3 d3;
 volatile double4 d4;
+float fa[16];
 
 rs_allocation aChar;
 rs_allocation aChar2;
@@ -1162,6 +1171,121 @@ void check_api_presence() {
     rsDebug("", ul2);
     rsDebug("", ul3);
     rsDebug("", ul4);
+
+    // rs_element.rsh
+    ui = rsElementGetSubElementCount(elemNonNull);
+    elemNull = rsElementGetSubElement(elemNonNull, 0);
+    ui = rsElementGetSubElementNameLength(elemNonNull, 0);
+    ui = rsElementGetSubElementName(elemNonNull, 0, NULL, 0);
+    ui = rsElementGetSubElementArraySize(elemNonNull, 0);
+    ui = rsElementGetSubElementOffsetBytes(elemNonNull, 0);
+    ui = rsElementGetBytesSize(elemNonNull);
+
+    dt = rsElementGetDataType(elemNonNull);
+    dk = rsElementGetDataKind(elemNonNull);
+
+    ui = rsElementGetVectorSize(elemNonNull);
+
+    // rs_math.rsh
+    i = rsRand(i);
+    i = rsRand(i, i);
+    f = rsRand(f);
+    f = rsFrac(f);
+    ui = rsClamp(ui, ui, ui);
+    i = rsClamp(i, i, i);
+    us = rsClamp(us, us, us);
+    s = rsClamp(s, s, s);
+    uc = rsClamp(uc, uc, uc);
+    c = rsClamp(c, c, c);
+
+    // skip always-inlined rsExtractFrustumPlanes
+    // skip always-inlined rsIsSphereInFrustum
+
+    uc4 = rsPackColorTo8888(f, f, f);
+    uc4 = rsPackColorTo8888(f, f, f, f);
+    uc4 = rsPackColorTo8888(f3);
+    uc4 = rsPackColorTo8888(f4);
+    f4 = rsUnpackColor8888(uc4);
+    uc4 = rsYuvToRGBA_uchar4(uc, uc, uc);
+    f4 = rsYuvToRGBA_float4(uc, uc, uc);
+
+    // rs_matrix.rsh
+    rsMatrixSet(&m4x4, ui, ui, f);
+    rsMatrixSet(&m3x3, ui, ui, f);
+    rsMatrixSet(&m2x2, ui, ui, f);
+    f = rsMatrixGet(&m4x4, ui, ui);
+    f = rsMatrixGet(&m3x3, ui, ui);
+    f = rsMatrixGet(&m2x2, ui, ui);
+    rsMatrixLoadIdentity(&m4x4);
+    rsMatrixLoadIdentity(&m3x3);
+    rsMatrixLoadIdentity(&m2x2);
+    rsMatrixLoad(&m4x4, fa);
+    rsMatrixLoad(&m3x3, fa);
+    rsMatrixLoad(&m2x2, fa);
+    rsMatrixLoad(&m4x4, &m4x4);
+    rsMatrixLoad(&m4x4, &m3x3);
+    rsMatrixLoad(&m4x4, &m2x2);
+    rsMatrixLoad(&m3x3, &m3x3);
+    rsMatrixLoad(&m2x2, &m2x2);
+    rsMatrixLoadRotate(&m4x4, f, f, f, f);
+    rsMatrixLoadScale(&m4x4, f, f, f);
+    rsMatrixLoadTranslate(&m4x4, f, f, f);
+    rsMatrixLoadMultiply(&m4x4, &m4x4, &m4x4);
+    rsMatrixLoadMultiply(&m3x3, &m3x3, &m3x3);
+    rsMatrixLoadMultiply(&m2x2, &m2x2, &m2x2);
+    rsMatrixMultiply(&m4x4, &m4x4);
+    rsMatrixMultiply(&m3x3, &m3x3);
+    rsMatrixMultiply(&m2x2, &m2x2);
+    rsMatrixRotate(&m4x4, f, f, f, f);
+    rsMatrixScale(&m4x4, f, f, f);
+    rsMatrixTranslate(&m4x4, f, f, f);
+    rsMatrixLoadOrtho(&m4x4, f, f, f, f, f, f);
+    rsMatrixLoadFrustum(&m4x4, f, f, f, f, f, f);
+    rsMatrixLoadPerspective(&m4x4, f, f, f, f);
+    f4 = rsMatrixMultiply(&m4x4, f4);
+    f4 = rsMatrixMultiply(&m4x4, f3);
+    f4 = rsMatrixMultiply(&m4x4, f2);
+    f3 = rsMatrixMultiply(&m3x3, f3);
+    f3 = rsMatrixMultiply(&m3x3, f2);
+    f2 = rsMatrixMultiply(&m2x2, f2);
+    b = rsMatrixInverse(&m4x4);
+    b = rsMatrixInverseTranspose(&m4x4);
+    rsMatrixTranspose(&m4x4);
+    rsMatrixTranspose(&m3x3);
+    rsMatrixTranspose(&m2x2);
+
+    // rs_object.rsh
+    rsSetObject(&elemNonNull, elemNonNull);
+    rsSetObject(&typeNonNull, typeNonNull);
+    rsSetObject(&allocNonNull, allocNonNull);
+    rsSetObject(&samplerNonNull, samplerNonNull);
+    rsSetObject(&scriptNonNull, scriptNonNull);
+    rsClearObject(&elemNonNull);
+    rsClearObject(&typeNonNull);
+    rsClearObject(&allocNonNull);
+    rsClearObject(&samplerNonNull);
+    rsClearObject(&scriptNonNull);
+    b = rsIsObject(elemNonNull);
+    b = rsIsObject(typeNonNull);
+    b = rsIsObject(allocNonNull);
+    b = rsIsObject(samplerNonNull);
+    b = rsIsObject(scriptNonNull);
+
+    // rs_quaternion.rsh skipped because all functions are static.
+
+    // rs_sampler.rsh
+    rsv = rsSamplerGetMinification(samplerNonNull);
+    rsv = rsSamplerGetMagnification(samplerNonNull);
+    rsv = rsSamplerGetWrapS(samplerNonNull);
+    rsv = rsSamplerGetWrapT(samplerNonNull);
+    f = rsSamplerGetAnisotropy(samplerNonNull);
+
+    // rs_time.rsh
+    rst = rsTime(NULL);
+    rsLocaltime((rs_tm *) &rstm, (rs_time_t *) &rst);
+    ll = rsUptimeMillis();
+    ll = rsUptimeNanos();
+    f = rsGetDt();
 
     /********************************
      * DO NOT EXECUTE THIS FUNCTION *
