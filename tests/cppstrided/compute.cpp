@@ -23,7 +23,7 @@ int main(int argc, char** argv)
 
     sp<RS> rs = new RS();
 
-    bool r = rs->init();
+    bool r = rs->init("/system/bin");
 
     sp<const Element> e = Element::U32(rs);
 

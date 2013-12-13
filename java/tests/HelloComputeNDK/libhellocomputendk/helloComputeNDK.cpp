@@ -19,6 +19,7 @@ using namespace android::RSC;
 extern "C" JNIEXPORT void JNICALL
 Java_com_example_android_rs_hellocomputendk_HelloComputeNDK_nativeMono(JNIEnv * env,
                                                                        jclass,
+                                                                       jstring pathObj,
                                                                        jint X,
                                                                        jint Y,
                                                                        jobject jbitmapIn,
@@ -32,8 +33,10 @@ Java_com_example_android_rs_hellocomputendk_HelloComputeNDK_nativeMono(JNIEnv * 
     AndroidBitmap_lockPixels(env, jbitmapIn, &inputPtr);
     AndroidBitmap_lockPixels(env, jbitmapOut, &outputPtr);
 
+    const char * path = env->GetStringUTFChars(pathObj, NULL);
     sp<RS> rs = new RS();
-    rs->init();
+    rs->init(path);
+    env->ReleaseStringUTFChars(pathObj, path);
 
     sp<const Element> e = Element::RGBA_8888(rs);
 
