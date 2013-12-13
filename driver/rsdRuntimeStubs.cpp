@@ -1323,6 +1323,14 @@ int64_t rsUptimeMillis() {
     return rsrUptimeMillis(rsc);
 }
 
+int64_t rsUptimeNanos() {
+    return SC_UptimeNanos();
+}
+
+float rsGetDt() {
+    return SC_GetDt();
+}
+
 uint32_t rsSendToClient(int cmdID) {
     return SC_ToClient(cmdID);
 }

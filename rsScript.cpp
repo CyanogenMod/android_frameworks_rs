@@ -65,7 +65,8 @@ void Script::setVar(uint32_t slot, const void *val, size_t len) {
 void Script::getVar(uint32_t slot, const void *val, size_t len) {
     //ALOGE("getVar %i %p %i", slot, val, len);
     if (slot >= mHal.info.exportedVariableCount) {
-        ALOGE("Script::getVar unable to set allocation, invalid slot index");
+        ALOGE("Script::getVar unable to set allocation, invalid slot index: "
+              "%u >= %u", slot, mHal.info.exportedVariableCount);
         return;
     }
     mRSC->mHal.funcs.script.getGlobalVar(mRSC, this, slot, (void *)val, len);
@@ -74,7 +75,8 @@ void Script::getVar(uint32_t slot, const void *val, size_t len) {
 void Script::setVar(uint32_t slot, const void *val, size_t len, Element *e,
                     const size_t *dims, size_t dimLen) {
     if (slot >= mHal.info.exportedVariableCount) {
-        ALOGE("Script::setVar unable to set allocation, invalid slot index");
+        ALOGE("Script::setVar unable to set allocation, invalid slot index: "
+              "%u >= %u", slot, mHal.info.exportedVariableCount);
         return;
     }
     mRSC->mHal.funcs.script.setGlobalVarWithElemDims(mRSC, this, slot,
@@ -84,7 +86,8 @@ void Script::setVar(uint32_t slot, const void *val, size_t len, Element *e,
 void Script::setVarObj(uint32_t slot, ObjectBase *val) {
     //ALOGE("setVarObj %i %p", slot, val);
     if (slot >= mHal.info.exportedVariableCount) {
-        ALOGE("Script::setVarObj unable to set allocation, invalid slot index");
+        ALOGE("Script::setVarObj unable to set allocation, invalid slot index: "
+              "%u >= %u", slot, mHal.info.exportedVariableCount);
         return;
     }
     mHasObjectSlots = true;
