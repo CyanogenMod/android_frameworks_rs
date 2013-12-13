@@ -33,7 +33,7 @@ sp<Allocation> createAlloc(sp<RS> rs, sp<const Element> e) {
 bool test_elem_##KERNELNAME##_##ENAME() { \
     printf("Verifying forEach_test_" #KERNELNAME "() with " #ENAME "\n"); \
     sp<RS> rs = new RS(); \
-    bool r = rs->init(); \
+    bool r = rs->init("/system/bin"); \
     sp<Allocation> a = createAlloc(rs, Element::ENAME(rs)); \
     ScriptC_kernels sc(rs); \
     sc.forEach_test_##KERNELNAME(a); \
