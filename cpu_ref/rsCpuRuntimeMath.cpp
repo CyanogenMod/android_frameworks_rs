@@ -159,6 +159,60 @@ EXPORT_F32_FN_F32(sqrtf)
 EXPORT_F32_FN_F32(tanf)
 EXPORT_F32_FN_F32(tanhf)
 EXPORT_F32_FN_F32(truncf)
+float __attribute__((overloadable)) rsFrac(float f) {
+    return SC_frac(f);
+}
+void __attribute__((overloadable)) rsMatrixLoadRotate(rs_matrix4x4 *m,
+        float rot, float x, float y, float z) {
+    SC_MatrixLoadRotate((Matrix4x4 *) m, rot, x, y, z);
+}
+void __attribute__((overloadable)) rsMatrixLoadScale(rs_matrix4x4 *m,
+        float x, float y, float z) {
+    SC_MatrixLoadScale((Matrix4x4 *) m, x, y, z);
+}
+void __attribute__((overloadable)) rsMatrixLoadTranslate(rs_matrix4x4 *m,
+        float x, float y, float z) {
+    SC_MatrixLoadTranslate((Matrix4x4 *) m, x, y, z);
+}
+void __attribute__((overloadable)) rsMatrixRotate(rs_matrix4x4 *m, float rot,
+        float x, float y, float z) {
+    SC_MatrixRotate((Matrix4x4 *) m, rot, x, y, z);
+}
+void __attribute__((overloadable)) rsMatrixScale(rs_matrix4x4 *m, float x,
+        float y, float z) {
+    SC_MatrixScale((Matrix4x4 *) m, x, y, z);
+}
+void __attribute__((overloadable)) rsMatrixTranslate(rs_matrix4x4 *m, float x,
+        float y, float z) {
+    SC_MatrixTranslate((Matrix4x4 *) m, x, y, z);
+}
+void __attribute__((overloadable)) rsMatrixLoadOrtho(rs_matrix4x4 *m, float l,
+        float r, float b, float t, float n, float f) {
+    SC_MatrixLoadOrtho((Matrix4x4 *) m, l, r, b, t, n, f);
+}
+void __attribute__((overloadable)) rsMatrixLoadFrustum(rs_matrix4x4 *m,
+        float l, float r, float b, float t, float n, float f) {
+    SC_MatrixLoadFrustum((Matrix4x4 *) m, l, r, b, t, n, f);
+}
+void __attribute__((overloadable)) rsMatrixLoadPerspective(rs_matrix4x4 *m,
+        float fovy, float aspect, float near, float far) {
+    SC_MatrixLoadPerspective((Matrix4x4 *) m, fovy, aspect, near, far);
+}
+bool __attribute__((overloadable)) rsMatrixInverse(rs_matrix4x4 *m) {
+    return SC_MatrixInverse_4x4((Matrix4x4 *) m);
+}
+bool __attribute__((overloadable)) rsMatrixInverseTranspose(rs_matrix4x4 *m) {
+    return SC_MatrixInverseTranspose_4x4((Matrix4x4 *) m);
+}
+void __attribute__((overloadable)) rsMatrixTranspose(rs_matrix4x4 *m) {
+    SC_MatrixTranspose_4x4((Matrix4x4 *) m);
+}
+void __attribute__((overloadable)) rsMatrixTranspose(rs_matrix3x3 *m) {
+    SC_MatrixTranspose_3x3((Matrix3x3 *) m);
+}
+void __attribute__((overloadable)) rsMatrixTranspose(rs_matrix2x2 *m) {
+    SC_MatrixTranspose_2x2((Matrix2x2 *) m);
+}
 #endif
 
 //////////////////////////////////////////////////////////////////////////////
