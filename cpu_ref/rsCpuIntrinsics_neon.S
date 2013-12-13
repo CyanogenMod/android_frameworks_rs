@@ -14,9 +14,6 @@
  * limitations under the License.
  */
 
-
-
-#include <machine/cpu-features.h>
 #include <machine/asm.h>
 
 /*
@@ -50,9 +47,9 @@ ENTRY(rsdIntrinsicConvolve3x3_K)
         vld1.8 {q15}, [r3], r5
 
         /* Signal memory for data that will be used in the loop after the next */
-        PLD         (r1, r5)
-        PLD         (r2, r5)
-        PLD         (r3, r5)
+        pld         [r1, r5]
+        pld         [r2, r5]
+        pld         [r3, r5]
 
         vmovl.u8 q2, d26
         vmovl.u8 q3, d27
@@ -565,8 +562,8 @@ ENTRY(rsdIntrinsicConvolve5x5_K)
         vld1.8  {d27, d28, d29}, [r2], r7      @  y0 ( y - 1 )
 
         /* Signal memory for data that will be used in the loop after the next */
-        PLD         (r1, r7)
-        PLD         (r2, r7)
+        pld         [r1, r7]
+        pld         [r2, r7]
 
         /* Promoting the 8bit channels to 16bit */
         vmovl.u8 q9,  d24
@@ -611,8 +608,8 @@ ENTRY(rsdIntrinsicConvolve5x5_K)
         vld1.8  {d27, d28, d29}, [r4], r7      @  y0 ( y + 1 )
 
         /* Signal memory for data that will be used in the loop after the next */
-        PLD         (r3, r7)
-        PLD         (r4, r7)
+        pld         [r3, r7]
+        pld         [r4, r7]
 
         /* Promoting the 8bit channels to 16bit */
         vmovl.u8 q9,  d24
@@ -655,7 +652,7 @@ ENTRY(rsdIntrinsicConvolve5x5_K)
         vld1.8  {d24, d25, d26}, [r5], r7      @  y0 ( y + 2 )
 
         /* Signal memory for data that will be used in the loop after the next */
-        PLD         (r5, r7)
+        pld         [r5, r7]
 
         /* Promoting the 8bit channels to 16bit */
         vmovl.u8 q9,  d24
