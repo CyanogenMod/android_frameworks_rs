@@ -90,10 +90,12 @@ class Sampler;
 
     /**
      * Initializes a RenderScript context. A context must be initialized before it can be used.
+     * @param[in] name Directory name to be used by this context. This should be equivalent to
+     * Context.getCacheDir().
      * @param[in] flags Optional flags for this context.
      * @return true on success
      */
-    bool init(uint32_t flags = 0);
+    bool init(std::string name, uint32_t flags = 0);
 
     /**
      * Sets the error handler function for this context. This error handler is
@@ -147,7 +149,7 @@ class Sampler;
     static bool usingNative;
     static bool initDispatch(int targetApi);
 
-    bool init(int targetApi, uint32_t flags);
+    bool init(std::string &name, int targetApi, uint32_t flags);
     static void * threadProc(void *);
 
     static bool gInitialized;
@@ -164,6 +166,8 @@ class Sampler;
     ErrorHandlerFunc_t mErrorFunc;
     MessageHandlerFunc_t mMessageFunc;
     bool mInit;
+
+    std::string mCacheDir;
 
     struct {
         sp<const Element> U8;
@@ -246,6 +250,7 @@ class Sampler;
     } mSamplers;
     friend class Sampler;
     friend class Element;
+    friend class ScriptC;
 };
 
  /**

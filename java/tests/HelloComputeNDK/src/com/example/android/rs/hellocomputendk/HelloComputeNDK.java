@@ -30,7 +30,7 @@ public class HelloComputeNDK extends Activity {
         System.loadLibrary("hellocomputendk");
     }
 
-    native void nativeMono(int X, int Y, Bitmap in, Bitmap out);
+    native void nativeMono(String cacheDir, int X, int Y, Bitmap in, Bitmap out);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +47,9 @@ public class HelloComputeNDK extends Activity {
         ImageView out = (ImageView) findViewById(R.id.displayout);
         out.setImageBitmap(mBitmapOut);
 
-        nativeMono(mBitmapIn.getWidth(), mBitmapIn.getHeight(), mBitmapIn, mBitmapOut);
+        nativeMono(this.getCacheDir().toString(),
+                   mBitmapIn.getWidth(), mBitmapIn.getHeight(),
+                   mBitmapIn, mBitmapOut);
 
     }
 

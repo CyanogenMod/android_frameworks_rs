@@ -66,8 +66,8 @@ RS::~RS() {
     }
 }
 
-bool RS::init(uint32_t flags) {
-    return RS::init(RS_VERSION, flags);
+bool RS::init(std::string name, uint32_t flags) {
+    return RS::init(name, RS_VERSION, flags);
 }
 
 static bool loadSymbols(void* handle) {
@@ -462,11 +462,18 @@ bool RS::initDispatch(int targetApi) {
     return false;
 }
 
-bool RS::init(int targetApi, uint32_t flags) {
+bool RS::init(std::string &name, int targetApi, uint32_t flags) {
+    if (mInit) {
+        return true;
+    }
+
     if (initDispatch(targetApi) == false) {
         ALOGE("Couldn't initialize dispatch table");
         return false;
     }
+
+    mCacheDir = name;
+    mCacheDir += "/com.android.renderscript.cache/";
 
     mDev = RS::dispatch->DeviceCreate();
     if (mDev == 0) {

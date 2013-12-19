@@ -57,7 +57,7 @@ int main(int argc, char** argv)
     if (forceCpu) flags |= RS_INIT_LOW_LATENCY;
     if (synchronous) flags |= RS_INIT_SYNCHRONOUS;
 
-    bool r = rs->init(flags);
+    bool r = rs->init("/system/bin", flags);
 
     sp<const Element> e = Element::U32(rs);
 

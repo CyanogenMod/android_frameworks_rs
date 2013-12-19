@@ -17,7 +17,8 @@ LOCAL_SHARED_LIBRARIES := \
 	libui \
 	libbcc \
 	libbcinfo \
-	libgui
+	libgui \
+	libstlport
 
 LOCAL_MODULE:= rstest-latency
 
