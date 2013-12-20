@@ -505,25 +505,25 @@ public:
      * Creates an Allocation for use by scripts with a given Type.
      * @param[in] rs Context to which the Allocation will belong
      * @param[in] type Type of the Allocation
-     * @param[in] mips desired mipmap behavior for the Allocation
+     * @param[in] mipmaps desired mipmap behavior for the Allocation
      * @param[in] usage usage for the Allocation
      * @return new Allocation
      */
     static sp<Allocation> createTyped(sp<RS> rs, sp<const Type> type,
-                                   RsAllocationMipmapControl mips, uint32_t usage);
+                                   RsAllocationMipmapControl mipmaps, uint32_t usage);
 
     /**
      * Creates an Allocation for use by scripts with a given Type and a backing pointer. For use
      * with RS_ALLOCATION_USAGE_SHARED.
      * @param[in] rs Context to which the Allocation will belong
      * @param[in] type Type of the Allocation
-     * @param[in] mips desired mipmap behavior for the Allocation
+     * @param[in] mipmaps desired mipmap behavior for the Allocation
      * @param[in] usage usage for the Allocation
      * @param[in] pointer existing backing store to use for this Allocation if possible
      * @return new Allocation
      */
     static sp<Allocation> createTyped(sp<RS> rs, sp<const Type> type,
-                                   RsAllocationMipmapControl mips, uint32_t usage, void * pointer);
+                                   RsAllocationMipmapControl mipmaps, uint32_t usage, void * pointer);
 
     /**
      * Creates an Allocation for use by scripts with a given Type with no mipmaps.
