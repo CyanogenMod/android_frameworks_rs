@@ -592,9 +592,9 @@ void rsi_AllocationResize2D(Context *rsc, RsAllocation va, uint32_t dimX, uint32
 }
 
 RsAllocation rsi_AllocationCreateTyped(Context *rsc, RsType vtype,
-                                       RsAllocationMipmapControl mips,
+                                       RsAllocationMipmapControl mipmaps,
                                        uint32_t usages, uintptr_t ptr) {
-    Allocation * alloc = Allocation::createAllocation(rsc, static_cast<Type *>(vtype), usages, mips, (void*)ptr);
+    Allocation * alloc = Allocation::createAllocation(rsc, static_cast<Type *>(vtype), usages, mipmaps, (void*)ptr);
     if (!alloc) {
         return NULL;
     }
@@ -603,11 +603,11 @@ RsAllocation rsi_AllocationCreateTyped(Context *rsc, RsType vtype,
 }
 
 RsAllocation rsi_AllocationCreateFromBitmap(Context *rsc, RsType vtype,
-                                            RsAllocationMipmapControl mips,
+                                            RsAllocationMipmapControl mipmaps,
                                             const void *data, size_t sizeBytes, uint32_t usages) {
     Type *t = static_cast<Type *>(vtype);
 
-    RsAllocation vTexAlloc = rsi_AllocationCreateTyped(rsc, vtype, mips, usages, 0);
+    RsAllocation vTexAlloc = rsi_AllocationCreateTyped(rsc, vtype, mipmaps, usages, 0);
     Allocation *texAlloc = static_cast<Allocation *>(vTexAlloc);
     if (texAlloc == NULL) {
         ALOGE("Memory allocation failure");
@@ -616,7 +616,7 @@ RsAllocation rsi_AllocationCreateFromBitmap(Context *rsc, RsType vtype,
 
     texAlloc->data(rsc, 0, 0, 0, RS_ALLOCATION_CUBEMAP_FACE_POSITIVE_X,
                    t->getDimX(), t->getDimY(), data, sizeBytes, 0);
-    if (mips == RS_ALLOCATION_MIPMAP_FULL) {
+    if (mipmaps == RS_ALLOCATION_MIPMAP_FULL) {
         rsc->mHal.funcs.allocation.generateMipmaps(rsc, texAlloc);
     }
 
@@ -625,14 +625,14 @@ RsAllocation rsi_AllocationCreateFromBitmap(Context *rsc, RsType vtype,
 }
 
 RsAllocation rsi_AllocationCubeCreateFromBitmap(Context *rsc, RsType vtype,
-                                                RsAllocationMipmapControl mips,
+                                                RsAllocationMipmapControl mipmaps,
                                                 const void *data, size_t sizeBytes, uint32_t usages) {
     Type *t = static_cast<Type *>(vtype);
 
     // Cubemap allocation's faces should be Width by Width each.
     // Source data should have 6 * Width by Width pixels
     // Error checking is done in the java layer
-    RsAllocation vTexAlloc = rsi_AllocationCreateTyped(rsc, vtype, mips, usages, 0);
+    RsAllocation vTexAlloc = rsi_AllocationCreateTyped(rsc, vtype, mipmaps, usages, 0);
     Allocation *texAlloc = static_cast<Allocation *>(vTexAlloc);
     if (texAlloc == NULL) {
         ALOGE("Memory allocation failure");
@@ -654,7 +654,7 @@ RsAllocation rsi_AllocationCubeCreateFromBitmap(Context *rsc, RsType vtype,
         sourcePtr += copySize;
     }
 
-    if (mips == RS_ALLOCATION_MIPMAP_FULL) {
+    if (mipmaps == RS_ALLOCATION_MIPMAP_FULL) {
         rsc->mHal.funcs.allocation.generateMipmaps(rsc, texAlloc);
     }
 
