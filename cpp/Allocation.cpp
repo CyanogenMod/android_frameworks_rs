@@ -313,10 +313,10 @@ void Allocation::copy3DRangeFrom(uint32_t xoff, uint32_t yoff, uint32_t zoff, ui
 
 
 sp<Allocation> Allocation::createTyped(sp<RS> rs, sp<const Type> type,
-                                    RsAllocationMipmapControl mips, uint32_t usage) {
+                                    RsAllocationMipmapControl mipmaps, uint32_t usage) {
     void *id = 0;
     if (rs->getError() == RS_SUCCESS) {
-        id = RS::dispatch->AllocationCreateTyped(rs->getContext(), type->getID(), mips, usage, 0);
+        id = RS::dispatch->AllocationCreateTyped(rs->getContext(), type->getID(), mipmaps, usage, 0);
     }
     if (id == 0) {
         rs->throwError(RS_ERROR_RUNTIME_ERROR, "Allocation creation failed");
@@ -326,11 +326,11 @@ sp<Allocation> Allocation::createTyped(sp<RS> rs, sp<const Type> type,
 }
 
 sp<Allocation> Allocation::createTyped(sp<RS> rs, sp<const Type> type,
-                                    RsAllocationMipmapControl mips, uint32_t usage,
+                                    RsAllocationMipmapControl mipmaps, uint32_t usage,
                                     void *pointer) {
     void *id = 0;
     if (rs->getError() == RS_SUCCESS) {
-        id = RS::dispatch->AllocationCreateTyped(rs->getContext(), type->getID(), mips, usage,
+        id = RS::dispatch->AllocationCreateTyped(rs->getContext(), type->getID(), mipmaps, usage,
                                                  (uintptr_t)pointer);
     }
     if (id == 0) {

@@ -295,10 +295,10 @@ namespace android {
 namespace renderscript {
 
 RsType rsi_TypeCreate(Context *rsc, RsElement _e, uint32_t dimX,
-                     uint32_t dimY, uint32_t dimZ, bool mips, bool faces, uint32_t yuv) {
+                     uint32_t dimY, uint32_t dimZ, bool mipmaps, bool faces, uint32_t yuv) {
     Element *e = static_cast<Element *>(_e);
 
-    return Type::getType(rsc, e, dimX, dimY, dimZ, mips, faces, yuv);
+    return Type::getType(rsc, e, dimX, dimY, dimZ, mipmaps, faces, yuv);
 }
 
 }

@@ -37,7 +37,7 @@ TypeCreate {
     param uint32_t dimX
     param uint32_t dimY
     param uint32_t dimZ
-    param bool mips
+    param bool mipmaps
     param bool faces
     param uint32_t yuv
     ret RsType
@@ -46,7 +46,7 @@ TypeCreate {
 AllocationCreateTyped {
     direct
     param RsType vtype
-    param RsAllocationMipmapControl mips
+    param RsAllocationMipmapControl mipmaps
     param uint32_t usages
     param uintptr_t ptr
     ret RsAllocation
@@ -55,7 +55,7 @@ AllocationCreateTyped {
 AllocationCreateFromBitmap {
     direct
     param RsType vtype
-    param RsAllocationMipmapControl mips
+    param RsAllocationMipmapControl mipmaps
     param const void *data
     param uint32_t usages
     ret RsAllocation
@@ -64,7 +64,7 @@ AllocationCreateFromBitmap {
 AllocationCubeCreateFromBitmap {
     direct
     param RsType vtype
-    param RsAllocationMipmapControl mips
+    param RsAllocationMipmapControl mipmaps
     param const void *data
     param uint32_t usages
     ret RsAllocation
