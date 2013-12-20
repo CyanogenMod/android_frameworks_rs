@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 The Android Open Source Project
+ * Copyright (C) 2011 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,26 +14,42 @@
  * limitations under the License.
  */
 
-package com.android.rs.test_v14;
+package com.android.rs.test_v16;
 
 import android.content.Context;
 import android.content.res.Resources;
 import android.renderscript.*;
 
-public class UT_rstime extends UnitTest {
+public class UT_foreach extends UnitTest {
     private Resources mRes;
+    private Allocation A;
 
-    protected UT_rstime(RSTestCore rstc, Resources res, Context ctx) {
-        super(rstc, "rsTime", ctx);
+    protected UT_foreach(RSTestCore rstc, Resources res, Context ctx) {
+        super(rstc, "ForEach", ctx);
         mRes = res;
+    }
+
+    private void initializeGlobals(RenderScript RS, ScriptC_foreach s) {
+        Type.Builder typeBuilder = new Type.Builder(RS, Element.I32(RS));
+        int X = 5;
+        int Y = 7;
+        s.set_dimX(X);
+        s.set_dimY(Y);
+        typeBuilder.setX(X).setY(Y);
+        A = Allocation.createTyped(RS, typeBuilder.create());
+        s.set_aRaw(A);
+
+        return;
     }
 
     public void run() {
         RenderScript pRS = RenderScript.create(mCtx);
-        ScriptC_rstime s = new ScriptC_rstime(pRS, mRes, R.raw.rstime);
+        ScriptC_foreach s = new ScriptC_foreach(pRS);
         pRS.setMessageHandler(mRsMessage);
-        s.setTimeZone("America/Los_Angeles");
-        s.invoke_test_rstime(0, 0);
+        initializeGlobals(pRS, s);
+        s.forEach_root(A);
+        s.invoke_verify_root();
+        s.invoke_foreach_test();
         pRS.finish();
         waitForMessage();
         pRS.destroy();

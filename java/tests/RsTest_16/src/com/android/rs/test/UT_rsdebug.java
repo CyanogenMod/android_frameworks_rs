@@ -14,26 +14,25 @@
  * limitations under the License.
  */
 
-package com.android.rs.test_v14;
+package com.android.rs.test_v16;
 
 import android.content.Context;
 import android.content.res.Resources;
 import android.renderscript.*;
 
-public class UT_rstime extends UnitTest {
+public class UT_rsdebug extends UnitTest {
     private Resources mRes;
 
-    protected UT_rstime(RSTestCore rstc, Resources res, Context ctx) {
-        super(rstc, "rsTime", ctx);
+    protected UT_rsdebug(RSTestCore rstc, Resources res, Context ctx) {
+        super(rstc, "rsDebug", ctx);
         mRes = res;
     }
 
     public void run() {
         RenderScript pRS = RenderScript.create(mCtx);
-        ScriptC_rstime s = new ScriptC_rstime(pRS, mRes, R.raw.rstime);
+        ScriptC_rsdebug s = new ScriptC_rsdebug(pRS, mRes, R.raw.rsdebug);
         pRS.setMessageHandler(mRsMessage);
-        s.setTimeZone("America/Los_Angeles");
-        s.invoke_test_rstime(0, 0);
+        s.invoke_test_rsdebug(0, 0);
         pRS.finish();
         waitForMessage();
         pRS.destroy();
