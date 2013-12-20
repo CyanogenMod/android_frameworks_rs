@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.rs.test_v14;
+package com.android.rs.test_v16;
 
 import android.content.Context;
 import android.content.res.Resources;
