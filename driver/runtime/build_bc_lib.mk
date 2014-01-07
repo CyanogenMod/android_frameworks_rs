@@ -14,12 +14,16 @@
 # limitations under the License.
 #
 
+# Set these values always by default
+LOCAL_MODULE_TAGS := optional
+LOCAL_MODULE_CLASS := SHARED_LIBRARIES
+
 include $(BUILD_SYSTEM)/base_rules.mk
 
 BCC_STRIP_ATTR := $(BUILD_OUT_EXECUTABLES)/bcc_strip_attr$(BUILD_EXECUTABLE_SUFFIX)
 
 bc_clang_cc1_cflags :=
-ifeq ($(TARGET_ARCH),arm)
+ifeq ($(BCC_RS_TRIPLE),armv7-none-linux-gnueabi)
 # We need to pass the +long64 flag to the underlying version of Clang, since
 # we are generating a library for use with Renderscript (64-bit long type,
 # not 32-bit).
@@ -34,7 +38,7 @@ bc_cflags := -MD \
              -O3 \
              -fno-builtin \
              -emit-llvm \
-             -target $(RS_TRIPLE) \
+             -target $(BCC_RS_TRIPLE) \
              -fsigned-char \
              $(LOCAL_CFLAGS) \
              $(bc_translated_clang_cc1_cflags)
