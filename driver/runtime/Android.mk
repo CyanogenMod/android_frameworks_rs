@@ -42,13 +42,11 @@ clcore_neon_files := \
     arch/neon.ll \
     arch/clamp.c
 
-ifeq ($(TARGET_ARCH),$(filter $(TARGET_ARCH),x86 x86_64))
-    clcore_x86_files := \
+clcore_x86_files := \
     $(clcore_base_files) \
     arch/generic.c \
     arch/x86_sse2.ll \
     arch/x86_sse3.ll
-endif
 
 ifeq "REL" "$(PLATFORM_VERSION_CODENAME)"
   RS_VERSION := $(PLATFORM_SDK_VERSION)
@@ -61,18 +59,16 @@ endif
 
 # Build the base version of the library
 include $(CLEAR_VARS)
+BCC_RS_TRIPLE := $(RS_TRIPLE)
 LOCAL_MODULE := libclcore.bc
-LOCAL_MODULE_TAGS := optional
-LOCAL_MODULE_CLASS := SHARED_LIBRARIES
 LOCAL_SRC_FILES := $(clcore_files)
 
 include $(LOCAL_PATH)/build_bc_lib.mk
 
 # Build a debug version of the library
 include $(CLEAR_VARS)
+BCC_RS_TRIPLE := $(RS_TRIPLE)
 LOCAL_MODULE := libclcore_debug.bc
-LOCAL_MODULE_TAGS := optional
-LOCAL_MODULE_CLASS := SHARED_LIBRARIES
 rs_debug_runtime := 1
 LOCAL_SRC_FILES := $(clcore_files)
 
@@ -81,9 +77,8 @@ include $(LOCAL_PATH)/build_bc_lib.mk
 # Build an optimized version of the library for x86 platforms (all have SSE2/3).
 ifeq ($(TARGET_ARCH),$(filter $(TARGET_ARCH),x86 x86_64))
 include $(CLEAR_VARS)
+BCC_RS_TRIPLE := $(RS_TRIPLE)
 LOCAL_MODULE := libclcore_x86.bc
-LOCAL_MODULE_TAGS := optional
-LOCAL_MODULE_CLASS := SHARED_LIBRARIES
 LOCAL_SRC_FILES := $(clcore_x86_files)
 
 include $(LOCAL_PATH)/build_bc_lib.mk
@@ -92,11 +87,37 @@ endif
 # Build a NEON-enabled version of the library (if possible)
 ifeq ($(ARCH_ARM_HAVE_NEON),true)
   include $(CLEAR_VARS)
+  BCC_RS_TRIPLE := $(RS_TRIPLE)
   LOCAL_MODULE := libclcore_neon.bc
-  LOCAL_MODULE_TAGS := optional
-  LOCAL_MODULE_CLASS := SHARED_LIBRARIES
   LOCAL_SRC_FILES := $(clcore_neon_files)
   LOCAL_CFLAGS += -DARCH_ARM_HAVE_NEON
 
   include $(LOCAL_PATH)/build_bc_lib.mk
 endif
+
+### Build new versions (librsrt_<ARCH>.bc) as host shared libraries.
+### These will be used with bcc_compat and the support library.
+
+# Build the ARM version of the library
+include $(CLEAR_VARS)
+BCC_RS_TRIPLE := armv7-none-linux-gnueabi
+LOCAL_MODULE := librsrt_arm.bc
+LOCAL_IS_HOST_MODULE := true
+LOCAL_SRC_FILES := $(clcore_files)
+include $(LOCAL_PATH)/build_bc_lib.mk
+
+# Build the MIPS version of the library
+include $(CLEAR_VARS)
+BCC_RS_TRIPLE := mipsel-unknown-linux
+LOCAL_MODULE := librsrt_mips.bc
+LOCAL_IS_HOST_MODULE := true
+LOCAL_SRC_FILES := $(clcore_files)
+include $(LOCAL_PATH)/build_bc_lib.mk
+
+# Build the x86 version of the library
+include $(CLEAR_VARS)
+BCC_RS_TRIPLE := i686-unknown-linux
+LOCAL_MODULE := librsrt_x86.bc
+LOCAL_IS_HOST_MODULE := true
+LOCAL_SRC_FILES := $(clcore_x86_files)
+include $(LOCAL_PATH)/build_bc_lib.mk
