@@ -249,12 +249,51 @@ string stringExpand(string s, const Func *f, int i1, int i2, int i3, int i4) {
     return s;
 }
 
+void writeLegal(FILE *o) {
+    fprintf(o, "/*\n");
+    fprintf(o, " * Copyright (C) 2014 The Android Open Source Project\n");
+    fprintf(o, " *\n");
+    fprintf(o, " * Licensed under the Apache License, Version 2.0 (the \"License\");\n");
+    fprintf(o, " * you may not use this file except in compliance with the License.\n");
+    fprintf(o, " * You may obtain a copy of the License at\n");
+    fprintf(o, " *\n");
+    fprintf(o, " *      http://www.apache.org/licenses/LICENSE-2.0\n");
+    fprintf(o, " *\n");
+    fprintf(o, " * Unless required by applicable law or agreed to in writing, software\n");
+    fprintf(o, " * distributed under the License is distributed on an \"AS IS\" BASIS,\n");
+    fprintf(o, " * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n");
+    fprintf(o, " * See the License for the specific language governing permissions and\n");
+    fprintf(o, " * limitations under the License.\n");
+    fprintf(o, " */\n\n");
+}
+
+void writeIfdef(FILE *o, string filename, bool isStart) {
+    string t = "__";
+    t += filename;
+    t += "__";
+
+    for (size_t i = 2; i < t.size(); i++) {
+        if (t[i] == '.') {
+            t[i] = '_';
+        }
+    }
+
+    if (isStart) {
+        fprintf(o, "#ifndef %s\n", t.c_str());
+        fprintf(o, "#define %s\n", t.c_str());
+    } else {
+        fprintf(o, "#endif // %s\n", t.c_str());
+    }
+}
+
+
+
 void writeHeaderFunc(FILE *o, const Func *f, int i1, int i2, int i3, int i4) {
     string s;
 
     if (f->mMinVersion || f->mMaxVersion) {
         if (f->mMaxVersion) {
-            fprintf(o, "#if (defined(RS_VERSION) && (RS_VERSION >= %i) && (RS_VERSION < %i))\n",
+            fprintf(o, "#if (defined(RS_VERSION) && (RS_VERSION >= %i) && (RS_VERSION <= %i))\n",
                     f->mMinVersion, f->mMaxVersion);
         } else {
             fprintf(o, "#if (defined(RS_VERSION) && (RS_VERSION >= %i))\n",
@@ -285,7 +324,11 @@ void writeHeaderFunc(FILE *o, const Func *f, int i1, int i2, int i3, int i4) {
     fprintf(o, " */\n");
 
     s.clear();
-    s += "extern ";
+    if (f->mInline.size() > 0) {
+        s += "static ";
+    } else {
+        s += "extern ";
+    }
     s += f->mRet;
     s += " __attribute__((const, overloadable))";
     s += f->mName;
@@ -295,12 +338,23 @@ void writeHeaderFunc(FILE *o, const Func *f, int i1, int i2, int i3, int i4) {
     }
     for (size_t ct=1; ct < f->mArgs.size(); ct++) {
         s += ", ";
-        s += f->mArgs[0];
+        s += f->mArgs[ct];
     }
-    s += ");";
+    if (f->mInline.size() > 0) {
+        s += ") {";
+    } else {
+        s += ");";
+    }
     s = stringExpand(s, f, i1, i2, i3, i4);
     fprintf(o, "%s\n", s.c_str());
 
+    if (f->mInline.size() > 0) {
+        for (size_t ct=0; ct < f->mInline.size(); ct++) {
+            s = stringExpand(f->mInline[ct], f, i1, i2, i3, i4);
+            fprintf(o, " %s\n", s.c_str());
+        }
+        fprintf(o, "}\n");
+    }
 
     if (f->mMinVersion || f->mMaxVersion) {
         fprintf(o, "#endif\n");
@@ -378,9 +432,12 @@ int main(int argc, char* argv[])
         return -1;
     }
 
+    writeLegal(gOut);
+    writeIfdef(gOut, outpath, true);
     for (size_t ct=0; ct < gFuncs.size(); ct++) {
         writeHeaderFuncs(gOut, gFuncs[ct]);
     }
+    writeIfdef(gOut, outpath, false);
 
     fclose (gIn);
     fclose (gOut);

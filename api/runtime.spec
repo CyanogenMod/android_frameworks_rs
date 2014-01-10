@@ -18,7 +18,7 @@ start:
 w: 2, 3, 4
 t: u8, u16, u32, u64, i8, i16, i32, i64, f32, f64
 t: u8, u16, u32, u64, i8, i16, i32, i64, f32, f64
-name: convert_uchar#1
+name: convert_#3#1
 arg: #2#1
 ret: #3#1
 comment:
@@ -299,6 +299,7 @@ t: f32
 name: fdim
 ret: #2#1
 arg: #2#1
+arg: #2#1
 comment:
  Return the positive difference between two values.
 version: 9
@@ -446,8 +447,8 @@ start:
 w: 1, 2, 3, 4
 t: f32
 name: ilogb
-ret: #2#1
-arg: #2#1
+ret: int#1
+arg: float#1
 comment:
  Return the integer exponent of a value
 version: 9
@@ -474,6 +475,34 @@ arg: #2#1
 arg: int
 comment:
  Return (x * 2^y)
+version: 9
+end:
+
+start:
+w: 1, 2, 3, 4
+name: ldexp
+ret: float#1
+arg: float#1 x
+arg: int#1 y
+comment:
+ Return (x * 2^y)
+
+ @param x Supports 1,2,3,4 components
+ @param y Supports single component or matching vector.
+version: 9
+end:
+
+start:
+w: 2, 3, 4
+name: ldexp
+ret: float#1
+arg: float#1 x
+arg: int y
+comment:
+ Return (x * 2^y)
+
+ @param x Supports 1,2,3,4 components
+ @param y Supports single component or matching vector.
 version: 9
 end:
 
@@ -835,7 +864,7 @@ start:
 w: 1, 2, 3, 4
 t: i8, i16, i32
 name: abs
-ret: #2#1
+ret: u#2#1
 arg: #2#1 value
 comment:
  Return the absolute value of a value.
@@ -866,7 +895,7 @@ version: 9
 end:
 
 start:
-w: 1, 2, 3, 4
+w: 1
 t: i8 i16 i32 u8 u16 u32
 name: min
 ret: #2#1
@@ -880,6 +909,60 @@ version: 9 19
 end:
 
 start:
+w: 2
+t: i8 i16 i32 u8 u16 u32
+name: min
+ret: #2#1
+arg: #2#1 v1
+arg: #2#1 v2
+comment:
+ Return the minimum value from two arguments
+inline:
+ #2#1 tmp;
+ tmp.x = (v1.x < v2.x ? v1.x : v2.x);
+ tmp.y = (v1.y < v2.y ? v1.y : v2.y);
+ return tmp;
+version: 9 19
+end:
+
+start:
+w: 3
+t: i8 i16 i32 u8 u16 u32
+name: min
+ret: #2#1
+arg: #2#1 v1
+arg: #2#1 v2
+comment:
+ Return the minimum value from two arguments
+inline:
+ #2#1 tmp;
+ tmp.x = (v1.x < v2.x ? v1.x : v2.x);
+ tmp.y = (v1.y < v2.y ? v1.y : v2.y);
+ tmp.z = (v1.z < v2.z ? v1.z : v2.z);
+ return tmp;
+version: 9 19
+end:
+
+start:
+w: 4
+t: i8 i16 i32 u8 u16 u32
+name: min
+ret: #2#1
+arg: #2#1 v1
+arg: #2#1 v2
+comment:
+ Return the minimum value from two arguments
+inline:
+ #2#1 tmp;
+ tmp.x = (v1.x < v2.x ? v1.x : v2.x);
+ tmp.y = (v1.y < v2.y ? v1.y : v2.y);
+ tmp.z = (v1.z < v2.z ? v1.z : v2.z);
+ tmp.w = (v1.w < v2.w ? v1.w : v2.w);
+ return tmp;
+version: 9 19
+end:
+
+start:
 w: 1, 2, 3, 4
 t: i8 i16 i32 i64 u8 u16 u32 u64
 name: min
@@ -888,7 +971,7 @@ arg: #2#1 v1
 arg: #2#1 v2
 comment:
  Return the minimum value from two arguments
-version: 19
+version: 20
 end:
 
 start:
@@ -904,7 +987,7 @@ version: 9
 end:
 
 start:
-w: 1, 2, 3, 4
+w: 1
 t: i8 i16 i32 u8 u16 u32
 name: max
 ret: #2#1
@@ -913,7 +996,61 @@ arg: #2#1 v2
 comment:
  Return the maximum value from two arguments
 inline:
- return (v1 < v2 ? v1 : v2);
+ return (v1 > v2 ? v1 : v2);
+version: 9 19
+end:
+
+start:
+w: 2
+t: i8 i16 i32 u8 u16 u32
+name: max
+ret: #2#1
+arg: #2#1 v1
+arg: #2#1 v2
+comment:
+ Return the maximum value from two arguments
+inline:
+ #2#1 tmp;
+ tmp.x = (v1.x > v2.x ? v1.x : v2.x);
+ tmp.y = (v1.y > v2.y ? v1.y : v2.y);
+ return tmp;
+version: 9 19
+end:
+
+start:
+w: 3
+t: i8 i16 i32 u8 u16 u32
+name: max
+ret: #2#1
+arg: #2#1 v1
+arg: #2#1 v2
+comment:
+ Return the maximum value from two arguments
+inline:
+ #2#1 tmp;
+ tmp.x = (v1.x > v2.x ? v1.x : v2.x);
+ tmp.y = (v1.y > v2.y ? v1.y : v2.y);
+ tmp.z = (v1.z > v2.z ? v1.z : v2.z);
+ return tmp;
+version: 9 19
+end:
+
+start:
+w: 4
+t: i8 i16 i32 u8 u16 u32
+name: max
+ret: #2#1
+arg: #2#1 v1
+arg: #2#1 v2
+comment:
+ Return the maximum value from two arguments
+inline:
+ #2#1 tmp;
+ tmp.x = (v1.x > v2.x ? v1.x : v2.x);
+ tmp.y = (v1.y > v2.y ? v1.y : v2.y);
+ tmp.z = (v1.z > v2.z ? v1.z : v2.z);
+ tmp.w = (v1.w > v2.w ? v1.w : v2.w);
+ return tmp;
 version: 9 19
 end:
 
@@ -926,7 +1063,7 @@ arg: #2#1 v1
 arg: #2#1 v2
 comment:
  Return the maximum value from two arguments
-version: 19
+version: 20
 end:
 
 start:
@@ -1050,7 +1187,8 @@ w: 1, 2, 3, 4
 t: f32
 name: step
 ret: #2#1
-arg: #2#1 value
+arg: #2#1 edge
+arg: #2#1 v
 comment:
  if (v < edge)
      return 0.f;
@@ -1060,11 +1198,11 @@ version: 9
 end:
 
 start:
-w: 1, 2, 3, 4
+w: 2, 3, 4
 t: f32
 name: step
 ret: #2#1
-arg: #2 edge
+arg: #2#1 edge
 arg: #2 v
 comment:
  if (v < edge)
@@ -1079,7 +1217,7 @@ w: 1, 2, 3, 4
 t: f32
 name: sign
 ret: #2#1
-arg: #2 v
+arg: #2#1 v
 comment:
  Return the sign of a value.
 
