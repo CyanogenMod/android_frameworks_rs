@@ -49,6 +49,7 @@ $(call add-clean-step, rm -rf $(OUT_DIR)/target/common/obj/APPS/*/src/renderscri
 $(call add-clean-step, rm -rf $(OUT_DIR)/target/common/obj/JAVA_LIBRARIES/*/src/renderscript)
 $(call add-clean-step, rm -rf $(OUT_DIR)/target/common/obj/APPS/*/src/RenderScript.stamp)
 $(call add-clean-step, rm -rf $(OUT_DIR)/target/common/obj/JAVA_LIBRARIES/*/src/RenderScript.stamp)
+$(call add-clean-step, rm -rf $(OUT_DIR)/target/product/*/obj/SHARED_LIBRARIES/lib*.bc_intermediates)
 
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
