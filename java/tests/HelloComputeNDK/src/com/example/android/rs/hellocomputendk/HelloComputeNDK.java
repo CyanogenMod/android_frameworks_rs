@@ -27,6 +27,7 @@ public class HelloComputeNDK extends Activity {
     private Bitmap mBitmapOut;
 
     static {
+        System.loadLibrary("RSSupport");
         System.loadLibrary("hellocomputendk");
     }
 
