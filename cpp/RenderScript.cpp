@@ -23,10 +23,14 @@
 #include "rsCppInternal.h"
 
 #include <dlfcn.h>
+#include <unistd.h>
 
-#if !defined(RS_SERVER) && defined(HAVE_ANDROID_OS)
+#if !defined(RS_SERVER) && !defined(RS_COMPATIBILITY_LIB) && defined(HAVE_ANDROID_OS)
 #include <cutils/properties.h>
+#else
+#include "rsCompatibilityLib.h"
 #endif
+
 
 using namespace android;
 using namespace RSC;
@@ -473,7 +477,6 @@ bool RS::init(std::string &name, int targetApi, uint32_t flags) {
     }
 
     mCacheDir = name;
-    mCacheDir += "/com.android.renderscript.cache/";
 
     mDev = RS::dispatch->DeviceCreate();
     if (mDev == 0) {
