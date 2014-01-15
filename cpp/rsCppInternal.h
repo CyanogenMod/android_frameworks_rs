@@ -17,6 +17,7 @@
 #ifndef ANDROID_RS_CPP_INTERNAL_H
 #define ANDROID_RS_CPP_INTERNAL_H
 
+#define LOG_TAG "rsC++"
 #include "rsCppUtils.h"
 
 #define tryDispatch(rs, dispatch)               \

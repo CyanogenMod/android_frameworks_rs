@@ -49,11 +49,15 @@ include $(CLEAR_VARS)
 
 LOCAL_CFLAGS += $(local_cflags_for_rs_cpp)
 
+LOCAL_SDK_VERSION := 8
+LOCAL_CFLAGS += -DRS_COMPATIBILITY_LIB
+
 LOCAL_SRC_FILES := $(rs_cpp_SRC_FILES)
+
+LOCAL_SRC_FILES += ../rsCompatibilityLib.cpp
 
 LOCAL_STATIC_LIBRARIES := \
 	libz \
-	libcutils \
 	libutils \
 	liblog \
 	libstlport_static
@@ -65,7 +69,8 @@ LOCAL_MODULE:= libRScpp_static
 LOCAL_MODULE_TAGS := optional
 
 LOCAL_C_INCLUDES += frameworks/rs
-LOCAL_C_INCLUDES += external/stlport/stlport bionic/ bionic/libstdc++/include
 LOCAL_C_INCLUDES += $(intermediates)
+
+LOCAL_NDK_STL_VARIANT := stlport_static
 
 include $(BUILD_STATIC_LIBRARY)
