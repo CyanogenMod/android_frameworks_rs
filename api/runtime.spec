@@ -1213,6 +1213,21 @@ version: 9
 end:
 
 start:
+w: 2, 3, 4
+t: f32
+name: step
+ret: #2#1
+arg: #2 edge
+arg: #2#1 v
+comment:
+ if (v < edge)
+     return 0.f;
+ else
+     return 1.f;
+version: 20
+end:
+
+start:
 w: 1, 2, 3, 4
 t: f32
 name: sign

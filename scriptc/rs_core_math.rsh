@@ -8129,6 +8129,42 @@ extern float3 __attribute__((const, overloadable))step(float3 edge, float v);
 extern float4 __attribute__((const, overloadable))step(float4 edge, float v);
 #endif
 
+#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+/*
+ * if (v < edge)
+ * return 0.f;
+ * else
+ * return 1.f;
+ *
+ * Supported by API versions 20 and newer.
+ */
+extern float2 __attribute__((const, overloadable))step(float edge, float2 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+/*
+ * if (v < edge)
+ * return 0.f;
+ * else
+ * return 1.f;
+ *
+ * Supported by API versions 20 and newer.
+ */
+extern float3 __attribute__((const, overloadable))step(float edge, float3 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+/*
+ * if (v < edge)
+ * return 0.f;
+ * else
+ * return 1.f;
+ *
+ * Supported by API versions 20 and newer.
+ */
+extern float4 __attribute__((const, overloadable))step(float edge, float4 v);
+#endif
+
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /*
  * Return the sign of a value.

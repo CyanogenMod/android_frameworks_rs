@@ -867,6 +867,27 @@ extern float4 __attribute__((overloadable)) step(float4 edge, float v) {
     r.w = (v < edge.w) ? 0.f : 1.f;
     return r;
 }
+extern float2 __attribute__((overloadable)) step(float edge, float2 v) {
+    float2 r;
+    r.x = (v.x < edge) ? 0.f : 1.f;
+    r.y = (v.y < edge) ? 0.f : 1.f;
+    return r;
+}
+extern float3 __attribute__((overloadable)) step(float edge, float3 v) {
+    float3 r;
+    r.x = (v.x < edge) ? 0.f : 1.f;
+    r.y = (v.y < edge) ? 0.f : 1.f;
+    r.z = (v.z < edge) ? 0.f : 1.f;
+    return r;
+}
+extern float4 __attribute__((overloadable)) step(float edge, float4 v) {
+    float4 r;
+    r.x = (v.x < edge) ? 0.f : 1.f;
+    r.y = (v.y < edge) ? 0.f : 1.f;
+    r.z = (v.z < edge) ? 0.f : 1.f;
+    r.w = (v.w < edge) ? 0.f : 1.f;
+    return r;
+}
 
 extern float __attribute__((overloadable)) smoothstep(float, float, float);
 extern float2 __attribute__((overloadable)) smoothstep(float2, float2, float2);
