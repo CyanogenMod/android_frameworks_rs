@@ -29,7 +29,12 @@ clcore_base_files := \
     rs_sampler.c \
     convert.ll \
     allocation.ll \
-    rsClamp.ll
+    rsClamp.ll \
+    rs_idct.c \
+    rs_dct.c \
+    rs_iadst.c  \
+    rs_fadst.c  \
+    rs_walsh.c
 
 clcore_files := \
     $(clcore_base_files) \
