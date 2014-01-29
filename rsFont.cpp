@@ -515,9 +515,9 @@ void FontState::initRenderState() {
 
     ObjectBaseRef<Type> inputType = Type::getTypeRef(mRSC, constInput.get(), 1, 0, 0, false, false, 0);
 
-    uint32_t tmp[4];
+    uintptr_t tmp[4];
     tmp[0] = RS_PROGRAM_PARAM_CONSTANT;
-    tmp[1] = (uint32_t)inputType.get();
+    tmp[1] = (uintptr_t)inputType.get();
     tmp[2] = RS_PROGRAM_PARAM_TEXTURE_TYPE;
     tmp[3] = RS_TEXTURE_2D;
 

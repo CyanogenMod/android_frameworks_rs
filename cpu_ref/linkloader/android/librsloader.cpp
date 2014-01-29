@@ -91,7 +91,12 @@ extern "C" void rsloaderUpdateSectionHeaders(RSExecRef object_,
           static_cast<ELFSectionBits<32>*>(object->getSectionByIndex(i));
       if (bits) {
         const unsigned char* addr = bits->getBuffer();
+#ifdef __LP64__
+        ALOGE("Code temporarily disabled for 64bit build");
+        abort();
+#else
         shtab[i].sh_addr = reinterpret_cast<llvm::ELF::Elf32_Addr>(addr);
+#endif
       }
     }
   }
