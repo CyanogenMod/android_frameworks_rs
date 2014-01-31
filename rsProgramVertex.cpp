@@ -25,7 +25,7 @@ using namespace android::renderscript;
 ProgramVertex::ProgramVertex(Context *rsc, const char * shaderText, size_t shaderLength,
                              const char** textureNames, size_t textureNamesCount, const size_t *textureNamesLength,
 
-                             const uint32_t * params, size_t paramLength)
+                             const uintptr_t * params, size_t paramLength)
     : Program(rsc, shaderText, shaderLength, params, paramLength) {
     mRSC->mHal.funcs.vertex.init(mRSC, this, mUserShader, mUserShaderLen,
                                  textureNames, textureNamesCount, textureNamesLength);
@@ -196,11 +196,11 @@ void ProgramVertexState::init(Context *rsc) {
             "  varTex0 = ATTRIB_texture0;\n"
             "}\n";
 
-    uint32_t tmp[4];
+    uintptr_t tmp[4];
     tmp[0] = RS_PROGRAM_PARAM_CONSTANT;
-    tmp[1] = (uint32_t)inputType.get();
+    tmp[1] = (uintptr_t)inputType.get();
     tmp[2] = RS_PROGRAM_PARAM_INPUT;
-    tmp[3] = (uint32_t)attrElem.get();
+    tmp[3] = (uintptr_t)attrElem.get();
 
     ProgramVertex *pv = new ProgramVertex(rsc, shaderString, strlen(shaderString),
                                           NULL, 0, NULL, tmp, 4);
@@ -244,7 +244,7 @@ namespace renderscript {
 RsProgramVertex rsi_ProgramVertexCreate(Context *rsc, const char * shaderText, size_t shaderLength,
                                         const char** textureNames, size_t textureNamesCount,
                                         const size_t *textureNamesLength,
-                                        const uint32_t * params, size_t paramLength) {
+                                        const uintptr_t * params, size_t paramLength) {
     ProgramVertex *pv = new ProgramVertex(rsc, shaderText, shaderLength,
                                           textureNames, textureNamesCount, textureNamesLength,
                                           params, paramLength);

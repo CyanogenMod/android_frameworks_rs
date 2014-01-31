@@ -42,7 +42,7 @@ ProgramFragmentCreate {
     direct
     param const char * shaderText
     param const char ** textureNames
-    param const uint32_t * params
+    param const uintptr_t * params
     ret RsProgramFragment
     }
 
@@ -50,7 +50,7 @@ ProgramVertexCreate {
     direct
     param const char * shaderText
     param const char ** textureNames
-    param const uint32_t * params
+    param const uintptr_t * params
     ret RsProgramVertex
     }
 
