@@ -110,7 +110,8 @@ public:
                                     uint32_t version_minor, sym_lookup_t lfn, script_lookup_t slfn
 #ifndef RS_COMPATIBILITY_LIB
                                     , bcc::RSLinkRuntimeCallback pLinkRuntimeCallback = NULL,
-                                    RSSelectRTCallback pSelectRTCallback = NULL
+                                    RSSelectRTCallback pSelectRTCallback = NULL,
+                                    const char *pBccPluginName = NULL
 #endif
                                     );
     virtual ~RsdCpuReference();
