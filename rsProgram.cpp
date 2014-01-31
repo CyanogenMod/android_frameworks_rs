@@ -17,11 +17,13 @@
 #include "rsContext.h"
 #include "rsProgram.h"
 
+#include <inttypes.h>
+
 using namespace android;
 using namespace android::renderscript;
 
 Program::Program(Context *rsc, const char * shaderText, size_t shaderLength,
-                 const uint32_t * params, size_t paramLength)
+                 const uintptr_t * params, size_t paramLength)
     : ProgramBase(rsc) {
 
     initMemberVars();
@@ -150,14 +152,14 @@ void Program::initMemberVars() {
 void Program::bindAllocation(Context *rsc, Allocation *alloc, uint32_t slot) {
     if (alloc != NULL) {
         if (slot >= mHal.state.constantsCount) {
-            ALOGE("Attempt to bind alloc at slot %u, on shader id %u, but const count is %u",
-                 slot, (uint32_t)this, mHal.state.constantsCount);
+            ALOGE("Attempt to bind alloc at slot %u, on shader id %" PRIuPTR ", but const count is %u",
+                 slot, (uintptr_t)this, mHal.state.constantsCount);
             rsc->setError(RS_ERROR_BAD_SHADER, "Cannot bind allocation");
             return;
         }
         if (alloc->getType() != mConstantTypes[slot].get()) {
-            ALOGE("Attempt to bind alloc at slot %u, on shader id %u, but types mismatch",
-                 slot, (uint32_t)this);
+            ALOGE("Attempt to bind alloc at slot %u, on shader id %" PRIuPTR ", but types mismatch",
+                 slot, (uintptr_t)this);
             rsc->setError(RS_ERROR_BAD_SHADER, "Cannot bind allocation");
             return;
         }

@@ -34,6 +34,7 @@
 #include <sys/syscall.h>
 #include <string.h>
 #include <dlfcn.h>
+#include <inttypes.h>
 #include <unistd.h>
 
 #if !defined(RS_SERVER) && !defined(RS_COMPATIBILITY_LIB) && \
@@ -184,7 +185,8 @@ void Context::timerPrint() {
 
 
     if (props.mLogTimes) {
-        ALOGV("RS: Frame (%i),   Script %2.1f%% (%i),  Swap %2.1f%% (%i),  Idle %2.1f%% (%lli),  Internal %2.1f%% (%lli), Avg fps: %u",
+        ALOGV("RS: Frame (%i),   Script %2.1f%% (%i),  Swap %2.1f%% (%i),  Idle %2.1f%% (%" PRIi64 "),  "
+              "Internal %2.1f%% (%" PRIi64 "), Avg fps: %u",
              mTimeMSLastFrame,
              100.0 * mTimers[RS_TIMER_SCRIPT] / total, mTimeMSLastScript,
              100.0 * mTimers[RS_TIMER_CLEAR_SWAP] / total, mTimeMSLastSwap,
