@@ -226,6 +226,21 @@ void printApiCpp(FILE *f) {
                 fprintf(f, "%s", vt->name);
             }
             fprintf(f, ");\n");
+        } else if (api->handcodeApi) {
+            // handle handcode path
+            fprintf(f, "    LF_%s_handcode(", api->name);
+            if (!api->nocontext) {
+                fprintf(f, "(Context *)rsc");
+            }
+            for (ct2=0; ct2 < api->paramCount; ct2++) {
+                const VarType *vt = &api->params[ct2];
+                if (ct2 > 0 || !api->nocontext) {
+                    fprintf(f, ", ");
+                }
+                fprintf(f, "%s", vt->name);
+            }
+            fprintf(f, ");\n");
+
         } else {
             // handle synchronous path
             fprintf(f, "    if (((Context *)rsc)->isSynchronous()) {\n");

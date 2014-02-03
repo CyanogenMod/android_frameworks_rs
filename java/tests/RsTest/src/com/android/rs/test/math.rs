@@ -172,6 +172,13 @@ res_ul_1 = src1_ul_1 op src2_ul_1;
     f3 = fnc(f3, f1);               \
     f4 = fnc(f4, f1);
 
+#define TEST_FN_FUNC_F_FN(fnc)      \
+    rsDebug("Testing " #fnc, 0);    \
+    f1 = fnc(f1, f1);               \
+    f2 = fnc(f1, f2);               \
+    f3 = fnc(f1, f3);               \
+    f4 = fnc(f1, f4);
+
 #define TEST_F_FUNC_FN(fnc)         \
     rsDebug("Testing " #fnc, 0);    \
     f1 = fnc(f1);                   \
@@ -321,6 +328,7 @@ static bool test_fp_math(uint32_t index) {
     TEST_FN_FUNC_FN(sqrt);
     TEST_FN_FUNC_FN_FN(step);
     TEST_FN_FUNC_FN_F(step);
+    TEST_FN_FUNC_F_FN(step);
     TEST_FN_FUNC_FN(tan);
     TEST_FN_FUNC_FN(tanh);
     TEST_FN_FUNC_FN(tanpi);

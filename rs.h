@@ -45,10 +45,10 @@ extern "C" {
     // Allocation update
     const void* rsaAllocationGetType(RsContext con, RsAllocation va);
     // Type update
-    void rsaTypeGetNativeData(RsContext, RsType, uint32_t *typeData, uint32_t typeDataSize);
+    void rsaTypeGetNativeData(RsContext, RsType, uintptr_t *typeData, uint32_t typeDataSize);
     // Element update
-    void rsaElementGetNativeData(RsContext, RsElement, uint32_t *elemData, uint32_t elemDataSize);
-    void rsaElementGetSubElements(RsContext, RsElement, uint32_t *ids, const char **names,
+    void rsaElementGetNativeData(RsContext, RsElement, uintptr_t *elemData, uint32_t elemDataSize);
+    void rsaElementGetSubElements(RsContext, RsElement, uintptr_t *ids, const char **names,
                                   uint32_t *arraySizes, uint32_t dataSize);
 
     RsDevice rsDeviceCreate();
