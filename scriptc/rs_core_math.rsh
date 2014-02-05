@@ -3730,15 +3730,6 @@ extern float4 __attribute__((const, overloadable))fmax(float4 x, float4 y);
  *
  * Supported by API versions 9 and newer.
  */
-extern float __attribute__((const, overloadable))fmax(float x, float y);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Return (x < y ? y : x)
- *
- * Supported by API versions 9 and newer.
- */
 extern float2 __attribute__((const, overloadable))fmax(float2 x, float y);
 #endif
 
@@ -3794,15 +3785,6 @@ extern float3 __attribute__((const, overloadable))fmin(float3 x, float3 y);
  * Supported by API versions 9 and newer.
  */
 extern float4 __attribute__((const, overloadable))fmin(float4 x, float4 y);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Return (x > y ? y : x)
- *
- * Supported by API versions 9 and newer.
- */
-extern float __attribute__((const, overloadable))fmin(float x, float y);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -4074,78 +4056,6 @@ extern int3 __attribute__((const, overloadable))ilogb(float3);
  * Supported by API versions 9 and newer.
  */
 extern int4 __attribute__((const, overloadable))ilogb(float4);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Return (x * 2^y)
- *
- * Supported by API versions 9 and newer.
- */
-extern float __attribute__((const, overloadable))ilogb(float, int);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Return (x * 2^y)
- *
- * Supported by API versions 9 and newer.
- */
-extern float2 __attribute__((const, overloadable))ilogb(float2, int2);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Return (x * 2^y)
- *
- * Supported by API versions 9 and newer.
- */
-extern float3 __attribute__((const, overloadable))ilogb(float3, int3);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Return (x * 2^y)
- *
- * Supported by API versions 9 and newer.
- */
-extern float4 __attribute__((const, overloadable))ilogb(float4, int4);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Return (x * 2^y)
- *
- * Supported by API versions 9 and newer.
- */
-extern float __attribute__((const, overloadable))ilogb(float, int);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Return (x * 2^y)
- *
- * Supported by API versions 9 and newer.
- */
-extern float2 __attribute__((const, overloadable))ilogb(float2, int);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Return (x * 2^y)
- *
- * Supported by API versions 9 and newer.
- */
-extern float3 __attribute__((const, overloadable))ilogb(float3, int);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Return (x * 2^y)
- *
- * Supported by API versions 9 and newer.
- */
-extern float4 __attribute__((const, overloadable))ilogb(float4, int);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -7027,19 +6937,6 @@ extern float4 __attribute__((const, overloadable))clamp(float4 value, float4 min
  *
  * Supported by API versions 9 and newer.
  */
-extern float __attribute__((const, overloadable))clamp(float value, float min_value, float max_value);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Clamp a value to a specified high and low bound.
- *
- * @param amount value to be clamped.  Supports 1,2,3,4 components
- * @param min_value Lower bound, must be scalar or matching vector.
- * @param max_value High bound, must match type of low
- *
- * Supported by API versions 9 and newer.
- */
 extern float2 __attribute__((const, overloadable))clamp(float2 value, float min_value, float max_value);
 #endif
 
@@ -7495,19 +7392,6 @@ extern ulong4 __attribute__((const, overloadable))clamp(ulong4 value, ulong4 min
  *
  * Supported by API versions 19 and newer.
  */
-extern char __attribute__((const, overloadable))clamp(char value, char min_value, char max_value);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 19))
-/*
- * Clamp a value to a specified high and low bound.
- *
- * @param amount value to be clamped.  Supports 1,2,3,4 components
- * @param min_value Lower bound, must be scalar or matching vector.
- * @param max_value High bound, must match type of low
- *
- * Supported by API versions 19 and newer.
- */
 extern char2 __attribute__((const, overloadable))clamp(char2 value, char min_value, char max_value);
 #endif
 
@@ -7535,19 +7419,6 @@ extern char3 __attribute__((const, overloadable))clamp(char3 value, char min_val
  * Supported by API versions 19 and newer.
  */
 extern char4 __attribute__((const, overloadable))clamp(char4 value, char min_value, char max_value);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 19))
-/*
- * Clamp a value to a specified high and low bound.
- *
- * @param amount value to be clamped.  Supports 1,2,3,4 components
- * @param min_value Lower bound, must be scalar or matching vector.
- * @param max_value High bound, must match type of low
- *
- * Supported by API versions 19 and newer.
- */
-extern uchar __attribute__((const, overloadable))clamp(uchar value, uchar min_value, uchar max_value);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 19))
@@ -7599,19 +7470,6 @@ extern uchar4 __attribute__((const, overloadable))clamp(uchar4 value, uchar min_
  *
  * Supported by API versions 19 and newer.
  */
-extern short __attribute__((const, overloadable))clamp(short value, short min_value, short max_value);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 19))
-/*
- * Clamp a value to a specified high and low bound.
- *
- * @param amount value to be clamped.  Supports 1,2,3,4 components
- * @param min_value Lower bound, must be scalar or matching vector.
- * @param max_value High bound, must match type of low
- *
- * Supported by API versions 19 and newer.
- */
 extern short2 __attribute__((const, overloadable))clamp(short2 value, short min_value, short max_value);
 #endif
 
@@ -7639,19 +7497,6 @@ extern short3 __attribute__((const, overloadable))clamp(short3 value, short min_
  * Supported by API versions 19 and newer.
  */
 extern short4 __attribute__((const, overloadable))clamp(short4 value, short min_value, short max_value);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 19))
-/*
- * Clamp a value to a specified high and low bound.
- *
- * @param amount value to be clamped.  Supports 1,2,3,4 components
- * @param min_value Lower bound, must be scalar or matching vector.
- * @param max_value High bound, must match type of low
- *
- * Supported by API versions 19 and newer.
- */
-extern ushort __attribute__((const, overloadable))clamp(ushort value, ushort min_value, ushort max_value);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 19))
@@ -7703,19 +7548,6 @@ extern ushort4 __attribute__((const, overloadable))clamp(ushort4 value, ushort m
  *
  * Supported by API versions 19 and newer.
  */
-extern int __attribute__((const, overloadable))clamp(int value, int min_value, int max_value);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 19))
-/*
- * Clamp a value to a specified high and low bound.
- *
- * @param amount value to be clamped.  Supports 1,2,3,4 components
- * @param min_value Lower bound, must be scalar or matching vector.
- * @param max_value High bound, must match type of low
- *
- * Supported by API versions 19 and newer.
- */
 extern int2 __attribute__((const, overloadable))clamp(int2 value, int min_value, int max_value);
 #endif
 
@@ -7743,19 +7575,6 @@ extern int3 __attribute__((const, overloadable))clamp(int3 value, int min_value,
  * Supported by API versions 19 and newer.
  */
 extern int4 __attribute__((const, overloadable))clamp(int4 value, int min_value, int max_value);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 19))
-/*
- * Clamp a value to a specified high and low bound.
- *
- * @param amount value to be clamped.  Supports 1,2,3,4 components
- * @param min_value Lower bound, must be scalar or matching vector.
- * @param max_value High bound, must match type of low
- *
- * Supported by API versions 19 and newer.
- */
-extern uint __attribute__((const, overloadable))clamp(uint value, uint min_value, uint max_value);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 19))
@@ -7807,19 +7626,6 @@ extern uint4 __attribute__((const, overloadable))clamp(uint4 value, uint min_val
  *
  * Supported by API versions 19 and newer.
  */
-extern long __attribute__((const, overloadable))clamp(long value, long min_value, long max_value);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 19))
-/*
- * Clamp a value to a specified high and low bound.
- *
- * @param amount value to be clamped.  Supports 1,2,3,4 components
- * @param min_value Lower bound, must be scalar or matching vector.
- * @param max_value High bound, must match type of low
- *
- * Supported by API versions 19 and newer.
- */
 extern long2 __attribute__((const, overloadable))clamp(long2 value, long min_value, long max_value);
 #endif
 
@@ -7847,19 +7653,6 @@ extern long3 __attribute__((const, overloadable))clamp(long3 value, long min_val
  * Supported by API versions 19 and newer.
  */
 extern long4 __attribute__((const, overloadable))clamp(long4 value, long min_value, long max_value);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 19))
-/*
- * Clamp a value to a specified high and low bound.
- *
- * @param amount value to be clamped.  Supports 1,2,3,4 components
- * @param min_value Lower bound, must be scalar or matching vector.
- * @param max_value High bound, must match type of low
- *
- * Supported by API versions 19 and newer.
- */
-extern ulong __attribute__((const, overloadable))clamp(ulong value, ulong min_value, ulong max_value);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 19))
@@ -7971,15 +7764,6 @@ extern float3 __attribute__((const, overloadable))mix(float3 start, float3 stop,
  * Supported by API versions 9 and newer.
  */
 extern float4 __attribute__((const, overloadable))mix(float4 start, float4 stop, float4 amount);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * return start + ((stop - start) * amount)
- *
- * Supported by API versions 9 and newer.
- */
-extern float __attribute__((const, overloadable))mix(float start, float stop, float amount);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
