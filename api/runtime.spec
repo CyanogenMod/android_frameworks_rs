@@ -342,7 +342,7 @@ version: 9
 end:
 
 start:
-w: 1, 2, 3, 4
+w: 2, 3, 4
 t: f32
 name: fmax
 ret: #2#1
@@ -366,7 +366,7 @@ version: 9
 end:
 
 start:
-w: 1, 2, 3, 4
+w: 2, 3, 4
 t: f32
 name: fmin
 ret: #2#1
@@ -451,30 +451,6 @@ ret: int#1
 arg: float#1
 comment:
  Return the integer exponent of a value
-version: 9
-end:
-
-start:
-w: 1, 2, 3, 4
-t: f32
-name: ilogb
-ret: #2#1
-arg: #2#1
-arg: int#1
-comment:
- Return (x * 2^y)
-version: 9
-end:
-
-start:
-w: 1, 2, 3, 4
-t: f32
-name: ilogb
-ret: #2#1
-arg: #2#1
-arg: int
-comment:
- Return (x * 2^y)
 version: 9
 end:
 
@@ -1084,7 +1060,7 @@ version: 9
 end:
 
 start:
-w: 1, 2, 3, 4
+w: 2, 3, 4
 t: f32
 name: clamp
 ret: #2#1
@@ -1118,7 +1094,7 @@ version: 19
 end:
 
 start:
-w: 1, 2, 3, 4
+w: 2, 3, 4
 t: u8, u16, u32, u64, i8, i16, i32, i64
 name: clamp
 ret: #2#1
@@ -1159,7 +1135,7 @@ version: 9
 end:
 
 start:
-w: 1, 2, 3, 4
+w: 2, 3, 4
 t: f32
 name: mix
 ret: #2#1
