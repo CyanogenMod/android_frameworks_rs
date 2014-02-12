@@ -22,7 +22,7 @@ static void idct4_1d(const int16_t *input, int16_t *output) {
     output[3] = step[0] - step[3];
 }
 
-void idct4x4_1(const rs_allocation input, rs_allocation dest, int xoff, int yoff) {
+static void idct4x4_1(const rs_allocation input, rs_allocation dest, int xoff, int yoff) {
     int i, j;
     int a1;
     int16_t out = dct_const_round_shift(rsGetElementAt_short(input, xoff, yoff)
@@ -39,7 +39,7 @@ void idct4x4_1(const rs_allocation input, rs_allocation dest, int xoff, int yoff
     }
 }
 
-void idct4x4_16(const rs_allocation input, rs_allocation dest, int xoff, int yoff) {
+static void idct4x4_16(const rs_allocation input, rs_allocation dest, int xoff, int yoff) {
     int16_t out[4 * 4];
     int16_t *outptr = out;
     int i, j;
@@ -120,7 +120,7 @@ static void idct8_1d(const int16_t *input, int16_t *output) {
     output[7] = step1[0] - step1[7];
 }
 
-void idct8x8_1(const rs_allocation input, rs_allocation dest, int xoff, int yoff) {
+static void idct8x8_1(const rs_allocation input, rs_allocation dest, int xoff, int yoff) {
     int i, j;
     int a1;
     int16_t out = dct_const_round_shift(rsGetElementAt_short(input, xoff, yoff)
@@ -137,7 +137,7 @@ void idct8x8_1(const rs_allocation input, rs_allocation dest, int xoff, int yoff
     }
 }
 
-void idct8x8_10(const rs_allocation input, rs_allocation dest, int xoff, int yoff) {
+static void idct8x8_10(const rs_allocation input, rs_allocation dest, int xoff, int yoff) {
     int16_t out[8 * 8] = { 0 };
     int16_t *outptr = out;
     int i, j;
@@ -173,7 +173,7 @@ void idct8x8_10(const rs_allocation input, rs_allocation dest, int xoff, int yof
     }
 }
 
-void idct8x8_64(const rs_allocation input, rs_allocation dest, int xoff, int yoff) {
+static void idct8x8_64(const rs_allocation input, rs_allocation dest, int xoff, int yoff) {
     int16_t out[8 * 8];
     int16_t *outptr = out;
     int i, j;
@@ -373,7 +373,7 @@ static void idct16_1d(const int16_t *input, int16_t *output) {
     output[15] = step2[0] - step2[15];
 }
 
-void idct16x16_1(const rs_allocation input, rs_allocation dest, int xoff, int yoff) {
+static void idct16x16_1(const rs_allocation input, rs_allocation dest, int xoff, int yoff) {
     int i, j;
     int a1;
     int16_t out = dct_const_round_shift(rsGetElementAt_short(input, xoff, yoff)
@@ -390,7 +390,7 @@ void idct16x16_1(const rs_allocation input, rs_allocation dest, int xoff, int yo
     }
 }
 
-void idct16x16_10(const rs_allocation input, rs_allocation dest, int xoff, int yoff) {
+static void idct16x16_10(const rs_allocation input, rs_allocation dest, int xoff, int yoff) {
     int16_t out[16 * 16] = { 0 };
     int16_t *outptr = out;
     int i, j;
@@ -426,7 +426,7 @@ void idct16x16_10(const rs_allocation input, rs_allocation dest, int xoff, int y
     }
 }
 
-void idct16x16_256(const rs_allocation input, rs_allocation dest, int xoff, int yoff) {
+static void idct16x16_256(const rs_allocation input, rs_allocation dest, int xoff, int yoff) {
     int16_t out[16 * 16];
     int16_t *outptr = out;
     int i, j;
@@ -828,7 +828,7 @@ static void idct32_1d(const int16_t *input, int16_t *output) {
     output[31] = step1[0] - step1[31];
 }
 
-void idct32x32_1(const rs_allocation input, rs_allocation dest, int xoff, int yoff) {
+static void idct32x32_1(const rs_allocation input, rs_allocation dest, int xoff, int yoff) {
     int i, j;
     int a1;
     int16_t out = dct_const_round_shift(rsGetElementAt_short(input, xoff, yoff)
@@ -844,7 +844,7 @@ void idct32x32_1(const rs_allocation input, rs_allocation dest, int xoff, int yo
     }
 }
 
-void idct32x32_34(const rs_allocation input, rs_allocation dest, int xoff, int yoff) {
+static void idct32x32_34(const rs_allocation input, rs_allocation dest, int xoff, int yoff) {
     int16_t out[32 * 32] = { 0 };
     int16_t *outptr = out;
     int i, j;
@@ -880,7 +880,7 @@ void idct32x32_34(const rs_allocation input, rs_allocation dest, int xoff, int y
     }
 }
 
-void idct32x32_1024(const rs_allocation input, rs_allocation dest, int xoff, int yoff) {
+static void idct32x32_1024(const rs_allocation input, rs_allocation dest, int xoff, int yoff) {
     int16_t out[32 * 32];
     int16_t *outptr = out;
     int i, j;
@@ -928,7 +928,7 @@ void idct32x32_1024(const rs_allocation input, rs_allocation dest, int xoff, int
     }
 }
 
-extern void idct4x4(const rs_allocation input, rs_allocation dest, int eob,
+extern void rsIdct4x4(const rs_allocation input, rs_allocation dest, int eob,
         int xoff, int yoff) {
     if (eob > 1) {
         idct4x4_16(input, dest, xoff, yoff);
@@ -937,7 +937,7 @@ extern void idct4x4(const rs_allocation input, rs_allocation dest, int eob,
     }
 }
 
-extern void idct8x8(const rs_allocation input, rs_allocation dest, int eob,
+extern void rsIdct8x8(const rs_allocation input, rs_allocation dest, int eob,
         int xoff, int yoff) {
     if (eob == 1)
         // DC only DCT coefficient
@@ -948,7 +948,7 @@ extern void idct8x8(const rs_allocation input, rs_allocation dest, int eob,
         idct8x8_64(input, dest, xoff, yoff);
 }
 
-extern void idct16x16(const rs_allocation input, rs_allocation dest, int eob,
+extern void rsIdct16x16(const rs_allocation input, rs_allocation dest, int eob,
         int xoff, int yoff) {
     if (eob == 1)
         /* DC only DCT coefficient. */
@@ -959,7 +959,7 @@ extern void idct16x16(const rs_allocation input, rs_allocation dest, int eob,
         idct16x16_256(input, dest, xoff, yoff);
 }
 
-extern void idct32x32(const rs_allocation input, rs_allocation dest, int eob,
+extern void rsIdct32x32(const rs_allocation input, rs_allocation dest, int eob,
         int xoff, int yoff) {
     if (eob == 1)
         idct32x32_1(input, dest, xoff, yoff);

@@ -392,7 +392,7 @@ static void dct32_1d(const int *input, int *output, int round) {
     output[31] = dct_32_round(step[31] * cospi_31_64 + step[16] * -cospi_1_64);
 }
 
-extern void dct4x4(rs_allocation input, rs_allocation output, int xoff, int yoff) {
+extern void rsDct4x4(rs_allocation input, rs_allocation output, int xoff, int yoff) {
     // The 2D transform is done with two passes which are actually pretty
     // similar. In the first one, we transform the columns and transpose
     // the results. In the second one, we transform the rows. To achieve that,
@@ -467,7 +467,7 @@ extern void dct4x4(rs_allocation input, rs_allocation output, int xoff, int yoff
     }
 }
 
-extern void dct8x8(rs_allocation input, rs_allocation output, int xoff, int yoff) {
+extern void rsDct8x8(rs_allocation input, rs_allocation output, int xoff, int yoff) {
     int i, j;
     int16_t intermediate[64];
     int16_t inptr[64];
@@ -553,7 +553,7 @@ extern void dct8x8(rs_allocation input, rs_allocation output, int xoff, int yoff
 
 }
 
-extern void dct16x16(rs_allocation input, rs_allocation output, int xoff, int yoff) {
+extern void rsDct16x16(rs_allocation input, rs_allocation output, int xoff, int yoff) {
     // The 2D transform is done with two passes which are actually pretty
     // similar. In the first one, we transform the columns and transpose
     // the results. In the second one, we transform the rows. To achieve that,
@@ -748,7 +748,7 @@ extern void dct16x16(rs_allocation input, rs_allocation output, int xoff, int yo
     }
 }
 
-extern void dct32x32(rs_allocation input, rs_allocation out, int xoff, int yoff) {
+extern void rsDct32x32(rs_allocation input, rs_allocation out, int xoff, int yoff) {
     int i, j;
     int output[32 * 32];
     int16_t inptr[1024];
@@ -792,7 +792,7 @@ extern void dct32x32(rs_allocation input, rs_allocation out, int xoff, int yoff)
 // Note that although we use dct_32_round in dct32_1d computation flow,
 // this 2d fdct32x32 for rate-distortion optimization loop is operating
 // within 16 bits precision.
-extern void dct32x32_rd(rs_allocation input, rs_allocation out, int xoff, int yoff) {
+extern void rsDct32x32_rd(rs_allocation input, rs_allocation out, int xoff, int yoff) {
     int i, j;
     int output[32 * 32];
     int16_t inptr[1024];
