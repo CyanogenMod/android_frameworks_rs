@@ -1,7 +1,7 @@
 #include "rs_types.rsh"
 #include "rs_allocation.rsh"
 
-extern void walsh4x4(rs_allocation input, rs_allocation dest, int xoff, int yoff) {
+extern void rsWalsh4x4(rs_allocation input, rs_allocation dest, int xoff, int yoff) {
     short output[16];
     int i, j;
     int a1, b1, c1, d1;
@@ -56,7 +56,7 @@ extern void walsh4x4(rs_allocation input, rs_allocation dest, int xoff, int yoff
 
 }
 
-extern void walsh4x4_1(rs_allocation input, rs_allocation dest, int xoff, int yoff) {
+extern void rsWalsh4x4_1(rs_allocation input, rs_allocation dest, int xoff, int yoff) {
     int i, j;
     int a1;
     int16_t inptr[16];
