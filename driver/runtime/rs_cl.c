@@ -977,7 +977,7 @@ extern float __attribute__((overloadable)) distance(float4 lhs, float4 rhs) {
 }
 
 extern float __attribute__((overloadable)) normalize(float v) {
-    return 1.f;
+    return (v < 0.0f) ? -1.0f : 1.0f;
 }
 extern float2 __attribute__((overloadable)) normalize(float2 v) {
     return v / length(v);
