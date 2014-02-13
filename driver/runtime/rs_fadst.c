@@ -1,7 +1,7 @@
 #include "rs_fadst.h"
 #include "rs_allocation.rsh"
 
-extern void fadst4(const rs_allocation input, rs_allocation output, int32_t xoff) {
+extern void rsFadst4(const rs_allocation input, rs_allocation output, int32_t xoff) {
     int x0, x1, x2, x3;
     int s0, s1, s2, s3, s4, s5, s6, s7;
 
@@ -43,7 +43,7 @@ extern void fadst4(const rs_allocation input, rs_allocation output, int32_t xoff
     rsSetElementAt_short(output, fdct_round_shift(s3), xoff + 3);
 }
 
-extern void fadst8(const rs_allocation input, rs_allocation output, int32_t xoff) {
+extern void rsFadst8(const rs_allocation input, rs_allocation output, int32_t xoff) {
     int s0, s1, s2, s3, s4, s5, s6, s7;
     int16_t outArr[8];
 
@@ -120,7 +120,7 @@ extern void fadst8(const rs_allocation input, rs_allocation output, int32_t xoff
     }
 }
 
-extern void fadst16(const rs_allocation input, rs_allocation output, int32_t xoff) {
+extern void rsFadst16(const rs_allocation input, rs_allocation output, int32_t xoff) {
     int s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, s12, s13, s14, s15;
     int16_t outArr[16];
 

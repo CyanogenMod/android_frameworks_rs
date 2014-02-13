@@ -1,7 +1,7 @@
 #include "rs_iadst.h"
 #include "rs_allocation.rsh"
 
-extern void iadst4(const rs_allocation input, rs_allocation output, int32_t xoff) {
+extern void rsIadst4(const rs_allocation input, rs_allocation output, int32_t xoff) {
     int s0, s1, s2, s3, s4, s5, s6, s7;
 
     int x0 = rsGetElementAt_short(input, xoff);
@@ -42,7 +42,7 @@ extern void iadst4(const rs_allocation input, rs_allocation output, int32_t xoff
     rsSetElementAt_short(output, dct_const_round_shift(s3), xoff + 3);
 }
 
-extern void iadst8(const rs_allocation input, rs_allocation output, int32_t xoff) {
+extern void rsIadst8(const rs_allocation input, rs_allocation output, int32_t xoff) {
     int s0, s1, s2, s3, s4, s5, s6, s7;
     int16_t outArr[8];
 
@@ -131,7 +131,7 @@ extern void iadst8(const rs_allocation input, rs_allocation output, int32_t xoff
     }
 }
 
-extern void iadst16(const rs_allocation input, rs_allocation output, int32_t xoff) {
+extern void rsIadst16(const rs_allocation input, rs_allocation output, int32_t xoff) {
     int s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, s12, s13, s14, s15;
     int16_t outArr[16];
     int i;
