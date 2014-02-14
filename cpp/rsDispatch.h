@@ -20,9 +20,9 @@
 #include "rsDefines.h"
 
 typedef const void* (*AllocationGetTypeFnPtr)(RsContext con, RsAllocation va);
-typedef void (*TypeGetNativeDataFnPtr)(RsContext, RsType, uint32_t *typeData, uint32_t typeDataSize);
-typedef void (*ElementGetNativeDataFnPtr)(RsContext, RsElement, uint32_t *elemData, uint32_t elemDataSize);
-typedef void (*ElementGetSubElementsFnPtr)(RsContext, RsElement, uint32_t *ids, const char **names, uint32_t *arraySizes, uint32_t dataSize);
+typedef void (*TypeGetNativeDataFnPtr)(RsContext, RsType, uintptr_t *typeData, uint32_t typeDataSize);
+typedef void (*ElementGetNativeDataFnPtr)(RsContext, RsElement, uintptr_t *elemData, uint32_t elemDataSize);
+typedef void (*ElementGetSubElementsFnPtr)(RsContext, RsElement, uintptr_t *ids, const char **names, uint32_t *arraySizes, uint32_t dataSize);
 typedef RsDevice (*DeviceCreateFnPtr) ();
 typedef void (*DeviceDestroyFnPtr) (RsDevice dev);
 typedef void (*DeviceSetConfigFnPtr) (RsDevice dev, RsDeviceParam p, int32_t value);
