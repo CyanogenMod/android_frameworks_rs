@@ -13,6 +13,7 @@ endif
 include $(CLEAR_VARS)
 LOCAL_CLANG := true
 LOCAL_MODULE := libRSCpuRef
+LOCAL_MODULE_TARGET_ARCH := arm mips x86 x86_64
 
 LOCAL_SRC_FILES:= \
 	rsCpuCore.cpp \
