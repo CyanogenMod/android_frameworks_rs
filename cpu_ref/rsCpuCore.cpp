@@ -330,6 +330,9 @@ RsdCpuReferenceImpl::~RsdCpuReferenceImpl() {
         pthread_join(mWorkers.mThreadId[ct], &res);
     }
     rsAssert(__sync_fetch_and_or(&mWorkers.mRunningCount, 0) == 0);
+    free(mWorkers.mThreadId);
+    free(mWorkers.mNativeThreadId);
+    delete[] mWorkers.mLaunchSignals;
 
     // Global structure cleanup.
     lockMutex();
