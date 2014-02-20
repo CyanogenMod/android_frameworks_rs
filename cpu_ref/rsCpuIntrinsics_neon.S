@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-#include <machine/asm.h>
-
 /*
         r0 = dst
         r1 = y0 base pointer
@@ -24,6 +22,9 @@
         sp = coeffs
         sp = length / 2
 */
+
+#define ENTRY(f) .text; .align 0; .globl f; .type f,#function; f: .fnstart
+#define END(f) .fnend; .size f, .-f;
 
 ENTRY(rsdIntrinsicConvolve3x3_K)
         push            {r4-r8, r10, r11, lr}
