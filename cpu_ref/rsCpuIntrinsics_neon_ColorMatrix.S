@@ -15,7 +15,6 @@
  */
 
 #include <machine/cpu-features.h>
-#include <machine/asm.h>
 
 #define SNIP_START(x) \
     .globl x; x:
