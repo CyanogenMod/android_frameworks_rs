@@ -5237,7 +5237,7 @@ extern float4 __attribute__((const, overloadable))fmod(float4 x, float4 y);
  *
  * Supported by API versions 9 and newer.
  */
-extern float __attribute__((overloadable))fract(float v, float *floor);
+extern float __attribute__((overloadable))fract(float v, float* floor);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -5248,7 +5248,7 @@ extern float __attribute__((overloadable))fract(float v, float *floor);
  *
  * Supported by API versions 9 and newer.
  */
-extern float2 __attribute__((overloadable))fract(float2 v, float2 *floor);
+extern float2 __attribute__((overloadable))fract(float2 v, float2* floor);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -5259,7 +5259,7 @@ extern float2 __attribute__((overloadable))fract(float2 v, float2 *floor);
  *
  * Supported by API versions 9 and newer.
  */
-extern float3 __attribute__((overloadable))fract(float3 v, float3 *floor);
+extern float3 __attribute__((overloadable))fract(float3 v, float3* floor);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -5270,7 +5270,7 @@ extern float3 __attribute__((overloadable))fract(float3 v, float3 *floor);
  *
  * Supported by API versions 9 and newer.
  */
-extern float4 __attribute__((overloadable))fract(float4 v, float4 *floor);
+extern float4 __attribute__((overloadable))fract(float4 v, float4* floor);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -5329,7 +5329,7 @@ static float4 __attribute__((const, overloadable))fract(float4 v) {
  *
  * Supported by API versions 9 and newer.
  */
-extern float __attribute__((overloadable))frexp(float v, int *iptr);
+extern float __attribute__((overloadable))frexp(float v, int* iptr);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -5340,7 +5340,7 @@ extern float __attribute__((overloadable))frexp(float v, int *iptr);
  *
  * Supported by API versions 9 and newer.
  */
-extern float2 __attribute__((overloadable))frexp(float2 v, int2 *iptr);
+extern float2 __attribute__((overloadable))frexp(float2 v, int2* iptr);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -5351,7 +5351,7 @@ extern float2 __attribute__((overloadable))frexp(float2 v, int2 *iptr);
  *
  * Supported by API versions 9 and newer.
  */
-extern float3 __attribute__((overloadable))frexp(float3 v, int3 *iptr);
+extern float3 __attribute__((overloadable))frexp(float3 v, int3* iptr);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -5362,7 +5362,7 @@ extern float3 __attribute__((overloadable))frexp(float3 v, int3 *iptr);
  *
  * Supported by API versions 9 and newer.
  */
-extern float4 __attribute__((overloadable))frexp(float4 v, int4 *iptr);
+extern float4 __attribute__((overloadable))frexp(float4 v, int4* iptr);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 17))
@@ -5707,7 +5707,7 @@ extern float4 __attribute__((const, overloadable))lgamma(float4);
  *
  * Supported by API versions 9 and newer.
  */
-extern float __attribute__((overloadable))lgamma(float x, int *y);
+extern float __attribute__((overloadable))lgamma(float x, int* y);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -5716,7 +5716,7 @@ extern float __attribute__((overloadable))lgamma(float x, int *y);
  *
  * Supported by API versions 9 and newer.
  */
-extern float2 __attribute__((overloadable))lgamma(float2 x, int2 *y);
+extern float2 __attribute__((overloadable))lgamma(float2 x, int2* y);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -5725,7 +5725,7 @@ extern float2 __attribute__((overloadable))lgamma(float2 x, int2 *y);
  *
  * Supported by API versions 9 and newer.
  */
-extern float3 __attribute__((overloadable))lgamma(float3 x, int3 *y);
+extern float3 __attribute__((overloadable))lgamma(float3 x, int3* y);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -5734,7 +5734,7 @@ extern float3 __attribute__((overloadable))lgamma(float3 x, int3 *y);
  *
  * Supported by API versions 9 and newer.
  */
-extern float4 __attribute__((overloadable))lgamma(float4 x, int4 *y);
+extern float4 __attribute__((overloadable))lgamma(float4 x, int4* y);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -7346,7 +7346,7 @@ extern float4 __attribute__((const, overloadable))mix(float4 start, float4 stop,
  *
  * Supported by API versions 9 and newer.
  */
-extern float __attribute__((overloadable))modf(float x, float *iret);
+extern float __attribute__((overloadable))modf(float x, float* iret);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -7359,7 +7359,7 @@ extern float __attribute__((overloadable))modf(float x, float *iret);
  *
  * Supported by API versions 9 and newer.
  */
-extern float2 __attribute__((overloadable))modf(float2 x, float2 *iret);
+extern float2 __attribute__((overloadable))modf(float2 x, float2* iret);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -7372,7 +7372,7 @@ extern float2 __attribute__((overloadable))modf(float2 x, float2 *iret);
  *
  * Supported by API versions 9 and newer.
  */
-extern float3 __attribute__((overloadable))modf(float3 x, float3 *iret);
+extern float3 __attribute__((overloadable))modf(float3 x, float3* iret);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -7385,7 +7385,7 @@ extern float3 __attribute__((overloadable))modf(float3 x, float3 *iret);
  *
  * Supported by API versions 9 and newer.
  */
-extern float4 __attribute__((overloadable))modf(float4 x, float4 *iret);
+extern float4 __attribute__((overloadable))modf(float4 x, float4* iret);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -7820,7 +7820,7 @@ extern float4 __attribute__((const, overloadable))pown(float4 x, int4 y);
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /*
  * Return x ^ y.
- * y must be > 0
+ * x must be >= 0
  *
  * Supported by API versions 9 and newer.
  */
@@ -7830,7 +7830,7 @@ extern float __attribute__((const, overloadable))powr(float x, float y);
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /*
  * Return x ^ y.
- * y must be > 0
+ * x must be >= 0
  *
  * Supported by API versions 9 and newer.
  */
@@ -7840,7 +7840,7 @@ extern float2 __attribute__((const, overloadable))powr(float2 x, float2 y);
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /*
  * Return x ^ y.
- * y must be > 0
+ * x must be >= 0
  *
  * Supported by API versions 9 and newer.
  */
@@ -7850,7 +7850,7 @@ extern float3 __attribute__((const, overloadable))powr(float3 x, float3 y);
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /*
  * Return x ^ y.
- * y must be > 0
+ * x must be >= 0
  *
  * Supported by API versions 9 and newer.
  */
@@ -7895,7 +7895,7 @@ extern float4 __attribute__((const, overloadable))radians(float4 value);
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /*
- * Return round x/y to the nearest integer then compute the remander.
+ * Return round x/y to the nearest integer then compute the remainder.
  *
  * Supported by API versions 9 and newer.
  */
@@ -7904,7 +7904,7 @@ extern float __attribute__((const, overloadable))remainder(float x, float y);
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /*
- * Return round x/y to the nearest integer then compute the remander.
+ * Return round x/y to the nearest integer then compute the remainder.
  *
  * Supported by API versions 9 and newer.
  */
@@ -7913,7 +7913,7 @@ extern float2 __attribute__((const, overloadable))remainder(float2 x, float2 y);
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /*
- * Return round x/y to the nearest integer then compute the remander.
+ * Return round x/y to the nearest integer then compute the remainder.
  *
  * Supported by API versions 9 and newer.
  */
@@ -7922,7 +7922,7 @@ extern float3 __attribute__((const, overloadable))remainder(float3 x, float3 y);
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /*
- * Return round x/y to the nearest integer then compute the remander.
+ * Return round x/y to the nearest integer then compute the remainder.
  *
  * Supported by API versions 9 and newer.
  */
@@ -7931,38 +7931,38 @@ extern float4 __attribute__((const, overloadable))remainder(float4 x, float4 y);
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /*
- * todo
+ * Return the quotient and the remainder of b/c
  *
  * Supported by API versions 9 and newer.
  */
-extern float __attribute__((overloadable))remquo(float b, float c, int *d);
+extern float __attribute__((overloadable))remquo(float b, float c, int* d);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /*
- * todo
+ * Return the quotient and the remainder of b/c
  *
  * Supported by API versions 9 and newer.
  */
-extern float2 __attribute__((overloadable))remquo(float2 b, float2 c, int2 *d);
+extern float2 __attribute__((overloadable))remquo(float2 b, float2 c, int2* d);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /*
- * todo
+ * Return the quotient and the remainder of b/c
  *
  * Supported by API versions 9 and newer.
  */
-extern float3 __attribute__((overloadable))remquo(float3 b, float3 c, int3 *d);
+extern float3 __attribute__((overloadable))remquo(float3 b, float3 c, int3* d);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /*
- * todo
+ * Return the quotient and the remainder of b/c
  *
  * Supported by API versions 9 and newer.
  */
-extern float4 __attribute__((overloadable))remquo(float4 b, float4 c, int4 *d);
+extern float4 __attribute__((overloadable))remquo(float4 b, float4 c, int4* d);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -8207,7 +8207,7 @@ extern float4 __attribute__((const, overloadable))sin(float4);
  *
  * Supported by API versions 9 and newer.
  */
-extern float __attribute__((overloadable))sincos(float v, float *cosptr);
+extern float __attribute__((overloadable))sincos(float v, float* cosptr);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -8220,7 +8220,7 @@ extern float __attribute__((overloadable))sincos(float v, float *cosptr);
  *
  * Supported by API versions 9 and newer.
  */
-extern float2 __attribute__((overloadable))sincos(float2 v, float2 *cosptr);
+extern float2 __attribute__((overloadable))sincos(float2 v, float2* cosptr);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -8233,7 +8233,7 @@ extern float2 __attribute__((overloadable))sincos(float2 v, float2 *cosptr);
  *
  * Supported by API versions 9 and newer.
  */
-extern float3 __attribute__((overloadable))sincos(float3 v, float3 *cosptr);
+extern float3 __attribute__((overloadable))sincos(float3 v, float3* cosptr);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -8246,7 +8246,7 @@ extern float3 __attribute__((overloadable))sincos(float3 v, float3 *cosptr);
  *
  * Supported by API versions 9 and newer.
  */
-extern float4 __attribute__((overloadable))sincos(float4 v, float4 *cosptr);
+extern float4 __attribute__((overloadable))sincos(float4 v, float4* cosptr);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
