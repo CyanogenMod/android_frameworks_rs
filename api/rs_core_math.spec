@@ -274,6 +274,8 @@ arg: #2#1
 comment:
  Return 10 ^ value.
 version: 9
+#TODO
+test: noverify
 end:
 
 start:
@@ -459,6 +461,8 @@ arg: float#1
 comment:
  Return the integer exponent of a value
 version: 9
+#TODO
+test: noverify
 end:
 
 start:
@@ -569,6 +573,8 @@ arg: #2#1
 comment:
  Compute the exponent of the value.
 version: 9
+#TODO
+test: noverify
 end:
 
 start:
@@ -646,6 +652,8 @@ arg: int#1 y
 comment:
  Return x ^ y.
 version: 9
+#TODO
+test: noverify
 end:
 
 start:
@@ -653,11 +661,11 @@ w: 1, 2, 3, 4
 t: f32
 name: powr
 ret: #2#1
-arg: #2#1 x
+arg: #2#1 x range(0,200)
 arg: #2#1 y
 comment:
  Return x ^ y.
- y must be > 0
+ x must be >= 0
 version: 9
 end:
 
@@ -669,7 +677,7 @@ ret: #2#1
 arg: #2#1 x
 arg: #2#1 y
 comment:
- Return round x/y to the nearest integer then compute the remander.
+ Return round x/y to the nearest integer then compute the remainder.
 version: 9
 end:
 
@@ -682,9 +690,9 @@ arg: #2#1 b
 arg: #2#1 c
 arg: int#1 *d
 comment:
- todo
+ Return the quotient and the remainder of b/c
 version: 9
-# TODO Test to be implemented
+#TODO
 test: noverify
 end:
 
@@ -720,8 +728,6 @@ arg: #2#1
 comment:
  Round to the nearest integral value.  Half values are rounded away from zero.
 version: 9
-# TODO Test to be implemented
-test: noverify
 end:
 
 start:
@@ -1067,7 +1073,7 @@ name: clamp
 ret: #2#1
 arg: #2#1 value
 arg: #2#1 min_value
-arg: #2#1 max_value
+arg: #2#1 max_value above(min_value)
 comment:
  Clamp a value to a specified high and low bound.
 
@@ -1084,7 +1090,7 @@ name: clamp
 ret: #2#1
 arg: #2#1 value
 arg: #2 min_value
-arg: #2 max_value
+arg: #2 max_value above(min_value)
 comment:
  Clamp a value to a specified high and low bound.
 
@@ -1101,7 +1107,7 @@ name: clamp
 ret: #2#1
 arg: #2#1 value
 arg: #2#1 min_value
-arg: #2#1 max_value
+arg: #2#1 max_value above(min_value)
 comment:
  Clamp a value to a specified high and low bound.
 
@@ -1118,7 +1124,7 @@ name: clamp
 ret: #2#1
 arg: #2#1 value
 arg: #2 min_value
-arg: #2 max_value
+arg: #2 max_value above(min_value)
 comment:
  Clamp a value to a specified high and low bound.
 
@@ -1287,7 +1293,7 @@ arg: #2#1 rhs
 comment:
  Compute the distance between two points.
 version: 9
-# TODO Test to be implemented
+# TODO test: vector
 test: noverify
 end:
 
@@ -1300,7 +1306,7 @@ arg: #2#1 v
 comment:
  Normalize a vector.
 version: 9
-# TODO Test to be implemented
+# TODO test: vector
 test: noverify
 end:
 
@@ -1362,7 +1368,7 @@ arg: #2#1 rhs
 comment:
  Compute the approximate distance between two points.
 version: 17
-# TODO Test to be implemented
+# TODO test: vector
 test: noverify
 end:
 
@@ -1375,7 +1381,7 @@ arg: #2#1 v
 comment:
  Approximately normalize a vector.
 version: 17
-# TODO Test to be implemented
+# TODO test: vector
 test: noverify
 end:
 
@@ -1384,7 +1390,7 @@ w: 1, 2, 3, 4
 t: f32
 name: native_exp
 ret: #2#1
-arg: #2#1 v
+arg: #2#1 v range(-86,86)
 comment:
  Fast approximate exp
  valid for inputs -86.f to 86.f
@@ -1399,7 +1405,7 @@ w: 1, 2, 3, 4
 t: f32
 name: native_exp2
 ret: #2#1
-arg: #2#1 v
+arg: #2#1 v range(-125,125)
 comment:
  Fast approximate exp2
  valid for inputs -125.f to 125.f
@@ -1414,7 +1420,7 @@ w: 1, 2, 3, 4
 t: f32
 name: native_exp10
 ret: #2#1
-arg: #2#1 v
+arg: #2#1 v range(-37,37)
 comment:
  Fast approximate exp10
  valid for inputs -37.f to 37.f
