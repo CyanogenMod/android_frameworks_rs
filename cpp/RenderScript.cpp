@@ -401,6 +401,11 @@ static bool loadSymbols(void* handle) {
         ALOGV("Couldn't initialize RS::dispatch->AllocationIoReceive");
         return false;
     }
+    RS::dispatch->AllocationGetPointer = (AllocationGetPointerFnPtr)dlsym(handle, "rsAllocationGetPointer");
+    if (RS::dispatch->AllocationGetPointer == NULL) {
+        ALOGV("Couldn't initialize RS::dispatch->AllocationGetPointer");
+        //return false;
+    }
 
     return true;
 }

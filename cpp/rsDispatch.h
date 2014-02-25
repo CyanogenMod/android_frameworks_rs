@@ -85,6 +85,7 @@ typedef void (*ScriptGroupSetInputFnPtr) (RsContext, RsScriptGroup, RsScriptKern
 typedef void (*ScriptGroupExecuteFnPtr) (RsContext, RsScriptGroup);
 typedef void (*AllocationIoSendFnPtr) (RsContext, RsAllocation);
 typedef void (*AllocationIoReceiveFnPtr) (RsContext, RsAllocation);
+typedef void * (*AllocationGetPointerFnPtr) (RsContext, RsAllocation, uint32_t lod, RsAllocationCubemapFace face, uint32_t z, uint32_t array, size_t *stride);
 
 typedef struct {
     // inserted by hand from rs.h
@@ -156,6 +157,7 @@ typedef struct {
     ScriptGroupExecuteFnPtr ScriptGroupExecute;
     AllocationIoSendFnPtr AllocationIoSend;
     AllocationIoReceiveFnPtr AllocationIoReceive;
+    AllocationGetPointerFnPtr AllocationGetPointer;
 } dispatchTable;
 
 #endif

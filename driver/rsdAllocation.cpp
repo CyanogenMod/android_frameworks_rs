@@ -599,7 +599,7 @@ void rsdAllocationSyncAll(const Context *rsc, const Allocation *alloc,
         return;
     }
 
-    rsAssert(src == RS_ALLOCATION_USAGE_SCRIPT);
+    rsAssert(src == RS_ALLOCATION_USAGE_SCRIPT || src == RS_ALLOCATION_USAGE_SHARED);
 
     if (alloc->mHal.state.usageFlags & RS_ALLOCATION_USAGE_GRAPHICS_TEXTURE) {
         UploadToTexture(rsc, alloc);
@@ -614,7 +614,13 @@ void rsdAllocationSyncAll(const Context *rsc, const Allocation *alloc,
     }
 
     if (alloc->mHal.state.usageFlags & RS_ALLOCATION_USAGE_SHARED) {
-        // NOP in CPU driver for now
+
+        if (src == RS_ALLOCATION_USAGE_SHARED) {
+            // just a memory fence for the CPU driver
+            // vendor drivers probably want to flush any dirty cachelines for
+            // this particular Allocation
+            __sync_synchronize();
+        }
     }
 
     drv->uploadDeferred = false;

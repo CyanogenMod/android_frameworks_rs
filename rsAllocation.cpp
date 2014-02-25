@@ -94,6 +94,24 @@ void Allocation::syncAll(Context *rsc, RsAllocationUsageType src) {
     rsc->mHal.funcs.allocation.syncAll(rsc, this, src);
 }
 
+void * Allocation::getPointer(const Context *rsc, uint32_t lod, RsAllocationCubemapFace face,
+                          uint32_t z, uint32_t array, size_t *stride) {
+
+    if ((lod >= mHal.drvState.lodCount) ||
+        (z && (z >= mHal.drvState.lod[lod].dimZ)) ||
+        ((face != RS_ALLOCATION_CUBEMAP_FACE_POSITIVE_X) && !mHal.state.hasFaces) ||
+        (array != 0)) {
+        return NULL;
+    }
+
+    size_t s = 0;
+    //void *ptr = mRSC->mHal.funcs.allocation.lock1D(rsc, this);
+    if ((stride != NULL) && mHal.drvState.lod[0].dimY) {
+        *stride = mHal.drvState.lod[lod].stride;
+    }
+    return mHal.drvState.lod[lod].mallocPtr;
+}
+
 void Allocation::data(Context *rsc, uint32_t xoff, uint32_t lod,
                          uint32_t count, const void *data, size_t sizeBytes) {
     const size_t eSize = mHal.state.type->getElementSizeBytes();
@@ -714,6 +732,15 @@ void rsi_AllocationIoSend(Context *rsc, RsAllocation valloc) {
 void rsi_AllocationIoReceive(Context *rsc, RsAllocation valloc) {
     Allocation *alloc = static_cast<Allocation *>(valloc);
     alloc->ioReceive(rsc);
+}
+
+void rsi_AllocationGetPointer(Context *rsc, RsAllocation valloc,
+                          uint32_t lod, RsAllocationCubemapFace face,
+                          uint32_t z, uint32_t array, size_t *stride, size_t strideLen) {
+    Allocation *alloc = static_cast<Allocation *>(valloc);
+    assert(strideLen == sizeof(size_t));
+
+    alloc->getPointer(rsc, lod, face, z, array, stride);
 }
 
 void rsi_Allocation1DRead(Context *rsc, RsAllocation va, uint32_t xoff, uint32_t lod,
