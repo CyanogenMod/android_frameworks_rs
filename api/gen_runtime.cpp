@@ -52,6 +52,7 @@
 #include <map>
 #include <set>
 #include <fstream>
+#include <sstream>
 #include <string>
 #include <vector>
 
@@ -87,7 +88,6 @@ class Permutation;
  * parseParameterDefinition.
  */
 struct ParameterDefinition {
-    string raw;           // The raw entry in the spec file, e.g. "uint3 v"
     string rsType;        // The Renderscript type, e.g. "uint3"
     string rsBaseType;    // As above but without the number, e.g. "uint"
     string javaBaseType;  // The type we need to declare in Java, e.g. "unsigned int"
@@ -101,10 +101,19 @@ struct ParameterDefinition {
      */
     string vectorWidth;
 
+    string specName;       // e.g. x, as found in the spec file
     string variableName;   // e.g. inX, used both in .rs and .java
     string rsAllocName;    // e.g. gAllocInX
     string javaAllocName;  // e.g. inX
     string javaArrayName;  // e.g. arrayInX
+
+    // If non empty, the mininum and maximum values to be used when generating the test data.
+    string minValue;
+    string maxValue;
+    /* If non empty, contains the name of another parameter that should be smaller or equal to this
+     * parameter, i.e.  value(smallerParameter) <= value(this).  This is used when testing clamp.
+     */
+    string smallerParameter;
 
     bool isOutParameter;  // True if this parameter returns data from the script.
 
@@ -293,9 +302,9 @@ private:
     void writeJavaVerifyVectorMethod(ofstream& file) const;
     void writeJavaVerifyFunctionHeader(ofstream& file) const;
     void writeJavaInputAllocationDefinition(ofstream& file, const string& indent,
-                                            const string& name, const string& cType) const;
+                                            const ParameterDefinition& param) const;
     void writeJavaOutputAllocationDefinition(ofstream& file, const string& indent,
-                                             const string& name, const string& cType) const;
+                                             const ParameterDefinition& param) const;
     void writeJavaCallToRs(ofstream& file, bool relaxed, bool generateCallToVerify) const;
 
     void writeJavaTestOneValue(ofstream& file, int indent, const string& rsBaseType,
@@ -374,6 +383,16 @@ long hashString(const string& s) {
         hash = hash * 43 + s[i];
     }
     return hash;
+}
+
+// Removes the character from present. Returns true if the string contained the character.
+static bool charRemoved(char c, string* s) {
+    size_t p = s->find(c);
+    if (p != string::npos) {
+        s->erase(p, 1);
+        return true;
+    }
+    return false;
 }
 
 // Return true if the string is already in the set.  Inserts it if not.
@@ -497,28 +516,16 @@ bool parseCommandLine(int argc, char* argv[], int* versionOfTestFiles,
  * we can create names like in2, in3, etc. */
 void ParameterDefinition::parseParameterDefinition(string s, bool isReturn, int* inputCount,
                                                    int* outputCount) {
-    raw = s;
+    istringstream stream(s);
+    string name, type, option;
+    stream >> rsType;
+    stream >> specName;
+    stream >> option;
 
-    // Determine if this an output.
-    isOutParameter = false;
-    size_t p = s.find('*');
-    if (p != string::npos) {
-        isOutParameter = true;
-        s.erase(p, 1);
-    }
-    if (isReturn) {
-        isOutParameter = true;
-    }
+    // Determine if this is an output.
+    isOutParameter = charRemoved('*', &rsType) || charRemoved('*', &specName) || isReturn;
 
-    // Separate the type from the name.
-    string name;
-    p = s.find(' ');
-    if (p != string::npos) {
-        rsType = s.substr(0, p);
-        name = capitalize(s.substr(p + 1));
-    } else {
-        rsType = s;
-    }
+    // Extract the vector size out of the type.
     int last = rsType.size() - 1;
     char lastChar = rsType[last];
     if (lastChar >= '0' && lastChar <= '9') {
@@ -539,16 +546,16 @@ void ParameterDefinition::parseParameterDefinition(string s, bool isReturn, int*
      */
     if (isOutParameter) {
         variableName = "out";
-        if (!name.empty()) {
-            variableName += name;
+        if (!specName.empty()) {
+            variableName += capitalize(specName);
         } else if (!isReturn) {
             variableName += toString(*outputCount);
         }
         (*outputCount)++;
     } else {
         variableName = "in";
-        if (!name.empty()) {
-            variableName += name;
+        if (!specName.empty()) {
+            variableName += capitalize(specName);
         } else if (*inputCount > 0) {
             variableName += toString(*inputCount);
         }
@@ -557,6 +564,29 @@ void ParameterDefinition::parseParameterDefinition(string s, bool isReturn, int*
     rsAllocName = "gAlloc" + capitalize(variableName);
     javaAllocName = variableName;
     javaArrayName = "array" + capitalize(javaAllocName);
+
+    // Process the option.
+    if (!option.empty()) {
+        if (option.compare(0, 6, "range(") == 0) {
+            size_t pComma = option.find(',');
+            size_t pParen = option.find(')');
+            if (pComma == string::npos || pParen == string::npos) {
+                printf("Incorrect range %s\n", option.c_str());
+            } else {
+                minValue = option.substr(6, pComma - 6);
+                maxValue = option.substr(pComma + 1, pParen - pComma - 1);
+            }
+        } else if (option.compare(0, 6, "above(") == 0) {
+            size_t pParen = option.find(')');
+            if (pParen == string::npos) {
+                printf("Incorrect option %s\n", option.c_str());
+            } else {
+                smallerParameter = option.substr(6, pParen - 6);
+            }
+        } else {
+            printf("Unrecognized option %s\n", option.c_str());
+        }
+    }
 
     for (int i = 0; i < NUM_TYPES; i++) {
         if (rsBaseType == TYPES[i].cType) {
@@ -1111,10 +1141,17 @@ void Permutation::writeHeaderSection(ofstream& file) const {
     bool needComma = false;
     for (int i = 0; i < (int)mParams.size(); i++) {
         if (i != mReturnIndex) {
+            const ParameterDefinition& p = *mParams[i];
             if (needComma) {
                 file << ", ";
             }
-            file << mParams[i]->raw;
+            file << p.rsType;
+            if (p.isOutParameter) {
+                file << "*";
+            }
+            if (!p.specName.empty()) {
+                file << " " << p.specName;
+            }
             needComma = true;
         }
     }
@@ -1313,7 +1350,16 @@ void Permutation::writeJavaCheckMethod(ofstream& file, bool generateCallToVerify
     for (size_t i = 0; i < mParams.size(); i++) {
         const ParameterDefinition& p = *mParams[i];
         if (!p.isOutParameter) {
-            writeJavaInputAllocationDefinition(file, tab(2), p.javaAllocName, p.rsType);
+            writeJavaInputAllocationDefinition(file, tab(2), p);
+        }
+    }
+    // Enforce ordering if needed.
+    for (size_t i = 0; i < mParams.size(); i++) {
+        const ParameterDefinition& p = *mParams[i];
+        if (!p.isOutParameter && !p.smallerParameter.empty()) {
+            string smallerAlloc = "in" + capitalize(p.smallerParameter);
+            file << tab(2) << "enforceOrdering(" << smallerAlloc << ", " << p.javaAllocName
+                 << ");\n";
         }
     }
     writeJavaCallToRs(file, false, generateCallToVerify);
@@ -1322,24 +1368,29 @@ void Permutation::writeJavaCheckMethod(ofstream& file, bool generateCallToVerify
 }
 
 void Permutation::writeJavaInputAllocationDefinition(ofstream& file, const string& indent,
-                                                     const string& name,
-                                                     const string& cType) const {
+                                                     const ParameterDefinition& param) const {
     string dataType;
     char vectorSize;
-    convertToRsType(cType, &dataType, &vectorSize);
-    long seed = hashString(mJavaCheckMethodName + mName);
-    file << indent << "Allocation " << name << " = CreateRandomAllocation(mRS, Element.DataType."
-         << dataType << ", " << vectorSize << ", 0x" << std::hex << seed << "L);\n";
+    convertToRsType(param.rsType, &dataType, &vectorSize);
+    long seed = hashString(mJavaCheckMethodName + param.javaAllocName);
+    file << indent << "Allocation " << param.javaAllocName
+         << " = createRandomAllocation(mRS, Element.DataType." << dataType << ", " << vectorSize
+         << ", 0x" << std::hex << seed << "l";
+    if (!param.minValue.empty()) {
+        file << ", " << param.minValue << ", " << param.maxValue;
+    } else {
+        file << ", false";  // TODO set to false only for native
+    }
+    file << ");\n";
 }
 
 void Permutation::writeJavaOutputAllocationDefinition(ofstream& file, const string& indent,
-                                                      const string& name,
-                                                      const string& cType) const {
+                                                      const ParameterDefinition& param) const {
     string dataType;
     char vectorSize;
-    convertToRsType(cType, &dataType, &vectorSize);
-    file << indent << "Allocation " << name << " = Allocation.createSized(mRS, "
-         << "GetElement(mRS, Element.DataType." << dataType << ", " << vectorSize
+    convertToRsType(param.rsType, &dataType, &vectorSize);
+    file << indent << "Allocation " << param.javaAllocName << " = Allocation.createSized(mRS, "
+         << "getElement(mRS, Element.DataType." << dataType << ", " << vectorSize
          << "), INPUTSIZE);\n";
 }
 
@@ -1424,8 +1475,8 @@ void Permutation::writeJavaVerifyScalarMethod(ofstream& file) const {
         }
     }
 
-    file << tab(5) << "assertTrue(\"Incorrect output for " << mJavaCheckMethodName
-         << "\" + (relaxed ? \"_relaxed\" : \"\") + \":\\n\" + message.toString(), valid);\n";
+    file << tab(5) << "assertTrue(\"Incorrect output for " << mJavaCheckMethodName << "\" +\n";
+    file << tab(7) << "(relaxed ? \"_relaxed\" : \"\") + \":\\n\" + message.toString(), valid);\n";
     file << tab(4) << "}\n";
     file << tab(3) << "}\n";
     file << tab(2) << "}\n";
@@ -1498,11 +1549,15 @@ void Permutation::writeJavaAppendVariableToMessage(ofstream& file, int indent,
                                                    const string& value) const {
     file << tab(indent) << "message.append(String.format(\"" + legend + ": ";
     if (rsBaseType[0] == 'f') {
-        file << "%x %.16f\", Float.floatToRawIntBits(" << value << "), " << value;
+        file << "%14.8g %8x %15a\",\n";
+        file << tab(indent + 2) << value << ", "
+             << "Float.floatToRawIntBits(" << value << "), " << value;
     } else if (rsBaseType[0] == 'u') {
-        file << "%x\", " << value;
+        file << "0x%x\",\n";
+        file << tab(indent + 2) << value;
     } else {
-        file << "%d\", " << value;
+        file << "%d\",\n";
+        file << tab(indent + 2) << value;
     }
     file << "));\n";
 }
@@ -1608,8 +1663,8 @@ void Permutation::writeJavaVerifyVectorMethod(ofstream& file) const {
         }
     }
 
-    file << tab(4) << "assertTrue(\"Incorrect output for " << mJavaCheckMethodName
-         << "\" + (relaxed ? \"_relaxed\" : \"\") + \":\\n\" + message.toString(), valid);\n";
+    file << tab(4) << "assertTrue(\"Incorrect output for " << mJavaCheckMethodName << "\" +\n";
+    file << tab(6) << "(relaxed ? \"_relaxed\" : \"\") + \":\\n\" + message.toString(), valid);\n";
     file << tab(3) << "}\n";
     file << tab(2) << "}\n";
     file << tab(1) << "}\n\n";
@@ -1625,7 +1680,7 @@ void Permutation::writeJavaCallToRs(ofstream& file, bool relaxed, bool generateC
     for (size_t i = 0; i < mParams.size(); i++) {
         const ParameterDefinition& p = *mParams[i];
         if (p.isOutParameter) {
-            writeJavaOutputAllocationDefinition(file, tab(3), p.javaAllocName, p.rsType);
+            writeJavaOutputAllocationDefinition(file, tab(3), p);
         }
     }
 
