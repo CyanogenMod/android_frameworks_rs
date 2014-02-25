@@ -976,17 +976,29 @@ extern float __attribute__((overloadable)) distance(float4 lhs, float4 rhs) {
     return length(lhs - rhs);
 }
 
+/* For the normalization functions, vectors of length 0 should simply be
+ * returned (i.e. all the components of that vector are 0).
+ */
 extern float __attribute__((overloadable)) normalize(float v) {
-    return (v < 0.0f) ? -1.0f : 1.0f;
+    if (v == 0.0f) {
+        return 0.0f;
+    } else if (v < 0.0f) {
+        return -1.0f;
+    } else {
+        return 1.0f;
+    }
 }
 extern float2 __attribute__((overloadable)) normalize(float2 v) {
-    return v / length(v);
+    float l = length(v);
+    return l == 0.0f ? v : v / l;
 }
 extern float3 __attribute__((overloadable)) normalize(float3 v) {
-    return v / length(v);
+    float l = length(v);
+    return l == 0.0f ? v : v / l;
 }
 extern float4 __attribute__((overloadable)) normalize(float4 v) {
-    return v / length(v);
+    float l = length(v);
+    return l == 0.0f ? v : v / l;
 }
 
 extern float __attribute__((overloadable)) half_sqrt(float);
@@ -1019,17 +1031,30 @@ extern float __attribute__((overloadable)) fast_distance(float4 lhs, float4 rhs)
 
 extern float __attribute__((overloadable)) half_rsqrt(float);
 
+/* For the normalization functions, vectors of length 0 should simply be
+ * returned (i.e. all the components of that vector are 0).
+ */
 extern float __attribute__((overloadable)) fast_normalize(float v) {
-    return 1.f;
+    if (v == 0.0f) {
+        return 0.0f;
+    } else if (v < 0.0f) {
+        return -1.0f;
+    } else {
+        return 1.0f;
+    }
 }
+// If the length is 0, then rlength should be NaN.
 extern float2 __attribute__((overloadable)) fast_normalize(float2 v) {
-    return v * half_rsqrt(v.x*v.x + v.y*v.y);
+    float rlength = half_rsqrt(v.x*v.x + v.y*v.y);
+    return (rlength == rlength) ? v * rlength : v;
 }
 extern float3 __attribute__((overloadable)) fast_normalize(float3 v) {
-    return v * half_rsqrt(v.x*v.x + v.y*v.y + v.z*v.z);
+    float rlength = half_rsqrt(v.x*v.x + v.y*v.y + v.z*v.z);
+    return (rlength == rlength) ? v * rlength : v;
 }
 extern float4 __attribute__((overloadable)) fast_normalize(float4 v) {
-    return v * half_rsqrt(v.x*v.x + v.y*v.y + v.z*v.z + v.w*v.w);
+    float rlength = half_rsqrt(v.x*v.x + v.y*v.y + v.z*v.z + v.w*v.w);
+    return (rlength == rlength) ? v * rlength : v;
 }
 
 extern float __attribute__((overloadable)) half_recip(float);
