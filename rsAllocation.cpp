@@ -738,7 +738,7 @@ void rsi_AllocationGetPointer(Context *rsc, RsAllocation valloc,
                           uint32_t lod, RsAllocationCubemapFace face,
                           uint32_t z, uint32_t array, size_t *stride, size_t strideLen) {
     Allocation *alloc = static_cast<Allocation *>(valloc);
-    assert(strideLen == sizeof(size_t));
+    rsAssert(strideLen == sizeof(size_t));
 
     alloc->getPointer(rsc, lod, face, z, array, stride);
 }
