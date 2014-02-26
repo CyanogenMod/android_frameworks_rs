@@ -169,8 +169,26 @@ void Allocation::ioGetInput() {
 #endif
 }
 
-void Allocation::generateMipmaps() {
-    tryDispatch(mRS, RS::dispatch->AllocationGenerateMipmaps(mRS->getContext(), getID()));
+void * Allocation::getPointer(size_t *stride) {
+    void *p = NULL;
+    if (!(mUsage & RS_ALLOCATION_USAGE_SHARED)) {
+        mRS->throwError(RS_ERROR_INVALID_PARAMETER, "Allocation does not support USAGE_SHARED.");
+        return NULL;
+    }
+
+    // FIXME: decide if lack of getPointer should cause compat mode
+    if (RS::dispatch->AllocationGetPointer == NULL) {
+        mRS->throwError(RS_ERROR_RUNTIME_ERROR, "Can't use getPointer on older APIs");
+        return NULL;
+    }
+
+    p = RS::dispatch->AllocationGetPointer(mRS->getContext(), getIDSafe(), 0,
+                                           RS_ALLOCATION_CUBEMAP_FACE_POSITIVE_X, 0, 0, stride);
+    if (mRS->getError() != RS_SUCCESS) {
+        mRS->throwError(RS_ERROR_RUNTIME_ERROR, "Allocation lock failed");
+        p = NULL;
+    }
+    return p;
 }
 
 void Allocation::copy1DRangeFrom(uint32_t off, size_t count, const void *data) {

@@ -163,6 +163,9 @@ public:
     void ioSend(const Context *rsc);
     void ioReceive(const Context *rsc);
 
+    void * getPointer(const Context *rsc, uint32_t lod, RsAllocationCubemapFace face,
+                      uint32_t z, uint32_t array, size_t *stride);
+
 protected:
     Vector<const Program *> mToDirtyList;
     ObjectBaseRef<const Type> mType;
