@@ -559,6 +559,13 @@ public:
                                         uint32_t usage = RS_ALLOCATION_USAGE_SCRIPT);
 
 
+    /**
+     * Get the backing pointer for a USAGE_SHARED allocation.
+     * @param[in] stride optional parameter. when non-NULL, will contain
+     *   stride in bytes of a 2D Allocation
+     * @return pointer to data
+     */
+    void * getPointer(size_t *stride = NULL);
 };
 
  /**
