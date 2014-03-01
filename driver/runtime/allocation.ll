@@ -2,6 +2,7 @@ target datalayout = "e-p:32:32:32-i1:8:8-i8:8:8-i16:16:16-i32:32:32-i64:64:64-f3
 target triple = "armv7-none-linux-gnueabi"
 
 declare i8* @rsOffset([1 x i32] %a.coerce, i32 %sizeOf, i32 %x, i32 %y, i32 %z)
+declare i8* @rsOffsetNs([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z)
 
 ; The loads and stores in this file are annotated with RenderScript-specific
 ; information for the type based alias analysis, such that the TBAA analysis
@@ -647,6 +648,389 @@ define void @rsGetElementAtImpl_double4(<4 x double>* noalias nocapture sret %ag
   store <4 x double> %3, <4 x double>* %agg.result, align 32, !tbaa !60
   ret void
 }
+
+
+define <4 x i64> @__rsAllocationVLoadXImpl_long4([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #0 {
+  %1 = tail call i8* @rsOffsetNs([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #10
+  %2 = bitcast i8* %1 to <4 x i64>*
+  %3 = load <4 x i64>* %2, align 8
+  ret <4 x i64> %3
+}
+define <3 x i64> @__rsAllocationVLoadXImpl_long3([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #0 {
+  %1 = tail call i8* @rsOffsetNs([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #10
+  %2 = bitcast i8* %1 to <3 x i64>*
+  %3 = load <3 x i64>* %2, align 8
+  ret <3 x i64> %3
+}
+define <2 x i64> @__rsAllocationVLoadXImpl_long2([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #0 {
+  %1 = tail call i8* @rsOffsetNs([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #10
+  %2 = bitcast i8* %1 to <2 x i64>*
+  %3 = load <2 x i64>* %2, align 8
+  ret <2 x i64> %3
+}
+
+define <4 x i64> @__rsAllocationVLoadXImpl_ulong4([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #0 {
+  %1 = tail call i8* @rsOffsetNs([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #10
+  %2 = bitcast i8* %1 to <4 x i64>*
+  %3 = load <4 x i64>* %2, align 8
+  ret <4 x i64> %3
+}
+define <3 x i64> @__rsAllocationVLoadXImpl_ulong3([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #0 {
+  %1 = tail call i8* @rsOffsetNs([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #10
+  %2 = bitcast i8* %1 to <3 x i64>*
+  %3 = load <3 x i64>* %2, align 8
+  ret <3 x i64> %3
+}
+define <2 x i64> @__rsAllocationVLoadXImpl_ulong2([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #0 {
+  %1 = tail call i8* @rsOffsetNs([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #10
+  %2 = bitcast i8* %1 to <2 x i64>*
+  %3 = load <2 x i64>* %2, align 8
+  ret <2 x i64> %3
+}
+
+define <4 x i32> @__rsAllocationVLoadXImpl_int4([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #0 {
+  %1 = tail call i8* @rsOffsetNs([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #10
+  %2 = bitcast i8* %1 to <4 x i32>*
+  %3 = load <4 x i32>* %2, align 4
+  ret <4 x i32> %3
+}
+define <3 x i32> @__rsAllocationVLoadXImpl_int3([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #0 {
+  %1 = tail call i8* @rsOffsetNs([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #10
+  %2 = bitcast i8* %1 to <3 x i32>*
+  %3 = load <3 x i32>* %2, align 4
+  ret <3 x i32> %3
+}
+define <2 x i32> @__rsAllocationVLoadXImpl_int2([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #0 {
+  %1 = tail call i8* @rsOffsetNs([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #10
+  %2 = bitcast i8* %1 to <2 x i32>*
+  %3 = load <2 x i32>* %2, align 4
+  ret <2 x i32> %3
+}
+
+define <4 x i32> @__rsAllocationVLoadXImpl_uint4([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #0 {
+  %1 = tail call i8* @rsOffsetNs([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #10
+  %2 = bitcast i8* %1 to <4 x i32>*
+  %3 = load <4 x i32>* %2, align 4
+  ret <4 x i32> %3
+}
+define <3 x i32> @__rsAllocationVLoadXImpl_uint3([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #0 {
+  %1 = tail call i8* @rsOffsetNs([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #10
+  %2 = bitcast i8* %1 to <3 x i32>*
+  %3 = load <3 x i32>* %2, align 4
+  ret <3 x i32> %3
+}
+define <2 x i32> @__rsAllocationVLoadXImpl_uint2([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #0 {
+  %1 = tail call i8* @rsOffsetNs([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #10
+  %2 = bitcast i8* %1 to <2 x i32>*
+  %3 = load <2 x i32>* %2, align 4
+  ret <2 x i32> %3
+}
+
+define <4 x i16> @__rsAllocationVLoadXImpl_short4([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #0 {
+  %1 = tail call i8* @rsOffsetNs([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #10
+  %2 = bitcast i8* %1 to <4 x i16>*
+  %3 = load <4 x i16>* %2, align 2
+  ret <4 x i16> %3
+}
+define <3 x i16> @__rsAllocationVLoadXImpl_short3([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #0 {
+  %1 = tail call i8* @rsOffsetNs([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #10
+  %2 = bitcast i8* %1 to <3 x i16>*
+  %3 = load <3 x i16>* %2, align 2
+  ret <3 x i16> %3
+}
+define <2 x i16> @__rsAllocationVLoadXImpl_short2([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #0 {
+  %1 = tail call i8* @rsOffsetNs([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #10
+  %2 = bitcast i8* %1 to <2 x i16>*
+  %3 = load <2 x i16>* %2, align 2
+  ret <2 x i16> %3
+}
+
+define <4 x i16> @__rsAllocationVLoadXImpl_ushort4([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #0 {
+  %1 = tail call i8* @rsOffsetNs([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #10
+  %2 = bitcast i8* %1 to <4 x i16>*
+  %3 = load <4 x i16>* %2, align 2
+  ret <4 x i16> %3
+}
+define <3 x i16> @__rsAllocationVLoadXImpl_ushort3([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #0 {
+  %1 = tail call i8* @rsOffsetNs([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #10
+  %2 = bitcast i8* %1 to <3 x i16>*
+  %3 = load <3 x i16>* %2, align 2
+  ret <3 x i16> %3
+}
+define <2 x i16> @__rsAllocationVLoadXImpl_ushort2([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #0 {
+  %1 = tail call i8* @rsOffsetNs([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #10
+  %2 = bitcast i8* %1 to <2 x i16>*
+  %3 = load <2 x i16>* %2, align 2
+  ret <2 x i16> %3
+}
+
+define <4 x i8> @__rsAllocationVLoadXImpl_char4([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #0 {
+  %1 = tail call i8* @rsOffsetNs([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #10
+  %2 = bitcast i8* %1 to <4 x i8>*
+  %3 = load <4 x i8>* %2, align 1
+  ret <4 x i8> %3
+}
+define <3 x i8> @__rsAllocationVLoadXImpl_char3([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #0 {
+  %1 = tail call i8* @rsOffsetNs([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #10
+  %2 = bitcast i8* %1 to <3 x i8>*
+  %3 = load <3 x i8>* %2, align 1
+  ret <3 x i8> %3
+}
+define <2 x i8> @__rsAllocationVLoadXImpl_char2([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #0 {
+  %1 = tail call i8* @rsOffsetNs([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #10
+  %2 = bitcast i8* %1 to <2 x i8>*
+  %3 = load <2 x i8>* %2, align 1
+  ret <2 x i8> %3
+}
+
+define <4 x i8> @__rsAllocationVLoadXImpl_uchar4([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #0 {
+  %1 = tail call i8* @rsOffsetNs([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #10
+  %2 = bitcast i8* %1 to <4 x i8>*
+  %3 = load <4 x i8>* %2, align 1
+  ret <4 x i8> %3
+}
+define <3 x i8> @__rsAllocationVLoadXImpl_uchar3([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #0 {
+  %1 = tail call i8* @rsOffsetNs([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #10
+  %2 = bitcast i8* %1 to <3 x i8>*
+  %3 = load <3 x i8>* %2, align 1
+  ret <3 x i8> %3
+}
+define <2 x i8> @__rsAllocationVLoadXImpl_uchar2([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #0 {
+  %1 = tail call i8* @rsOffsetNs([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #10
+  %2 = bitcast i8* %1 to <2 x i8>*
+  %3 = load <2 x i8>* %2, align 1
+  ret <2 x i8> %3
+}
+
+define <4 x float> @__rsAllocationVLoadXImpl_float4([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #0 {
+  %1 = tail call i8* @rsOffsetNs([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #10
+  %2 = bitcast i8* %1 to <4 x float>*
+  %3 = load <4 x float>* %2, align 4
+  ret <4 x float> %3
+}
+define <3 x float> @__rsAllocationVLoadXImpl_float3([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #0 {
+  %1 = tail call i8* @rsOffsetNs([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #10
+  %2 = bitcast i8* %1 to <3 x float>*
+  %3 = load <3 x float>* %2, align 4
+  ret <3 x float> %3
+}
+define <2 x float> @__rsAllocationVLoadXImpl_float2([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #0 {
+  %1 = tail call i8* @rsOffsetNs([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #10
+  %2 = bitcast i8* %1 to <2 x float>*
+  %3 = load <2 x float>* %2, align 4
+  ret <2 x float> %3
+}
+
+define <4 x double> @__rsAllocationVLoadXImpl_double4([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #0 {
+  %1 = tail call i8* @rsOffsetNs([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #10
+  %2 = bitcast i8* %1 to <4 x double>*
+  %3 = load <4 x double>* %2, align 8
+  ret <4 x double> %3
+}
+define <3 x double> @__rsAllocationVLoadXImpl_double3([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #0 {
+  %1 = tail call i8* @rsOffsetNs([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #10
+  %2 = bitcast i8* %1 to <3 x double>*
+  %3 = load <3 x double>* %2, align 8
+  ret <3 x double> %3
+}
+define <2 x double> @__rsAllocationVLoadXImpl_double2([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #0 {
+  %1 = tail call i8* @rsOffsetNs([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #10
+  %2 = bitcast i8* %1 to <2 x double>*
+  %3 = load <2 x double>* %2, align 8
+  ret <2 x double> %3
+}
+
+
+define void @__rsAllocationVStoreXImpl_long4([1 x i32] %a.coerce, <4 x i64> %val, i32 %x, i32 %y, i32 %z) #0 {
+  %1 = tail call i8* @rsOffsetNs([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #10
+  %2 = bitcast i8* %1 to <4 x i64>*
+  store <4 x i64> %val, <4 x i64>* %2, align 8
+  ret void
+}
+define void @__rsAllocationVStoreXImpl_long3([1 x i32] %a.coerce, <3 x i64> %val, i32 %x, i32 %y, i32 %z) #0 {
+  %1 = tail call i8* @rsOffsetNs([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #10
+  %2 = bitcast i8* %1 to <3 x i64>*
+  store <3 x i64> %val, <3 x i64>* %2, align 8
+  ret void
+}
+define void @__rsAllocationVStoreXImpl_long2([1 x i32] %a.coerce, <2 x i64> %val, i32 %x, i32 %y, i32 %z) #0 {
+  %1 = tail call i8* @rsOffsetNs([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #10
+  %2 = bitcast i8* %1 to <2 x i64>*
+  store <2 x i64> %val, <2 x i64>* %2, align 8
+  ret void
+}
+
+define void @__rsAllocationVStoreXImpl_ulong4([1 x i32] %a.coerce, <4 x i64> %val, i32 %x, i32 %y, i32 %z) #0 {
+  %1 = tail call i8* @rsOffsetNs([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #10
+  %2 = bitcast i8* %1 to <4 x i64>*
+  store <4 x i64> %val, <4 x i64>* %2, align 8
+  ret void
+}
+define void @__rsAllocationVStoreXImpl_ulong3([1 x i32] %a.coerce, <3 x i64> %val, i32 %x, i32 %y, i32 %z) #0 {
+  %1 = tail call i8* @rsOffsetNs([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #10
+  %2 = bitcast i8* %1 to <3 x i64>*
+  store <3 x i64> %val, <3 x i64>* %2, align 8
+  ret void
+}
+define void @__rsAllocationVStoreXImpl_ulong2([1 x i32] %a.coerce, <2 x i64> %val, i32 %x, i32 %y, i32 %z) #0 {
+  %1 = tail call i8* @rsOffsetNs([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #10
+  %2 = bitcast i8* %1 to <2 x i64>*
+  store <2 x i64> %val, <2 x i64>* %2, align 8
+  ret void
+}
+
+define void @__rsAllocationVStoreXImpl_int4([1 x i32] %a.coerce, <4 x i32> %val, i32 %x, i32 %y, i32 %z) #0 {
+  %1 = tail call i8* @rsOffsetNs([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #10
+  %2 = bitcast i8* %1 to <4 x i32>*
+  store <4 x i32> %val, <4 x i32>* %2, align 8
+  ret void
+}
+define void @__rsAllocationVStoreXImpl_int3([1 x i32] %a.coerce, <3 x i32> %val, i32 %x, i32 %y, i32 %z) #0 {
+  %1 = tail call i8* @rsOffsetNs([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #10
+  %2 = bitcast i8* %1 to <3 x i32>*
+  store <3 x i32> %val, <3 x i32>* %2, align 8
+  ret void
+}
+define void @__rsAllocationVStoreXImpl_int2([1 x i32] %a.coerce, <2 x i32> %val, i32 %x, i32 %y, i32 %z) #0 {
+  %1 = tail call i8* @rsOffsetNs([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #10
+  %2 = bitcast i8* %1 to <2 x i32>*
+  store <2 x i32> %val, <2 x i32>* %2, align 8
+  ret void
+}
+
+define void @__rsAllocationVStoreXImpl_uint4([1 x i32] %a.coerce, <4 x i32> %val, i32 %x, i32 %y, i32 %z) #0 {
+  %1 = tail call i8* @rsOffsetNs([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #10
+  %2 = bitcast i8* %1 to <4 x i32>*
+  store <4 x i32> %val, <4 x i32>* %2, align 8
+  ret void
+}
+define void @__rsAllocationVStoreXImpl_uint3([1 x i32] %a.coerce, <3 x i32> %val, i32 %x, i32 %y, i32 %z) #0 {
+  %1 = tail call i8* @rsOffsetNs([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #10
+  %2 = bitcast i8* %1 to <3 x i32>*
+  store <3 x i32> %val, <3 x i32>* %2, align 8
+  ret void
+}
+define void @__rsAllocationVStoreXImpl_uint2([1 x i32] %a.coerce, <2 x i32> %val, i32 %x, i32 %y, i32 %z) #0 {
+  %1 = tail call i8* @rsOffsetNs([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #10
+  %2 = bitcast i8* %1 to <2 x i32>*
+  store <2 x i32> %val, <2 x i32>* %2, align 8
+  ret void
+}
+
+define void @__rsAllocationVStoreXImpl_short4([1 x i32] %a.coerce, <4 x i16> %val, i32 %x, i32 %y, i32 %z) #0 {
+  %1 = tail call i8* @rsOffsetNs([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #10
+  %2 = bitcast i8* %1 to <4 x i16>*
+  store <4 x i16> %val, <4 x i16>* %2, align 8
+  ret void
+}
+define void @__rsAllocationVStoreXImpl_short3([1 x i32] %a.coerce, <3 x i16> %val, i32 %x, i32 %y, i32 %z) #0 {
+  %1 = tail call i8* @rsOffsetNs([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #10
+  %2 = bitcast i8* %1 to <3 x i16>*
+  store <3 x i16> %val, <3 x i16>* %2, align 8
+  ret void
+}
+define void @__rsAllocationVStoreXImpl_short2([1 x i32] %a.coerce, <2 x i16> %val, i32 %x, i32 %y, i32 %z) #0 {
+  %1 = tail call i8* @rsOffsetNs([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #10
+  %2 = bitcast i8* %1 to <2 x i16>*
+  store <2 x i16> %val, <2 x i16>* %2, align 8
+  ret void
+}
+
+define void @__rsAllocationVStoreXImpl_ushort4([1 x i32] %a.coerce, <4 x i16> %val, i32 %x, i32 %y, i32 %z) #0 {
+  %1 = tail call i8* @rsOffsetNs([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #10
+  %2 = bitcast i8* %1 to <4 x i16>*
+  store <4 x i16> %val, <4 x i16>* %2, align 8
+  ret void
+}
+define void @__rsAllocationVStoreXImpl_ushort3([1 x i32] %a.coerce, <3 x i16> %val, i32 %x, i32 %y, i32 %z) #0 {
+  %1 = tail call i8* @rsOffsetNs([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #10
+  %2 = bitcast i8* %1 to <3 x i16>*
+  store <3 x i16> %val, <3 x i16>* %2, align 8
+  ret void
+}
+define void @__rsAllocationVStoreXImpl_ushort2([1 x i32] %a.coerce, <2 x i16> %val, i32 %x, i32 %y, i32 %z) #0 {
+  %1 = tail call i8* @rsOffsetNs([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #10
+  %2 = bitcast i8* %1 to <2 x i16>*
+  store <2 x i16> %val, <2 x i16>* %2, align 8
+  ret void
+}
+
+define void @__rsAllocationVStoreXImpl_char4([1 x i32] %a.coerce, <4 x i8> %val, i32 %x, i32 %y, i32 %z) #0 {
+  %1 = tail call i8* @rsOffsetNs([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #10
+  %2 = bitcast i8* %1 to <4 x i8>*
+  store <4 x i8> %val, <4 x i8>* %2, align 8
+  ret void
+}
+define void @__rsAllocationVStoreXImpl_char3([1 x i32] %a.coerce, <3 x i8> %val, i32 %x, i32 %y, i32 %z) #0 {
+  %1 = tail call i8* @rsOffsetNs([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #10
+  %2 = bitcast i8* %1 to <3 x i8>*
+  store <3 x i8> %val, <3 x i8>* %2, align 8
+  ret void
+}
+define void @__rsAllocationVStoreXImpl_char2([1 x i32] %a.coerce, <2 x i8> %val, i32 %x, i32 %y, i32 %z) #0 {
+  %1 = tail call i8* @rsOffsetNs([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #10
+  %2 = bitcast i8* %1 to <2 x i8>*
+  store <2 x i8> %val, <2 x i8>* %2, align 8
+  ret void
+}
+
+define void @__rsAllocationVStoreXImpl_uchar4([1 x i32] %a.coerce, <4 x i8> %val, i32 %x, i32 %y, i32 %z) #0 {
+  %1 = tail call i8* @rsOffsetNs([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #10
+  %2 = bitcast i8* %1 to <4 x i8>*
+  store <4 x i8> %val, <4 x i8>* %2, align 8
+  ret void
+}
+define void @__rsAllocationVStoreXImpl_uchar3([1 x i32] %a.coerce, <3 x i8> %val, i32 %x, i32 %y, i32 %z) #0 {
+  %1 = tail call i8* @rsOffsetNs([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #10
+  %2 = bitcast i8* %1 to <3 x i8>*
+  store <3 x i8> %val, <3 x i8>* %2, align 8
+  ret void
+}
+define void @__rsAllocationVStoreXImpl_uchar2([1 x i32] %a.coerce, <2 x i8> %val, i32 %x, i32 %y, i32 %z) #0 {
+  %1 = tail call i8* @rsOffsetNs([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #10
+  %2 = bitcast i8* %1 to <2 x i8>*
+  store <2 x i8> %val, <2 x i8>* %2, align 8
+  ret void
+}
+
+define void @__rsAllocationVStoreXImpl_float4([1 x i32] %a.coerce, <4 x float> %val, i32 %x, i32 %y, i32 %z) #0 {
+  %1 = tail call i8* @rsOffsetNs([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #10
+  %2 = bitcast i8* %1 to <4 x float>*
+  store <4 x float> %val, <4 x float>* %2, align 8
+  ret void
+}
+define void @__rsAllocationVStoreXImpl_float3([1 x i32] %a.coerce, <3 x float> %val, i32 %x, i32 %y, i32 %z) #0 {
+  %1 = tail call i8* @rsOffsetNs([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #10
+  %2 = bitcast i8* %1 to <3 x float>*
+  store <3 x float> %val, <3 x float>* %2, align 8
+  ret void
+}
+define void @__rsAllocationVStoreXImpl_float2([1 x i32] %a.coerce, <2 x float> %val, i32 %x, i32 %y, i32 %z) #0 {
+  %1 = tail call i8* @rsOffsetNs([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #10
+  %2 = bitcast i8* %1 to <2 x float>*
+  store <2 x float> %val, <2 x float>* %2, align 8
+  ret void
+}
+
+define void @__rsAllocationVStoreXImpl_double4([1 x i32] %a.coerce, <4 x double> %val, i32 %x, i32 %y, i32 %z) #0 {
+  %1 = tail call i8* @rsOffsetNs([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #10
+  %2 = bitcast i8* %1 to <4 x double>*
+  store <4 x double> %val, <4 x double>* %2, align 8
+  ret void
+}
+define void @__rsAllocationVStoreXImpl_double3([1 x i32] %a.coerce, <3 x double> %val, i32 %x, i32 %y, i32 %z) #0 {
+  %1 = tail call i8* @rsOffsetNs([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #10
+  %2 = bitcast i8* %1 to <3 x double>*
+  store <3 x double> %val, <3 x double>* %2, align 8
+  ret void
+}
+define void @__rsAllocationVStoreXImpl_double2([1 x i32] %a.coerce, <2 x double> %val, i32 %x, i32 %y, i32 %z) #0 {
+  %1 = tail call i8* @rsOffsetNs([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #10
+  %2 = bitcast i8* %1 to <2 x double>*
+  store <2 x double> %val, <2 x double>* %2, align 8
+  ret void
+}
+
 
 attributes #0 = { nounwind readonly "less-precise-fpmad"="false" "no-frame-pointer-elim"="true" "no-frame-pointer-elim-non-leaf"="true" "no-infs-fp-math"="false" "no-nans-fp-math"="false" "unsafe-fp-math"="false" "use-soft-float"="false" }
 attributes #1 = { nounwind "less-precise-fpmad"="false" "no-frame-pointer-elim"="true" "no-frame-pointer-elim-non-leaf"="true" "no-infs-fp-math"="false" "no-nans-fp-math"="false" "unsafe-fp-math"="false" "use-soft-float"="false" }

@@ -374,5 +374,58 @@ extern const uchar __attribute__((overloadable))
 
 #endif // (defined(RS_VERSION) && (RS_VERSION >= 18))
 
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+
+#define VOP(T)                                                                   \
+    extern T __attribute__((overloadable))                                       \
+    rsAllocationVLoadX_##T(rs_allocation a, uint32_t x);                         \
+    extern T __attribute__((overloadable))                                       \
+    rsAllocationVLoadX_##T(rs_allocation a, uint32_t x, uint32_t y);             \
+    extern T __attribute__((overloadable))                                       \
+    rsAllocationVLoadX_##T(rs_allocation a, uint32_t x, uint32_t y, uint32_t z); \
+    extern void __attribute__((overloadable))                                    \
+    rsAllocationVStoreX_##T(rs_allocation a, T val, uint32_t x);                 \
+    extern void __attribute__((overloadable))                                    \
+    rsAllocationVStoreX_##T(rs_allocation a, T val, uint32_t x, uint32_t y);     \
+    extern void __attribute__((overloadable))                                    \
+    rsAllocationVStoreX_##T(rs_allocation a, T val, uint32_t x, uint32_t y, uint32_t z);
+
+VOP(char2)
+VOP(char3)
+VOP(char4)
+VOP(uchar2)
+VOP(uchar3)
+VOP(uchar4)
+VOP(short2)
+VOP(short3)
+VOP(short4)
+VOP(ushort2)
+VOP(ushort3)
+VOP(ushort4)
+VOP(int2)
+VOP(int3)
+VOP(int4)
+VOP(uint2)
+VOP(uint3)
+VOP(uint4)
+VOP(long2)
+VOP(long3)
+VOP(long4)
+VOP(ulong2)
+VOP(ulong3)
+VOP(ulong4)
+VOP(float2)
+VOP(float3)
+VOP(float4)
+VOP(double2)
+VOP(double3)
+VOP(double4)
+
+#undef VOP
+
+#endif //(defined(RS_VERSION) && (RS_VERSION >= 999))
+
+
 #endif
 
