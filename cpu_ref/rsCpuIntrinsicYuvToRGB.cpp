@@ -97,19 +97,9 @@ static uchar4 rsYuvToRGBA_uchar4(uchar y, uchar u, uchar v) {
 }
 
 
-static short YuvCoeff[] = {
-    298, 409, -100, 516,   -208, 255, 0, 0,
-    16, 16, 16, 16,        16, 16, 16, 16,
-    128, 128, 128, 128, 128, 128, 128, 128,
-    298, 298, 298, 298, 298, 298, 298, 298,
-    255, 255, 255, 255, 255, 255, 255, 255
-
-
-};
-
-extern "C" void rsdIntrinsicYuv_K(void *dst, const uchar *Y, const uchar *uv, uint32_t count, const short *param);
-extern "C" void rsdIntrinsicYuvR_K(void *dst, const uchar *Y, const uchar *uv, uint32_t count, const short *param);
-extern "C" void rsdIntrinsicYuv2_K(void *dst, const uchar *Y, const uchar *u, const uchar *v, uint32_t count, const short *param);
+extern "C" void rsdIntrinsicYuv_K(void *dst, const uchar *Y, const uchar *uv, uint32_t xstart, size_t xend);
+extern "C" void rsdIntrinsicYuvR_K(void *dst, const uchar *Y, const uchar *uv, uint32_t xstart, size_t xend);
+extern "C" void rsdIntrinsicYuv2_K(void *dst, const uchar *Y, const uchar *u, const uchar *v, size_t xstart, size_t xend);
 
 void RsdCpuScriptIntrinsicYuvToRGB::kernel(const RsForEachStubParamStruct *p,
                                            uint32_t xstart, uint32_t xend,
@@ -164,28 +154,24 @@ void RsdCpuScriptIntrinsicYuvToRGB::kernel(const RsForEachStubParamStruct *p,
 
 #if defined(ARCH_ARM_HAVE_VFP)
     if((x2 > x1) && gArchUseSIMD) {
-        // The neon paths may over-read by up to 8 bytes
-        int32_t len = (x2 - x1 - 8) >> 3;
-        if(len > 0) {
-            if (cstep == 1) {
-                rsdIntrinsicYuv2_K(out, Y, u, v, len, YuvCoeff);
-                x1 += len << 3;
-                out += len << 3;
-            } else if (cstep == 2) {
-                // Check for proper interleave
-                intptr_t ipu = (intptr_t)u;
-                intptr_t ipv = (intptr_t)v;
+        int32_t len = x2 - x1;
+        if (cstep == 1) {
+            rsdIntrinsicYuv2_K(out, Y, u, v, x1, x2);
+            x1 += len;
+            out += len;
+        } else if (cstep == 2) {
+            // Check for proper interleave
+            intptr_t ipu = (intptr_t)u;
+            intptr_t ipv = (intptr_t)v;
 
-                if (ipu == (ipv + 1)) {
-                    rsdIntrinsicYuv_K(out, Y, v, len, YuvCoeff);
-                    x1 += len << 3;
-                    out += len << 3;
-                } else if (ipu == (ipv - 1)) {
-                    rsdIntrinsicYuvR_K(out, Y, u, len, YuvCoeff);
-                    x1 += len << 3;
-                    out += len << 3;
-                }
-
+            if (ipu == (ipv + 1)) {
+                rsdIntrinsicYuv_K(out, Y, v, x1, x2);
+                x1 += len;
+                out += len;
+            } else if (ipu == (ipv - 1)) {
+                rsdIntrinsicYuvR_K(out, Y, u, x1, x2);
+                x1 += len;
+                out += len;
             }
         }
     }
