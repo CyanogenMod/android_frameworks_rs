@@ -23,7 +23,6 @@
 
 #ifndef RS_COMPATIBILITY_LIB
 #include "rsMesh.h"
-#include <ui/FramebufferNativeWindow.h>
 #include <gui/DisplayEventReceiver.h>
 #endif
 
