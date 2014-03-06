@@ -51,7 +51,7 @@ ifeq ($(ARCH_ARM_HAVE_VFP),true)
     rsCpuIntrinsics_neon_ColorMatrix.S \
     rsCpuIntrinsics_neon_Blend.S \
     rsCpuIntrinsics_neon_Blur.S \
-    rsCpuIntrinsics_neon_YuvToRGB.S
+    rsCpuIntrinsics_neon_YuvToRGB.S \
     convolve/convolve_copy_neon.s \
     convolve/convolve_avg_neon.s \
     convolve/convolve8_neon.s \

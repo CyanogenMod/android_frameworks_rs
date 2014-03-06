@@ -533,9 +533,11 @@ RsdCpuReference::CpuScript * RsdCpuReferenceImpl::createIntrinsic(const Script *
     case RS_SCRIPT_INTRINSIC_ID_3DLUT:
         i = rsdIntrinsic_3DLUT(this, s, e);
         break;
+#ifndef RS_COMPATIBILITY_LIB
     case RS_SCRIPT_INTRINSIC_ID_INTER_PRED:
         i = rsdIntrinsic_InterPred(this, s, e);
         break;
+#endif
     case RS_SCRIPT_INTRINSIC_ID_CONVOLVE_3x3:
         i = rsdIntrinsic_Convolve3x3(this, s, e);
         break;
