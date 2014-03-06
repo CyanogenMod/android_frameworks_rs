@@ -177,5 +177,85 @@ extern uint32_t __attribute__((overloadable))
 
 #endif //defined(RS_VERSION) && (RS_VERSION >= 14)
 
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+
+/**
+ * Atomic add one to the value at addr.
+ * Equal to rsAtomicAdd(addr, 1)
+ *
+ * @param addr Address of value to increment
+ *
+ * @return old value
+ */
+extern int32_t __attribute__((overloadable))
+    rsAtomicInc(volatile uint32_t* addr);
+
+/**
+ * Atomic subtract one from the value at addr. Equal to rsAtomicSub(addr, 1)
+ *
+ * @param addr Address of value to decrement
+ *
+ * @return old value
+ */
+extern int32_t __attribute__((overloadable))
+    rsAtomicDec(volatile uint32_t* addr);
+
+/**
+ * Atomic add a value to the value at addr.  addr[0] += value
+ *
+ * @param addr Address of value to modify
+ * @param value Amount to add to the value at addr
+ *
+ * @return old value
+ */
+extern int32_t __attribute__((overloadable))
+    rsAtomicAdd(volatile uint32_t* addr, uint32_t value);
+
+/**
+ * Atomic Subtract a value from the value at addr.  addr[0] -= value
+ *
+ * @param addr Address of value to modify
+ * @param value Amount to subtract from the value at addr
+ *
+ * @return old value
+ */
+extern int32_t __attribute__((overloadable))
+    rsAtomicSub(volatile uint32_t* addr, uint32_t value);
+
+/**
+ * Atomic Bitwise and a value from the value at addr.  addr[0] &= value
+ *
+ * @param addr Address of value to modify
+ * @param value Amount to and with the value at addr
+ *
+ * @return old value
+ */
+extern int32_t __attribute__((overloadable))
+    rsAtomicAnd(volatile uint32_t* addr, uint32_t value);
+
+/**
+ * Atomic Bitwise or a value from the value at addr.  addr[0] |= value
+ *
+ * @param addr Address of value to modify
+ * @param value Amount to or with the value at addr
+ *
+ * @return old value
+ */
+extern int32_t __attribute__((overloadable))
+    rsAtomicOr(volatile uint32_t* addr, uint32_t value);
+
+/**
+ * Atomic Bitwise xor a value from the value at addr.  addr[0] ^= value
+ *
+ * @param addr Address of value to modify
+ * @param value Amount to xor with the value at addr
+ *
+ * @return old value
+ */
+extern int32_t __attribute__((overloadable))
+    rsAtomicXor(volatile uint32_t* addr, uint32_t value);
+
+#endif //defined(RS_VERSION) && (RS_VERSION >= 21)
+
 #endif
 

@@ -18,10 +18,14 @@ extern int32_t __attribute__((overloadable)) rsAtomicCas(volatile int32_t *ptr, 
 }
 
 extern uint32_t __attribute__((overloadable)) rsAtomicCas(volatile uint32_t *ptr, uint32_t expectedValue, uint32_t newValue) {
-    return __sync_val_compare_and_swap((volatile int32_t *)ptr, (int32_t)expectedValue, (int32_t)newValue);
+    return __sync_val_compare_and_swap(ptr, expectedValue, newValue);
 }
 
 extern int32_t __attribute__((overloadable)) rsAtomicInc(volatile int32_t *ptr) {
+    return __sync_fetch_and_add(ptr, 1);
+}
+
+extern int32_t __attribute__((overloadable)) rsAtomicInc(volatile uint32_t *ptr) {
     return __sync_fetch_and_add(ptr, 1);
 }
 
@@ -29,7 +33,15 @@ extern int32_t __attribute__((overloadable)) rsAtomicDec(volatile int32_t *ptr) 
     return __sync_fetch_and_sub(ptr, 1);
 }
 
+extern int32_t __attribute__((overloadable)) rsAtomicDec(volatile uint32_t *ptr) {
+    return __sync_fetch_and_sub(ptr, 1);
+}
+
 extern int32_t __attribute__((overloadable)) rsAtomicAdd(volatile int32_t *ptr, int32_t value) {
+    return __sync_fetch_and_add(ptr, value);
+}
+
+extern int32_t __attribute__((overloadable)) rsAtomicAdd(volatile uint32_t *ptr, uint32_t value) {
     return __sync_fetch_and_add(ptr, value);
 }
 
@@ -37,7 +49,15 @@ extern int32_t __attribute__((overloadable)) rsAtomicSub(volatile int32_t *ptr, 
     return __sync_fetch_and_sub(ptr, value);
 }
 
+extern int32_t __attribute__((overloadable)) rsAtomicSub(volatile uint32_t *ptr, uint32_t value) {
+    return __sync_fetch_and_sub(ptr, value);
+}
+
 extern int32_t __attribute__((overloadable)) rsAtomicAnd(volatile int32_t *ptr, int32_t value) {
+    return __sync_fetch_and_and(ptr, value);
+}
+
+extern int32_t __attribute__((overloadable)) rsAtomicAnd(volatile uint32_t *ptr, uint32_t value) {
     return __sync_fetch_and_and(ptr, value);
 }
 
@@ -45,7 +65,15 @@ extern int32_t __attribute__((overloadable)) rsAtomicOr(volatile int32_t *ptr, i
     return __sync_fetch_and_or(ptr, value);
 }
 
+extern int32_t __attribute__((overloadable)) rsAtomicOr(volatile uint32_t *ptr, uint32_t value) {
+    return __sync_fetch_and_or(ptr, value);
+}
+
 extern int32_t __attribute__((overloadable)) rsAtomicXor(volatile int32_t *ptr, int32_t value) {
+    return __sync_fetch_and_xor(ptr, value);
+}
+
+extern int32_t __attribute__((overloadable)) rsAtomicXor(volatile uint32_t *ptr, uint32_t value) {
     return __sync_fetch_and_xor(ptr, value);
 }
 
@@ -59,7 +87,7 @@ extern uint32_t __attribute__((overloadable)) rsAtomicMin(volatile uint32_t *ptr
     do {
         prev = *ptr;
         uint32_t n = min(value, prev);
-        status = rsAtomicCas((volatile int32_t*) ptr, (int32_t) prev, (int32_t)n);
+        status = __sync_val_compare_and_swap(ptr, prev, n);
     } while (status != prev);
     return prev;
 }
@@ -69,7 +97,7 @@ extern int32_t __attribute__((overloadable)) rsAtomicMin(volatile int32_t *ptr, 
     do {
         prev = *ptr;
         int32_t n = min(value, prev);
-        status = rsAtomicCas(ptr, prev, n);
+        status = __sync_val_compare_and_swap(ptr, prev, n);
     } while (status != prev);
     return prev;
 }
@@ -79,7 +107,7 @@ extern uint32_t __attribute__((overloadable)) rsAtomicMax(volatile uint32_t *ptr
     do {
         prev = *ptr;
         uint32_t n = max(value, prev);
-        status = rsAtomicCas((volatile int32_t*) ptr, (int32_t) prev, (int32_t) n);
+        status = __sync_val_compare_and_swap(ptr, prev, n);
     } while (status != prev);
     return prev;
 }
@@ -89,7 +117,7 @@ extern int32_t __attribute__((overloadable)) rsAtomicMax(volatile int32_t *ptr, 
     do {
         prev = *ptr;
         int32_t n = max(value, prev);
-        status = rsAtomicCas(ptr, prev, n);
+        status = __sync_val_compare_and_swap(ptr, prev, n);
     } while (status != prev);
     return prev;
 }
