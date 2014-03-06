@@ -1435,6 +1435,20 @@ class ScriptIntrinsic3DLUT : public ScriptIntrinsic {
      */
     void setLUT(sp<Allocation> lut);
 };
+/**
+ * Intrinsic for VP9InterPrediction
+ */
+class ScriptIntrinsicVP9InterPred : public ScriptIntrinsic {
+ private:
+    ScriptIntrinsicVP9InterPred(sp<RS> rs, sp<const Element> e);
+ public:
+    static sp<ScriptIntrinsicVP9InterPred> create(sp<RS> rs, sp<const Element> e);
+
+    void forEach(sp<Allocation> asize);
+    void setRef(sp<Allocation> ref);
+    void setParamCount(int fri, int sec, int offset);
+    void setParam(sp<Allocation> param);
+};
 
 /**
  * Intrinsic kernel for blending two Allocations.
