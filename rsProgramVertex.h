@@ -29,7 +29,7 @@ class ProgramVertex : public Program {
 public:
     ProgramVertex(Context *,const char * shaderText, size_t shaderLength,
                   const char** textureNames, size_t textureNamesCount, const size_t *textureNamesLength,
-                  const uint32_t * params, size_t paramLength);
+                  const uintptr_t * params, size_t paramLength);
     virtual ~ProgramVertex();
 
     virtual void setup(Context *rsc, ProgramVertexState *state);

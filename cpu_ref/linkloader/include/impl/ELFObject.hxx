@@ -381,7 +381,12 @@ relocateX86_64(void *(*find_sym)(void *context, char const *name),
       if (!S) {
         missingSymbols = true;
       }
+#ifdef __LP64__
+      llvm::errs() << "Code temporarily disabled for 64bit build";
+      abort();
+#else
       sym->setAddress((void *)S);
+#endif
     }
 
     switch (rel->getType()) {
@@ -435,7 +440,12 @@ relocateX86_32(void *(*find_sym)(void *context, char const *name),
       if (!S) {
         missingSymbols = true;
       }
+#ifdef __LP64__
+      llvm::errs() << "Code temporarily disabled for 64bit build";
+      abort();
+#else
       sym->setAddress((void *)S);
+#endif
     }
 
     switch (rel->getType()) {
@@ -485,7 +495,12 @@ relocateMIPS(void *(*find_sym)(void *context, char const *name),
       if (!S) {
         missingSymbols = true;
       }
+#ifdef __LP64__
+      llvm::errs() << "Code temporarily disabled for 64bit build";
+      abort();
+#else
       sym->setAddress((void *)S);
+#endif
     }
 
     switch (rel->getType()) {
@@ -523,7 +538,13 @@ relocateMIPS(void *(*find_sym)(void *context, char const *name),
           A += S;
           *inst |= ((A >> 2) & 0x3FFFFFF);
           if (((P + 4) >> 28) != (A >> 28)) { // far local call
+#ifdef __LP64__
+            llvm::errs() << "Code temporarily disabled for 64bit build";
+            abort();
+            void* stub = NULL;
+#else
             void *stub = text->getStubLayout()->allocateStub((void *)A);
+#endif
             rsl_assert(stub && "cannot allocate stub.");
             sym->setAddress(stub);
             S = (int32_t)(intptr_t)stub;
@@ -534,7 +555,13 @@ relocateMIPS(void *(*find_sym)(void *context, char const *name),
       } else { // shared-library call
         A = (A & 0x3FFFFFF) << 2;
         rsl_assert(A == 0 && "R_MIPS_26 addend is not zero.");
+#ifdef __LP64__
+        llvm::errs() << "Code temporarily disabled for 64bit build";
+        abort();
+        void* stub = NULL;
+#else
         void *stub = text->getStubLayout()->allocateStub((void *)S);
+#endif
         rsl_assert(stub && "cannot allocate stub.");
         sym->setAddress(stub);
         S = (int32_t)(intptr_t)stub;
@@ -560,7 +587,12 @@ relocateMIPS(void *(*find_sym)(void *context, char const *name),
       }
       if (strcmp (sym->getName(), "_gp_disp") == 0) {
           S = (int)(intptr_t)got_address() + GP_OFFSET - (int)P;
+#ifdef __LP64__
+          llvm::errs() << "Code temporarily disabled for 64bit build";
+          abort();
+#else
           sym->setAddress((void *)S);
+#endif
       }
       *inst |= (((S + A + (int)0x8000) >> 16) & 0xFFFF);
       break;
@@ -601,8 +633,14 @@ relocateMIPS(void *(*find_sym)(void *context, char const *name),
         } else { // R_MIPS_CALL16
           rsl_assert(A == 0 && "R_MIPS_CALL16 addend is not 0.");
         }
+#ifdef __LP64__
+        llvm::errs() << "Code temporarily disabled for 64bit build";
+        abort();
+        int got_index = 0;
+#else
         int got_index = search_got((int)rel->getSymTabIndex(), (void *)(S + A),
                                    sym->getBindingAttribute());
+#endif
         int got_offset = (got_index << 2) - GP_OFFSET;
         *inst |= (got_offset & 0xFFFF);
       }
