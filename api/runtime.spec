@@ -24,6 +24,7 @@ ret: #3#1
 comment:
  Component wise conversion from #2#1 to #3#1
 version: 9
+test: noverify
 end:
 
 start:
@@ -225,6 +226,8 @@ arg: #2#1
 comment:
  Return the complementary error function.
 version: 9
+# TODO Test to be implemented
+test: noverify
 end:
 
 start:
@@ -236,6 +239,8 @@ arg: #2#1
 comment:
  Return the error function.
 version: 9
+# TODO Test to be implemented
+test: noverify
 end:
 
 start:
@@ -298,8 +303,8 @@ w: 1, 2, 3, 4
 t: f32
 name: fdim
 ret: #2#1
-arg: #2#1
-arg: #2#1
+arg: #2#1 a
+arg: #2#1 b
 comment:
  Return the positive difference between two values.
 version: 9
@@ -395,11 +400,11 @@ t: f32
 name: fract
 ret: #2#1
 arg: #2#1 v
-arg: #2#1 *iptr
+arg: #2#1 *floor
 comment:
  Return fractional part of v
 
- @param iptr  iptr[0] will be set to the floor of the input value.
+ @param floor  floor[0] will be set to the floor of the input value.
 version: 9
 end:
 
@@ -429,6 +434,8 @@ comment:
 
  @param v Supports float, float2, float3, float4.
 version: 9
+# TODO Test to be implemented
+test: noverify
 end:
 
 start:
@@ -487,10 +494,12 @@ w: 1, 2, 3, 4
 t: f32
 name: lgamma
 ret: #2#1
-arg: #2#1 x
+arg: #2#1
 comment:
  Return the log gamma and sign
 version: 9
+# TODO Test to be implemented
+test: noverify
 end:
 
 start:
@@ -503,6 +512,8 @@ arg: int#1 *y
 comment:
  Return the log gamma and sign
 version: 9
+# TODO Test to be implemented
+test: noverify
 end:
 
 start:
@@ -510,7 +521,7 @@ w: 1, 2, 3, 4
 t: f32
 name: log
 ret: #2#1
-arg: #2#1 x
+arg: #2#1
 comment:
  Return the natural logarithm.
 version: 9
@@ -521,7 +532,7 @@ w: 1, 2, 3, 4
 t: f32
 name: log2
 ret: #2#1
-arg: #2#1 x
+arg: #2#1
 comment:
  Return the base 2 logarithm.
 version: 9
@@ -532,7 +543,7 @@ w: 1, 2, 3, 4
 t: f32
 name: log10
 ret: #2#1
-arg: #2#1 x
+arg: #2#1
 comment:
  Return the base 10 logarithm.
 version: 9
@@ -543,7 +554,7 @@ w: 1, 2, 3, 4
 t: f32
 name: log1p
 ret: #2#1
-arg: #2#1 x
+arg: #2#1
 comment:
  Return the natural logarithm of (v + 1.0f)
 version: 9
@@ -554,7 +565,7 @@ w: 1, 2, 3, 4
 t: f32
 name: logb
 ret: #2#1
-arg: #2#1 x
+arg: #2#1
 comment:
  Compute the exponent of the value.
 version: 9
@@ -598,6 +609,7 @@ arg: uint#1
 comment:
  generate a nan
 version: 9
+test: noverify
 end:
 
 start:
@@ -666,12 +678,14 @@ w: 1, 2, 3, 4
 t: f32
 name: remquo
 ret: #2#1
-arg: #2#1
-arg: #2#1
-arg: int#1 *
+arg: #2#1 b
+arg: #2#1 c
+arg: int#1 *d
 comment:
  todo
 version: 9
+# TODO Test to be implemented
+test: noverify
 end:
 
 start:
@@ -706,6 +720,8 @@ arg: #2#1
 comment:
  Round to the nearest integral value.  Half values are rounded away from zero.
 version: 9
+# TODO Test to be implemented
+test: noverify
 end:
 
 start:
@@ -821,6 +837,8 @@ arg: #2#1
 comment:
  Compute the gamma function of a value.
 version: 9
+# TODO Test to be implemented
+test: noverify
 end:
 
 start:
@@ -1228,6 +1246,8 @@ arg: #2#1 rhs
 comment:
  Compute the cross product of two vectors.
 version: 9
+# TODO test: vector
+test: noverify
 end:
 
 start:
@@ -1240,6 +1260,8 @@ arg: #2#1 rhs
 comment:
  Compute the dot product of two vectors.
 version: 9
+# TODO test: vector
+test: noverify
 end:
 
 start:
@@ -1251,6 +1273,8 @@ arg: #2#1 v
 comment:
  Compute the length of a vector.
 version: 9
+# TODO test: vector
+test: noverify
 end:
 
 start:
@@ -1263,6 +1287,8 @@ arg: #2#1 rhs
 comment:
  Compute the distance between two points.
 version: 9
+# TODO Test to be implemented
+test: noverify
 end:
 
 start:
@@ -1274,6 +1300,8 @@ arg: #2#1 v
 comment:
  Normalize a vector.
 version: 9
+# TODO Test to be implemented
+test: noverify
 end:
 
 start:
@@ -1285,6 +1313,8 @@ arg: #2#1 v
 comment:
  Return the approximate reciprocal of a value.
 version: 17
+# TODO fix & implement
+test: noverify
 end:
 
 start:
@@ -1318,6 +1348,8 @@ arg: #2#1 v
 comment:
  Compute the approximate length of a vector.
 version: 17
+# TODO test: vector
+test: noverify
 end:
 
 start:
@@ -1330,6 +1362,8 @@ arg: #2#1 rhs
 comment:
  Compute the approximate distance between two points.
 version: 17
+# TODO Test to be implemented
+test: noverify
 end:
 
 start:
@@ -1341,6 +1375,8 @@ arg: #2#1 v
 comment:
  Approximately normalize a vector.
 version: 17
+# TODO Test to be implemented
+test: noverify
 end:
 
 start:
@@ -1354,6 +1390,8 @@ comment:
  valid for inputs -86.f to 86.f
  Max 8192 ulps of error
 version: 18
+# TODO Fix precision issue & verify
+test: noverify
 end:
 
 start:
@@ -1367,6 +1405,8 @@ comment:
  valid for inputs -125.f to 125.f
  Max 8192 ulps of error
 version: 18
+# TODO Fix precision issue & verify
+test: noverify
 end:
 
 start:
@@ -1380,6 +1420,8 @@ comment:
  valid for inputs -37.f to 37.f
  Max 8192 ulps of error
 version: 18
+# TODO Fix precision issue & verify
+test: noverify
 end:
 
 start:
@@ -1391,6 +1433,8 @@ arg: #2#1 v
 comment:
  Fast approximate log
 version: 18
+# TODO Fix precision issue & verify
+test: noverify
 end:
 
 start:
@@ -1402,6 +1446,8 @@ arg: #2#1 v
 comment:
  Fast approximate log2
 version: 18
+# TODO Fix precision issue & verify
+test: noverify
 end:
 
 start:
@@ -1413,6 +1459,8 @@ arg: #2#1 v
 comment:
  Fast approximate log10
 version: 18
+# TODO Fix precision issue & verify
+test: noverify
 end:
 
 start:
@@ -1425,6 +1473,7 @@ arg: #2#1 y
 comment:
  Fast approximate v ^ y
 version: 18
+# TODO Fix precision issue & verify
+test: noverify
 end:
-
 
