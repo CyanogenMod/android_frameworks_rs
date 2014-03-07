@@ -746,24 +746,27 @@ extern uint8_t __attribute__((overloadable)) abs(int8_t v) {
 
 /**
  * clz
+ * __builtin_clz only accepts a 32-bit unsigned int, so every input will be
+ * expanded to 32 bits. For our smaller data types, we need to subtract off
+ * these unused top bits (that will be always be composed of zeros).
  */
 extern uint32_t __attribute__((overloadable)) clz(uint32_t v) {
     return __builtin_clz(v);
 }
 extern uint16_t __attribute__((overloadable)) clz(uint16_t v) {
-    return (uint16_t)__builtin_clz(v);
+    return __builtin_clz(v) - 16;
 }
 extern uint8_t __attribute__((overloadable)) clz(uint8_t v) {
-    return (uint8_t)__builtin_clz(v);
+    return __builtin_clz(v) - 24;
 }
 extern int32_t __attribute__((overloadable)) clz(int32_t v) {
-    return (int32_t)__builtin_clz((uint32_t)v);
+    return __builtin_clz(v);
 }
 extern int16_t __attribute__((overloadable)) clz(int16_t v) {
-    return (int16_t)__builtin_clz(v);
+    return __builtin_clz(((uint32_t)v) & 0x0000ffff) - 16;
 }
 extern int8_t __attribute__((overloadable)) clz(int8_t v) {
-    return (int8_t)__builtin_clz(v);
+    return __builtin_clz(((uint32_t)v) & 0x000000ff) - 24;
 }
 
 
