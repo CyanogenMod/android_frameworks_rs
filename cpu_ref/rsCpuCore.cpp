@@ -506,6 +506,8 @@ RsdCpuReference::CpuScript * RsdCpuReferenceImpl::createScript(const ScriptC *s,
 
 extern RsdCpuScriptImpl * rsdIntrinsic_3DLUT(RsdCpuReferenceImpl *ctx,
                                              const Script *s, const Element *e);
+extern RsdCpuScriptImpl * rsdIntrinsic_InterPred(RsdCpuReferenceImpl *ctx,
+                                                 const Script *s, const Element *e);
 extern RsdCpuScriptImpl * rsdIntrinsic_Convolve3x3(RsdCpuReferenceImpl *ctx,
                                                    const Script *s, const Element *e);
 extern RsdCpuScriptImpl * rsdIntrinsic_ColorMatrix(RsdCpuReferenceImpl *ctx,
@@ -530,6 +532,9 @@ RsdCpuReference::CpuScript * RsdCpuReferenceImpl::createIntrinsic(const Script *
     switch (iid) {
     case RS_SCRIPT_INTRINSIC_ID_3DLUT:
         i = rsdIntrinsic_3DLUT(this, s, e);
+        break;
+    case RS_SCRIPT_INTRINSIC_ID_INTER_PRED:
+        i = rsdIntrinsic_InterPred(this, s, e);
         break;
     case RS_SCRIPT_INTRINSIC_ID_CONVOLVE_3x3:
         i = rsdIntrinsic_Convolve3x3(this, s, e);
