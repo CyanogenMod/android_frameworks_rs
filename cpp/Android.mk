@@ -56,7 +56,7 @@ LOCAL_SRC_FILES := $(rs_cpp_SRC_FILES)
 
 LOCAL_SRC_FILES += ../rsCompatibilityLib.cpp
 
-LOCAL_STATIC_LIBRARIES := \
+LOCAL_WHOLE_STATIC_LIBRARIES := \
 	libz \
 	libutils \
 	liblog \
