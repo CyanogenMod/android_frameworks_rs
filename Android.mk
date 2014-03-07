@@ -13,6 +13,7 @@ endif
 include $(CLEAR_VARS)
 LOCAL_CLANG := true
 LOCAL_MODULE := libRSDriver
+LOCAL_MODULE_TARGET_ARCH_WARN := arm mips x86 x86_64
 
 LOCAL_SRC_FILES:= \
 	driver/rsdAllocation.cpp \
@@ -73,13 +74,14 @@ RSG_GENERATOR:=$(LOCAL_BUILT_MODULE)
 include $(CLEAR_VARS)
 LOCAL_CLANG := true
 LOCAL_MODULE := libRS
+LOCAL_MODULE_TARGET_ARCH_WARN := arm mips x86 x86_64
 
 LOCAL_MODULE_CLASS := SHARED_LIBRARIES
-intermediates:= $(local-intermediates-dir)
+generated_sources:= $(local-generated-sources-dir)
 
 # Generate custom headers
 
-GEN := $(addprefix $(intermediates)/, \
+GEN := $(addprefix $(generated_sources)/, \
             rsgApiStructs.h \
             rsgApiFuncDecl.h \
         )
@@ -87,7 +89,7 @@ GEN := $(addprefix $(intermediates)/, \
 $(GEN) : PRIVATE_PATH := $(LOCAL_PATH)
 $(GEN) : PRIVATE_CUSTOM_TOOL = cat $(PRIVATE_PATH)/rs.spec $(PRIVATE_PATH)/rsg.spec $(PRIVATE_PATH)/rs_native.spec | $(RSG_GENERATOR) $< $@
 $(GEN) : $(RSG_GENERATOR) $(LOCAL_PATH)/rs.spec $(LOCAL_PATH)/rsg.spec $(LOCAL_PATH)/rs_native.spec
-$(GEN): $(intermediates)/%.h : $(LOCAL_PATH)/%.h.rsg
+$(GEN): $(generated_sources)/%.h : $(LOCAL_PATH)/%.h.rsg
 	$(transform-generated-source)
 
 # used in jni/Android.mk
@@ -96,7 +98,7 @@ LOCAL_GENERATED_SOURCES += $(GEN)
 
 # Generate custom source files
 
-GEN := $(addprefix $(intermediates)/, \
+GEN := $(addprefix $(generated_sources)/, \
             rsgApi.cpp \
             rsgApiReplay.cpp \
         )
@@ -104,7 +106,7 @@ GEN := $(addprefix $(intermediates)/, \
 $(GEN) : PRIVATE_PATH := $(LOCAL_PATH)
 $(GEN) : PRIVATE_CUSTOM_TOOL = cat $(PRIVATE_PATH)/rs.spec $(PRIVATE_PATH)/rsg.spec $(PRIVATE_PATH)/rs_native.spec | $(RSG_GENERATOR) $< $@
 $(GEN) : $(RSG_GENERATOR) $(LOCAL_PATH)/rs.spec $(LOCAL_PATH)/rsg.spec $(LOCAL_PATH)/rs_native.spec
-$(GEN): $(intermediates)/%.cpp : $(LOCAL_PATH)/%.cpp.rsg
+$(GEN): $(generated_sources)/%.cpp : $(LOCAL_PATH)/%.cpp.rsg
 	$(transform-generated-source)
 
 # used in jni/Android.mk
