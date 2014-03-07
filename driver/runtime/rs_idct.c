@@ -1,6 +1,5 @@
 #include "rs_idct.h"
 #include "rs_allocation.rsh"
-#include <string.h>
 
 static void idct4_1d(const int16_t *input, int16_t *output) {
     int16_t step[4];
@@ -906,10 +905,13 @@ static void idct32x32_1024(const rs_allocation input, rs_allocation dest, int xo
         for (j = 0; j < 2; ++j)
             zero_coeff[j] = zero_coeff[2 * j] | zero_coeff[2 * j + 1];
 
-        if (zero_coeff[0] | zero_coeff[1])
+        if (zero_coeff[0] | zero_coeff[1]) {
             idct32_1d(inptr, outptr);
-        else
-            memset(outptr, 0, sizeof(int16_t) * 32);
+        } else {
+            for (int ct = 0; ct < 32; ct++) {
+                outptr[ct] = 0;
+            }
+        }
         inptr += 32;
         outptr += 32;
     }
