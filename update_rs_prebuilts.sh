@@ -4,18 +4,35 @@
 MY_ANDROID_DIR=$PWD/../../
 cd $MY_ANDROID_DIR
 
+if [ $OSTYPE == 'darwin13' ];
+then
+
+  DARWIN=1
+  SHORT_OSNAME=darwin
+  SONAME=dylib
+  # Only build arm on darwin.
+  TARGETS=(arm)
+  SYS_NAMES=(generic)
+
+else
+
+  DARWIN=0
+  SHORT_OSNAME=linux
+  SONAME=so
+  # Target architectures and their system library names.
+  TARGETS=(arm mips x86)
+  SYS_NAMES=(generic generic_mips generic_x86)
+
+fi
+
 # ANDROID_HOST_OUT is where the new prebuilts will be constructed/copied from.
-ANDROID_HOST_OUT=$MY_ANDROID_DIR/out/host/linux-x86/
+ANDROID_HOST_OUT=$MY_ANDROID_DIR/out/host/$SHORT_OSNAME-x86/
 
 # HOST_LIB_DIR allows us to pick up the built librsrt_*.bc libraries.
 HOST_LIB_DIR=$ANDROID_HOST_OUT/lib
 
 # PREBUILTS_DIR is where we want to copy our new files to.
 PREBUILTS_DIR=$MY_ANDROID_DIR/prebuilts/sdk/
-
-# Target architectures and their system library names.
-TARGETS=(arm mips x86)
-SYS_NAMES=(generic generic_mips generic_x86)
 
 print_usage() {
   echo "USAGE: $0 [-h|--help] [-n|--no-build] [-x]"
@@ -88,50 +105,55 @@ DATE=`date +%Y%m%d`
 cd $PREBUILTS_DIR || exit 3
 repo start pb_$DATE .
 
-for i in $(seq 0 $((${#TARGETS[@]} - 1))); do
-  t=${TARGETS[$i]}
-  sys_lib_dir=$MY_ANDROID_DIR/out/target/product/${SYS_NAMES[$i]}/system/lib
-  for a in `find renderscript/lib/$t -name \*.so`; do
-    file=`basename $a`
-    cp `find $sys_lib_dir -name $file` $a || exit 4
+# Don't copy device prebuilts on Darwin. We don't need/use them.
+if [ $DARWIN -eq 0 ]; then
+  for i in $(seq 0 $((${#TARGETS[@]} - 1))); do
+    t=${TARGETS[$i]}
+    sys_lib_dir=$MY_ANDROID_DIR/out/target/product/${SYS_NAMES[$i]}/system/lib
+    for a in `find renderscript/lib/$t -name \*.so`; do
+      file=`basename $a`
+      cp `find $sys_lib_dir -name $file` $a || exit 4
+    done
+
+    for a in `find renderscript/lib/$t -name \*.bc`; do
+      file=`basename $a`
+      cp `find $HOST_LIB_DIR $sys_lib_dir -name $file` $a || exit 5
+    done
   done
 
-  for a in `find renderscript/lib/$t -name \*.bc`; do
-    file=`basename $a`
-    cp `find $HOST_LIB_DIR $sys_lib_dir -name $file` $a || exit 5
-  done
-done
+  # javalib.jar
+  cp $MY_ANDROID_DIR/out/target/common/obj/JAVA_LIBRARIES/android-support-v8-renderscript_intermediates/javalib.jar renderscript/lib
 
-# general
-# javalib.jar
-cp $MY_ANDROID_DIR/out/target/common/obj/JAVA_LIBRARIES/android-support-v8-renderscript_intermediates/javalib.jar renderscript/lib
+fi
 
 # Copy header files for compilers
 cp $MY_ANDROID_DIR/external/clang/lib/Headers/*.h renderscript/clang-include
 cp $MY_ANDROID_DIR/frameworks/rs/scriptc/* renderscript/include
 
 
-# Linux-specific tools (bin/ and lib/)
+# Host-specific tools (bin/ and lib/)
 TOOLS_BIN="
 bcc_compat
 llvm-rs-cc
 "
 
 TOOLS_LIB="
-libbcc.so
-libbcinfo.so
-libclang.so
-libLLVM.so
+libbcc.$SONAME
+libbcinfo.$SONAME
+libclang.$SONAME
+libLLVM.$SONAME
 "
 
 for a in $TOOLS_BIN; do
-  cp $ANDROID_HOST_OUT/bin/$a tools/linux/
-  strip tools/linux/$a
+  cp $ANDROID_HOST_OUT/bin/$a tools/$SHORT_OSNAME/
+  strip tools/$SHORT_OSNAME/$a
 done
 
 for a in $TOOLS_LIB; do
-  cp $ANDROID_HOST_OUT/lib/$a tools/linux/
-  strip tools/linux/$a
+  cp $ANDROID_HOST_OUT/lib/$a tools/$SHORT_OSNAME/
+  strip tools/$SHORT_OSNAME/$a
 done
 
-echo "DON'T FORGET TO UPDATE THE DARWIN COMPILER PREBUILTS!!!"
+if [ $DARWIN -eq 0 ]; then
+  echo "DON'T FORGET TO UPDATE THE DARWIN COMPILER PREBUILTS!!!"
+fi

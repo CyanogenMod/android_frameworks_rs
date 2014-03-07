@@ -21,9 +21,11 @@ else
   RS_VERSION := "(1 + $(PLATFORM_SDK_VERSION))"
 endif
 local_cflags_for_rs_cpp += -DRS_VERSION=$(RS_VERSION)
+local_cflags_for_rs_cpp += -Wno-unused-parameter
 
 LOCAL_SRC_FILES := $(rs_cpp_SRC_FILES)
 
+LOCAL_CLANG := true
 LOCAL_CFLAGS += $(local_cflags_for_rs_cpp)
 
 LOCAL_SHARED_LIBRARIES := \
@@ -47,6 +49,7 @@ include $(BUILD_SHARED_LIBRARY)
 
 include $(CLEAR_VARS)
 
+LOCAL_CLANG := true
 LOCAL_CFLAGS += $(local_cflags_for_rs_cpp)
 
 LOCAL_SDK_VERSION := 8

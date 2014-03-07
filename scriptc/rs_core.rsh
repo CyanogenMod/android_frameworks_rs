@@ -51,7 +51,7 @@
 #include "rs_types.rsh"
 #include "rs_allocation.rsh"
 #include "rs_atomic.rsh"
-#include "rs_cl.rsh"
+#include "rs_core_math.rsh"
 #include "rs_debug.rsh"
 #include "rs_element.rsh"
 #include "rs_math.rsh"

@@ -157,7 +157,7 @@ public class SampleRSActivity extends Activity {
         long t = java.lang.System.currentTimeMillis();
         mScript.invoke_setSampleData(alloc, mTwoByTwoAlloc, sampler);
         mScript.forEach_root(alloc);
-        alloc.ioSendOutput();
+        alloc.ioSend();
         mRS.finish();
         t = java.lang.System.currentTimeMillis() - t;
         Log.i(TAG, "Filter time is: " + t + " ms");
