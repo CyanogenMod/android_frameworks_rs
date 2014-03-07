@@ -32,6 +32,9 @@ build_rs_libs() {
   cd $MY_ANDROID_DIR/frameworks/rs/driver/runtime && mma -j32 && cd - || exit 1
   # Build a sample support application to ensure that all the pieces are up to date.
   cd $MY_ANDROID_DIR/frameworks/rs/java/tests/RSTest_CompatLib/ && mma -j32 && cd - || exit 2
+  # Build bcc_compat.
+  cd $MY_ANDROID_DIR/frameworks/compile/libbcc/ && mma -j32 && cd - || exit 3
+
 }
 
 # Build everything by default
