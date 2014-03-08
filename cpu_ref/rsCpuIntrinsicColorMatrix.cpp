@@ -125,6 +125,32 @@ typedef union {
     } u;
 } Key_t;
 
+#if defined(ARCH_ARM_HAVE_VFP) && defined(FAKE_ARM64_BUILD)
+typedef struct {
+    void (*column[4])(void);
+    void (*store)(void);
+    void (*load)(void);
+} FunctionTab_t;
+
+extern "C" size_t rsdIntrinsicColorMatrix_int_K(
+             void *out, void const *in, size_t count,
+             FunctionTab_t const *fns,
+             int16_t const *mult, int32_t const *add);
+
+extern "C" void rsdIntrinsicColorMatrixSetup_int_K(
+             FunctionTab_t const *fns,
+             uint32_t mask, int dt, int st);
+
+extern "C" size_t rsdIntrinsicColorMatrix_float_K(
+             void *out, void const *in, size_t count,
+             FunctionTab_t const *fns,
+             float const *mult, float const *add);
+
+extern "C" void rsdIntrinsicColorMatrixSetup_float_K(
+             FunctionTab_t const *fns,
+             uint32_t mask, int dt, int st);
+#endif
+
 class RsdCpuScriptIntrinsicColorMatrix : public RsdCpuScriptIntrinsic {
 public:
     virtual void populateScript(Script *);
@@ -146,9 +172,12 @@ protected:
     // The following four fields are read as constants
     // by the SIMD assembly code.
     short ip[16];
-    int ipa[16];
+    int ipa[4];
     float tmpFp[16];
-    float tmpFpa[16];
+    float tmpFpa[4];
+#if defined(ARCH_ARM_HAVE_VFP) && defined(FAKE_ARM64_BUILD)
+    FunctionTab_t mFnTab;
+#endif
 
     static void kernel(const RsForEachStubParamStruct *p,
                        uint32_t xstart, uint32_t xend,
@@ -212,9 +241,9 @@ Key_t RsdCpuScriptIntrinsicColorMatrix::computeKey(
             }
         }
         if (ipa[0] != 0) key.u.addMask |= 0x1;
-        if (ipa[4] != 0) key.u.addMask |= 0x2;
-        if (ipa[8] != 0) key.u.addMask |= 0x4;
-        if (ipa[12] != 0) key.u.addMask |= 0x8;
+        if (ipa[1] != 0) key.u.addMask |= 0x2;
+        if (ipa[2] != 0) key.u.addMask |= 0x4;
+        if (ipa[3] != 0) key.u.addMask |= 0x8;
     }
 
     // Look for a dot product where the r,g,b colums are the same
@@ -257,13 +286,16 @@ Key_t RsdCpuScriptIntrinsicColorMatrix::computeKey(
     case 3:
         key.u.outVecSize = 2;
         key.u.coeffMask &= ~0x8888;
+        key.u.addMask &= 7;
         break;
     case 2:
         key.u.outVecSize = 1;
         key.u.coeffMask &= ~0xCCCC;
+        key.u.addMask &= 3;
         break;
     default:
         key.u.coeffMask &= ~0xEEEE;
+        key.u.addMask &= 1;
         break;
     }
 
@@ -278,7 +310,7 @@ Key_t RsdCpuScriptIntrinsicColorMatrix::computeKey(
     return key;
 }
 
-#if defined(ARCH_ARM_HAVE_NEON) && !defined(FAKE_ARM64_BUILD)
+#if defined(ARCH_ARM_HAVE_VFP) && !defined(FAKE_ARM64_BUILD)
 
 #define DEF_SYM(x)                                  \
     extern "C" uint32_t _N_ColorMatrix_##x;      \
@@ -408,7 +440,7 @@ static uint8_t * addVADD_F32(uint8_t *buf, uint32_t dest_q, uint32_t src_q1, uin
 
 
 bool RsdCpuScriptIntrinsicColorMatrix::build(Key_t key) {
-#if defined(ARCH_ARM_HAVE_NEON) && !defined(FAKE_ARM64_BUILD)
+#if defined(ARCH_ARM_HAVE_VFP) && !defined(FAKE_ARM64_BUILD)
     mBufSize = 4096;
     //StopWatch build_time("rs cm: build time");
     mBuf = (uint8_t *)mmap(0, mBufSize, PROT_READ | PROT_WRITE,
@@ -676,18 +708,12 @@ void RsdCpuScriptIntrinsicColorMatrix::updateCoeffCache(float fpMul, float addMu
     float add = 0.f;
     if (fpMul > 254.f) add = 0.5f;
     for(int ct=0; ct < 4; ct++) {
-        tmpFpa[ct * 4 + 0] = fpa[ct] * addMul + add;
+        tmpFpa[ct] = fpa[ct] * addMul + add;
         //ALOGE("fpa %i %f  %f", ct, fpa[ct], tmpFpa[ct * 4 + 0]);
-        tmpFpa[ct * 4 + 1] = tmpFpa[ct * 4];
-        tmpFpa[ct * 4 + 2] = tmpFpa[ct * 4];
-        tmpFpa[ct * 4 + 3] = tmpFpa[ct * 4];
     }
 
     for(int ct=0; ct < 4; ct++) {
-        ipa[ct * 4 + 0] = (int)(fpa[ct] * 65536.f + 0.5f);
-        ipa[ct * 4 + 1] = ipa[ct * 4];
-        ipa[ct * 4 + 2] = ipa[ct * 4];
-        ipa[ct * 4 + 3] = ipa[ct * 4];
+        ipa[ct] = (int)(fpa[ct] * 65536.f + 0.5f);
     }
 }
 
@@ -768,9 +794,9 @@ static void One(const RsForEachStubParamStruct *p, void *out,
     //ALOGE("f2  %f %f %f %f", sum.x, sum.y, sum.z, sum.w);
 
     sum.x += add[0];
-    sum.y += add[4];
-    sum.z += add[8];
-    sum.w += add[12];
+    sum.y += add[1];
+    sum.z += add[2];
+    sum.w += add[3];
 
 
     //ALOGE("fout %i vs %i, sum %f %f %f %f", fout, vsout, sum.x, sum.y, sum.z, sum.w);
@@ -826,12 +852,27 @@ void RsdCpuScriptIntrinsicColorMatrix::kernel(const RsForEachStubParamStruct *p,
     //if (!p->y) ALOGE("steps %i %i   %i %i", instep, outstep, vsin, vsout);
 
     if(x2 > x1) {
-        int32_t len = (x2 - x1) >> 2;
-        if((cp->mOptKernel != NULL) && (len > 0)) {
-            cp->mOptKernel(out, in, cp->ip, len);
-            x1 += len << 2;
-            out += outstep * (len << 2);
-            in += instep * (len << 2);
+        int32_t len = x2 - x1;
+        if (gArchUseSIMD) {
+            if((cp->mOptKernel != NULL) && (len >= 4)) {
+                cp->mOptKernel(out, in, cp->ip, len >> 2);
+                x1 += len;
+                out += outstep * len;
+                in += instep * len;
+            }
+#if defined(ARCH_ARM_HAVE_VFP) && defined(FAKE_ARM64_BUILD)
+            else {
+                size_t done;
+                if (cp->mLastKey.u.inType == RS_TYPE_FLOAT_32 || cp->mLastKey.u.outType == RS_TYPE_FLOAT_32) {
+                    done = len - rsdIntrinsicColorMatrix_float_K(out, in, len, &cp->mFnTab, cp->tmpFp, cp->tmpFpa);
+                } else {
+                    done = len - rsdIntrinsicColorMatrix_int_K(out, in, len, &cp->mFnTab, cp->ip, cp->ipa);
+                }
+                x1 += done;
+                out += outstep * done;
+                in += instep * done;
+            }
+#endif
         }
 
         while(x1 != x2) {
@@ -872,8 +913,29 @@ void RsdCpuScriptIntrinsicColorMatrix::preLaunch(
         mOptKernel = NULL;
         if (build(key)) {
             mOptKernel = (void (*)(void *, const void *, const short *, uint32_t)) mBuf;
-            mLastKey = key;
         }
+#if defined(ARCH_ARM_HAVE_VFP) && defined(FAKE_ARM64_BUILD)
+        else {
+            int dt = key.u.outVecSize + (key.u.outType == RS_TYPE_FLOAT_32 ? 4 : 0);
+            int st = key.u.inVecSize + (key.u.inType == RS_TYPE_FLOAT_32 ? 4 : 0);
+            uint32_t mm = 0;
+            int i;
+            for (i = 0; i < 4; i++)
+            {
+                uint32_t m = (key.u.coeffMask >> i) & 0x1111;
+                m = ((m * 0x249) >> 9) & 15;
+                m |= ((key.u.addMask >> i) & 1) << 4;
+                mm |= m << (i * 5);
+            }
+
+            if (key.u.inType == RS_TYPE_FLOAT_32 || key.u.outType == RS_TYPE_FLOAT_32) {
+                rsdIntrinsicColorMatrixSetup_float_K(&mFnTab, mm, dt, st);
+            } else {
+                rsdIntrinsicColorMatrixSetup_int_K(&mFnTab, mm, dt, st);
+            }
+        }
+#endif
+        mLastKey = key;
     }
 }
 
