@@ -13,6 +13,7 @@ then
   # Only build arm on darwin.
   TARGETS=(arm)
   SYS_NAMES=(generic)
+  NUM_CORES=`sysctl -n hw.ncpu`
 
 else
 
@@ -22,8 +23,21 @@ else
   # Target architectures and their system library names.
   TARGETS=(arm mips x86)
   SYS_NAMES=(generic generic_mips generic_x86)
+  NUM_CORES=`cat /proc/cpuinfo | grep processor | tail -n 1 | cut -f 2 -d :`
+  NUM_CORES=$(($NUM_CORES+1))
 
 fi
+
+echo "Using $NUM_CORES cores"
+
+# Turn off the build cache and make sure we build all of LLVM from scratch.
+export ANDROID_USE_BUILDCACHE=false
+export FORCE_BUILD_LLVM_COMPONENTS=true
+
+# Ensure that we have constructed the latest "bcc" for the host. Without
+# this variable, we don't build the .so files, hence we never construct the
+# actual required compiler pieces.
+export FORCE_BUILD_RS_COMPAT=true
 
 # ANDROID_HOST_OUT is where the new prebuilts will be constructed/copied from.
 ANDROID_HOST_OUT=$MY_ANDROID_DIR/out/host/$SHORT_OSNAME-x86/
@@ -46,11 +60,9 @@ build_rs_libs() {
   echo Building for target $1
   lunch $1
   # Build the RS runtime libraries.
-  cd $MY_ANDROID_DIR/frameworks/rs/driver/runtime && mma -j32 && cd - || exit 1
+  cd $MY_ANDROID_DIR/frameworks/rs/driver/runtime && mma -j$NUM_CORES && cd - || exit 1
   # Build a sample support application to ensure that all the pieces are up to date.
-  cd $MY_ANDROID_DIR/frameworks/rs/java/tests/RSTest_CompatLib/ && mma -j32 && cd - || exit 2
-  # Build bcc_compat.
-  cd $MY_ANDROID_DIR/frameworks/compile/libbcc/ && mma -j32 && cd - || exit 3
+  cd $MY_ANDROID_DIR/frameworks/rs/java/tests/RSTest_CompatLib/ && mma -j$NUM_CORES && cd - || exit 2
 
 }
 
