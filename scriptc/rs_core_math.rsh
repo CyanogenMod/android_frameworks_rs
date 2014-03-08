@@ -132,7 +132,7 @@ extern uint4 __attribute__((const, overloadable))abs(int4 value);
  *
  * Supported by API versions 9 and newer.
  */
-extern float __attribute__((const, overloadable))acos(float);
+extern float __attribute__((const, overloadable))acos(float v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -141,7 +141,7 @@ extern float __attribute__((const, overloadable))acos(float);
  *
  * Supported by API versions 9 and newer.
  */
-extern float2 __attribute__((const, overloadable))acos(float2);
+extern float2 __attribute__((const, overloadable))acos(float2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -150,7 +150,7 @@ extern float2 __attribute__((const, overloadable))acos(float2);
  *
  * Supported by API versions 9 and newer.
  */
-extern float3 __attribute__((const, overloadable))acos(float3);
+extern float3 __attribute__((const, overloadable))acos(float3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -159,7 +159,7 @@ extern float3 __attribute__((const, overloadable))acos(float3);
  *
  * Supported by API versions 9 and newer.
  */
-extern float4 __attribute__((const, overloadable))acos(float4);
+extern float4 __attribute__((const, overloadable))acos(float4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -204,7 +204,7 @@ extern float4 __attribute__((const, overloadable))acosh(float4);
  *
  * Supported by API versions 9 and newer.
  */
-extern float __attribute__((const, overloadable))acospi(float);
+extern float __attribute__((const, overloadable))acospi(float v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -213,7 +213,7 @@ extern float __attribute__((const, overloadable))acospi(float);
  *
  * Supported by API versions 9 and newer.
  */
-extern float2 __attribute__((const, overloadable))acospi(float2);
+extern float2 __attribute__((const, overloadable))acospi(float2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -222,7 +222,7 @@ extern float2 __attribute__((const, overloadable))acospi(float2);
  *
  * Supported by API versions 9 and newer.
  */
-extern float3 __attribute__((const, overloadable))acospi(float3);
+extern float3 __attribute__((const, overloadable))acospi(float3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -231,7 +231,7 @@ extern float3 __attribute__((const, overloadable))acospi(float3);
  *
  * Supported by API versions 9 and newer.
  */
-extern float4 __attribute__((const, overloadable))acospi(float4);
+extern float4 __attribute__((const, overloadable))acospi(float4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -240,7 +240,7 @@ extern float4 __attribute__((const, overloadable))acospi(float4);
  *
  * Supported by API versions 9 and newer.
  */
-extern float __attribute__((const, overloadable))asin(float);
+extern float __attribute__((const, overloadable))asin(float v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -249,7 +249,7 @@ extern float __attribute__((const, overloadable))asin(float);
  *
  * Supported by API versions 9 and newer.
  */
-extern float2 __attribute__((const, overloadable))asin(float2);
+extern float2 __attribute__((const, overloadable))asin(float2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -258,7 +258,7 @@ extern float2 __attribute__((const, overloadable))asin(float2);
  *
  * Supported by API versions 9 and newer.
  */
-extern float3 __attribute__((const, overloadable))asin(float3);
+extern float3 __attribute__((const, overloadable))asin(float3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -267,7 +267,7 @@ extern float3 __attribute__((const, overloadable))asin(float3);
  *
  * Supported by API versions 9 and newer.
  */
-extern float4 __attribute__((const, overloadable))asin(float4);
+extern float4 __attribute__((const, overloadable))asin(float4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -312,7 +312,7 @@ extern float4 __attribute__((const, overloadable))asinh(float4);
  *
  * Supported by API versions 9 and newer.
  */
-extern float __attribute__((const, overloadable))asinpi(float);
+extern float __attribute__((const, overloadable))asinpi(float v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -321,7 +321,7 @@ extern float __attribute__((const, overloadable))asinpi(float);
  *
  * Supported by API versions 9 and newer.
  */
-extern float2 __attribute__((const, overloadable))asinpi(float2);
+extern float2 __attribute__((const, overloadable))asinpi(float2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -330,7 +330,7 @@ extern float2 __attribute__((const, overloadable))asinpi(float2);
  *
  * Supported by API versions 9 and newer.
  */
-extern float3 __attribute__((const, overloadable))asinpi(float3);
+extern float3 __attribute__((const, overloadable))asinpi(float3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -339,7 +339,7 @@ extern float3 __attribute__((const, overloadable))asinpi(float3);
  *
  * Supported by API versions 9 and newer.
  */
-extern float4 __attribute__((const, overloadable))asinpi(float4);
+extern float4 __attribute__((const, overloadable))asinpi(float4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -348,7 +348,7 @@ extern float4 __attribute__((const, overloadable))asinpi(float4);
  *
  * Supported by API versions 9 and newer.
  */
-extern float __attribute__((const, overloadable))atan(float);
+extern float __attribute__((const, overloadable))atan(float v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -357,7 +357,7 @@ extern float __attribute__((const, overloadable))atan(float);
  *
  * Supported by API versions 9 and newer.
  */
-extern float2 __attribute__((const, overloadable))atan(float2);
+extern float2 __attribute__((const, overloadable))atan(float2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -366,7 +366,7 @@ extern float2 __attribute__((const, overloadable))atan(float2);
  *
  * Supported by API versions 9 and newer.
  */
-extern float3 __attribute__((const, overloadable))atan(float3);
+extern float3 __attribute__((const, overloadable))atan(float3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -375,7 +375,7 @@ extern float3 __attribute__((const, overloadable))atan(float3);
  *
  * Supported by API versions 9 and newer.
  */
-extern float4 __attribute__((const, overloadable))atan(float4);
+extern float4 __attribute__((const, overloadable))atan(float4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -492,7 +492,7 @@ extern float4 __attribute__((const, overloadable))atanh(float4);
  *
  * Supported by API versions 9 and newer.
  */
-extern float __attribute__((const, overloadable))atanpi(float);
+extern float __attribute__((const, overloadable))atanpi(float v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -501,7 +501,7 @@ extern float __attribute__((const, overloadable))atanpi(float);
  *
  * Supported by API versions 9 and newer.
  */
-extern float2 __attribute__((const, overloadable))atanpi(float2);
+extern float2 __attribute__((const, overloadable))atanpi(float2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -510,7 +510,7 @@ extern float2 __attribute__((const, overloadable))atanpi(float2);
  *
  * Supported by API versions 9 and newer.
  */
-extern float3 __attribute__((const, overloadable))atanpi(float3);
+extern float3 __attribute__((const, overloadable))atanpi(float3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -519,7 +519,7 @@ extern float3 __attribute__((const, overloadable))atanpi(float3);
  *
  * Supported by API versions 9 and newer.
  */
-extern float4 __attribute__((const, overloadable))atanpi(float4);
+extern float4 __attribute__((const, overloadable))atanpi(float4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -1635,7 +1635,7 @@ extern uint4 __attribute__((const, overloadable))clz(uint4 value);
  *
  * Supported by API versions 9 and newer.
  */
-extern float2 __attribute__((const, overloadable))convert_float2(float2);
+extern float2 __attribute__((const, overloadable))convert_float2(float2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -1644,7 +1644,7 @@ extern float2 __attribute__((const, overloadable))convert_float2(float2);
  *
  * Supported by API versions 9 and newer.
  */
-extern float3 __attribute__((const, overloadable))convert_float3(float3);
+extern float3 __attribute__((const, overloadable))convert_float3(float3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -1653,7 +1653,7 @@ extern float3 __attribute__((const, overloadable))convert_float3(float3);
  *
  * Supported by API versions 9 and newer.
  */
-extern float4 __attribute__((const, overloadable))convert_float4(float4);
+extern float4 __attribute__((const, overloadable))convert_float4(float4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -1662,7 +1662,7 @@ extern float4 __attribute__((const, overloadable))convert_float4(float4);
  *
  * Supported by API versions 9 and newer.
  */
-extern float2 __attribute__((const, overloadable))convert_float2(double2);
+extern float2 __attribute__((const, overloadable))convert_float2(double2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -1671,7 +1671,7 @@ extern float2 __attribute__((const, overloadable))convert_float2(double2);
  *
  * Supported by API versions 9 and newer.
  */
-extern float3 __attribute__((const, overloadable))convert_float3(double3);
+extern float3 __attribute__((const, overloadable))convert_float3(double3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -1680,7 +1680,7 @@ extern float3 __attribute__((const, overloadable))convert_float3(double3);
  *
  * Supported by API versions 9 and newer.
  */
-extern float4 __attribute__((const, overloadable))convert_float4(double4);
+extern float4 __attribute__((const, overloadable))convert_float4(double4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -1689,7 +1689,7 @@ extern float4 __attribute__((const, overloadable))convert_float4(double4);
  *
  * Supported by API versions 9 and newer.
  */
-extern float2 __attribute__((const, overloadable))convert_float2(char2);
+extern float2 __attribute__((const, overloadable))convert_float2(char2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -1698,7 +1698,7 @@ extern float2 __attribute__((const, overloadable))convert_float2(char2);
  *
  * Supported by API versions 9 and newer.
  */
-extern float3 __attribute__((const, overloadable))convert_float3(char3);
+extern float3 __attribute__((const, overloadable))convert_float3(char3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -1707,7 +1707,7 @@ extern float3 __attribute__((const, overloadable))convert_float3(char3);
  *
  * Supported by API versions 9 and newer.
  */
-extern float4 __attribute__((const, overloadable))convert_float4(char4);
+extern float4 __attribute__((const, overloadable))convert_float4(char4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -1716,7 +1716,7 @@ extern float4 __attribute__((const, overloadable))convert_float4(char4);
  *
  * Supported by API versions 9 and newer.
  */
-extern float2 __attribute__((const, overloadable))convert_float2(uchar2);
+extern float2 __attribute__((const, overloadable))convert_float2(uchar2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -1725,7 +1725,7 @@ extern float2 __attribute__((const, overloadable))convert_float2(uchar2);
  *
  * Supported by API versions 9 and newer.
  */
-extern float3 __attribute__((const, overloadable))convert_float3(uchar3);
+extern float3 __attribute__((const, overloadable))convert_float3(uchar3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -1734,7 +1734,7 @@ extern float3 __attribute__((const, overloadable))convert_float3(uchar3);
  *
  * Supported by API versions 9 and newer.
  */
-extern float4 __attribute__((const, overloadable))convert_float4(uchar4);
+extern float4 __attribute__((const, overloadable))convert_float4(uchar4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -1743,7 +1743,7 @@ extern float4 __attribute__((const, overloadable))convert_float4(uchar4);
  *
  * Supported by API versions 9 and newer.
  */
-extern float2 __attribute__((const, overloadable))convert_float2(short2);
+extern float2 __attribute__((const, overloadable))convert_float2(short2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -1752,7 +1752,7 @@ extern float2 __attribute__((const, overloadable))convert_float2(short2);
  *
  * Supported by API versions 9 and newer.
  */
-extern float3 __attribute__((const, overloadable))convert_float3(short3);
+extern float3 __attribute__((const, overloadable))convert_float3(short3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -1761,7 +1761,7 @@ extern float3 __attribute__((const, overloadable))convert_float3(short3);
  *
  * Supported by API versions 9 and newer.
  */
-extern float4 __attribute__((const, overloadable))convert_float4(short4);
+extern float4 __attribute__((const, overloadable))convert_float4(short4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -1770,7 +1770,7 @@ extern float4 __attribute__((const, overloadable))convert_float4(short4);
  *
  * Supported by API versions 9 and newer.
  */
-extern float2 __attribute__((const, overloadable))convert_float2(ushort2);
+extern float2 __attribute__((const, overloadable))convert_float2(ushort2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -1779,7 +1779,7 @@ extern float2 __attribute__((const, overloadable))convert_float2(ushort2);
  *
  * Supported by API versions 9 and newer.
  */
-extern float3 __attribute__((const, overloadable))convert_float3(ushort3);
+extern float3 __attribute__((const, overloadable))convert_float3(ushort3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -1788,7 +1788,7 @@ extern float3 __attribute__((const, overloadable))convert_float3(ushort3);
  *
  * Supported by API versions 9 and newer.
  */
-extern float4 __attribute__((const, overloadable))convert_float4(ushort4);
+extern float4 __attribute__((const, overloadable))convert_float4(ushort4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -1797,7 +1797,7 @@ extern float4 __attribute__((const, overloadable))convert_float4(ushort4);
  *
  * Supported by API versions 9 and newer.
  */
-extern float2 __attribute__((const, overloadable))convert_float2(int2);
+extern float2 __attribute__((const, overloadable))convert_float2(int2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -1806,7 +1806,7 @@ extern float2 __attribute__((const, overloadable))convert_float2(int2);
  *
  * Supported by API versions 9 and newer.
  */
-extern float3 __attribute__((const, overloadable))convert_float3(int3);
+extern float3 __attribute__((const, overloadable))convert_float3(int3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -1815,7 +1815,7 @@ extern float3 __attribute__((const, overloadable))convert_float3(int3);
  *
  * Supported by API versions 9 and newer.
  */
-extern float4 __attribute__((const, overloadable))convert_float4(int4);
+extern float4 __attribute__((const, overloadable))convert_float4(int4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -1824,7 +1824,7 @@ extern float4 __attribute__((const, overloadable))convert_float4(int4);
  *
  * Supported by API versions 9 and newer.
  */
-extern float2 __attribute__((const, overloadable))convert_float2(uint2);
+extern float2 __attribute__((const, overloadable))convert_float2(uint2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -1833,7 +1833,7 @@ extern float2 __attribute__((const, overloadable))convert_float2(uint2);
  *
  * Supported by API versions 9 and newer.
  */
-extern float3 __attribute__((const, overloadable))convert_float3(uint3);
+extern float3 __attribute__((const, overloadable))convert_float3(uint3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -1842,7 +1842,7 @@ extern float3 __attribute__((const, overloadable))convert_float3(uint3);
  *
  * Supported by API versions 9 and newer.
  */
-extern float4 __attribute__((const, overloadable))convert_float4(uint4);
+extern float4 __attribute__((const, overloadable))convert_float4(uint4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -1851,7 +1851,7 @@ extern float4 __attribute__((const, overloadable))convert_float4(uint4);
  *
  * Supported by API versions 9 and newer.
  */
-extern float2 __attribute__((const, overloadable))convert_float2(long2);
+extern float2 __attribute__((const, overloadable))convert_float2(long2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -1860,7 +1860,7 @@ extern float2 __attribute__((const, overloadable))convert_float2(long2);
  *
  * Supported by API versions 9 and newer.
  */
-extern float3 __attribute__((const, overloadable))convert_float3(long3);
+extern float3 __attribute__((const, overloadable))convert_float3(long3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -1869,7 +1869,7 @@ extern float3 __attribute__((const, overloadable))convert_float3(long3);
  *
  * Supported by API versions 9 and newer.
  */
-extern float4 __attribute__((const, overloadable))convert_float4(long4);
+extern float4 __attribute__((const, overloadable))convert_float4(long4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -1878,7 +1878,7 @@ extern float4 __attribute__((const, overloadable))convert_float4(long4);
  *
  * Supported by API versions 9 and newer.
  */
-extern float2 __attribute__((const, overloadable))convert_float2(ulong2);
+extern float2 __attribute__((const, overloadable))convert_float2(ulong2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -1887,7 +1887,7 @@ extern float2 __attribute__((const, overloadable))convert_float2(ulong2);
  *
  * Supported by API versions 9 and newer.
  */
-extern float3 __attribute__((const, overloadable))convert_float3(ulong3);
+extern float3 __attribute__((const, overloadable))convert_float3(ulong3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -1896,7 +1896,7 @@ extern float3 __attribute__((const, overloadable))convert_float3(ulong3);
  *
  * Supported by API versions 9 and newer.
  */
-extern float4 __attribute__((const, overloadable))convert_float4(ulong4);
+extern float4 __attribute__((const, overloadable))convert_float4(ulong4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -1905,7 +1905,7 @@ extern float4 __attribute__((const, overloadable))convert_float4(ulong4);
  *
  * Supported by API versions 9 and newer.
  */
-extern double2 __attribute__((const, overloadable))convert_double2(float2);
+extern double2 __attribute__((const, overloadable))convert_double2(float2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -1914,7 +1914,7 @@ extern double2 __attribute__((const, overloadable))convert_double2(float2);
  *
  * Supported by API versions 9 and newer.
  */
-extern double3 __attribute__((const, overloadable))convert_double3(float3);
+extern double3 __attribute__((const, overloadable))convert_double3(float3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -1923,7 +1923,7 @@ extern double3 __attribute__((const, overloadable))convert_double3(float3);
  *
  * Supported by API versions 9 and newer.
  */
-extern double4 __attribute__((const, overloadable))convert_double4(float4);
+extern double4 __attribute__((const, overloadable))convert_double4(float4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -1932,7 +1932,7 @@ extern double4 __attribute__((const, overloadable))convert_double4(float4);
  *
  * Supported by API versions 9 and newer.
  */
-extern double2 __attribute__((const, overloadable))convert_double2(double2);
+extern double2 __attribute__((const, overloadable))convert_double2(double2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -1941,7 +1941,7 @@ extern double2 __attribute__((const, overloadable))convert_double2(double2);
  *
  * Supported by API versions 9 and newer.
  */
-extern double3 __attribute__((const, overloadable))convert_double3(double3);
+extern double3 __attribute__((const, overloadable))convert_double3(double3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -1950,7 +1950,7 @@ extern double3 __attribute__((const, overloadable))convert_double3(double3);
  *
  * Supported by API versions 9 and newer.
  */
-extern double4 __attribute__((const, overloadable))convert_double4(double4);
+extern double4 __attribute__((const, overloadable))convert_double4(double4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -1959,7 +1959,7 @@ extern double4 __attribute__((const, overloadable))convert_double4(double4);
  *
  * Supported by API versions 9 and newer.
  */
-extern double2 __attribute__((const, overloadable))convert_double2(char2);
+extern double2 __attribute__((const, overloadable))convert_double2(char2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -1968,7 +1968,7 @@ extern double2 __attribute__((const, overloadable))convert_double2(char2);
  *
  * Supported by API versions 9 and newer.
  */
-extern double3 __attribute__((const, overloadable))convert_double3(char3);
+extern double3 __attribute__((const, overloadable))convert_double3(char3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -1977,7 +1977,7 @@ extern double3 __attribute__((const, overloadable))convert_double3(char3);
  *
  * Supported by API versions 9 and newer.
  */
-extern double4 __attribute__((const, overloadable))convert_double4(char4);
+extern double4 __attribute__((const, overloadable))convert_double4(char4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -1986,7 +1986,7 @@ extern double4 __attribute__((const, overloadable))convert_double4(char4);
  *
  * Supported by API versions 9 and newer.
  */
-extern double2 __attribute__((const, overloadable))convert_double2(uchar2);
+extern double2 __attribute__((const, overloadable))convert_double2(uchar2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -1995,7 +1995,7 @@ extern double2 __attribute__((const, overloadable))convert_double2(uchar2);
  *
  * Supported by API versions 9 and newer.
  */
-extern double3 __attribute__((const, overloadable))convert_double3(uchar3);
+extern double3 __attribute__((const, overloadable))convert_double3(uchar3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2004,7 +2004,7 @@ extern double3 __attribute__((const, overloadable))convert_double3(uchar3);
  *
  * Supported by API versions 9 and newer.
  */
-extern double4 __attribute__((const, overloadable))convert_double4(uchar4);
+extern double4 __attribute__((const, overloadable))convert_double4(uchar4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2013,7 +2013,7 @@ extern double4 __attribute__((const, overloadable))convert_double4(uchar4);
  *
  * Supported by API versions 9 and newer.
  */
-extern double2 __attribute__((const, overloadable))convert_double2(short2);
+extern double2 __attribute__((const, overloadable))convert_double2(short2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2022,7 +2022,7 @@ extern double2 __attribute__((const, overloadable))convert_double2(short2);
  *
  * Supported by API versions 9 and newer.
  */
-extern double3 __attribute__((const, overloadable))convert_double3(short3);
+extern double3 __attribute__((const, overloadable))convert_double3(short3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2031,7 +2031,7 @@ extern double3 __attribute__((const, overloadable))convert_double3(short3);
  *
  * Supported by API versions 9 and newer.
  */
-extern double4 __attribute__((const, overloadable))convert_double4(short4);
+extern double4 __attribute__((const, overloadable))convert_double4(short4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2040,7 +2040,7 @@ extern double4 __attribute__((const, overloadable))convert_double4(short4);
  *
  * Supported by API versions 9 and newer.
  */
-extern double2 __attribute__((const, overloadable))convert_double2(ushort2);
+extern double2 __attribute__((const, overloadable))convert_double2(ushort2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2049,7 +2049,7 @@ extern double2 __attribute__((const, overloadable))convert_double2(ushort2);
  *
  * Supported by API versions 9 and newer.
  */
-extern double3 __attribute__((const, overloadable))convert_double3(ushort3);
+extern double3 __attribute__((const, overloadable))convert_double3(ushort3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2058,7 +2058,7 @@ extern double3 __attribute__((const, overloadable))convert_double3(ushort3);
  *
  * Supported by API versions 9 and newer.
  */
-extern double4 __attribute__((const, overloadable))convert_double4(ushort4);
+extern double4 __attribute__((const, overloadable))convert_double4(ushort4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2067,7 +2067,7 @@ extern double4 __attribute__((const, overloadable))convert_double4(ushort4);
  *
  * Supported by API versions 9 and newer.
  */
-extern double2 __attribute__((const, overloadable))convert_double2(int2);
+extern double2 __attribute__((const, overloadable))convert_double2(int2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2076,7 +2076,7 @@ extern double2 __attribute__((const, overloadable))convert_double2(int2);
  *
  * Supported by API versions 9 and newer.
  */
-extern double3 __attribute__((const, overloadable))convert_double3(int3);
+extern double3 __attribute__((const, overloadable))convert_double3(int3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2085,7 +2085,7 @@ extern double3 __attribute__((const, overloadable))convert_double3(int3);
  *
  * Supported by API versions 9 and newer.
  */
-extern double4 __attribute__((const, overloadable))convert_double4(int4);
+extern double4 __attribute__((const, overloadable))convert_double4(int4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2094,7 +2094,7 @@ extern double4 __attribute__((const, overloadable))convert_double4(int4);
  *
  * Supported by API versions 9 and newer.
  */
-extern double2 __attribute__((const, overloadable))convert_double2(uint2);
+extern double2 __attribute__((const, overloadable))convert_double2(uint2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2103,7 +2103,7 @@ extern double2 __attribute__((const, overloadable))convert_double2(uint2);
  *
  * Supported by API versions 9 and newer.
  */
-extern double3 __attribute__((const, overloadable))convert_double3(uint3);
+extern double3 __attribute__((const, overloadable))convert_double3(uint3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2112,7 +2112,7 @@ extern double3 __attribute__((const, overloadable))convert_double3(uint3);
  *
  * Supported by API versions 9 and newer.
  */
-extern double4 __attribute__((const, overloadable))convert_double4(uint4);
+extern double4 __attribute__((const, overloadable))convert_double4(uint4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2121,7 +2121,7 @@ extern double4 __attribute__((const, overloadable))convert_double4(uint4);
  *
  * Supported by API versions 9 and newer.
  */
-extern double2 __attribute__((const, overloadable))convert_double2(long2);
+extern double2 __attribute__((const, overloadable))convert_double2(long2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2130,7 +2130,7 @@ extern double2 __attribute__((const, overloadable))convert_double2(long2);
  *
  * Supported by API versions 9 and newer.
  */
-extern double3 __attribute__((const, overloadable))convert_double3(long3);
+extern double3 __attribute__((const, overloadable))convert_double3(long3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2139,7 +2139,7 @@ extern double3 __attribute__((const, overloadable))convert_double3(long3);
  *
  * Supported by API versions 9 and newer.
  */
-extern double4 __attribute__((const, overloadable))convert_double4(long4);
+extern double4 __attribute__((const, overloadable))convert_double4(long4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2148,7 +2148,7 @@ extern double4 __attribute__((const, overloadable))convert_double4(long4);
  *
  * Supported by API versions 9 and newer.
  */
-extern double2 __attribute__((const, overloadable))convert_double2(ulong2);
+extern double2 __attribute__((const, overloadable))convert_double2(ulong2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2157,7 +2157,7 @@ extern double2 __attribute__((const, overloadable))convert_double2(ulong2);
  *
  * Supported by API versions 9 and newer.
  */
-extern double3 __attribute__((const, overloadable))convert_double3(ulong3);
+extern double3 __attribute__((const, overloadable))convert_double3(ulong3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2166,7 +2166,7 @@ extern double3 __attribute__((const, overloadable))convert_double3(ulong3);
  *
  * Supported by API versions 9 and newer.
  */
-extern double4 __attribute__((const, overloadable))convert_double4(ulong4);
+extern double4 __attribute__((const, overloadable))convert_double4(ulong4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2175,7 +2175,7 @@ extern double4 __attribute__((const, overloadable))convert_double4(ulong4);
  *
  * Supported by API versions 9 and newer.
  */
-extern char2 __attribute__((const, overloadable))convert_char2(float2);
+extern char2 __attribute__((const, overloadable))convert_char2(float2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2184,7 +2184,7 @@ extern char2 __attribute__((const, overloadable))convert_char2(float2);
  *
  * Supported by API versions 9 and newer.
  */
-extern char3 __attribute__((const, overloadable))convert_char3(float3);
+extern char3 __attribute__((const, overloadable))convert_char3(float3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2193,7 +2193,7 @@ extern char3 __attribute__((const, overloadable))convert_char3(float3);
  *
  * Supported by API versions 9 and newer.
  */
-extern char4 __attribute__((const, overloadable))convert_char4(float4);
+extern char4 __attribute__((const, overloadable))convert_char4(float4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2202,7 +2202,7 @@ extern char4 __attribute__((const, overloadable))convert_char4(float4);
  *
  * Supported by API versions 9 and newer.
  */
-extern char2 __attribute__((const, overloadable))convert_char2(double2);
+extern char2 __attribute__((const, overloadable))convert_char2(double2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2211,7 +2211,7 @@ extern char2 __attribute__((const, overloadable))convert_char2(double2);
  *
  * Supported by API versions 9 and newer.
  */
-extern char3 __attribute__((const, overloadable))convert_char3(double3);
+extern char3 __attribute__((const, overloadable))convert_char3(double3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2220,7 +2220,7 @@ extern char3 __attribute__((const, overloadable))convert_char3(double3);
  *
  * Supported by API versions 9 and newer.
  */
-extern char4 __attribute__((const, overloadable))convert_char4(double4);
+extern char4 __attribute__((const, overloadable))convert_char4(double4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2229,7 +2229,7 @@ extern char4 __attribute__((const, overloadable))convert_char4(double4);
  *
  * Supported by API versions 9 and newer.
  */
-extern char2 __attribute__((const, overloadable))convert_char2(char2);
+extern char2 __attribute__((const, overloadable))convert_char2(char2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2238,7 +2238,7 @@ extern char2 __attribute__((const, overloadable))convert_char2(char2);
  *
  * Supported by API versions 9 and newer.
  */
-extern char3 __attribute__((const, overloadable))convert_char3(char3);
+extern char3 __attribute__((const, overloadable))convert_char3(char3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2247,7 +2247,7 @@ extern char3 __attribute__((const, overloadable))convert_char3(char3);
  *
  * Supported by API versions 9 and newer.
  */
-extern char4 __attribute__((const, overloadable))convert_char4(char4);
+extern char4 __attribute__((const, overloadable))convert_char4(char4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2256,7 +2256,7 @@ extern char4 __attribute__((const, overloadable))convert_char4(char4);
  *
  * Supported by API versions 9 and newer.
  */
-extern char2 __attribute__((const, overloadable))convert_char2(uchar2);
+extern char2 __attribute__((const, overloadable))convert_char2(uchar2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2265,7 +2265,7 @@ extern char2 __attribute__((const, overloadable))convert_char2(uchar2);
  *
  * Supported by API versions 9 and newer.
  */
-extern char3 __attribute__((const, overloadable))convert_char3(uchar3);
+extern char3 __attribute__((const, overloadable))convert_char3(uchar3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2274,7 +2274,7 @@ extern char3 __attribute__((const, overloadable))convert_char3(uchar3);
  *
  * Supported by API versions 9 and newer.
  */
-extern char4 __attribute__((const, overloadable))convert_char4(uchar4);
+extern char4 __attribute__((const, overloadable))convert_char4(uchar4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2283,7 +2283,7 @@ extern char4 __attribute__((const, overloadable))convert_char4(uchar4);
  *
  * Supported by API versions 9 and newer.
  */
-extern char2 __attribute__((const, overloadable))convert_char2(short2);
+extern char2 __attribute__((const, overloadable))convert_char2(short2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2292,7 +2292,7 @@ extern char2 __attribute__((const, overloadable))convert_char2(short2);
  *
  * Supported by API versions 9 and newer.
  */
-extern char3 __attribute__((const, overloadable))convert_char3(short3);
+extern char3 __attribute__((const, overloadable))convert_char3(short3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2301,7 +2301,7 @@ extern char3 __attribute__((const, overloadable))convert_char3(short3);
  *
  * Supported by API versions 9 and newer.
  */
-extern char4 __attribute__((const, overloadable))convert_char4(short4);
+extern char4 __attribute__((const, overloadable))convert_char4(short4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2310,7 +2310,7 @@ extern char4 __attribute__((const, overloadable))convert_char4(short4);
  *
  * Supported by API versions 9 and newer.
  */
-extern char2 __attribute__((const, overloadable))convert_char2(ushort2);
+extern char2 __attribute__((const, overloadable))convert_char2(ushort2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2319,7 +2319,7 @@ extern char2 __attribute__((const, overloadable))convert_char2(ushort2);
  *
  * Supported by API versions 9 and newer.
  */
-extern char3 __attribute__((const, overloadable))convert_char3(ushort3);
+extern char3 __attribute__((const, overloadable))convert_char3(ushort3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2328,7 +2328,7 @@ extern char3 __attribute__((const, overloadable))convert_char3(ushort3);
  *
  * Supported by API versions 9 and newer.
  */
-extern char4 __attribute__((const, overloadable))convert_char4(ushort4);
+extern char4 __attribute__((const, overloadable))convert_char4(ushort4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2337,7 +2337,7 @@ extern char4 __attribute__((const, overloadable))convert_char4(ushort4);
  *
  * Supported by API versions 9 and newer.
  */
-extern char2 __attribute__((const, overloadable))convert_char2(int2);
+extern char2 __attribute__((const, overloadable))convert_char2(int2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2346,7 +2346,7 @@ extern char2 __attribute__((const, overloadable))convert_char2(int2);
  *
  * Supported by API versions 9 and newer.
  */
-extern char3 __attribute__((const, overloadable))convert_char3(int3);
+extern char3 __attribute__((const, overloadable))convert_char3(int3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2355,7 +2355,7 @@ extern char3 __attribute__((const, overloadable))convert_char3(int3);
  *
  * Supported by API versions 9 and newer.
  */
-extern char4 __attribute__((const, overloadable))convert_char4(int4);
+extern char4 __attribute__((const, overloadable))convert_char4(int4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2364,7 +2364,7 @@ extern char4 __attribute__((const, overloadable))convert_char4(int4);
  *
  * Supported by API versions 9 and newer.
  */
-extern char2 __attribute__((const, overloadable))convert_char2(uint2);
+extern char2 __attribute__((const, overloadable))convert_char2(uint2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2373,7 +2373,7 @@ extern char2 __attribute__((const, overloadable))convert_char2(uint2);
  *
  * Supported by API versions 9 and newer.
  */
-extern char3 __attribute__((const, overloadable))convert_char3(uint3);
+extern char3 __attribute__((const, overloadable))convert_char3(uint3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2382,7 +2382,7 @@ extern char3 __attribute__((const, overloadable))convert_char3(uint3);
  *
  * Supported by API versions 9 and newer.
  */
-extern char4 __attribute__((const, overloadable))convert_char4(uint4);
+extern char4 __attribute__((const, overloadable))convert_char4(uint4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2391,7 +2391,7 @@ extern char4 __attribute__((const, overloadable))convert_char4(uint4);
  *
  * Supported by API versions 9 and newer.
  */
-extern char2 __attribute__((const, overloadable))convert_char2(long2);
+extern char2 __attribute__((const, overloadable))convert_char2(long2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2400,7 +2400,7 @@ extern char2 __attribute__((const, overloadable))convert_char2(long2);
  *
  * Supported by API versions 9 and newer.
  */
-extern char3 __attribute__((const, overloadable))convert_char3(long3);
+extern char3 __attribute__((const, overloadable))convert_char3(long3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2409,7 +2409,7 @@ extern char3 __attribute__((const, overloadable))convert_char3(long3);
  *
  * Supported by API versions 9 and newer.
  */
-extern char4 __attribute__((const, overloadable))convert_char4(long4);
+extern char4 __attribute__((const, overloadable))convert_char4(long4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2418,7 +2418,7 @@ extern char4 __attribute__((const, overloadable))convert_char4(long4);
  *
  * Supported by API versions 9 and newer.
  */
-extern char2 __attribute__((const, overloadable))convert_char2(ulong2);
+extern char2 __attribute__((const, overloadable))convert_char2(ulong2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2427,7 +2427,7 @@ extern char2 __attribute__((const, overloadable))convert_char2(ulong2);
  *
  * Supported by API versions 9 and newer.
  */
-extern char3 __attribute__((const, overloadable))convert_char3(ulong3);
+extern char3 __attribute__((const, overloadable))convert_char3(ulong3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2436,7 +2436,7 @@ extern char3 __attribute__((const, overloadable))convert_char3(ulong3);
  *
  * Supported by API versions 9 and newer.
  */
-extern char4 __attribute__((const, overloadable))convert_char4(ulong4);
+extern char4 __attribute__((const, overloadable))convert_char4(ulong4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2445,7 +2445,7 @@ extern char4 __attribute__((const, overloadable))convert_char4(ulong4);
  *
  * Supported by API versions 9 and newer.
  */
-extern uchar2 __attribute__((const, overloadable))convert_uchar2(float2);
+extern uchar2 __attribute__((const, overloadable))convert_uchar2(float2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2454,7 +2454,7 @@ extern uchar2 __attribute__((const, overloadable))convert_uchar2(float2);
  *
  * Supported by API versions 9 and newer.
  */
-extern uchar3 __attribute__((const, overloadable))convert_uchar3(float3);
+extern uchar3 __attribute__((const, overloadable))convert_uchar3(float3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2463,7 +2463,7 @@ extern uchar3 __attribute__((const, overloadable))convert_uchar3(float3);
  *
  * Supported by API versions 9 and newer.
  */
-extern uchar4 __attribute__((const, overloadable))convert_uchar4(float4);
+extern uchar4 __attribute__((const, overloadable))convert_uchar4(float4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2472,7 +2472,7 @@ extern uchar4 __attribute__((const, overloadable))convert_uchar4(float4);
  *
  * Supported by API versions 9 and newer.
  */
-extern uchar2 __attribute__((const, overloadable))convert_uchar2(double2);
+extern uchar2 __attribute__((const, overloadable))convert_uchar2(double2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2481,7 +2481,7 @@ extern uchar2 __attribute__((const, overloadable))convert_uchar2(double2);
  *
  * Supported by API versions 9 and newer.
  */
-extern uchar3 __attribute__((const, overloadable))convert_uchar3(double3);
+extern uchar3 __attribute__((const, overloadable))convert_uchar3(double3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2490,7 +2490,7 @@ extern uchar3 __attribute__((const, overloadable))convert_uchar3(double3);
  *
  * Supported by API versions 9 and newer.
  */
-extern uchar4 __attribute__((const, overloadable))convert_uchar4(double4);
+extern uchar4 __attribute__((const, overloadable))convert_uchar4(double4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2499,7 +2499,7 @@ extern uchar4 __attribute__((const, overloadable))convert_uchar4(double4);
  *
  * Supported by API versions 9 and newer.
  */
-extern uchar2 __attribute__((const, overloadable))convert_uchar2(char2);
+extern uchar2 __attribute__((const, overloadable))convert_uchar2(char2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2508,7 +2508,7 @@ extern uchar2 __attribute__((const, overloadable))convert_uchar2(char2);
  *
  * Supported by API versions 9 and newer.
  */
-extern uchar3 __attribute__((const, overloadable))convert_uchar3(char3);
+extern uchar3 __attribute__((const, overloadable))convert_uchar3(char3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2517,7 +2517,7 @@ extern uchar3 __attribute__((const, overloadable))convert_uchar3(char3);
  *
  * Supported by API versions 9 and newer.
  */
-extern uchar4 __attribute__((const, overloadable))convert_uchar4(char4);
+extern uchar4 __attribute__((const, overloadable))convert_uchar4(char4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2526,7 +2526,7 @@ extern uchar4 __attribute__((const, overloadable))convert_uchar4(char4);
  *
  * Supported by API versions 9 and newer.
  */
-extern uchar2 __attribute__((const, overloadable))convert_uchar2(uchar2);
+extern uchar2 __attribute__((const, overloadable))convert_uchar2(uchar2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2535,7 +2535,7 @@ extern uchar2 __attribute__((const, overloadable))convert_uchar2(uchar2);
  *
  * Supported by API versions 9 and newer.
  */
-extern uchar3 __attribute__((const, overloadable))convert_uchar3(uchar3);
+extern uchar3 __attribute__((const, overloadable))convert_uchar3(uchar3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2544,7 +2544,7 @@ extern uchar3 __attribute__((const, overloadable))convert_uchar3(uchar3);
  *
  * Supported by API versions 9 and newer.
  */
-extern uchar4 __attribute__((const, overloadable))convert_uchar4(uchar4);
+extern uchar4 __attribute__((const, overloadable))convert_uchar4(uchar4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2553,7 +2553,7 @@ extern uchar4 __attribute__((const, overloadable))convert_uchar4(uchar4);
  *
  * Supported by API versions 9 and newer.
  */
-extern uchar2 __attribute__((const, overloadable))convert_uchar2(short2);
+extern uchar2 __attribute__((const, overloadable))convert_uchar2(short2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2562,7 +2562,7 @@ extern uchar2 __attribute__((const, overloadable))convert_uchar2(short2);
  *
  * Supported by API versions 9 and newer.
  */
-extern uchar3 __attribute__((const, overloadable))convert_uchar3(short3);
+extern uchar3 __attribute__((const, overloadable))convert_uchar3(short3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2571,7 +2571,7 @@ extern uchar3 __attribute__((const, overloadable))convert_uchar3(short3);
  *
  * Supported by API versions 9 and newer.
  */
-extern uchar4 __attribute__((const, overloadable))convert_uchar4(short4);
+extern uchar4 __attribute__((const, overloadable))convert_uchar4(short4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2580,7 +2580,7 @@ extern uchar4 __attribute__((const, overloadable))convert_uchar4(short4);
  *
  * Supported by API versions 9 and newer.
  */
-extern uchar2 __attribute__((const, overloadable))convert_uchar2(ushort2);
+extern uchar2 __attribute__((const, overloadable))convert_uchar2(ushort2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2589,7 +2589,7 @@ extern uchar2 __attribute__((const, overloadable))convert_uchar2(ushort2);
  *
  * Supported by API versions 9 and newer.
  */
-extern uchar3 __attribute__((const, overloadable))convert_uchar3(ushort3);
+extern uchar3 __attribute__((const, overloadable))convert_uchar3(ushort3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2598,7 +2598,7 @@ extern uchar3 __attribute__((const, overloadable))convert_uchar3(ushort3);
  *
  * Supported by API versions 9 and newer.
  */
-extern uchar4 __attribute__((const, overloadable))convert_uchar4(ushort4);
+extern uchar4 __attribute__((const, overloadable))convert_uchar4(ushort4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2607,7 +2607,7 @@ extern uchar4 __attribute__((const, overloadable))convert_uchar4(ushort4);
  *
  * Supported by API versions 9 and newer.
  */
-extern uchar2 __attribute__((const, overloadable))convert_uchar2(int2);
+extern uchar2 __attribute__((const, overloadable))convert_uchar2(int2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2616,7 +2616,7 @@ extern uchar2 __attribute__((const, overloadable))convert_uchar2(int2);
  *
  * Supported by API versions 9 and newer.
  */
-extern uchar3 __attribute__((const, overloadable))convert_uchar3(int3);
+extern uchar3 __attribute__((const, overloadable))convert_uchar3(int3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2625,7 +2625,7 @@ extern uchar3 __attribute__((const, overloadable))convert_uchar3(int3);
  *
  * Supported by API versions 9 and newer.
  */
-extern uchar4 __attribute__((const, overloadable))convert_uchar4(int4);
+extern uchar4 __attribute__((const, overloadable))convert_uchar4(int4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2634,7 +2634,7 @@ extern uchar4 __attribute__((const, overloadable))convert_uchar4(int4);
  *
  * Supported by API versions 9 and newer.
  */
-extern uchar2 __attribute__((const, overloadable))convert_uchar2(uint2);
+extern uchar2 __attribute__((const, overloadable))convert_uchar2(uint2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2643,7 +2643,7 @@ extern uchar2 __attribute__((const, overloadable))convert_uchar2(uint2);
  *
  * Supported by API versions 9 and newer.
  */
-extern uchar3 __attribute__((const, overloadable))convert_uchar3(uint3);
+extern uchar3 __attribute__((const, overloadable))convert_uchar3(uint3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2652,7 +2652,7 @@ extern uchar3 __attribute__((const, overloadable))convert_uchar3(uint3);
  *
  * Supported by API versions 9 and newer.
  */
-extern uchar4 __attribute__((const, overloadable))convert_uchar4(uint4);
+extern uchar4 __attribute__((const, overloadable))convert_uchar4(uint4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2661,7 +2661,7 @@ extern uchar4 __attribute__((const, overloadable))convert_uchar4(uint4);
  *
  * Supported by API versions 9 and newer.
  */
-extern uchar2 __attribute__((const, overloadable))convert_uchar2(long2);
+extern uchar2 __attribute__((const, overloadable))convert_uchar2(long2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2670,7 +2670,7 @@ extern uchar2 __attribute__((const, overloadable))convert_uchar2(long2);
  *
  * Supported by API versions 9 and newer.
  */
-extern uchar3 __attribute__((const, overloadable))convert_uchar3(long3);
+extern uchar3 __attribute__((const, overloadable))convert_uchar3(long3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2679,7 +2679,7 @@ extern uchar3 __attribute__((const, overloadable))convert_uchar3(long3);
  *
  * Supported by API versions 9 and newer.
  */
-extern uchar4 __attribute__((const, overloadable))convert_uchar4(long4);
+extern uchar4 __attribute__((const, overloadable))convert_uchar4(long4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2688,7 +2688,7 @@ extern uchar4 __attribute__((const, overloadable))convert_uchar4(long4);
  *
  * Supported by API versions 9 and newer.
  */
-extern uchar2 __attribute__((const, overloadable))convert_uchar2(ulong2);
+extern uchar2 __attribute__((const, overloadable))convert_uchar2(ulong2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2697,7 +2697,7 @@ extern uchar2 __attribute__((const, overloadable))convert_uchar2(ulong2);
  *
  * Supported by API versions 9 and newer.
  */
-extern uchar3 __attribute__((const, overloadable))convert_uchar3(ulong3);
+extern uchar3 __attribute__((const, overloadable))convert_uchar3(ulong3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2706,7 +2706,7 @@ extern uchar3 __attribute__((const, overloadable))convert_uchar3(ulong3);
  *
  * Supported by API versions 9 and newer.
  */
-extern uchar4 __attribute__((const, overloadable))convert_uchar4(ulong4);
+extern uchar4 __attribute__((const, overloadable))convert_uchar4(ulong4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2715,7 +2715,7 @@ extern uchar4 __attribute__((const, overloadable))convert_uchar4(ulong4);
  *
  * Supported by API versions 9 and newer.
  */
-extern short2 __attribute__((const, overloadable))convert_short2(float2);
+extern short2 __attribute__((const, overloadable))convert_short2(float2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2724,7 +2724,7 @@ extern short2 __attribute__((const, overloadable))convert_short2(float2);
  *
  * Supported by API versions 9 and newer.
  */
-extern short3 __attribute__((const, overloadable))convert_short3(float3);
+extern short3 __attribute__((const, overloadable))convert_short3(float3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2733,7 +2733,7 @@ extern short3 __attribute__((const, overloadable))convert_short3(float3);
  *
  * Supported by API versions 9 and newer.
  */
-extern short4 __attribute__((const, overloadable))convert_short4(float4);
+extern short4 __attribute__((const, overloadable))convert_short4(float4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2742,7 +2742,7 @@ extern short4 __attribute__((const, overloadable))convert_short4(float4);
  *
  * Supported by API versions 9 and newer.
  */
-extern short2 __attribute__((const, overloadable))convert_short2(double2);
+extern short2 __attribute__((const, overloadable))convert_short2(double2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2751,7 +2751,7 @@ extern short2 __attribute__((const, overloadable))convert_short2(double2);
  *
  * Supported by API versions 9 and newer.
  */
-extern short3 __attribute__((const, overloadable))convert_short3(double3);
+extern short3 __attribute__((const, overloadable))convert_short3(double3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2760,7 +2760,7 @@ extern short3 __attribute__((const, overloadable))convert_short3(double3);
  *
  * Supported by API versions 9 and newer.
  */
-extern short4 __attribute__((const, overloadable))convert_short4(double4);
+extern short4 __attribute__((const, overloadable))convert_short4(double4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2769,7 +2769,7 @@ extern short4 __attribute__((const, overloadable))convert_short4(double4);
  *
  * Supported by API versions 9 and newer.
  */
-extern short2 __attribute__((const, overloadable))convert_short2(char2);
+extern short2 __attribute__((const, overloadable))convert_short2(char2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2778,7 +2778,7 @@ extern short2 __attribute__((const, overloadable))convert_short2(char2);
  *
  * Supported by API versions 9 and newer.
  */
-extern short3 __attribute__((const, overloadable))convert_short3(char3);
+extern short3 __attribute__((const, overloadable))convert_short3(char3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2787,7 +2787,7 @@ extern short3 __attribute__((const, overloadable))convert_short3(char3);
  *
  * Supported by API versions 9 and newer.
  */
-extern short4 __attribute__((const, overloadable))convert_short4(char4);
+extern short4 __attribute__((const, overloadable))convert_short4(char4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2796,7 +2796,7 @@ extern short4 __attribute__((const, overloadable))convert_short4(char4);
  *
  * Supported by API versions 9 and newer.
  */
-extern short2 __attribute__((const, overloadable))convert_short2(uchar2);
+extern short2 __attribute__((const, overloadable))convert_short2(uchar2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2805,7 +2805,7 @@ extern short2 __attribute__((const, overloadable))convert_short2(uchar2);
  *
  * Supported by API versions 9 and newer.
  */
-extern short3 __attribute__((const, overloadable))convert_short3(uchar3);
+extern short3 __attribute__((const, overloadable))convert_short3(uchar3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2814,7 +2814,7 @@ extern short3 __attribute__((const, overloadable))convert_short3(uchar3);
  *
  * Supported by API versions 9 and newer.
  */
-extern short4 __attribute__((const, overloadable))convert_short4(uchar4);
+extern short4 __attribute__((const, overloadable))convert_short4(uchar4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2823,7 +2823,7 @@ extern short4 __attribute__((const, overloadable))convert_short4(uchar4);
  *
  * Supported by API versions 9 and newer.
  */
-extern short2 __attribute__((const, overloadable))convert_short2(short2);
+extern short2 __attribute__((const, overloadable))convert_short2(short2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2832,7 +2832,7 @@ extern short2 __attribute__((const, overloadable))convert_short2(short2);
  *
  * Supported by API versions 9 and newer.
  */
-extern short3 __attribute__((const, overloadable))convert_short3(short3);
+extern short3 __attribute__((const, overloadable))convert_short3(short3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2841,7 +2841,7 @@ extern short3 __attribute__((const, overloadable))convert_short3(short3);
  *
  * Supported by API versions 9 and newer.
  */
-extern short4 __attribute__((const, overloadable))convert_short4(short4);
+extern short4 __attribute__((const, overloadable))convert_short4(short4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2850,7 +2850,7 @@ extern short4 __attribute__((const, overloadable))convert_short4(short4);
  *
  * Supported by API versions 9 and newer.
  */
-extern short2 __attribute__((const, overloadable))convert_short2(ushort2);
+extern short2 __attribute__((const, overloadable))convert_short2(ushort2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2859,7 +2859,7 @@ extern short2 __attribute__((const, overloadable))convert_short2(ushort2);
  *
  * Supported by API versions 9 and newer.
  */
-extern short3 __attribute__((const, overloadable))convert_short3(ushort3);
+extern short3 __attribute__((const, overloadable))convert_short3(ushort3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2868,7 +2868,7 @@ extern short3 __attribute__((const, overloadable))convert_short3(ushort3);
  *
  * Supported by API versions 9 and newer.
  */
-extern short4 __attribute__((const, overloadable))convert_short4(ushort4);
+extern short4 __attribute__((const, overloadable))convert_short4(ushort4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2877,7 +2877,7 @@ extern short4 __attribute__((const, overloadable))convert_short4(ushort4);
  *
  * Supported by API versions 9 and newer.
  */
-extern short2 __attribute__((const, overloadable))convert_short2(int2);
+extern short2 __attribute__((const, overloadable))convert_short2(int2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2886,7 +2886,7 @@ extern short2 __attribute__((const, overloadable))convert_short2(int2);
  *
  * Supported by API versions 9 and newer.
  */
-extern short3 __attribute__((const, overloadable))convert_short3(int3);
+extern short3 __attribute__((const, overloadable))convert_short3(int3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2895,7 +2895,7 @@ extern short3 __attribute__((const, overloadable))convert_short3(int3);
  *
  * Supported by API versions 9 and newer.
  */
-extern short4 __attribute__((const, overloadable))convert_short4(int4);
+extern short4 __attribute__((const, overloadable))convert_short4(int4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2904,7 +2904,7 @@ extern short4 __attribute__((const, overloadable))convert_short4(int4);
  *
  * Supported by API versions 9 and newer.
  */
-extern short2 __attribute__((const, overloadable))convert_short2(uint2);
+extern short2 __attribute__((const, overloadable))convert_short2(uint2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2913,7 +2913,7 @@ extern short2 __attribute__((const, overloadable))convert_short2(uint2);
  *
  * Supported by API versions 9 and newer.
  */
-extern short3 __attribute__((const, overloadable))convert_short3(uint3);
+extern short3 __attribute__((const, overloadable))convert_short3(uint3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2922,7 +2922,7 @@ extern short3 __attribute__((const, overloadable))convert_short3(uint3);
  *
  * Supported by API versions 9 and newer.
  */
-extern short4 __attribute__((const, overloadable))convert_short4(uint4);
+extern short4 __attribute__((const, overloadable))convert_short4(uint4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2931,7 +2931,7 @@ extern short4 __attribute__((const, overloadable))convert_short4(uint4);
  *
  * Supported by API versions 9 and newer.
  */
-extern short2 __attribute__((const, overloadable))convert_short2(long2);
+extern short2 __attribute__((const, overloadable))convert_short2(long2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2940,7 +2940,7 @@ extern short2 __attribute__((const, overloadable))convert_short2(long2);
  *
  * Supported by API versions 9 and newer.
  */
-extern short3 __attribute__((const, overloadable))convert_short3(long3);
+extern short3 __attribute__((const, overloadable))convert_short3(long3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2949,7 +2949,7 @@ extern short3 __attribute__((const, overloadable))convert_short3(long3);
  *
  * Supported by API versions 9 and newer.
  */
-extern short4 __attribute__((const, overloadable))convert_short4(long4);
+extern short4 __attribute__((const, overloadable))convert_short4(long4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2958,7 +2958,7 @@ extern short4 __attribute__((const, overloadable))convert_short4(long4);
  *
  * Supported by API versions 9 and newer.
  */
-extern short2 __attribute__((const, overloadable))convert_short2(ulong2);
+extern short2 __attribute__((const, overloadable))convert_short2(ulong2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2967,7 +2967,7 @@ extern short2 __attribute__((const, overloadable))convert_short2(ulong2);
  *
  * Supported by API versions 9 and newer.
  */
-extern short3 __attribute__((const, overloadable))convert_short3(ulong3);
+extern short3 __attribute__((const, overloadable))convert_short3(ulong3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2976,7 +2976,7 @@ extern short3 __attribute__((const, overloadable))convert_short3(ulong3);
  *
  * Supported by API versions 9 and newer.
  */
-extern short4 __attribute__((const, overloadable))convert_short4(ulong4);
+extern short4 __attribute__((const, overloadable))convert_short4(ulong4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2985,7 +2985,7 @@ extern short4 __attribute__((const, overloadable))convert_short4(ulong4);
  *
  * Supported by API versions 9 and newer.
  */
-extern ushort2 __attribute__((const, overloadable))convert_ushort2(float2);
+extern ushort2 __attribute__((const, overloadable))convert_ushort2(float2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2994,7 +2994,7 @@ extern ushort2 __attribute__((const, overloadable))convert_ushort2(float2);
  *
  * Supported by API versions 9 and newer.
  */
-extern ushort3 __attribute__((const, overloadable))convert_ushort3(float3);
+extern ushort3 __attribute__((const, overloadable))convert_ushort3(float3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3003,7 +3003,7 @@ extern ushort3 __attribute__((const, overloadable))convert_ushort3(float3);
  *
  * Supported by API versions 9 and newer.
  */
-extern ushort4 __attribute__((const, overloadable))convert_ushort4(float4);
+extern ushort4 __attribute__((const, overloadable))convert_ushort4(float4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3012,7 +3012,7 @@ extern ushort4 __attribute__((const, overloadable))convert_ushort4(float4);
  *
  * Supported by API versions 9 and newer.
  */
-extern ushort2 __attribute__((const, overloadable))convert_ushort2(double2);
+extern ushort2 __attribute__((const, overloadable))convert_ushort2(double2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3021,7 +3021,7 @@ extern ushort2 __attribute__((const, overloadable))convert_ushort2(double2);
  *
  * Supported by API versions 9 and newer.
  */
-extern ushort3 __attribute__((const, overloadable))convert_ushort3(double3);
+extern ushort3 __attribute__((const, overloadable))convert_ushort3(double3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3030,7 +3030,7 @@ extern ushort3 __attribute__((const, overloadable))convert_ushort3(double3);
  *
  * Supported by API versions 9 and newer.
  */
-extern ushort4 __attribute__((const, overloadable))convert_ushort4(double4);
+extern ushort4 __attribute__((const, overloadable))convert_ushort4(double4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3039,7 +3039,7 @@ extern ushort4 __attribute__((const, overloadable))convert_ushort4(double4);
  *
  * Supported by API versions 9 and newer.
  */
-extern ushort2 __attribute__((const, overloadable))convert_ushort2(char2);
+extern ushort2 __attribute__((const, overloadable))convert_ushort2(char2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3048,7 +3048,7 @@ extern ushort2 __attribute__((const, overloadable))convert_ushort2(char2);
  *
  * Supported by API versions 9 and newer.
  */
-extern ushort3 __attribute__((const, overloadable))convert_ushort3(char3);
+extern ushort3 __attribute__((const, overloadable))convert_ushort3(char3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3057,7 +3057,7 @@ extern ushort3 __attribute__((const, overloadable))convert_ushort3(char3);
  *
  * Supported by API versions 9 and newer.
  */
-extern ushort4 __attribute__((const, overloadable))convert_ushort4(char4);
+extern ushort4 __attribute__((const, overloadable))convert_ushort4(char4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3066,7 +3066,7 @@ extern ushort4 __attribute__((const, overloadable))convert_ushort4(char4);
  *
  * Supported by API versions 9 and newer.
  */
-extern ushort2 __attribute__((const, overloadable))convert_ushort2(uchar2);
+extern ushort2 __attribute__((const, overloadable))convert_ushort2(uchar2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3075,7 +3075,7 @@ extern ushort2 __attribute__((const, overloadable))convert_ushort2(uchar2);
  *
  * Supported by API versions 9 and newer.
  */
-extern ushort3 __attribute__((const, overloadable))convert_ushort3(uchar3);
+extern ushort3 __attribute__((const, overloadable))convert_ushort3(uchar3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3084,7 +3084,7 @@ extern ushort3 __attribute__((const, overloadable))convert_ushort3(uchar3);
  *
  * Supported by API versions 9 and newer.
  */
-extern ushort4 __attribute__((const, overloadable))convert_ushort4(uchar4);
+extern ushort4 __attribute__((const, overloadable))convert_ushort4(uchar4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3093,7 +3093,7 @@ extern ushort4 __attribute__((const, overloadable))convert_ushort4(uchar4);
  *
  * Supported by API versions 9 and newer.
  */
-extern ushort2 __attribute__((const, overloadable))convert_ushort2(short2);
+extern ushort2 __attribute__((const, overloadable))convert_ushort2(short2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3102,7 +3102,7 @@ extern ushort2 __attribute__((const, overloadable))convert_ushort2(short2);
  *
  * Supported by API versions 9 and newer.
  */
-extern ushort3 __attribute__((const, overloadable))convert_ushort3(short3);
+extern ushort3 __attribute__((const, overloadable))convert_ushort3(short3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3111,7 +3111,7 @@ extern ushort3 __attribute__((const, overloadable))convert_ushort3(short3);
  *
  * Supported by API versions 9 and newer.
  */
-extern ushort4 __attribute__((const, overloadable))convert_ushort4(short4);
+extern ushort4 __attribute__((const, overloadable))convert_ushort4(short4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3120,7 +3120,7 @@ extern ushort4 __attribute__((const, overloadable))convert_ushort4(short4);
  *
  * Supported by API versions 9 and newer.
  */
-extern ushort2 __attribute__((const, overloadable))convert_ushort2(ushort2);
+extern ushort2 __attribute__((const, overloadable))convert_ushort2(ushort2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3129,7 +3129,7 @@ extern ushort2 __attribute__((const, overloadable))convert_ushort2(ushort2);
  *
  * Supported by API versions 9 and newer.
  */
-extern ushort3 __attribute__((const, overloadable))convert_ushort3(ushort3);
+extern ushort3 __attribute__((const, overloadable))convert_ushort3(ushort3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3138,7 +3138,7 @@ extern ushort3 __attribute__((const, overloadable))convert_ushort3(ushort3);
  *
  * Supported by API versions 9 and newer.
  */
-extern ushort4 __attribute__((const, overloadable))convert_ushort4(ushort4);
+extern ushort4 __attribute__((const, overloadable))convert_ushort4(ushort4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3147,7 +3147,7 @@ extern ushort4 __attribute__((const, overloadable))convert_ushort4(ushort4);
  *
  * Supported by API versions 9 and newer.
  */
-extern ushort2 __attribute__((const, overloadable))convert_ushort2(int2);
+extern ushort2 __attribute__((const, overloadable))convert_ushort2(int2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3156,7 +3156,7 @@ extern ushort2 __attribute__((const, overloadable))convert_ushort2(int2);
  *
  * Supported by API versions 9 and newer.
  */
-extern ushort3 __attribute__((const, overloadable))convert_ushort3(int3);
+extern ushort3 __attribute__((const, overloadable))convert_ushort3(int3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3165,7 +3165,7 @@ extern ushort3 __attribute__((const, overloadable))convert_ushort3(int3);
  *
  * Supported by API versions 9 and newer.
  */
-extern ushort4 __attribute__((const, overloadable))convert_ushort4(int4);
+extern ushort4 __attribute__((const, overloadable))convert_ushort4(int4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3174,7 +3174,7 @@ extern ushort4 __attribute__((const, overloadable))convert_ushort4(int4);
  *
  * Supported by API versions 9 and newer.
  */
-extern ushort2 __attribute__((const, overloadable))convert_ushort2(uint2);
+extern ushort2 __attribute__((const, overloadable))convert_ushort2(uint2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3183,7 +3183,7 @@ extern ushort2 __attribute__((const, overloadable))convert_ushort2(uint2);
  *
  * Supported by API versions 9 and newer.
  */
-extern ushort3 __attribute__((const, overloadable))convert_ushort3(uint3);
+extern ushort3 __attribute__((const, overloadable))convert_ushort3(uint3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3192,7 +3192,7 @@ extern ushort3 __attribute__((const, overloadable))convert_ushort3(uint3);
  *
  * Supported by API versions 9 and newer.
  */
-extern ushort4 __attribute__((const, overloadable))convert_ushort4(uint4);
+extern ushort4 __attribute__((const, overloadable))convert_ushort4(uint4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3201,7 +3201,7 @@ extern ushort4 __attribute__((const, overloadable))convert_ushort4(uint4);
  *
  * Supported by API versions 9 and newer.
  */
-extern ushort2 __attribute__((const, overloadable))convert_ushort2(long2);
+extern ushort2 __attribute__((const, overloadable))convert_ushort2(long2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3210,7 +3210,7 @@ extern ushort2 __attribute__((const, overloadable))convert_ushort2(long2);
  *
  * Supported by API versions 9 and newer.
  */
-extern ushort3 __attribute__((const, overloadable))convert_ushort3(long3);
+extern ushort3 __attribute__((const, overloadable))convert_ushort3(long3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3219,7 +3219,7 @@ extern ushort3 __attribute__((const, overloadable))convert_ushort3(long3);
  *
  * Supported by API versions 9 and newer.
  */
-extern ushort4 __attribute__((const, overloadable))convert_ushort4(long4);
+extern ushort4 __attribute__((const, overloadable))convert_ushort4(long4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3228,7 +3228,7 @@ extern ushort4 __attribute__((const, overloadable))convert_ushort4(long4);
  *
  * Supported by API versions 9 and newer.
  */
-extern ushort2 __attribute__((const, overloadable))convert_ushort2(ulong2);
+extern ushort2 __attribute__((const, overloadable))convert_ushort2(ulong2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3237,7 +3237,7 @@ extern ushort2 __attribute__((const, overloadable))convert_ushort2(ulong2);
  *
  * Supported by API versions 9 and newer.
  */
-extern ushort3 __attribute__((const, overloadable))convert_ushort3(ulong3);
+extern ushort3 __attribute__((const, overloadable))convert_ushort3(ulong3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3246,7 +3246,7 @@ extern ushort3 __attribute__((const, overloadable))convert_ushort3(ulong3);
  *
  * Supported by API versions 9 and newer.
  */
-extern ushort4 __attribute__((const, overloadable))convert_ushort4(ulong4);
+extern ushort4 __attribute__((const, overloadable))convert_ushort4(ulong4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3255,7 +3255,7 @@ extern ushort4 __attribute__((const, overloadable))convert_ushort4(ulong4);
  *
  * Supported by API versions 9 and newer.
  */
-extern int2 __attribute__((const, overloadable))convert_int2(float2);
+extern int2 __attribute__((const, overloadable))convert_int2(float2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3264,7 +3264,7 @@ extern int2 __attribute__((const, overloadable))convert_int2(float2);
  *
  * Supported by API versions 9 and newer.
  */
-extern int3 __attribute__((const, overloadable))convert_int3(float3);
+extern int3 __attribute__((const, overloadable))convert_int3(float3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3273,7 +3273,7 @@ extern int3 __attribute__((const, overloadable))convert_int3(float3);
  *
  * Supported by API versions 9 and newer.
  */
-extern int4 __attribute__((const, overloadable))convert_int4(float4);
+extern int4 __attribute__((const, overloadable))convert_int4(float4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3282,7 +3282,7 @@ extern int4 __attribute__((const, overloadable))convert_int4(float4);
  *
  * Supported by API versions 9 and newer.
  */
-extern int2 __attribute__((const, overloadable))convert_int2(double2);
+extern int2 __attribute__((const, overloadable))convert_int2(double2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3291,7 +3291,7 @@ extern int2 __attribute__((const, overloadable))convert_int2(double2);
  *
  * Supported by API versions 9 and newer.
  */
-extern int3 __attribute__((const, overloadable))convert_int3(double3);
+extern int3 __attribute__((const, overloadable))convert_int3(double3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3300,7 +3300,7 @@ extern int3 __attribute__((const, overloadable))convert_int3(double3);
  *
  * Supported by API versions 9 and newer.
  */
-extern int4 __attribute__((const, overloadable))convert_int4(double4);
+extern int4 __attribute__((const, overloadable))convert_int4(double4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3309,7 +3309,7 @@ extern int4 __attribute__((const, overloadable))convert_int4(double4);
  *
  * Supported by API versions 9 and newer.
  */
-extern int2 __attribute__((const, overloadable))convert_int2(char2);
+extern int2 __attribute__((const, overloadable))convert_int2(char2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3318,7 +3318,7 @@ extern int2 __attribute__((const, overloadable))convert_int2(char2);
  *
  * Supported by API versions 9 and newer.
  */
-extern int3 __attribute__((const, overloadable))convert_int3(char3);
+extern int3 __attribute__((const, overloadable))convert_int3(char3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3327,7 +3327,7 @@ extern int3 __attribute__((const, overloadable))convert_int3(char3);
  *
  * Supported by API versions 9 and newer.
  */
-extern int4 __attribute__((const, overloadable))convert_int4(char4);
+extern int4 __attribute__((const, overloadable))convert_int4(char4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3336,7 +3336,7 @@ extern int4 __attribute__((const, overloadable))convert_int4(char4);
  *
  * Supported by API versions 9 and newer.
  */
-extern int2 __attribute__((const, overloadable))convert_int2(uchar2);
+extern int2 __attribute__((const, overloadable))convert_int2(uchar2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3345,7 +3345,7 @@ extern int2 __attribute__((const, overloadable))convert_int2(uchar2);
  *
  * Supported by API versions 9 and newer.
  */
-extern int3 __attribute__((const, overloadable))convert_int3(uchar3);
+extern int3 __attribute__((const, overloadable))convert_int3(uchar3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3354,7 +3354,7 @@ extern int3 __attribute__((const, overloadable))convert_int3(uchar3);
  *
  * Supported by API versions 9 and newer.
  */
-extern int4 __attribute__((const, overloadable))convert_int4(uchar4);
+extern int4 __attribute__((const, overloadable))convert_int4(uchar4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3363,7 +3363,7 @@ extern int4 __attribute__((const, overloadable))convert_int4(uchar4);
  *
  * Supported by API versions 9 and newer.
  */
-extern int2 __attribute__((const, overloadable))convert_int2(short2);
+extern int2 __attribute__((const, overloadable))convert_int2(short2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3372,7 +3372,7 @@ extern int2 __attribute__((const, overloadable))convert_int2(short2);
  *
  * Supported by API versions 9 and newer.
  */
-extern int3 __attribute__((const, overloadable))convert_int3(short3);
+extern int3 __attribute__((const, overloadable))convert_int3(short3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3381,7 +3381,7 @@ extern int3 __attribute__((const, overloadable))convert_int3(short3);
  *
  * Supported by API versions 9 and newer.
  */
-extern int4 __attribute__((const, overloadable))convert_int4(short4);
+extern int4 __attribute__((const, overloadable))convert_int4(short4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3390,7 +3390,7 @@ extern int4 __attribute__((const, overloadable))convert_int4(short4);
  *
  * Supported by API versions 9 and newer.
  */
-extern int2 __attribute__((const, overloadable))convert_int2(ushort2);
+extern int2 __attribute__((const, overloadable))convert_int2(ushort2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3399,7 +3399,7 @@ extern int2 __attribute__((const, overloadable))convert_int2(ushort2);
  *
  * Supported by API versions 9 and newer.
  */
-extern int3 __attribute__((const, overloadable))convert_int3(ushort3);
+extern int3 __attribute__((const, overloadable))convert_int3(ushort3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3408,7 +3408,7 @@ extern int3 __attribute__((const, overloadable))convert_int3(ushort3);
  *
  * Supported by API versions 9 and newer.
  */
-extern int4 __attribute__((const, overloadable))convert_int4(ushort4);
+extern int4 __attribute__((const, overloadable))convert_int4(ushort4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3417,7 +3417,7 @@ extern int4 __attribute__((const, overloadable))convert_int4(ushort4);
  *
  * Supported by API versions 9 and newer.
  */
-extern int2 __attribute__((const, overloadable))convert_int2(int2);
+extern int2 __attribute__((const, overloadable))convert_int2(int2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3426,7 +3426,7 @@ extern int2 __attribute__((const, overloadable))convert_int2(int2);
  *
  * Supported by API versions 9 and newer.
  */
-extern int3 __attribute__((const, overloadable))convert_int3(int3);
+extern int3 __attribute__((const, overloadable))convert_int3(int3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3435,7 +3435,7 @@ extern int3 __attribute__((const, overloadable))convert_int3(int3);
  *
  * Supported by API versions 9 and newer.
  */
-extern int4 __attribute__((const, overloadable))convert_int4(int4);
+extern int4 __attribute__((const, overloadable))convert_int4(int4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3444,7 +3444,7 @@ extern int4 __attribute__((const, overloadable))convert_int4(int4);
  *
  * Supported by API versions 9 and newer.
  */
-extern int2 __attribute__((const, overloadable))convert_int2(uint2);
+extern int2 __attribute__((const, overloadable))convert_int2(uint2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3453,7 +3453,7 @@ extern int2 __attribute__((const, overloadable))convert_int2(uint2);
  *
  * Supported by API versions 9 and newer.
  */
-extern int3 __attribute__((const, overloadable))convert_int3(uint3);
+extern int3 __attribute__((const, overloadable))convert_int3(uint3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3462,7 +3462,7 @@ extern int3 __attribute__((const, overloadable))convert_int3(uint3);
  *
  * Supported by API versions 9 and newer.
  */
-extern int4 __attribute__((const, overloadable))convert_int4(uint4);
+extern int4 __attribute__((const, overloadable))convert_int4(uint4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3471,7 +3471,7 @@ extern int4 __attribute__((const, overloadable))convert_int4(uint4);
  *
  * Supported by API versions 9 and newer.
  */
-extern int2 __attribute__((const, overloadable))convert_int2(long2);
+extern int2 __attribute__((const, overloadable))convert_int2(long2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3480,7 +3480,7 @@ extern int2 __attribute__((const, overloadable))convert_int2(long2);
  *
  * Supported by API versions 9 and newer.
  */
-extern int3 __attribute__((const, overloadable))convert_int3(long3);
+extern int3 __attribute__((const, overloadable))convert_int3(long3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3489,7 +3489,7 @@ extern int3 __attribute__((const, overloadable))convert_int3(long3);
  *
  * Supported by API versions 9 and newer.
  */
-extern int4 __attribute__((const, overloadable))convert_int4(long4);
+extern int4 __attribute__((const, overloadable))convert_int4(long4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3498,7 +3498,7 @@ extern int4 __attribute__((const, overloadable))convert_int4(long4);
  *
  * Supported by API versions 9 and newer.
  */
-extern int2 __attribute__((const, overloadable))convert_int2(ulong2);
+extern int2 __attribute__((const, overloadable))convert_int2(ulong2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3507,7 +3507,7 @@ extern int2 __attribute__((const, overloadable))convert_int2(ulong2);
  *
  * Supported by API versions 9 and newer.
  */
-extern int3 __attribute__((const, overloadable))convert_int3(ulong3);
+extern int3 __attribute__((const, overloadable))convert_int3(ulong3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3516,7 +3516,7 @@ extern int3 __attribute__((const, overloadable))convert_int3(ulong3);
  *
  * Supported by API versions 9 and newer.
  */
-extern int4 __attribute__((const, overloadable))convert_int4(ulong4);
+extern int4 __attribute__((const, overloadable))convert_int4(ulong4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3525,7 +3525,7 @@ extern int4 __attribute__((const, overloadable))convert_int4(ulong4);
  *
  * Supported by API versions 9 and newer.
  */
-extern uint2 __attribute__((const, overloadable))convert_uint2(float2);
+extern uint2 __attribute__((const, overloadable))convert_uint2(float2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3534,7 +3534,7 @@ extern uint2 __attribute__((const, overloadable))convert_uint2(float2);
  *
  * Supported by API versions 9 and newer.
  */
-extern uint3 __attribute__((const, overloadable))convert_uint3(float3);
+extern uint3 __attribute__((const, overloadable))convert_uint3(float3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3543,7 +3543,7 @@ extern uint3 __attribute__((const, overloadable))convert_uint3(float3);
  *
  * Supported by API versions 9 and newer.
  */
-extern uint4 __attribute__((const, overloadable))convert_uint4(float4);
+extern uint4 __attribute__((const, overloadable))convert_uint4(float4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3552,7 +3552,7 @@ extern uint4 __attribute__((const, overloadable))convert_uint4(float4);
  *
  * Supported by API versions 9 and newer.
  */
-extern uint2 __attribute__((const, overloadable))convert_uint2(double2);
+extern uint2 __attribute__((const, overloadable))convert_uint2(double2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3561,7 +3561,7 @@ extern uint2 __attribute__((const, overloadable))convert_uint2(double2);
  *
  * Supported by API versions 9 and newer.
  */
-extern uint3 __attribute__((const, overloadable))convert_uint3(double3);
+extern uint3 __attribute__((const, overloadable))convert_uint3(double3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3570,7 +3570,7 @@ extern uint3 __attribute__((const, overloadable))convert_uint3(double3);
  *
  * Supported by API versions 9 and newer.
  */
-extern uint4 __attribute__((const, overloadable))convert_uint4(double4);
+extern uint4 __attribute__((const, overloadable))convert_uint4(double4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3579,7 +3579,7 @@ extern uint4 __attribute__((const, overloadable))convert_uint4(double4);
  *
  * Supported by API versions 9 and newer.
  */
-extern uint2 __attribute__((const, overloadable))convert_uint2(char2);
+extern uint2 __attribute__((const, overloadable))convert_uint2(char2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3588,7 +3588,7 @@ extern uint2 __attribute__((const, overloadable))convert_uint2(char2);
  *
  * Supported by API versions 9 and newer.
  */
-extern uint3 __attribute__((const, overloadable))convert_uint3(char3);
+extern uint3 __attribute__((const, overloadable))convert_uint3(char3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3597,7 +3597,7 @@ extern uint3 __attribute__((const, overloadable))convert_uint3(char3);
  *
  * Supported by API versions 9 and newer.
  */
-extern uint4 __attribute__((const, overloadable))convert_uint4(char4);
+extern uint4 __attribute__((const, overloadable))convert_uint4(char4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3606,7 +3606,7 @@ extern uint4 __attribute__((const, overloadable))convert_uint4(char4);
  *
  * Supported by API versions 9 and newer.
  */
-extern uint2 __attribute__((const, overloadable))convert_uint2(uchar2);
+extern uint2 __attribute__((const, overloadable))convert_uint2(uchar2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3615,7 +3615,7 @@ extern uint2 __attribute__((const, overloadable))convert_uint2(uchar2);
  *
  * Supported by API versions 9 and newer.
  */
-extern uint3 __attribute__((const, overloadable))convert_uint3(uchar3);
+extern uint3 __attribute__((const, overloadable))convert_uint3(uchar3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3624,7 +3624,7 @@ extern uint3 __attribute__((const, overloadable))convert_uint3(uchar3);
  *
  * Supported by API versions 9 and newer.
  */
-extern uint4 __attribute__((const, overloadable))convert_uint4(uchar4);
+extern uint4 __attribute__((const, overloadable))convert_uint4(uchar4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3633,7 +3633,7 @@ extern uint4 __attribute__((const, overloadable))convert_uint4(uchar4);
  *
  * Supported by API versions 9 and newer.
  */
-extern uint2 __attribute__((const, overloadable))convert_uint2(short2);
+extern uint2 __attribute__((const, overloadable))convert_uint2(short2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3642,7 +3642,7 @@ extern uint2 __attribute__((const, overloadable))convert_uint2(short2);
  *
  * Supported by API versions 9 and newer.
  */
-extern uint3 __attribute__((const, overloadable))convert_uint3(short3);
+extern uint3 __attribute__((const, overloadable))convert_uint3(short3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3651,7 +3651,7 @@ extern uint3 __attribute__((const, overloadable))convert_uint3(short3);
  *
  * Supported by API versions 9 and newer.
  */
-extern uint4 __attribute__((const, overloadable))convert_uint4(short4);
+extern uint4 __attribute__((const, overloadable))convert_uint4(short4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3660,7 +3660,7 @@ extern uint4 __attribute__((const, overloadable))convert_uint4(short4);
  *
  * Supported by API versions 9 and newer.
  */
-extern uint2 __attribute__((const, overloadable))convert_uint2(ushort2);
+extern uint2 __attribute__((const, overloadable))convert_uint2(ushort2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3669,7 +3669,7 @@ extern uint2 __attribute__((const, overloadable))convert_uint2(ushort2);
  *
  * Supported by API versions 9 and newer.
  */
-extern uint3 __attribute__((const, overloadable))convert_uint3(ushort3);
+extern uint3 __attribute__((const, overloadable))convert_uint3(ushort3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3678,7 +3678,7 @@ extern uint3 __attribute__((const, overloadable))convert_uint3(ushort3);
  *
  * Supported by API versions 9 and newer.
  */
-extern uint4 __attribute__((const, overloadable))convert_uint4(ushort4);
+extern uint4 __attribute__((const, overloadable))convert_uint4(ushort4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3687,7 +3687,7 @@ extern uint4 __attribute__((const, overloadable))convert_uint4(ushort4);
  *
  * Supported by API versions 9 and newer.
  */
-extern uint2 __attribute__((const, overloadable))convert_uint2(int2);
+extern uint2 __attribute__((const, overloadable))convert_uint2(int2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3696,7 +3696,7 @@ extern uint2 __attribute__((const, overloadable))convert_uint2(int2);
  *
  * Supported by API versions 9 and newer.
  */
-extern uint3 __attribute__((const, overloadable))convert_uint3(int3);
+extern uint3 __attribute__((const, overloadable))convert_uint3(int3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3705,7 +3705,7 @@ extern uint3 __attribute__((const, overloadable))convert_uint3(int3);
  *
  * Supported by API versions 9 and newer.
  */
-extern uint4 __attribute__((const, overloadable))convert_uint4(int4);
+extern uint4 __attribute__((const, overloadable))convert_uint4(int4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3714,7 +3714,7 @@ extern uint4 __attribute__((const, overloadable))convert_uint4(int4);
  *
  * Supported by API versions 9 and newer.
  */
-extern uint2 __attribute__((const, overloadable))convert_uint2(uint2);
+extern uint2 __attribute__((const, overloadable))convert_uint2(uint2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3723,7 +3723,7 @@ extern uint2 __attribute__((const, overloadable))convert_uint2(uint2);
  *
  * Supported by API versions 9 and newer.
  */
-extern uint3 __attribute__((const, overloadable))convert_uint3(uint3);
+extern uint3 __attribute__((const, overloadable))convert_uint3(uint3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3732,7 +3732,7 @@ extern uint3 __attribute__((const, overloadable))convert_uint3(uint3);
  *
  * Supported by API versions 9 and newer.
  */
-extern uint4 __attribute__((const, overloadable))convert_uint4(uint4);
+extern uint4 __attribute__((const, overloadable))convert_uint4(uint4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3741,7 +3741,7 @@ extern uint4 __attribute__((const, overloadable))convert_uint4(uint4);
  *
  * Supported by API versions 9 and newer.
  */
-extern uint2 __attribute__((const, overloadable))convert_uint2(long2);
+extern uint2 __attribute__((const, overloadable))convert_uint2(long2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3750,7 +3750,7 @@ extern uint2 __attribute__((const, overloadable))convert_uint2(long2);
  *
  * Supported by API versions 9 and newer.
  */
-extern uint3 __attribute__((const, overloadable))convert_uint3(long3);
+extern uint3 __attribute__((const, overloadable))convert_uint3(long3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3759,7 +3759,7 @@ extern uint3 __attribute__((const, overloadable))convert_uint3(long3);
  *
  * Supported by API versions 9 and newer.
  */
-extern uint4 __attribute__((const, overloadable))convert_uint4(long4);
+extern uint4 __attribute__((const, overloadable))convert_uint4(long4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3768,7 +3768,7 @@ extern uint4 __attribute__((const, overloadable))convert_uint4(long4);
  *
  * Supported by API versions 9 and newer.
  */
-extern uint2 __attribute__((const, overloadable))convert_uint2(ulong2);
+extern uint2 __attribute__((const, overloadable))convert_uint2(ulong2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3777,7 +3777,7 @@ extern uint2 __attribute__((const, overloadable))convert_uint2(ulong2);
  *
  * Supported by API versions 9 and newer.
  */
-extern uint3 __attribute__((const, overloadable))convert_uint3(ulong3);
+extern uint3 __attribute__((const, overloadable))convert_uint3(ulong3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3786,7 +3786,7 @@ extern uint3 __attribute__((const, overloadable))convert_uint3(ulong3);
  *
  * Supported by API versions 9 and newer.
  */
-extern uint4 __attribute__((const, overloadable))convert_uint4(ulong4);
+extern uint4 __attribute__((const, overloadable))convert_uint4(ulong4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3795,7 +3795,7 @@ extern uint4 __attribute__((const, overloadable))convert_uint4(ulong4);
  *
  * Supported by API versions 9 and newer.
  */
-extern long2 __attribute__((const, overloadable))convert_long2(float2);
+extern long2 __attribute__((const, overloadable))convert_long2(float2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3804,7 +3804,7 @@ extern long2 __attribute__((const, overloadable))convert_long2(float2);
  *
  * Supported by API versions 9 and newer.
  */
-extern long3 __attribute__((const, overloadable))convert_long3(float3);
+extern long3 __attribute__((const, overloadable))convert_long3(float3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3813,7 +3813,7 @@ extern long3 __attribute__((const, overloadable))convert_long3(float3);
  *
  * Supported by API versions 9 and newer.
  */
-extern long4 __attribute__((const, overloadable))convert_long4(float4);
+extern long4 __attribute__((const, overloadable))convert_long4(float4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3822,7 +3822,7 @@ extern long4 __attribute__((const, overloadable))convert_long4(float4);
  *
  * Supported by API versions 9 and newer.
  */
-extern long2 __attribute__((const, overloadable))convert_long2(double2);
+extern long2 __attribute__((const, overloadable))convert_long2(double2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3831,7 +3831,7 @@ extern long2 __attribute__((const, overloadable))convert_long2(double2);
  *
  * Supported by API versions 9 and newer.
  */
-extern long3 __attribute__((const, overloadable))convert_long3(double3);
+extern long3 __attribute__((const, overloadable))convert_long3(double3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3840,7 +3840,7 @@ extern long3 __attribute__((const, overloadable))convert_long3(double3);
  *
  * Supported by API versions 9 and newer.
  */
-extern long4 __attribute__((const, overloadable))convert_long4(double4);
+extern long4 __attribute__((const, overloadable))convert_long4(double4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3849,7 +3849,7 @@ extern long4 __attribute__((const, overloadable))convert_long4(double4);
  *
  * Supported by API versions 9 and newer.
  */
-extern long2 __attribute__((const, overloadable))convert_long2(char2);
+extern long2 __attribute__((const, overloadable))convert_long2(char2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3858,7 +3858,7 @@ extern long2 __attribute__((const, overloadable))convert_long2(char2);
  *
  * Supported by API versions 9 and newer.
  */
-extern long3 __attribute__((const, overloadable))convert_long3(char3);
+extern long3 __attribute__((const, overloadable))convert_long3(char3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3867,7 +3867,7 @@ extern long3 __attribute__((const, overloadable))convert_long3(char3);
  *
  * Supported by API versions 9 and newer.
  */
-extern long4 __attribute__((const, overloadable))convert_long4(char4);
+extern long4 __attribute__((const, overloadable))convert_long4(char4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3876,7 +3876,7 @@ extern long4 __attribute__((const, overloadable))convert_long4(char4);
  *
  * Supported by API versions 9 and newer.
  */
-extern long2 __attribute__((const, overloadable))convert_long2(uchar2);
+extern long2 __attribute__((const, overloadable))convert_long2(uchar2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3885,7 +3885,7 @@ extern long2 __attribute__((const, overloadable))convert_long2(uchar2);
  *
  * Supported by API versions 9 and newer.
  */
-extern long3 __attribute__((const, overloadable))convert_long3(uchar3);
+extern long3 __attribute__((const, overloadable))convert_long3(uchar3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3894,7 +3894,7 @@ extern long3 __attribute__((const, overloadable))convert_long3(uchar3);
  *
  * Supported by API versions 9 and newer.
  */
-extern long4 __attribute__((const, overloadable))convert_long4(uchar4);
+extern long4 __attribute__((const, overloadable))convert_long4(uchar4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3903,7 +3903,7 @@ extern long4 __attribute__((const, overloadable))convert_long4(uchar4);
  *
  * Supported by API versions 9 and newer.
  */
-extern long2 __attribute__((const, overloadable))convert_long2(short2);
+extern long2 __attribute__((const, overloadable))convert_long2(short2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3912,7 +3912,7 @@ extern long2 __attribute__((const, overloadable))convert_long2(short2);
  *
  * Supported by API versions 9 and newer.
  */
-extern long3 __attribute__((const, overloadable))convert_long3(short3);
+extern long3 __attribute__((const, overloadable))convert_long3(short3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3921,7 +3921,7 @@ extern long3 __attribute__((const, overloadable))convert_long3(short3);
  *
  * Supported by API versions 9 and newer.
  */
-extern long4 __attribute__((const, overloadable))convert_long4(short4);
+extern long4 __attribute__((const, overloadable))convert_long4(short4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3930,7 +3930,7 @@ extern long4 __attribute__((const, overloadable))convert_long4(short4);
  *
  * Supported by API versions 9 and newer.
  */
-extern long2 __attribute__((const, overloadable))convert_long2(ushort2);
+extern long2 __attribute__((const, overloadable))convert_long2(ushort2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3939,7 +3939,7 @@ extern long2 __attribute__((const, overloadable))convert_long2(ushort2);
  *
  * Supported by API versions 9 and newer.
  */
-extern long3 __attribute__((const, overloadable))convert_long3(ushort3);
+extern long3 __attribute__((const, overloadable))convert_long3(ushort3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3948,7 +3948,7 @@ extern long3 __attribute__((const, overloadable))convert_long3(ushort3);
  *
  * Supported by API versions 9 and newer.
  */
-extern long4 __attribute__((const, overloadable))convert_long4(ushort4);
+extern long4 __attribute__((const, overloadable))convert_long4(ushort4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3957,7 +3957,7 @@ extern long4 __attribute__((const, overloadable))convert_long4(ushort4);
  *
  * Supported by API versions 9 and newer.
  */
-extern long2 __attribute__((const, overloadable))convert_long2(int2);
+extern long2 __attribute__((const, overloadable))convert_long2(int2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3966,7 +3966,7 @@ extern long2 __attribute__((const, overloadable))convert_long2(int2);
  *
  * Supported by API versions 9 and newer.
  */
-extern long3 __attribute__((const, overloadable))convert_long3(int3);
+extern long3 __attribute__((const, overloadable))convert_long3(int3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3975,7 +3975,7 @@ extern long3 __attribute__((const, overloadable))convert_long3(int3);
  *
  * Supported by API versions 9 and newer.
  */
-extern long4 __attribute__((const, overloadable))convert_long4(int4);
+extern long4 __attribute__((const, overloadable))convert_long4(int4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3984,7 +3984,7 @@ extern long4 __attribute__((const, overloadable))convert_long4(int4);
  *
  * Supported by API versions 9 and newer.
  */
-extern long2 __attribute__((const, overloadable))convert_long2(uint2);
+extern long2 __attribute__((const, overloadable))convert_long2(uint2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3993,7 +3993,7 @@ extern long2 __attribute__((const, overloadable))convert_long2(uint2);
  *
  * Supported by API versions 9 and newer.
  */
-extern long3 __attribute__((const, overloadable))convert_long3(uint3);
+extern long3 __attribute__((const, overloadable))convert_long3(uint3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -4002,7 +4002,7 @@ extern long3 __attribute__((const, overloadable))convert_long3(uint3);
  *
  * Supported by API versions 9 and newer.
  */
-extern long4 __attribute__((const, overloadable))convert_long4(uint4);
+extern long4 __attribute__((const, overloadable))convert_long4(uint4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -4011,7 +4011,7 @@ extern long4 __attribute__((const, overloadable))convert_long4(uint4);
  *
  * Supported by API versions 9 and newer.
  */
-extern long2 __attribute__((const, overloadable))convert_long2(long2);
+extern long2 __attribute__((const, overloadable))convert_long2(long2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -4020,7 +4020,7 @@ extern long2 __attribute__((const, overloadable))convert_long2(long2);
  *
  * Supported by API versions 9 and newer.
  */
-extern long3 __attribute__((const, overloadable))convert_long3(long3);
+extern long3 __attribute__((const, overloadable))convert_long3(long3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -4029,7 +4029,7 @@ extern long3 __attribute__((const, overloadable))convert_long3(long3);
  *
  * Supported by API versions 9 and newer.
  */
-extern long4 __attribute__((const, overloadable))convert_long4(long4);
+extern long4 __attribute__((const, overloadable))convert_long4(long4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -4038,7 +4038,7 @@ extern long4 __attribute__((const, overloadable))convert_long4(long4);
  *
  * Supported by API versions 9 and newer.
  */
-extern long2 __attribute__((const, overloadable))convert_long2(ulong2);
+extern long2 __attribute__((const, overloadable))convert_long2(ulong2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -4047,7 +4047,7 @@ extern long2 __attribute__((const, overloadable))convert_long2(ulong2);
  *
  * Supported by API versions 9 and newer.
  */
-extern long3 __attribute__((const, overloadable))convert_long3(ulong3);
+extern long3 __attribute__((const, overloadable))convert_long3(ulong3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -4056,7 +4056,7 @@ extern long3 __attribute__((const, overloadable))convert_long3(ulong3);
  *
  * Supported by API versions 9 and newer.
  */
-extern long4 __attribute__((const, overloadable))convert_long4(ulong4);
+extern long4 __attribute__((const, overloadable))convert_long4(ulong4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -4065,7 +4065,7 @@ extern long4 __attribute__((const, overloadable))convert_long4(ulong4);
  *
  * Supported by API versions 9 and newer.
  */
-extern ulong2 __attribute__((const, overloadable))convert_ulong2(float2);
+extern ulong2 __attribute__((const, overloadable))convert_ulong2(float2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -4074,7 +4074,7 @@ extern ulong2 __attribute__((const, overloadable))convert_ulong2(float2);
  *
  * Supported by API versions 9 and newer.
  */
-extern ulong3 __attribute__((const, overloadable))convert_ulong3(float3);
+extern ulong3 __attribute__((const, overloadable))convert_ulong3(float3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -4083,7 +4083,7 @@ extern ulong3 __attribute__((const, overloadable))convert_ulong3(float3);
  *
  * Supported by API versions 9 and newer.
  */
-extern ulong4 __attribute__((const, overloadable))convert_ulong4(float4);
+extern ulong4 __attribute__((const, overloadable))convert_ulong4(float4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -4092,7 +4092,7 @@ extern ulong4 __attribute__((const, overloadable))convert_ulong4(float4);
  *
  * Supported by API versions 9 and newer.
  */
-extern ulong2 __attribute__((const, overloadable))convert_ulong2(double2);
+extern ulong2 __attribute__((const, overloadable))convert_ulong2(double2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -4101,7 +4101,7 @@ extern ulong2 __attribute__((const, overloadable))convert_ulong2(double2);
  *
  * Supported by API versions 9 and newer.
  */
-extern ulong3 __attribute__((const, overloadable))convert_ulong3(double3);
+extern ulong3 __attribute__((const, overloadable))convert_ulong3(double3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -4110,7 +4110,7 @@ extern ulong3 __attribute__((const, overloadable))convert_ulong3(double3);
  *
  * Supported by API versions 9 and newer.
  */
-extern ulong4 __attribute__((const, overloadable))convert_ulong4(double4);
+extern ulong4 __attribute__((const, overloadable))convert_ulong4(double4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -4119,7 +4119,7 @@ extern ulong4 __attribute__((const, overloadable))convert_ulong4(double4);
  *
  * Supported by API versions 9 and newer.
  */
-extern ulong2 __attribute__((const, overloadable))convert_ulong2(char2);
+extern ulong2 __attribute__((const, overloadable))convert_ulong2(char2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -4128,7 +4128,7 @@ extern ulong2 __attribute__((const, overloadable))convert_ulong2(char2);
  *
  * Supported by API versions 9 and newer.
  */
-extern ulong3 __attribute__((const, overloadable))convert_ulong3(char3);
+extern ulong3 __attribute__((const, overloadable))convert_ulong3(char3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -4137,7 +4137,7 @@ extern ulong3 __attribute__((const, overloadable))convert_ulong3(char3);
  *
  * Supported by API versions 9 and newer.
  */
-extern ulong4 __attribute__((const, overloadable))convert_ulong4(char4);
+extern ulong4 __attribute__((const, overloadable))convert_ulong4(char4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -4146,7 +4146,7 @@ extern ulong4 __attribute__((const, overloadable))convert_ulong4(char4);
  *
  * Supported by API versions 9 and newer.
  */
-extern ulong2 __attribute__((const, overloadable))convert_ulong2(uchar2);
+extern ulong2 __attribute__((const, overloadable))convert_ulong2(uchar2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -4155,7 +4155,7 @@ extern ulong2 __attribute__((const, overloadable))convert_ulong2(uchar2);
  *
  * Supported by API versions 9 and newer.
  */
-extern ulong3 __attribute__((const, overloadable))convert_ulong3(uchar3);
+extern ulong3 __attribute__((const, overloadable))convert_ulong3(uchar3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -4164,7 +4164,7 @@ extern ulong3 __attribute__((const, overloadable))convert_ulong3(uchar3);
  *
  * Supported by API versions 9 and newer.
  */
-extern ulong4 __attribute__((const, overloadable))convert_ulong4(uchar4);
+extern ulong4 __attribute__((const, overloadable))convert_ulong4(uchar4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -4173,7 +4173,7 @@ extern ulong4 __attribute__((const, overloadable))convert_ulong4(uchar4);
  *
  * Supported by API versions 9 and newer.
  */
-extern ulong2 __attribute__((const, overloadable))convert_ulong2(short2);
+extern ulong2 __attribute__((const, overloadable))convert_ulong2(short2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -4182,7 +4182,7 @@ extern ulong2 __attribute__((const, overloadable))convert_ulong2(short2);
  *
  * Supported by API versions 9 and newer.
  */
-extern ulong3 __attribute__((const, overloadable))convert_ulong3(short3);
+extern ulong3 __attribute__((const, overloadable))convert_ulong3(short3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -4191,7 +4191,7 @@ extern ulong3 __attribute__((const, overloadable))convert_ulong3(short3);
  *
  * Supported by API versions 9 and newer.
  */
-extern ulong4 __attribute__((const, overloadable))convert_ulong4(short4);
+extern ulong4 __attribute__((const, overloadable))convert_ulong4(short4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -4200,7 +4200,7 @@ extern ulong4 __attribute__((const, overloadable))convert_ulong4(short4);
  *
  * Supported by API versions 9 and newer.
  */
-extern ulong2 __attribute__((const, overloadable))convert_ulong2(ushort2);
+extern ulong2 __attribute__((const, overloadable))convert_ulong2(ushort2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -4209,7 +4209,7 @@ extern ulong2 __attribute__((const, overloadable))convert_ulong2(ushort2);
  *
  * Supported by API versions 9 and newer.
  */
-extern ulong3 __attribute__((const, overloadable))convert_ulong3(ushort3);
+extern ulong3 __attribute__((const, overloadable))convert_ulong3(ushort3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -4218,7 +4218,7 @@ extern ulong3 __attribute__((const, overloadable))convert_ulong3(ushort3);
  *
  * Supported by API versions 9 and newer.
  */
-extern ulong4 __attribute__((const, overloadable))convert_ulong4(ushort4);
+extern ulong4 __attribute__((const, overloadable))convert_ulong4(ushort4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -4227,7 +4227,7 @@ extern ulong4 __attribute__((const, overloadable))convert_ulong4(ushort4);
  *
  * Supported by API versions 9 and newer.
  */
-extern ulong2 __attribute__((const, overloadable))convert_ulong2(int2);
+extern ulong2 __attribute__((const, overloadable))convert_ulong2(int2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -4236,7 +4236,7 @@ extern ulong2 __attribute__((const, overloadable))convert_ulong2(int2);
  *
  * Supported by API versions 9 and newer.
  */
-extern ulong3 __attribute__((const, overloadable))convert_ulong3(int3);
+extern ulong3 __attribute__((const, overloadable))convert_ulong3(int3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -4245,7 +4245,7 @@ extern ulong3 __attribute__((const, overloadable))convert_ulong3(int3);
  *
  * Supported by API versions 9 and newer.
  */
-extern ulong4 __attribute__((const, overloadable))convert_ulong4(int4);
+extern ulong4 __attribute__((const, overloadable))convert_ulong4(int4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -4254,7 +4254,7 @@ extern ulong4 __attribute__((const, overloadable))convert_ulong4(int4);
  *
  * Supported by API versions 9 and newer.
  */
-extern ulong2 __attribute__((const, overloadable))convert_ulong2(uint2);
+extern ulong2 __attribute__((const, overloadable))convert_ulong2(uint2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -4263,7 +4263,7 @@ extern ulong2 __attribute__((const, overloadable))convert_ulong2(uint2);
  *
  * Supported by API versions 9 and newer.
  */
-extern ulong3 __attribute__((const, overloadable))convert_ulong3(uint3);
+extern ulong3 __attribute__((const, overloadable))convert_ulong3(uint3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -4272,7 +4272,7 @@ extern ulong3 __attribute__((const, overloadable))convert_ulong3(uint3);
  *
  * Supported by API versions 9 and newer.
  */
-extern ulong4 __attribute__((const, overloadable))convert_ulong4(uint4);
+extern ulong4 __attribute__((const, overloadable))convert_ulong4(uint4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -4281,7 +4281,7 @@ extern ulong4 __attribute__((const, overloadable))convert_ulong4(uint4);
  *
  * Supported by API versions 9 and newer.
  */
-extern ulong2 __attribute__((const, overloadable))convert_ulong2(long2);
+extern ulong2 __attribute__((const, overloadable))convert_ulong2(long2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -4290,7 +4290,7 @@ extern ulong2 __attribute__((const, overloadable))convert_ulong2(long2);
  *
  * Supported by API versions 9 and newer.
  */
-extern ulong3 __attribute__((const, overloadable))convert_ulong3(long3);
+extern ulong3 __attribute__((const, overloadable))convert_ulong3(long3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -4299,7 +4299,7 @@ extern ulong3 __attribute__((const, overloadable))convert_ulong3(long3);
  *
  * Supported by API versions 9 and newer.
  */
-extern ulong4 __attribute__((const, overloadable))convert_ulong4(long4);
+extern ulong4 __attribute__((const, overloadable))convert_ulong4(long4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -4308,7 +4308,7 @@ extern ulong4 __attribute__((const, overloadable))convert_ulong4(long4);
  *
  * Supported by API versions 9 and newer.
  */
-extern ulong2 __attribute__((const, overloadable))convert_ulong2(ulong2);
+extern ulong2 __attribute__((const, overloadable))convert_ulong2(ulong2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -4317,7 +4317,7 @@ extern ulong2 __attribute__((const, overloadable))convert_ulong2(ulong2);
  *
  * Supported by API versions 9 and newer.
  */
-extern ulong3 __attribute__((const, overloadable))convert_ulong3(ulong3);
+extern ulong3 __attribute__((const, overloadable))convert_ulong3(ulong3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -4326,7 +4326,7 @@ extern ulong3 __attribute__((const, overloadable))convert_ulong3(ulong3);
  *
  * Supported by API versions 9 and newer.
  */
-extern ulong4 __attribute__((const, overloadable))convert_ulong4(ulong4);
+extern ulong4 __attribute__((const, overloadable))convert_ulong4(ulong4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -7640,6 +7640,8 @@ extern float4 __attribute__((const, overloadable))native_log2(float4 v);
 #if (defined(RS_VERSION) && (RS_VERSION >= 18))
 /*
  * Fast approximate v ^ y
+ * v must be between 0.f and 256.f
+ * y must be between -15.f and 15.f
  *
  * Supported by API versions 18 and newer.
  */
@@ -7649,6 +7651,8 @@ extern float __attribute__((const, overloadable))native_powr(float v, float y);
 #if (defined(RS_VERSION) && (RS_VERSION >= 18))
 /*
  * Fast approximate v ^ y
+ * v must be between 0.f and 256.f
+ * y must be between -15.f and 15.f
  *
  * Supported by API versions 18 and newer.
  */
@@ -7658,6 +7662,8 @@ extern float2 __attribute__((const, overloadable))native_powr(float2 v, float2 y
 #if (defined(RS_VERSION) && (RS_VERSION >= 18))
 /*
  * Fast approximate v ^ y
+ * v must be between 0.f and 256.f
+ * y must be between -15.f and 15.f
  *
  * Supported by API versions 18 and newer.
  */
@@ -7667,6 +7673,8 @@ extern float3 __attribute__((const, overloadable))native_powr(float3 v, float3 y
 #if (defined(RS_VERSION) && (RS_VERSION >= 18))
 /*
  * Fast approximate v ^ y
+ * v must be between 0.f and 256.f
+ * y must be between -15.f and 15.f
  *
  * Supported by API versions 18 and newer.
  */
