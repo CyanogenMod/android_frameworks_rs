@@ -515,9 +515,10 @@ FN_FUNC_FN_FN(pow)
 extern float __attribute__((overloadable)) pown(float v, int p) {
     /* The mantissa of a float has fewer bits than an int (24 effective vs. 31).
      * For very large ints, we'll lose whether the exponent is even or odd, making
-     * the selection of a correct sign incorrect.  We correct this.
+     * the selection of a correct sign incorrect.  We correct this.  Use copysign
+     * to handle the negative zero case.
      */
-    float sign = (v < 0.0f && (p & 0x1)) ? -1.0 : 1.0;
+    float sign = (p & 0x1) ? copysign(1.f, v) : 1.f;
     float f = pow(v, (float)p);
     return copysign(f, sign);
 }
