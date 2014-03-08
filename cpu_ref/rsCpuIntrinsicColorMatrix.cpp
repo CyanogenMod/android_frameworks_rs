@@ -403,7 +403,7 @@ static uint8_t * addVMULL_S16(uint8_t *buf, uint32_t dest_q, uint32_t src_d1, ui
 }
 
 static uint8_t * addVQADD_S32(uint8_t *buf, uint32_t dest_q, uint32_t src_q1, uint32_t src_q2) {
-    //vqadd.s32 Q#1, D#1, D#2
+    //vqadd.s32 Q#1, Q#1, Q#2
     uint32_t op = 0xf2200050 | encodeSIMDRegs(dest_q << 1, src_q1 << 1, src_q2 << 1);
     ((uint32_t *)buf)[0] = op;
     return buf + 4;
@@ -426,6 +426,14 @@ static uint8_t * addVMULL_F32(uint8_t *buf, uint32_t dest_q, uint32_t src_d1, ui
 static uint8_t * addVORR_32(uint8_t *buf, uint32_t dest_q, uint32_t src_q1, uint32_t src_q2) {
     //vadd.f32 Q#1, D#1, D#2
     uint32_t op = 0xf2200150 | encodeSIMDRegs(dest_q << 1, src_q1 << 1, src_q2 << 1);
+    ((uint32_t *)buf)[0] = op;
+    return buf + 4;
+}
+
+static uint8_t * addVMOV_32(uint8_t *buf, uint32_t dest_q, uint32_t imm) {
+    //vmov.32 Q#1, #imm
+    rsAssert(imm == 0);
+    uint32_t op = 0xf2800050 | encodeSIMDRegs(dest_q << 1, 0, 0);
     ((uint32_t *)buf)[0] = op;
     return buf + 4;
 }
@@ -565,7 +573,9 @@ bool RsdCpuScriptIntrinsicColorMatrix::build(Key_t key) {
                 }
             } else {
                 if (key.u.addMask & (1 << j)) {
-                    buf = addVADD_F32(buf, j, j, 8+j);
+                    buf = addVORR_32(buf, j, 8+j, 8+j);
+                } else {
+                    buf = addVMOV_32(buf, j, 0);
                 }
             }
         }
@@ -655,7 +665,7 @@ bool RsdCpuScriptIntrinsicColorMatrix::build(Key_t key) {
                 }
             } else {
                 if (key.u.addMask & (1 << j)) {
-                    buf = addVQADD_S32(buf, 8+j, 12+j, 4+j);
+                    buf = addVORR_32(buf, 8+j, 4+j, 4+j);
                 }
             }
         }
