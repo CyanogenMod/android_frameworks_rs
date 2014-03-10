@@ -19,6 +19,8 @@
 #include "rsContext.h"
 #include "rsThreadIO.h"
 
+#include "rsgApiStructs.h"
+
 #ifndef RS_COMPATIBILITY_LIB
 #include "rsMesh.h"
 #include <ui/FramebufferNativeWindow.h>
@@ -902,6 +904,32 @@ void rsi_ContextSendMessage(Context *rsc, uint32_t id, const uint8_t *data, size
     rsc->sendMessageToClient(data, RS_MESSAGE_TO_CLIENT_USER, id, len, true);
 }
 
+// implementation of handcode LF_ObjDestroy
+// required so nObjDestroy can be run from finalizer without blocking
+void LF_ObjDestroy_handcode(const Context *rsc, RsAsyncVoidPtr objPtr) {
+    if (((Context *)rsc)->isSynchronous()) {
+        rsi_ObjDestroy((Context *)rsc, objPtr);
+        return;
+    }
+
+    // struct has two parts:
+    // RsPlaybackRemoteHeader (cmdID and bytes)
+    // RS_CMD_ObjDestroy (ptr)
+    struct destroyCmd {
+        uint32_t cmdID;
+        uint32_t bytes;
+        RsAsyncVoidPtr ptr;
+     };
+
+    destroyCmd cmd;
+    cmd.cmdID = RS_CMD_ID_ObjDestroy;
+    cmd.bytes = sizeof(RsAsyncVoidPtr);
+    cmd.ptr = objPtr;
+    ThreadIO *io = &((Context *)rsc)->mIO;
+    io->coreWrite((void*)&cmd, sizeof(destroyCmd));
+
+}
+
 }
 }
 
@@ -938,3 +966,4 @@ void rsaGetName(RsContext con, void * obj, const char **name) {
     ObjectBase *ob = static_cast<ObjectBase *>(obj);
     (*name) = ob->getName();
 }
+
