@@ -20,6 +20,7 @@
 #include "rsCpuIntrinsic.h"
 #include "rsCpuIntrinsicInlines.h"
 #include "linkloader/include/MemChunk.h"
+#include "linkloader/utils/flush_cpu_cache.h"
 
 #include <sys/mman.h>
 #include <stddef.h>
@@ -658,7 +659,7 @@ bool RsdCpuScriptIntrinsicColorMatrix::build(Key_t key) {
         return false;
     }
 
-    cacheflush((long)mBuf, (long)mBuf + mBufSize, 0);
+    FLUSH_CPU_CACHE(mBuf, (char*) mBuf + mBufSize);
     return true;
 #else
     return false;
