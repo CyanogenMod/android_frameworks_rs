@@ -36,6 +36,7 @@ ifeq ($(TARGET_ARCH),arm64)
     LOCAL_CFLAGS += -DARCH_ARM_HAVE_NEON
     LOCAL_SRC_FILES+= \
         rsCpuIntrinsics_advsimd_Blend.S \
+        rsCpuIntrinsics_advsimd_Blur.S \
         rsCpuIntrinsics_advsimd_YuvToRGB.S
 else
     ifeq ($(ARCH_ARM_HAVE_NEON),true)
@@ -48,6 +49,7 @@ else
             rsCpuIntrinsics_neon.S \
             rsCpuIntrinsics_neon_ColorMatrix.S \
             rsCpuIntrinsics_neon_Blend.S \
+            rsCpuIntrinsics_neon_Blur.S \
             rsCpuIntrinsics_neon_YuvToRGB.S
         LOCAL_ASFLAGS := -mfpu=neon
     endif
