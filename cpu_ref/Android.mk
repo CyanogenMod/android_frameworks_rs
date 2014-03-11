@@ -32,16 +32,22 @@ LOCAL_SRC_FILES:= \
 	rsCpuIntrinsicLUT.cpp \
 	rsCpuIntrinsicYuvToRGB.cpp
 
-ifeq ($(ARCH_ARM_HAVE_NEON),true)
+ifeq ($(TARGET_ARCH),arm64)
     LOCAL_CFLAGS += -DARCH_ARM_HAVE_NEON
-endif
+    LOCAL_SRC_FILES+=rsCpuIntrinsics_advsimd_Blend.S
+else
+    ifeq ($(ARCH_ARM_HAVE_NEON),true)
+        LOCAL_CFLAGS += -DARCH_ARM_HAVE_NEON
+    endif
 
-ifeq ($(ARCH_ARM_HAVE_VFP),true)
-    LOCAL_CFLAGS += -DARCH_ARM_HAVE_VFP
-    LOCAL_SRC_FILES+= \
-        rsCpuIntrinsics_neon.S \
-        rsCpuIntrinsics_neon_ColorMatrix.S
-    LOCAL_ASFLAGS := -mfpu=neon
+    ifeq ($(ARCH_ARM_HAVE_VFP),true)
+        LOCAL_CFLAGS += -DARCH_ARM_HAVE_VFP
+        LOCAL_SRC_FILES+= \
+            rsCpuIntrinsics_neon.S \
+            rsCpuIntrinsics_neon_ColorMatrix.S \
+            rsCpuIntrinsics_neon_Blend.S
+        LOCAL_ASFLAGS := -mfpu=neon
+    endif
 endif
 
 LOCAL_SHARED_LIBRARIES += libRS libcutils libutils liblog libsync
