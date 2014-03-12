@@ -486,9 +486,10 @@ void Allocation::NewBufferListener::onFrameAvailable() {
 void * Allocation::getSurface(const Context *rsc) {
 #ifndef RS_COMPATIBILITY_LIB
     // Configure GrallocConsumer to be in asynchronous mode
-    sp<BufferQueue> bq = new BufferQueue();
-    mGrallocConsumer = new GrallocConsumer(this, bq);
-    sp<IGraphicBufferProducer> bp = bq;
+    sp<IGraphicBufferProducer> bp;
+    sp<IGraphicBufferConsumer> bc;
+    BufferQueue::createBufferQueue(&bp, &bc);
+    mGrallocConsumer = new GrallocConsumer(this, bc);
     bp->incStrong(NULL);
 
     mBufferListener = new NewBufferListener();
