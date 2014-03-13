@@ -45,6 +45,10 @@
 #$(call add-clean-step, rm -rf $(PRODUCT_OUT)/data/*)
 $(call add-clean-step, rm -rf $(OUT_DIR)/target/common/obj/APPS/*/src/RenderScript.stamp)
 $(call add-clean-step, rm -rf $(OUT_DIR)/target/common/obj/APPS/*/src/renderscript/)
+$(call add-clean-step, rm -rf $(OUT_DIR)/target/common/obj/APPS/*/src/renderscript)
+$(call add-clean-step, rm -rf $(OUT_DIR)/target/common/obj/JAVA_LIBRARIES/*/src/renderscript)
+$(call add-clean-step, rm -rf $(OUT_DIR)/target/common/obj/APPS/*/src/RenderScript.stamp)
+$(call add-clean-step, rm -rf $(OUT_DIR)/target/common/obj/JAVA_LIBRARIES/*/src/RenderScript.stamp)
 
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
