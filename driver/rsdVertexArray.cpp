@@ -52,7 +52,7 @@ void RsdVertexArray::Attrib::clear() {
 }
 
 void RsdVertexArray::Attrib::set(uint32_t type, uint32_t size, uint32_t stride,
-                              bool normalized, uint32_t offset,
+                              bool normalized, size_t offset,
                               const char *name) {
     clear();
     this->type = type;
@@ -67,16 +67,16 @@ void RsdVertexArray::logAttrib(uint32_t idx, uint32_t slot) const {
     if (idx == 0) {
         ALOGV("Starting vertex attribute binding");
     }
-    ALOGV("va %i: slot=%i name=%s buf=%i ptr=%p size=%i  type=0x%x  stride=0x%x  norm=%i  offset=0x%x",
-         idx, slot,
-         mAttribs[idx].name.string(),
-         mAttribs[idx].buffer,
-         mAttribs[idx].ptr,
-         mAttribs[idx].size,
-         mAttribs[idx].type,
-         mAttribs[idx].stride,
-         mAttribs[idx].normalized,
-         mAttribs[idx].offset);
+    ALOGV("va %i: slot=%i name=%s buf=%i ptr=%p size=%i  type=0x%x  stride=0x%x  norm=%i  offset=0x%p",
+          idx, slot,
+          mAttribs[idx].name.string(),
+          mAttribs[idx].buffer,
+          mAttribs[idx].ptr,
+          mAttribs[idx].size,
+          mAttribs[idx].type,
+          mAttribs[idx].stride,
+          mAttribs[idx].normalized,
+          (void*)mAttribs[idx].offset);
 }
 
 void RsdVertexArray::setup(const Context *rsc) const {
