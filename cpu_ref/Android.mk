@@ -30,7 +30,6 @@ LOCAL_SRC_FILES:= \
 	rsCpuIntrinsicConvolve5x5.cpp \
 	rsCpuIntrinsicHistogram.cpp \
 	rsCpuIntrinsicInterPred.cpp \
-	rsCpuIntrinsicLoopFilter.cpp \
 	rsCpuIntrinsicLUT.cpp \
 	rsCpuIntrinsicYuvToRGB.cpp \
 	convolve/convolve.c
@@ -57,10 +56,7 @@ ifeq ($(ARCH_ARM_HAVE_VFP),true)
     convolve/convolve_avg_neon.s \
     convolve/convolve8_neon.s \
     convolve/convolve8_avg_neon.s \
-    convolve/convolve_neon.c \
-    vp9_loopfilter_16_neon.S \
-    vp9_loopfilter_neon.S \
-    vp9_mb_lpf_neon.S
+    convolve/convolve_neon.c
     LOCAL_ASFLAGS_arm := -mfpu=neon
 endif
 
@@ -69,7 +65,6 @@ LOCAL_SHARED_LIBRARIES += libbcc libbcinfo
 
 LOCAL_C_INCLUDES += frameworks/compile/libbcc/include
 LOCAL_C_INCLUDES += frameworks/rs
-LOCAL_C_INCLUDES += system/core/include
 
 LOCAL_CFLAGS += $(rs_base_CFLAGS)
 
