@@ -1468,27 +1468,29 @@ void Permutation::writeJavaRandomCompatibleFloatAllocation(ofstream& file, const
                                                            const Type& generatedType) const {
     file << "createRandomFloatAllocation"
          << "(mRS, Element.DataType." << dataType << ", " << vectorSize << ", " << seed << ", ";
-    file << scientific << std::setprecision(10);
+    double minValue = 0.0;
+    double maxValue = 0.0;
     switch (compatibleType.kind) {
         case FLOATING_POINT: {
             // We're generating floating point values.  We just have to worry about the
             // exponent.  Subtract 1 for the sign.
             int bits = min(compatibleType.significantBits, generatedType.significantBits) - 1;
-            double maxValue = ldexp(0.95, (1 << bits) - 1);
-            file << -maxValue << ", " << maxValue;
+            maxValue = ldexp(0.95, (1 << bits) - 1);
+            minValue = -maxValue;
             break;
         }
         case UNSIGNED_INTEGER:
-            file << "0, " << ldexp(1, compatibleType.significantBits);
+            minValue = 0.0;
+            maxValue = ldexp(1, compatibleType.significantBits) - 1.0;
             break;
-        case SIGNED_INTEGER: {
-            double max = ldexp(1, compatibleType.significantBits);
-            file << -max << ", " << (max - 1);
+        case SIGNED_INTEGER:
+            minValue = -ldexp(1, compatibleType.significantBits);
+            maxValue = ldexp(1, compatibleType.significantBits) - 1;
             break;
-        }
     }
+    file << scientific << std::setprecision(10);
+    file << minValue << ", " << maxValue << ")";
     file.unsetf(ios_base::floatfield);
-    file << ")";
 }
 
 void Permutation::writeJavaRandomCompatibleIntegerAllocation(ofstream& file, const string& dataType,
