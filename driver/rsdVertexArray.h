@@ -34,7 +34,7 @@ public:
     public:
         uint32_t buffer;
         const uint8_t * ptr;
-        uint32_t offset;
+        size_t offset;
         uint32_t type;
         uint32_t size;
         uint32_t stride;
@@ -43,7 +43,7 @@ public:
 
         Attrib();
         void clear();
-        void set(uint32_t type, uint32_t size, uint32_t stride, bool normalized, uint32_t offset, const char *name);
+        void set(uint32_t type, uint32_t size, uint32_t stride, bool normalized, size_t offset, const char *name);
     };
 
     RsdVertexArray(const Attrib *attribs, uint32_t numAttribs);
