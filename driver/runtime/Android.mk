@@ -64,6 +64,10 @@ endif
 
 # Build the base version of the library
 include $(CLEAR_VARS)
+
+# FIXME for 64-bit
+LOCAL_32_BIT_ONLY := true
+
 LOCAL_MODULE := libclcore.bc
 LOCAL_SRC_FILES := $(clcore_files)
 
@@ -71,6 +75,10 @@ include $(LOCAL_PATH)/build_bc_lib.mk
 
 # Build a debug version of the library
 include $(CLEAR_VARS)
+
+# FIXME for 64-bit
+LOCAL_32_BIT_ONLY := true
+
 LOCAL_MODULE := libclcore_debug.bc
 rs_debug_runtime := 1
 LOCAL_SRC_FILES := $(clcore_files)
@@ -80,6 +88,10 @@ include $(LOCAL_PATH)/build_bc_lib.mk
 # Build an optimized version of the library for x86 platforms (all have SSE2/3).
 ifeq ($(TARGET_ARCH),$(filter $(TARGET_ARCH),x86 x86_64))
 include $(CLEAR_VARS)
+
+# FIXME for 64-bit
+LOCAL_32_BIT_ONLY := true
+
 LOCAL_MODULE := libclcore_x86.bc
 LOCAL_SRC_FILES := $(clcore_x86_files)
 
@@ -89,6 +101,10 @@ endif
 # Build a NEON-enabled version of the library (if possible)
 ifeq ($(ARCH_ARM_HAVE_NEON),true)
   include $(CLEAR_VARS)
+
+  # FIXME for 64-bit
+  LOCAL_32_BIT_ONLY := true
+
   LOCAL_MODULE := libclcore_neon.bc
   LOCAL_SRC_FILES := $(clcore_neon_files)
   LOCAL_CFLAGS += -DARCH_ARM_HAVE_NEON
@@ -101,6 +117,10 @@ endif
 
 # Build the ARM version of the library
 include $(CLEAR_VARS)
+
+# FIXME for 64-bit
+LOCAL_32_BIT_ONLY := true
+
 BCC_RS_TRIPLE := armv7-none-linux-gnueabi
 LOCAL_MODULE := librsrt_arm.bc
 LOCAL_IS_HOST_MODULE := true
@@ -109,6 +129,10 @@ include $(LOCAL_PATH)/build_bc_lib.mk
 
 # Build the MIPS version of the library
 include $(CLEAR_VARS)
+
+# FIXME for 64-bit
+LOCAL_32_BIT_ONLY := true
+
 BCC_RS_TRIPLE := mipsel-unknown-linux
 LOCAL_MODULE := librsrt_mips.bc
 LOCAL_IS_HOST_MODULE := true
@@ -117,8 +141,13 @@ include $(LOCAL_PATH)/build_bc_lib.mk
 
 # Build the x86 version of the library
 include $(CLEAR_VARS)
+
+# FIXME for 64-bit
+LOCAL_32_BIT_ONLY := true
+
 BCC_RS_TRIPLE := i686-unknown-linux
 LOCAL_MODULE := librsrt_x86.bc
 LOCAL_IS_HOST_MODULE := true
 LOCAL_SRC_FILES := $(clcore_x86_files)
 include $(LOCAL_PATH)/build_bc_lib.mk
+

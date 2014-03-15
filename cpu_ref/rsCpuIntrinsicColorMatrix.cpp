@@ -277,7 +277,7 @@ Key_t RsdCpuScriptIntrinsicColorMatrix::computeKey(
     return key;
 }
 
-#if defined(ARCH_ARM_HAVE_NEON)
+#if defined(ARCH_ARM_HAVE_NEON) && !defined(FAKE_ARM64_BUILD)
 
 #define DEF_SYM(x)                                  \
     extern "C" uint32_t _N_ColorMatrix_##x;      \
@@ -407,7 +407,7 @@ static uint8_t * addVADD_F32(uint8_t *buf, uint32_t dest_q, uint32_t src_q1, uin
 
 
 bool RsdCpuScriptIntrinsicColorMatrix::build(Key_t key) {
-#if defined(ARCH_ARM_HAVE_NEON)
+#if defined(ARCH_ARM_HAVE_NEON) && !defined(FAKE_ARM64_BUILD)
     mBufSize = 4096;
     //StopWatch build_time("rs cm: build time");
     mBuf = (uint8_t *)mmap(0, mBufSize, PROT_READ | PROT_WRITE,

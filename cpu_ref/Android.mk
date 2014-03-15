@@ -13,7 +13,7 @@ endif
 include $(CLEAR_VARS)
 LOCAL_CLANG := true
 LOCAL_MODULE := libRSCpuRef
-LOCAL_MODULE_TARGET_ARCH := arm mips x86 x86_64
+LOCAL_MODULE_TARGET_ARCH := arm mips x86 x86_64 arm64
 
 LOCAL_SRC_FILES:= \
 	rsCpuCore.cpp \
@@ -34,11 +34,11 @@ LOCAL_SRC_FILES:= \
 	rsCpuIntrinsicYuvToRGB.cpp \
 	convolve/convolve.c
 
-LOCAL_CFLAGS_arm64 += -DARCH_ARM_HAVE_NEON
-LOCAL_SRC_FILES_arm64 += \
-    rsCpuIntrinsics_advsimd_Blend.S \
-    rsCpuIntrinsics_advsimd_Blur.S \
-    rsCpuIntrinsics_advsimd_YuvToRGB.S
+LOCAL_CFLAGS_arm64 += -DARCH_ARM_HAVE_NEON -DFAKE_ARM64_BUILD
+#LOCAL_SRC_FILES_arm64 += \
+#    rsCpuIntrinsics_advsimd_Blend.S \
+#    rsCpuIntrinsics_advsimd_Blur.S \
+#    rsCpuIntrinsics_advsimd_YuvToRGB.S
 
 ifeq ($(ARCH_ARM_HAVE_NEON),true)
     LOCAL_CFLAGS_arm += -DARCH_ARM_HAVE_NEON
@@ -61,7 +61,10 @@ ifeq ($(ARCH_ARM_HAVE_VFP),true)
 endif
 
 LOCAL_SHARED_LIBRARIES += libRS libcutils libutils liblog libsync
-LOCAL_SHARED_LIBRARIES += libbcc libbcinfo
+
+# these are not supported in 64-bit yet
+LOCAL_SHARED_LIBRARIES_32 += libbcc libbcinfo
+
 
 LOCAL_C_INCLUDES += frameworks/compile/libbcc/include
 LOCAL_C_INCLUDES += frameworks/rs

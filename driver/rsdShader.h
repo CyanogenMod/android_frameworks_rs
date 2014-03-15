@@ -39,7 +39,7 @@ class RsdShader {
 public:
 
     RsdShader(const android::renderscript::Program *p, uint32_t type,
-              const char * shaderText, uint32_t shaderLength,
+              const char * shaderText, size_t shaderLength,
               const char** textureNames, size_t textureNamesCount,
               const size_t *textureNamesLength);
     virtual ~RsdShader();

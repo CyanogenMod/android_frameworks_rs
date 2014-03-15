@@ -126,7 +126,7 @@ bool RsdMeshObj::init(const Context *rsc) {
 }
 
 void RsdMeshObj::renderPrimitiveRange(const Context *rsc, uint32_t primIndex,
-                                      uint32_t start, uint32_t len) const {
+                                      size_t start, uint32_t len) const {
     if (len < 1 || primIndex >= mRSMesh->mHal.state.primitivesCount || mAttribCount == 0) {
         rsc->setError(RS_ERROR_FATAL_DRIVER, "Invalid mesh or parameters");
         return;

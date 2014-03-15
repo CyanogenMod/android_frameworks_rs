@@ -91,14 +91,19 @@ public:
 
     virtual Allocation * getAllocationForPointer(const void *ptr) const;
 
+#ifndef FAKE_ARM64_BUILD
 #ifndef RS_COMPATIBILITY_LIB
     virtual  void * getRSExecutable() { return mExecutable; }
+#endif
+#else
+    virtual void* getRSExecutable() { return NULL; }
 #endif
 
 protected:
     RsdCpuReferenceImpl *mCtx;
     const Script *mScript;
 
+#ifndef FAKE_ARM64_BUILD
 #ifndef RS_COMPATIBILITY_LIB
     int (*mRoot)();
     int (*mRootExpand)();
@@ -126,6 +131,7 @@ protected:
     //int mVersionMinor;
     size_t mExportedVariableCount;
     size_t mExportedFunctionCount;
+#endif
 #endif
 
     Allocation **mBoundAllocs;

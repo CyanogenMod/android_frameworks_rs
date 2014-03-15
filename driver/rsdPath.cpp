@@ -150,8 +150,8 @@ void DrvPathStatic::draw(Context *rsc) {
     }
 
     RsdVertexArray::Attrib attribs[2];
-    attribs[0].set(GL_FLOAT, 2, 8, false, (uint32_t)vtx, "ATTRIB_position");
-    attribs[1].set(GL_FLOAT, 4, 16, false, (uint32_t)color, "ATTRIB_color");
+    attribs[0].set(GL_FLOAT, 2, 8, false, (size_t)vtx, "ATTRIB_position");
+    attribs[1].set(GL_FLOAT, 4, 16, false, (size_t)color, "ATTRIB_color");
     RsdVertexArray va(attribs, 2);
     va.setup(rsc);
 

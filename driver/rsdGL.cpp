@@ -541,8 +541,9 @@ void rsdGLDrawQuadTexCoords(const android::renderscript::Context *rsc,
     const float tex[] = {u1,v1, u2,v2, u3,v3, u4,v4};
 
     RsdVertexArray::Attrib attribs[2];
-    attribs[0].set(GL_FLOAT, 3, 12, false, (uint32_t)vtx, "ATTRIB_position");
-    attribs[1].set(GL_FLOAT, 2, 8, false, (uint32_t)tex, "ATTRIB_texture0");
+
+    attribs[0].set(GL_FLOAT, 3, 12, false, (size_t)vtx, "ATTRIB_position");
+    attribs[1].set(GL_FLOAT, 2, 8, false, (size_t)tex, "ATTRIB_texture0");
 
     RsdVertexArray va(attribs, 2);
     va.setup(rsc);
