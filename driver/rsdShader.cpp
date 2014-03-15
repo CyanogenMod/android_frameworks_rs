@@ -468,8 +468,8 @@ void RsdShader::setupTextures(const Context *rsc, RsdShaderCache *sc) {
     uint32_t numTexturesToBind = mRSProgram->mHal.state.texturesCount;
     uint32_t numTexturesAvailable = dc->gl.gl.maxFragmentTextureImageUnits;
     if (numTexturesToBind >= numTexturesAvailable) {
-        ALOGE("Attempting to bind %u textures on shader id %u, but only %u are available",
-             mRSProgram->mHal.state.texturesCount, (uint32_t)this, numTexturesAvailable);
+        ALOGE("Attempting to bind %u textures on shader id %p, but only %u are available",
+             mRSProgram->mHal.state.texturesCount, this, numTexturesAvailable);
         rsc->setError(RS_ERROR_BAD_SHADER, "Cannot bind more textuers than available");
         numTexturesToBind = numTexturesAvailable;
     }
@@ -489,8 +489,8 @@ void RsdShader::setupTextures(const Context *rsc, RsdShaderCache *sc) {
         if (mCurrentState->mTextureTargets[ct] != GL_TEXTURE_2D &&
             mCurrentState->mTextureTargets[ct] != GL_TEXTURE_CUBE_MAP &&
             mCurrentState->mTextureTargets[ct] != GL_TEXTURE_EXTERNAL_OES) {
-            ALOGE("Attempting to bind unknown texture to shader id %u, texture unit %u",
-                  (uint)this, ct);
+            ALOGE("Attempting to bind unknown texture to shader id %p, texture unit %u",
+                  this, ct);
             rsc->setError(RS_ERROR_BAD_SHADER, "Non-texture allocation bound to a shader");
         }
         RSD_CALL_GL(glBindTexture, mCurrentState->mTextureTargets[ct], drvTex->textureID);
@@ -523,8 +523,8 @@ void RsdShader::setupUserConstants(const Context *rsc, RsdShaderCache *sc, bool 
         Allocation *alloc = mRSProgram->mHal.state.constants[ct];
 
         if (!alloc) {
-            ALOGE("Attempting to set constants on shader id %u, but alloc at slot %u is not set",
-                 (uint32_t)this, ct);
+            ALOGE("Attempting to set constants on shader id %p, but alloc at slot %u is not set",
+                  this, ct);
             rsc->setError(RS_ERROR_BAD_SHADER, "No constant allocation bound");
             continue;
         }

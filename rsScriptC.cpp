@@ -17,10 +17,12 @@
 #include "rsContext.h"
 #include "rsScriptC.h"
 
+#ifndef FAKE_ARM64_BUILD
 #ifndef RS_COMPATIBILITY_LIB
 #ifndef ANDROID_RS_SERIALIZE
 #include <bcinfo/BitcodeTranslator.h>
 #include <bcinfo/BitcodeWrapper.h>
+#endif
 #endif
 #endif
 
@@ -40,14 +42,17 @@ using namespace android::renderscript;
     ScriptC * sc = (ScriptC *) tls->mScript
 
 ScriptC::ScriptC(Context *rsc) : Script(rsc) {
+#ifndef FAKE_ARM64_BUILD
 #ifndef RS_COMPATIBILITY_LIB
 #ifndef ANDROID_RS_SERIALIZE
     BT = NULL;
 #endif
 #endif
+#endif
 }
 
 ScriptC::~ScriptC() {
+#ifndef FAKE_ARM64_BUILD
 #ifndef RS_COMPATIBILITY_LIB
 #ifndef ANDROID_RS_SERIALIZE
     if (BT) {
@@ -56,12 +61,14 @@ ScriptC::~ScriptC() {
     }
 #endif
 #endif
+#endif
     if (mInitialized) {
         mRSC->mHal.funcs.script.invokeFreeChildren(mRSC, this);
         mRSC->mHal.funcs.script.destroy(mRSC, this);
     }
 }
 
+#ifndef FAKE_ARM64_BUILD
 #ifndef RS_COMPATIBILITY_LIB
 bool ScriptC::createCacheDir(const char *cacheDir) {
     String8 cacheDirString, currentDir;
@@ -99,6 +106,7 @@ bool ScriptC::createCacheDir(const char *cacheDir) {
     }
     return true;
 }
+#endif
 #endif
 
 void ScriptC::setupScript(Context *rsc) {
@@ -249,6 +257,7 @@ bool ScriptC::runCompiler(Context *rsc,
                           size_t bitcodeLen) {
     ATRACE_CALL();
     //ALOGE("runCompiler %p %p %p %p %p %i", rsc, this, resName, cacheDir, bitcode, bitcodeLen);
+#ifndef FAKE_ARM64_BUILD
 #ifndef RS_COMPATIBILITY_LIB
 #ifndef ANDROID_RS_SERIALIZE
     uint32_t sdkVersion = 0;
@@ -281,8 +290,8 @@ bool ScriptC::runCompiler(Context *rsc,
     }
     bitcode = (const uint8_t *) BT->getTranslatedBitcode();
     bitcodeLen = BT->getTranslatedBitcodeSize();
-#endif
 
+#endif
     if (!cacheDir) {
         // MUST BE FIXED BEFORE ANYTHING USING C++ API IS RELEASED
         cacheDir = getenv("EXTERNAL_STORAGE");
@@ -293,6 +302,7 @@ bool ScriptC::runCompiler(Context *rsc,
     if (cacheDir && !createCacheDir(cacheDir)) {
       return false;
     }
+#endif
 #endif
 
     if (!rsc->mHal.funcs.script.init(rsc, this, resName, cacheDir, bitcode, bitcodeLen, 0)) {
