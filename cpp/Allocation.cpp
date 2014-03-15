@@ -198,7 +198,7 @@ void Allocation::copy1DRangeFrom(uint32_t off, size_t count, const void *data) {
         return;
     }
     if((off + count) > mCurrentCount) {
-        ALOGE("Overflow, Available count %zu, got %zu at offset %zu.", mCurrentCount, count, off);
+        ALOGE("Overflow, Available count %u, got %zu at offset %u.", mCurrentCount, count, off);
         mRS->throwError(RS_ERROR_INVALID_PARAMETER, "Invalid copy specified");
         return;
     }
@@ -213,7 +213,7 @@ void Allocation::copy1DRangeTo(uint32_t off, size_t count, void *data) {
         return;
     }
     if((off + count) > mCurrentCount) {
-        ALOGE("Overflow, Available count %zu, got %zu at offset %zu.", mCurrentCount, count, off);
+        ALOGE("Overflow, Available count %u, got %zu at offset %u.", mCurrentCount, count, off);
         mRS->throwError(RS_ERROR_INVALID_PARAMETER, "Invalid copy specified");
         return;
     }

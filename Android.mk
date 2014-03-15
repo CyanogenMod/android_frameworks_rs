@@ -13,7 +13,7 @@ endif
 include $(CLEAR_VARS)
 LOCAL_CLANG := true
 LOCAL_MODULE := libRSDriver
-LOCAL_MODULE_TARGET_ARCH_WARN := arm mips x86 x86_64
+LOCAL_MODULE_TARGET_ARCH_WARN := arm mips x86 x86_64 arm64
 
 LOCAL_SRC_FILES:= \
 	driver/rsdAllocation.cpp \
@@ -38,12 +38,17 @@ LOCAL_SRC_FILES:= \
 
 LOCAL_SHARED_LIBRARIES += libRS libRSCpuRef
 LOCAL_SHARED_LIBRARIES += liblog libcutils libutils libEGL libGLESv1_CM libGLESv2
-LOCAL_SHARED_LIBRARIES += libbcc libbcinfo libLLVM libui libgui libsync
+LOCAL_SHARED_LIBRARIES += libui libgui libsync
+
+# FIXME for 64-bit
+LOCAL_SHARED_LIBRARIES_32 += libbcc libbcinfo libLLVM
 
 LOCAL_C_INCLUDES += frameworks/compile/libbcc/include
 LOCAL_C_INCLUDES += frameworks/rs/cpu_ref/linkloader/include
 
 LOCAL_CFLAGS += $(rs_base_CFLAGS)
+
+LOCAL_CFLAGS_64 += -DFAKE_ARM64_BUILD=1
 
 LOCAL_LDLIBS := -lpthread -ldl
 LOCAL_MODULE_TAGS := optional
@@ -74,7 +79,7 @@ RSG_GENERATOR:=$(LOCAL_BUILT_MODULE)
 include $(CLEAR_VARS)
 LOCAL_CLANG := true
 LOCAL_MODULE := libRS
-LOCAL_MODULE_TARGET_ARCH_WARN := arm mips x86 x86_64
+LOCAL_MODULE_TARGET_ARCH_WARN := arm mips x86 x86_64 arm64
 
 LOCAL_MODULE_CLASS := SHARED_LIBRARIES
 generated_sources:= $(local-generated-sources-dir)
@@ -152,14 +157,21 @@ LOCAL_SRC_FILES:= \
 	rsThreadIO.cpp \
 	rsType.cpp
 
-LOCAL_SHARED_LIBRARIES += liblog libcutils libutils libEGL libGLESv1_CM libGLESv2 libbcc
-LOCAL_SHARED_LIBRARIES += libui libbcinfo libLLVM libgui libsync libdl
+LOCAL_SHARED_LIBRARIES += liblog libcutils libutils libEGL libGLESv1_CM libGLESv2
+LOCAL_SHARED_LIBRARIES += libgui libsync libdl libui
 LOCAL_SHARED_LIBRARIES += libft2 libpng libz
+
+# FIXME for 64-bit
+LOCAL_SHARED_LIBRARIES_32 += libbcc libbcinfo libLLVM
+
 
 LOCAL_C_INCLUDES += external/freetype/include
 LOCAL_C_INCLUDES += frameworks/compile/libbcc/include
 
 LOCAL_CFLAGS += $(rs_base_CFLAGS)
+
+# FIXME for 64-bit
+LOCAL_CFLAGS_64 += -DFAKE_ARM64_BUILD=1
 
 LOCAL_LDLIBS := -lpthread -ldl
 LOCAL_MODULE_TAGS := optional
@@ -249,7 +261,6 @@ LOCAL_LDLIBS := -lpthread
 
 include $(BUILD_HOST_STATIC_LIBRARY)
 
-
 LLVM_ROOT_PATH := external/llvm
 
 #=============================================================================
@@ -271,6 +282,7 @@ rsloader_SRC_FILES := \
 
 include $(CLEAR_VARS)
 
+
 LOCAL_MODULE := librsloader
 
 LOCAL_MODULE_TAGS := optional
@@ -288,7 +300,6 @@ LOCAL_C_INCLUDES := \
 
 include $(LLVM_ROOT_PATH)/llvm-device-build.mk
 include $(BUILD_STATIC_LIBRARY)
-
 
 #=============================================================================
 # android librsloader for libbcc (Host)
@@ -320,3 +331,4 @@ include $(LLVM_ROOT_PATH)/llvm-host-build.mk
 include $(BUILD_HOST_STATIC_LIBRARY)
 
 include $(call all-makefiles-under,$(LOCAL_PATH))
+

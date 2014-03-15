@@ -38,7 +38,7 @@ public:
     ~RsdMeshObj();
 
     void renderPrimitiveRange(const android::renderscript::Context *,
-                              uint32_t primIndex, uint32_t start, uint32_t len) const;
+                              uint32_t primIndex, size_t start, uint32_t len) const;
 
     bool init(const android::renderscript::Context *rsc);
 

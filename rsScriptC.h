@@ -21,9 +21,11 @@
 
 #include "rsEnv.h"
 
+#ifndef FAKE_ARM64_BUILD
 #ifndef RS_COMPATIBILITY_LIB
 #ifndef ANDROID_RS_SERIALIZE
 #include "bcinfo/BitcodeTranslator.h"
+#endif
 #endif
 #endif
 
@@ -63,12 +65,14 @@ public:
     void setupScript(Context *);
     void setupGLState(Context *);
 private:
+#ifndef FAKE_ARM64_BUILD
 #ifndef RS_COMPATIBILITY_LIB
 #ifndef ANDROID_RS_SERIALIZE
     bcinfo::BitcodeTranslator *BT;
 #endif
 
     bool createCacheDir(const char *cacheDir);
+#endif
 #endif
 };
 
