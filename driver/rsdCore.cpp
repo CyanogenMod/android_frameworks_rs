@@ -190,6 +190,7 @@ extern "C" bool rsdHalInit(RsContext c, uint32_t version_major,
                                           &rsdLookupRuntimeStub, &LookupScript);
     if (!dc->mCpuRef) {
         ALOGE("RsdCpuReference::create for driver hal failed.");
+        rsc->mHal.drv = NULL;
         free(dc);
         return false;
     }
@@ -230,6 +231,7 @@ void SetPriority(const Context *rsc, int32_t priority) {
 void Shutdown(Context *rsc) {
     RsdHal *dc = (RsdHal *)rsc->mHal.drv;
     delete dc->mCpuRef;
+    free(dc);
     rsc->mHal.drv = NULL;
 }
 
