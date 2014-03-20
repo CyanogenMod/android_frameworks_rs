@@ -34,7 +34,9 @@ LOCAL_SRC_FILES:= \
 	rsCpuIntrinsicYuvToRGB.cpp \
 	convolve/convolve.c
 
-LOCAL_CFLAGS_arm64 += -DARCH_ARM_HAVE_NEON -DFAKE_ARM64_BUILD
+LOCAL_CFLAGS_arm64 += -DARCH_ARM_HAVE_NEON
+LOCAL_CFLAGS_64 += -DFAKE_ARM64_BUILD
+
 #LOCAL_SRC_FILES_arm64 += \
 #    rsCpuIntrinsics_advsimd_Blend.S \
 #    rsCpuIntrinsics_advsimd_Blur.S \
