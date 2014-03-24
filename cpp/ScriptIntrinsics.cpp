@@ -644,3 +644,48 @@ void ScriptIntrinsicYuvToRGB::forEach(sp<Allocation> out) {
 
     Script::forEach(0, NULL, out, NULL, 0);
 }
+
+sp<ScriptIntrinsicVP9LoopFilter> ScriptIntrinsicVP9LoopFilter::create(sp<RS> rs, sp<const Element> e) {
+    if (!(e->isCompatible(Element::U8(rs)))) {
+        rs->throwError(RS_ERROR_INVALID_ELEMENT, "Invalid element for Vp9LoopFilter");
+        return NULL;
+    }
+    return new ScriptIntrinsicVP9LoopFilter(rs, e);
+}
+
+ScriptIntrinsicVP9LoopFilter::ScriptIntrinsicVP9LoopFilter(sp<RS> rs, sp<const Element> e)
+    : ScriptIntrinsic(rs, RS_SCRIPT_INTRINSIC_ID_LOOP_FILTER, e) {
+    sp<const Type> t_pad = Type::create(rs, e, 1, 0, 0);
+    mPadAlloc = Allocation::createTyped(rs, t_pad, RS_ALLOCATION_MIPMAP_NONE, RS_ALLOCATION_USAGE_SCRIPT, NULL);
+}
+
+void ScriptIntrinsicVP9LoopFilter::setLoopFilterDomain(int start, int stop, int numPlanes, int miRows, int miCols) {
+    FieldPacker fp(20);
+    fp.add(start);
+    fp.add(stop);
+    fp.add(numPlanes);
+    fp.add(miRows);
+    fp.add(miCols);
+    Script::setVar(0, fp.getData(), fp.getLength());
+}
+
+void ScriptIntrinsicVP9LoopFilter::setBufferInfo(const BufferInfo *bufInfo) {
+    Script::setVar(1, bufInfo, sizeof(BufferInfo));
+}
+
+void ScriptIntrinsicVP9LoopFilter::setLoopFilterInfo(sp<Allocation> lfInfo) {
+    Script::setVar(2, lfInfo);
+}
+
+void ScriptIntrinsicVP9LoopFilter::setLoopFilterMasks(sp<Allocation> lfMasks) {
+    Script::setVar(3, lfMasks);
+}
+
+void ScriptIntrinsicVP9LoopFilter::forEach(sp<Allocation> frameBuffer) {
+    if (!(frameBuffer->getType()->getElement()->isCompatible(mElement))) {
+        mRS->throwError(RS_ERROR_INVALID_ELEMENT, "Invalid element for input/output in Vp9LoopFilter");
+        return;
+    }
+    Script::setVar(4, frameBuffer);
+    Script::forEach(0, mPadAlloc, NULL, NULL, 0);
+}
