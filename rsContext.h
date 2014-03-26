@@ -116,7 +116,6 @@ public:
     TypeState mStateType;
     SamplerState mStateSampler;
 
-    ScriptCState mScriptC;
     bool isSynchronous() {return mSynchronous;}
     bool setupCheck();
 

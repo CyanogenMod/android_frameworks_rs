@@ -17,13 +17,9 @@
 #include "rsContext.h"
 #include "rsScriptC.h"
 
-#ifndef FAKE_ARM64_BUILD
-#ifndef RS_COMPATIBILITY_LIB
-#ifndef ANDROID_RS_SERIALIZE
+#if !defined(FAKE_ARM64_BUILD) && !defined(RS_COMPATIBILITY_LIB) && !defined(ANDROID_RS_SERIALIZE)
 #include <bcinfo/BitcodeTranslator.h>
 #include <bcinfo/BitcodeWrapper.h>
-#endif
-#endif
 #endif
 
 #if !defined(RS_SERVER) && !defined(RS_COMPATIBILITY_LIB)
@@ -42,25 +38,17 @@ using namespace android::renderscript;
     ScriptC * sc = (ScriptC *) tls->mScript
 
 ScriptC::ScriptC(Context *rsc) : Script(rsc) {
-#ifndef FAKE_ARM64_BUILD
-#ifndef RS_COMPATIBILITY_LIB
-#ifndef ANDROID_RS_SERIALIZE
+#if !defined(FAKE_ARM64_BUILD) && !defined(RS_COMPATIBILITY_LIB) && !defined(ANDROID_RS_SERIALIZE)
     BT = NULL;
-#endif
-#endif
 #endif
 }
 
 ScriptC::~ScriptC() {
-#ifndef FAKE_ARM64_BUILD
-#ifndef RS_COMPATIBILITY_LIB
-#ifndef ANDROID_RS_SERIALIZE
+#if !defined(FAKE_ARM64_BUILD) && !defined(RS_COMPATIBILITY_LIB) && !defined(ANDROID_RS_SERIALIZE)
     if (BT) {
         delete BT;
         BT = NULL;
     }
-#endif
-#endif
 #endif
     if (mInitialized) {
         mRSC->mHal.funcs.script.invokeFreeChildren(mRSC, this);
@@ -212,43 +200,6 @@ void ScriptC::Invoke(Context *rsc, uint32_t slot, const void *data, size_t len) 
     }
     rsc->mHal.funcs.script.invokeFunction(rsc, this, slot, data, len);
 }
-
-ScriptCState::ScriptCState() {
-}
-
-ScriptCState::~ScriptCState() {
-}
-
-/*
-static void* symbolLookup(void* pContext, char const* name) {
-    const ScriptCState::SymbolTable_t *sym;
-    ScriptC *s = (ScriptC *)pContext;
-    if (!strcmp(name, "__isThreadable")) {
-      return (void*) s->mHal.info.isThreadable;
-    } else if (!strcmp(name, "__clearThreadable")) {
-      s->mHal.info.isThreadable = false;
-      return NULL;
-    }
-    sym = ScriptCState::lookupSymbol(name);
-    if (!sym) {
-        sym = ScriptCState::lookupSymbolCL(name);
-    }
-    if (!sym) {
-        sym = ScriptCState::lookupSymbolGL(name);
-    }
-    if (sym) {
-        s->mHal.info.isThreadable &= sym->threadable;
-        return sym->mPtr;
-    }
-    ALOGE("ScriptC sym lookup failed for %s", name);
-    return NULL;
-}
-*/
-
-#if 0
-extern const char rs_runtime_lib_bc[];
-extern unsigned rs_runtime_lib_bc_size;
-#endif
 
 bool ScriptC::runCompiler(Context *rsc,
                           const char *resName,
