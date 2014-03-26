@@ -17,16 +17,11 @@
 #ifndef ANDROID_RS_SCRIPT_C_H
 #define ANDROID_RS_SCRIPT_C_H
 
+#include "rsEnv.h"
 #include "rsScript.h"
 
-#include "rsEnv.h"
-
-#ifndef FAKE_ARM64_BUILD
-#ifndef RS_COMPATIBILITY_LIB
-#ifndef ANDROID_RS_SERIALIZE
+#if !defined(FAKE_ARM64_BUILD) && !defined(RS_COMPATIBILITY_LIB) && !defined(ANDROID_RS_SERIALIZE)
 #include "bcinfo/BitcodeTranslator.h"
-#endif
-#endif
 #endif
 
 // ---------------------------------------------------------------------------
@@ -34,6 +29,7 @@ namespace android {
 namespace renderscript {
 
 
+/** This class represents a script compiled from an .rs file. */
 class ScriptC : public Script {
 public:
     typedef int (*RunScript_t)();
@@ -65,35 +61,14 @@ public:
     void setupScript(Context *);
     void setupGLState(Context *);
 private:
-#ifndef FAKE_ARM64_BUILD
-#ifndef RS_COMPATIBILITY_LIB
-#ifndef ANDROID_RS_SERIALIZE
+#if !defined(FAKE_ARM64_BUILD) && !defined(RS_COMPATIBILITY_LIB) && !defined(ANDROID_RS_SERIALIZE)
     bcinfo::BitcodeTranslator *BT;
 #endif
 
+#if !defined(FAKE_ARM64_BUILD) && !defined(RS_COMPATIBILITY_LIB)
     bool createCacheDir(const char *cacheDir);
 #endif
-#endif
 };
-
-class ScriptCState {
-public:
-    ScriptCState();
-    ~ScriptCState();
-
-    char * mScriptText;
-    size_t mScriptLen;
-
-    struct SymbolTable_t {
-        const char * mName;
-        void * mPtr;
-        bool threadable;
-    };
-    static const SymbolTable_t * lookupSymbol(const char *);
-    static const SymbolTable_t * lookupSymbolCL(const char *);
-    static const SymbolTable_t * lookupSymbolGL(const char *);
-};
-
 
 }
 }
