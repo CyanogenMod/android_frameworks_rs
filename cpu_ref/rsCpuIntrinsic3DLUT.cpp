@@ -52,9 +52,10 @@ void RsdCpuScriptIntrinsic3DLUT::setGlobalObj(uint32_t slot, ObjectBase *data) {
     mLUT.set(static_cast<Allocation *>(data));
 }
 
-extern "C" void rsdIntrinsic3DLUT_K(void *dst, const void *src, const void *lut,
-                                    size_t lut_stride_y, size_t lut_stride_z,
-                                    uint32_t count, const void *constants);
+extern "C" size_t rsdIntrinsic3DLUT_K(void *dst, void const *in, size_t count,
+                                      void const *lut,
+                                      int32_t pitchy, int32_t pitchz,
+                                      int dimx, int dimy, int dimz);
 
 
 void RsdCpuScriptIntrinsic3DLUT::kernel(const RsForEachStubParamStruct *p,
@@ -85,21 +86,18 @@ void RsdCpuScriptIntrinsic3DLUT::kernel(const RsForEachStubParamStruct *p,
     while (x1 < x2) {
 #if defined(ARCH_ARM_HAVE_VFP)
         if (gArchUseSIMD) {
-            int32_t len = (x2 - x1 - 1) >> 1;
-            if(len > 0) {
-                const short neon_constants[] = {
-                    static_cast<short>(coordMul.x), static_cast<short>(coordMul.y),
-                    static_cast<short>(coordMul.z), 0, 0, 0, 0, static_cast<short>(0xffff),
+            int32_t len = x2 - x1;
+            if(len >= 8) {
+                size_t done;
+               done = len - rsdIntrinsic3DLUT_K(out, in, len,
+                                      bp, stride_y, stride_z,
+                                      dims.x, dims.y, dims.z);
 
-                };
-
-                rsdIntrinsic3DLUT_K(out, in, bp, stride_y, stride_z, len, neon_constants);
-                x1 += len << 1;
-                out += len << 1;
-                in += len << 1;
+                x1 += done;
+                out += done;
+                in += done;
             }
         }
-
 #endif
 
         int4 baseCoord = convert_int4(*in) * coordMul;
