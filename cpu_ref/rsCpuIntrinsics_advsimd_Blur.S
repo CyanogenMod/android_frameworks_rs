@@ -15,6 +15,7 @@
  */
 
 #define ENTRY(f) .text; .align 4; .globl f; .type f,#function; f:
+#define PRIVATE(f) .text; .align 4; .type f,#function; f:
 #define END(f) .size f, .-f;
 
 .set FRACTION_BITS, 7
@@ -54,7 +55,7 @@
  *      q0-q3 -- coefficient table
  *      x13 = -pitch
  *      x15 = top-row in
- *      x16 = bottom-row in
+ *      x19 = bottom-row in
  * Output:
  *      x1 += 16
  *      q10,q11 -- 16 convolved columns
@@ -82,7 +83,7 @@
             umull       v12.4s, v14.4h, v0.h[0]
     ifcc    sub         \reg, \reg, x5, LSL #6
             umull2      v13.4s, v14.8h, v0.h[0]
-            mov         x11, x16
+            mov         x11, x19
             umull       v14.4s, v15.4h, v0.h[0]
     ifcc    add         \reg, \reg, x5, LSL #3
             umull2      v15.4s, v15.8h, v0.h[0]
@@ -101,7 +102,7 @@
             uaddl       v16.8h, v10.8b, v11.8b
     ifcc    cmp         x7, #i
             uaddl2      v11.8h, v10.16b, v11.16b
-    ifcc    csel        x11, x16, x11, lo
+    ifcc    csel        x11, x19, x11, lo
             umlal       v12.4s, v16.4h, v\dreg\doth[\lane]
             umlal2      v13.4s, v16.8h, v\dreg\doth[\lane]
 //            prfm        PLDL1KEEP,[x10, #32] // TODO: confirm
@@ -123,7 +124,7 @@ nop
             uqrshrn     v10.4h, v12.4s, #16 - FRACTION_BITS
             add         x15, x15, #16
             uqrshrn2    v10.8h, v13.4s, #16 - FRACTION_BITS
-            add         x16, x16, #16
+            add         x19, x19, #16
             uqrshrn     v11.4h, v14.4s, #16 - FRACTION_BITS
             uqrshrn2    v11.8h, v15.4s, #16 - FRACTION_BITS
 .endm /*}}}*/
@@ -142,16 +143,16 @@ nop
  * more data that won't be used and it means that rotating the window involves
  * more mov operations.
  *
- * When the buffer gets too big the buffer at [r9] is used.
+ * When the buffer gets too big the buffer at [x9] is used.
  *
  * Input:
  *      q4-q11 -- convoltion window
- *      r9 -- pointer to additional convolution window data
+ *      x9 -- pointer to additional convolution window data
  * Output:
- *      r9 -- updated buffer pointer (if used)
+ *      x9 -- updated buffer pointer (if used)
  *      d31 -- result to be stored
  * Modifies:
- *      r12 -- temp buffer pointer
+ *      x12 -- temp buffer pointer
  *      q12-q13 -- temporaries for load and vext operations.
  *      q14-q15 -- intermediate sums
  */
@@ -160,17 +161,19 @@ nop
             umull       v14.4s, v9.4h, v0.h[0]
             umull2      v15.4s, v9.8h, v0.h[0]
 
-            adr         x12, 199f-8
-            ldr         x12, [x12, x5, LSL #3]
+            adr         x16, 100f
+            ldrsh       x12, [x16, x5, LSL #1]
+            add         x12, x12, x16
             br          x12
-   199:     .xword 101f
-            .xword 102f
-            .xword 103f
-            .xword 104f
-            .xword 105f
-            .xword 106f
-            .xword 107f
-            .xword 108f
+   100:     .hword -4
+            .hword 101f-100b
+            .hword 102f-100b
+            .hword 103f-100b
+            .hword 104f-100b
+            .hword 105f-100b
+            .hword 106f-100b
+            .hword 107f-100b
+            .hword 108f-100b
             .align      4
     108:    umlal       v14.4s, v8.4h, v1.h[0]
             umlal2      v15.4s, v8.8h, v1.h[0]
@@ -232,25 +235,27 @@ nop
             umull       v14.4s, v8.4h, v0.h[0]
             umull2      v15.4s, v8.8h, v0.h[0]
 
-            adr         x12, 199f-8
-            ldr         x12, [x12, x5, LSL #3]
+            adr         x16, 100f
+            ldrsh       x12, [x16, x5, LSL #1]
+            add         x12, x12, x16
             br          x12
-   199:     .xword 101f
-            .xword 102f
-            .xword 103f
-            .xword 104f
-            .xword 105f
-            .xword 106f
-            .xword 107f
-            .xword 108f
-            .xword 109f
-            .xword 110f
-            .xword 111f
-            .xword 112f
-            .xword 113f
-            .xword 114f
-            .xword 115f
-            .xword 116f
+   100:     .hword -4
+            .hword 101f-100b
+            .hword 102f-100b
+            .hword 103f-100b
+            .hword 104f-100b
+            .hword 105f-100b
+            .hword 106f-100b
+            .hword 107f-100b
+            .hword 108f-100b
+            .hword 109f-100b
+            .hword 110f-100b
+            .hword 111f-100b
+            .hword 112f-100b
+            .hword 113f-100b
+            .hword 114f-100b
+            .hword 115f-100b
+            .hword 116f-100b
             .align 4
     116:    //ext         v12.16b, v6.16b, v7.16b, #0*2
             //ext         v13.16b, v10.16b, v11.16b, #0*2
@@ -365,34 +370,36 @@ nop
             umull       v14.4s, v12.4h, v0.h[0]
             umull2      v15.4s, v12.8h, v0.h[0]
 
-            adr         x12, 199f-8
-            ldr         x12, [x12, x5, LSL #3]
+            adr         x16, 100f
+            ldrsh       x12, [x16, x5, LSL #1]
+            add         x12, x12, x16
             br          x12
-   199:     .xword 101f
-            .xword 102f
-            .xword 103f
-            .xword 104f
-            .xword 105f
-            .xword 106f
-            .xword 107f
-            .xword 108f
-            .xword 109f
-            .xword 110f
-            .xword 111f
-            .xword 112f
-            .xword 113f
-            .xword 114f
-            .xword 115f
-            .xword 116f
-            .xword 117f
-            .xword 118f
-            .xword 119f
-            .xword 120f
-            .xword 121f
-            .xword 122f
-            .xword 123f
-            .xword 124f
-            .xword 125f
+   100:     .hword -4
+            .hword 101f-100b
+            .hword 102f-100b
+            .hword 103f-100b
+            .hword 104f-100b
+            .hword 105f-100b
+            .hword 106f-100b
+            .hword 107f-100b
+            .hword 108f-100b
+            .hword 109f-100b
+            .hword 110f-100b
+            .hword 111f-100b
+            .hword 112f-100b
+            .hword 113f-100b
+            .hword 114f-100b
+            .hword 115f-100b
+            .hword 116f-100b
+            .hword 117f-100b
+            .hword 118f-100b
+            .hword 119f-100b
+            .hword 120f-100b
+            .hword 121f-100b
+            .hword 122f-100b
+            .hword 123f-100b
+            .hword 124f-100b
+            .hword 125f-100b
             .align 4
     125:    ext         v12.16b, v3.16b, v4.16b, #6*2
             ext         v13.16b, v10.16b, v11.16b, #0*2
@@ -564,15 +571,17 @@ nop
             umull       v14.4s, v7.4h, v0.h[0]
             umull2      v15.4s, v7.8h, v0.h[0]
 
-            adr         x12, 199f-8
-            ldr         x12, [x12, x5, LSL #3]
+            adr         x16, 100f
+            ldrsh       x12, [x16, x5, LSL #1]
+            add         x12, x12, x16
             br          x12
-   199:     .xword 101f
-            .xword 102f
-            .xword 103f
-            .xword 104f
-            .xword 105f
-            .xword 106f
+   100:     .hword -4
+            .hword 101f-100b
+            .hword 102f-100b
+            .hword 103f-100b
+            .hword 104f-100b
+            .hword 105f-100b
+            .hword 106f-100b
             .align      4
     106:    umlal       v14.4s, v4.4h,  v0.h[6]
             umlal2      v15.4s, v4.8h,  v0.h[6]
@@ -616,21 +625,23 @@ nop
             umull       v14.4s, v4.4h, v0.h[0]
             umull2      v15.4s, v4.8h, v0.h[0]
 
-            adr         x12, 199f-8
-            ldr         x12, [x12, x5, LSL #3]
+            adr         x16, 100f
+            ldrsh       x12, [x16, x5, LSL #1]
+            add         x12, x12, x16
             br          x12
-   199:     .xword 101f
-            .xword 102f
-            .xword 103f
-            .xword 104f
-            .xword 105f
-            .xword 106f
-            .xword 107f
-            .xword 108f
-            .xword 109f
-            .xword 110f
-            .xword 111f
-            .xword 112f
+   100:     .hword -4
+            .hword 101f-100b
+            .hword 102f-100b
+            .hword 103f-100b
+            .hword 104f-100b
+            .hword 105f-100b
+            .hword 106f-100b
+            .hword 107f-100b
+            .hword 108f-100b
+            .hword 109f-100b
+            .hword 110f-100b
+            .hword 111f-100b
+            .hword 112f-100b
             .align 4
     112:    add         x12, x9, #0x1a0
             bic         x12, x12, #0x200
@@ -751,34 +762,36 @@ nop
             umull       v14.4s, v12.4h, v0.h[0]
             umull       v15.4s, v13.4h, v0.h[0]
 
-            adr         x12, 199f-8
-            ldr         x12, [x12, x5, LSL #3]
+            adr         x16, 100f
+            ldrsh       x12, [x16, x5, LSL #1]
+            add         x12, x12, x16
             br          x12
-   199:     .xword 101f
-            .xword 102f
-            .xword 103f
-            .xword 104f
-            .xword 105f
-            .xword 106f
-            .xword 107f
-            .xword 108f
-            .xword 109f
-            .xword 110f
-            .xword 111f
-            .xword 112f
-            .xword 113f
-            .xword 114f
-            .xword 115f
-            .xword 116f
-            .xword 117f
-            .xword 118f
-            .xword 119f
-            .xword 120f
-            .xword 121f
-            .xword 122f
-            .xword 123f
-            .xword 124f
-            .xword 125f
+   100:     .hword -4
+            .hword 101f-100b
+            .hword 102f-100b
+            .hword 103f-100b
+            .hword 104f-100b
+            .hword 105f-100b
+            .hword 106f-100b
+            .hword 107f-100b
+            .hword 108f-100b
+            .hword 109f-100b
+            .hword 110f-100b
+            .hword 111f-100b
+            .hword 112f-100b
+            .hword 113f-100b
+            .hword 114f-100b
+            .hword 115f-100b
+            .hword 116f-100b
+            .hword 117f-100b
+            .hword 118f-100b
+            .hword 119f-100b
+            .hword 120f-100b
+            .hword 121f-100b
+            .hword 122f-100b
+            .hword 123f-100b
+            .hword 124f-100b
+            .hword 125f-100b
             .align 4
     125:    add         x12, x9, #0x0d0
             bic         x12, x12, #0x200
@@ -1043,7 +1056,7 @@ nop
 /* Dedicated function wrapper for the fetch macro, for the cases where
  * performance isn't that important, to keep code size down.
  */
-ENTRY(fetch_generic_asm)
+PRIVATE(fetch_generic_asm)
             stp         x10, x11, [sp, #-16]!
             fetch
             ldp         x10, x11, [sp], #16
@@ -1055,10 +1068,10 @@ END(fetch_generic_asm)
  * hand edge of the window when starting too close to the right hand edge of
  * the image.
  */
-ENTRY(prefetch_clamp1)
+PRIVATE(prefetch_clamp1)
             sub         x11, xzr, x11
             sub         x15, x15, x1
-            sub         x16, x16, x1
+            sub         x19, x19, x1
             tbz         x11, #3, 1f
             mov         v11.16b, v10.16b
             sub         x1, x1, #16
@@ -1084,14 +1097,14 @@ ENTRY(prefetch_clamp1)
             mov         v11.16b, v12.16b
 1:          sub         x11, xzr, x11
             add         x15, x15, x1
-            add         x16, x16, x1
+            add         x19, x19, x1
             ret
 END(prefetch_clamp1)
 
-ENTRY(prefetch_clamp4)
+PRIVATE(prefetch_clamp4)
             sub         x11, xzr, x11
             sub         x15, x15, x1
-            sub         x16, x16, x1
+            sub         x19, x19, x1
             tbz         x11, #3, 1f
             sub         x1, x1, #16     // what's this?
             mov         v11.16b, v10.16b
@@ -1105,7 +1118,7 @@ ENTRY(prefetch_clamp4)
             mov         v11.16b, v12.16b
 1:          sub         x11, xzr, x11
             add         x15, x15, x1
-            add         x16, x16, x1
+            add         x19, x19, x1
             ret
 END(prefetch_clamp4)
 
@@ -1174,7 +1187,7 @@ END(prefetch_clamp4)
  *      x9 -- buffer (if needed)
  *      x13 = -pitch
  *      x15 = top-row in
- *      x16 = bottom-row in
+ *      x19 = bottom-row in
  * Output:
  *      x1 += rlf + min(count, rrt)
  * Modifies:
@@ -1221,11 +1234,11 @@ END(prefetch_clamp4)
   .endif
 1:          sub         x1, x1, x10
             sub         x15, x15, x10
-            sub         x16, x16, x10
+            sub         x19, x19, x10
             bic         x10, x10, #15
             add         x1, x1, x10
             add         x15, x15, x10
-            add         x16, x16, x10
+            add         x19, x19, x10
 2:
   .if \step > 1
             /* it's only in the uchar2 and uchar4 cases where the register file
@@ -1276,7 +1289,7 @@ END(prefetch_clamp4)
  *      x9 = buffer
  *      x13 = -pitch
  *      x15 = top-row in
- *      x16 = bottom-row in
+ *      x19 = bottom-row in
  * Modifies
  *      x8 = fetch code pointer
  */
@@ -1324,10 +1337,10 @@ END(prefetch_clamp4)
 
 1:          sub         x1, x1, #16
             sub         x15, x15, #16
-            sub         x16, x16, #16
+            sub         x19, x19, #16
             add         x1, x1, x4
             add         x15, x15, x4
-            add         x16, x16, x4
+            add         x19, x19, x4
             bl          fetch_generic_asm
 
   .if \step==1
@@ -1373,7 +1386,7 @@ END(prefetch_clamp4)
 .endm
 
 .irep r, TUNED_LIST1, 25
-ENTRY(convolve1_\r)
+PRIVATE(convolve1_\r)
             stp         x29,x30, [sp, #-16]!
 
             prefetch    step=1, max_r=\r
@@ -1386,7 +1399,7 @@ END(convolve1_\r)
 .endr
 
 .irep r, TUNED_LIST4, 25
-ENTRY(convolve4_\r)
+PRIVATE(convolve4_\r)
             sub         x12, sp, #0x200
             bic         x9, x12, #0x3fc
             mov         sp, x9
@@ -1421,17 +1434,13 @@ END(convolve4_\r)
  *                  uint16_t *tab); // [sp,#8]
  */
 ENTRY(rsdIntrinsicBlurU1_K)
-            stp         x16,x30, [sp, #-80]!
-            stp         x14,x15, [sp, #16]
-            stp         x12,x13, [sp, #32]
-            stp         x10,x11, [sp, #48]
-            stp         x8,x9, [sp, #64]
+            stp         x19,x30, [sp, #-16]!
             sub         x8, sp, #32
             sub         sp, sp, #64
             st1         {v8.1d - v11.1d}, [sp]
             st1         {v12.1d - v15.1d}, [x8]
             mov         x8, x5        // x
-            ldr         w5, [sp,#144] // r
+            ldr         w5, [sp,#80]  // r
             sub         x9, x2, x8
             sub         x10, x3, x6
             mov         x2, x4        // pitch
@@ -1439,7 +1448,7 @@ ENTRY(rsdIntrinsicBlurU1_K)
             sub         x7, x10, #1
             sub         x9, x9, x3
 
-            ldr         x12, [sp, #152] // tab
+            ldr         x12, [sp, #88] // tab
 
             add         x0, x0, x8
             add         x1, x1, x8
@@ -1460,7 +1469,7 @@ ENTRY(rsdIntrinsicBlurU1_K)
 
             sub         x13, xzr, x2
             msub        x15, x2, x6, x1
-            madd        x16, x2, x7, x1
+            madd        x19, x2, x7, x1
 
             ld1         {v0.8h,v1.8h}, [x12], #32
             ld1         {v2.8h,v3.8h}, [x12], #32
@@ -1474,11 +1483,7 @@ ENTRY(rsdIntrinsicBlurU1_K)
 
 1:          ld1         {v8.1d - v11.1d}, [sp], #32
             ld1         {v12.1d - v15.1d}, [sp], #32
-            ldp         x8,x9, [sp, #64]
-            ldp         x10,x11, [sp, #48]
-            ldp         x12,x13, [sp, #32]
-            ldp         x14,x15, [sp, #16]
-            ldp         x12,x30, [sp], #80
+            ldp         x19,x30, [sp], #16
             ret
 END(rsdIntrinsicBlurU1_K)
 
@@ -1495,17 +1500,13 @@ END(rsdIntrinsicBlurU1_K)
  *                  uint16_t *tab); // [sp,#8]
  */
 ENTRY(rsdIntrinsicBlurU4_K)
-            stp         x16,x30, [sp, #-80]!
-            stp         x14,x15, [sp, #16]
-            stp         x12,x13, [sp, #32]
-            stp         x10,x11, [sp, #48]
-            stp         x8,x9, [sp, #64]
+            stp         x19,x30, [sp, #-16]!
             sub         x8, sp, #32
             sub         sp, sp, #64
             st1         {v8.1d - v11.1d}, [sp]
             st1         {v12.1d - v15.1d}, [x8]
             mov         x8, x5        // x
-            ldr         w5, [sp,#144] // r
+            ldr         w5, [sp,#80]  // r
             sub         x9, x2, x8
             sub         x10, x3, x6
             mov         x2, x4        // pitch
@@ -1513,7 +1514,7 @@ ENTRY(rsdIntrinsicBlurU4_K)
             sub         x7, x10, #1
             sub         x9, x9, x3
 
-            ldr         x12, [sp, #152]
+            ldr         x12, [sp, #88]
 
             add         x0, x0, x8, LSL #2
             add         x1, x1, x8, LSL #2
@@ -1535,7 +1536,7 @@ ENTRY(rsdIntrinsicBlurU4_K)
 
             sub         x13, xzr, x2
             msub        x15, x2, x6, x1
-            madd        x16, x2, x7, x1
+            madd        x19, x2, x7, x1
 
             ld1         {v0.8h,v1.8h}, [x12], #32
             ld1         {v2.8h,v3.8h}, [x12], #32
@@ -1549,10 +1550,6 @@ ENTRY(rsdIntrinsicBlurU4_K)
 
 1:          ld1         {v8.1d - v11.1d}, [sp], #32
             ld1         {v12.1d - v15.1d}, [sp], #32
-            ldp         x8,x9, [sp, #64]
-            ldp         x10,x11, [sp, #48]
-            ldp         x12,x13, [sp, #32]
-            ldp         x14,x15, [sp, #16]
-            ldp         x12,x30, [sp], #80
+            ldp         x19,x30, [sp], #16
             ret
 END(rsdIntrinsicBlurU4_K)
