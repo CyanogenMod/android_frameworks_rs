@@ -37,6 +37,7 @@ LOCAL_SRC_FILES:= \
 
 LOCAL_CFLAGS_arm64 += -DARCH_ARM_HAVE_NEON
 LOCAL_CFLAGS_64 += -DFAKE_ARM64_BUILD
+LOCAL_ASFLAGS_arm64 += -no-integrated-as
 
 #LOCAL_SRC_FILES_arm64 += \
 #    rsCpuIntrinsics_advsimd_Blend.S \
