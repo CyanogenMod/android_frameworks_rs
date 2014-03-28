@@ -354,6 +354,288 @@ relocateARM(void *(*find_sym)(void *context, char const *name),
 
 template <unsigned Bitwidth>
 inline void ELFObject<Bitwidth>::
+relocateAARCH64(void *(*find_sym)(void *context, char const *name),
+            void *context,
+            ELFSectionRelTableTy *reltab,
+            ELFSectionProgBitsTy *text) {
+  // FIXME: Should be implement in independent files.
+  rsl_assert(Bitwidth == 64 && "AARCH64 only have 64 bits.");
+
+  ELFSectionSymTabTy *symtab =
+    static_cast<ELFSectionSymTabTy *>(getSectionByName(".symtab"));
+  rsl_assert(symtab && "Symtab is required.");
+
+  for (size_t i = 0; i < reltab->size(); ++i) {
+    ELFRelocTy *rel = (*reltab)[i];
+    ELFSymbolTy *sym = (*symtab)[rel->getSymTabIndex()];
+
+    typedef int64_t Inst_t;
+    Inst_t *inst = (Inst_t *)&(*text)[rel->getOffset()];
+    int32_t* inst32 = reinterpret_cast<int32_t*>(inst);
+    int16_t* inst16 = reinterpret_cast<int16_t*>(inst);
+    Inst_t P = (Inst_t)(int64_t)inst;
+    Inst_t A = 0;
+    Inst_t S = (Inst_t)(int64_t)sym->getAddress(EM_ARM);
+
+    // TODO: add other relocations when we know what ones are used.
+    word_t reltype = rel->getType();
+    switch (reltype) {
+    default:
+      rsl_assert(0 && "Unimplemented relocation type.");
+      break;
+
+    // TODO: factor out the find_sym common stuff.
+    case R_AARCH64_ABS64:
+      {
+        if (S == 0 && sym->getType() == STT_NOTYPE) {
+          void *ext_sym = find_sym(context, sym->getName());
+          if (!ext_sym) {
+            missingSymbols = true;
+          }
+          S = (Inst_t)(uintptr_t)ext_sym;
+          sym->setAddress(ext_sym);
+        }
+        A = *inst;
+        *inst = S + A;
+      }
+      break;
+
+    case R_AARCH64_ABS32:
+      {
+        if (S == 0 && sym->getType() == STT_NOTYPE) {
+          void *ext_sym = find_sym(context, sym->getName());
+          if (!ext_sym) {
+            missingSymbols = true;
+          }
+          S = (Inst_t)(uintptr_t)ext_sym;
+          sym->setAddress(ext_sym);
+        }
+        A = *inst32;
+        *inst32 = static_cast<int32_t>(S + A);
+      }
+      break;
+
+    case R_AARCH64_ABS16:
+      {
+        if (S == 0 && sym->getType() == STT_NOTYPE) {
+          void *ext_sym = find_sym(context, sym->getName());
+          if (!ext_sym) {
+            missingSymbols = true;
+          }
+          S = (Inst_t)(uintptr_t)ext_sym;
+          sym->setAddress(ext_sym);
+        }
+        A = *inst16;
+        *inst16 = static_cast<int16_t>(S + A);
+      }
+      break;
+
+    case R_AARCH64_PREL64:
+      {
+        if (S == 0 && sym->getType() == STT_NOTYPE) {
+          void *ext_sym = find_sym(context, sym->getName());
+          if (!ext_sym) {
+            missingSymbols = true;
+          }
+          S = (Inst_t)(uintptr_t)ext_sym;
+          sym->setAddress(ext_sym);
+        }
+        A = *inst;
+        *inst = S + A - P;
+      }
+      break;
+
+    case R_AARCH64_PREL32:
+      {
+        if (S == 0 && sym->getType() == STT_NOTYPE) {
+          void *ext_sym = find_sym(context, sym->getName());
+          if (!ext_sym) {
+            missingSymbols = true;
+          }
+          S = (Inst_t)(uintptr_t)ext_sym;
+          sym->setAddress(ext_sym);
+        }
+        A = *inst32;
+        *inst32 = static_cast<int32_t>(S + A - P);
+      }
+      break;
+
+    case R_AARCH64_PREL16:
+      {
+        if (S == 0 && sym->getType() == STT_NOTYPE) {
+          void *ext_sym = find_sym(context, sym->getName());
+          if (!ext_sym) {
+            missingSymbols = true;
+          }
+          S = (Inst_t)(uintptr_t)ext_sym;
+          sym->setAddress(ext_sym);
+        }
+        A = *inst16;
+        *inst16 = static_cast<int16_t>(S + A - P);
+      }
+      break;
+
+    case R_AARCH64_CALL26:
+    case R_AARCH64_JUMP26:
+      {
+#define SIGN_EXTEND(x, l) (((x)^(1<<((l)-1)))-(1<<(l-1)))
+        A = (Inst_t)(int64_t)SIGN_EXTEND(*inst32 & 0x3FFFFFF, 26);
+        A <<= 2;
+#undef SIGN_EXTEND
+
+        void *callee_addr = sym->getAddress(EM_AARCH64);
+        bool try_direct = false;        // Try to use a direct call?
+        bool call_via_stub = false;     // Call via a stub (linker veneer).
+
+        switch (sym->getType()) {
+        default:
+          rsl_assert(0 && "Wrong type for R_ARM_CALL relocation.");
+          abort();
+          break;
+
+        case STT_FUNC:
+          // NOTE: Callee function is in the object file, but it may be
+          // in different PROGBITS section (which may be far call).
+
+          if (callee_addr == 0) {
+            rsl_assert(0 && "We should get function address at previous "
+                   "sym->getAddress(EM_ARM) function call.");
+            abort();
+          }
+          try_direct = true;
+          break;
+
+        case STT_NOTYPE:
+          // NOTE: Callee function is an external function.  Call find_sym
+          // if it has not resolved yet.
+
+          if (callee_addr == 0) {
+            callee_addr = find_sym(context, sym->getName());
+            if (!callee_addr) {
+              missingSymbols = true;
+            }
+            sym->setAddress(callee_addr);
+          }
+          break;
+        }
+
+        uint32_t result = 0;
+        // See if we can do the branch without a stub.
+        if (try_direct) {
+          S = reinterpret_cast<int64_t>(callee_addr);
+          result = (S + A - P) >> 2;
+          call_via_stub = false;        // Assume it's in range.
+          if (result > 0x01FFFFFF && result < 0xFE000000) {
+            // Not in range, need a stub.
+            call_via_stub = true;
+          }
+        }
+
+        // Calling via a stub makes a BL instruction to a stub containing the following code:
+        // ldr x16, addr
+        // br x16
+        // addr:
+        // .word low32
+        // .word high32
+        //
+        // This loads the PC value from the 64 bits at PC + 8.  Since AARCH64 can't
+        // manipulate the PC directly we have to load a register and branch to the contents.
+        if (call_via_stub) {
+          // Get the stub for this function
+          StubLayout *stub_layout = text->getStubLayout();
+
+          if (!stub_layout) {
+            llvm::errs() << "unable to get stub layout." << "\n";
+            abort();
+          }
+
+          void *stub = stub_layout->allocateStub(callee_addr);
+
+          if (!stub) {
+            llvm::errs() << "unable to allocate stub." << "\n";
+            abort();
+          }
+
+          //LOGI("Function %s: using stub %p\n", sym->getName(), stub);
+          S = (uint64_t)(uintptr_t)stub;
+
+          result = (S + A - P) >> 2;
+
+          if (result > 0x01FFFFFF && result < 0xFE000000) {
+            rsl_assert(0 && "Stub is still too far");
+            abort();
+          }
+        }
+
+        // 'result' contains the offset from PC to the destination address, encoded
+        // in the correct form for the BL or B instructions.
+        *inst32 = ((result) & 0x03FFFFFF) | (*inst & 0xFC000000);
+      }
+      break;
+    case R_AARCH64_MOVW_UABS_G0:
+    case R_AARCH64_MOVW_UABS_G0_NC:
+    case R_AARCH64_MOVW_UABS_G1:
+    case R_AARCH64_MOVW_UABS_G1_NC:
+    case R_AARCH64_MOVW_UABS_G2:
+    case R_AARCH64_MOVW_UABS_G2_NC:
+    case R_AARCH64_MOVW_UABS_G3:
+      {
+        int shift = 0;
+        switch (reltype) {
+        case R_AARCH64_MOVW_UABS_G0:
+        case R_AARCH64_MOVW_UABS_G0_NC: shift = 0; break;
+        case R_AARCH64_MOVW_UABS_G1:
+        case R_AARCH64_MOVW_UABS_G1_NC: shift = 16; break;
+        case R_AARCH64_MOVW_UABS_G2:
+        case R_AARCH64_MOVW_UABS_G2_NC: shift = 32; break;
+        case R_AARCH64_MOVW_UABS_G3: shift = 48; break;
+        }
+
+        A = (*inst32 >> 5) & 0xFFFF;
+        uint32_t value = ((S + A) >> shift) & 0xFFFF;
+        *inst32 = (*inst32 & ~(0xFFFF << 6)) | (value << 6);
+      }
+      break;
+
+    case R_AARCH64_MOVW_SABS_G0:
+    case R_AARCH64_MOVW_SABS_G1:
+    case R_AARCH64_MOVW_SABS_G2:
+      {
+        int shift = 0;
+        switch (reltype) {
+        case R_AARCH64_MOVW_SABS_G0: shift = 0; break;
+        case R_AARCH64_MOVW_SABS_G1: shift = 16; break;
+        case R_AARCH64_MOVW_SABS_G2: shift = 32; break;
+        }
+
+        A = (*inst32 >> 5) & 0xFFFF;
+        int32_t value = ((S + A) >> shift) & 0xFFFF;
+
+        *inst32 = (*inst32 & ~(0xFFFF << 6)) | (value << 6);
+
+        // This relocation type must also set the instruction bit 30 to 0 or 1
+        // depending on the sign of the value.  The bit corresponds to the
+        // movz or movn encoding.  A value of 0 means movn.
+        if (value >= 0) {
+          // Set the instruction to movz (set bit 30 to 1)
+          *inst32 |= 0x40000000;
+        } else {
+          // Set the instruction to movn (set bit 30 to 0)
+          *inst32 &= ~0x40000000;
+        }
+      }
+      break;
+    }
+    //llvm::errs() << "S:     " << (void *)S << '\n';
+    //llvm::errs() << "A:     " << (void *)A << '\n';
+    //llvm::errs() << "P:     " << (void *)P << '\n';
+    //llvm::errs() << "S+A:   " << (void *)(S+A) << '\n';
+    //llvm::errs() << "S+A-P: " << (void *)(S+A-P) << '\n';
+  }
+}
+
+template <unsigned Bitwidth>
+inline void ELFObject<Bitwidth>::
 relocateX86_64(void *(*find_sym)(void *context, char const *name),
                void *context,
                ELFSectionRelTableTy *reltab,
@@ -735,6 +1017,9 @@ relocate(void *(*find_sym)(void *context, char const *name), void *context) {
     switch (getHeader()->getMachine()) {
       case EM_ARM:
         relocateARM(find_sym, context, reltab, need_rel);
+        break;
+      case EM_AARCH64:
+        relocateAARCH64(find_sym, context, reltab, need_rel);
         break;
       case EM_386:
         relocateX86_32(find_sym, context, reltab, need_rel);

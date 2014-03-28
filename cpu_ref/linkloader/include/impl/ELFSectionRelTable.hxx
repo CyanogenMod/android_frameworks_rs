@@ -111,6 +111,24 @@ getMaxNumStubs(ELFObjectTy const *obj) const {
       return sym_index_set.size();
     }
 
+  case EM_AARCH64:
+    {
+      std::set<uint32_t> sym_index_set;
+
+      for (size_t i = 0; i < size(); ++i) {
+        ELFRelocTy *rel = table[i];
+
+        switch (rel->getType()) {
+        case R_AARCH64_CALL26:
+        case R_AARCH64_JUMP26:
+          sym_index_set.insert(rel->getSymTabIndex());
+          break;
+        }
+      }
+
+      return sym_index_set.size();
+    }
+
   case EM_MIPS:
     {
       std::set<uint32_t> sym_index_set;
