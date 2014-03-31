@@ -323,7 +323,7 @@ void * Context::threadProc(void *vrsc) {
 
     if (getProp("debug.rs.default-CPU-driver") != 0) {
         ALOGD("Skipping override driver and loading default CPU driver");
-    } else if (rsc->mForceCpu) {
+    } else if (rsc->mForceCpu || rsc->mIsGraphicsContext) {
         ALOGV("Application requested CPU execution");
     } else if (rsc->getContextType() == RS_CONTEXT_TYPE_DEBUG) {
         ALOGV("Application requested debug context");
