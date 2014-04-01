@@ -43,6 +43,7 @@ LOCAL_ASFLAGS_arm64 += -no-integrated-as
 #    rsCpuIntrinsics_advsimd_3DLUT.S \
 #    rsCpuIntrinsics_advsimd_Blend.S \
 #    rsCpuIntrinsics_advsimd_Blur.S \
+#    rsCpuIntrinsics_advsimd_Convolve.S \
 #    rsCpuIntrinsics_advsimd_ColorMatrix.S \
 #    rsCpuIntrinsics_advsimd_YuvToRGB.S
 
@@ -53,10 +54,10 @@ endif
 ifeq ($(ARCH_ARM_HAVE_VFP),true)
     LOCAL_CFLAGS_arm += -DARCH_ARM_HAVE_VFP
     LOCAL_SRC_FILES_arm += \
-    rsCpuIntrinsics_neon.S \
     rsCpuIntrinsics_neon_3DLUT.S \
     rsCpuIntrinsics_neon_Blend.S \
     rsCpuIntrinsics_neon_Blur.S \
+    rsCpuIntrinsics_neon_Convolve.S \
     rsCpuIntrinsics_neon_ColorMatrix.S \
     rsCpuIntrinsics_neon_YuvToRGB.S \
     convolve/convolve_copy_neon.s \
