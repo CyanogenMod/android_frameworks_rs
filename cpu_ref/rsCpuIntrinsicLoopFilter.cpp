@@ -122,7 +122,7 @@ struct BufferInfo {
 
 #define MAX_CPU_CORES   32
 #define MAX_MB_PLANE    3
-#define MAX_SB_COL      32
+#define MAX_SB_ROW      64
 
 struct LoopFilterProgressChart {
     int start;
@@ -138,7 +138,7 @@ struct LoopFilterProgressChart {
     int               wid;
     int               quit;
     int               doing;
-    volatile int32_t  chart[MAX_SB_COL];
+    volatile int32_t  chart[MAX_SB_ROW];
     int32_t           sb_row_pro;
     pthread_t         *tid;
     pthread_mutex_t   *mutex;
