@@ -608,7 +608,9 @@ Context::~Context() {
         void *res;
 
         mIO.shutdown();
-        int status = pthread_join(mThreadId, &res);
+        if (!mSynchronous) {
+            pthread_join(mThreadId, &res);
+        }
         rsAssert(mExit);
 
         if (mHal.funcs.shutdownDriver) {
