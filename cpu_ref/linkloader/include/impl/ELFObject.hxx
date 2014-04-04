@@ -148,8 +148,11 @@ relocateARM(void *(*find_sym)(void *context, char const *name),
     if (sym->isConcreteFunc() && (sym->getValue() & 0x1)) {
       T = 1;
     }
-
+#ifdef __LP64__
+    xword_t reltype = rel->getType();
+#else
     word_t reltype = rel->getType();
+#endif
     switch (reltype) {
     default:
       rsl_assert(0 && "Not implemented relocation type.");
