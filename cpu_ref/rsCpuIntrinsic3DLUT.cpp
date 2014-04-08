@@ -86,7 +86,7 @@ void RsdCpuScriptIntrinsic3DLUT::kernel(const RsForEachStubParamStruct *p,
     while (x1 < x2) {
 #if defined(ARCH_ARM_HAVE_VFP)
         if (gArchUseSIMD) {
-            int32_t len = x2 - x1;
+            int32_t len = (x2 - x1 - 1);
             if(len >= 8) {
                 size_t done;
                done = len - rsdIntrinsic3DLUT_K(out, in, len,
