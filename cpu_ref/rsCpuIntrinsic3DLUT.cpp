@@ -52,7 +52,7 @@ void RsdCpuScriptIntrinsic3DLUT::setGlobalObj(uint32_t slot, ObjectBase *data) {
     mLUT.set(static_cast<Allocation *>(data));
 }
 
-extern "C" size_t rsdIntrinsic3DLUT_K(void *dst, void const *in, size_t count,
+extern "C" void rsdIntrinsic3DLUT_K(void *dst, void const *in, size_t count,
                                       void const *lut,
                                       int32_t pitchy, int32_t pitchz,
                                       int dimx, int dimy, int dimz);
@@ -63,8 +63,8 @@ void RsdCpuScriptIntrinsic3DLUT::kernel(const RsForEachStubParamStruct *p,
                                       uint32_t instep, uint32_t outstep) {
     RsdCpuScriptIntrinsic3DLUT *cp = (RsdCpuScriptIntrinsic3DLUT *)p->usr;
 
-    uchar4 *out = (uchar4 *)p->out;
-    uchar4 *in = (uchar4 *)p->in;
+    uchar4 *out = (uchar4 *)p->out + xstart;
+    uchar4 *in = (uchar4 *)p->in + xstart;
     uint32_t x1 = xstart;
     uint32_t x2 = xend;
 
@@ -83,23 +83,21 @@ void RsdCpuScriptIntrinsic3DLUT::kernel(const RsForEachStubParamStruct *p,
 
     //ALOGE("strides %zu %zu", stride_y, stride_z);
 
-    while (x1 < x2) {
 #if defined(ARCH_ARM_HAVE_VFP)
-        if (gArchUseSIMD) {
-            int32_t len = (x2 - x1 - 1);
-            if(len >= 8) {
-                size_t done;
-               done = len - rsdIntrinsic3DLUT_K(out, in, len,
-                                      bp, stride_y, stride_z,
-                                      dims.x, dims.y, dims.z);
-
-                x1 += done;
-                out += done;
-                in += done;
-            }
+    if (gArchUseSIMD) {
+        int32_t len = x2 - x1;
+        if(len > 0) {
+            rsdIntrinsic3DLUT_K(out, in, len,
+                                bp, stride_y, stride_z,
+                                dims.x, dims.y, dims.z);
+            x1 += len;
+            out += len;
+            in += len;
         }
+    }
 #endif
 
+    while (x1 < x2) {
         int4 baseCoord = convert_int4(*in) * coordMul;
         int4 coord1 = baseCoord >> (int4)15;
         //int4 coord2 = min(coord1 + 1, gDims - 1);
