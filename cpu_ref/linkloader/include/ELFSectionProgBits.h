@@ -47,6 +47,10 @@ public:
         stubs = new StubLayoutARM();
       break;
 
+    case EM_AARCH64:
+        stubs = new StubLayoutAARCH64();
+      break;
+
     case EM_MIPS:
         stubs = new StubLayoutMIPS();
       break;

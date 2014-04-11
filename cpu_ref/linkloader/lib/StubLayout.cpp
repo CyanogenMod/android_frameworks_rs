@@ -61,6 +61,43 @@ size_t StubLayout::calcStubTableSize(size_t count) const {
   return count * getUnitStubSize();
 }
 
+size_t StubLayoutAARCH64::getUnitStubSize() const {
+  return 16;
+}
+
+void StubLayoutAARCH64::setStubAddress(void *stub_, void *addr) {
+  uint8_t *stub = (uint8_t *)stub_;
+
+  // First instruction:
+  // ldr x16,[pc,#8]        LDR literal (pc relative)
+  // +--+---+-+--+-------------------+-----+
+  // |01|011|0|00| (#8 >> 2) = 10    |10000|
+  // +--+---+-+--+-------------------+-----+
+  // 0x58000050
+  // Little endian.
+  stub[0] = 0x50;
+  stub[1] = 0x00;
+  stub[2] = 0x0f;
+  stub[3] = 0x58;
+
+  // Next Instruction:
+  // br x16
+  // +-------+--+--+-----+------+-----+-----+
+  // |1101011|00|00|11111|000000|10000|00000|
+  // +-------+--+--+-----+------+-----+-----+
+  // 0xd61f0200
+
+  stub += 4;
+  stub[0] = 0x00;
+  stub[1] = 0x02;
+  stub[2] = 0x1f;
+  stub[3] = 0xd6;
+
+  // Now the absolute address (64 bits).
+  uint64_t *target = reinterpret_cast<uint64_t*>(stub + 4);
+  *target = reinterpret_cast<uint64_t>(addr);
+}
+
 size_t StubLayoutARM::getUnitStubSize() const {
   return 8;
 }
