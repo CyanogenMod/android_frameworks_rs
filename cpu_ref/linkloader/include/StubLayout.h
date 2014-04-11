@@ -51,6 +51,15 @@ private:
   virtual void setStubAddress(void *stub, void *addr);
 };
 
+class StubLayoutAARCH64 : public StubLayout {
+public:
+  StubLayoutAARCH64() { }
+  size_t getUnitStubSize() const;
+
+private:
+  virtual void setStubAddress(void *stub, void *addr);
+};
+
 class StubLayoutMIPS : public StubLayout {
 public:
   StubLayoutMIPS() { }
