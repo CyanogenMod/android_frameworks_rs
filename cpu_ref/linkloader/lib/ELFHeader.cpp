@@ -84,6 +84,7 @@ char const *ELFHeaderHelperMixin::getMachineStr(uint16_t machine) {
     case EM_386: return "Intel 80386 (X86)";
     case EM_X86_64: return "AMD x86-64 architecture";
     case EM_ARM: return "Advanced RISC Machine (ARM)";
+    case EM_AARCH64: return "Advanced RISC Machine (ARM) V8";
     case EM_MIPS: return "MIPS";
   }
 }
