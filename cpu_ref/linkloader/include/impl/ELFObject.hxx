@@ -651,44 +651,86 @@ relocateX86_64(void *(*find_sym)(void *context, char const *name),
     ELFRelocTy *rel = (*reltab)[i];
     ELFSymbolTy *sym = (*symtab)[rel->getSymTabIndex()];
 
-    //typedef uint64_t Inst_t;
-    typedef int32_t Inst_t;
-    Inst_t *inst = (Inst_t *)&(*text)[rel->getOffset()];
-    Inst_t P = (Inst_t)(int64_t)inst;
-    Inst_t A = (Inst_t)(int64_t)rel->getAddend();
-    Inst_t S = (Inst_t)(int64_t)sym->getAddress(EM_X86_64);
+    typedef intptr_t Inst_t;
+    Inst_t *inst = (Inst_t*)&(*text)[rel->getOffset()];
+    Inst_t P = (Inst_t)inst;
+    Inst_t A = (Inst_t)rel->getAddend();
+    Inst_t S = (Inst_t)sym->getAddress(EM_X86_64);
 
     if (S == 0) {
-      S = (Inst_t)(int64_t)find_sym(context, sym->getName());
+      S = (Inst_t)find_sym(context, sym->getName());
       if (!S) {
         missingSymbols = true;
       }
-#ifdef __LP64__
-      llvm::errs() << "Code temporarily disabled for 64bit build";
-      abort();
-#else
       sym->setAddress((void *)S);
-#endif
     }
 
     switch (rel->getType()) {
-      default:
-        rsl_assert(0 && "Not implemented relocation type.");
-        break;
+    default:
+      rsl_assert(0 && "Not implemented relocation type.");
+      break;
 
-      // FIXME: XXX: R_X86_64_64 is 64 bit, there is a big problem here.
-      case 1: // R_X86_64_64
-        *inst = (S+A);
-        break;
-
-      case 2: // R_X86_64_PC32
-        *inst = (S+A-P);
-        break;
-
-      case 10: // R_X86_64_32
-      case 11: // R_X86_64_32S
-        *inst = (S+A);
-        break;
+    // FIXME, consider other relocation types if RS support dynamic reolcations in future.
+    case R_X86_64_64: {//Direct 64-bit.
+      int64_t *paddr = (int64_t*)&(*text)[rel->getOffset()];
+      int64_t vAddr = S + A;
+      *paddr = vAddr;
+      break;
+    }
+    case R_X86_64_PC32: {//PC relative 32-bit signed.
+      int32_t *paddr = (int32_t*)&(*text)[rel->getOffset()];
+      int64_t vOffset = S + A - P;
+      rsl_assert(vOffset <= INT32_MAX && vOffset >= INT32_MIN);
+      *paddr = (int32_t)(vOffset & 0xFFFFFFFF);
+      break;
+    }
+    case R_X86_64_32: {//Direct 32-bit zero-extended.
+      uint32_t *paddr = (uint32_t*)&(*text)[rel->getOffset()];
+      int64_t vAddr = S + A;
+      rsl_assert(vAddr <= UINT32_MAX);
+      *paddr = (uint32_t)(vAddr & 0xFFFFFFFF);
+      break;
+    }
+    case R_X86_64_32S: {//Direct 32-bit sign-extended.
+      int32_t *paddr = (int32_t*)&(*text)[rel->getOffset()];
+      int64_t vAddr = S + A;
+      rsl_assert(vAddr <= INT32_MAX && vAddr >= INT32_MIN);
+      *paddr = (uint32_t)(vAddr & 0xFFFFFFFF);
+      break;
+    }
+    case R_X86_64_16: {//Direct 16-bit zero-extended.
+      uint16_t *paddr = (uint16_t*)&(*text)[rel->getOffset()];
+      int64_t vAddr = S + A;
+      rsl_assert(vAddr <= UINT16_MAX);
+      *paddr = (uint16_t)(vAddr & 0xFFFF);
+      break;
+    }
+    case R_X86_64_PC16: {//16-bit sign-extended PC relative.
+      int16_t *paddr = (int16_t*)&(*text)[rel->getOffset()];
+      int64_t vOffset = S + A - P;
+      rsl_assert(vOffset <= INT16_MAX && vOffset >= INT16_MIN);
+      *paddr = (int16_t)(vOffset & 0xFFFF);
+      break;
+    }
+    case R_X86_64_8: {//Direct 8-bit sign-extended.
+      int8_t *paddr = (int8_t*)&(*text)[rel->getOffset()];
+      int64_t vAddr = S + A;
+      rsl_assert(vAddr <= INT8_MAX && vAddr >= INT8_MIN);
+      *paddr = (uint8_t)(vAddr & 0xFF);
+      break;
+    }
+    case R_X86_64_PC8: {//8-bit sign-extended PC relative.
+      int8_t *paddr = (int8_t*)&(*text)[rel->getOffset()];
+      int64_t vOffset = S + A - P;
+      rsl_assert(vOffset <= INT8_MAX && vOffset >= INT8_MIN);
+      *paddr = (int8_t)(vOffset & 0xFF);
+      break;
+    }
+    case R_X86_64_PC64: {//PC relative 64-bit.
+      int64_t *paddr = (int64_t*)&(*text)[rel->getOffset()];
+      *paddr = (int64_t)(S + A - P);
+      break;
+    }
     }
   }
 }
@@ -710,24 +752,18 @@ relocateX86_32(void *(*find_sym)(void *context, char const *name),
     ELFRelocTy *rel = (*reltab)[i];
     ELFSymbolTy *sym = (*symtab)[rel->getSymTabIndex()];
 
-    //typedef uint64_t Inst_t;
-    typedef int32_t Inst_t;
+    typedef intptr_t Inst_t;
     Inst_t *inst = (Inst_t *)&(*text)[rel->getOffset()];
-    Inst_t P = (Inst_t)(uintptr_t)inst;
-    Inst_t A = (Inst_t)(uintptr_t)*inst;
-    Inst_t S = (Inst_t)(uintptr_t)sym->getAddress(EM_386);
+    Inst_t P = (Inst_t)inst;
+    Inst_t A = (Inst_t)*inst;
+    Inst_t S = (Inst_t)sym->getAddress(EM_386);
 
     if (S == 0) {
-      S = (Inst_t)(uintptr_t)find_sym(context, sym->getName());
+      S = (Inst_t)find_sym(context, sym->getName());
       if (!S) {
         missingSymbols = true;
       }
-#ifdef __LP64__
-      llvm::errs() << "Code temporarily disabled for 64bit build";
-      abort();
-#else
       sym->setAddress((void *)S);
-#endif
     }
 
     switch (rel->getType()) {
@@ -735,13 +771,16 @@ relocateX86_32(void *(*find_sym)(void *context, char const *name),
       rsl_assert(0 && "Not implemented relocation type.");
       break;
 
-    case R_386_PC32:
-      *inst = (S+A-P);
+    case R_386_PC32: {//Add PC-relative symbol value.
+      int32_t *paddr = (int32_t*)&(*text)[rel->getOffset()];
+      *paddr = (int32_t)(S + A - P);
       break;
-
-    case R_386_32:
-      *inst = (S+A);
+    }
+    case R_386_32: {//Add symbol value.
+      uint32_t *paddr = (uint32_t*)&(*text)[rel->getOffset()];
+      *paddr = (uint32_t)(S + A);
       break;
+    }
     }
   }
 }
