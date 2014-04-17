@@ -28,6 +28,7 @@ LOCAL_SRC_FILES:= \
 	rsCpuIntrinsicConvolve3x3.cpp \
 	rsCpuIntrinsicConvolve5x5.cpp \
 	rsCpuIntrinsicHistogram.cpp \
+	rsCpuIntrinsicResize.cpp \
 	rsCpuIntrinsicLUT.cpp \
 	rsCpuIntrinsicYuvToRGB.cpp
 
