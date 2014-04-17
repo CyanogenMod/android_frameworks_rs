@@ -579,6 +579,11 @@ bool Context::initContext(Device *dev, const RsSurfaceConfig *sc) {
     timerSet(RS_TIMER_INTERNAL);
     if (mSynchronous) {
         threadProc(this);
+
+        if (mError != RS_ERROR_NONE) {
+            ALOGE("Errors during thread init (sync mode)");
+            return false;
+        }
     } else {
         status = pthread_create(&mThreadId, &threadAttr, threadProc, this);
         if (status) {
@@ -612,7 +617,7 @@ Context::~Context() {
         }
         rsAssert(mExit);
 
-        if (mHal.funcs.shutdownDriver) {
+        if (mHal.funcs.shutdownDriver && mHal.drv) {
             mHal.funcs.shutdownDriver(this);
         }
 
