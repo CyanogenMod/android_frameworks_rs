@@ -66,7 +66,6 @@ public class SampleRSActivity extends Activity {
         }
 
         public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
-            mOutPixelsAllocation.setSurface(null);
             return true;
         }
     }
@@ -102,11 +101,11 @@ public class SampleRSActivity extends Activity {
         mRS = RenderScript.create(this);
         mTwoByTwoAlloc = Allocation.createFromBitmap(mRS, mBitmapTwoByTwo,
                                                           Allocation.MipmapControl.MIPMAP_NONE,
-                                                          Allocation.USAGE_SCRIPT);
+                                                          Allocation.USAGE_SCRIPT | Allocation.USAGE_GRAPHICS_TEXTURE);
 
         mCityAlloc = Allocation.createFromBitmap(mRS, mBitmapCity,
                                                           Allocation.MipmapControl.MIPMAP_NONE,
-                                                          Allocation.USAGE_SCRIPT);
+                                                          Allocation.USAGE_SCRIPT | Allocation.USAGE_GRAPHICS_TEXTURE);
 
         Type.Builder b = new Type.Builder(mRS, Element.RGBA_8888(mRS));
 
