@@ -381,7 +381,11 @@ relocateAARCH64(void *(*find_sym)(void *context, char const *name),
     Inst_t S = (Inst_t)(int64_t)sym->getAddress(EM_ARM);
 
     // TODO: add other relocations when we know what ones are used.
+#ifdef __LP64__
+    xword_t reltype = rel->getType();
+#else
     word_t reltype = rel->getType();
+#endif
     switch (reltype) {
     default:
       rsl_assert(0 && "Unimplemented relocation type.");
