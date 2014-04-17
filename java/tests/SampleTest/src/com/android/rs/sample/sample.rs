@@ -37,7 +37,7 @@ void root(uchar4 *out, uint32_t x, uint32_t y) {
     uv.x = (float)x / destX;
     uv.y = (float)y / destY;
 
-    out->xyz = convert_uchar3(rsSample(sourceAlloc, allocSampler, uv*2.0f).xyz);
+    out->xyz = convert_uchar3(rsSample(sourceAlloc, allocSampler, uv * 2.0f).xyz * 255.0f);
     out->w = 0xff;
 }
 
