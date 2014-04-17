@@ -31,8 +31,9 @@ LOCAL_SRC_FILES:= \
 	rsCpuIntrinsicHistogram.cpp \
 	rsCpuIntrinsicInterPred.cpp \
 	rsCpuIntrinsicLoopFilter.cpp \
-	rsCpuIntrinsicLUT.cpp \
 	rsCpuIntrinsicYuvToRGB.cpp \
+	rsCpuIntrinsicResize.cpp \
+	rsCpuIntrinsicLUT.cpp \
 	convolve/convolve.c
 
 LOCAL_CFLAGS_arm64 += -DARCH_ARM_HAVE_NEON
