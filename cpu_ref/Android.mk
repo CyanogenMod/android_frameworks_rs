@@ -31,6 +31,7 @@ LOCAL_SRC_FILES:= \
 	rsCpuIntrinsicHistogram.cpp \
 	rsCpuIntrinsicInterPred.cpp \
 	rsCpuIntrinsicLoopFilter.cpp \
+	rsCpuIntrinsicResize.cpp \
 	rsCpuIntrinsicLUT.cpp \
 	rsCpuIntrinsicYuvToRGB.cpp \
 	convolve/convolve.c
