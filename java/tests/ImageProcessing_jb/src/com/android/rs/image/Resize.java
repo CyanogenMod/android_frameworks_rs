@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.rs.image;
+package com.android.rs.imagejb;
 
 import java.lang.Math;
 
