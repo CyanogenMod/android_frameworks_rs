@@ -511,6 +511,10 @@ void rsdAllocationDestroy(const Context *rsc, Allocation *alloc) {
             GraphicBufferMapper &mapper = GraphicBufferMapper::get();
             mapper.unlock(drv->wndBuffer->handle);
             int32_t r = nw->queueBuffer(nw, drv->wndBuffer, -1);
+
+            drv->wndSurface = NULL;
+            native_window_api_disconnect(nw, NATIVE_WINDOW_API_CPU);
+            nw->decStrong(NULL);
         }
     }
 #endif
