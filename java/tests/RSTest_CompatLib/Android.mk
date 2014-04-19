@@ -35,6 +35,6 @@ LOCAL_RENDERSCRIPT_INCLUDES_OVERRIDE := \
     $(TOPDIR)frameworks/rs/scriptc
 
 LOCAL_RENDERSCRIPT_FLAGS := -rs-package-name=android.support.v8.renderscript
-LOCAL_REQUIRED_MODULES := librsjni
+LOCAL_JNI_SHARED_LIBRARIES := librsjni
 
 include $(BUILD_PACKAGE)
