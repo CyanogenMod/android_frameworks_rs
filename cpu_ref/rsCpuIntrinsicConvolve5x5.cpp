@@ -378,6 +378,17 @@ void RsdCpuScriptIntrinsicConvolve5x5::kernelU4(const RsForEachStubParamStruct *
         out++;
         x1++;
     }
+#if defined(ARCH_X86_HAVE_SSSE3)
+    // for x86 SIMD, require minimum of 7 elements (4 for SIMD,
+    // 3 for end boundary where x may hit the end boundary)
+    if (gArchUseSIMD &&((x1 + 6) < x2)) {
+        // subtract 3 for end boundary
+        uint32_t len = (x2 - x1 - 3) >> 2;
+        rsdIntrinsicConvolve5x5_K(out, py0, py1, py2, py3, py4, cp->mIp, len);
+        out += len << 2;
+        x1 += len << 2;
+    }
+#endif
 
 #if defined(ARCH_ARM_HAVE_VFP)
     if(gArchUseSIMD && ((x1 + 3) < x2)) {

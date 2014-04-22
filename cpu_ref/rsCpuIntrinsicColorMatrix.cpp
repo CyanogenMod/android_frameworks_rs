@@ -438,6 +438,31 @@ static uint8_t * addVADD_F32(uint8_t *buf, uint32_t dest_q, uint32_t src_q1, uin
 }
 #endif
 
+#if defined(ARCH_X86_HAVE_SSSE3)
+extern "C" void rsdIntrinsicColorMatrixDot_K(void *dst, const void *src,
+                                  const short *coef, uint32_t count);
+extern "C" void rsdIntrinsicColorMatrix3x3_K(void *dst, const void *src,
+                                  const short *coef, uint32_t count);
+extern "C" void rsdIntrinsicColorMatrix4x4_K(void *dst, const void *src,
+                                  const short *coef, uint32_t count);
+
+void * selectKernel(Key_t key)
+{
+    void * kernel = NULL;
+
+    // inType, outType float if nonzero
+    if (!(key.u.inType || key.u.outType)) {
+        if (key.u.dot)
+            kernel = (void *)rsdIntrinsicColorMatrixDot_K;
+        else if (key.u.copyAlpha)
+            kernel = (void *)rsdIntrinsicColorMatrix3x3_K;
+        else
+            kernel = (void *)rsdIntrinsicColorMatrix4x4_K;
+    }
+
+    return kernel;
+}
+#endif
 
 bool RsdCpuScriptIntrinsicColorMatrix::build(Key_t key) {
 #if defined(ARCH_ARM_HAVE_VFP) && !defined(FAKE_ARM64_BUILD)
@@ -908,6 +933,14 @@ void RsdCpuScriptIntrinsicColorMatrix::preLaunch(
 
     Key_t key = computeKey(ain->mHal.state.type->getElement(),
                            aout->mHal.state.type->getElement());
+#if defined(ARCH_X86_HAVE_SSSE3)
+    if ((mOptKernel == NULL) || (mLastKey.key != key.key)) {
+        // FIXME: Disable mOptKernel to pass RS color matrix CTS cases
+        // mOptKernel = (void (*)(void *, const void *, const short *, uint32_t)) selectKernel(key);
+        mLastKey = key;
+    }
+
+#else //if !defined(ARCH_X86_HAVE_SSSE3)
     if ((mOptKernel == NULL) || (mLastKey.key != key.key)) {
         if (mBuf) munmap(mBuf, mBufSize);
         mBuf = NULL;
@@ -938,6 +971,7 @@ void RsdCpuScriptIntrinsicColorMatrix::preLaunch(
 #endif
         mLastKey = key;
     }
+#endif //if !defined(ARCH_X86_HAVE_SSSE3)
 }
 
 void RsdCpuScriptIntrinsicColorMatrix::postLaunch(

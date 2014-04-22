@@ -211,7 +211,7 @@ void RsdCpuScriptIntrinsicConvolve3x3::kernelU4(const RsForEachStubParamStruct *
     }
 
     if(x2 > x1) {
-#if defined(ARCH_ARM_HAVE_VFP)
+#if defined(ARCH_ARM_HAVE_VFP) || defined(ARCH_X86_HAVE_SSSE3)
         if (gArchUseSIMD) {
             int32_t len = (x2 - x1 - 1) >> 1;
             if(len > 0) {
