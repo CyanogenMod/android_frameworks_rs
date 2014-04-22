@@ -1056,6 +1056,12 @@ relocate(void *(*find_sym)(void *context, char const *name), void *context) {
       need_rel_name = reltab_name + 5;
     }
 
+    // TODO: We currently skip relocations of ARM unwind information, because
+    // it is unused.
+    if (!strcmp(".ARM.exidx", need_rel_name)) {
+      continue;
+    }
+
     ELFSectionProgBitsTy *need_rel =
       static_cast<ELFSectionProgBitsTy *>(getSectionByName(need_rel_name));
     rsl_assert(need_rel && "Need be relocated section can't be NULL.");
