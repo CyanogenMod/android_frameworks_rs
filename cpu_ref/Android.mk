@@ -72,6 +72,12 @@ ifeq ($(ARCH_ARM_HAVE_VFP),true)
     LOCAL_ASFLAGS_arm := -mfpu=neon
 endif
 
+ifeq ($(ARCH_X86_HAVE_SSSE3),true)
+    LOCAL_CFLAGS += -DARCH_X86_HAVE_SSSE3
+    LOCAL_SRC_FILES+= \
+    rsCpuIntrinsics_x86.c
+endif
+
 LOCAL_SHARED_LIBRARIES += libRS libcutils libutils liblog libsync
 
 # these are not supported in 64-bit yet
