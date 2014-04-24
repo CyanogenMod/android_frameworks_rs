@@ -66,52 +66,6 @@ void ScriptIntrinsic3DLUT::setLUT(sp<Allocation> lut) {
     Script::setVar(0, lut);
 }
 
-sp<ScriptIntrinsicVP9InterPred> ScriptIntrinsicVP9InterPred::create(sp<RS> rs, sp<const Element> e) {
-    if (e->isCompatible(Element::U8(rs)) == false) {
-        rs->throwError(RS_ERROR_INVALID_ELEMENT, "Element not supported for intrinsic");
-        return NULL;
-    }
-    return new ScriptIntrinsicVP9InterPred(rs, e);
-}
-
-ScriptIntrinsicVP9InterPred::ScriptIntrinsicVP9InterPred(sp<RS> rs, sp<const Element> e)
-    : ScriptIntrinsic(rs, RS_SCRIPT_INTRINSIC_ID_INTER_PRED, e) {
-}
-
-void ScriptIntrinsicVP9InterPred::forEach(sp<Allocation> asize) {
-    if (asize->getType()->getElement()->isCompatible(mElement) == false) {
-        mRS->throwError(RS_ERROR_INVALID_ELEMENT, "InterPred forEach element mismatch");
-        return;
-    }
-    Script::forEach(0, asize, NULL, NULL, 0);
-}
-
-void ScriptIntrinsicVP9InterPred::setRef(sp<Allocation> ref) {
-    sp<const Type> t = ref->getType();
-    if (!t->getElement()->isCompatible(mElement)) {
-        mRS->throwError(RS_ERROR_INVALID_ELEMENT, "setRef element does not match");
-        return;
-    }
-    Script::setVar(0, ref);
-}
-
-void ScriptIntrinsicVP9InterPred::setParam(sp<Allocation> param) {
-    sp<const Type> t = param->getType();
-    if (!t->getElement()->isCompatible(mElement)) {
-        mRS->throwError(RS_ERROR_INVALID_ELEMENT, "setFriParam element does not match");
-        return;
-    }
-    Script::setVar(1, param);
-}
-
-void ScriptIntrinsicVP9InterPred::setParamCount(int fri, int sec, int offset) {
-    FieldPacker fp(12);
-    fp.add(fri);
-    fp.add(sec);
-    fp.add(offset);
-    Script::setVar(2, fp.getData(), fp.getLength());
-}
-
 sp<ScriptIntrinsicBlend> ScriptIntrinsicBlend::create(sp<RS> rs, sp<const Element> e) {
     if (e->isCompatible(Element::U8_4(rs)) == false) {
         rs->throwError(RS_ERROR_INVALID_ELEMENT, "Element not supported for intrinsic");
