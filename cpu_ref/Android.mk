@@ -29,12 +29,10 @@ LOCAL_SRC_FILES:= \
 	rsCpuIntrinsicConvolve3x3.cpp \
 	rsCpuIntrinsicConvolve5x5.cpp \
 	rsCpuIntrinsicHistogram.cpp \
-	rsCpuIntrinsicInterPred.cpp \
 	rsCpuIntrinsicLoopFilter.cpp \
 	rsCpuIntrinsicResize.cpp \
 	rsCpuIntrinsicLUT.cpp \
-	rsCpuIntrinsicYuvToRGB.cpp \
-	convolve/convolve.c
+	rsCpuIntrinsicYuvToRGB.cpp
 
 LOCAL_CFLAGS_arm64 += -DARCH_ARM_HAVE_NEON
 LOCAL_CFLAGS_64 += -DFAKE_ARM64_BUILD
@@ -61,11 +59,6 @@ ifeq ($(ARCH_ARM_HAVE_VFP),true)
     rsCpuIntrinsics_neon_Convolve.S \
     rsCpuIntrinsics_neon_ColorMatrix.S \
     rsCpuIntrinsics_neon_YuvToRGB.S \
-    convolve/convolve_copy_neon.s \
-    convolve/convolve_avg_neon.s \
-    convolve/convolve8_neon.s \
-    convolve/convolve8_avg_neon.s \
-    convolve/convolve_neon.c\
     vp9_loopfilter_16_neon.S \
     vp9_loopfilter_neon.S \
     vp9_mb_lpf_neon.S
