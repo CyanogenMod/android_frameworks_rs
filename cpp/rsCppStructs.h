@@ -23,6 +23,7 @@
 
 #include <vector>
 #include <string>
+#include <pthread.h>
 
 /**
  * Every row in an RS allocation is guaranteed to be aligned by this amount, and
