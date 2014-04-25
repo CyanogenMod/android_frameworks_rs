@@ -60,9 +60,6 @@ endif
 # Build the base version of the library
 include $(CLEAR_VARS)
 
-# FIXME for 64-bit
-LOCAL_32_BIT_ONLY := true
-
 LOCAL_MODULE := libclcore.bc
 LOCAL_SRC_FILES := $(clcore_files)
 
@@ -70,9 +67,6 @@ include $(LOCAL_PATH)/build_bc_lib.mk
 
 # Build a debug version of the library
 include $(CLEAR_VARS)
-
-# FIXME for 64-bit
-LOCAL_32_BIT_ONLY := true
 
 LOCAL_MODULE := libclcore_debug.bc
 rs_debug_runtime := 1
@@ -84,9 +78,6 @@ include $(LOCAL_PATH)/build_bc_lib.mk
 ifeq ($(TARGET_ARCH),$(filter $(TARGET_ARCH),x86 x86_64))
 include $(CLEAR_VARS)
 
-# FIXME for 64-bit
-LOCAL_32_BIT_ONLY := true
-
 LOCAL_MODULE := libclcore_x86.bc
 LOCAL_SRC_FILES := $(clcore_x86_files)
 
@@ -96,9 +87,6 @@ endif
 # Build a NEON-enabled version of the library (if possible)
 ifeq ($(ARCH_ARM_HAVE_NEON),true)
   include $(CLEAR_VARS)
-
-  # FIXME for 64-bit
-  LOCAL_32_BIT_ONLY := true
 
   LOCAL_MODULE := libclcore_neon.bc
   LOCAL_SRC_FILES := $(clcore_neon_files)
@@ -146,3 +134,13 @@ LOCAL_IS_HOST_MODULE := true
 LOCAL_SRC_FILES := $(clcore_x86_files)
 include $(LOCAL_PATH)/build_bc_lib.mk
 
+
+
+
+include $(CLEAR_VARS)
+
+BCC_RS_TRIPLE := aarch64-none-linux-gnueabi
+LOCAL_MODULE := librsrt_arm64.bc
+LOCAL_IS_HOST_MODULE := true
+LOCAL_SRC_FILES := $(clcore_files)
+include $(LOCAL_PATH)/build_bc_lib.mk
