@@ -997,7 +997,10 @@ extern float4 __attribute__((overloadable)) normalize(float4 v) {
     return l == 0.0f ? v : v / l;
 }
 
-extern float __attribute__((overloadable)) half_sqrt(float);
+extern float __attribute__((overloadable)) half_sqrt(float v) {
+    return sqrt(v);
+}
+FN_FUNC_FN(half_sqrt)
 
 extern float __attribute__((overloadable)) fast_length(float v) {
     return fabs(v);
@@ -1053,7 +1056,9 @@ extern float4 __attribute__((overloadable)) fast_normalize(float4 v) {
     return (rlength == rlength) ? v * rlength : v;
 }
 
-extern float __attribute__((overloadable)) half_recip(float);
+extern float __attribute__((overloadable)) half_recip(float v) {
+    return 1.f / v;
+}
 
 /*
 extern float __attribute__((overloadable)) approx_atan(float x) {
