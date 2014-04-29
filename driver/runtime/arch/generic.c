@@ -773,67 +773,18 @@ extern float4 __attribute__((overloadable)) rsYuvToRGBA_float4(uchar y, uchar u,
  * half_RECIP
  */
 
-extern float __attribute__((overloadable)) half_recip(float v) {
-    // FIXME:  actual algorithm for generic approximate reciprocal
-    return 1.f / v;
-}
-
 extern float2 __attribute__((overloadable)) half_recip(float2 v) {
-    float2 r;
-    r.x = half_recip(r.x);
-    r.y = half_recip(r.y);
-    return r;
+    return ((float2) 1.f) / v;
 }
 
 extern float3 __attribute__((overloadable)) half_recip(float3 v) {
-    float3 r;
-    r.x = half_recip(r.x);
-    r.y = half_recip(r.y);
-    r.z = half_recip(r.z);
-    return r;
+    return ((float3) 1.f) / v;
 }
 
 extern float4 __attribute__((overloadable)) half_recip(float4 v) {
-    float4 r;
-    r.x = half_recip(r.x);
-    r.y = half_recip(r.y);
-    r.z = half_recip(r.z);
-    r.w = half_recip(r.w);
-    return r;
+    return ((float4) 1.f) / v;
 }
 
-
-/*
- * half_SQRT
- */
-
-extern float __attribute__((overloadable)) half_sqrt(float v) {
-    return sqrt(v);
-}
-
-extern float2 __attribute__((overloadable)) half_sqrt(float2 v) {
-    float2 r;
-    r.x = half_sqrt(v.x);
-    r.y = half_sqrt(v.y);
-    return r;
-}
-
-extern float3 __attribute__((overloadable)) half_sqrt(float3 v) {
-    float3 r;
-    r.x = half_sqrt(v.x);
-    r.y = half_sqrt(v.y);
-    r.z = half_sqrt(v.z);
-    return r;
-}
-
-extern float4 __attribute__((overloadable)) half_sqrt(float4 v) {
-    float4 r;
-    r.x = half_sqrt(v.x);
-    r.y = half_sqrt(v.y);
-    r.z = half_sqrt(v.z);
-    r.w = half_sqrt(v.w);
-    return r;
-}
 
 
 /*
