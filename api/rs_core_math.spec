@@ -1294,7 +1294,7 @@ comment:
  Return the approximate reciprocal of a value.
 version: 17
 # TODO enable once precision is improved
-test: noverify
+#test: noverify
 end:
 
 start:
