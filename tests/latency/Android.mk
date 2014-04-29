@@ -9,8 +9,7 @@ LOCAL_SRC_FILES:= \
 	latency.cpp
 
 LOCAL_STATIC_LIBRARIES := \
-	libRScpp_static \
-	libstlport_static
+	libRScpp_static
 
 LOCAL_LDFLAGS += -llog -ldl
 
