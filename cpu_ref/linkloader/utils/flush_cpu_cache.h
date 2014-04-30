@@ -18,7 +18,7 @@
 #define FLUSH_CPU_CACHE_H
 
 #if defined(__arm__) || defined(__aarch64__) || defined(__mips__)
-#define FLUSH_CPU_CACHE(BEGIN, END) __clear_cache((BEGIN), (END))
+#define FLUSH_CPU_CACHE(BEGIN, END) __builtin___clear_cache((char *)(BEGIN), (char *)(END))
 #else
 #define FLUSH_CPU_CACHE(BEGIN, END) do { } while (0)
 #endif
