@@ -881,7 +881,7 @@ void RsdCpuScriptIntrinsicColorMatrix::kernel(const RsForEachStubParamStruct *p,
         if (gArchUseSIMD) {
             if((cp->mOptKernel != NULL) && (len >= 4)) {
                 cp->mOptKernel(out, in, cp->ip, len >> 2);
-                len &= 3;
+                len &= ~3;
                 x1 += len;
                 out += outstep * len;
                 in += instep * len;
