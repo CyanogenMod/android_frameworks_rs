@@ -63,12 +63,13 @@ void RsdCpuScriptIntrinsicBlur::ComputeGaussianWeights() {
 
     // Compute gaussian weights for the blur
     // e is the euler's number
+    // TODO Define these constants only once
     float e = 2.718281828459045f;
     float pi = 3.1415926535897932f;
-    // g(x) = ( 1 / sqrt( 2 * pi ) * sigma) * e ^ ( -x^2 / 2 * sigma^2 )
+    // g(x) = (1 / (sqrt(2 * pi) * sigma)) * e ^ (-x^2 / (2 * sigma^2))
     // x is of the form [-radius .. 0 .. radius]
-    // and sigma varies with radius.
-    // Based on some experimental radius values and sigma's
+    // and sigma varies with the radius.
+    // Based on some experimental radius values and sigmas,
     // we approximately fit sigma = f(radius) as
     // sigma = radius * 0.4  + 0.6
     // The larger the radius gets, the more our gaussian blur
@@ -91,7 +92,7 @@ void RsdCpuScriptIntrinsicBlur::ComputeGaussianWeights() {
         normalizeFactor += mFp[r + mIradius];
     }
 
-    //Now we need to normalize the weights because all our coefficients need to add up to one
+    // Now we need to normalize the weights because all our coefficients need to add up to one
     normalizeFactor = 1.0f / normalizeFactor;
     for (r = -mIradius; r <= mIradius; r ++) {
         mFp[r + mIradius] *= normalizeFactor;
