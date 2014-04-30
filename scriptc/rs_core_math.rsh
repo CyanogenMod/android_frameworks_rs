@@ -1658,33 +1658,6 @@ extern float4 __attribute__((const, overloadable))convert_float4(float4 v);
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /*
- * Component wise conversion from double2 to float2
- *
- * Supported by API versions 9 and newer.
- */
-extern float2 __attribute__((const, overloadable))convert_float2(double2 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from double3 to float3
- *
- * Supported by API versions 9 and newer.
- */
-extern float3 __attribute__((const, overloadable))convert_float3(double3 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from double4 to float4
- *
- * Supported by API versions 9 and newer.
- */
-extern float4 __attribute__((const, overloadable))convert_float4(double4 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
  * Component wise conversion from char2 to float2
  *
  * Supported by API versions 9 and newer.
@@ -1847,330 +1820,6 @@ extern float4 __attribute__((const, overloadable))convert_float4(uint4 v);
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /*
- * Component wise conversion from long2 to float2
- *
- * Supported by API versions 9 and newer.
- */
-extern float2 __attribute__((const, overloadable))convert_float2(long2 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from long3 to float3
- *
- * Supported by API versions 9 and newer.
- */
-extern float3 __attribute__((const, overloadable))convert_float3(long3 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from long4 to float4
- *
- * Supported by API versions 9 and newer.
- */
-extern float4 __attribute__((const, overloadable))convert_float4(long4 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from ulong2 to float2
- *
- * Supported by API versions 9 and newer.
- */
-extern float2 __attribute__((const, overloadable))convert_float2(ulong2 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from ulong3 to float3
- *
- * Supported by API versions 9 and newer.
- */
-extern float3 __attribute__((const, overloadable))convert_float3(ulong3 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from ulong4 to float4
- *
- * Supported by API versions 9 and newer.
- */
-extern float4 __attribute__((const, overloadable))convert_float4(ulong4 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from float2 to double2
- *
- * Supported by API versions 9 and newer.
- */
-extern double2 __attribute__((const, overloadable))convert_double2(float2 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from float3 to double3
- *
- * Supported by API versions 9 and newer.
- */
-extern double3 __attribute__((const, overloadable))convert_double3(float3 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from float4 to double4
- *
- * Supported by API versions 9 and newer.
- */
-extern double4 __attribute__((const, overloadable))convert_double4(float4 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from double2 to double2
- *
- * Supported by API versions 9 and newer.
- */
-extern double2 __attribute__((const, overloadable))convert_double2(double2 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from double3 to double3
- *
- * Supported by API versions 9 and newer.
- */
-extern double3 __attribute__((const, overloadable))convert_double3(double3 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from double4 to double4
- *
- * Supported by API versions 9 and newer.
- */
-extern double4 __attribute__((const, overloadable))convert_double4(double4 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from char2 to double2
- *
- * Supported by API versions 9 and newer.
- */
-extern double2 __attribute__((const, overloadable))convert_double2(char2 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from char3 to double3
- *
- * Supported by API versions 9 and newer.
- */
-extern double3 __attribute__((const, overloadable))convert_double3(char3 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from char4 to double4
- *
- * Supported by API versions 9 and newer.
- */
-extern double4 __attribute__((const, overloadable))convert_double4(char4 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from uchar2 to double2
- *
- * Supported by API versions 9 and newer.
- */
-extern double2 __attribute__((const, overloadable))convert_double2(uchar2 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from uchar3 to double3
- *
- * Supported by API versions 9 and newer.
- */
-extern double3 __attribute__((const, overloadable))convert_double3(uchar3 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from uchar4 to double4
- *
- * Supported by API versions 9 and newer.
- */
-extern double4 __attribute__((const, overloadable))convert_double4(uchar4 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from short2 to double2
- *
- * Supported by API versions 9 and newer.
- */
-extern double2 __attribute__((const, overloadable))convert_double2(short2 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from short3 to double3
- *
- * Supported by API versions 9 and newer.
- */
-extern double3 __attribute__((const, overloadable))convert_double3(short3 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from short4 to double4
- *
- * Supported by API versions 9 and newer.
- */
-extern double4 __attribute__((const, overloadable))convert_double4(short4 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from ushort2 to double2
- *
- * Supported by API versions 9 and newer.
- */
-extern double2 __attribute__((const, overloadable))convert_double2(ushort2 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from ushort3 to double3
- *
- * Supported by API versions 9 and newer.
- */
-extern double3 __attribute__((const, overloadable))convert_double3(ushort3 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from ushort4 to double4
- *
- * Supported by API versions 9 and newer.
- */
-extern double4 __attribute__((const, overloadable))convert_double4(ushort4 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from int2 to double2
- *
- * Supported by API versions 9 and newer.
- */
-extern double2 __attribute__((const, overloadable))convert_double2(int2 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from int3 to double3
- *
- * Supported by API versions 9 and newer.
- */
-extern double3 __attribute__((const, overloadable))convert_double3(int3 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from int4 to double4
- *
- * Supported by API versions 9 and newer.
- */
-extern double4 __attribute__((const, overloadable))convert_double4(int4 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from uint2 to double2
- *
- * Supported by API versions 9 and newer.
- */
-extern double2 __attribute__((const, overloadable))convert_double2(uint2 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from uint3 to double3
- *
- * Supported by API versions 9 and newer.
- */
-extern double3 __attribute__((const, overloadable))convert_double3(uint3 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from uint4 to double4
- *
- * Supported by API versions 9 and newer.
- */
-extern double4 __attribute__((const, overloadable))convert_double4(uint4 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from long2 to double2
- *
- * Supported by API versions 9 and newer.
- */
-extern double2 __attribute__((const, overloadable))convert_double2(long2 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from long3 to double3
- *
- * Supported by API versions 9 and newer.
- */
-extern double3 __attribute__((const, overloadable))convert_double3(long3 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from long4 to double4
- *
- * Supported by API versions 9 and newer.
- */
-extern double4 __attribute__((const, overloadable))convert_double4(long4 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from ulong2 to double2
- *
- * Supported by API versions 9 and newer.
- */
-extern double2 __attribute__((const, overloadable))convert_double2(ulong2 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from ulong3 to double3
- *
- * Supported by API versions 9 and newer.
- */
-extern double3 __attribute__((const, overloadable))convert_double3(ulong3 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from ulong4 to double4
- *
- * Supported by API versions 9 and newer.
- */
-extern double4 __attribute__((const, overloadable))convert_double4(ulong4 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
  * Component wise conversion from float2 to char2
  *
  * Supported by API versions 9 and newer.
@@ -2194,33 +1843,6 @@ extern char3 __attribute__((const, overloadable))convert_char3(float3 v);
  * Supported by API versions 9 and newer.
  */
 extern char4 __attribute__((const, overloadable))convert_char4(float4 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from double2 to char2
- *
- * Supported by API versions 9 and newer.
- */
-extern char2 __attribute__((const, overloadable))convert_char2(double2 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from double3 to char3
- *
- * Supported by API versions 9 and newer.
- */
-extern char3 __attribute__((const, overloadable))convert_char3(double3 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from double4 to char4
- *
- * Supported by API versions 9 and newer.
- */
-extern char4 __attribute__((const, overloadable))convert_char4(double4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2387,60 +2009,6 @@ extern char4 __attribute__((const, overloadable))convert_char4(uint4 v);
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /*
- * Component wise conversion from long2 to char2
- *
- * Supported by API versions 9 and newer.
- */
-extern char2 __attribute__((const, overloadable))convert_char2(long2 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from long3 to char3
- *
- * Supported by API versions 9 and newer.
- */
-extern char3 __attribute__((const, overloadable))convert_char3(long3 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from long4 to char4
- *
- * Supported by API versions 9 and newer.
- */
-extern char4 __attribute__((const, overloadable))convert_char4(long4 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from ulong2 to char2
- *
- * Supported by API versions 9 and newer.
- */
-extern char2 __attribute__((const, overloadable))convert_char2(ulong2 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from ulong3 to char3
- *
- * Supported by API versions 9 and newer.
- */
-extern char3 __attribute__((const, overloadable))convert_char3(ulong3 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from ulong4 to char4
- *
- * Supported by API versions 9 and newer.
- */
-extern char4 __attribute__((const, overloadable))convert_char4(ulong4 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
  * Component wise conversion from float2 to uchar2
  *
  * Supported by API versions 9 and newer.
@@ -2464,33 +2032,6 @@ extern uchar3 __attribute__((const, overloadable))convert_uchar3(float3 v);
  * Supported by API versions 9 and newer.
  */
 extern uchar4 __attribute__((const, overloadable))convert_uchar4(float4 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from double2 to uchar2
- *
- * Supported by API versions 9 and newer.
- */
-extern uchar2 __attribute__((const, overloadable))convert_uchar2(double2 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from double3 to uchar3
- *
- * Supported by API versions 9 and newer.
- */
-extern uchar3 __attribute__((const, overloadable))convert_uchar3(double3 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from double4 to uchar4
- *
- * Supported by API versions 9 and newer.
- */
-extern uchar4 __attribute__((const, overloadable))convert_uchar4(double4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2657,60 +2198,6 @@ extern uchar4 __attribute__((const, overloadable))convert_uchar4(uint4 v);
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /*
- * Component wise conversion from long2 to uchar2
- *
- * Supported by API versions 9 and newer.
- */
-extern uchar2 __attribute__((const, overloadable))convert_uchar2(long2 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from long3 to uchar3
- *
- * Supported by API versions 9 and newer.
- */
-extern uchar3 __attribute__((const, overloadable))convert_uchar3(long3 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from long4 to uchar4
- *
- * Supported by API versions 9 and newer.
- */
-extern uchar4 __attribute__((const, overloadable))convert_uchar4(long4 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from ulong2 to uchar2
- *
- * Supported by API versions 9 and newer.
- */
-extern uchar2 __attribute__((const, overloadable))convert_uchar2(ulong2 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from ulong3 to uchar3
- *
- * Supported by API versions 9 and newer.
- */
-extern uchar3 __attribute__((const, overloadable))convert_uchar3(ulong3 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from ulong4 to uchar4
- *
- * Supported by API versions 9 and newer.
- */
-extern uchar4 __attribute__((const, overloadable))convert_uchar4(ulong4 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
  * Component wise conversion from float2 to short2
  *
  * Supported by API versions 9 and newer.
@@ -2734,33 +2221,6 @@ extern short3 __attribute__((const, overloadable))convert_short3(float3 v);
  * Supported by API versions 9 and newer.
  */
 extern short4 __attribute__((const, overloadable))convert_short4(float4 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from double2 to short2
- *
- * Supported by API versions 9 and newer.
- */
-extern short2 __attribute__((const, overloadable))convert_short2(double2 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from double3 to short3
- *
- * Supported by API versions 9 and newer.
- */
-extern short3 __attribute__((const, overloadable))convert_short3(double3 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from double4 to short4
- *
- * Supported by API versions 9 and newer.
- */
-extern short4 __attribute__((const, overloadable))convert_short4(double4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -2927,60 +2387,6 @@ extern short4 __attribute__((const, overloadable))convert_short4(uint4 v);
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /*
- * Component wise conversion from long2 to short2
- *
- * Supported by API versions 9 and newer.
- */
-extern short2 __attribute__((const, overloadable))convert_short2(long2 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from long3 to short3
- *
- * Supported by API versions 9 and newer.
- */
-extern short3 __attribute__((const, overloadable))convert_short3(long3 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from long4 to short4
- *
- * Supported by API versions 9 and newer.
- */
-extern short4 __attribute__((const, overloadable))convert_short4(long4 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from ulong2 to short2
- *
- * Supported by API versions 9 and newer.
- */
-extern short2 __attribute__((const, overloadable))convert_short2(ulong2 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from ulong3 to short3
- *
- * Supported by API versions 9 and newer.
- */
-extern short3 __attribute__((const, overloadable))convert_short3(ulong3 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from ulong4 to short4
- *
- * Supported by API versions 9 and newer.
- */
-extern short4 __attribute__((const, overloadable))convert_short4(ulong4 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
  * Component wise conversion from float2 to ushort2
  *
  * Supported by API versions 9 and newer.
@@ -3004,33 +2410,6 @@ extern ushort3 __attribute__((const, overloadable))convert_ushort3(float3 v);
  * Supported by API versions 9 and newer.
  */
 extern ushort4 __attribute__((const, overloadable))convert_ushort4(float4 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from double2 to ushort2
- *
- * Supported by API versions 9 and newer.
- */
-extern ushort2 __attribute__((const, overloadable))convert_ushort2(double2 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from double3 to ushort3
- *
- * Supported by API versions 9 and newer.
- */
-extern ushort3 __attribute__((const, overloadable))convert_ushort3(double3 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from double4 to ushort4
- *
- * Supported by API versions 9 and newer.
- */
-extern ushort4 __attribute__((const, overloadable))convert_ushort4(double4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3197,60 +2576,6 @@ extern ushort4 __attribute__((const, overloadable))convert_ushort4(uint4 v);
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /*
- * Component wise conversion from long2 to ushort2
- *
- * Supported by API versions 9 and newer.
- */
-extern ushort2 __attribute__((const, overloadable))convert_ushort2(long2 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from long3 to ushort3
- *
- * Supported by API versions 9 and newer.
- */
-extern ushort3 __attribute__((const, overloadable))convert_ushort3(long3 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from long4 to ushort4
- *
- * Supported by API versions 9 and newer.
- */
-extern ushort4 __attribute__((const, overloadable))convert_ushort4(long4 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from ulong2 to ushort2
- *
- * Supported by API versions 9 and newer.
- */
-extern ushort2 __attribute__((const, overloadable))convert_ushort2(ulong2 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from ulong3 to ushort3
- *
- * Supported by API versions 9 and newer.
- */
-extern ushort3 __attribute__((const, overloadable))convert_ushort3(ulong3 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from ulong4 to ushort4
- *
- * Supported by API versions 9 and newer.
- */
-extern ushort4 __attribute__((const, overloadable))convert_ushort4(ulong4 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
  * Component wise conversion from float2 to int2
  *
  * Supported by API versions 9 and newer.
@@ -3274,33 +2599,6 @@ extern int3 __attribute__((const, overloadable))convert_int3(float3 v);
  * Supported by API versions 9 and newer.
  */
 extern int4 __attribute__((const, overloadable))convert_int4(float4 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from double2 to int2
- *
- * Supported by API versions 9 and newer.
- */
-extern int2 __attribute__((const, overloadable))convert_int2(double2 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from double3 to int3
- *
- * Supported by API versions 9 and newer.
- */
-extern int3 __attribute__((const, overloadable))convert_int3(double3 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from double4 to int4
- *
- * Supported by API versions 9 and newer.
- */
-extern int4 __attribute__((const, overloadable))convert_int4(double4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3467,60 +2765,6 @@ extern int4 __attribute__((const, overloadable))convert_int4(uint4 v);
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /*
- * Component wise conversion from long2 to int2
- *
- * Supported by API versions 9 and newer.
- */
-extern int2 __attribute__((const, overloadable))convert_int2(long2 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from long3 to int3
- *
- * Supported by API versions 9 and newer.
- */
-extern int3 __attribute__((const, overloadable))convert_int3(long3 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from long4 to int4
- *
- * Supported by API versions 9 and newer.
- */
-extern int4 __attribute__((const, overloadable))convert_int4(long4 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from ulong2 to int2
- *
- * Supported by API versions 9 and newer.
- */
-extern int2 __attribute__((const, overloadable))convert_int2(ulong2 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from ulong3 to int3
- *
- * Supported by API versions 9 and newer.
- */
-extern int3 __attribute__((const, overloadable))convert_int3(ulong3 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from ulong4 to int4
- *
- * Supported by API versions 9 and newer.
- */
-extern int4 __attribute__((const, overloadable))convert_int4(ulong4 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
  * Component wise conversion from float2 to uint2
  *
  * Supported by API versions 9 and newer.
@@ -3544,33 +2788,6 @@ extern uint3 __attribute__((const, overloadable))convert_uint3(float3 v);
  * Supported by API versions 9 and newer.
  */
 extern uint4 __attribute__((const, overloadable))convert_uint4(float4 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from double2 to uint2
- *
- * Supported by API versions 9 and newer.
- */
-extern uint2 __attribute__((const, overloadable))convert_uint2(double2 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from double3 to uint3
- *
- * Supported by API versions 9 and newer.
- */
-extern uint3 __attribute__((const, overloadable))convert_uint3(double3 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from double4 to uint4
- *
- * Supported by API versions 9 and newer.
- */
-extern uint4 __attribute__((const, overloadable))convert_uint4(double4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -3735,596 +2952,1622 @@ extern uint3 __attribute__((const, overloadable))convert_uint3(uint3 v);
 extern uint4 __attribute__((const, overloadable))convert_uint4(uint4 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from double2 to float2
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float2 __attribute__((const, overloadable))convert_float2(double2 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from double3 to float3
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float3 __attribute__((const, overloadable))convert_float3(double3 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from double4 to float4
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float4 __attribute__((const, overloadable))convert_float4(double4 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from long2 to float2
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float2 __attribute__((const, overloadable))convert_float2(long2 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from long3 to float3
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float3 __attribute__((const, overloadable))convert_float3(long3 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from long4 to float4
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float4 __attribute__((const, overloadable))convert_float4(long4 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from ulong2 to float2
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float2 __attribute__((const, overloadable))convert_float2(ulong2 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from ulong3 to float3
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float3 __attribute__((const, overloadable))convert_float3(ulong3 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from ulong4 to float4
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float4 __attribute__((const, overloadable))convert_float4(ulong4 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from double2 to double2
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern double2 __attribute__((const, overloadable))convert_double2(double2 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from double3 to double3
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern double3 __attribute__((const, overloadable))convert_double3(double3 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from double4 to double4
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern double4 __attribute__((const, overloadable))convert_double4(double4 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from long2 to double2
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern double2 __attribute__((const, overloadable))convert_double2(long2 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from long3 to double3
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern double3 __attribute__((const, overloadable))convert_double3(long3 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from long4 to double4
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern double4 __attribute__((const, overloadable))convert_double4(long4 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from ulong2 to double2
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern double2 __attribute__((const, overloadable))convert_double2(ulong2 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from ulong3 to double3
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern double3 __attribute__((const, overloadable))convert_double3(ulong3 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from ulong4 to double4
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern double4 __attribute__((const, overloadable))convert_double4(ulong4 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from double2 to char2
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern char2 __attribute__((const, overloadable))convert_char2(double2 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from double3 to char3
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern char3 __attribute__((const, overloadable))convert_char3(double3 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from double4 to char4
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern char4 __attribute__((const, overloadable))convert_char4(double4 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from long2 to char2
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern char2 __attribute__((const, overloadable))convert_char2(long2 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from long3 to char3
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern char3 __attribute__((const, overloadable))convert_char3(long3 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from long4 to char4
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern char4 __attribute__((const, overloadable))convert_char4(long4 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from ulong2 to char2
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern char2 __attribute__((const, overloadable))convert_char2(ulong2 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from ulong3 to char3
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern char3 __attribute__((const, overloadable))convert_char3(ulong3 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from ulong4 to char4
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern char4 __attribute__((const, overloadable))convert_char4(ulong4 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from double2 to uchar2
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern uchar2 __attribute__((const, overloadable))convert_uchar2(double2 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from double3 to uchar3
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern uchar3 __attribute__((const, overloadable))convert_uchar3(double3 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from double4 to uchar4
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern uchar4 __attribute__((const, overloadable))convert_uchar4(double4 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from long2 to uchar2
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern uchar2 __attribute__((const, overloadable))convert_uchar2(long2 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from long3 to uchar3
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern uchar3 __attribute__((const, overloadable))convert_uchar3(long3 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from long4 to uchar4
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern uchar4 __attribute__((const, overloadable))convert_uchar4(long4 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from ulong2 to uchar2
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern uchar2 __attribute__((const, overloadable))convert_uchar2(ulong2 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from ulong3 to uchar3
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern uchar3 __attribute__((const, overloadable))convert_uchar3(ulong3 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from ulong4 to uchar4
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern uchar4 __attribute__((const, overloadable))convert_uchar4(ulong4 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from double2 to short2
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern short2 __attribute__((const, overloadable))convert_short2(double2 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from double3 to short3
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern short3 __attribute__((const, overloadable))convert_short3(double3 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from double4 to short4
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern short4 __attribute__((const, overloadable))convert_short4(double4 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from long2 to short2
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern short2 __attribute__((const, overloadable))convert_short2(long2 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from long3 to short3
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern short3 __attribute__((const, overloadable))convert_short3(long3 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from long4 to short4
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern short4 __attribute__((const, overloadable))convert_short4(long4 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from ulong2 to short2
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern short2 __attribute__((const, overloadable))convert_short2(ulong2 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from ulong3 to short3
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern short3 __attribute__((const, overloadable))convert_short3(ulong3 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from ulong4 to short4
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern short4 __attribute__((const, overloadable))convert_short4(ulong4 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from double2 to ushort2
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern ushort2 __attribute__((const, overloadable))convert_ushort2(double2 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from double3 to ushort3
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern ushort3 __attribute__((const, overloadable))convert_ushort3(double3 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from double4 to ushort4
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern ushort4 __attribute__((const, overloadable))convert_ushort4(double4 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from long2 to ushort2
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern ushort2 __attribute__((const, overloadable))convert_ushort2(long2 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from long3 to ushort3
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern ushort3 __attribute__((const, overloadable))convert_ushort3(long3 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from long4 to ushort4
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern ushort4 __attribute__((const, overloadable))convert_ushort4(long4 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from ulong2 to ushort2
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern ushort2 __attribute__((const, overloadable))convert_ushort2(ulong2 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from ulong3 to ushort3
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern ushort3 __attribute__((const, overloadable))convert_ushort3(ulong3 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from ulong4 to ushort4
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern ushort4 __attribute__((const, overloadable))convert_ushort4(ulong4 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from double2 to int2
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern int2 __attribute__((const, overloadable))convert_int2(double2 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from double3 to int3
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern int3 __attribute__((const, overloadable))convert_int3(double3 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from double4 to int4
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern int4 __attribute__((const, overloadable))convert_int4(double4 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from long2 to int2
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern int2 __attribute__((const, overloadable))convert_int2(long2 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from long3 to int3
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern int3 __attribute__((const, overloadable))convert_int3(long3 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from long4 to int4
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern int4 __attribute__((const, overloadable))convert_int4(long4 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from ulong2 to int2
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern int2 __attribute__((const, overloadable))convert_int2(ulong2 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from ulong3 to int3
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern int3 __attribute__((const, overloadable))convert_int3(ulong3 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from ulong4 to int4
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern int4 __attribute__((const, overloadable))convert_int4(ulong4 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from double2 to uint2
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern uint2 __attribute__((const, overloadable))convert_uint2(double2 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from double3 to uint3
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern uint3 __attribute__((const, overloadable))convert_uint3(double3 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from double4 to uint4
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern uint4 __attribute__((const, overloadable))convert_uint4(double4 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from long2 to uint2
  *
- * Supported by API versions 9 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern uint2 __attribute__((const, overloadable))convert_uint2(long2 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from long3 to uint3
  *
- * Supported by API versions 9 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern uint3 __attribute__((const, overloadable))convert_uint3(long3 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from long4 to uint4
  *
- * Supported by API versions 9 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern uint4 __attribute__((const, overloadable))convert_uint4(long4 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from ulong2 to uint2
  *
- * Supported by API versions 9 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern uint2 __attribute__((const, overloadable))convert_uint2(ulong2 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from ulong3 to uint3
  *
- * Supported by API versions 9 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern uint3 __attribute__((const, overloadable))convert_uint3(ulong3 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from ulong4 to uint4
  *
- * Supported by API versions 9 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern uint4 __attribute__((const, overloadable))convert_uint4(ulong4 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from float2 to long2
- *
- * Supported by API versions 9 and newer.
- */
-extern long2 __attribute__((const, overloadable))convert_long2(float2 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from float3 to long3
- *
- * Supported by API versions 9 and newer.
- */
-extern long3 __attribute__((const, overloadable))convert_long3(float3 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from float4 to long4
- *
- * Supported by API versions 9 and newer.
- */
-extern long4 __attribute__((const, overloadable))convert_long4(float4 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from double2 to long2
  *
- * Supported by API versions 9 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern long2 __attribute__((const, overloadable))convert_long2(double2 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from double3 to long3
  *
- * Supported by API versions 9 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern long3 __attribute__((const, overloadable))convert_long3(double3 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from double4 to long4
  *
- * Supported by API versions 9 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern long4 __attribute__((const, overloadable))convert_long4(double4 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from char2 to long2
- *
- * Supported by API versions 9 and newer.
- */
-extern long2 __attribute__((const, overloadable))convert_long2(char2 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from char3 to long3
- *
- * Supported by API versions 9 and newer.
- */
-extern long3 __attribute__((const, overloadable))convert_long3(char3 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from char4 to long4
- *
- * Supported by API versions 9 and newer.
- */
-extern long4 __attribute__((const, overloadable))convert_long4(char4 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from uchar2 to long2
- *
- * Supported by API versions 9 and newer.
- */
-extern long2 __attribute__((const, overloadable))convert_long2(uchar2 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from uchar3 to long3
- *
- * Supported by API versions 9 and newer.
- */
-extern long3 __attribute__((const, overloadable))convert_long3(uchar3 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from uchar4 to long4
- *
- * Supported by API versions 9 and newer.
- */
-extern long4 __attribute__((const, overloadable))convert_long4(uchar4 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from short2 to long2
- *
- * Supported by API versions 9 and newer.
- */
-extern long2 __attribute__((const, overloadable))convert_long2(short2 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from short3 to long3
- *
- * Supported by API versions 9 and newer.
- */
-extern long3 __attribute__((const, overloadable))convert_long3(short3 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from short4 to long4
- *
- * Supported by API versions 9 and newer.
- */
-extern long4 __attribute__((const, overloadable))convert_long4(short4 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from ushort2 to long2
- *
- * Supported by API versions 9 and newer.
- */
-extern long2 __attribute__((const, overloadable))convert_long2(ushort2 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from ushort3 to long3
- *
- * Supported by API versions 9 and newer.
- */
-extern long3 __attribute__((const, overloadable))convert_long3(ushort3 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from ushort4 to long4
- *
- * Supported by API versions 9 and newer.
- */
-extern long4 __attribute__((const, overloadable))convert_long4(ushort4 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from int2 to long2
- *
- * Supported by API versions 9 and newer.
- */
-extern long2 __attribute__((const, overloadable))convert_long2(int2 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from int3 to long3
- *
- * Supported by API versions 9 and newer.
- */
-extern long3 __attribute__((const, overloadable))convert_long3(int3 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from int4 to long4
- *
- * Supported by API versions 9 and newer.
- */
-extern long4 __attribute__((const, overloadable))convert_long4(int4 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from uint2 to long2
- *
- * Supported by API versions 9 and newer.
- */
-extern long2 __attribute__((const, overloadable))convert_long2(uint2 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from uint3 to long3
- *
- * Supported by API versions 9 and newer.
- */
-extern long3 __attribute__((const, overloadable))convert_long3(uint3 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from uint4 to long4
- *
- * Supported by API versions 9 and newer.
- */
-extern long4 __attribute__((const, overloadable))convert_long4(uint4 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from long2 to long2
  *
- * Supported by API versions 9 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern long2 __attribute__((const, overloadable))convert_long2(long2 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from long3 to long3
  *
- * Supported by API versions 9 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern long3 __attribute__((const, overloadable))convert_long3(long3 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from long4 to long4
  *
- * Supported by API versions 9 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern long4 __attribute__((const, overloadable))convert_long4(long4 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from ulong2 to long2
  *
- * Supported by API versions 9 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern long2 __attribute__((const, overloadable))convert_long2(ulong2 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from ulong3 to long3
  *
- * Supported by API versions 9 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern long3 __attribute__((const, overloadable))convert_long3(ulong3 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from ulong4 to long4
  *
- * Supported by API versions 9 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern long4 __attribute__((const, overloadable))convert_long4(ulong4 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from float2 to ulong2
- *
- * Supported by API versions 9 and newer.
- */
-extern ulong2 __attribute__((const, overloadable))convert_ulong2(float2 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from float3 to ulong3
- *
- * Supported by API versions 9 and newer.
- */
-extern ulong3 __attribute__((const, overloadable))convert_ulong3(float3 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from float4 to ulong4
- *
- * Supported by API versions 9 and newer.
- */
-extern ulong4 __attribute__((const, overloadable))convert_ulong4(float4 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from double2 to ulong2
  *
- * Supported by API versions 9 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern ulong2 __attribute__((const, overloadable))convert_ulong2(double2 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from double3 to ulong3
  *
- * Supported by API versions 9 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern ulong3 __attribute__((const, overloadable))convert_ulong3(double3 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from double4 to ulong4
  *
- * Supported by API versions 9 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern ulong4 __attribute__((const, overloadable))convert_ulong4(double4 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from char2 to ulong2
- *
- * Supported by API versions 9 and newer.
- */
-extern ulong2 __attribute__((const, overloadable))convert_ulong2(char2 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from char3 to ulong3
- *
- * Supported by API versions 9 and newer.
- */
-extern ulong3 __attribute__((const, overloadable))convert_ulong3(char3 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from char4 to ulong4
- *
- * Supported by API versions 9 and newer.
- */
-extern ulong4 __attribute__((const, overloadable))convert_ulong4(char4 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from uchar2 to ulong2
- *
- * Supported by API versions 9 and newer.
- */
-extern ulong2 __attribute__((const, overloadable))convert_ulong2(uchar2 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from uchar3 to ulong3
- *
- * Supported by API versions 9 and newer.
- */
-extern ulong3 __attribute__((const, overloadable))convert_ulong3(uchar3 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from uchar4 to ulong4
- *
- * Supported by API versions 9 and newer.
- */
-extern ulong4 __attribute__((const, overloadable))convert_ulong4(uchar4 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from short2 to ulong2
- *
- * Supported by API versions 9 and newer.
- */
-extern ulong2 __attribute__((const, overloadable))convert_ulong2(short2 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from short3 to ulong3
- *
- * Supported by API versions 9 and newer.
- */
-extern ulong3 __attribute__((const, overloadable))convert_ulong3(short3 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from short4 to ulong4
- *
- * Supported by API versions 9 and newer.
- */
-extern ulong4 __attribute__((const, overloadable))convert_ulong4(short4 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from ushort2 to ulong2
- *
- * Supported by API versions 9 and newer.
- */
-extern ulong2 __attribute__((const, overloadable))convert_ulong2(ushort2 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from ushort3 to ulong3
- *
- * Supported by API versions 9 and newer.
- */
-extern ulong3 __attribute__((const, overloadable))convert_ulong3(ushort3 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from ushort4 to ulong4
- *
- * Supported by API versions 9 and newer.
- */
-extern ulong4 __attribute__((const, overloadable))convert_ulong4(ushort4 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from int2 to ulong2
- *
- * Supported by API versions 9 and newer.
- */
-extern ulong2 __attribute__((const, overloadable))convert_ulong2(int2 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from int3 to ulong3
- *
- * Supported by API versions 9 and newer.
- */
-extern ulong3 __attribute__((const, overloadable))convert_ulong3(int3 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from int4 to ulong4
- *
- * Supported by API versions 9 and newer.
- */
-extern ulong4 __attribute__((const, overloadable))convert_ulong4(int4 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from uint2 to ulong2
- *
- * Supported by API versions 9 and newer.
- */
-extern ulong2 __attribute__((const, overloadable))convert_ulong2(uint2 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from uint3 to ulong3
- *
- * Supported by API versions 9 and newer.
- */
-extern ulong3 __attribute__((const, overloadable))convert_ulong3(uint3 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/*
- * Component wise conversion from uint4 to ulong4
- *
- * Supported by API versions 9 and newer.
- */
-extern ulong4 __attribute__((const, overloadable))convert_ulong4(uint4 v);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from long2 to ulong2
  *
- * Supported by API versions 9 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern ulong2 __attribute__((const, overloadable))convert_ulong2(long2 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from long3 to ulong3
  *
- * Supported by API versions 9 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern ulong3 __attribute__((const, overloadable))convert_ulong3(long3 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from long4 to ulong4
  *
- * Supported by API versions 9 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern ulong4 __attribute__((const, overloadable))convert_ulong4(long4 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from ulong2 to ulong2
  *
- * Supported by API versions 9 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern ulong2 __attribute__((const, overloadable))convert_ulong2(ulong2 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from ulong3 to ulong3
  *
- * Supported by API versions 9 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern ulong3 __attribute__((const, overloadable))convert_ulong3(ulong3 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from ulong4 to ulong4
  *
- * Supported by API versions 9 and newer.
+ * Supported by API versions 21 and newer.
+ */
+extern ulong4 __attribute__((const, overloadable))convert_ulong4(ulong4 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from float2 to double2
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern double2 __attribute__((const, overloadable))convert_double2(float2 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from float3 to double3
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern double3 __attribute__((const, overloadable))convert_double3(float3 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from float4 to double4
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern double4 __attribute__((const, overloadable))convert_double4(float4 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from double2 to double2
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern double2 __attribute__((const, overloadable))convert_double2(double2 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from double3 to double3
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern double3 __attribute__((const, overloadable))convert_double3(double3 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from double4 to double4
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern double4 __attribute__((const, overloadable))convert_double4(double4 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from char2 to double2
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern double2 __attribute__((const, overloadable))convert_double2(char2 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from char3 to double3
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern double3 __attribute__((const, overloadable))convert_double3(char3 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from char4 to double4
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern double4 __attribute__((const, overloadable))convert_double4(char4 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from uchar2 to double2
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern double2 __attribute__((const, overloadable))convert_double2(uchar2 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from uchar3 to double3
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern double3 __attribute__((const, overloadable))convert_double3(uchar3 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from uchar4 to double4
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern double4 __attribute__((const, overloadable))convert_double4(uchar4 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from short2 to double2
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern double2 __attribute__((const, overloadable))convert_double2(short2 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from short3 to double3
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern double3 __attribute__((const, overloadable))convert_double3(short3 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from short4 to double4
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern double4 __attribute__((const, overloadable))convert_double4(short4 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from ushort2 to double2
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern double2 __attribute__((const, overloadable))convert_double2(ushort2 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from ushort3 to double3
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern double3 __attribute__((const, overloadable))convert_double3(ushort3 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from ushort4 to double4
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern double4 __attribute__((const, overloadable))convert_double4(ushort4 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from int2 to double2
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern double2 __attribute__((const, overloadable))convert_double2(int2 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from int3 to double3
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern double3 __attribute__((const, overloadable))convert_double3(int3 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from int4 to double4
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern double4 __attribute__((const, overloadable))convert_double4(int4 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from uint2 to double2
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern double2 __attribute__((const, overloadable))convert_double2(uint2 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from uint3 to double3
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern double3 __attribute__((const, overloadable))convert_double3(uint3 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from uint4 to double4
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern double4 __attribute__((const, overloadable))convert_double4(uint4 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from long2 to double2
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern double2 __attribute__((const, overloadable))convert_double2(long2 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from long3 to double3
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern double3 __attribute__((const, overloadable))convert_double3(long3 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from long4 to double4
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern double4 __attribute__((const, overloadable))convert_double4(long4 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from ulong2 to double2
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern double2 __attribute__((const, overloadable))convert_double2(ulong2 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from ulong3 to double3
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern double3 __attribute__((const, overloadable))convert_double3(ulong3 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from ulong4 to double4
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern double4 __attribute__((const, overloadable))convert_double4(ulong4 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from float2 to long2
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern long2 __attribute__((const, overloadable))convert_long2(float2 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from float3 to long3
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern long3 __attribute__((const, overloadable))convert_long3(float3 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from float4 to long4
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern long4 __attribute__((const, overloadable))convert_long4(float4 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from double2 to long2
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern long2 __attribute__((const, overloadable))convert_long2(double2 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from double3 to long3
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern long3 __attribute__((const, overloadable))convert_long3(double3 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from double4 to long4
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern long4 __attribute__((const, overloadable))convert_long4(double4 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from char2 to long2
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern long2 __attribute__((const, overloadable))convert_long2(char2 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from char3 to long3
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern long3 __attribute__((const, overloadable))convert_long3(char3 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from char4 to long4
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern long4 __attribute__((const, overloadable))convert_long4(char4 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from uchar2 to long2
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern long2 __attribute__((const, overloadable))convert_long2(uchar2 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from uchar3 to long3
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern long3 __attribute__((const, overloadable))convert_long3(uchar3 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from uchar4 to long4
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern long4 __attribute__((const, overloadable))convert_long4(uchar4 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from short2 to long2
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern long2 __attribute__((const, overloadable))convert_long2(short2 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from short3 to long3
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern long3 __attribute__((const, overloadable))convert_long3(short3 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from short4 to long4
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern long4 __attribute__((const, overloadable))convert_long4(short4 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from ushort2 to long2
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern long2 __attribute__((const, overloadable))convert_long2(ushort2 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from ushort3 to long3
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern long3 __attribute__((const, overloadable))convert_long3(ushort3 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from ushort4 to long4
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern long4 __attribute__((const, overloadable))convert_long4(ushort4 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from int2 to long2
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern long2 __attribute__((const, overloadable))convert_long2(int2 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from int3 to long3
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern long3 __attribute__((const, overloadable))convert_long3(int3 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from int4 to long4
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern long4 __attribute__((const, overloadable))convert_long4(int4 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from uint2 to long2
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern long2 __attribute__((const, overloadable))convert_long2(uint2 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from uint3 to long3
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern long3 __attribute__((const, overloadable))convert_long3(uint3 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from uint4 to long4
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern long4 __attribute__((const, overloadable))convert_long4(uint4 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from long2 to long2
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern long2 __attribute__((const, overloadable))convert_long2(long2 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from long3 to long3
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern long3 __attribute__((const, overloadable))convert_long3(long3 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from long4 to long4
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern long4 __attribute__((const, overloadable))convert_long4(long4 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from ulong2 to long2
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern long2 __attribute__((const, overloadable))convert_long2(ulong2 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from ulong3 to long3
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern long3 __attribute__((const, overloadable))convert_long3(ulong3 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from ulong4 to long4
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern long4 __attribute__((const, overloadable))convert_long4(ulong4 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from float2 to ulong2
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern ulong2 __attribute__((const, overloadable))convert_ulong2(float2 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from float3 to ulong3
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern ulong3 __attribute__((const, overloadable))convert_ulong3(float3 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from float4 to ulong4
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern ulong4 __attribute__((const, overloadable))convert_ulong4(float4 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from double2 to ulong2
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern ulong2 __attribute__((const, overloadable))convert_ulong2(double2 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from double3 to ulong3
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern ulong3 __attribute__((const, overloadable))convert_ulong3(double3 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from double4 to ulong4
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern ulong4 __attribute__((const, overloadable))convert_ulong4(double4 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from char2 to ulong2
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern ulong2 __attribute__((const, overloadable))convert_ulong2(char2 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from char3 to ulong3
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern ulong3 __attribute__((const, overloadable))convert_ulong3(char3 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from char4 to ulong4
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern ulong4 __attribute__((const, overloadable))convert_ulong4(char4 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from uchar2 to ulong2
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern ulong2 __attribute__((const, overloadable))convert_ulong2(uchar2 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from uchar3 to ulong3
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern ulong3 __attribute__((const, overloadable))convert_ulong3(uchar3 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from uchar4 to ulong4
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern ulong4 __attribute__((const, overloadable))convert_ulong4(uchar4 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from short2 to ulong2
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern ulong2 __attribute__((const, overloadable))convert_ulong2(short2 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from short3 to ulong3
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern ulong3 __attribute__((const, overloadable))convert_ulong3(short3 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from short4 to ulong4
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern ulong4 __attribute__((const, overloadable))convert_ulong4(short4 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from ushort2 to ulong2
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern ulong2 __attribute__((const, overloadable))convert_ulong2(ushort2 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from ushort3 to ulong3
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern ulong3 __attribute__((const, overloadable))convert_ulong3(ushort3 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from ushort4 to ulong4
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern ulong4 __attribute__((const, overloadable))convert_ulong4(ushort4 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from int2 to ulong2
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern ulong2 __attribute__((const, overloadable))convert_ulong2(int2 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from int3 to ulong3
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern ulong3 __attribute__((const, overloadable))convert_ulong3(int3 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from int4 to ulong4
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern ulong4 __attribute__((const, overloadable))convert_ulong4(int4 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from uint2 to ulong2
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern ulong2 __attribute__((const, overloadable))convert_ulong2(uint2 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from uint3 to ulong3
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern ulong3 __attribute__((const, overloadable))convert_ulong3(uint3 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from uint4 to ulong4
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern ulong4 __attribute__((const, overloadable))convert_ulong4(uint4 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from long2 to ulong2
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern ulong2 __attribute__((const, overloadable))convert_ulong2(long2 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from long3 to ulong3
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern ulong3 __attribute__((const, overloadable))convert_ulong3(long3 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from long4 to ulong4
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern ulong4 __attribute__((const, overloadable))convert_ulong4(long4 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from ulong2 to ulong2
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern ulong2 __attribute__((const, overloadable))convert_ulong2(ulong2 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from ulong3 to ulong3
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern ulong3 __attribute__((const, overloadable))convert_ulong3(ulong3 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Component wise conversion from ulong4 to ulong4
+ *
+ * Supported by API versions 21 and newer.
  */
 extern ulong4 __attribute__((const, overloadable))convert_ulong4(ulong4 v);
 #endif
