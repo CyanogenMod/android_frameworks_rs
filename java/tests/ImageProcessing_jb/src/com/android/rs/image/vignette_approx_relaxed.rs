@@ -15,6 +15,7 @@
  */
 
 #include "ip.rsh"
+#pragma rs_fp_relaxed
 
 #include "vignette_approx.rsh"
 
