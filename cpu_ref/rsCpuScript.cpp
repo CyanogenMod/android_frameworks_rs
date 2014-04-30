@@ -38,6 +38,9 @@
     #include <sys/types.h>
     #include <sys/wait.h>
     #include <unistd.h>
+
+    #include <string>
+    #include <vector>
 #endif
 #endif
 
@@ -221,7 +224,9 @@ static bool compileBitcode(const char *cacheDir,
                            const char *resName,
                            const char *bitcode,
                            size_t bitcodeSize,
-                           const char *core_lib) {
+                           const char *core_lib,
+                           bool useRSDebugContext,
+                           const char *bccPluginName) {
     rsAssert(cacheDir && resName && bitcode && bitcodeSize && core_lib);
 
     android::String8 bcFilename(cacheDir);
@@ -242,21 +247,46 @@ static bool compileBitcode(const char *cacheDir,
     }
 
     pid_t pid = fork();
+
     switch (pid) {
     case -1: {  // Error occurred (we attempt no recovery)
         ALOGE("Couldn't fork for bcc compiler execution");
         return false;
     }
     case 0: {  // Child process
+        std::vector<std::string> args;
+        args.push_back(BCC_EXE_PATH);
+        args.push_back("-o");
+        args.push_back(resName);
+        args.push_back("-output_path");
+        args.push_back(cacheDir);
+        args.push_back("-bclib");
+        args.push_back(core_lib);
+
         // Execute the bcc compiler.
-        execl(BCC_EXE_PATH,
-              BCC_EXE_PATH,
-              "-o", resName,
-              "-output_path", cacheDir,
-              "-bclib", core_lib,
-              bcFilename.string(),
-              (char *) NULL);
-        ALOGE("execl() failed: %s", strerror(errno));
+        if (useRSDebugContext) {
+            args.push_back("-rs-debug-ctx");
+        } else {
+            // Only load additional libraries for compiles that don't use
+            // the debug context.
+            if (bccPluginName && strlen(bccPluginName) > 0) {
+                args.push_back("-load");
+                args.push_back(bccPluginName);
+            }
+        }
+
+        args.push_back(bcFilename.string());
+
+        const char **cargs = new const char *[args.size() + 1];
+        for (uint32_t i = 0; i < args.size(); i++) {
+            cargs[i] = args[i].c_str();
+        }
+        cargs[args.size()] = NULL;
+
+        execv(BCC_EXE_PATH, (char *const *)cargs);
+
+        delete [] cargs;
+        ALOGE("execv() failed: %s", strerror(errno));
         abort();
         return false;
     }
@@ -360,7 +390,7 @@ RsdCpuScriptImpl::RsdCpuScriptImpl(RsdCpuReferenceImpl *ctx, const Script *s) {
 
 bool RsdCpuScriptImpl::init(char const *resName, char const *cacheDir,
                             uint8_t const *bitcode, size_t bitcodeSize,
-                            uint32_t flags) {
+                            uint32_t flags, char const *bccPluginName) {
     //ALOGE("rsdScriptCreate %p %p %p %p %i %i %p", rsc, resName, cacheDir, bitcode, bitcodeSize, flags, lookupFunc);
     //ALOGE("rsdScriptInit %p %p", rsc, script);
 
@@ -368,6 +398,7 @@ bool RsdCpuScriptImpl::init(char const *resName, char const *cacheDir,
 #ifndef FAKE_ARM64_BUILD
 #ifndef RS_COMPATIBILITY_LIB
     bcc::RSExecutable *exec = NULL;
+    bool useRSDebugContext = false;
 
     mCompilerContext = NULL;
     mCompilerDriver = NULL;
@@ -436,6 +467,7 @@ bool RsdCpuScriptImpl::init(char const *resName, char const *cacheDir,
         // Use the libclcore_debug.bc instead of the default library.
         core_lib = bcc::RSInfo::LibCLCoreDebugPath;
         mCompilerDriver->setDebugContext(true);
+        useRSDebugContext = true;
         // Skip the cache lookup
     } else if (!is_force_recompile()) {
         // Attempt to just load the script from cache first if we can.
@@ -446,7 +478,8 @@ bool RsdCpuScriptImpl::init(char const *resName, char const *cacheDir,
     if (exec == NULL) {
 #ifdef EXTERNAL_BCC_COMPILER
         bool built = compileBitcode(cacheDir, resName, (const char *)bitcode,
-                                    bitcodeSize, core_lib);
+                                    bitcodeSize, core_lib, useRSDebugContext,
+                                    bccPluginName);
 #else
         bool built = mCompilerDriver->build(*mCompilerContext, cacheDir,
                                             resName, (const char *)bitcode,
