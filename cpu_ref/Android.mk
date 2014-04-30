@@ -85,6 +85,8 @@ LOCAL_C_INCLUDES += frameworks/compile/libbcc/include
 LOCAL_C_INCLUDES += frameworks/rs
 LOCAL_C_INCLUDES += system/core/include
 
+include external/libcxx/libcxx.mk
+
 LOCAL_CFLAGS += $(rs_base_CFLAGS)
 
 LOCAL_LDLIBS := -lpthread -ldl

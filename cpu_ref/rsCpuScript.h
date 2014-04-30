@@ -47,7 +47,8 @@ public:
 #endif
 
     bool init(char const *resName, char const *cacheDir,
-              uint8_t const *bitcode, size_t bitcodeSize, uint32_t flags);
+              uint8_t const *bitcode, size_t bitcodeSize, uint32_t flags,
+              char const *bccPluginName = NULL);
     virtual void populateScript(Script *);
 
     virtual void invokeFunction(uint32_t slot, const void *params, size_t paramLength);

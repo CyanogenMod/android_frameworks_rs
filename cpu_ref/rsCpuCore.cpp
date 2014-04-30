@@ -66,7 +66,8 @@ RsdCpuReference * RsdCpuReference::create(Context *rsc, uint32_t version_major,
         uint32_t version_minor, sym_lookup_t lfn, script_lookup_t slfn
 #ifndef RS_COMPATIBILITY_LIB
         , bcc::RSLinkRuntimeCallback pLinkRuntimeCallback,
-        RSSelectRTCallback pSelectRTCallback
+        RSSelectRTCallback pSelectRTCallback,
+        const char *pBccPluginName
 #endif
         ) {
 
@@ -82,6 +83,9 @@ RsdCpuReference * RsdCpuReference::create(Context *rsc, uint32_t version_major,
 #ifndef RS_COMPATIBILITY_LIB
     cpu->setLinkRuntimeCallback(pLinkRuntimeCallback);
     cpu->setSelectRTCallback(pSelectRTCallback);
+    if (pBccPluginName) {
+        cpu->setBccPluginName(pBccPluginName);
+    }
 #endif
 
     return cpu;
@@ -504,7 +508,11 @@ RsdCpuReference::CpuScript * RsdCpuReferenceImpl::createScript(const ScriptC *s,
                                     uint32_t flags) {
 
     RsdCpuScriptImpl *i = new RsdCpuScriptImpl(this, s);
-    if (!i->init(resName, cacheDir, bitcode, bitcodeSize, flags)) {
+    if (!i->init(resName, cacheDir, bitcode, bitcodeSize, flags
+#ifndef RS_COMPATIBILITY_LIB
+        , getBccPluginName()
+#endif
+        )) {
         delete i;
         return NULL;
     }
