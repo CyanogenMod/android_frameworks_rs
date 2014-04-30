@@ -880,7 +880,11 @@ void RsdCpuScriptIntrinsicColorMatrix::kernel(const RsForEachStubParamStruct *p,
         int32_t len = x2 - x1;
         if (gArchUseSIMD) {
             if((cp->mOptKernel != NULL) && (len >= 4)) {
+                // The optimized kernel processes 4 pixels at once
+                // and requires a minimum of 1 chunk of 4
                 cp->mOptKernel(out, in, cp->ip, len >> 2);
+                // Update the len and pointers so the generic code can
+                // finish any leftover pixels
                 len &= ~3;
                 x1 += len;
                 out += outstep * len;
