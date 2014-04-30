@@ -23,6 +23,8 @@
 #include "rsElement.h"
 #include "rsScriptC.h"
 
+#include <string>
+
 namespace bcc {
     class BCCContext;
     class RSCompilerDriver;
@@ -134,6 +136,13 @@ public:
     virtual RSSetupCompilerCallback getSetupCompilerCallback() const {
         return mSetupCompilerCallback;
     }
+
+    virtual void setBccPluginName(const char *name) {
+        mBccPluginName.assign(name);
+    }
+    virtual const char *getBccPluginName() const {
+        return mBccPluginName.c_str();
+    }
 #endif
     virtual bool getInForEach() { return mInForEach; }
 
@@ -166,6 +175,7 @@ protected:
     bcc::RSLinkRuntimeCallback mLinkRuntimeCallback;
     RSSelectRTCallback mSelectRTCallback;
     RSSetupCompilerCallback mSetupCompilerCallback;
+    std::string mBccPluginName;
 #endif
 };
 
