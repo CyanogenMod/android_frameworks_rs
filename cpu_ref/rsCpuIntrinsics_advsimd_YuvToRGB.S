@@ -165,7 +165,7 @@
 1:      tbz         x2, #0, 1f
         ld1         {v8.b}[1], [x1], #1
   .if \interleaved
-        ld1         {v16.b}[1], [x3], #1
+        ld1         {v16.h}[0], [x3], #2
   .else
         ld1         {v16.b}[0], [x3], #1
         ld1         {v17.b}[0], [x4], #1
@@ -247,7 +247,7 @@ END(rsdIntrinsicYuv2_K)
  *          size_t xend);       // x4
  */
 ENTRY(rsdIntrinsicYuv_K)
-        bic         x5, x4, #1
+        bic         x5, x3, #1
         add         x0, x0, x5, LSL #2
         add         x1, x1, x5
         add         x3, x2, x5
@@ -273,7 +273,7 @@ END(rsdIntrinsicYuv_K)
  *          size_t xend);       // x4
  */
 ENTRY(rsdIntrinsicYuvR_K)
-        bic         x5, x4, #1
+        bic         x5, x3, #1
         add         x0, x0, x5, LSL #2
         add         x1, x1, x5
         add         x3, x2, x5
