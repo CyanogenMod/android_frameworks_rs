@@ -349,10 +349,6 @@ public:
     Permutation(Function* function, Specification* specification, int i1, int i2, int i3, int i4);
     void writeFiles(ofstream& headerFile, ofstream& rsFile, ofstream& javaFile,
                     int versionOfTestFiles);
-#define DISABLE_LONG_AND_DOUBLE_TESTS
-#ifdef DISABLE_LONG_AND_DOUBLE_TESTS
-    bool hasLongOrDoubleParameter() const;
-#endif
 };
 
 // Table of type equivalences
@@ -1146,30 +1142,9 @@ Permutation::Permutation(Function* func, Specification* spec, int i1, int i2, in
     mJavaVerifierComputeMethodName = "compute" + capitalize(mCleanName);
 }
 
-#ifdef DISABLE_LONG_AND_DOUBLE_TESTS
-// TODO Remove once we have long/double copyTo/copyFrom
-bool Permutation::hasLongOrDoubleParameter() const {
-    for (size_t i = 0; i < mParams.size(); i++) {
-        const ParameterDefinition& p = *mParams[i];
-        if (p.javaBaseType == "long" || p.javaBaseType == "double") {
-            return true;
-        }
-    }
-    return false;
-}
-#endif
-
 void Permutation::writeFiles(ofstream& headerFile, ofstream& rsFile, ofstream& javaFile,
                              int versionOfTestFiles) {
     writeHeaderSection(headerFile);
-#ifdef DISABLE_LONG_AND_DOUBLE_TESTS
-    if (hasLongOrDoubleParameter()) {
-        printf("Warning: skipping a test for %s as we don't support long or double arguments (due "
-               "to Allocation not supporting them).\n",
-               mName.c_str());
-        return;
-    }
-#endif
     if (mSpecification->relevantForVersion(versionOfTestFiles) && mTest != "none") {
         writeRsSection(rsFile);
         writeJavaSection(javaFile);
