@@ -1010,15 +1010,15 @@ define <4 x i32> @_Z13convert_uint4Dv4_y(<4 x i64> %in) nounwind readnone always
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 define <4 x i64> @_Z13convert_long4Dv4_f(<4 x float> %in) nounwind readnone alwaysinline {
-  %1 = fptoui <4 x float> %in to <4 x i64>
+  %1 = fptosi <4 x float> %in to <4 x i64>
   ret <4 x i64> %1
 }
 define <3 x i64> @_Z13convert_long3Dv3_f(<3 x float> %in) nounwind readnone alwaysinline {
-  %1 = fptoui <3 x float> %in to <3 x i64>
+  %1 = fptosi <3 x float> %in to <3 x i64>
   ret <3 x i64> %1
 }
 define <2 x i64> @_Z13convert_long2Dv2_f(<2 x float> %in) nounwind readnone alwaysinline {
-  %1 = fptoui <2 x float> %in to <2 x i64>
+  %1 = fptosi <2 x float> %in to <2 x i64>
   ret <2 x i64> %1
 }
 
