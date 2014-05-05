@@ -27,7 +27,7 @@ clcore_base_files := \
     rs_program.c \
     rs_sample.c \
     rs_sampler.c \
-    convert.ll \
+    rs_convert.c \
     allocation.ll \
     rsClamp.ll
 
