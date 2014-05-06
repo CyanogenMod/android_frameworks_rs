@@ -595,8 +595,377 @@ colormatrix_float_ldf1:
             ld1         {v20.4s}, [x1], #16
             br          x4
 
+colormatrix_int_stu1_end:
+            uqxtn       v12.8b, v8.8h
+            tbz         x2, #2, 1f
+            st1         {v12.s}[1], [x0], #4
+1:          tbz         x2, #1, 1f
+            st1         {v12.h}[1], [x0], #2
+1:          tbz         x2, #0, 1f
+            st1         {v12.b}[1], [x0], #1
+1:          b           colormatrix_int_realend
 
-/* size_t rsdIntrinsicColorMatrix_int_K(
+colormatrix_int_stu2_end:
+            uqxtn       v12.8b, v8.8h
+            uqxtn       v13.8b, v9.8h
+            zip1        v12.16b, v12.16b, v13.16b
+            tbz         x2, #2, 1f
+            st1         {v12.d}[1], [x0], #8
+1:          tbz         x2, #1, 1f
+            st1         {v12.s}[1], [x0], #4
+1:          tbz         x2, #0, 1f
+            st1         {v12.h}[1], [x0], #2
+1:          b           colormatrix_int_realend
+
+colormatrix_int_stu3_end:
+            uqxtn       v12.8b, v8.8h
+            uqxtn       v13.8b, v9.8h
+            uqxtn       v14.8b, v10.8h
+            movi        v15.8b, #0
+            tbz         x2, #2, 1f
+            st4         {v12.b,v13.b,v14.b,v15.b}[4], [x0], #4
+            st4         {v12.b,v13.b,v14.b,v15.b}[5], [x0], #4
+            st4         {v12.b,v13.b,v14.b,v15.b}[6], [x0], #4
+            st4         {v12.b,v13.b,v14.b,v15.b}[7], [x0], #4
+1:          tbz         x2, #1, 1f
+            st4         {v12.b,v13.b,v14.b,v15.b}[2], [x0], #4
+            st4         {v12.b,v13.b,v14.b,v15.b}[3], [x0], #4
+1:          tbz         x2, #0, 1f
+            st4         {v12.b,v13.b,v14.b,v15.b}[1], [x0], #4
+1:          b           colormatrix_int_realend
+
+colormatrix_int_stu4_end:
+            uqxtn       v12.8b, v8.8h
+            uqxtn       v13.8b, v9.8h
+            uqxtn       v14.8b, v10.8h
+            uqxtn       v15.8b, v11.8h
+            tbz         x2, #2, 1f
+            st4         {v12.b,v13.b,v14.b,v15.b}[4], [x0], #4
+            st4         {v12.b,v13.b,v14.b,v15.b}[5], [x0], #4
+            st4         {v12.b,v13.b,v14.b,v15.b}[6], [x0], #4
+            st4         {v12.b,v13.b,v14.b,v15.b}[7], [x0], #4
+1:          tbz         x2, #1, 1f
+            st4         {v12.b,v13.b,v14.b,v15.b}[2], [x0], #4
+            st4         {v12.b,v13.b,v14.b,v15.b}[3], [x0], #4
+1:          tbz         x2, #0, 1f
+            st4         {v12.b,v13.b,v14.b,v15.b}[1], [x0], #4
+1:          b           colormatrix_int_realend
+
+
+colormatrix_int_ldu1_end:
+            tbz         x2, #2, 1f
+            ld1         {v15.s}[3], [x1], #4
+1:          tbz         x2, #1, 1f
+            ld1         {v15.h}[5], [x1], #2
+1:          tbz         x2, #0, 1f
+            ld1         {v15.b}[9], [x1], #1
+1:          uxtl2       v12.8h, v15.16b
+            br          x4
+
+colormatrix_int_ldu2_end:
+            tbz         x2, #2, 1f
+            ld1         {v15.d}[1], [x1], #8
+1:          tbz         x2, #1, 1f
+            ld1         {v15.s}[1], [x1], #4
+1:          tbz         x2, #0, 1f
+            ld1         {v15.h}[1], [x1], #2
+1:          uzp1        v14.16b, v15.16b, v15.16b
+            uzp2        v15.16b, v15.16b, v15.16b
+            uxtl        v12.8h, v14.8b
+            uxtl        v13.8h, v15.8b
+            br          x4
+
+colormatrix_int_ldu3_end:
+            tbz         x2, #2, 1f
+            ld4         {v12.b,v13.b,v14.b,v15.b}[4], [x1], #4
+            ld4         {v12.b,v13.b,v14.b,v15.b}[5], [x1], #4
+            ld4         {v12.b,v13.b,v14.b,v15.b}[6], [x1], #4
+            ld4         {v12.b,v13.b,v14.b,v15.b}[7], [x1], #4
+1:          tbz         x2, #1, 1f
+            ld4         {v12.b,v13.b,v14.b,v15.b}[2], [x1], #4
+            ld4         {v12.b,v13.b,v14.b,v15.b}[3], [x1], #4
+1:          tbz         x2, #0, 1f
+            ld4         {v12.b,v13.b,v14.b,v15.b}[1], [x1], #4
+1:          uxtl        v12.8h, v12.8b
+            uxtl        v13.8h, v13.8b
+            uxtl        v14.8h, v14.8b
+            br          x4
+
+colormatrix_int_ldu4_end:
+            tbz         x2, #2, 1f
+            ld4         {v12.b,v13.b,v14.b,v15.b}[4], [x1], #4
+            ld4         {v12.b,v13.b,v14.b,v15.b}[5], [x1], #4
+            ld4         {v12.b,v13.b,v14.b,v15.b}[6], [x1], #4
+            ld4         {v12.b,v13.b,v14.b,v15.b}[7], [x1], #4
+1:          tbz         x2, #1, 1f
+            ld4         {v12.b,v13.b,v14.b,v15.b}[2], [x1], #4
+            ld4         {v12.b,v13.b,v14.b,v15.b}[3], [x1], #4
+1:          tbz         x2, #0, 1f
+            ld4         {v12.b,v13.b,v14.b,v15.b}[1], [x1], #4
+1:          uxtl        v12.8h, v12.8b
+            uxtl        v13.8h, v13.8b
+            uxtl        v14.8h, v14.8b
+            uxtl        v15.8h, v15.8b
+            br          x4
+
+colormatrix_float_stu1_end:
+            fcvtzs      v12.4s, v8.4s, #1
+            fcvtzs      v13.4s, v16.4s, #1
+            sqrshrun    v12.4h, v12.4s, #1
+            sqrshrun2   v12.8h, v13.4s, #1
+            uqxtn       v12.8b, v12.8h
+            tbz         x2, #2, 1f
+            st1         {v12.s}[1], [x0], #4
+1:          tbz         x2, #1, 1f
+            st1         {v12.h}[1], [x0], #2
+1:          tbz         x2, #0, 1f
+            st1         {v12.b}[1], [x0], #1
+1:          b           colormatrix_float_realend
+
+colormatrix_float_stu2_end:
+            fcvtzs      v12.4s, v8.4s, #1
+            fcvtzs      v13.4s, v9.4s, #1
+            fcvtzs      v14.4s, v16.4s, #1
+            fcvtzs      v15.4s, v17.4s, #1
+            sqrshrun    v12.4h, v12.4s, #1
+            sqrshrun    v13.4h, v13.4s, #1
+            sqrshrun    v14.4h, v14.4s, #1
+            sqrshrun    v15.4h, v15.4s, #1
+            zip1        v12.8h, v12.8h, v13.8h
+            zip1        v13.8h, v14.8h, v15.8h
+            uqxtn       v12.8b, v12.8h
+            uqxtn2      v12.16b, v13.8h
+            tbz         x2, #2, 1f
+            st1         {v12.d}[1], [x0], #8
+1:          tbz         x2, #1, 1f
+            st1         {v12.s}[1], [x0], #4
+1:          tbz         x2, #0, 1f
+            st1         {v12.h}[1], [x0], #2
+1:          b           colormatrix_float_realend
+
+colormatrix_float_stu3_end:
+            fcvtzs      v24.4s, v8.4s, #1
+            fcvtzs      v25.4s, v9.4s, #1
+            fcvtzs      v26.4s, v10.4s, #1
+            fcvtzs      v28.4s, v16.4s, #1
+            fcvtzs      v29.4s, v17.4s, #1
+            fcvtzs      v30.4s, v18.4s, #1
+            sqrshrun    v24.4h, v24.4s, #1
+            sqrshrun    v25.4h, v25.4s, #1
+            sqrshrun    v26.4h, v26.4s, #1
+            sqrshrun2   v24.8h, v28.4s, #1
+            sqrshrun2   v25.8h, v29.4s, #1
+            sqrshrun2   v26.8h, v30.4s, #1
+            uqxtn       v12.8b, v24.8h
+            uqxtn       v13.8b, v25.8h
+            uqxtn       v14.8b, v26.8h
+            movi        v15.8b, #0
+            tbz         x2, #2, 1f
+            st4         {v12.b,v13.b,v14.b,v15.b}[4], [x0], #4
+            st4         {v12.b,v13.b,v14.b,v15.b}[5], [x0], #4
+            st4         {v12.b,v13.b,v14.b,v15.b}[6], [x0], #4
+            st4         {v12.b,v13.b,v14.b,v15.b}[7], [x0], #4
+1:          tbz         x2, #1, 1f
+            st4         {v12.b,v13.b,v14.b,v15.b}[2], [x0], #4
+            st4         {v12.b,v13.b,v14.b,v15.b}[3], [x0], #4
+1:          tbz         x2, #0, 1f
+            st4         {v12.b,v13.b,v14.b,v15.b}[1], [x0], #4
+1:          b           colormatrix_float_realend
+
+colormatrix_float_stu4_end:
+            fcvtzs      v24.4s, v8.4s, #1
+            fcvtzs      v25.4s, v9.4s, #1
+            fcvtzs      v26.4s, v10.4s, #1
+            fcvtzs      v27.4s, v11.4s, #1
+            fcvtzs      v28.4s, v16.4s, #1
+            fcvtzs      v29.4s, v17.4s, #1
+            fcvtzs      v30.4s, v18.4s, #1
+            fcvtzs      v31.4s, v19.4s, #1
+            sqrshrun    v24.4h, v24.4s, #1
+            sqrshrun    v25.4h, v25.4s, #1
+            sqrshrun    v26.4h, v26.4s, #1
+            sqrshrun    v27.4h, v27.4s, #1
+            sqrshrun2   v24.8h, v28.4s, #1
+            sqrshrun2   v25.8h, v29.4s, #1
+            sqrshrun2   v26.8h, v30.4s, #1
+            sqrshrun2   v27.8h, v31.4s, #1
+            uqxtn       v12.8b, v24.8h
+            uqxtn       v13.8b, v25.8h
+            uqxtn       v14.8b, v26.8h
+            uqxtn       v15.8b, v27.8h
+            tbz         x2, #2, 1f
+            st4         {v12.b,v13.b,v14.b,v15.b}[4], [x0], #4
+            st4         {v12.b,v13.b,v14.b,v15.b}[5], [x0], #4
+            st4         {v12.b,v13.b,v14.b,v15.b}[6], [x0], #4
+            st4         {v12.b,v13.b,v14.b,v15.b}[7], [x0], #4
+1:          tbz         x2, #1, 1f
+            st4         {v12.b,v13.b,v14.b,v15.b}[2], [x0], #4
+            st4         {v12.b,v13.b,v14.b,v15.b}[3], [x0], #4
+1:          tbz         x2, #0, 1f
+            st4         {v12.b,v13.b,v14.b,v15.b}[1], [x0], #4
+1:          b           colormatrix_float_realend
+
+colormatrix_float_stf1_end:
+            tbz         x2, #2, 1f
+            st1         {v16.4s}, [x0], #16
+1:          tbz         x2, #1, 1f
+            st1         {v8.d}[1], [x0], #8
+1:          tbz         x2, #0, 1f
+            st1         {v8.s}[1], [x0], #4
+1:          b           colormatrix_float_realend
+
+colormatrix_float_stf2_end:
+            tbz         x2, #2, 1f
+            st2         {v16.4s, v17.4s}, [x0], #32
+1:          tbz         x2, #1, 1f
+            st2         {v8.s,v9.s}[2], [x0], #8
+            st2         {v8.s,v9.s}[3], [x0], #8
+1:          tbz         x2, #0, 1f
+            st2         {v8.s,v9.s}[1], [x0], #8
+1:          b           colormatrix_float_realend
+
+colormatrix_float_stf3_end:
+            movi        v11.16b, #0
+            movi        v19.16b, #0
+colormatrix_float_stf4_end:
+            tbz         x2, #2, 1f
+            st4         {v16.4s,v17.4s,v18.4s,v19.4s}, [x0], #64
+1:          tbz         x2, #1, 1f
+            st4         {v8.s,v9.s,v10.s,v11.s}[2], [x0], #16
+            st4         {v8.s,v9.s,v10.s,v11.s}[3], [x0], #16
+1:          tbz         x2, #0, 1f
+            st4         {v8.s,v9.s,v10.s,v11.s}[1], [x0], #16
+1:          b           colormatrix_float_realend
+
+colormatrix_float_ldu1_end:
+            tbz         x2, #2, 1f
+            ld1         {v15.s}[1], [x1], #4
+1:          tbz         x2, #1, 1f
+            ld1         {v15.h}[1], [x1], #2
+1:          tbz         x2, #0, 1f
+            ld1         {v15.b}[1], [x1], #1
+1:          uxtl        v15.8h, v15.8b
+            uxtl        v12.4s, v15.4h
+            uxtl2       v20.4s, v15.8h
+            ucvtf       v12.4s, v12.4s
+            ucvtf       v20.4s, v20.4s
+            br          x4
+
+colormatrix_float_ldu2_end:
+            tbz         x2, #2, 1f
+            ld1         {v15.d}[1], [x1], #8
+1:          tbz         x2, #1, 1f
+            ld1         {v15.s}[1], [x1], #4
+1:          tbz         x2, #0, 1f
+            ld1         {v15.h}[1], [x1], #2
+1:          uxtl        v14.8h, v15.8b
+            uxtl2       v15.8h, v15.16b
+            uzp1        v12.8h, v14.8h, v14.8h
+            uzp2        v13.8h, v14.8h, v14.8h
+            uzp1        v20.8h, v15.8h, v15.8h
+            uzp2        v21.8h, v15.8h, v15.8h
+            uxtl        v12.4s, v12.4h
+            uxtl        v13.4s, v13.4h
+            uxtl        v20.4s, v20.4h
+            uxtl        v21.4s, v21.4h
+            ucvtf       v12.4s, v12.4s
+            ucvtf       v13.4s, v13.4s
+            ucvtf       v20.4s, v20.4s
+            ucvtf       v21.4s, v21.4s
+            br          x4
+
+colormatrix_float_ldu3_end:
+            tbz         x2, #2, 1f
+            ld4         {v20.b,v21.b,v22.b,v23.b}[4], [x1], #4
+            ld4         {v20.b,v21.b,v22.b,v23.b}[5], [x1], #4
+            ld4         {v20.b,v21.b,v22.b,v23.b}[6], [x1], #4
+            ld4         {v20.b,v21.b,v22.b,v23.b}[7], [x1], #4
+1:          tbz         x2, #1, 1f
+            ld4         {v20.b,v21.b,v22.b,v23.b}[2], [x1], #4
+            ld4         {v20.b,v21.b,v22.b,v23.b}[3], [x1], #4
+1:          tbz         x2, #0, 1f
+            ld4         {v20.b,v21.b,v22.b,v23.b}[1], [x1], #4
+1:          uxtl        v20.8h, v20.8b
+            uxtl        v21.8h, v21.8b
+            uxtl        v22.8h, v22.8b
+            uxtl        v12.4s, v20.4h
+            uxtl        v13.4s, v21.4h
+            uxtl        v14.4s, v22.4h
+            uxtl2       v20.4s, v20.8h
+            uxtl2       v21.4s, v21.8h
+            uxtl2       v22.4s, v22.8h
+            ucvtf       v12.4s, v12.4s
+            ucvtf       v13.4s, v13.4s
+            ucvtf       v14.4s, v14.4s
+            ucvtf       v20.4s, v20.4s
+            ucvtf       v21.4s, v21.4s
+            ucvtf       v22.4s, v22.4s
+            br          x4
+
+colormatrix_float_ldu4_end:
+            tbz         x2, #2, 1f
+            ld4         {v20.b,v21.b,v22.b,v23.b}[4], [x1], #4
+            ld4         {v20.b,v21.b,v22.b,v23.b}[5], [x1], #4
+            ld4         {v20.b,v21.b,v22.b,v23.b}[6], [x1], #4
+            ld4         {v20.b,v21.b,v22.b,v23.b}[7], [x1], #4
+1:          tbz         x2, #1, 1f
+            ld4         {v20.b,v21.b,v22.b,v23.b}[2], [x1], #4
+            ld4         {v20.b,v21.b,v22.b,v23.b}[3], [x1], #4
+1:          tbz         x2, #0, 1f
+            ld4         {v20.b,v21.b,v22.b,v23.b}[1], [x1], #4
+1:          uxtl        v20.8h, v20.8b
+            uxtl        v21.8h, v21.8b
+            uxtl        v22.8h, v22.8b
+            uxtl        v23.8h, v23.8b
+            uxtl        v12.4s, v20.4h
+            uxtl        v13.4s, v21.4h
+            uxtl        v14.4s, v22.4h
+            uxtl        v15.4s, v23.4h
+            uxtl2       v20.4s, v20.8h
+            uxtl2       v21.4s, v21.8h
+            uxtl2       v22.4s, v22.8h
+            uxtl2       v23.4s, v23.8h
+            ucvtf       v12.4s, v12.4s
+            ucvtf       v13.4s, v13.4s
+            ucvtf       v14.4s, v14.4s
+            ucvtf       v15.4s, v15.4s
+            ucvtf       v20.4s, v20.4s
+            ucvtf       v21.4s, v21.4s
+            ucvtf       v22.4s, v22.4s
+            ucvtf       v23.4s, v23.4s
+            br          x4
+
+colormatrix_float_ldf1_end:
+            tbz         x2, #2, 1f
+            ld1         {v20.4s}, [x1], #16
+1:          tbz         x2, #1, 1f
+            ld1         {v12.d}[1], [x1], #8
+1:          tbz         x2, #0, 1f
+            ld1         {v12.s}[1], [x1], #4
+1:          br          x4
+
+colormatrix_float_ldf2_end:
+            tbz         x2, #2, 1f
+            ld2         {v20.4s,v21.4s}, [x1], #32
+1:          tbz         x2, #1, 1f
+            ld2         {v12.s,v13.s}[2], [x1], #8
+            ld2         {v12.s,v13.s}[3], [x1], #8
+1:          tbz         x2, #0, 1f
+            ld2         {v12.s,v13.s}[1], [x1], #8
+1:          br          x4
+
+colormatrix_float_ldf3_end:
+colormatrix_float_ldf4_end:
+            tbz         x2, #2, 1f
+            ld4         {v20.4s,v21.4s,v22.4s,v23.4s}, [x1], #64
+1:          tbz         x2, #1, 1f
+            ld4         {v12.s,v13.s,v14.s,v15.s}[2], [x1], #16
+            ld4         {v12.s,v13.s,v14.s,v15.s}[3], [x1], #16
+1:          tbz         x2, #0, 1f
+            ld4         {v12.s,v13.s,v14.s,v15.s}[1], [x1], #16
+1:          br          x4
+
+/* void rsdIntrinsicColorMatrix_int_K(
  *          void *out,              // x0
  *          void const *in,         // x1
  *          size_t count,           // x2
@@ -605,7 +974,6 @@ colormatrix_float_ldf1:
  *          int32_t const *add);    // x5
  */
 ENTRY(rsdIntrinsicColorMatrix_int_K)
-            stp         x8,x9, [sp, #-16]!
             sub         x7, sp, #32
             sub         sp, sp, #64
             st1         {v8.1d-v11.1d}, [sp]
@@ -636,10 +1004,23 @@ ENTRY(rsdIntrinsicColorMatrix_int_K)
             br          x9
 
 colormatrix_int_end:
+            adds        x2, x2, #8
+            bls         colormatrix_int_realend
+            mov         x16, x8
+            ldp         x8, x9, [x3], #16
+            cmp         x4, x16
+            csel        x4, x8, x4, eq
+            cmp         x5, x16
+            csel        x5, x8, x5, eq
+            cmp         x6, x16
+            csel        x6, x8, x6, eq
+            cmp         x7, x16
+            csel        x7, x8, x7, eq
+            br          x9
+
+colormatrix_int_realend:
             ld1         {v8.1d-v11.1d}, [sp], #32
             ld1         {v12.1d-v15.1d}, [sp], #32
-            ldp         x8,x9, [sp], #16
-            add         x0, x2, #8
             ret
 END(rsdIntrinsicColorMatrix_int_K)
 
@@ -650,28 +1031,35 @@ END(rsdIntrinsicColorMatrix_int_K)
  *          int st);            // x3
  */
 ENTRY(rsdIntrinsicColorMatrixSetup_int_K)
-            adr         x4, 2f
-            ldrsh       x2, [x4, x2, LSL #1]
-            add         x2, x2, x4
-            adr         x4, 3f
-            ldrsh       x3, [x4, x3, LSL #1]
-            add         x3, x3, x4
+            adr         x7, 2f
+            add         x4, x7, x2, LSL #2
+            ldrsh       x2, [x4], #2
+            ldrsh       x4, [x4]
+            add         x2, x2, x7
+            add         x4, x4, x7
+            adr         x7, 3f
+            add         x5, x7, x3, LSL #2
+            ldrsh       x3, [x5], #2
+            ldrsh       x5, [x5]
+            add         x3, x3, x7
+            add         x5, x5, x7
             stp         x2, x3, [x0, #32]
+            stp         x4, x5, [x0, #48]
 
 /* For each column function, if the matrix is all zeroes then write NULL,
  * otherwise look up the appropriate function and store that. */
 
             mov         x3, #4
-            adr         x4, 4f
+            adr         x7, 4f
 1:          ands        x2, x1, #15
             beq         9f
             and         x2, x1, #31
             lsl         x2, x2, #3
-            ldrsh       x2, [x4, x2]
-            add         x2, x2, x4
+            ldrsh       x2, [x7, x2]
+            add         x2, x2, x7
 9:          str         x2, [x0], #8
             lsr         x1, x1, #5
-            add         x4, x4, #2
+            add         x7, x7, #2
             subs        x3, x3, #1
             bne         1b
 
@@ -690,13 +1078,21 @@ ENTRY(rsdIntrinsicColorMatrixSetup_int_K)
 
             .align 4
 2:          .hword      colormatrix_int_stu1-2b
+            .hword      colormatrix_int_stu1_end-2b
             .hword      colormatrix_int_stu2-2b
+            .hword      colormatrix_int_stu2_end-2b
             .hword      colormatrix_int_stu3-2b
+            .hword      colormatrix_int_stu3_end-2b
             .hword      colormatrix_int_stu4-2b
+            .hword      colormatrix_int_stu4_end-2b
 3:          .hword      colormatrix_int_ldu1-3b
+            .hword      colormatrix_int_ldu1_end-3b
             .hword      colormatrix_int_ldu2-3b
+            .hword      colormatrix_int_ldu2_end-3b
             .hword      colormatrix_int_ldu3-3b
+            .hword      colormatrix_int_ldu3_end-3b
             .hword      colormatrix_int_ldu4-3b
+            .hword      colormatrix_int_ldu4_end-3b
 4:
 .irp i, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
             .hword      colormatrix_int_col0_\i-4b
@@ -713,7 +1109,7 @@ ENTRY(rsdIntrinsicColorMatrixSetup_int_K)
 END(rsdIntrinsicColorMatrixSetup_int_K)
 
 
-/* size_t rsdIntrinsicColorMatrix_float_K(
+/* void rsdIntrinsicColorMatrix_float_K(
  *          void *out,              // x0
  *          void const *in,         // x1
  *          size_t count,           // x2
@@ -722,7 +1118,6 @@ END(rsdIntrinsicColorMatrixSetup_int_K)
  *          float const *add);      // x5
  */
 ENTRY(rsdIntrinsicColorMatrix_float_K)
-            stp         x8,x9, [sp, #-16]!
             sub         x7, sp, #32
             sub         sp, sp, #64
             st1         {v8.1d-v11.1d}, [sp]
@@ -753,10 +1148,23 @@ ENTRY(rsdIntrinsicColorMatrix_float_K)
             br          x9
 
 colormatrix_float_end:
+            adds        x2, x2, #8
+            bls         colormatrix_int_realend
+            mov         x16, x8
+            ldp         x8,x9, [x3], #16
+            cmp         x4, x16
+            csel        x4, x8, x4, eq
+            cmp         x5, x16
+            csel        x5, x8, x5, eq
+            cmp         x6, x16
+            csel        x6, x8, x6, eq
+            cmp         x7, x16
+            csel        x7, x8, x7, eq
+            br          x9
+
+colormatrix_float_realend:
             ld1         {v8.1d-v11.1d}, [sp], #32
             ld1         {v12.1d-v15.1d}, [sp], #32
-            ldp         x8,x9, [sp], #16
-            add         x0, x2, #8
             ret
 END(rsdIntrinsicColorMatrix_float_K)
 
@@ -767,28 +1175,35 @@ END(rsdIntrinsicColorMatrix_float_K)
  *          int st);            // x3
  */
 ENTRY(rsdIntrinsicColorMatrixSetup_float_K)
-            adr         x4, 2f
-            ldrsh       x2, [x4, x2, LSL #1]
-            add         x2, x2, x4
-            adr         x4, 3f
-            ldrsh       x3, [x4, x3, LSL #1]
-            add         x3, x3, x4
+            adr         x7, 2f
+            add         x4, x7, x2, LSL #2
+            ldrsh       x2, [x4], #2
+            ldrsh       x4, [x4]
+            add         x2, x2, x7
+            add         x4, x4, x7
+            adr         x7, 3f
+            add         x5, x7, x3, LSL #2
+            ldrsh       x3, [x5], #2
+            ldrsh       x5, [x5]
+            add         x3, x3, x7
+            add         x5, x5, x7
             stp         x2, x3, [x0, #32]
+            stp         x4, x5, [x0, #48]
 
 /* For each column function, if the matrix is all zeroes then write NULL,
  * otherwise look up the appropriate function and store that. */
 
             mov         x3, #4
-            adr         x4, 4f
+            adr         x7, 4f
 1:          ands        x2, x1, #15
             beq         9f
             and         x2, x1, #31
             lsl         x2, x2, #3
-            ldrsh       x2, [x4, x2]
-            add         x2, x2, x4
+            ldrsh       x2, [x7, x2]
+            add         x2, x2, x7
 9:          str         x2, [x0], #8
             lsr         x1, x1, #5
-            add         x4, x4, #2
+            add         x7, x7, #2
             subs        x3, x3, #1
             bne         1b
 
@@ -807,21 +1222,37 @@ ENTRY(rsdIntrinsicColorMatrixSetup_float_K)
 
             .align 4
 2:          .hword      colormatrix_float_stu1-2b
+            .hword      colormatrix_float_stu1_end-2b
             .hword      colormatrix_float_stu2-2b
+            .hword      colormatrix_float_stu2_end-2b
             .hword      colormatrix_float_stu3-2b
+            .hword      colormatrix_float_stu3_end-2b
             .hword      colormatrix_float_stu4-2b
+            .hword      colormatrix_float_stu4_end-2b
             .hword      colormatrix_float_stf1-2b
+            .hword      colormatrix_float_stf1_end-2b
             .hword      colormatrix_float_stf2-2b
+            .hword      colormatrix_float_stf2_end-2b
             .hword      colormatrix_float_stf3-2b
+            .hword      colormatrix_float_stf3_end-2b
             .hword      colormatrix_float_stf4-2b
+            .hword      colormatrix_float_stf4_end-2b
 3:          .hword      colormatrix_float_ldu1-3b
+            .hword      colormatrix_float_ldu1_end-3b
             .hword      colormatrix_float_ldu2-3b
+            .hword      colormatrix_float_ldu2_end-3b
             .hword      colormatrix_float_ldu3-3b
+            .hword      colormatrix_float_ldu3_end-3b
             .hword      colormatrix_float_ldu4-3b
+            .hword      colormatrix_float_ldu4_end-3b
             .hword      colormatrix_float_ldf1-3b
+            .hword      colormatrix_float_ldf1_end-3b
             .hword      colormatrix_float_ldf2-3b
+            .hword      colormatrix_float_ldf2_end-3b
             .hword      colormatrix_float_ldf3-3b
+            .hword      colormatrix_float_ldf3_end-3b
             .hword      colormatrix_float_ldf4-3b
+            .hword      colormatrix_float_ldf4_end-3b
 4:
 .irp i, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
             .hword      colormatrix_float_col0_\i-4b

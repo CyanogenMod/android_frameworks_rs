@@ -130,24 +130,32 @@ typedef struct {
     void (*column[4])(void);
     void (*store)(void);
     void (*load)(void);
+    void (*store_end)(void);
+    void (*load_end)(void);
 } FunctionTab_t;
 
-extern "C" size_t rsdIntrinsicColorMatrix_int_K(
+extern "C" void rsdIntrinsicColorMatrix_int_K(
              void *out, void const *in, size_t count,
              FunctionTab_t const *fns,
              int16_t const *mult, int32_t const *add);
 
-extern "C" void rsdIntrinsicColorMatrixSetup_int_K(
-             FunctionTab_t const *fns,
-             uint32_t mask, int dt, int st);
-
-extern "C" size_t rsdIntrinsicColorMatrix_float_K(
+extern "C" void rsdIntrinsicColorMatrix_float_K(
              void *out, void const *in, size_t count,
              FunctionTab_t const *fns,
              float const *mult, float const *add);
 
+/* The setup functions fill in function tables to be used by above functions;
+ * this code also eliminates jump-to-another-jump cases by short-circuiting
+ * empty functions.  While it's not performance critical, it works out easier
+ * to write the set-up code in assembly than to try to expose the same symbols
+ * and write the code in C.
+ */
+extern "C" void rsdIntrinsicColorMatrixSetup_int_K(
+             FunctionTab_t *fns,
+             uint32_t mask, int dt, int st);
+
 extern "C" void rsdIntrinsicColorMatrixSetup_float_K(
-             FunctionTab_t const *fns,
+             FunctionTab_t *fns,
              uint32_t mask, int dt, int st);
 #endif
 
@@ -874,8 +882,8 @@ void RsdCpuScriptIntrinsicColorMatrix::kernel(const RsForEachStubParamStruct *p,
                                               uint32_t xstart, uint32_t xend,
                                               uint32_t instep, uint32_t outstep) {
     RsdCpuScriptIntrinsicColorMatrix *cp = (RsdCpuScriptIntrinsicColorMatrix *)p->usr;
-    uchar *out = (uchar *)p->out;
-    uchar *in = (uchar *)p->in;
+    uchar *out = (uchar *)p->out + outstep * xstart;
+    uchar *in = (uchar *)p->in + instep * xstart;
     uint32_t x1 = xstart;
     uint32_t x2 = xend;
 
@@ -902,15 +910,14 @@ void RsdCpuScriptIntrinsicColorMatrix::kernel(const RsForEachStubParamStruct *p,
             }
 #if defined(ARCH_ARM64_USE_INTRINSICS)
             else {
-                size_t done;
                 if (cp->mLastKey.u.inType == RS_TYPE_FLOAT_32 || cp->mLastKey.u.outType == RS_TYPE_FLOAT_32) {
-                    done = len - rsdIntrinsicColorMatrix_float_K(out, in, len, &cp->mFnTab, cp->tmpFp, cp->tmpFpa);
+                    rsdIntrinsicColorMatrix_float_K(out, in, len, &cp->mFnTab, cp->tmpFp, cp->tmpFpa);
                 } else {
-                    done = len - rsdIntrinsicColorMatrix_int_K(out, in, len, &cp->mFnTab, cp->ip, cp->ipa);
+                    rsdIntrinsicColorMatrix_int_K(out, in, len, &cp->mFnTab, cp->ip, cp->ipa);
                 }
-                x1 += done;
-                out += outstep * done;
-                in += instep * done;
+                x1 += len;
+                out += outstep * len;
+                in += instep * len;
             }
 #endif
         }
