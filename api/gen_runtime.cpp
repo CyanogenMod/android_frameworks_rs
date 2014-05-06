@@ -90,6 +90,8 @@ struct ParameterDefinition {
     string rsType;        // The Renderscript type, e.g. "uint3"
     string rsBaseType;    // As above but without the number, e.g. "uint"
     string javaBaseType;  // The type we need to declare in Java, e.g. "unsigned int"
+    string specType;      // The type found in the spec, e.g. "f16"
+    bool isFloatType;     // True if it's a floating point value
 
     /* The number of entries in the vector.  It should be either "1", "2", "3", or "4".  It's also
      * "1" for scalars.
@@ -328,10 +330,10 @@ private:
                                const string& argsIndex, const string& actualIndex) const;
     void writeJavaAppendOutputToMessage(ofstream& file, int indent, const ParameterDefinition& p,
                                         const string& argsIndex, const string& actualIndex) const;
-    void writeJavaAppendInputToMessage(ofstream& file, int indent, const string& rsBaseType,
-                                       const string& name, const string& actual) const;
+    void writeJavaAppendInputToMessage(ofstream& file, int indent, const ParameterDefinition& p,
+                                       const string& actual) const;
     void writeJavaAppendNewLineToMessage(ofstream& file, int indent) const;
-    void writeJavaAppendVariableToMessage(ofstream& file, int indent, const string& rsBaseType,
+    void writeJavaAppendVariableToMessage(ofstream& file, int indent, const ParameterDefinition& p,
                                           const string& value) const;
     void writeJavaAppendFloatyVariableToMessage(ofstream& file, int indent,
                                                 const string& value) const;
@@ -347,7 +349,10 @@ public:
     Permutation(Function* function, Specification* specification, int i1, int i2, int i3, int i4);
     void writeFiles(ofstream& headerFile, ofstream& rsFile, ofstream& javaFile,
                     int versionOfTestFiles);
+#define DISABLE_LONG_AND_DOUBLE_TESTS
+#ifdef DISABLE_LONG_AND_DOUBLE_TESTS
     bool hasLongOrDoubleParameter() const;
+#endif
 };
 
 // Table of type equivalences
@@ -362,22 +367,24 @@ struct Type {
     const char* javaType;  // Type in a Java file
     NumberKind kind;
     /* For integers, number of bits of the number, excluding the sign bit.
-     * For floats, number of bits of the exponent.
+     * For floats, number of implied bits of the mantissa.
      */
     int significantBits;
+    // For floats, number of bits of the exponent.  0 for integer types.
+    int exponentBits;
 };
 
-const Type TYPES[] = {{"f16", "FLOAT_16", "half", "half", FLOATING_POINT, 5},
-                      {"f32", "FLOAT_32", "float", "float", FLOATING_POINT, 8},
-                      {"f64", "FLOAT_64", "double", "double", FLOATING_POINT, 11},
-                      {"i8", "SIGNED_8", "char", "byte", SIGNED_INTEGER, 7},
-                      {"u8", "UNSIGNED_8", "uchar", "byte", UNSIGNED_INTEGER, 8},
-                      {"i16", "SIGNED_16", "short", "short", SIGNED_INTEGER, 15},
-                      {"u16", "UNSIGNED_16", "ushort", "short", UNSIGNED_INTEGER, 16},
-                      {"i32", "SIGNED_32", "int", "int", SIGNED_INTEGER, 31},
-                      {"u32", "UNSIGNED_32", "uint", "int", UNSIGNED_INTEGER, 32},
-                      {"i64", "SIGNED_64", "long", "long", SIGNED_INTEGER, 63},
-                      {"u64", "UNSIGNED_64", "ulong", "long", UNSIGNED_INTEGER, 64}};
+const Type TYPES[] = {{"f16", "FLOAT_16", "half", "half", FLOATING_POINT, 11, 5},
+                      {"f32", "FLOAT_32", "float", "float", FLOATING_POINT, 24, 8},
+                      {"f64", "FLOAT_64", "double", "double", FLOATING_POINT, 53, 11},
+                      {"i8", "SIGNED_8", "char", "byte", SIGNED_INTEGER, 7, 0},
+                      {"u8", "UNSIGNED_8", "uchar", "byte", UNSIGNED_INTEGER, 8, 0},
+                      {"i16", "SIGNED_16", "short", "short", SIGNED_INTEGER, 15, 0},
+                      {"u16", "UNSIGNED_16", "ushort", "short", UNSIGNED_INTEGER, 16, 0},
+                      {"i32", "SIGNED_32", "int", "int", SIGNED_INTEGER, 31, 0},
+                      {"u32", "UNSIGNED_32", "uint", "int", UNSIGNED_INTEGER, 32, 0},
+                      {"i64", "SIGNED_64", "long", "long", SIGNED_INTEGER, 63, 0},
+                      {"u64", "UNSIGNED_64", "ulong", "long", UNSIGNED_INTEGER, 64, 0}};
 
 const int NUM_TYPES = sizeof(TYPES) / sizeof(TYPES[0]);
 
@@ -547,6 +554,19 @@ bool parseCommandLine(int argc, char* argv[], int* versionOfTestFiles,
     return true;
 }
 
+/* Returns a double that should be able to be converted to an integer of size
+ * numberOfIntegerBits.
+ */
+static double MaxDoubleForInteger(int numberOfIntegerBits, int mantissaSize) {
+    /* Double has only 52 bits of precision (53 implied). So for longs, we want
+     * to create smaller values to avoid a round up.  Same for floats and halfs.
+     */
+    int lowZeroBits = max(0, numberOfIntegerBits - mantissaSize);
+    unsigned long l = (0xffffffffffffffff >> (64 - numberOfIntegerBits + lowZeroBits))
+                      << lowZeroBits;
+    return (double)l;
+}
+
 /* Parse a parameter definition.  It's of the form "type [*][name]".  The type
  * is required.  The name is optional.  The * indicates it's an output
  * parameter.  We also pass the indexed of this parameter in the definition, so
@@ -637,11 +657,14 @@ void ParameterDefinition::parseParameterDefinition(string s, bool isReturn, int*
     }
 
     typeIndex = FindCType(rsBaseType);
+    isFloatType = false;
     if (typeIndex < 0) {
         // TODO set a global flag when we encounter an error & abort
         printf("Error, could not find %s\n", rsBaseType.c_str());
     } else {
         javaBaseType = TYPES[typeIndex].javaType;
+        specType = TYPES[typeIndex].specType;
+        isFloatType = TYPES[typeIndex].exponentBits > 0;
     }
 }
 
@@ -1123,6 +1146,7 @@ Permutation::Permutation(Function* func, Specification* spec, int i1, int i2, in
     mJavaVerifierComputeMethodName = "compute" + capitalize(mCleanName);
 }
 
+#ifdef DISABLE_LONG_AND_DOUBLE_TESTS
 // TODO Remove once we have long/double copyTo/copyFrom
 bool Permutation::hasLongOrDoubleParameter() const {
     for (size_t i = 0; i < mParams.size(); i++) {
@@ -1133,17 +1157,19 @@ bool Permutation::hasLongOrDoubleParameter() const {
     }
     return false;
 }
+#endif
 
 void Permutation::writeFiles(ofstream& headerFile, ofstream& rsFile, ofstream& javaFile,
                              int versionOfTestFiles) {
     writeHeaderSection(headerFile);
+#ifdef DISABLE_LONG_AND_DOUBLE_TESTS
     if (hasLongOrDoubleParameter()) {
         printf("Warning: skipping a test for %s as we don't support long or double arguments (due "
                "to Allocation not supporting them).\n",
                mName.c_str());
         return;
     }
-
+#endif
     if (mSpecification->relevantForVersion(versionOfTestFiles) && mTest != "none") {
         writeRsSection(rsFile);
         writeJavaSection(javaFile);
@@ -1391,7 +1417,7 @@ void Permutation::writeJavaArgumentClass(ofstream& file, bool scalar) const {
     for (size_t i = 0; i < mParams.size(); i++) {
         const ParameterDefinition& p = *mParams[i];
         s += tab(2) + "public ";
-        if (p.isOutParameter && p.javaBaseType == "float") {
+        if (p.isOutParameter && p.isFloatType) {
             s += "Floaty";
         } else {
             s += p.javaBaseType;
@@ -1472,23 +1498,25 @@ void Permutation::writeJavaRandomCompatibleFloatAllocation(ofstream& file, const
     double maxValue = 0.0;
     switch (compatibleType.kind) {
         case FLOATING_POINT: {
-            // We're generating floating point values.  We just have to worry about the
-            // exponent.  Subtract 1 for the sign.
-            int bits = min(compatibleType.significantBits, generatedType.significantBits) - 1;
+            // We're generating floating point values.  We just worry about the exponent.
+            // Subtract 1 for the exponent sign.
+            int bits = min(compatibleType.exponentBits, generatedType.exponentBits) - 1;
             maxValue = ldexp(0.95, (1 << bits) - 1);
             minValue = -maxValue;
             break;
         }
         case UNSIGNED_INTEGER:
+            maxValue = MaxDoubleForInteger(compatibleType.significantBits,
+                                           generatedType.significantBits);
             minValue = 0.0;
-            maxValue = ldexp(1, compatibleType.significantBits) - 1.0;
             break;
         case SIGNED_INTEGER:
-            minValue = -ldexp(1, compatibleType.significantBits);
-            maxValue = ldexp(1, compatibleType.significantBits) - 1;
+            maxValue = MaxDoubleForInteger(compatibleType.significantBits,
+                                           generatedType.significantBits);
+            minValue = -maxValue - 1.0;
             break;
     }
-    file << scientific << std::setprecision(10);
+    file << scientific << std::setprecision(19);
     file << minValue << ", " << maxValue << ")";
     file.unsetf(ios_base::floatfield);
 }
@@ -1595,8 +1623,7 @@ void Permutation::writeJavaVerifyScalarMethod(ofstream& file) const {
         if (p.isOutParameter) {
             writeJavaAppendOutputToMessage(file, 5, p, "", "[i * " + p.vectorWidth + " + j]");
         } else {
-            writeJavaAppendInputToMessage(file, 5, p.rsBaseType, p.variableName,
-                                          "args." + p.variableName);
+            writeJavaAppendInputToMessage(file, 5, p, "args." + p.variableName);
         }
     }
 
@@ -1628,7 +1655,7 @@ void Permutation::writeJavaTestAndSetValid(ofstream& file, int indent, const Par
 void Permutation::writeJavaTestOneValue(ofstream& file, int indent, const ParameterDefinition& p,
                                         const string& argsIndex, const string& actualIndex) const {
     file << tab(indent) << "if (";
-    if (p.rsBaseType[0] == 'f') {
+    if (p.isFloatType) {
         file << "!args." << p.variableName << argsIndex << ".couldBe(" << p.javaArrayName
              << actualIndex;
         if (!mPrecisionLimit.empty()) {
@@ -1651,14 +1678,14 @@ void Permutation::writeJavaAppendOutputToMessage(ofstream& file, int indent,
     const string expected = "args." + p.variableName + argsIndex;
     const string actual = p.javaArrayName + actualIndex;
     file << tab(indent) << "message.append(\"Expected output " + p.variableName + ": \");\n";
-    if (p.rsBaseType[0] == 'f') {
+    if (p.isFloatType) {
         writeJavaAppendFloatyVariableToMessage(file, indent, expected);
     } else {
-        writeJavaAppendVariableToMessage(file, indent, p.rsBaseType, expected);
+        writeJavaAppendVariableToMessage(file, indent, p, expected);
     }
     writeJavaAppendNewLineToMessage(file, indent);
     file << tab(indent) << "message.append(\"Actual   output " + p.variableName + ": \");\n";
-    writeJavaAppendVariableToMessage(file, indent, p.rsBaseType, actual);
+    writeJavaAppendVariableToMessage(file, indent, p, actual);
 
     writeJavaTestOneValue(file, indent, p, argsIndex, actualIndex);
     file << tab(indent + 1) << "message.append(\" FAIL\");\n";
@@ -1667,10 +1694,10 @@ void Permutation::writeJavaAppendOutputToMessage(ofstream& file, int indent,
 }
 
 void Permutation::writeJavaAppendInputToMessage(ofstream& file, int indent,
-                                                const string& rsBaseType, const string& name,
+                                                const ParameterDefinition& p,
                                                 const string& actual) const {
-    file << tab(indent) << "message.append(\"Input " + name + ": \");\n";
-    writeJavaAppendVariableToMessage(file, indent, rsBaseType, actual);
+    file << tab(indent) << "message.append(\"Input " + p.variableName + ": \");\n";
+    writeJavaAppendVariableToMessage(file, indent, p, actual);
     writeJavaAppendNewLineToMessage(file, indent);
 }
 
@@ -1679,13 +1706,17 @@ void Permutation::writeJavaAppendNewLineToMessage(ofstream& file, int indent) co
 }
 
 void Permutation::writeJavaAppendVariableToMessage(ofstream& file, int indent,
-                                                   const string& rsBaseType,
+                                                   const ParameterDefinition& p,
                                                    const string& value) const {
-    if (rsBaseType[0] == 'f') {
+    if (p.specType == "f16" || p.specType == "f32") {
         file << tab(indent) << "message.append(String.format(\"%14.8g %8x %15a\",\n";
         file << tab(indent + 2) << value << ", "
              << "Float.floatToRawIntBits(" << value << "), " << value << "));\n";
-    } else if (rsBaseType[0] == 'u') {
+    } else if (p.specType == "f64") {
+        file << tab(indent) << "message.append(String.format(\"%24.8g %16x %31a\",\n";
+        file << tab(indent + 2) << value << ", "
+             << "Double.doubleToRawLongBits(" << value << "), " << value << "));\n";
+    } else if (p.specType[0] == 'u') {
         file << tab(indent) << "message.append(String.format(\"0x%x\", " << value << "));\n";
     } else {
         file << tab(indent) << "message.append(String.format(\"%d\", " << value << "));\n";
@@ -1712,11 +1743,10 @@ void Permutation::writeJavaVectorComparison(ofstream& file, int indent,
 void Permutation::writeJavaAppendVectorInputToMessage(ofstream& file, int indent,
                                                       const ParameterDefinition& p) const {
     if (p.mVectorSize == "1") {
-        writeJavaAppendInputToMessage(file, indent, p.rsBaseType, p.variableName,
-                                      p.javaArrayName + "[i]");
+        writeJavaAppendInputToMessage(file, indent, p, p.javaArrayName + "[i]");
     } else {
         file << tab(indent) << "for (int j = 0; j < " << p.mVectorSize << " ; j++) {\n";
-        writeJavaAppendInputToMessage(file, indent + 1, p.rsBaseType, p.variableName,
+        writeJavaAppendInputToMessage(file, indent + 1, p,
                                       p.javaArrayName + "[i * " + p.vectorWidth + " + j]");
         file << tab(indent) << "}\n";
     }
@@ -1750,7 +1780,7 @@ void Permutation::writeJavaVerifyVectorMethod(ofstream& file) const {
         const ParameterDefinition& p = *mParams[i];
         if (p.mVectorSize != "1") {
             string type = p.javaBaseType;
-            if (p.isOutParameter && type == "float") {
+            if (p.isOutParameter && p.isFloatType) {
                 type = "Floaty";
             }
             file << tab(3) << "args." << p.variableName << " = new " << type << "[" << p.mVectorSize
