@@ -29,7 +29,7 @@ end:
 start:
 w: 2, 3, 4
 t: u64, i64, f64
-t: u8, u16, u32, u64, i8, i16, i32, i64, f32, f64
+t: u64, i64, f64
 name: convert_#3#1
 arg: #2#1 v compatible(#3)
 ret: #3#1
@@ -40,7 +40,19 @@ end:
 
 start:
 w: 2, 3, 4
-t: u8, u16, u32, u64, i8, i16, i32, i64, f32, f64
+t: u64, i64, f64
+t: u8, u16, u32, i8, i16, i32, f32
+name: convert_#3#1
+arg: #2#1 v compatible(#3)
+ret: #3#1
+comment:
+ Component wise conversion from #2#1 to #3#1
+version: 21
+end:
+
+start:
+w: 2, 3, 4
+t: u8, u16, u32, i8, i16, i32, f32
 t: u64, i64, f64
 name: convert_#3#1
 arg: #2#1 v compatible(#3)
@@ -1317,8 +1329,6 @@ arg: #2#1 v
 comment:
  Return the approximate reciprocal of a value.
 version: 17
-# TODO enable once precision is improved
-#test: noverify
 end:
 
 start:
