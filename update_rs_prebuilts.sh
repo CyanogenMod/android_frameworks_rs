@@ -122,14 +122,15 @@ if [ $DARWIN -eq 0 ]; then
   for i in $(seq 0 $((${#TARGETS[@]} - 1))); do
     t=${TARGETS[$i]}
     sys_lib_dir=$MY_ANDROID_DIR/out/target/product/${SYS_NAMES[$i]}/system/lib
+    obj_lib_dir=$MY_ANDROID_DIR/out/target/product/${SYS_NAMES[$i]}/obj/lib
     for a in `find renderscript/lib/$t -name \*.so`; do
       file=`basename $a`
-      cp `find $sys_lib_dir -name $file` $a || exit 4
+      cp `find $sys_lib_dir $obj_lib_dir -name $file | head -1` $a || exit 4
     done
 
     for a in `find renderscript/lib/$t -name \*.bc`; do
       file=`basename $a`
-      cp `find $HOST_LIB_DIR $sys_lib_dir -name $file` $a || exit 5
+      cp `find $HOST_LIB_DIR $sys_lib_dir $obj_lib_dir -name $file | head -1` $a || exit 5
     done
   done
 
@@ -153,6 +154,8 @@ TOOLS_LIB="
 libbcc.$SONAME
 libbcinfo.$SONAME
 libclang.$SONAME
+libc++abi.$SONAME
+libc++.$SONAME
 libLLVM.$SONAME
 "
 
