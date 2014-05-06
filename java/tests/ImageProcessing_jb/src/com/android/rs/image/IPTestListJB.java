@@ -71,7 +71,9 @@ public class IPTestListJB {
         WHITE_BALANCE ("White Balance", RELAXED_FP, 160.1f),
         COLOR_CUBE ("Color Cube", RELAXED_FP, 85.3f),
         COLOR_CUBE_3D_INTRINSIC ("Color Cube (3D LUT intrinsic)", INTRINSIC, 49.5f),
-        ARTISTIC1 ("Artistic 1", RELAXED_FP, 120.f);
+        ARTISTIC1 ("Artistic 1", RELAXED_FP, 120.f),
+        RESIZE_BI_SCRIPT ("Resize BiCubic Script", RELAXED_FP, 100.f),
+        RESIZE_BI_INTRINSIC ("Resize BiCubic Intrinsic", INTRINSIC, 100.f);
 
 
         private final String name;
@@ -177,6 +179,10 @@ public class IPTestListJB {
             return new ColorCube(true);
         case ARTISTIC1:
             return new Artistic1();
+        case RESIZE_BI_SCRIPT:
+            return new Resize(false);
+        case RESIZE_BI_INTRINSIC:
+            return new Resize(true);
         }
         return null;
     }
