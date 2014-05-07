@@ -89,7 +89,6 @@ include external/libcxx/libcxx.mk
 
 LOCAL_CFLAGS += $(rs_base_CFLAGS)
 
-LOCAL_LDLIBS := -lpthread -ldl
 LOCAL_MODULE_TAGS := optional
 
 include $(BUILD_SHARED_LIBRARY)
