@@ -49,7 +49,6 @@ LOCAL_C_INCLUDES += external/libcxx/include
 LOCAL_CFLAGS += $(rs_base_CFLAGS)
 LOCAL_CPPFLAGS += -fno-exceptions
 
-LOCAL_LDLIBS := -lpthread -ldl
 LOCAL_MODULE_TAGS := optional
 
 include $(BUILD_SHARED_LIBRARY)
@@ -170,7 +169,6 @@ LOCAL_CFLAGS += $(rs_base_CFLAGS)
 
 LOCAL_CPPFLAGS += -fno-exceptions
 
-LOCAL_LDLIBS := -lpthread -ldl
 LOCAL_MODULE_TAGS := optional
 
 include $(BUILD_SHARED_LIBRARY)
@@ -255,8 +253,6 @@ LOCAL_SRC_FILES:= \
 
 LOCAL_STATIC_LIBRARIES := libcutils libutils liblog
 
-LOCAL_LDLIBS := -lpthread
-
 include $(BUILD_HOST_STATIC_LIBRARY)
 
 LLVM_ROOT_PATH := external/llvm
@@ -333,4 +329,3 @@ include $(LLVM_ROOT_PATH)/llvm-host-build.mk
 include $(BUILD_HOST_STATIC_LIBRARY)
 
 include $(call all-makefiles-under,$(LOCAL_PATH))
-
