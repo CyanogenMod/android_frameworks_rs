@@ -308,34 +308,6 @@ extern int4 __attribute__((overloadable)) max(int4 v1, int4 v2) {
     return r;
 }
 
-extern int64_t __attribute__((overloadable)) max(int64_t v1, int64_t v2) {
-    return v1 > v2 ? v1 : v2;
-}
-
-extern long2 __attribute__((overloadable)) max(long2 v1, long2 v2) {
-    long2 r;
-    r.x = v1.x > v2.x ? v1.x : v2.x;
-    r.y = v1.y > v2.y ? v1.y : v2.y;
-    return r;
-}
-
-extern long3 __attribute__((overloadable)) max(long3 v1, long3 v2) {
-    long3 r;
-    r.x = v1.x > v2.x ? v1.x : v2.x;
-    r.y = v1.y > v2.y ? v1.y : v2.y;
-    r.z = v1.z > v2.z ? v1.z : v2.z;
-    return r;
-}
-
-extern long4 __attribute__((overloadable)) max(long4 v1, long4 v2) {
-    long4 r;
-    r.x = v1.x > v2.x ? v1.x : v2.x;
-    r.y = v1.y > v2.y ? v1.y : v2.y;
-    r.z = v1.z > v2.z ? v1.z : v2.z;
-    r.w = v1.w > v2.w ? v1.w : v2.w;
-    return r;
-}
-
 extern uchar __attribute__((overloadable)) max(uchar v1, uchar v2) {
     return v1 > v2 ? v1 : v2;
 }
@@ -413,34 +385,6 @@ extern uint3 __attribute__((overloadable)) max(uint3 v1, uint3 v2) {
 
 extern uint4 __attribute__((overloadable)) max(uint4 v1, uint4 v2) {
     uint4 r;
-    r.x = v1.x > v2.x ? v1.x : v2.x;
-    r.y = v1.y > v2.y ? v1.y : v2.y;
-    r.z = v1.z > v2.z ? v1.z : v2.z;
-    r.w = v1.w > v2.w ? v1.w : v2.w;
-    return r;
-}
-
-extern ulong __attribute__((overloadable)) max(ulong v1, ulong v2) {
-    return v1 > v2 ? v1 : v2;
-}
-
-extern ulong2 __attribute__((overloadable)) max(ulong2 v1, ulong2 v2) {
-    ulong2 r;
-    r.x = v1.x > v2.x ? v1.x : v2.x;
-    r.y = v1.y > v2.y ? v1.y : v2.y;
-    return r;
-}
-
-extern ulong3 __attribute__((overloadable)) max(ulong3 v1, ulong3 v2) {
-    ulong3 r;
-    r.x = v1.x > v2.x ? v1.x : v2.x;
-    r.y = v1.y > v2.y ? v1.y : v2.y;
-    r.z = v1.z > v2.z ? v1.z : v2.z;
-    return r;
-}
-
-extern ulong4 __attribute__((overloadable)) max(ulong4 v1, ulong4 v2) {
-    ulong4 r;
     r.x = v1.x > v2.x ? v1.x : v2.x;
     r.y = v1.y > v2.y ? v1.y : v2.y;
     r.z = v1.z > v2.z ? v1.z : v2.z;
@@ -565,34 +509,6 @@ extern int4 __attribute__((overloadable)) min(int4 v1, int4 v2) {
     return r;
 }
 
-extern int64_t __attribute__((overloadable)) min(int64_t v1, int64_t v2) {
-    return v1 < v2 ? v1 : v2;
-}
-
-extern long2 __attribute__((overloadable)) min(long2 v1, long2 v2) {
-    long2 r;
-    r.x = v1.x < v2.x ? v1.x : v2.x;
-    r.y = v1.y < v2.y ? v1.y : v2.y;
-    return r;
-}
-
-extern long3 __attribute__((overloadable)) min(long3 v1, long3 v2) {
-    long3 r;
-    r.x = v1.x < v2.x ? v1.x : v2.x;
-    r.y = v1.y < v2.y ? v1.y : v2.y;
-    r.z = v1.z < v2.z ? v1.z : v2.z;
-    return r;
-}
-
-extern long4 __attribute__((overloadable)) min(long4 v1, long4 v2) {
-    long4 r;
-    r.x = v1.x < v2.x ? v1.x : v2.x;
-    r.y = v1.y < v2.y ? v1.y : v2.y;
-    r.z = v1.z < v2.z ? v1.z : v2.z;
-    r.w = v1.w < v2.w ? v1.w : v2.w;
-    return r;
-}
-
 extern uchar __attribute__((overloadable)) min(uchar v1, uchar v2) {
     return v1 < v2 ? v1 : v2;
 }
@@ -670,34 +586,6 @@ extern uint3 __attribute__((overloadable)) min(uint3 v1, uint3 v2) {
 
 extern uint4 __attribute__((overloadable)) min(uint4 v1, uint4 v2) {
     uint4 r;
-    r.x = v1.x < v2.x ? v1.x : v2.x;
-    r.y = v1.y < v2.y ? v1.y : v2.y;
-    r.z = v1.z < v2.z ? v1.z : v2.z;
-    r.w = v1.w < v2.w ? v1.w : v2.w;
-    return r;
-}
-
-extern ulong __attribute__((overloadable)) min(ulong v1, ulong v2) {
-    return v1 < v2 ? v1 : v2;
-}
-
-extern ulong2 __attribute__((overloadable)) min(ulong2 v1, ulong2 v2) {
-    ulong2 r;
-    r.x = v1.x < v2.x ? v1.x : v2.x;
-    r.y = v1.y < v2.y ? v1.y : v2.y;
-    return r;
-}
-
-extern ulong3 __attribute__((overloadable)) min(ulong3 v1, ulong3 v2) {
-    ulong3 r;
-    r.x = v1.x < v2.x ? v1.x : v2.x;
-    r.y = v1.y < v2.y ? v1.y : v2.y;
-    r.z = v1.z < v2.z ? v1.z : v2.z;
-    return r;
-}
-
-extern ulong4 __attribute__((overloadable)) min(ulong4 v1, ulong4 v2) {
-    ulong4 r;
     r.x = v1.x < v2.x ? v1.x : v2.x;
     r.y = v1.y < v2.y ? v1.y : v2.y;
     r.z = v1.z < v2.z ? v1.z : v2.z;

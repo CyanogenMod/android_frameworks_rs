@@ -555,11 +555,6 @@ define <4 x i32> @_Z3maxDv4_jS_(<4 x i32> %v1, <4 x i32> %v2) nounwind readnone 
   ret <4 x i32> %1
 }
 
-define i64 @_Z3maxyy(i64 %v1, i64 %v2) nounwind readnone {
-  %1 = icmp ugt i64 %v1, %v2
-  %2 = select i1 %1, i64 %v1, i64 %v2
-  ret i64 %2
-}
 
 ; TODO:  long vector types
 
@@ -791,11 +786,6 @@ define <4 x i32> @_Z3minDv4_jS_(<4 x i32> %v1, <4 x i32> %v2) nounwind readnone 
   ret <4 x i32> %1
 }
 
-define i64 @_Z3minyy(i64 %v1, i64 %v2) nounwind readnone {
-  %1 = icmp ult i64 %v1, %v2
-  %2 = select i1 %1, i64 %v1, i64 %v2
-  ret i64 %2
-}
 
 ; TODO:  long vector types
 
