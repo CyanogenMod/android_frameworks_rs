@@ -29,6 +29,7 @@
     #include <unistd.h>
 #else
     #include <bcc/BCCContext.h>
+    #include <bcc/Config/Config.h>
     #include <bcc/Renderscript/RSCompilerDriver.h>
     #include <bcc/Renderscript/RSExecutable.h>
     #include <bcc/Renderscript/RSInfo.h>
@@ -262,6 +263,8 @@ static bool compileBitcode(const char *cacheDir,
         args.push_back(cacheDir);
         args.push_back("-bclib");
         args.push_back(core_lib);
+        args.push_back("-mtriple");
+        args.push_back(DEFAULT_TARGET_TRIPLE_STRING);
 
         // Execute the bcc compiler.
         if (useRSDebugContext) {

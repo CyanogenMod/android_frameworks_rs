@@ -86,6 +86,7 @@ LOCAL_C_INCLUDES += frameworks/rs
 LOCAL_C_INCLUDES += system/core/include
 
 include external/libcxx/libcxx.mk
+include frameworks/compile/libbcc/libbcc-targets.mk
 
 LOCAL_CFLAGS += $(rs_base_CFLAGS)
 
