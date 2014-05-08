@@ -154,6 +154,7 @@ TOOLS_LIB="
 libbcc.$SONAME
 libbcinfo.$SONAME
 libclang.$SONAME
+libcompiler_rt.$SONAME
 libc++abi.$SONAME
 libc++.$SONAME
 libLLVM.$SONAME
