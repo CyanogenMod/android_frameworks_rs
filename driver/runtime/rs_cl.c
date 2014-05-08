@@ -1263,6 +1263,162 @@ extern float4 __attribute__((overloadable)) native_powr(float4 v, float4 y) {
     return native_exp2(v2 * y);
 }
 
+extern double __attribute__((overloadable)) min(double v1, double v2) {
+    return v1 < v2 ? v1 : v2;
+}
+
+extern double2 __attribute__((overloadable)) min(double2 v1, double2 v2) {
+    double2 r;
+    r.x = v1.x < v2.x ? v1.x : v2.x;
+    r.y = v1.y < v2.y ? v1.y : v2.y;
+    return r;
+}
+
+extern double3 __attribute__((overloadable)) min(double3 v1, double3 v2) {
+    double3 r;
+    r.x = v1.x < v2.x ? v1.x : v2.x;
+    r.y = v1.y < v2.y ? v1.y : v2.y;
+    r.z = v1.z < v2.z ? v1.z : v2.z;
+    return r;
+}
+
+extern double4 __attribute__((overloadable)) min(double4 v1, double4 v2) {
+    double4 r;
+    r.x = v1.x < v2.x ? v1.x : v2.x;
+    r.y = v1.y < v2.y ? v1.y : v2.y;
+    r.z = v1.z < v2.z ? v1.z : v2.z;
+    r.w = v1.w < v2.w ? v1.w : v2.w;
+    return r;
+}
+
+extern int64_t _Z3minll(int64_t v1, int64_t v2) {
+    return v1 < v2 ? v1 : v2;
+}
+extern long2 _Z3minDv2_lS_(long2 v1, long2 v2) {
+    long2 r;
+    r.x = v1.x < v2.x ? v1.x : v2.x;
+    r.y = v1.y < v2.y ? v1.y : v2.y;
+    return r;
+}
+extern long3 _Z3minDv3_lS_(long3 v1, long3 v2) {
+    long3 r;
+    r.x = v1.x < v2.x ? v1.x : v2.x;
+    r.y = v1.y < v2.y ? v1.y : v2.y;
+    r.z = v1.z < v2.z ? v1.z : v2.z;
+    return r;
+}
+extern long4 _Z3minDv4_lS_(long4 v1, long4 v2) {
+    long4 r;
+    r.x = v1.x < v2.x ? v1.x : v2.x;
+    r.y = v1.y < v2.y ? v1.y : v2.y;
+    r.z = v1.z < v2.z ? v1.z : v2.z;
+    r.w = v1.w < v2.w ? v1.w : v2.w;
+    return r;
+}
+
+extern uint64_t _Z3minyy(uint64_t v1, uint64_t v2) {
+    return v1 < v2 ? v1 : v2;
+}
+extern ulong2 _Z3minDv2_yS_(ulong2 v1, ulong2 v2) {
+    ulong2 r;
+    r.x = v1.x < v2.x ? v1.x : v2.x;
+    r.y = v1.y < v2.y ? v1.y : v2.y;
+    return r;
+}
+extern ulong3 _Z3minDv3_yS_(ulong3 v1, ulong3 v2) {
+    ulong3 r;
+    r.x = v1.x < v2.x ? v1.x : v2.x;
+    r.y = v1.y < v2.y ? v1.y : v2.y;
+    r.z = v1.z < v2.z ? v1.z : v2.z;
+    return r;
+}
+extern ulong4 _Z3minDv4_yS_(ulong4 v1, ulong4 v2) {
+    ulong4 r;
+    r.x = v1.x < v2.x ? v1.x : v2.x;
+    r.y = v1.y < v2.y ? v1.y : v2.y;
+    r.z = v1.z < v2.z ? v1.z : v2.z;
+    r.w = v1.w < v2.w ? v1.w : v2.w;
+    return r;
+}
+
+extern double __attribute__((overloadable)) max(double v1, double v2) {
+    return v1 > v2 ? v1 : v2;
+}
+
+extern double2 __attribute__((overloadable)) max(double2 v1, double2 v2) {
+    double2 r;
+    r.x = v1.x > v2.x ? v1.x : v2.x;
+    r.y = v1.y > v2.y ? v1.y : v2.y;
+    return r;
+}
+
+extern double3 __attribute__((overloadable)) max(double3 v1, double3 v2) {
+    double3 r;
+    r.x = v1.x > v2.x ? v1.x : v2.x;
+    r.y = v1.y > v2.y ? v1.y : v2.y;
+    r.z = v1.z > v2.z ? v1.z : v2.z;
+    return r;
+}
+
+extern double4 __attribute__((overloadable)) max(double4 v1, double4 v2) {
+    double4 r;
+    r.x = v1.x > v2.x ? v1.x : v2.x;
+    r.y = v1.y > v2.y ? v1.y : v2.y;
+    r.z = v1.z > v2.z ? v1.z : v2.z;
+    r.w = v1.w > v2.w ? v1.w : v2.w;
+    return r;
+}
+
+extern int64_t _Z3maxll(int64_t v1, int64_t v2) {
+    return v1 > v2 ? v1 : v2;
+}
+extern long2 _Z3maxDv2_lS_(long2 v1, long2 v2) {
+    long2 r;
+    r.x = v1.x > v2.x ? v1.x : v2.x;
+    r.y = v1.y > v2.y ? v1.y : v2.y;
+    return r;
+}
+extern long3 _Z3maxDv3_lS_(long3 v1, long3 v2) {
+    long3 r;
+    r.x = v1.x > v2.x ? v1.x : v2.x;
+    r.y = v1.y > v2.y ? v1.y : v2.y;
+    r.z = v1.z > v2.z ? v1.z : v2.z;
+    return r;
+}
+extern long4 _Z3maxDv4_lS_(long4 v1, long4 v2) {
+    long4 r;
+    r.x = v1.x > v2.x ? v1.x : v2.x;
+    r.y = v1.y > v2.y ? v1.y : v2.y;
+    r.z = v1.z > v2.z ? v1.z : v2.z;
+    r.w = v1.w > v2.w ? v1.w : v2.w;
+    return r;
+}
+
+extern uint64_t _Z3maxyy(uint64_t v1, uint64_t v2) {
+    return v1 > v2 ? v1 : v2;
+}
+extern ulong2 _Z3maxDv2_yS_(ulong2 v1, ulong2 v2) {
+    ulong2 r;
+    r.x = v1.x > v2.x ? v1.x : v2.x;
+    r.y = v1.y > v2.y ? v1.y : v2.y;
+    return r;
+}
+extern ulong3 _Z3maxDv3_yS_(ulong3 v1, ulong3 v2) {
+    ulong3 r;
+    r.x = v1.x > v2.x ? v1.x : v2.x;
+    r.y = v1.y > v2.y ? v1.y : v2.y;
+    r.z = v1.z > v2.z ? v1.z : v2.z;
+    return r;
+}
+extern ulong4 _Z3maxDv4_yS_(ulong4 v1, ulong4 v2) {
+    ulong4 r;
+    r.x = v1.x > v2.x ? v1.x : v2.x;
+    r.y = v1.y > v2.y ? v1.y : v2.y;
+    r.z = v1.z > v2.z ? v1.z : v2.z;
+    r.w = v1.w > v2.w ? v1.w : v2.w;
+    return r;
+}
+
 
 #undef FN_FUNC_FN
 #undef IN_FUNC_FN
