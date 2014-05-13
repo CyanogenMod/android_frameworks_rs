@@ -123,7 +123,7 @@ void RsdCpuScriptIntrinsicYuvToRGB::kernel(const RsForEachStubParamStruct *p,
     }
     const uchar *Y = pinY + (p->y * strideY);
 
-    uchar4 *out = (uchar4 *)p->out;
+    uchar4 *out = (uchar4 *)p->out + xstart;
     uint32_t x1 = xstart;
     uint32_t x2 = xend;
 
@@ -152,11 +152,20 @@ void RsdCpuScriptIntrinsicYuvToRGB::kernel(const RsForEachStubParamStruct *p,
         cstep = 2;
     }
 
+    /* If we start on an odd pixel then deal with it here and bump things along
+     * so that subsequent code can carry on with even-odd pairing assumptions.
+     */
+    if((x1 & 1) && (x2 > x1)) {
+        int cx = (x1 >> 1) * cstep;
+        *out = rsYuvToRGBA_uchar4(Y[x1], u[cx], v[cx]);
+        out++;
+        x1++;
+    }
 #if defined(ARCH_ARM_HAVE_VFP)
     if((x2 > x1) && gArchUseSIMD) {
         int32_t len = x2 - x1;
         if (cstep == 1) {
-            rsdIntrinsicYuv2_K(out, Y, u, v, x1, x2);
+            rsdIntrinsicYuv2_K(p->out, Y, u, v, x1, x2);
             x1 += len;
             out += len;
         } else if (cstep == 2) {
@@ -165,11 +174,11 @@ void RsdCpuScriptIntrinsicYuvToRGB::kernel(const RsForEachStubParamStruct *p,
             intptr_t ipv = (intptr_t)v;
 
             if (ipu == (ipv + 1)) {
-                rsdIntrinsicYuv_K(out, Y, v, x1, x2);
+                rsdIntrinsicYuv_K(p->out, Y, v, x1, x2);
                 x1 += len;
                 out += len;
             } else if (ipu == (ipv - 1)) {
-                rsdIntrinsicYuvR_K(out, Y, u, x1, x2);
+                rsdIntrinsicYuvR_K(p->out, Y, u, x1, x2);
                 x1 += len;
                 out += len;
             }
