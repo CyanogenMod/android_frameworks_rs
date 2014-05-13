@@ -94,7 +94,7 @@
             vqrshrn.u16  \dst, q14, #8
 .endm
 
-/* size_t rsdIntrinsic3DLUT_K(
+/* void rsdIntrinsic3DLUT_K(
  *          void *dst,          // r0
  *          void const *in,     // r1
  *          size_t count,       // r2
@@ -120,9 +120,14 @@ ENTRY(rsdIntrinsic3DLUT_K)
             vmov.u16    d8[2], r12
             vmov.s32    d9, r4, r5
 
-            b           2f
+            subs        r2, #8
+            bge         2f
+            cmp         r2, #-8
+            ble         9f
+            b           4f
 
             .align 6
+1:          vst4.u8     {d12,d13,d14,d15}, [r0]!
 /* r0  = dst
  * r1  = src
  * r2  = count
@@ -132,9 +137,8 @@ ENTRY(rsdIntrinsic3DLUT_K)
  * r6 = offset0
  * r7 = offset1
  */
-
-1:          vld4.u8     {d0,d2,d4,d6}, [r1]!
-            vmov        d10, d6
+2:          vld4.u8     {d0,d2,d4,d6}, [r1]!
+3:          vmov        d10, d6
 /* q0,q1,q2,q5 source data
  * q4 dimensions and pitches
  * q3, scratch register for scalar access
@@ -198,13 +202,54 @@ ENTRY(rsdIntrinsic3DLUT_K)
             vuzp.u8     d12, d14
             vuzp.u8     d13, d15
 
+            subs        r2, r2, #8
             vmov.u8     d15, d10
+
+            bge         1b
+
+            cmp         r2, #-8
+            blt         1f
 
             vst4.u8     {d12,d13,d14,d15}, [r0]!
 
-2:          subs        r2, #8
-            bhs         1b
-            add         r0, r2, #8
+            beq         9f
+
+            /* fill the vector with a safe value */
+4:          vld1.u32    {d0[]}, [r1]
+            vmov        d2, d0
+            vmov        d4, d0
+            vmov        d6, d0
+            tst         r2, #4
+            beq         2f
+            vld1.u32    {d0}, [r1]!
+            vld1.u32    {d2}, [r1]!
+2:          tst         r2, #2
+            beq         2f
+            vld1.u32    {d4}, [r1]!
+2:          tst         r2, #1
+            beq         2f
+            vld1.u32    {d6[0]}, [r1]!
+2:          vuzp.8      d0, d2
+            vuzp.8      d4, d6
+            vuzp.8      d0, d4
+            vuzp.8      d2, d6
+            b           3b
+
+1:          vzip.8      d12, d14
+            vzip.8      d13, d15
+            vzip.8      d12, d13
+            vzip.8      d14, d15
+            tst         r2, #4
+            beq         2f
+            vst1.u32    {d12,d13}, [r0]!
+2:          tst         r2, #2
+            beq         2f
+            vst1.u32    {d14}, [r0]!
+2:          tst         r2, #1
+            beq         9f
+            vst1.u32    {d15[0]}, [r0]!
+
+9:          mov         r0, #0
             vpop        {d8-d15}
             pop         {r4,r5,r6,r7}
             bx lr
