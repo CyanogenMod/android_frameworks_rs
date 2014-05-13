@@ -99,7 +99,7 @@
 .endif ; .endif
 .endm
 
-/* size_t rsdIntrinsic3DLUT_K(
+/* void rsdIntrinsic3DLUT_K(
  *          void *dst,          // x0
  *          void const *in,     // x1
  *          size_t count,       // x2
@@ -124,9 +124,14 @@ ENTRY(rsdIntrinsic3DLUT_K)
             ins         v4.s[3], w5
             movi        v5.16b, #0
 
-            b           2f
+            subs        x2, x2, #8
+            bge         2f
+            cmp         x2, #-8
+            ble         9f
+            b           4f
 
             .align 6
+1:          st4         {v20.8b,v21.8b,v22.8b,v23.8b}, [x0], #32
 /* x0  = dst
  * x1  = src
  * x2  = count
@@ -136,12 +141,11 @@ ENTRY(rsdIntrinsic3DLUT_K)
  * x6 = offset0
  * x7 = offset1
  */
-
-1:          ld4         {v0.8b-v3.8b}, [x1], #32
+2:          ld4         {v0.8b-v3.8b}, [x1], #32
 /* v0,v1,v2,v3 source data
  * v4 dimensions and pitches
  */
-            uxtl        v0.8h, v0.8b
+3:          uxtl        v0.8h, v0.8b
             uxtl        v1.8h, v1.8b
             uxtl        v2.8h, v2.8b
             mul         v0.8h, v0.8h, v4.h[0]
@@ -198,14 +202,47 @@ ENTRY(rsdIntrinsic3DLUT_K)
             uzp1        v20.16b, v6.16b, v7.16b
             uzp2        v22.16b, v6.16b, v7.16b
             mov         v21.d[0], v20.d[1]
+
+            subs        x2, x2, #8
             mov         v23.8b, v3.8b
 
-            st4         {v20.8b,v21.8b,v22.8b,v23.8b}, [x0], #32
+            bge         1b
 
-2:          subs        x2, x2, #8
-            bhs         1b
-            add         x0, x2, #8
-            ldp         d14, d15, [sp, #48]
+            cmp         x2, #-8
+            blt         1f
+
+            st4         {v20.8b,v21.8b,v22.8b,v23.8b}, [x0], #32
+            beq         9f
+
+            /* fill the vector  with a safe value */
+4:          ld4r        {v0.8b-v3.8b}, [x1]
+            tbz         x2, #2, 2f
+            ld4         {v0.b-v3.b}[0], [x1], #4
+            ld4         {v0.b-v3.b}[1], [x1], #4
+            ld4         {v0.b-v3.b}[2], [x1], #4
+            ld4         {v0.b-v3.b}[3], [x1], #4
+2:          tbz         x2, #1, 2f
+            ld4         {v0.b-v3.b}[4], [x1], #4
+            ld4         {v0.b-v3.b}[5], [x1], #4
+2:          tbz         x2, #0, 2f
+            ld4         {v0.b-v3.b}[6], [x1], #4
+2:          b           3b
+
+1:          tst         x2, #4
+            beq         2f
+            st4         {v20.b-v23.b}[0], [x0], #4
+            st4         {v20.b-v23.b}[1], [x0], #4
+            st4         {v20.b-v23.b}[2], [x0], #4
+            st4         {v20.b-v23.b}[3], [x0], #4
+2:          tst         x2, #2
+            beq         2f
+            st4         {v20.b-v23.b}[4], [x0], #4
+            st4         {v20.b-v23.b}[5], [x0], #4
+2:          tst         x2, #1
+            beq         9f
+            st4         {v20.b-v23.b}[6], [x0], #4
+
+9:          ldp         d14, d15, [sp, #48]
             ldp         d12, d13, [sp, #32]
             ldp         d10, d11, [sp, #16]
             ldp         d8, d9, [sp], #64
