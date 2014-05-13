@@ -117,7 +117,7 @@
 
         \kernel
 
-        subs    r2, #16
+        subs        r2, #16
 
         vst4.u8     {d0,d2,d4,d6}, [r0]!
         vst4.u8     {d1,d3,d5,d7}, [r0]!
@@ -169,7 +169,7 @@
         beq         1f
         vld1.u8     d16[1], [r1]!
   .if \interleaved
-        vld1.u8     d20[1], [r3]!
+        vld1.u16    d20[0], [r3]!
   .else
         vld1.u8     d20[0], [r3]!
         vld1.u8     d21[0], [r4]!
