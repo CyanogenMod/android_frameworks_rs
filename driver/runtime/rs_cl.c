@@ -1188,18 +1188,15 @@ extern float __attribute__((overloadable)) native_log2(float v) {
 
     float ir;
     SET_FLOAT_WORD(ir, ibits);
-
     ir -= 1.5f;
     float ir2 = ir*ir;
-    float adj2 = 0.405465108f + // -0.00009f +
-                 (0.666666667f * ir) -
-                 (0.222222222f * ir2) +
-                 (0.098765432f * ir*ir2) -
-                 (0.049382716f * ir2*ir2) +
-                 (0.026337449f * ir*ir2*ir2) -
-                 (0.014631916f * ir2*ir2*ir2);
-    adj2 *= (1.f / 0.693147181f);
-
+    float adj2 = (0.405465108f / 0.693147181f) +
+                 ((0.666666667f / 0.693147181f) * ir) -
+                 ((0.222222222f / 0.693147181f) * ir2) +
+                 ((0.098765432f / 0.693147181f) * ir*ir2) -
+                 ((0.049382716f / 0.693147181f) * ir2*ir2) +
+                 ((0.026337449f / 0.693147181f) * ir*ir2*ir2) -
+                 ((0.014631916f / 0.693147181f) * ir2*ir2*ir2);
     return (float)(e - 127) + adj2;
 }
 extern float2 __attribute__((overloadable)) native_log2(float2 v) {
@@ -1244,23 +1241,23 @@ extern float4 __attribute__((overloadable)) native_log10(float4 v) {
 
 extern float __attribute__((overloadable)) native_powr(float v, float y) {
     float v2 = native_log2(v);
-    v2 = fmax(v2, -125.f);
-    return native_exp2(v2 * y);
+    v2 = fmax(v2 * y, -125.f);
+    return native_exp2(v2);
 }
 extern float2 __attribute__((overloadable)) native_powr(float2 v, float2 y) {
     float2 v2 = native_log2(v);
-    v2 = fmax(v2, -125.f);
-    return native_exp2(v2 * y);
+    v2 = fmax(v2 * y, -125.f);
+    return native_exp2(v2);
 }
 extern float3 __attribute__((overloadable)) native_powr(float3 v, float3 y) {
     float3 v2 = native_log2(v);
-    v2 = fmax(v2, -125.f);
-    return native_exp2(v2 * y);
+    v2 = fmax(v2 * y, -125.f);
+    return native_exp2(v2);
 }
 extern float4 __attribute__((overloadable)) native_powr(float4 v, float4 y) {
     float4 v2 = native_log2(v);
-    v2 = fmax(v2, -125.f);
-    return native_exp2(v2 * y);
+    v2 = fmax(v2 * y, -125.f);
+    return native_exp2(v2);
 }
 
 extern double __attribute__((overloadable)) min(double v1, double v2) {
