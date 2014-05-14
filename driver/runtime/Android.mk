@@ -48,14 +48,8 @@ clcore_x86_files := \
     arch/x86_sse2.ll \
     arch/x86_sse3.ll
 
-ifeq "REL" "$(PLATFORM_VERSION_CODENAME)"
-  RS_VERSION := $(PLATFORM_SDK_VERSION)
-else
-  # Increment by 1 whenever this is not a final release build, since we want to
-  # be able to see the RS version number change during development.
-  # See build/core/version_defaults.mk for more information about this.
-  RS_VERSION := "(1 + $(PLATFORM_SDK_VERSION))"
-endif
+# Grab the current value for $(RS_VERSION_DEFINE)
+include frameworks/compile/slang/rs_version.mk
 
 # Build the base version of the library
 include $(CLEAR_VARS)
