@@ -36,7 +36,7 @@ endif
 bc_translated_clang_cc1_cflags := $(addprefix -Xclang , $(bc_clang_cc1_cflags))
 
 bc_cflags := -MD \
-             -DRS_VERSION=$(RS_VERSION) \
+             $(RS_VERSION_DEFINE) \
              -std=c99 \
              -c \
              -O3 \
