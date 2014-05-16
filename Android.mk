@@ -278,7 +278,6 @@ include $(CLEAR_VARS)
 
 
 LOCAL_MODULE := librsloader
-
 LOCAL_MODULE_TAGS := optional
 
 LOCAL_SRC_FILES := $(rsloader_SRC_FILES)
@@ -304,6 +303,7 @@ include $(BUILD_STATIC_LIBRARY)
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := librsloader
+LOCAL_CLANG := true
 
 LOCAL_MODULE_TAGS := optional
 
