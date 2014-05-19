@@ -1,5 +1,4 @@
 #include "rs_core.rsh"
-#include "rs_graphics.rsh"
 #include "rs_structs.h"
 
 /* Function declarations from libRS */
@@ -12,6 +11,28 @@ extern float4 rsUnpackColor8888(uchar4 c)
     return convert_float4(c) * 0.003921569f;
 }
 
+
+extern float __attribute__((overloadable)) rsClamp(float v, float l, float h) {
+    return clamp(v, l, h);
+}
+extern char __attribute__((overloadable)) rsClamp(char v, char l, char h) {
+    return clamp(v, l, h);
+}
+extern uchar __attribute__((overloadable)) rsClamp(uchar v, uchar l, uchar h) {
+    return clamp(v, l, h);
+}
+extern short __attribute__((overloadable)) rsClamp(short v, short l, short h) {
+    return clamp(v, l, h);
+}
+extern ushort __attribute__((overloadable)) rsClamp(ushort v, ushort l, ushort h) {
+    return clamp(v, l, h);
+}
+extern int __attribute__((overloadable)) rsClamp(int v, int l, int h) {
+    return clamp(v, l, h);
+}
+extern uint __attribute__((overloadable)) rsClamp(uint v, uint l, uint h) {
+    return clamp(v, l, h);
+}
 
 extern int32_t __attribute__((overloadable)) rsAtomicCas(volatile int32_t *ptr, int32_t expectedValue, int32_t newValue) {
     return __sync_val_compare_and_swap(ptr, expectedValue, newValue);
