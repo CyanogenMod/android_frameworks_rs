@@ -52,6 +52,8 @@ extern void __attribute__((overloadable))
  */
 extern void __attribute__((overloadable))
     rsSetObject(rs_script *dst, rs_script src);
+
+#ifndef __LP64__
 /**
  * \overload
  */
@@ -87,6 +89,7 @@ extern void __attribute__((overloadable))
  */
 extern void __attribute__((overloadable))
     rsSetObject(rs_font *dst, rs_font src);
+#endif //__LP64__
 
 /**
  * Sets the object to NULL.
@@ -115,6 +118,9 @@ extern void __attribute__((overloadable))
  */
 extern void __attribute__((overloadable))
     rsClearObject(rs_script *dst);
+
+
+#ifndef __LP64__
 /**
  * \overload
  */
@@ -150,7 +156,7 @@ extern void __attribute__((overloadable))
  */
 extern void __attribute__((overloadable))
     rsClearObject(rs_font *dst);
-
+#endif //__LP64__
 
 
 /**
@@ -181,6 +187,8 @@ extern bool __attribute__((overloadable))
  */
 extern bool __attribute__((overloadable))
     rsIsObject(rs_script);
+
+#ifndef __LP64__
 /**
  * \overload
  */
@@ -216,5 +224,6 @@ extern bool __attribute__((overloadable))
  */
 extern bool __attribute__((overloadable))
     rsIsObject(rs_font);
+#endif //__LP64__
 
 #endif
