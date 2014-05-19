@@ -114,36 +114,44 @@ typedef uint32_t size_t;
  */
 typedef int32_t ssize_t;
 
+#ifndef __LP64__
+#define RS_BASE_OBJ typedef struct { const int* const p; } __attribute__((packed, aligned(4)))
+#else
+#define RS_BASE_OBJ typedef struct { const int* const p; const int* const r; const int* const v1; const int* const v2; }
+#endif
+
 /**
  * \brief Opaque handle to a RenderScript element.
  *
  * See: android.renderscript.Element
  */
-typedef struct { const int* const p; } __attribute__((packed, aligned(4))) rs_element;
+RS_BASE_OBJ rs_element;
 /**
  * \brief Opaque handle to a RenderScript type.
  *
  * See: android.renderscript.Type
  */
-typedef struct { const int* const p; } __attribute__((packed, aligned(4))) rs_type;
+RS_BASE_OBJ rs_type;
 /**
  * \brief Opaque handle to a RenderScript allocation.
  *
  * See: android.renderscript.Allocation
  */
-typedef struct { const int* const p; } __attribute__((packed, aligned(4))) rs_allocation;
+RS_BASE_OBJ rs_allocation;
 /**
  * \brief Opaque handle to a RenderScript sampler object.
  *
  * See: android.renderscript.Sampler
  */
-typedef struct { const int* const p; } __attribute__((packed, aligned(4))) rs_sampler;
+RS_BASE_OBJ rs_sampler;
 /**
  * \brief Opaque handle to a RenderScript script object.
  *
  * See: android.renderscript.ScriptC
  */
-typedef struct { const int* const p; } __attribute__((packed, aligned(4))) rs_script;
+RS_BASE_OBJ rs_script;
+
+#ifndef __LP64__
 /**
  * \brief Opaque handle to a RenderScript mesh object.
  *
@@ -186,6 +194,7 @@ typedef struct { const int* const p; } __attribute__((packed, aligned(4))) rs_pr
  * See: android.renderscript.Font
  */
 typedef struct { const int* const p; } __attribute__((packed, aligned(4))) rs_font;
+#endif // __LP64__
 
 /**
  * Vector version of the basic float type.
@@ -418,6 +427,7 @@ typedef enum {
 // New API's
 #if (defined(RS_VERSION) && (RS_VERSION >= 16))
 
+#ifndef __LP64__
 /**
  * Describes the way mesh vertex data is interpreted when rendering
  *
@@ -456,6 +466,7 @@ typedef enum {
     */
     RS_PRIMITIVE_INVALID            = 100,
 } rs_primitive;
+#endif // __LP64__
 
 /**
  * \brief Enumeration for possible element data types
@@ -535,6 +546,7 @@ typedef enum {
     RS_KIND_INVALID      = 100,
 } rs_data_kind;
 
+#ifndef __LP64__
 typedef enum {
     /**
     * Always drawn
@@ -610,6 +622,7 @@ typedef enum {
 
     RS_CULL_INVALID  = 100,
 } rs_cull_mode;
+#endif //__LP64__
 
 typedef enum {
     RS_SAMPLER_NEAREST              = 0,

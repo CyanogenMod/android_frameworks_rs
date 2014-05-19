@@ -63,6 +63,7 @@ typedef struct Allocation {
     } mHal;
 } Allocation_t;
 
+#ifndef __LP64__
 /*****************************************************************************
  * CAUTION
  *
@@ -124,6 +125,7 @@ typedef struct ProgramRaster {
         } state;
     } mHal;
 } ProgramRaster_t;
+#endif //__LP64__
 
 /*****************************************************************************
  * CAUTION
@@ -231,6 +233,7 @@ typedef struct Type {
     } mHal;
 } Type_t;
 
+#ifndef __LP64__
 /*****************************************************************************
  * CAUTION
  *
@@ -264,4 +267,5 @@ typedef struct Mesh {
         } state;
     } mHal;
 } Mesh_t;
+#endif //__LP64__
 #endif // _RS_CORE_H_
