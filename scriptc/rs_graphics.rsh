@@ -23,6 +23,10 @@
 #ifndef __RS_GRAPHICS_RSH__
 #define __RS_GRAPHICS_RSH__
 
+#ifdef __LP64__
+//#error "RenderScript graphics is deprecated and not supported in 64bit mode."
+#else
+
 #include "rs_mesh.rsh"
 #include "rs_program.rsh"
 
@@ -417,5 +421,6 @@ rsgMeshComputeBoundingBox(rs_mesh mesh, float3 *bBoxMin, float3 *bBoxMax) {
     bBoxMax->z = z2;
 }
 
+#endif //__LP64__
 #endif
 
