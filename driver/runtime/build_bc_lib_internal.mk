@@ -52,8 +52,11 @@ ifeq ($(rs_debug_runtime),1)
 endif
 rs_debug_runtime:=
 
-c_sources := $(filter %.c,$(LOCAL_SRC_FILES))
-ll_sources := $(filter %.ll,$(LOCAL_SRC_FILES))
+bc_src_files := $(LOCAL_SRC_FILES)
+bc_src_files += $(LOCAL_SRC_FILES_$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)) $(LOCAL_SRC_FILES_$(my_32_64_bit_suffix))
+
+c_sources := $(filter %.c,$(bc_src_files))
+ll_sources := $(filter %.ll,$(bc_src_files))
 
 c_bc_files := $(patsubst %.c,%.bc, \
     $(addprefix $(intermediates)/, $(c_sources)))
