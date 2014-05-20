@@ -177,8 +177,10 @@ include $(BUILD_SHARED_LIBRARY)
 include $(CLEAR_VARS)
 LOCAL_MODULE:= libRS
 LOCAL_MODULE_TAGS := optional
+LOCAL_MODULE_CLASS := STATIC_LIBRARIES
+LOCAL_IS_HOST_MODULE := true
 
-intermediates := $(call intermediates-dir-for,STATIC_LIBRARIES,libRS,HOST,)
+intermediates := $(call local-generated-sources-dir)
 
 # Generate custom headers
 
