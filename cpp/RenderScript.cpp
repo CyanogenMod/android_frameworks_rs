@@ -493,7 +493,8 @@ bool RS::init(std::string &name, int targetApi, uint32_t flags) {
         return false;
     }
 
-    if (flags >= RS_CONTEXT_MAX) {
+    if (flags & ~(RS_CONTEXT_SYNCHRONOUS | RS_CONTEXT_LOW_LATENCY |
+                  RS_CONTEXT_LOW_POWER)) {
         ALOGE("Invalid flags passed");
         return false;
     }
