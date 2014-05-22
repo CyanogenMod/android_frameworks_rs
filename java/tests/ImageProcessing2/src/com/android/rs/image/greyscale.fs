@@ -18,19 +18,19 @@
 
 const static float3 gMonoMult = {0.299f, 0.587f, 0.114f};
 
-uchar4 __attribute__((kernel)) root(uchar4 v_in) {
+uchar4 RS_KERNEL root(uchar4 v_in) {
     float4 f4 = rsUnpackColor8888(v_in);
 
     float3 mono = dot(f4.rgb, gMonoMult);
     return rsPackColorTo8888(mono);
 }
 
-uchar __attribute__((kernel)) toU8(uchar4 v_in) {
+uchar RS_KERNEL toU8(uchar4 v_in) {
     float4 f4 = convert_float4(v_in);
     return (uchar)dot(f4.rgb, gMonoMult);
 }
 
-uchar4 __attribute__((kernel)) toU8_4(uchar v_in) {
+uchar4 RS_KERNEL toU8_4(uchar v_in) {
     return (uchar4)v_in;
 }
 

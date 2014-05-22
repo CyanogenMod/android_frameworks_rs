@@ -16,7 +16,7 @@
 
 #include "ip.rsh"
 
-uchar4 __attribute__((kernel)) root(uchar4 v_in) {
+uchar4 RS_KERNEL root(uchar4 v_in) {
     return v_in;
 }
 

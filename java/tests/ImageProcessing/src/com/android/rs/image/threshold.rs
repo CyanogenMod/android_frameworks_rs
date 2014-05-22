@@ -70,11 +70,11 @@ void setRadius(int rad) {
     }
 }
 
-float4 __attribute__((kernel)) copyIn(uchar4 in) {
+float4 RS_KERNEL copyIn(uchar4 in) {
     return convert_float4(in);
 }
 
-uchar4 __attribute__((kernel)) vert(uint32_t x, uint32_t y) {
+uchar4 RS_KERNEL vert(uint32_t x, uint32_t y) {
     float3 blurredPixel = 0;
     int gi = 0;
     uchar4 out;
@@ -96,7 +96,7 @@ uchar4 __attribute__((kernel)) vert(uint32_t x, uint32_t y) {
     return out;
 }
 
-float4 __attribute__((kernel)) horz(uint32_t x, uint32_t y) {
+float4 RS_KERNEL horz(uint32_t x, uint32_t y) {
     float4 blurredPixel = 0;
     int gi = 0;
     if ((x > radius) && (x < (width - radius))) {

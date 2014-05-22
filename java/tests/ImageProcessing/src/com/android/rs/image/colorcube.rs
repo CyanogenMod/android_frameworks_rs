@@ -34,7 +34,7 @@ void setCube(rs_allocation c) {
     gCoordMul = convert_int4(m * (float4)0x10000);
 }
 
-uchar4 __attribute__((kernel)) root(uchar4 in) {
+uchar4 RS_KERNEL root(uchar4 in) {
     int4 baseCoord = convert_int4(in) * gCoordMul;
     int4 coord1 = baseCoord >> (int4)16;
     int4 coord2 = min(coord1 + 1, gDims - 1);
