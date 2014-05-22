@@ -83,7 +83,7 @@ void RsdCpuScriptIntrinsic3DLUT::kernel(const RsForEachStubParamStruct *p,
 
     //ALOGE("strides %zu %zu", stride_y, stride_z);
 
-#if defined(ARCH_ARM_HAVE_VFP)
+#if defined(ARCH_ARM_USE_INTRINSICS)
     if (gArchUseSIMD) {
         int32_t len = x2 - x1;
         if(len > 0) {
