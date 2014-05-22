@@ -48,6 +48,8 @@
 
 #define _RS_RUNTIME extern
 
+#define RS_KERNEL __attribute__((kernel))
+
 #include "rs_types.rsh"
 #include "rs_allocation.rsh"
 #include "rs_atomic.rsh"
