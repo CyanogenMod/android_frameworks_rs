@@ -204,7 +204,6 @@ void RsdCpuReferenceImpl::unlockMutex() {
     pthread_mutex_unlock(&gInitMutex);
 }
 
-#if defined(ARCH_ARM_HAVE_VFP) || defined(ARCH_X86_HAVE_SSSE3)
 static int
 read_file(const char*  pathname, char*  buffer, size_t  buffsize)
 {
@@ -232,13 +231,13 @@ static void GetCpuInfo() {
         return;
     }
 
-#if defined(ARCH_ARM_HAVE_VFP)
-    gArchUseSIMD = !!strstr(cpuinfo, " neon");
+#if defined(ARCH_ARM_HAVE_VFP) || defined(ARCH_ARM_USE_INTRINSICS)
+    gArchUseSIMD = (!!strstr(cpuinfo, " neon")) ||
+                   (!!strstr(cpuinfo, " asimd"));
 #elif defined(ARCH_X86_HAVE_SSSE3)
     gArchUseSIMD = !!strstr(cpuinfo, " ssse3");
 #endif
 }
-#endif // ARCH_ARM_HAVE_VFP || ARCH_X86_HAVE_SSSE3
 
 bool RsdCpuReferenceImpl::init(uint32_t version_major, uint32_t version_minor,
                                sym_lookup_t lfn, script_lookup_t slfn) {
@@ -265,9 +264,7 @@ bool RsdCpuReferenceImpl::init(uint32_t version_major, uint32_t version_minor,
         ALOGE("pthread_setspecific %i", status);
     }
 
-#if defined(ARCH_ARM_HAVE_VFP) || defined(ARCH_X86_HAVE_SSSE3)
     GetCpuInfo();
-#endif
 
     int cpu = sysconf(_SC_NPROCESSORS_ONLN);
     if(mRSC->props.mDebugMaxThreads) {

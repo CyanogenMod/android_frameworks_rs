@@ -377,7 +377,8 @@ extern "C" void vp9_lpf_horizontal_4_dual_neon(uint8_t *s, int pitch,
                                                const uint8_t *thresh1);
 
 
-#if defined(ARCH_ARM_HAVE_VFP)
+// remove ARM64 statement when ARM64 asm available
+#if defined(ARCH_ARM_USE_INTRINSICS) && !defined(ARCH_ARM64_USE_INTRINSICS)
 
 #define vp9_lpf_vertical_16 vp9_lpf_vertical_16_neon
 #define vp9_lpf_vertical_16_dual vp9_lpf_vertical_16_dual_neon
@@ -446,7 +447,7 @@ void vp9_lpf_vertical_16_dual_neon(uint8_t *s, int p,
 #define vp9_lpf_horizontal_4 vp9_lpf_horizontal_4_c
 #define vp9_lpf_horizontal_4_dual vp9_lpf_horizontal_4_dual_c
 
-#endif // ARCH_ARM_HAVE_VFP
+#endif // ARCH_ARM_USE_INTRINSICS && !ARCH_ARM64_USE_INTRINSICS
 
 
 
