@@ -17,6 +17,8 @@
 #ifndef ELF_OBJECT_HXX
 #define ELF_OBJECT_HXX
 
+#include <android/log.h>
+
 #include "ELFHeader.h"
 #include "ELFReloc.h"
 #include "ELFSection.h"
@@ -28,6 +30,7 @@
 #include <llvm/ADT/SmallVector.h>
 
 #include "utils/rsl_assert.h"
+
 
 template <unsigned Bitwidth>
 template <typename Archiver>
@@ -379,6 +382,16 @@ relocateAARCH64(void *(*find_sym)(void *context, char const *name),
     Inst_t P = (Inst_t)(int64_t)inst;
     Inst_t A = 0;
     Inst_t S = (Inst_t)(int64_t)sym->getAddress(EM_ARM);
+    Inst_t Page_P = P & ~0xfff;         // Page address.
+
+    if (S == 0 && sym->getType() == STT_NOTYPE) {
+      void *ext_sym = find_sym(context, sym->getName());
+      if (!ext_sym) {
+        missingSymbols = true;
+      }
+      S = (Inst_t)(uintptr_t)ext_sym;
+      sym->setAddress(ext_sym);
+    }
 
     // TODO: add other relocations when we know what ones are used.
 #ifdef __LP64__
@@ -388,97 +401,87 @@ relocateAARCH64(void *(*find_sym)(void *context, char const *name),
 #endif
     switch (reltype) {
     default:
+      __android_log_print(ANDROID_LOG_ERROR, "rs",
+        "Unimplemented AARCH64 relocation type %d(0x%x)\n", static_cast<uint32_t>(reltype),
+        static_cast<uint32_t>(reltype));
       rsl_assert(0 && "Unimplemented relocation type.");
       break;
 
-    // TODO: factor out the find_sym common stuff.
     case R_AARCH64_ABS64:
-      {
-        if (S == 0 && sym->getType() == STT_NOTYPE) {
-          void *ext_sym = find_sym(context, sym->getName());
-          if (!ext_sym) {
-            missingSymbols = true;
-          }
-          S = (Inst_t)(uintptr_t)ext_sym;
-          sym->setAddress(ext_sym);
-        }
         A = *inst;
         *inst = S + A;
-      }
       break;
 
     case R_AARCH64_ABS32:
-      {
-        if (S == 0 && sym->getType() == STT_NOTYPE) {
-          void *ext_sym = find_sym(context, sym->getName());
-          if (!ext_sym) {
-            missingSymbols = true;
-          }
-          S = (Inst_t)(uintptr_t)ext_sym;
-          sym->setAddress(ext_sym);
-        }
         A = *inst32;
         *inst32 = static_cast<int32_t>(S + A);
-      }
       break;
 
     case R_AARCH64_ABS16:
-      {
-        if (S == 0 && sym->getType() == STT_NOTYPE) {
-          void *ext_sym = find_sym(context, sym->getName());
-          if (!ext_sym) {
-            missingSymbols = true;
-          }
-          S = (Inst_t)(uintptr_t)ext_sym;
-          sym->setAddress(ext_sym);
-        }
         A = *inst16;
         *inst16 = static_cast<int16_t>(S + A);
-      }
       break;
 
     case R_AARCH64_PREL64:
-      {
-        if (S == 0 && sym->getType() == STT_NOTYPE) {
-          void *ext_sym = find_sym(context, sym->getName());
-          if (!ext_sym) {
-            missingSymbols = true;
-          }
-          S = (Inst_t)(uintptr_t)ext_sym;
-          sym->setAddress(ext_sym);
-        }
         A = *inst;
         *inst = S + A - P;
-      }
       break;
 
     case R_AARCH64_PREL32:
-      {
-        if (S == 0 && sym->getType() == STT_NOTYPE) {
-          void *ext_sym = find_sym(context, sym->getName());
-          if (!ext_sym) {
-            missingSymbols = true;
-          }
-          S = (Inst_t)(uintptr_t)ext_sym;
-          sym->setAddress(ext_sym);
-        }
         A = *inst32;
         *inst32 = static_cast<int32_t>(S + A - P);
-      }
       break;
 
     case R_AARCH64_PREL16:
-      {
-        if (S == 0 && sym->getType() == STT_NOTYPE) {
-          void *ext_sym = find_sym(context, sym->getName());
-          if (!ext_sym) {
-            missingSymbols = true;
-          }
-          S = (Inst_t)(uintptr_t)ext_sym;
-          sym->setAddress(ext_sym);
-        }
         A = *inst16;
         *inst16 = static_cast<int16_t>(S + A - P);
+      break;
+
+    case R_AARCH64_ADR_PREL_PG_HI21:
+      // Relocate an ADRP instruction to the page
+      {
+        A = rel->getAddend();
+        int32_t immed = ((S + A) & ~0xfff) - Page_P;
+        immed >>= 12;
+        uint32_t immlo = immed & 0b11;              // 2 bits.
+        uint32_t immhi = (immed >> 2) & 0x7FFFF;   // 19 bits.
+        *inst32 |= static_cast<int32_t>(immlo << 29 | immhi << 5);
+      }
+      break;
+
+    case R_AARCH64_ADR_PREL_LO21:
+      {
+        A = rel->getAddend();
+        int32_t immed = S + A - P;
+        uint32_t immlo = immed & 0b11;              // 2 bits.
+        uint32_t immhi = (immed >> 2) & 0x7FFFF;   // 19 bits.
+        *inst32 |= static_cast<int32_t>(immlo << 29 | immhi << 5);
+      }
+      break;
+
+    case R_AARCH64_LDST16_ABS_LO12_NC:
+    case R_AARCH64_LDST32_ABS_LO12_NC:
+    case R_AARCH64_LDST64_ABS_LO12_NC:
+    case R_AARCH64_LDST128_ABS_LO12_NC:
+      {
+        // Set LD/ST (unsigned) immediate instruction to the low 12 bits, shifted depending
+        // on relocation.
+        A = rel->getAddend();
+        uint32_t shift = 0;
+        switch (reltype) {
+          case R_AARCH64_LDST16_ABS_LO12_NC: shift = 1; break;
+          case R_AARCH64_LDST32_ABS_LO12_NC: shift = 2; break;
+          case R_AARCH64_LDST64_ABS_LO12_NC: shift = 3; break;
+          case R_AARCH64_LDST128_ABS_LO12_NC: shift = 4; break;
+          default:
+            rsl_assert("Cannot reach");
+        }
+
+        // Form imm12 by taking 12 bits and shifting by appropriate amount.
+        uint32_t imm12 = ((S + A) & 0xFFF) >> shift;
+
+        // Put it into the instruction.
+        *inst32 |= static_cast<int32_t>(imm12 << 10);
       }
       break;
 
