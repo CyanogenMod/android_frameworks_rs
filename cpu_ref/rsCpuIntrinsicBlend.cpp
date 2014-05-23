@@ -90,7 +90,7 @@ enum {
     BLEND_LUMINOSITY = 43
 };
 
-#if defined(ARCH_ARM_HAVE_VFP)
+#if defined(ARCH_ARM_USE_INTRINSICS)
 extern "C" int rsdIntrinsicBlend_K(uchar4 *out, uchar4 const *in, int slot,
                     uint32_t xstart, uint32_t xend);
 #endif
@@ -121,7 +121,7 @@ void RsdCpuScriptIntrinsicBlend::kernel(const RsForEachStubParamStruct *p,
     uint32_t x1 = xstart;
     uint32_t x2 = xend;
 
-#if defined(ARCH_ARM_HAVE_VFP)
+#if defined(ARCH_ARM_USE_INTRINSICS) && !defined(ARCH_ARM64_USE_INTRINSICS)
     if (gArchUseSIMD) {
         if (rsdIntrinsicBlend_K(out, in, p->slot, x1, x2) >= 0)
             return;
