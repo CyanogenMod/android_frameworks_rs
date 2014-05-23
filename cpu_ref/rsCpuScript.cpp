@@ -418,8 +418,11 @@ bool RsdCpuScriptImpl::init(char const *resName, char const *cacheDir,
         return false;
     }
 
-    mCompilerDriver->setRSRuntimeLookupFunction(lookupRuntimeStub);
-    mCompilerDriver->setRSRuntimeLookupContext(this);
+    // Configure symbol resolvers (via compiler-rt and the RS runtime).
+    mRSRuntime.setLookupFunction(lookupRuntimeStub);
+    mRSRuntime.setContext(this);
+    mResolver.chainResolver(mCompilerRuntime);
+    mResolver.chainResolver(mRSRuntime);
 
     // Run any compiler setup functions we have been provided with.
     RSSetupCompilerCallback setupCompilerCallback =
@@ -471,8 +474,8 @@ bool RsdCpuScriptImpl::init(char const *resName, char const *cacheDir,
         // Skip the cache lookup
     } else if (!is_force_recompile()) {
         // Attempt to just load the script from cache first if we can.
-        exec = mCompilerDriver->loadScript(cacheDir, resName,
-                                           (const char *)bitcode, bitcodeSize);
+        exec = bcc::RSCompilerDriver::loadScript(cacheDir, resName,
+                    (const char *)bitcode, bitcodeSize, mResolver);
     }
 
     if (exec == NULL) {
@@ -480,9 +483,8 @@ bool RsdCpuScriptImpl::init(char const *resName, char const *cacheDir,
                                     bitcodeSize, core_lib, useRSDebugContext,
                                     bccPluginName);
         if (built) {
-            exec = mCompilerDriver->loadScript(cacheDir, resName,
-                                               (const char *)bitcode,
-                                               bitcodeSize);
+            exec = bcc::RSCompilerDriver::loadScript(cacheDir, resName,
+                    (const char *)bitcode, bitcodeSize, mResolver);
         }
     }
 

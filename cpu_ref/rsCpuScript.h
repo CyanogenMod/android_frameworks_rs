@@ -20,6 +20,11 @@
 #include <rs_hal.h>
 #include <rsRuntime.h>
 
+#ifndef RS_COMPATIBILITY_LIB
+#include <bcc/ExecutionEngine/CompilerRTSymbolResolver.h>
+#include <bcc/ExecutionEngine/SymbolResolverProxy.h>
+#endif
+
 #include "rsCpuCore.h"
 
 namespace bcc {
@@ -113,6 +118,9 @@ protected:
 
     bcc::BCCContext *mCompilerContext;
     bcc::RSCompilerDriver *mCompilerDriver;
+    bcc::CompilerRTSymbolResolver mCompilerRuntime;
+    bcc::LookupFunctionSymbolResolver<void *> mRSRuntime;
+    bcc::SymbolResolverProxy mResolver;
     bcc::RSExecutable *mExecutable;
 #else
     void *mScriptSO;
