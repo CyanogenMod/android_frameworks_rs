@@ -141,8 +141,8 @@ public class LevelsV4 extends TestBase {
     }
 
     public void createTest(android.content.res.Resources res) {
-        mScriptR = new ScriptC_levels_relaxed(mRS, res, R.raw.levels_relaxed);
-        mScriptF = new ScriptC_levels_full(mRS, res, R.raw.levels_full);
+        mScriptR = new ScriptC_levels_relaxed(mRS);
+        mScriptF = new ScriptC_levels_full(mRS);
         setSaturation();
         setLevels();
     }

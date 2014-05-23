@@ -54,7 +54,7 @@ public class Convolve3x3 extends TestBase {
             mIntrinsic.setCoefficients(f);
             mIntrinsic.setInput(mInPixelsAllocation);
         } else {
-            mScript = new ScriptC_convolve3x3(mRS, res, R.raw.convolve3x3);
+            mScript = new ScriptC_convolve3x3(mRS);
             mScript.set_gCoeffs(f);
             mScript.set_gIn(mInPixelsAllocation);
             mScript.set_gWidth(mWidth);
