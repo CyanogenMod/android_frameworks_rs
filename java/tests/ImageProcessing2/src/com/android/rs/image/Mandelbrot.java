@@ -77,7 +77,7 @@ public class Mandelbrot extends TestBase {
         int width = mOutPixelsAllocation.getType().getX();
         int height = mOutPixelsAllocation.getType().getY();
 
-        mScript = new ScriptC_mandelbrot(mRS, res, R.raw.mandelbrot);
+        mScript = new ScriptC_mandelbrot(mRS);
         mScript.set_gDimX(width);
         mScript.set_gDimY(height);
         mScript.set_gMaxIteration(50);
