@@ -120,17 +120,13 @@ public class Vignette extends TestBase {
     public void createTest(android.content.res.Resources res) {
         if (approx) {
             if (relaxed)
-                mScript_approx_relaxed = new ScriptC_vignette_approx_relaxed(
-                        mRS, res, R.raw.vignette_approx_relaxed);
+                mScript_approx_relaxed = new ScriptC_vignette_approx_relaxed(mRS);
             else
-                mScript_approx_full = new ScriptC_vignette_approx_full(
-                        mRS, res, R.raw.vignette_approx_full);
+                mScript_approx_full = new ScriptC_vignette_approx_full(mRS);
         } else if (relaxed)
-            mScript_relaxed = new ScriptC_vignette_relaxed(mRS, res,
-                    R.raw.vignette_relaxed);
+            mScript_relaxed = new ScriptC_vignette_relaxed(mRS);
         else
-            mScript_full = new ScriptC_vignette_full(mRS, res,
-                    R.raw.vignette_full);
+            mScript_full = new ScriptC_vignette_full(mRS);
         do_init();
     }
 

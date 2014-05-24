@@ -27,7 +27,7 @@ public class Benchmark implements Runnable {
 
     public Benchmark(RenderScript rs, Resources res) {
         mRS = rs;
-        mScript = new ScriptC_compute_benchmark(mRS, res, R.raw.compute_benchmark);
+        mScript = new ScriptC_compute_benchmark(mRS);
         ain = Allocation.createSized(rs, Element.U32(mRS), 10000);
         aout = Allocation.createSized(rs, Element.U32(mRS), 10000);
     }

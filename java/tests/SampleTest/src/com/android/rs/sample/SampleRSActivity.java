@@ -138,7 +138,7 @@ public class SampleRSActivity extends Activity {
         displayView = (TextureView) findViewById(R.id.display4);
         displayView.setSurfaceTextureListener(updater);
 
-        mScript = new ScriptC_sample(mRS, getResources(), R.raw.sample);
+        mScript = new ScriptC_sample(mRS);
     }
 
     private Bitmap loadBitmap(int resource) {
