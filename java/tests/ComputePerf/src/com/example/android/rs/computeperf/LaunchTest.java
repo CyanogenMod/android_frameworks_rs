@@ -28,8 +28,8 @@ public class LaunchTest {
 
     LaunchTest(RenderScript rs, Resources res) {
         mRS = rs;
-        mScript_xlw = new ScriptC_launchtestxlw(mRS, res, R.raw.launchtestxlw);
-        mScript_xyw = new ScriptC_launchtestxyw(mRS, res, R.raw.launchtestxyw);
+        mScript_xlw = new ScriptC_launchtestxlw(mRS);
+        mScript_xyw = new ScriptC_launchtestxyw(mRS);
         final int dim = mScript_xlw.get_dim();
 
         mAllocationX = Allocation.createSized(rs, Element.U8(rs), dim);

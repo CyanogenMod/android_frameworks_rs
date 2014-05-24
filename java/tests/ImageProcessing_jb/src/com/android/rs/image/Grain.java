@@ -76,7 +76,7 @@ public class Grain extends TestBase {
         mNoise = Allocation.createTyped(mRS, tb.create());
         mNoise2 = Allocation.createTyped(mRS, tb.create());
 
-        mScript = new ScriptC_grain(mRS, res, R.raw.grain);
+        mScript = new ScriptC_grain(mRS);
         mScript.set_gWMask(noiseW - 1);
         mScript.set_gHMask(noiseH - 1);
         mScript.set_gNoiseStrength(0.5f);

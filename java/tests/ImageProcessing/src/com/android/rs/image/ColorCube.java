@@ -68,7 +68,7 @@ public class ColorCube extends TestBase {
     }
 
     public void createTest(android.content.res.Resources res) {
-        mScript = new ScriptC_colorcube(mRS, res, R.raw.colorcube);
+        mScript = new ScriptC_colorcube(mRS);
         mIntrinsic = ScriptIntrinsic3DLUT.create(mRS, Element.U8_4(mRS));
 
         initCube();
