@@ -75,7 +75,7 @@ public class Blur25 extends TestBase {
             mScratchPixelsAllocation1 = Allocation.createTyped(mRS, tb.create());
             mScratchPixelsAllocation2 = Allocation.createTyped(mRS, tb.create());
 
-            mScript = new ScriptC_threshold(mRS, res, R.raw.threshold);
+            mScript = new ScriptC_threshold(mRS);
             mScript.set_width(width);
             mScript.set_height(height);
             mScript.invoke_setRadius(MAX_RADIUS);

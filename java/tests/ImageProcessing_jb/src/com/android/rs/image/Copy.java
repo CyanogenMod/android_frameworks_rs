@@ -30,7 +30,7 @@ public class Copy extends TestBase {
     private ScriptC_copy mScript;
 
     public void createTest(android.content.res.Resources res) {
-        mScript = new ScriptC_copy(mRS, res, R.raw.copy);
+        mScript = new ScriptC_copy(mRS);
     }
 
     public void runTest() {

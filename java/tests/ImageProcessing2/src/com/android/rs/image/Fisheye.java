@@ -95,24 +95,20 @@ public class Fisheye extends TestBase {
     public void createTest(android.content.res.Resources res) {
         if (approx) {
             if (relaxed) {
-                mScript_approx_relaxed = new ScriptC_fisheye_approx_relaxed(mRS,
-                        res, R.raw.fisheye_approx_relaxed);
+                mScript_approx_relaxed = new ScriptC_fisheye_approx_relaxed(mRS);
                 mScript_approx_relaxed.set_in_alloc(mInPixelsAllocation);
                 mScript_approx_relaxed.set_sampler(Sampler.CLAMP_LINEAR(mRS));
             } else {
-                mScript_approx_full = new ScriptC_fisheye_approx_full(mRS, res,
-                        R.raw.fisheye_approx_full);
+                mScript_approx_full = new ScriptC_fisheye_approx_full(mRS);
                 mScript_approx_full.set_in_alloc(mInPixelsAllocation);
                 mScript_approx_full.set_sampler(Sampler.CLAMP_LINEAR(mRS));
             }
         } else if (relaxed) {
-            mScript_relaxed = new ScriptC_fisheye_relaxed(mRS, res,
-                    R.raw.fisheye_relaxed);
+            mScript_relaxed = new ScriptC_fisheye_relaxed(mRS);
             mScript_relaxed.set_in_alloc(mInPixelsAllocation);
             mScript_relaxed.set_sampler(Sampler.CLAMP_LINEAR(mRS));
         } else {
-            mScript_full = new ScriptC_fisheye_full(mRS, res,
-                    R.raw.fisheye_full);
+            mScript_full = new ScriptC_fisheye_full(mRS);
             mScript_full.set_in_alloc(mInPixelsAllocation);
             mScript_full.set_sampler(Sampler.CLAMP_LINEAR(mRS));
         }
