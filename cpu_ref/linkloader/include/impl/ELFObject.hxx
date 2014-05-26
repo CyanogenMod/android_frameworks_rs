@@ -151,11 +151,7 @@ relocateARM(void *(*find_sym)(void *context, char const *name),
     if (sym->isConcreteFunc() && (sym->getValue() & 0x1)) {
       T = 1;
     }
-#ifdef __LP64__
-    xword_t reltype = rel->getType();
-#else
-    word_t reltype = rel->getType();
-#endif
+    relinfo_t reltype = rel->getType();
     switch (reltype) {
     default:
       rsl_assert(0 && "Not implemented relocation type.");
@@ -394,11 +390,7 @@ relocateAARCH64(void *(*find_sym)(void *context, char const *name),
     }
 
     // TODO: add other relocations when we know what ones are used.
-#ifdef __LP64__
-    xword_t reltype = rel->getType();
-#else
-    word_t reltype = rel->getType();
-#endif
+    relinfo_t reltype = rel->getType();
     switch (reltype) {
     default:
       __android_log_print(ANDROID_LOG_ERROR, "rs",
@@ -864,7 +856,7 @@ relocateMIPS(void *(*find_sym)(void *context, char const *name),
       if (!S) {
         missingSymbols = true;
       }
-#ifdef __LP64__
+#if defined(__LP64__) || defined(__x86_64__)
       llvm::errs() << "Code temporarily disabled for 64bit build";
       abort();
 #else
@@ -907,7 +899,7 @@ relocateMIPS(void *(*find_sym)(void *context, char const *name),
           A += S;
           *inst |= ((A >> 2) & 0x3FFFFFF);
           if (((P + 4) >> 28) != (A >> 28)) { // far local call
-#ifdef __LP64__
+#if defined(__LP64__) || defined(__x86_64__)
             llvm::errs() << "Code temporarily disabled for 64bit build";
             abort();
             void* stub = NULL;
@@ -924,7 +916,7 @@ relocateMIPS(void *(*find_sym)(void *context, char const *name),
       } else { // shared-library call
         A = (A & 0x3FFFFFF) << 2;
         rsl_assert(A == 0 && "R_MIPS_26 addend is not zero.");
-#ifdef __LP64__
+#if defined(__LP64__) || defined(__x86_64__)
         llvm::errs() << "Code temporarily disabled for 64bit build";
         abort();
         void* stub = NULL;
@@ -956,7 +948,7 @@ relocateMIPS(void *(*find_sym)(void *context, char const *name),
       }
       if (strcmp (sym->getName(), "_gp_disp") == 0) {
           S = (int)(intptr_t)got_address() + GP_OFFSET - (int)P;
-#ifdef __LP64__
+#if defined(__LP64__) || defined(__x86_64__)
           llvm::errs() << "Code temporarily disabled for 64bit build";
           abort();
 #else
@@ -1002,7 +994,7 @@ relocateMIPS(void *(*find_sym)(void *context, char const *name),
         } else { // R_MIPS_CALL16
           rsl_assert(A == 0 && "R_MIPS_CALL16 addend is not 0.");
         }
-#ifdef __LP64__
+#if defined(__LP64__) || defined(__x86_64__)
         llvm::errs() << "Code temporarily disabled for 64bit build";
         abort();
         int got_index = 0;
