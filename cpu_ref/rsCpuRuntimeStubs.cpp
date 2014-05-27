@@ -32,6 +32,9 @@ using namespace android::renderscript;
 typedef float float2 __attribute__((ext_vector_type(2)));
 typedef float float3 __attribute__((ext_vector_type(3)));
 typedef float float4 __attribute__((ext_vector_type(4)));
+typedef double double2 __attribute__((ext_vector_type(2)));
+typedef double double3 __attribute__((ext_vector_type(3)));
+typedef double double4 __attribute__((ext_vector_type(4)));
 typedef char char2 __attribute__((ext_vector_type(2)));
 typedef char char3 __attribute__((ext_vector_type(3)));
 typedef char char4 __attribute__((ext_vector_type(4)));
@@ -87,6 +90,16 @@ static void SC_debugF4(const char *s, const float4 *f) {
 static void SC_debugD(const char *s, double d) {
     ALOGD("double %s %f, 0x%08llx", s, d, *((long long *) (&d)));
 }
+static void SC_debugD2(const char *s, const double2 *f) {
+    ALOGD("double2 %s {%f, %f}", s, f->x, f->y);
+}
+static void SC_debugD3(const char *s, const double3 *f) {
+    ALOGD("double3 %s {%f, %f, %f}", s, f->x, f->y, f->z);
+}
+static void SC_debugD4(const char *s, const double4 *f) {
+    ALOGD("double4 %s {%f, %f, %f, %f}", s, f->x, f->y, f->z, f->w);
+}
+
 static void SC_debugFM4v4(const char *s, const float *f) {
     ALOGD("matrix4x4 %s {%f, %f, %f, %f", s, f[0], f[4], f[8], f[12]);
     ALOGD("          %s  %f, %f, %f, %f", s, f[1], f[5], f[9], f[13]);
@@ -237,6 +250,9 @@ static RsdCpuReference::CpuSymbol gSyms[] = {
     { "_Z7rsDebugPKcPKDv3_f", (void *)&SC_debugF3, true },
     { "_Z7rsDebugPKcPKDv4_f", (void *)&SC_debugF4, true },
     { "_Z7rsDebugPKcd", (void *)&SC_debugD, true },
+    { "_Z7rsDebugPKcPKDv2_d", (void *)&SC_debugD2, true },
+    { "_Z7rsDebugPKcPKDv3_d", (void *)&SC_debugD3, true },
+    { "_Z7rsDebugPKcPKDv4_d", (void *)&SC_debugD4, true },
     { "_Z7rsDebugPKcPK12rs_matrix4x4", (void *)&SC_debugFM4v4, true },
     { "_Z7rsDebugPKcPK12rs_matrix3x3", (void *)&SC_debugFM3v3, true },
     { "_Z7rsDebugPKcPK12rs_matrix2x2", (void *)&SC_debugFM2v2, true },
