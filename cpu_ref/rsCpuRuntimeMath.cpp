@@ -253,6 +253,7 @@ static RsdCpuReference::CpuSymbol gSyms[] = {
     { "_Z3erff", (void *)&erff, true },
     { "_Z3expf", (void *)&expf, true },
     { "_Z4exp2f", (void *)&exp2f, true },
+    { "exp2f", (void *)&exp2f, true },
     { "_Z5expm1f", (void *)&expm1f, true },
     { "_Z4fdimff", (void *)&fdimf, true },
     { "_Z5floorf", (void *)&floorf, true },
