@@ -110,36 +110,36 @@ double4 d4;
 double4 d4i = {1, 2, 3, 4};
 
 
-void __attribute__((kernel)) test_BOOLEAN(bool in) {
+void RS_KERNEL test_BOOLEAN(bool in) {
 }
 
-void __attribute__((kernel)) test_I8(char in) {
+void RS_KERNEL test_I8(char in) {
 }
 
-void __attribute__((kernel)) test_U8(uchar in) {
+void RS_KERNEL test_U8(uchar in) {
 }
 
-void __attribute__((kernel)) test_I16(short in) {
+void RS_KERNEL test_I16(short in) {
 }
 
-void __attribute__((kernel)) test_U16(ushort in) {
+void RS_KERNEL test_U16(ushort in) {
 }
 
-void __attribute__((kernel)) test_I32(int in) {
+void RS_KERNEL test_I32(int in) {
 }
 
-void __attribute__((kernel)) test_U32(uint in) {
+void RS_KERNEL test_U32(uint in) {
 }
 
-void __attribute__((kernel)) test_I64(long in) {
+void RS_KERNEL test_I64(long in) {
 }
 
-void __attribute__((kernel)) test_U64(ulong in) {
+void RS_KERNEL test_U64(ulong in) {
 }
 
-void __attribute__((kernel)) test_F32(float in) {
+void RS_KERNEL test_F32(float in) {
 }
 
-void __attribute__((kernel)) test_F64(double in) {
+void RS_KERNEL test_F64(double in) {
 }
 

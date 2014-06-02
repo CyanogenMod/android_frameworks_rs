@@ -22,7 +22,7 @@ float lowerBoundX = -2.f;
 float lowerBoundY = -2.f;
 float scaleFactor = 4.f;
 
-uchar4 __attribute__((kernel)) root(uint32_t x, uint32_t y) {
+uchar4 RS_KERNEL root(uint32_t x, uint32_t y) {
   float2 p;
   p.x = lowerBoundX + ((float)x / gDimX) * scaleFactor;
   p.y = lowerBoundY + ((float)y / gDimY) * scaleFactor;

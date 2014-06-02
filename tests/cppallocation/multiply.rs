@@ -18,7 +18,7 @@
 #pragma rs java_package_name(unused)
 #pragma rs_fp_relaxed
 
-uint32_t __attribute__((kernel)) multiply(uint32_t in) {
+uint32_t RS_KERNEL multiply(uint32_t in) {
     return in * 2;
 }
 

@@ -21,7 +21,7 @@ void init_vars(struct simpleStruct *out, uint32_t x) {
     out->f2 = 1.0f;
 }
 
-struct simpleStruct __attribute__((kernel))
+struct simpleStruct RS_KERNEL
         root(struct simpleStruct in, uint32_t x) {
     struct simpleStruct s;
     s.i1 = in.i1 + x;
