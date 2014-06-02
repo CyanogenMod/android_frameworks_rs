@@ -23,7 +23,7 @@ void setBright(float v) {
     bright = 255.f / (255.f - v);
 }
 
-uchar4 __attribute__((kernel)) exposure(uchar4 in)
+uchar4 RS_KERNEL exposure(uchar4 in)
 {
     uchar4 out = {0, 0, 0, 255};
     float3 t = convert_float3(in.rgb);

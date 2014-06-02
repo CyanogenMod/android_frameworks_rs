@@ -71,11 +71,11 @@ void bar(int i, int j, char k, int l, int m, int n) {
     _RS_ASSERT(n == -8);
 }
 
-int __attribute__((kernel)) kern1(int i, uint32_t x, uint32_t y) {
+int RS_KERNEL kern1(int i, uint32_t x, uint32_t y) {
     return i + 10 * x + 100 *y;
 }
 
-void __attribute__((kernel)) verify_kern1(int i, uint32_t x, uint32_t y) {
+void RS_KERNEL verify_kern1(int i, uint32_t x, uint32_t y) {
     _RS_ASSERT(i == (5 + 10 * x + 100 * y));
     rsDebug("i ", i);
 }

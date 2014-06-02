@@ -101,7 +101,7 @@ void prepareWhiteBalance() {
     scale.b =  avg / estimation.b;
 }
 
-uchar4 __attribute__((kernel)) whiteBalanceKernel(uchar4 in) {
+uchar4 RS_KERNEL whiteBalanceKernel(uchar4 in) {
     float3 t = convert_float3(in.rgb);
     t *= scale;
     t = min(t, 255.f);

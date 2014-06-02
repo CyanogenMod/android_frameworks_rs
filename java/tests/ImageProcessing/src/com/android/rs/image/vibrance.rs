@@ -25,7 +25,7 @@ static const float Bf = 0.114f;
 
 static float Vib = 0.f;
 
-uchar4 __attribute__((kernel)) vibranceKernel(uchar4 in) {
+uchar4 RS_KERNEL vibranceKernel(uchar4 in) {
     int r = in.r;
     int g = in.g;
     int b = in.b;

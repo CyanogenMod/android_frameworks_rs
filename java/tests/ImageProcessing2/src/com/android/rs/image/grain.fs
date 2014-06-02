@@ -16,7 +16,7 @@
 
 #include "ip.rsh"
 
-uchar __attribute__((kernel)) genRand() {
+uchar RS_KERNEL genRand() {
     return (uchar)rsRand(0xff);
 }
 
@@ -40,7 +40,7 @@ int32_t gWMask;
 int32_t gHMask;
 
 rs_allocation gBlendSource;
-uchar __attribute__((kernel)) blend9(uint32_t x, uint32_t y) {
+uchar RS_KERNEL blend9(uint32_t x, uint32_t y) {
     uint32_t x1 = (x-1) & gWMask;
     uint32_t x2 = (x+1) & gWMask;
     uint32_t y1 = (y-1) & gHMask;
@@ -74,7 +74,7 @@ uchar __attribute__((kernel)) blend9(uint32_t x, uint32_t y) {
 float gNoiseStrength;
 
 rs_allocation gNoise;
-uchar4 __attribute__((kernel)) root(uchar4 in, uint32_t x, uint32_t y) {
+uchar4 RS_KERNEL root(uchar4 in, uint32_t x, uint32_t y) {
     float4 ip = convert_float4(in);
     float pnoise = (float) rsGetElementAt_uchar(gNoise, x & gWMask, y & gHMask);
 
