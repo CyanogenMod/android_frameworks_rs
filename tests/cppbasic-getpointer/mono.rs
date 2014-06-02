@@ -18,6 +18,6 @@
 #pragma rs java_package_name(com.android.rs.cppbasic)
 #pragma rs_fp_relaxed
 
-uint32_t __attribute__((kernel)) copyAndNot(uint32_t in) {
+uint32_t RS_KERNEL copyAndNot(uint32_t in) {
     return ~in;
 }

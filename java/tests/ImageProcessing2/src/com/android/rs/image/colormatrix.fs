@@ -26,7 +26,7 @@ void setMatrix(rs_matrix4x4 m) {
     Mat = m;
 }
 
-uchar4 __attribute__((kernel)) root(uchar4 in) {
+uchar4 RS_KERNEL root(uchar4 in) {
     float4 f = convert_float4(in);
     f = rsMatrixMultiply(&Mat, f);
     f = clamp(f, 0.f, 255.f);

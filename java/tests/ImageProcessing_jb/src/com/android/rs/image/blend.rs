@@ -17,7 +17,7 @@
 
 uchar alpha = 0x0;
 
-uchar4 __attribute__((kernel)) setImageAlpha(uchar4 in, uint32_t x, uint32_t y) {
+uchar4 RS_KERNEL setImageAlpha(uchar4 in, uint32_t x, uint32_t y) {
     uchar4 out;
     out.rgba = convert_uchar4((convert_uint4(in.rgba) * alpha) >> (uint4)8);
     out.a = alpha;

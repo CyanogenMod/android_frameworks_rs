@@ -22,7 +22,7 @@ rs_allocation gIn;
 
 float gCoeffs[25];
 
-uchar4 __attribute__((kernel)) root(uint32_t x, uint32_t y) {
+uchar4 RS_KERNEL root(uint32_t x, uint32_t y) {
     uint32_t x0 = max((int32_t)x-2, 0);
     uint32_t x1 = max((int32_t)x-1, 0);
     uint32_t x2 = x;
