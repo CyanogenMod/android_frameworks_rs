@@ -18,7 +18,7 @@ void root(int *out, uint32_t x, uint32_t y) {
     *out = x + y * dimX;
 }
 
-int __attribute__((kernel)) zero() {
+int RS_KERNEL zero() {
     return 0;
 }
 

@@ -10,7 +10,7 @@ void init_vars(int *out) {
 }
 
 
-int __attribute__((kernel)) root(int ain, uint32_t x) {
+int RS_KERNEL root(int ain, uint32_t x) {
     _RS_ASSERT(ain == 7);
     return ain + x;
 }

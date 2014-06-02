@@ -38,7 +38,7 @@ void setup() {
     }
 }
 
-uchar4 __attribute__((kernel)) process(uchar4 in, uint32_t x, uint32_t y) {
+uchar4 RS_KERNEL process(uchar4 in, uint32_t x, uint32_t y) {
     float2 xyDist;
     xyDist.x = (x * gOverWm1 - 0.5f);
     xyDist.y = (y * gOverHm1 - 0.5f);

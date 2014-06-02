@@ -25,7 +25,7 @@ void setBright(float v) {
     brightC = 127.f - brightM * 127.f;
 }
 
-uchar4 __attribute__((kernel)) contrast(uchar4 in) {
+uchar4 RS_KERNEL contrast(uchar4 in) {
     float3 v = convert_float3(in.rgb) * brightM + brightC;
     uchar4 o;
     o.rgb = convert_uchar3(clamp(v, 0.f, 255.f));
