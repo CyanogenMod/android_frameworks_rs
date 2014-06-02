@@ -23,6 +23,8 @@
 #ifndef RS_COMPATIBILITY_LIB
 #include <bcc/ExecutionEngine/CompilerRTSymbolResolver.h>
 #include <bcc/ExecutionEngine/SymbolResolverProxy.h>
+#include <vector>
+#include <utility>
 #endif
 
 #include "rsCpuCore.h"
@@ -115,6 +117,8 @@ protected:
     int (*mRootExpand)();
     void (*mInit)();
     void (*mFreeChildren)();
+
+    std::vector<std::pair<const char *, uint32_t> > mExportedForEachFuncList;
 
     bcc::BCCContext *mCompilerContext;
     bcc::RSCompilerDriver *mCompilerDriver;
