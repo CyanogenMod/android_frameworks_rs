@@ -473,9 +473,8 @@ bool RsdCpuScriptImpl::init(char const *resName, char const *cacheDir,
         useRSDebugContext = true;
         // Skip the cache lookup
     } else if (!is_force_recompile()) {
-        // Attempt to just load the script from cache first if we can.
-        exec = bcc::RSCompilerDriver::loadScript(cacheDir, resName,
-                    (const char *)bitcode, bitcodeSize, mResolver);
+        // New cache infrastructure goes here
+
     }
 
     if (exec == NULL) {
@@ -509,10 +508,15 @@ bool RsdCpuScriptImpl::init(char const *resName, char const *cacheDir,
         reinterpret_cast<void (*)()>(exec->getSymbolAddress(".rs.dtor"));
 
 
-    const bcc::RSInfo *info = &mExecutable->getInfo();
-    if (info->getExportVarNames().size()) {
-        mBoundAllocs = new Allocation *[info->getExportVarNames().size()];
-        memset(mBoundAllocs, 0, sizeof(void *) * info->getExportVarNames().size());
+    if (ME.getExportVarCount()) {
+        mBoundAllocs = new Allocation *[ME.getExportVarCount()];
+        memset(mBoundAllocs, 0, sizeof(void *) * ME.getExportVarCount());
+    }
+
+    for (size_t i = 0; i < ME.getExportForEachSignatureCount(); i++) {
+        char* name = new char[strlen(ME.getExportForEachNameList()[i]) + 1];
+        mExportedForEachFuncList.push_back(std::make_pair(name, 
+                                                          ME.getExportForEachSignatureList()[i]));
     }
 
 #else
@@ -738,13 +742,11 @@ error:
 void RsdCpuScriptImpl::populateScript(Script *script) {
 #ifndef FAKE_ARM64_BUILD
 #ifndef RS_COMPATIBILITY_LIB
-    const bcc::RSInfo *info = &mExecutable->getInfo();
-
     // Copy info over to runtime
-    script->mHal.info.exportedFunctionCount = info->getExportFuncNames().size();
-    script->mHal.info.exportedVariableCount = info->getExportVarNames().size();
-    script->mHal.info.exportedForeachFuncList = info->getExportForeachFuncs().array();
-    script->mHal.info.exportedPragmaCount = info->getPragmas().size();
+    script->mHal.info.exportedFunctionCount = mExecutable->getExportFuncAddrs().size();
+    script->mHal.info.exportedVariableCount = mExecutable->getExportVarAddrs().size();
+    script->mHal.info.exportedForeachFuncList = &mExportedForEachFuncList[0];
+    script->mHal.info.exportedPragmaCount = mExecutable->getPragmaKeys().size();
     script->mHal.info.exportedPragmaKeyList =
         const_cast<const char**>(mExecutable->getPragmaKeys().array());
     script->mHal.info.exportedPragmaValueList =
@@ -1146,6 +1148,10 @@ RsdCpuScriptImpl::~RsdCpuScriptImpl() {
     }
     if (mBoundAllocs) {
         delete[] mBoundAllocs;
+    }
+    
+    for (size_t i = 0; i < mExportedForEachFuncList.size(); i++) {
+        delete[] mExportedForEachFuncList[i].first;
     }
 #else
     if (mFieldIsObject) {
