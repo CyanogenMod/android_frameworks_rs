@@ -20,6 +20,9 @@ LOCAL_CFLAGS += -no-integrated-as
 LOCAL_ASFLAGS += -no-integrated-as
 endif
 
+# script caching is not yet functional on 64-bit
+LOCAL_CFLAGS_64 += -DDISABLE_RS_CACHE
+
 LOCAL_SRC_FILES:= \
 	rsCpuCore.cpp \
 	rsCpuScript.cpp \

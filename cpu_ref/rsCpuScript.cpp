@@ -470,9 +470,11 @@ bool RsdCpuScriptImpl::init(char const *resName, char const *cacheDir,
         useRSDebugContext = true;
         // Skip the cache lookup
     } else if (!is_force_recompile()) {
+#ifndef DISABLE_RS_CACHE
         // Attempt to just load the script from cache first if we can.
         exec = mCompilerDriver->loadScript(cacheDir, resName,
                                            (const char *)bitcode, bitcodeSize);
+#endif
     }
 
     if (exec == NULL) {
