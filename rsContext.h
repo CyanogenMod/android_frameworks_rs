@@ -311,6 +311,8 @@ private:
     uint32_t mAverageFPS;
 };
 
+void LF_ObjDestroy_handcode(const Context *rsc, RsAsyncVoidPtr objPtr);
+
 } // renderscript
 } // android
 #endif

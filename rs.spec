@@ -105,6 +105,7 @@ AssignName {
 
 ObjDestroy {
     param RsAsyncVoidPtr objPtr
+    handcodeApi
     }
 
 ElementCreate {
