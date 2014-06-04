@@ -13,7 +13,7 @@ endif
 include $(CLEAR_VARS)
 LOCAL_CLANG := true
 LOCAL_MODULE := libRSDriver
-LOCAL_MODULE_TARGET_ARCH_WARN := arm mips x86 x86_64 arm64
+LOCAL_MODULE_TARGET_ARCH_WARN := arm mips mips64 x86 x86_64 arm64
 
 LOCAL_SRC_FILES:= \
 	driver/rsdAllocation.cpp \
@@ -77,7 +77,7 @@ RSG_GENERATOR:=$(LOCAL_BUILT_MODULE)
 include $(CLEAR_VARS)
 LOCAL_CLANG := true
 LOCAL_MODULE := libRS
-LOCAL_MODULE_TARGET_ARCH_WARN := arm mips x86 x86_64 arm64
+LOCAL_MODULE_TARGET_ARCH_WARN := arm mips mips64 x86 x86_64 arm64
 
 LOCAL_MODULE_CLASS := SHARED_LIBRARIES
 generated_sources:= $(local-generated-sources-dir)

@@ -13,7 +13,7 @@ endif
 include $(CLEAR_VARS)
 LOCAL_CLANG := true
 LOCAL_MODULE := libRSCpuRef
-LOCAL_MODULE_TARGET_ARCH := arm mips x86 x86_64 arm64
+LOCAL_MODULE_TARGET_ARCH := arm mips mips64 x86 x86_64 arm64
 
 ifeq ($(HOST_OS), darwin)
 LOCAL_CFLAGS += -no-integrated-as
