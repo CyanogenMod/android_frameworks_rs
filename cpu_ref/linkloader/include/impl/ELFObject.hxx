@@ -459,6 +459,17 @@ relocateAARCH64(void *(*find_sym)(void *context, char const *name),
       }
       break;
 
+    case R_AARCH64_ADD_ABS_LO12_NC:
+      // ADD instruction immediate value.
+      {
+        A = rel->getAddend();
+        int32_t immed = S + A;
+        uint32_t imm12 = (immed & 0xFFF);   // 12 bits.
+        *inst32 |= static_cast<int32_t>(imm12 << 10);
+      }
+      break;
+
+    case R_AARCH64_LDST8_ABS_LO12_NC:
     case R_AARCH64_LDST16_ABS_LO12_NC:
     case R_AARCH64_LDST32_ABS_LO12_NC:
     case R_AARCH64_LDST64_ABS_LO12_NC:
@@ -469,6 +480,7 @@ relocateAARCH64(void *(*find_sym)(void *context, char const *name),
         A = rel->getAddend();
         uint32_t shift = 0;
         switch (reltype) {
+          case R_AARCH64_LDST8_ABS_LO12_NC: shift = 0; break;
           case R_AARCH64_LDST16_ABS_LO12_NC: shift = 1; break;
           case R_AARCH64_LDST32_ABS_LO12_NC: shift = 2; break;
           case R_AARCH64_LDST64_ABS_LO12_NC: shift = 3; break;
