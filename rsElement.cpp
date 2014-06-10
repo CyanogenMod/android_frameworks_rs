@@ -243,6 +243,12 @@ ObjectBaseRef<const Element> Element::createRef(Context *rsc, RsDataType dt, RsD
     e->mComponent.set(dt, dk, isNorm, vecSize);
     e->compute();
 
+#ifdef RS_FIND_OFFSETS
+    ALOGE("pointer for element: %p", e);
+    ALOGE("pointer for element.drv: %p", &e->mHal.drv);
+#endif
+
+
     ObjectBase::asyncLock();
     rsc->mStateElement.mElements.push(e);
     ObjectBase::asyncUnlock();

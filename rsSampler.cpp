@@ -107,6 +107,11 @@ ObjectBaseRef<Sampler> Sampler::getSampler(Context *rsc,
     Sampler *s = new (allocMem) Sampler(rsc, magFilter, minFilter, wrapS, wrapT, wrapR, aniso);
     returnRef.set(s);
 
+#ifdef RS_FIND_OFFSETS
+    ALOGE("pointer for sampler: %p", s);
+    ALOGE("pointer for sampler.drv: %p", &s->mHal.drv);
+#endif
+
     ObjectBase::asyncLock();
     rsc->mStateSampler.mAllSamplers.push(s);
     ObjectBase::asyncUnlock();

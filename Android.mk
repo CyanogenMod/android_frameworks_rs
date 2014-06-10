@@ -10,6 +10,10 @@ ifneq ($(OVERRIDE_RS_DRIVER),)
   rs_base_CFLAGS += -DOVERRIDE_RS_DRIVER=$(OVERRIDE_RS_DRIVER)
 endif
 
+ifeq ($(RS_FIND_OFFSETS), true)
+  rs_base_CFLAGS += -DRS_FIND_OFFSETS
+endif
+
 include $(CLEAR_VARS)
 LOCAL_CLANG := true
 LOCAL_MODULE := libRSDriver
