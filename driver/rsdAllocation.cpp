@@ -463,6 +463,13 @@ bool rsdAllocationInit(const Context *rsc, Allocation *alloc, bool forceZero) {
         rsdAllocationData2D(rsc, alloc, 0, 0, 0, RS_ALLOCATION_CUBEMAP_FACE_POSITIVE_X, alloc->getType()->getDimX(), alloc->getType()->getDimY(), alloc->mHal.state.userProvidedPtr, allocSize, 0);
     }
 
+
+#ifdef RS_FIND_OFFSETS
+    ALOGE("pointer for allocation: %p", alloc);
+    ALOGE("pointer for allocation.drv: %p", &alloc->mHal.drv);
+#endif
+
+
     return true;
 }
 
