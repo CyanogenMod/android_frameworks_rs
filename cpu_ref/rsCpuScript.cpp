@@ -17,7 +17,6 @@
 #include "rsCpuCore.h"
 #include "rsCpuScript.h"
 
-#ifndef FAKE_ARM64_BUILD
 #ifdef RS_COMPATIBILITY_LIB
     #include <set>
     #include <string>
@@ -43,10 +42,8 @@
     #include <string>
     #include <vector>
 #endif
-#endif
 
 namespace {
-#ifndef FAKE_ARM64_BUILD
 #ifdef RS_COMPATIBILITY_LIB
 
 // Create a len length string containing random characters from [A-Za-z0-9].
@@ -194,7 +191,7 @@ static void *loadSharedLibrary(const char *cacheDir, const char *resName) {
 }
 
 
-#else
+#else  // RS_COMPATIBILITY_LIB is defined
 static bool is_force_recompile() {
 #ifdef RS_SERVER
   return false;
@@ -311,7 +308,6 @@ static bool compileBitcode(const char *cacheDir,
 }
 
 #endif  // !defined(RS_COMPATIBILITY_LIB)
-#endif
 }  // namespace
 
 namespace android {
@@ -360,7 +356,6 @@ RsdCpuScriptImpl::RsdCpuScriptImpl(RsdCpuReferenceImpl *ctx, const Script *s) {
     mCtx = ctx;
     mScript = s;
 
-#ifndef FAKE_ARM64_BUILD
 #ifdef RS_COMPATIBILITY_LIB
     mScriptSO = NULL;
     mInvokeFunctions = NULL;
@@ -384,7 +379,6 @@ RsdCpuScriptImpl::RsdCpuScriptImpl(RsdCpuReferenceImpl *ctx, const Script *s) {
     mBoundAllocs = NULL;
     mIntrinsicData = NULL;
     mIsThreadable = true;
-#endif
 }
 
 
@@ -395,7 +389,6 @@ bool RsdCpuScriptImpl::init(char const *resName, char const *cacheDir,
     //ALOGE("rsdScriptInit %p %p", rsc, script);
 
     mCtx->lockMutex();
-#ifndef FAKE_ARM64_BUILD
 #ifndef RS_COMPATIBILITY_LIB
     bcc::RSExecutable *exec = NULL;
     bool useRSDebugContext = false;
@@ -519,7 +512,7 @@ bool RsdCpuScriptImpl::init(char const *resName, char const *cacheDir,
                                                           ME.getExportForEachSignatureList()[i]));
     }
 
-#else
+#else  // RS_COMPATIBILITY_LIB is defined
 
     mScriptSO = loadSharedLibrary(cacheDir, resName);
 
@@ -718,7 +711,6 @@ bool RsdCpuScriptImpl::init(char const *resName, char const *cacheDir,
         goto error;
     }
 #endif
-#endif // FAKE_ARM64_BUILD
     mCtx->unlockMutex();
     return true;
 
@@ -740,7 +732,6 @@ error:
 }
 
 void RsdCpuScriptImpl::populateScript(Script *script) {
-#ifndef FAKE_ARM64_BUILD
 #ifndef RS_COMPATIBILITY_LIB
     // Copy info over to runtime
     script->mHal.info.exportedFunctionCount = mExecutable->getExportFuncAddrs().size();
@@ -771,7 +762,6 @@ void RsdCpuScriptImpl::populateScript(Script *script) {
     } else {
         script->mHal.info.root = mRoot;
     }
-#endif
 #endif
 }
 
@@ -897,7 +887,6 @@ void RsdCpuScriptImpl::invokeForEach(uint32_t slot,
 void RsdCpuScriptImpl::forEachKernelSetup(uint32_t slot, MTLaunchStruct *mtls) {
     mtls->script = this;
     mtls->fep.slot = slot;
-#ifndef FAKE_ARM64_BUILD
 #ifndef RS_COMPATIBILITY_LIB
     rsAssert(slot < mExecutable->getExportForeachFuncAddrs().size());
     mtls->kernel = reinterpret_cast<ForEachFunc_t>(
@@ -909,34 +898,25 @@ void RsdCpuScriptImpl::forEachKernelSetup(uint32_t slot, MTLaunchStruct *mtls) {
     rsAssert(mtls->kernel != NULL);
     mtls->sig = mForEachSignatures[slot];
 #endif
-#endif
 }
 
 int RsdCpuScriptImpl::invokeRoot() {
     RsdCpuScriptImpl * oldTLS = mCtx->setTLS(this);
-#ifndef FAKE_ARM64_BUILD
     int ret = mRoot();
-#else
-    int ret = 0;
-#endif
     mCtx->setTLS(oldTLS);
     return ret;
 }
 
 void RsdCpuScriptImpl::invokeInit() {
-#ifndef FAKE_ARM64_BUILD
     if (mInit) {
         mInit();
     }
-#endif
 }
 
 void RsdCpuScriptImpl::invokeFreeChildren() {
-#ifndef FAKE_ARM64_BUILD
     if (mFreeChildren) {
         mFreeChildren();
     }
-#endif
 }
 
 void RsdCpuScriptImpl::invokeFunction(uint32_t slot, const void *params,
@@ -944,13 +924,11 @@ void RsdCpuScriptImpl::invokeFunction(uint32_t slot, const void *params,
     //ALOGE("invoke %p %p %i %p %i", dc, script, slot, params, paramLength);
 
     RsdCpuScriptImpl * oldTLS = mCtx->setTLS(this);
-#ifndef FAKE_ARM64_BUILD
     reinterpret_cast<void (*)(const void *, uint32_t)>(
 #ifndef RS_COMPATIBILITY_LIB
         mExecutable->getExportFuncAddrs()[slot])(params, paramLength);
 #else
         mInvokeFunctions[slot])(params, paramLength);
-#endif
 #endif
     mCtx->setTLS(oldTLS);
 }
@@ -964,15 +942,11 @@ void RsdCpuScriptImpl::setGlobalVar(uint32_t slot, const void *data, size_t data
         //return;
     //}
 
-#ifndef FAKE_ARM64_BUILD
 #ifndef RS_COMPATIBILITY_LIB
     int32_t *destPtr = reinterpret_cast<int32_t *>(
                           mExecutable->getExportVarAddrs()[slot]);
 #else
     int32_t *destPtr = reinterpret_cast<int32_t *>(mFieldAddress[slot]);
-#endif
-#else
-    int32_t *destPtr = NULL;
 #endif
     if (!destPtr) {
         //ALOGV("Calling setVar on slot = %i which is null", slot);
@@ -986,15 +960,11 @@ void RsdCpuScriptImpl::getGlobalVar(uint32_t slot, void *data, size_t dataLength
     //rsAssert(!script->mFieldIsObject[slot]);
     //ALOGE("getGlobalVar %p %p %i %p %i", dc, script, slot, data, dataLength);
 
-#ifndef FAKE_ARM64_BUILD
 #ifndef RS_COMPATIBILITY_LIB
     int32_t *srcPtr = reinterpret_cast<int32_t *>(
                           mExecutable->getExportVarAddrs()[slot]);
 #else
     int32_t *srcPtr = reinterpret_cast<int32_t *>(mFieldAddress[slot]);
-#endif
-#else
-    int32_t *srcPtr = NULL;
 #endif
     if (!srcPtr) {
         //ALOGV("Calling setVar on slot = %i which is null", slot);
@@ -1008,15 +978,11 @@ void RsdCpuScriptImpl::setGlobalVarWithElemDims(uint32_t slot, const void *data,
                                                 const Element *elem,
                                                 const size_t *dims, size_t dimLength) {
 
-#ifndef FAKE_ARM64_BUILD
 #ifndef RS_COMPATIBILITY_LIB
     int32_t *destPtr = reinterpret_cast<int32_t *>(
         mExecutable->getExportVarAddrs()[slot]);
 #else
     int32_t *destPtr = reinterpret_cast<int32_t *>(mFieldAddress[slot]);
-#endif
-#else
-    int32_t *destPtr = NULL;
 #endif
     if (!destPtr) {
         //ALOGV("Calling setVar on slot = %i which is null", slot);
@@ -1054,15 +1020,11 @@ void RsdCpuScriptImpl::setGlobalBind(uint32_t slot, Allocation *data) {
     //rsAssert(!script->mFieldIsObject[slot]);
     //ALOGE("setGlobalBind %p %p %i %p", dc, script, slot, data);
 
-#ifndef FAKE_ARM64_BUILD
 #ifndef RS_COMPATIBILITY_LIB
     int32_t *destPtr = reinterpret_cast<int32_t *>(
                           mExecutable->getExportVarAddrs()[slot]);
 #else
     int32_t *destPtr = reinterpret_cast<int32_t *>(mFieldAddress[slot]);
-#endif
-#else
-    int32_t *destPtr = NULL;
 #endif
     if (!destPtr) {
         //ALOGV("Calling setVar on slot = %i which is null", slot);
@@ -1087,17 +1049,12 @@ void RsdCpuScriptImpl::setGlobalObj(uint32_t slot, ObjectBase *data) {
         //return;
     //}
 
-#ifndef FAKE_ARM64_BUILD
 #ifndef RS_COMPATIBILITY_LIB
     int32_t *destPtr = reinterpret_cast<int32_t *>(
                           mExecutable->getExportVarAddrs()[slot]);
 #else
     int32_t *destPtr = reinterpret_cast<int32_t *>(mFieldAddress[slot]);
 #endif
-#else
-    int32_t *destPtr = NULL;
-#endif
-
 
     if (!destPtr) {
         //ALOGV("Calling setVar on slot = %i which is null", slot);
@@ -1108,7 +1065,6 @@ void RsdCpuScriptImpl::setGlobalObj(uint32_t slot, ObjectBase *data) {
 }
 
 RsdCpuScriptImpl::~RsdCpuScriptImpl() {
-#ifndef FAKE_ARM64_BUILD
 #ifndef RS_COMPATIBILITY_LIB
     if (mExecutable) {
         Vector<void *>::const_iterator var_addr_iter =
@@ -1175,7 +1131,6 @@ RsdCpuScriptImpl::~RsdCpuScriptImpl() {
     if (mScriptSO) {
         dlclose(mScriptSO);
     }
-#endif
 #endif
 }
 
