@@ -58,8 +58,8 @@ void RsdCpuScriptIntrinsicLUT::kernel(const RsForEachStubParamStruct *p,
                                       uint32_t instep, uint32_t outstep) {
     RsdCpuScriptIntrinsicLUT *cp = (RsdCpuScriptIntrinsicLUT *)p->usr;
 
-    uchar4 *out = (uchar4 *)p->out;
-    uchar4 *in = (uchar4 *)p->in;
+    uchar *out = (uchar *)p->out;
+    const uchar *in = (uchar *)p->in;
     uint32_t x1 = xstart;
     uint32_t x2 = xend;
 
@@ -69,11 +69,12 @@ void RsdCpuScriptIntrinsicLUT::kernel(const RsForEachStubParamStruct *p,
     const uchar *ta = &tb[256];
 
     while (x1 < x2) {
-        uchar4 p = *in;
-        uchar4 o = {tr[p.x], tg[p.y], tb[p.z], ta[p.w]};
-        *out = o;
-        in++;
-        out++;
+        out[0] = tr[in[0]];
+        out[1] = tg[in[1]];
+        out[2] = tb[in[2]];
+        out[3] = ta[in[3]];
+        in += 4;
+        out += 4;
         x1++;
     }
 }
