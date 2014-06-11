@@ -43,16 +43,19 @@ ELFSectionProgBits<Bitwidth>::read(Archiver &AR,
   StubLayout *stubs = result->getStubLayout();
   if (stubs) {
     // Compute the maximal possible numbers of stubs
-    std::string reltab_name(".rel" + std::string(sh->getName()));
+    max_num_stubs = 0;
+    for (const char* prefix : {".rel", ".rela"}) {
+      std::string reltab_name(prefix + std::string(sh->getName()));
 
-    ELFSectionRelTableTy const *reltab =
-      static_cast<ELFSectionRelTableTy *>(
-        owner->getSectionByName(reltab_name.c_str()));
+      ELFSectionRelTableTy const *reltab =
+        static_cast<ELFSectionRelTableTy *>(
+          owner->getSectionByName(reltab_name.c_str()));
 
-    if (reltab) {
-      // If we have relocation table, then get the approximation of
-      // maximum numbers of stubs.
-      max_num_stubs = reltab->getMaxNumStubs(owner);
+      if (reltab) {
+        // If we have relocation table, then get the approximation of
+        // maximum numbers of stubs.
+        max_num_stubs += reltab->getMaxNumStubs(owner);
+      }
     }
 
     // Compute the stub table size
