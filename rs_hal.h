@@ -51,7 +51,7 @@ typedef struct {
     const void *in;
     void *out;
     const void *usr;
-    size_t usrLen;
+    uint32_t usrLen;
     uint32_t x;
     uint32_t y;
     uint32_t z;

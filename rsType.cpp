@@ -228,6 +228,12 @@ ObjectBaseRef<Type> Type::getTypeRef(Context *rsc, const Element *e,
 
 
     Type *nt = new Type(rsc);
+
+#ifdef RS_FIND_OFFSETS
+    ALOGE("pointer for type: %p", nt);
+    ALOGE("pointer for type.drv: %p", &nt->mHal.drv);
+#endif
+
     nt->mDimLOD = dimLOD;
     returnRef.set(nt);
     nt->mElement.set(e);
