@@ -27,17 +27,29 @@ clcore_base_files := \
     rs_program.c \
     rs_sample.c \
     rs_sampler.c \
-    rs_convert.c \
-    allocation.ll
+    rs_convert.c
+
+clcore_base_files_32 := \
+    ll32/allocation.ll
+
+clcore_base_files_64 := \
+    ll64/allocation.ll
 
 clcore_files := \
     $(clcore_base_files) \
-    math.ll \
     arch/generic.c
+
+clcore_files_32 := \
+    $(clcore_base_files_32) \
+    ll32/math.ll
+
+clcore_files_64 := \
+    $(clcore_base_files_64) \
+    ll64/math.ll
 
 clcore_neon_files := \
     $(clcore_base_files) \
-    math.ll \
+    $(clcore_files_32) \
     arch/neon.ll \
     arch/clamp.c
 
@@ -55,6 +67,8 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE := libclcore.bc
 LOCAL_SRC_FILES := $(clcore_files)
+LOCAL_SRC_FILES_32 := $(clcore_files_32)
+LOCAL_SRC_FILES_64 := $(clcore_files_64)
 
 include $(LOCAL_PATH)/build_bc_lib.mk
 
@@ -64,6 +78,8 @@ include $(CLEAR_VARS)
 LOCAL_MODULE := libclcore_debug.bc
 rs_debug_runtime := 1
 LOCAL_SRC_FILES := $(clcore_files)
+LOCAL_SRC_FILES_32 := $(clcore_files_32)
+LOCAL_SRC_FILES_64 := $(clcore_files_64)
 
 include $(LOCAL_PATH)/build_bc_lib.mk
 
@@ -73,13 +89,18 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE := libclcore_x86.bc
 LOCAL_SRC_FILES := $(clcore_x86_files)
+LOCAL_SRC_FILES_32 := $(clcore_base_files_32)
+LOCAL_SRC_FILES_64 := $(clcore_base_files_64)
 
 include $(LOCAL_PATH)/build_bc_lib.mk
 endif
 
 # Build a NEON-enabled version of the library (if possible)
+# Only build on 32-bit, because we don't need a 64-bit NEON lib
 ifeq ($(ARCH_ARM_HAVE_NEON),true)
   include $(CLEAR_VARS)
+
+  LOCAL_32_BIT_ONLY := true
 
   LOCAL_MODULE := libclcore_neon.bc
   LOCAL_SRC_FILES := $(clcore_neon_files)
@@ -101,6 +122,7 @@ BCC_RS_TRIPLE := armv7-none-linux-gnueabi
 LOCAL_MODULE := librsrt_arm.bc
 LOCAL_IS_HOST_MODULE := true
 LOCAL_SRC_FILES := $(clcore_files)
+LOCAL_SRC_FILES_32 := $(clcore_files_32)
 include $(LOCAL_PATH)/build_bc_lib.mk
 
 # Build the MIPS version of the library
@@ -113,6 +135,7 @@ BCC_RS_TRIPLE := mipsel-unknown-linux
 LOCAL_MODULE := librsrt_mips.bc
 LOCAL_IS_HOST_MODULE := true
 LOCAL_SRC_FILES := $(clcore_files)
+LOCAL_SRC_FILES_32 := $(clcore_files_32)
 include $(LOCAL_PATH)/build_bc_lib.mk
 
 # Build the x86 version of the library
@@ -125,6 +148,7 @@ BCC_RS_TRIPLE := i686-unknown-linux
 LOCAL_MODULE := librsrt_x86.bc
 LOCAL_IS_HOST_MODULE := true
 LOCAL_SRC_FILES := $(clcore_x86_files)
+LOCAL_SRC_FILES_32 := $(clcore_base_files_32)
 include $(LOCAL_PATH)/build_bc_lib.mk
 
 
@@ -136,4 +160,5 @@ BCC_RS_TRIPLE := aarch64-none-linux-gnueabi
 LOCAL_MODULE := librsrt_arm64.bc
 LOCAL_IS_HOST_MODULE := true
 LOCAL_SRC_FILES := $(clcore_files)
+LOCAL_SRC_FILES_64 := $(clcore_files_64)
 include $(LOCAL_PATH)/build_bc_lib.mk
