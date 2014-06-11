@@ -479,6 +479,109 @@ void RsdCpuReferenceImpl::launchThreads(const Allocation * ain, Allocation * aou
     }
 }
 
+void RsdCpuReferenceImpl::launchThreads(const Allocation** ains, uint32_t inLen, Allocation* aout,
+                                        const RsScriptCall* sc, MTLaunchStruct* mtls) {
+
+    //android::StopWatch kernel_time("kernel time");
+
+    if ((mWorkers.mCount >= 1) && mtls->isThreadable && !mInForEach) {
+        const size_t targetByteChunk = 16 * 1024;
+        mInForEach = true;
+        if (mtls->fep.dimY > 1) {
+            uint32_t s1 = mtls->fep.dimY / ((mWorkers.mCount + 1) * 4);
+            uint32_t s2 = 0;
+
+            // This chooses our slice size to rate limit atomic ops to
+            // one per 16k bytes of reads/writes.
+            if (mtls->fep.yStrideOut) {
+                s2 = targetByteChunk / mtls->fep.yStrideOut;
+            } else {
+                s2 = targetByteChunk / mtls->fep.yStrideIn;
+            }
+            mtls->mSliceSize = rsMin(s1, s2);
+
+            if(mtls->mSliceSize < 1) {
+                mtls->mSliceSize = 1;
+            }
+
+         //   mtls->mSliceSize = 2;
+            launchThreads(wc_xy, mtls);
+        } else {
+            uint32_t s1 = mtls->fep.dimX / ((mWorkers.mCount + 1) * 4);
+            uint32_t s2 = 0;
+
+            // This chooses our slice size to rate limit atomic ops to
+            // one per 16k bytes of reads/writes.
+            if (mtls->fep.eStrideOut) {
+                s2 = targetByteChunk / mtls->fep.eStrideOut;
+            } else {
+                s2 = targetByteChunk / mtls->fep.eStrideIn;
+            }
+            mtls->mSliceSize = rsMin(s1, s2);
+
+            if (mtls->mSliceSize < 1) {
+                mtls->mSliceSize = 1;
+            }
+
+            launchThreads(wc_x, mtls);
+        }
+        mInForEach = false;
+
+        //ALOGE("launch 1");
+    } else {
+        RsForEachStubParamStruct p;
+        memcpy(&p, &mtls->fep, sizeof(p));
+        uint32_t sig = mtls->sig;
+
+        // Allocate space for our input base pointers.
+        p.ins = new const void*[inLen];
+
+        // Allocate space for our input stride information.
+        p.eStrideIns = new uint32_t[inLen];
+
+        // Fill our stride information.
+        for (int index = inLen; --index >= 0;) {
+          p.eStrideIns[index] = mtls->fep.inStrides[index].eStride;
+        }
+
+        //ALOGE("launch 3");
+        outer_foreach_t fn = (outer_foreach_t) mtls->kernel;
+        uint32_t offset_invariant = mtls->fep.dimY * mtls->fep.dimZ * p.ar[0];
+
+        for (p.ar[0] = mtls->arrayStart; p.ar[0] < mtls->arrayEnd; p.ar[0]++) {
+            uint32_t offset_part = offset_invariant * p.ar[0];
+
+            for (p.z = mtls->zStart; p.z < mtls->zEnd; p.z++) {
+                for (p.y = mtls->yStart; p.y < mtls->yEnd; p.y++) {
+                    uint32_t offset = offset_part + mtls->fep.dimY * p.z + p.y;
+
+                    p.out = mtls->fep.ptrOut + (mtls->fep.yStrideOut * offset) +
+                            (mtls->fep.eStrideOut * mtls->xStart);
+
+                    for (int index = inLen; --index >= 0;) {
+                        StridePair &strides = mtls->fep.inStrides[index];
+
+                        p.ins[index] = mtls->fep.ptrIns[index] +
+                                       (strides.yStride * offset) +
+                                       (strides.eStride * mtls->xStart);
+                    }
+
+                    /*
+                     * The fourth argument is zero here because multi-input
+                     * kernels get their stride information from a member of p
+                     * that points to an array.
+                     */
+                    fn(&p, mtls->xStart, mtls->xEnd, 0, mtls->fep.eStrideOut);
+                }
+            }
+        }
+
+        // Free our arrays.
+        delete[] p.ins;
+        delete[] p.eStrideIns;
+    }
+}
+
 RsdCpuScriptImpl * RsdCpuReferenceImpl::setTLS(RsdCpuScriptImpl *sc) {
     //ALOGE("setTls %p", sc);
     ScriptTLSStruct * tls = (ScriptTLSStruct *)pthread_getspecific(gThreadTLSKey);
@@ -595,5 +698,3 @@ RsdCpuReference::CpuScriptGroup * RsdCpuReferenceImpl::createScriptGroup(const S
     }
     return sgi;
 }
-
-
