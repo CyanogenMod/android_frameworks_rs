@@ -50,7 +50,6 @@ bc_cflags := -MD \
 ifeq ($(rs_debug_runtime),1)
     bc_cflags += -DRS_DEBUG_RUNTIME
 endif
-rs_debug_runtime:=
 
 bc_src_files := $(LOCAL_SRC_FILES)
 bc_src_files += $(LOCAL_SRC_FILES_$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)) $(LOCAL_SRC_FILES_$(my_32_64_bit_suffix))
