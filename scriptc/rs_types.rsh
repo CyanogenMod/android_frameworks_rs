@@ -116,11 +116,11 @@ typedef uint64_t size_t;
 typedef int64_t ssize_t;
 #endif
 
-//#ifndef __LP64__
+#ifndef __LP64__
 #define RS_BASE_OBJ typedef struct { const int* const p; } __attribute__((packed, aligned(4)))
-//#else
-//#define RS_BASE_OBJ typedef struct { const int* const p; const int* const r; const int* const v1; const int* const v2; }
-//#endif
+#else
+#define RS_BASE_OBJ typedef struct { const long* const p; const long* const r; const long* const v1; const long* const v2; }
+#endif
 
 /**
  * \brief Opaque handle to a RenderScript element.
