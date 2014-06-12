@@ -506,7 +506,6 @@ relocateAARCH64(void *(*find_sym)(void *context, char const *name),
 #undef SIGN_EXTEND
 
         void *callee_addr = sym->getAddress(EM_AARCH64);
-        bool try_direct = false;        // Try to use a direct call?
         bool call_via_stub = false;     // Call via a stub (linker veneer).
 
         switch (sym->getType()) {
@@ -524,7 +523,6 @@ relocateAARCH64(void *(*find_sym)(void *context, char const *name),
                    "sym->getAddress(EM_ARM) function call.");
             abort();
           }
-          try_direct = true;
           break;
 
         case STT_NOTYPE:
@@ -541,16 +539,13 @@ relocateAARCH64(void *(*find_sym)(void *context, char const *name),
           break;
         }
 
-        uint32_t result = 0;
+        S = reinterpret_cast<int64_t>(callee_addr);
+        uint32_t result = (S + A - P) >> 2;
+
         // See if we can do the branch without a stub.
-        if (try_direct) {
-          S = reinterpret_cast<int64_t>(callee_addr);
-          result = (S + A - P) >> 2;
-          call_via_stub = false;        // Assume it's in range.
-          if (result > 0x01FFFFFF && result < 0xFE000000) {
-            // Not in range, need a stub.
-            call_via_stub = true;
-          }
+        if (result > 0x01FFFFFF && result < 0xFE000000) {
+          // Not in range, need a stub.
+          call_via_stub = true;
         }
 
         // Calling via a stub makes a BL instruction to a stub containing the following code:
@@ -567,6 +562,7 @@ relocateAARCH64(void *(*find_sym)(void *context, char const *name),
           StubLayout *stub_layout = text->getStubLayout();
 
           if (!stub_layout) {
+            __android_log_print(ANDROID_LOG_ERROR, "rs", "unable to get stub layout\n");
             llvm::errs() << "unable to get stub layout." << "\n";
             abort();
           }
@@ -574,6 +570,7 @@ relocateAARCH64(void *(*find_sym)(void *context, char const *name),
           void *stub = stub_layout->allocateStub(callee_addr);
 
           if (!stub) {
+            __android_log_print(ANDROID_LOG_ERROR, "rs", "unable to get allocate stub\n");
             llvm::errs() << "unable to allocate stub." << "\n";
             abort();
           }
@@ -584,6 +581,7 @@ relocateAARCH64(void *(*find_sym)(void *context, char const *name),
           result = (S + A - P) >> 2;
 
           if (result > 0x01FFFFFF && result < 0xFE000000) {
+            __android_log_print(ANDROID_LOG_ERROR, "rs", "stub is still too far\n");
             rsl_assert(0 && "Stub is still too far");
             abort();
           }
@@ -591,7 +589,7 @@ relocateAARCH64(void *(*find_sym)(void *context, char const *name),
 
         // 'result' contains the offset from PC to the destination address, encoded
         // in the correct form for the BL or B instructions.
-        *inst32 = ((result) & 0x03FFFFFF) | (*inst & 0xFC000000);
+        *inst32 = (result & 0x03FFFFFF) | (*inst & 0xFC000000);
       }
       break;
     case R_AARCH64_MOVW_UABS_G0:
