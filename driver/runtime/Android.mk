@@ -82,6 +82,7 @@ LOCAL_SRC_FILES_32 := $(clcore_files_32)
 LOCAL_SRC_FILES_64 := $(clcore_files_64)
 
 include $(LOCAL_PATH)/build_bc_lib.mk
+rs_debug_runtime :=
 
 # Build an optimized version of the library for x86 platforms (all have SSE2/3).
 ifeq ($(TARGET_ARCH),$(filter $(TARGET_ARCH),x86 x86_64))
