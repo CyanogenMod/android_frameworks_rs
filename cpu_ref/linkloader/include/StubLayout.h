@@ -69,5 +69,22 @@ private:
   virtual void setStubAddress(void *stub, void *addr);
 };
 
+class StubLayoutX86 : public StubLayout {
+public:
+  StubLayoutX86() { }
+  size_t getUnitStubSize() const;
+
+private:
+  virtual void setStubAddress(void *stub, void *addr);
+};
+
+class StubLayoutX86_64 : public StubLayout {
+public:
+  StubLayoutX86_64() { }
+  size_t getUnitStubSize() const;
+
+private:
+  virtual void setStubAddress(void *stub, void *addr);
+};
 
 #endif // STUB_LAYOUT_H
