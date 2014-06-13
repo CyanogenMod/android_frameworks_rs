@@ -570,7 +570,7 @@ relocateAARCH64(void *(*find_sym)(void *context, char const *name),
           void *stub = stub_layout->allocateStub(callee_addr);
 
           if (!stub) {
-            __android_log_print(ANDROID_LOG_ERROR, "rs", "unable to get allocate stub\n");
+            __android_log_print(ANDROID_LOG_ERROR, "rs", "unable to allocate stub\n");
             llvm::errs() << "unable to allocate stub." << "\n";
             abort();
           }
@@ -700,6 +700,34 @@ relocateX86_64(void *(*find_sym)(void *context, char const *name),
     case R_X86_64_PC32: {//PC relative 32-bit signed.
       int32_t *paddr = (int32_t*)&(*text)[rel->getOffset()];
       int64_t vOffset = S + A - P;
+
+      if (vOffset > INT32_MAX || vOffset < INT32_MIN) {
+        // Not in range, need a stub.
+        StubLayout *stub_layout = text->getStubLayout();
+        if (!stub_layout) {
+          __android_log_print(ANDROID_LOG_ERROR, "rs", "unable to get stub layout\n");
+          llvm::errs() << "unable to get stub layout." << "\n";
+          abort();
+        }
+
+        void *stub = stub_layout->allocateStub((void *)S);
+
+        if (!stub) {
+          __android_log_print(ANDROID_LOG_ERROR, "rs", "unable to allocate stub\n");
+          llvm::errs() << "unable to allocate stub." << "\n";
+          abort();
+        }
+
+        S = (Inst_t)stub;
+        vOffset = S + A - P;
+
+        if (vOffset > INT32_MAX || vOffset < INT32_MIN) {
+          __android_log_print(ANDROID_LOG_ERROR, "rs", "stub is still too far\n");
+          rsl_assert(0 && "Stub is still too far");
+          abort();
+        }
+      }
+
       rsl_assert(vOffset <= INT32_MAX && vOffset >= INT32_MIN);
       *paddr = (int32_t)(vOffset & 0xFFFFFFFF);
       break;
