@@ -436,9 +436,11 @@ bool RsdCpuScriptImpl::init(char const *resName, char const *cacheDir,
     switch (prec) {
     case bcinfo::RS_FP_Imprecise:
     case bcinfo::RS_FP_Relaxed:
-#if defined(ARCH_ARM_HAVE_NEON)
-        // NEON-capable devices can use an accelerated math library for all
-        // reduced precision scripts.
+#if defined(ARCH_ARM_HAVE_NEON) && !defined(ARCH_ARM64_HAVE_NEON)
+        // NEON-capable ARMv7a devices can use an accelerated math library
+        // for all reduced precision scripts.
+        // ARMv8 does not use NEON, as ASIMD can be used with all precision
+        // levels.
         core_lib = bcc::RSInfo::LibCLCoreNEONPath;
 #endif
         break;
@@ -508,7 +510,7 @@ bool RsdCpuScriptImpl::init(char const *resName, char const *cacheDir,
 
     for (size_t i = 0; i < ME.getExportForEachSignatureCount(); i++) {
         char* name = new char[strlen(ME.getExportForEachNameList()[i]) + 1];
-        mExportedForEachFuncList.push_back(std::make_pair(name, 
+        mExportedForEachFuncList.push_back(std::make_pair(name,
                                                           ME.getExportForEachSignatureList()[i]));
     }
 
@@ -1105,7 +1107,7 @@ RsdCpuScriptImpl::~RsdCpuScriptImpl() {
     if (mBoundAllocs) {
         delete[] mBoundAllocs;
     }
-    
+
     for (size_t i = 0; i < mExportedForEachFuncList.size(); i++) {
         delete[] mExportedForEachFuncList[i].first;
     }
