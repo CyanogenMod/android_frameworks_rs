@@ -16,10 +16,9 @@
 
 package com.android.rs.test;
 
-import android.renderscript.RSSurfaceView;
 import android.renderscript.RenderScript;
 
-import android.app.Activity;
+import android.app.ListActivity;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
@@ -33,52 +32,28 @@ import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.ArrayAdapter;
 
 import java.lang.Runtime;
 
-public class RSTest extends Activity {
-    //EventListener mListener = new EventListener();
+public class RSTest extends ListActivity {
 
     private static final String LOG_TAG = "RSTest";
     private static final boolean DEBUG  = false;
     private static final boolean LOG_ENABLED = false;
 
-    private RSTestView mView;
+    private RenderScript mRS;
+    private RSTestCore RSTC;
 
-    // get the current looper (from your Activity UI thread for instance
+    String mTestNames[];
 
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
+        mRS = RenderScript.create(this);
 
-        // Create our Preview view and set it as the content of our
-        // Activity
-        mView = new RSTestView(this);
-        setContentView(mView);
-    }
-
-    @Override
-    protected void onResume() {
-        // Ideally a game should implement onResume() and onPause()
-        // to take appropriate action when the activity loses focus
-        super.onResume();
-        mView.resume();
-    }
-
-    @Override
-    protected void onPause() {
-        // Ideally a game should implement onResume() and onPause()
-        // to take appropriate action when the activity loses focus
-        super.onPause();
-        mView.pause();
-    }
-
-    @Override
-    protected void onStop() {
-        // Actually kill the app if we are stopping. We don't want to
-        // continue/resume this test ever. It should always start fresh.
-        finish();
-        super.onStop();
+        RSTC = new RSTestCore(this);
+        RSTC.init(mRS, getResources());
     }
 
     static void log(String message) {
