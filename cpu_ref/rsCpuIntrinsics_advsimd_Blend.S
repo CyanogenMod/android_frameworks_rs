@@ -588,25 +588,25 @@
  *          size_t xend);       // x4
  */
 ENTRY(rsdIntrinsicBlend_K)
-    adr     x5, blend_functions
-    cmp     w2, #(blend_functions_end - blend_functions) >> 3
-    bhs     .bail
-    ldr     x5, [x5, w2, uxtw #3]
+    adr     x5, 2f
+    cmp     w2, #(3f - 2f) >> 1
+    bhs     1f
+    ldrsh   x6, [x5, w2, uxtw #1]
     add     x0, x0, w3, uxtw #2
     add     x1, x1, w3, uxtw #2
     sub     w2, w4, w3
     ubfiz   x2, x2, #2, #32 /* TODO: fix */
-    cbz     x5, .bail
-    br      x5
-.bail:
-    mov     x0, #-1
+    cbz     x6, 1f
+    add     x6, x5, x6
+    br      x6
+1:  mov     x0, #-1
     ret
 
-blend_functions:
+2:
 .set off,0
-#define BLEND_X(d, n) .rept d-off ; .xword 0 ; .endr ; .xword blend_line_##n ; .set off, d+1 ;
+#define BLEND_X(d, n) .rept d-off ; .hword 0 ; .endr ; .hword blend_line_##n - 2b ; .set off, d+1 ;
         BLEND_LIST(BLEND_X)
 #undef BLEND_X
-blend_functions_end:
+3:
 
 END(rsdIntrinsicBlend_K)
