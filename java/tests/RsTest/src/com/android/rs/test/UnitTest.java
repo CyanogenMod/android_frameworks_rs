@@ -120,6 +120,17 @@ public class UnitTest extends Thread {
         updateUI();
     }
 
+    public String toString() {
+        String out = name;
+        if (result == 1) {
+            out += " - PASSED";
+        }
+        else if (result == -1) {
+            out += " - FAILED";
+        }
+        return out;
+    }
+
     public void setItem(ScriptField_ListAllocs_s.Item item) {
         mItem = item;
     }
