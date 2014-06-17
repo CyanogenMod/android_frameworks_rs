@@ -523,7 +523,7 @@ public class ImageProcessingActivityJB extends Activity
         mTestList = i.getIntArrayExtra("tests");
 
         mToggleIO = i.getBooleanExtra("enable io", false);
-        mToggleDVFS = i.getBooleanExtra("enable dvfs", true);
+        mToggleDVFS = i.getBooleanExtra("enable dvfs", false);
         mToggleLong = i.getBooleanExtra("enable long", false);
         mTogglePause = i.getBooleanExtra("enable pause", false);
         mBitmapWidth = i.getIntExtra("resolution X", 0);
