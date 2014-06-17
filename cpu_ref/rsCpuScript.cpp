@@ -1237,11 +1237,6 @@ void RsdCpuScriptImpl::setGlobalObj(uint32_t slot, ObjectBase *data) {
     //rsAssert(script->mFieldIsObject[slot]);
     //ALOGE("setGlobalObj %p %p %i %p", dc, script, slot, data);
 
-    //if (mIntrinsicID) {
-        //mIntrinsicFuncs.setVarObj(dc, script, drv->mIntrinsicData, slot, alloc);
-        //return;
-    //}
-
 #ifndef RS_COMPATIBILITY_LIB
     int32_t *destPtr = reinterpret_cast<int32_t *>(
                           mExecutable->getExportVarAddrs()[slot]);
@@ -1277,7 +1272,7 @@ RsdCpuScriptImpl::~RsdCpuScriptImpl() {
             ObjectBase **obj_addr =
                 reinterpret_cast<ObjectBase **>(*var_addr_iter);
             if (*is_object_iter) {
-                if (*var_addr_iter != NULL) {
+                if (*var_addr_iter != NULL && mCtx->getContext() != NULL) {
                     rsrClearObject(mCtx->getContext(), obj_addr);
                 }
             }

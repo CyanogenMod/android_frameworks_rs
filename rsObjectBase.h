@@ -66,6 +66,8 @@ public:
     static void asyncLock();
     static void asyncUnlock();
 
+    virtual void callUpdateCacheObject(const Context *rsc, void *dstObj) const;
+
 protected:
     // Called inside the async lock for any object list management that is
     // necessary in derived classes.
