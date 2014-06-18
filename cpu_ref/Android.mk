@@ -11,7 +11,9 @@ ifneq ($(OVERRIDE_RS_DRIVER),)
 endif
 
 include $(CLEAR_VARS)
+ifneq ($(HOST_OS),windows)
 LOCAL_CLANG := true
+endif
 LOCAL_MODULE := libRSCpuRef
 LOCAL_MODULE_TARGET_ARCH := arm mips mips64 x86 x86_64 arm64
 
@@ -84,7 +86,9 @@ LOCAL_C_INCLUDES += frameworks/compile/libbcc/include
 LOCAL_C_INCLUDES += frameworks/rs
 LOCAL_C_INCLUDES += system/core/include
 
+ifneq ($(HOST_OS),windows)
 include external/libcxx/libcxx.mk
+endif
 include frameworks/compile/libbcc/libbcc-targets.mk
 
 LOCAL_CFLAGS += $(rs_base_CFLAGS)

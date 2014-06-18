@@ -28,7 +28,7 @@
 #include <llvm/ADT/OwningPtr.h>
 #include <llvm/Support/ELF.h>
 
-#ifdef __LP64__
+#if defined(__LP64__) || defined(__x86_64__)
 static inline RSExecRef wrap(ELFObject<64> *object) {
   return reinterpret_cast<RSExecRef>(object);
 }
@@ -38,7 +38,7 @@ static inline RSExecRef wrap(ELFObject<32> *object) {
 }
 #endif
 
-#ifdef __LP64__
+#if defined(__LP64__) || defined(__x86_64__)
 static inline ELFObject<64> *unwrap(RSExecRef object) {
   return reinterpret_cast<ELFObject<64> *>(object);
 }
@@ -69,7 +69,7 @@ extern "C" RSExecRef rsloaderLoadExecutable(unsigned char const *buf,
                                             size_t buf_size) {
   ArchiveReaderLE AR(buf, buf_size);
 
-#ifdef __LP64__
+#if defined(__LP64__) || defined(__x86_64__)
   llvm::OwningPtr<ELFObject<64> > object(ELFObject<64>::read(AR));
 #else
   llvm::OwningPtr<ELFObject<32> > object(ELFObject<32>::read(AR));
@@ -85,7 +85,7 @@ extern "C" RSExecRef rsloaderLoadExecutable(unsigned char const *buf,
 extern "C" int rsloaderRelocateExecutable(RSExecRef object_,
                                           RSFindSymbolFn find_symbol,
                                           void *find_symbol_context) {
-#ifdef __LP64__
+#if defined(__LP64__) || defined(__x86_64__)
   ELFObject<64>* object = unwrap(object_);
 #else
   ELFObject<32>* object = unwrap(object_);
@@ -96,20 +96,20 @@ extern "C" int rsloaderRelocateExecutable(RSExecRef object_,
 
 extern "C" void rsloaderUpdateSectionHeaders(RSExecRef object_,
                                              unsigned char *buf) {
-#ifdef __LP64__
+#if defined(__LP64__) || defined(__x86_64__)
   ELFObject<64> *object = unwrap(object_);
 #else
   ELFObject<32> *object = unwrap(object_);
 #endif
 
   // Remap the section header addresses to match the loaded code
-#ifdef __LP64__
+#if defined(__LP64__) || defined(__x86_64__)
   llvm::ELF::Elf64_Ehdr* header = reinterpret_cast<llvm::ELF::Elf64_Ehdr*>(buf);
 #else
   llvm::ELF::Elf32_Ehdr* header = reinterpret_cast<llvm::ELF::Elf32_Ehdr*>(buf);
 #endif
 
-#ifdef __LP64__
+#if defined(__LP64__) || defined(__x86_64__)
   llvm::ELF::Elf64_Shdr* shtab =
       reinterpret_cast<llvm::ELF::Elf64_Shdr*>(buf + header->e_shoff);
 #else
@@ -119,7 +119,7 @@ extern "C" void rsloaderUpdateSectionHeaders(RSExecRef object_,
 
   for (int i = 0; i < header->e_shnum; i++) {
     if (shtab[i].sh_flags & SHF_ALLOC) {
-#ifdef __LP64__
+#if defined(__LP64__) || defined(__x86_64__)
       ELFSectionBits<64>* bits =
           static_cast<ELFSectionBits<64>*>(object->getSectionByIndex(i));
 #else
@@ -128,7 +128,7 @@ extern "C" void rsloaderUpdateSectionHeaders(RSExecRef object_,
 #endif
       if (bits) {
         const unsigned char* addr = bits->getBuffer();
-#ifdef __LP64__
+#if defined(__LP64__) || defined(__x86_64__)
         shtab[i].sh_addr = reinterpret_cast<llvm::ELF::Elf64_Addr>(addr);
 #else
         shtab[i].sh_addr = reinterpret_cast<llvm::ELF::Elf32_Addr>(addr);
@@ -144,7 +144,7 @@ extern "C" void rsloaderDisposeExec(RSExecRef object) {
 
 extern "C" void *rsloaderGetSymbolAddress(RSExecRef object_,
                                           char const *name) {
-#ifdef __LP64__
+#if defined(__LP64__) || defined(__x86_64__)
   ELFObject<64> *object = unwrap(object_);
 
   ELFSectionSymTab<64> *symtab =
@@ -160,7 +160,7 @@ extern "C" void *rsloaderGetSymbolAddress(RSExecRef object_,
     return NULL;
   }
 
-#ifdef __LP64__
+#if defined(__LP64__) || defined(__x86_64__)
   ELFSymbol<64> *symbol = symtab->getByName(name);
 #else
   ELFSymbol<32> *symbol = symtab->getByName(name);
@@ -177,7 +177,7 @@ extern "C" void *rsloaderGetSymbolAddress(RSExecRef object_,
 }
 
 extern "C" size_t rsloaderGetSymbolSize(RSExecRef object_, char const *name) {
-#ifdef __LP64__
+#if defined(__LP64__) || defined(__x86_64__)
   ELFObject<64> *object = unwrap(object_);
 
   ELFSectionSymTab<64> *symtab =
@@ -192,7 +192,7 @@ extern "C" size_t rsloaderGetSymbolSize(RSExecRef object_, char const *name) {
     return 0;
   }
 
-#ifdef __LP64__
+#if defined(__LP64__) || defined(__x86_64__)
   ELFSymbol<64> *symbol = symtab->getByName(name);
 #else
   ELFSymbol<32> *symbol = symtab->getByName(name);
@@ -207,7 +207,7 @@ extern "C" size_t rsloaderGetSymbolSize(RSExecRef object_, char const *name) {
 }
 
 extern "C" size_t rsloaderGetFuncCount(RSExecRef object) {
-#ifdef __LP64__
+#if defined(__LP64__) || defined(__x86_64__)
   ELFSectionSymTab<64> *symtab = static_cast<ELFSectionSymTab<64> *>(
 #else
   ELFSectionSymTab<32> *symtab = static_cast<ELFSectionSymTab<32> *>(
@@ -224,7 +224,7 @@ extern "C" size_t rsloaderGetFuncCount(RSExecRef object) {
 extern "C" void rsloaderGetFuncNameList(RSExecRef object,
                                         size_t size,
                                         char const **list) {
-#ifdef __LP64__
+#if defined(__LP64__) || defined(__x86_64__)
   ELFSectionSymTab<64> *symtab = static_cast<ELFSectionSymTab<64> *>(
 #else
   ELFSectionSymTab<32> *symtab = static_cast<ELFSectionSymTab<32> *>(

@@ -18,7 +18,9 @@ local_cflags_for_rs_cpp += -Wno-unused-parameter
 
 LOCAL_SRC_FILES := $(rs_cpp_SRC_FILES)
 
+ifneq ($(HOST_OS),windows)
 LOCAL_CLANG := true
+endif
 LOCAL_CFLAGS += $(local_cflags_for_rs_cpp)
 
 LOCAL_SHARED_LIBRARIES := \
@@ -42,7 +44,9 @@ include $(BUILD_SHARED_LIBRARY)
 
 include $(CLEAR_VARS)
 
+ifneq ($(HOST_OS),windows)
 LOCAL_CLANG := true
+endif
 LOCAL_CFLAGS += $(local_cflags_for_rs_cpp)
 
 LOCAL_SDK_VERSION := 8

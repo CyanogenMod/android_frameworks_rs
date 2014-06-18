@@ -15,7 +15,9 @@ ifeq ($(RS_FIND_OFFSETS), true)
 endif
 
 include $(CLEAR_VARS)
+ifneq ($(HOST_OS),windows)
 LOCAL_CLANG := true
+endif
 LOCAL_MODULE := libRSDriver
 LOCAL_MODULE_TARGET_ARCH_WARN := arm mips mips64 x86 x86_64 arm64
 
@@ -79,7 +81,9 @@ include $(BUILD_HOST_EXECUTABLE)
 RSG_GENERATOR:=$(LOCAL_BUILT_MODULE)
 
 include $(CLEAR_VARS)
+ifneq ($(HOST_OS),windows)
 LOCAL_CLANG := true
+endif
 LOCAL_MODULE := libRS
 LOCAL_MODULE_TARGET_ARCH_WARN := arm mips mips64 x86 x86_64 arm64
 
@@ -309,7 +313,9 @@ include $(BUILD_STATIC_LIBRARY)
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := librsloader
+ifneq ($(HOST_OS),windows)
 LOCAL_CLANG := true
+endif
 
 LOCAL_MODULE_TAGS := optional
 
@@ -325,11 +331,18 @@ LOCAL_CFLAGS += $(rs_base_CFLAGS)
 LOCAL_CFLAGS += -D__HOST__
 LOCAL_CPPFLAGS += -fno-exceptions
 
+ifeq ($(HOST_OS),windows)
+LOCAL_C_INCLUDES := \
+  $(LOCAL_PATH)/cpu_ref/linkloader \
+  $(LOCAL_PATH)/cpu_ref/linkloader/include \
+  $(LOCAL_C_INCLUDES)
+else
 LOCAL_C_INCLUDES := \
   $(LOCAL_PATH)/cpu_ref/linkloader \
   $(LOCAL_PATH)/cpu_ref/linkloader/include \
   external/libcxx/include \
   $(LOCAL_C_INCLUDES)
+endif
 
 include $(LLVM_ROOT_PATH)/llvm-host-build.mk
 include $(BUILD_HOST_STATIC_LIBRARY)
