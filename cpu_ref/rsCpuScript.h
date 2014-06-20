@@ -35,6 +35,10 @@ namespace bcc {
     class RSExecutable;
 }
 
+namespace bcinfo {
+    class MetadataExtractor;
+}
+
 namespace android {
 namespace renderscript {
 
@@ -108,6 +112,8 @@ protected:
     const Script *mScript;
 
 #ifndef RS_COMPATIBILITY_LIB
+    const char* findCoreLib(const bcinfo::MetadataExtractor& ME, const char* bitcode,
+                            size_t bitcodeSize);
     int (*mRoot)();
     int (*mRootExpand)();
     void (*mInit)();
