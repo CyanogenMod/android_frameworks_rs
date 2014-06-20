@@ -548,7 +548,7 @@ FN_FUNC_FN(rint)
 
 extern float __attribute__((overloadable)) rootn(float v, int r) {
     if (r == 0) {
-        return nan(0);
+        return posinf(0);
     }
 
     if (iszero(v)) {
