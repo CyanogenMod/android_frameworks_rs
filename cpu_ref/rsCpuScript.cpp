@@ -4,7 +4,7 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
-< *
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
@@ -190,8 +190,8 @@ static void *loadSharedLibrary(const char *cacheDir, const char *resName) {
     return loaded;
 }
 
+#else  // RS_COMPATIBILITY_LIB is not defined
 
-#else  // RS_COMPATIBILITY_LIB is defined
 static bool is_force_recompile() {
 #ifdef RS_SERVER
   return false;
@@ -424,46 +424,15 @@ bool RsdCpuScriptImpl::init(char const *resName, char const *cacheDir,
         setupCompilerCallback(mCompilerDriver);
     }
 
-    const char *core_lib = bcc::RSInfo::LibCLCorePath;
-
     bcinfo::MetadataExtractor ME((const char *) bitcode, bitcodeSize);
     if (!ME.extract()) {
         ALOGE("Could not extract metadata from bitcode");
         return false;
     }
 
-    enum bcinfo::RSFloatPrecision prec = ME.getRSFloatPrecision();
-    switch (prec) {
-    case bcinfo::RS_FP_Imprecise:
-    case bcinfo::RS_FP_Relaxed:
-#if defined(ARCH_ARM_HAVE_NEON) && !defined(ARCH_ARM64_HAVE_NEON)
-        // NEON-capable ARMv7a devices can use an accelerated math library
-        // for all reduced precision scripts.
-        // ARMv8 does not use NEON, as ASIMD can be used with all precision
-        // levels.
-        core_lib = bcc::RSInfo::LibCLCoreNEONPath;
-#endif
-        break;
-    case bcinfo::RS_FP_Full:
-        break;
-    default:
-        ALOGE("Unknown precision for bitcode");
-        return false;
-    }
-
-#if defined(__i386__)
-    // x86 devices will use an optimized library.
-     core_lib = bcc::RSInfo::LibCLCoreX86Path;
-#endif
-
-    RSSelectRTCallback selectRTCallback = mCtx->getSelectRTCallback();
-    if (selectRTCallback != NULL) {
-        core_lib = selectRTCallback((const char *)bitcode, bitcodeSize);
-    }
+    const char* core_lib = findCoreLib(ME, (const char*)bitcode, bitcodeSize);
 
     if (mCtx->getContext()->getContextType() == RS_CONTEXT_TYPE_DEBUG) {
-        // Use the libclcore_debug.bc instead of the default library.
-        core_lib = bcc::RSInfo::LibCLCoreDebugPath;
         mCompilerDriver->setDebugContext(true);
         useRSDebugContext = true;
         // Skip the cache lookup
@@ -732,6 +701,51 @@ error:
     return false;
 #endif
 }
+
+#ifndef RS_COMPATIBILITY_LIB
+
+#ifdef __LP64__
+#define SYSLIBPATH "/system/lib64"
+#else
+#define SYSLIBPATH "/system/lib"
+#endif
+
+const char* RsdCpuScriptImpl::findCoreLib(const bcinfo::MetadataExtractor& ME, const char* bitcode,
+                                          size_t bitcodeSize) {
+    const char* defaultLib = SYSLIBPATH"/libclcore.bc";
+
+    // If we're debugging, use the debug library.
+    if (mCtx->getContext()->getContextType() == RS_CONTEXT_TYPE_DEBUG) {
+        return SYSLIBPATH"/libclcore_debug.bc";
+    }
+
+    // If a callback has been registered to specify a library, use that.
+    RSSelectRTCallback selectRTCallback = mCtx->getSelectRTCallback();
+    if (selectRTCallback != NULL) {
+        return selectRTCallback((const char*)bitcode, bitcodeSize);
+    }
+
+    // Check for a platform specific library
+#if defined(ARCH_ARM_HAVE_NEON) && !defined(DISABLE_CLCORE_NEON)
+    enum bcinfo::RSFloatPrecision prec = ME.getRSFloatPrecision();
+    if (prec == bcinfo::RS_FP_Imprecise || prec == bcinfo::RS_FP_Relaxed) {
+        // NEON-capable ARMv7a devices can use an accelerated math library
+        // for all reduced precision scripts.
+        // ARMv8 does not use NEON, as ASIMD can be used with all precision
+        // levels.
+        return SYSLIBPATH"/libclcore_neon.bc";
+    } else {
+        return defaultLib;
+    }
+#elif defined(__i386__) || defined(__x86_64__)
+    // x86 devices will use an optimized library.
+    return SYSLIBPATH"/libclcore_x86.bc";
+#else
+    return defaultLib;
+#endif
+}
+
+#endif
 
 void RsdCpuScriptImpl::populateScript(Script *script) {
 #ifndef RS_COMPATIBILITY_LIB
