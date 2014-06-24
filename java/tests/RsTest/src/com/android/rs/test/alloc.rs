@@ -10,27 +10,18 @@ rs_allocation aFaces;
 rs_allocation aLOD;
 rs_allocation aFacesLOD;
 
-void root(int *o, uint32_t x, uint32_t y) {
-    *o = x + y * dimX;
+void root(int *o, uint32_t x) {
+    *o = x;
 }
 
 static bool test_alloc_dims() {
     bool failed = false;
-    int i, j;
+    int i;
 
     _RS_ASSERT(rsAllocationGetDimX(aRaw) == dimX);
-    _RS_ASSERT(rsAllocationGetDimY(aRaw) == dimY);
-    _RS_ASSERT(rsAllocationGetDimZ(aRaw) == dimZ);
-
-    // Test 2D addressing
-    for (j = 0; j < dimY; j++) {
-        for (i = 0; i < dimX; i++) {
-            rsDebug("Verifying ", i + j * dimX);
-            const void *p = rsGetElementAt(aRaw, i, j);
-            int val = *(const int *)p;
-            _RS_ASSERT(val == (i + j * dimX));
-        }
-    }
+    // Since we are binding with our A allocation, it has 0 Y/Z dimensions.
+    _RS_ASSERT(rsAllocationGetDimY(aRaw) == 0);
+    _RS_ASSERT(rsAllocationGetDimZ(aRaw) == 0);
 
     // Test 1D addressing
     for (i = 0; i < dimX; i++) {
@@ -38,16 +29,6 @@ static bool test_alloc_dims() {
         const void *p = rsGetElementAt(aRaw, i);
         int val = *(const int *)p;
         _RS_ASSERT(val == i);
-    }
-
-    // Test 3D addressing
-    for (j = 0; j < dimY; j++) {
-        for (i = 0; i < dimX; i++) {
-            rsDebug("Verifying ", i + j * dimX);
-            const void *p = rsGetElementAt(aRaw, i, j, 0);
-            int val = *(const int *)p;
-            _RS_ASSERT(val == (i + j * dimX));
-        }
     }
 
     _RS_ASSERT(rsAllocationGetDimX(aFaces) == dimX);
