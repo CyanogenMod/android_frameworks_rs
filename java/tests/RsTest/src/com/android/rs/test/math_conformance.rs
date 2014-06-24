@@ -5,8 +5,8 @@
 static bool test_rootn() {
     bool failed = false;
 
-    // rootn(x, 0) -> NaN
-    _RS_ASSERT(isnan(rootn(1.0f, 0)));
+    // rootn(x, 0) -> +inf
+    _RS_ASSERT(isposinf(rootn(1.0f, 0)));
 
     // rootn(+/-0, n) -> +/-inf for odd n < 0
     _RS_ASSERT(isposinf(rootn(0.f, -3)));
