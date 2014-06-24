@@ -36,7 +36,7 @@ public class UT_alloc extends UnitTest {
         s.set_dimX(X);
         s.set_dimY(Y);
         s.set_dimZ(Z);
-        typeBuilder.setX(X).setY(Y);
+        typeBuilder.setX(X);  // Only build a 1-D version of this
         Allocation A = Allocation.createTyped(RS, typeBuilder.create());
         s.bind_a(A);
         s.set_aRaw(A);
