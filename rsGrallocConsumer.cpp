@@ -142,8 +142,8 @@ status_t GrallocConsumer::lockNextBuffer() {
     //mAlloc->frameNumber = b.mFrameNumber;
 
     if (mAlloc->mHal.state.yuv) {
-        mAlloc->mHal.drvState.lod[1].mallocPtr = ycbcr.cr;
-        mAlloc->mHal.drvState.lod[2].mallocPtr = ycbcr.cb;
+        mAlloc->mHal.drvState.lod[1].mallocPtr = ycbcr.cb;
+        mAlloc->mHal.drvState.lod[2].mallocPtr = ycbcr.cr;
 
         mAlloc->mHal.drvState.lod[0].stride = ycbcr.ystride;
         mAlloc->mHal.drvState.lod[1].stride = ycbcr.cstride;
