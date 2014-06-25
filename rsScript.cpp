@@ -73,7 +73,7 @@ void Script::getVar(uint32_t slot, const void *val, size_t len) {
 }
 
 void Script::setVar(uint32_t slot, const void *val, size_t len, Element *e,
-                    const size_t *dims, size_t dimLen) {
+                    const uint32_t *dims, size_t dimLen) {
     if (slot >= mHal.info.exportedVariableCount) {
         ALOGE("Script::setVar unable to set allocation, invalid slot index: "
               "%u >= %zu", slot, mHal.info.exportedVariableCount);
