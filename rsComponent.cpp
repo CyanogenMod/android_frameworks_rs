@@ -127,8 +127,15 @@ void Component::set(RsDataType dt, RsDataKind dk, bool norm, uint32_t vecSize) {
         rsAssert(mVectorSize == 1);
         rsAssert(mNormalized == false);
         rsAssert(mKind == RS_KIND_USER);
+#ifdef __LP64__
+        // Large object pointers on 64-bit targets.
+        mBits = 256;
+        mTypeBits = 256;
+#else
+        // Single pointer objects on 32-bit targets.
         mBits = 32;
         mTypeBits = 32;
+#endif  // __LP64__
         return;
 
     case RS_TYPE_FLOAT_16:
