@@ -117,7 +117,7 @@ void rsdScriptGetGlobalVar(const Context *dc, const Script *s,
 void rsdScriptSetGlobalVarWithElemDims(const Context *dc, const Script *s,
                                        uint32_t slot, void *data, size_t dataLength,
                                        const android::renderscript::Element *elem,
-                                       const size_t *dims, size_t dimLength) {
+                                       const uint32_t *dims, size_t dimLength) {
     RsdCpuReference::CpuScript *cs = (RsdCpuReference::CpuScript *)s->mHal.drv;
     cs->setGlobalVarWithElemDims(slot, data, dataLength, elem, dims, dimLength);
 }

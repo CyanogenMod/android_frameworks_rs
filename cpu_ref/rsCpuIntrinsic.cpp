@@ -54,7 +54,7 @@ void RsdCpuScriptIntrinsic::setGlobalVar(uint32_t slot, const void *data, size_t
 
 void RsdCpuScriptIntrinsic::setGlobalVarWithElemDims(uint32_t slot, const void *data,
                                                      size_t dataLength, const Element *e,
-                                                     const size_t *dims, size_t dimLength) {
+                                                     const uint32_t *dims, size_t dimLength) {
     mCtx->getContext()->setError(RS_ERROR_FATAL_DRIVER,
                                  "Unexpected RsdCpuScriptIntrinsic::setGlobalVarWithElemDims");
 }

@@ -130,7 +130,7 @@ typedef struct {
                                          void *data,
                                          size_t dataLength,
                                          const Element *e,
-                                         const size_t *dims,
+                                         const uint32_t *dims,
                                          size_t dimLength);
         void (*setGlobalBind)(const Context *rsc, const Script *s,
                               uint32_t slot,

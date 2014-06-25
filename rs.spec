@@ -343,7 +343,7 @@ ScriptSetVarVE {
     param uint32_t slot
     param const void * data
     param RsElement e
-    param const size_t * dims
+    param const uint32_t * dims
     }
 
 
