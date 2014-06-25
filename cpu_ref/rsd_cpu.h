@@ -81,7 +81,7 @@ public:
         virtual void setGlobalVar(uint32_t slot, const void *data, size_t dataLength) = 0;
         virtual void getGlobalVar(uint32_t slot, void *data, size_t dataLength) = 0;
         virtual void setGlobalVarWithElemDims(uint32_t slot, const void *data, size_t dataLength,
-                                      const Element *e, const size_t *dims, size_t dimLength) = 0;
+                                      const Element *e, const uint32_t *dims, size_t dimLength) = 0;
         virtual void setGlobalBind(uint32_t slot, Allocation *data) = 0;
         virtual void setGlobalObj(uint32_t slot, ObjectBase *obj) = 0;
 
