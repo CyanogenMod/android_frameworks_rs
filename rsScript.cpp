@@ -252,7 +252,7 @@ void rsi_ScriptGetVarV(Context *rsc, RsScript vs, uint32_t slot, void *data, siz
 
 void rsi_ScriptSetVarVE(Context *rsc, RsScript vs, uint32_t slot,
                         const void *data, size_t len, RsElement ve,
-                        const size_t *dims, size_t dimLen) {
+                        const uint32_t *dims, size_t dimLen) {
     Script *s = static_cast<Script *>(vs);
     Element *e = static_cast<Element *>(ve);
     s->setVar(slot, data, len, e, dims, dimLen);

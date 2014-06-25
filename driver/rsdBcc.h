@@ -61,7 +61,7 @@ void rsdScriptSetGlobalVarWithElemDims(const android::renderscript::Context *,
                                        uint32_t slot, void *data,
                                        size_t dataLength,
                                        const android::renderscript::Element *,
-                                       const size_t *dims,
+                                       const uint32_t *dims,
                                        size_t dimLength);
 void rsdScriptSetGlobalBind(const android::renderscript::Context *,
                             const android::renderscript::Script *,
