@@ -86,7 +86,7 @@ void printStructures(FILE *f) {
     for (ct=0; ct < apiCount; ct++) {
         const ApiEntry * api = &apis[ct];
         fprintf(f, "#define RS_CMD_ID_%s %i\n", api->name, ct+1);
-        fprintf(f, "struct RS_CMD_%s_rec {\n", api->name);
+        fprintf(f, "struct __attribute__((packed)) RS_CMD_%s_rec {\n", api->name);
         //fprintf(f, "    RsCommandHeader _hdr;\n");
 
         for (ct2=0; ct2 < api->paramCount; ct2++) {
