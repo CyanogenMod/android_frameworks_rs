@@ -103,7 +103,7 @@ public:
     void setVar(uint32_t slot, const void *val, size_t len);
     void getVar(uint32_t slot, const void *val, size_t len);
     void setVar(uint32_t slot, const void *val, size_t len, Element *e,
-                const size_t *dims, size_t dimLen);
+                const uint32_t *dims, size_t dimLen);
     void setVarObj(uint32_t slot, ObjectBase *val);
 
     virtual bool freeChildren();
