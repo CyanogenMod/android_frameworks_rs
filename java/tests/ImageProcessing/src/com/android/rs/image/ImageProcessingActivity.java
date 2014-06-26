@@ -528,7 +528,9 @@ public class ImageProcessingActivity extends Activity
     protected void onResume() {
         super.onResume();
 
-        init();
+        if (null == mRS) {
+            init();
+        }
     }
 
     // button hook
