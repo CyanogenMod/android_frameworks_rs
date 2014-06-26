@@ -80,6 +80,7 @@ public:
         void * drv;
 
         RsdHalFunctions funcs;
+        uint32_t flags;
     };
     Hal mHal;
 

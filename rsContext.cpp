@@ -530,6 +530,7 @@ Context * Context::createContext(Device *dev, const RsSurfaceConfig *sc,
         rsc->mSynchronous = true;
     }
     rsc->mContextType = ct;
+    rsc->mHal.flags = flags;
 
     if (!rsc->initContext(dev, sc)) {
         delete rsc;
