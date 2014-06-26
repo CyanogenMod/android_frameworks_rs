@@ -401,7 +401,7 @@ nop
             .hword 124f-100b
             .hword 125f-100b
             .align 4
-    125:    ext         v12.16b, v3.16b, v4.16b, #6*2
+    125:    ext         v12.16b, v31.16b, v4.16b, #6*2
             ext         v13.16b, v10.16b, v11.16b, #0*2
             umlal       v14.4s, v12.4h, v3.h[1]
             umlal2      v15.4s, v12.8h, v3.h[1]
@@ -556,7 +556,7 @@ nop
             uqrshrn2    v14.8h, v15.4s, #16
             uqrshrn     v15.8b, v14.8h, #FRACTION_BITS
 
-            ins         v3.d[1], v4.d[0]
+            mov         v31.16b, v4.16b
             mov         v4.16b, v5.16b
             mov         v5.16b, v6.16b
             mov         v6.16b, v7.16b
@@ -566,7 +566,7 @@ nop
             mov         v10.16b, v11.16b
 .endm/*}}}*/
 
-#define TUNED_LIST4 6, 12
+#define TUNED_LIST4 6, 12, 20
 .macro hconv4_6/*{{{*/
             umull       v14.4s, v7.4h, v0.h[0]
             umull2      v15.4s, v7.8h, v0.h[0]
@@ -643,97 +643,51 @@ nop
             .hword 111f-100b
             .hword 112f-100b
             .align 4
-    112:    add         x12, x9, #0x1a0
-            bic         x12, x12, #0x200
-            ld1         {v12.8h}, [x12]
-            umlal       v14.4s, v12.4h, v1.h[4]
-            umlal2      v15.4s, v12.8h, v1.h[4]
+    112:    umlal       v14.4s, v26.4h, v1.h[4]
+            umlal2      v15.4s, v26.8h, v1.h[4]
             umlal       v14.4s, v10.4h, v1.h[4]
             umlal2      v15.4s, v10.8h, v1.h[4]
-    111:    add         x12, x9, #0x1a8
-            bic         x12, x12, #0x200
-            ld1         {v12.4h}, [x12], #8
-            bic         x12, x12, #0x200
-            ld1         {v13.4h}, [x12]
-            umlal       v14.4s, v12.4h, v1.h[3]
-            umlal       v15.4s, v13.4h, v1.h[3]
+    111:    umlal2      v14.4s, v26.8h, v1.h[3]
+            umlal       v15.4s, v27.4h, v1.h[3]
             umlal2      v14.4s, v9.8h, v1.h[3]
             umlal       v15.4s, v10.4h, v1.h[3]
-    110:    add         x12, x9, #0x1b0
-            bic         x12, x12, #0x200
-            ld1         {v12.8h}, [x12]
-            umlal       v14.4s, v12.4h, v1.h[2]
-            umlal2      v15.4s, v12.8h, v1.h[2]
+    110:    umlal       v14.4s, v27.4h, v1.h[2]
+            umlal2      v15.4s, v27.8h, v1.h[2]
             umlal       v14.4s, v9.4h, v1.h[2]
             umlal2      v15.4s, v9.8h, v1.h[2]
-    109:    add         x12, x9, #0x1b8
-            bic         x12, x12, #0x200
-            ld1         {v12.4h}, [x12], #8
-            bic         x12, x12, #0x200
-            ld1         {v13.4h}, [x12]
-            umlal       v14.4s, v12.4h, v1.h[1]
-            umlal       v15.4s, v13.4h, v1.h[1]
+    109:    umlal2      v14.4s, v27.8h, v1.h[1]
+            umlal       v15.4s, v28.4h, v1.h[1]
             umlal2      v14.4s, v8.8h, v1.h[1]
             umlal       v15.4s, v9.4h, v1.h[1]
-    108:    add         x12, x9, #0x1c0
-            bic         x12, x12, #0x200
-            ld1         {v12.8h}, [x12]
-            umlal       v14.4s, v12.4h, v1.h[0]
-            umlal2      v15.4s, v12.8h, v1.h[0]
+    108:    umlal       v14.4s, v28.4h, v1.h[0]
+            umlal2      v15.4s, v28.8h, v1.h[0]
             umlal       v14.4s, v8.4h, v1.h[0]
             umlal2      v15.4s, v8.8h, v1.h[0]
-    107:    add         x12, x9, #0x1c8
-            bic         x12, x12, #0x200
-            ld1         {v12.4h}, [x12], #8
-            bic         x12, x12, #0x200
-            ld1         {v13.4h}, [x12]
-            umlal       v14.4s, v12.4h, v0.h[7]
-            umlal       v15.4s, v13.4h, v0.h[7]
+    107:    umlal2      v14.4s, v28.8h, v0.h[7]
+            umlal       v15.4s, v29.4h, v0.h[7]
             umlal2      v14.4s, v7.8h, v0.h[7]
             umlal       v15.4s, v8.4h, v0.h[7]
-    106:    add         x12, x9, #0x1d0
-            bic         x12, x12, #0x200
-            ld1         {v12.8h}, [x12]
-            umlal       v14.4s, v12.4h, v0.h[6]
-            umlal2      v15.4s, v12.8h, v0.h[6]
+    106:    umlal       v14.4s, v29.4h, v0.h[6]
+            umlal2      v15.4s, v29.8h, v0.h[6]
             umlal       v14.4s, v7.4h, v0.h[6]
             umlal2      v15.4s, v7.8h, v0.h[6]
-    105:    add         x12, x9, #0x1d8
-            bic         x12, x12, #0x200
-            ld1         {v12.4h}, [x12], #8
-            bic         x12, x12, #0x200
-            ld1         {v13.4h}, [x12]
-            umlal       v14.4s, v12.4h, v0.h[5]
-            umlal       v15.4s, v13.4h, v0.h[5]
+    105:    umlal2      v14.4s, v29.8h, v0.h[5]
+            umlal       v15.4s, v30.4h, v0.h[5]
             umlal2      v14.4s, v6.8h, v0.h[5]
             umlal       v15.4s, v7.4h, v0.h[5]
-    104:    add         x12, x9, #0x1e0
-            bic         x12, x12, #0x200
-            ld1         {v12.8h}, [x12]
-            umlal       v14.4s, v12.4h, v0.h[4]
-            umlal2      v15.4s, v12.8h, v0.h[4]
+    104:    umlal       v14.4s, v30.4h, v0.h[4]
+            umlal2      v15.4s, v30.8h, v0.h[4]
             umlal       v14.4s, v6.4h, v0.h[4]
             umlal2      v15.4s, v6.8h, v0.h[4]
-    103:    add         x12, x9, #0x1e8
-            bic         x12, x12, #0x200
-            ld1         {v12.4h}, [x12], #8
-            bic         x12, x12, #0x200
-            ld1         {v13.4h}, [x12]
-            umlal       v14.4s, v12.4h, v0.h[3]
-            umlal       v15.4s, v13.4h, v0.h[3]
+    103:    umlal2      v14.4s, v30.8h, v0.h[3]
+            umlal       v15.4s, v31.4h, v0.h[3]
             umlal2      v14.4s, v5.8h, v0.h[3]
             umlal       v15.4s, v6.4h, v0.h[3]
-    102:    add         x12, x9, #0x1f0
-            bic         x12, x12, #0x200
-            ld1         {v12.8h}, [x12]
-            umlal       v14.4s, v12.4h, v0.h[2]
-            umlal2      v15.4s, v12.8h, v0.h[2]
+    102:    umlal       v14.4s, v31.4h, v0.h[2]
+            umlal2      v15.4s, v31.8h, v0.h[2]
             umlal       v14.4s, v5.4h, v0.h[2]
             umlal2      v15.4s, v5.8h, v0.h[2]
-    101:    add         x12, x9, #0x1f8
-            bic         x12, x12, #0x200
-            ld1         {v12.4h}, [x12]
-            umlal       v14.4s, v12.4h, v0.h[1]
+    101:    umlal2      v14.4s, v31.8h, v0.h[1]
             umlal       v15.4s, v4.4h,  v0.h[1]
             umlal2      v14.4s, v4.8h,  v0.h[1]
             umlal       v15.4s, v5.4h, v0.h[1]
@@ -742,8 +696,151 @@ nop
             uqrshrn2    v14.8h, v15.4s, #16
             uqrshrn     v15.8b, v14.8h, #FRACTION_BITS
 
-            st1         {v4.16b}, [x9], #16
-            bic         x9, x9, #0x200
+            mov         v26.16b, v27.16b
+            mov         v27.16b, v28.16b
+            mov         v28.16b, v29.16b
+            mov         v29.16b, v30.16b
+            mov         v30.16b, v31.16b
+            mov         v31.16b, v4.16b
+            mov         v4.16b, v5.16b
+            mov         v5.16b, v6.16b
+            mov         v6.16b, v7.16b
+            mov         v7.16b, v8.16b
+            mov         v8.16b, v9.16b
+            mov         v9.16b, v10.16b
+            mov         v10.16b, v11.16b
+.endm/*}}}*/
+
+.macro hconv4_20/*{{{*/
+            umull       v14.4s, v28.4h, v0.h[0]
+            umull2      v15.4s, v28.8h, v0.h[0]
+
+            adr         x16, 100f
+            ldrsh       x12, [x16, x5, LSL #1]
+            add         x12, x12, x16
+            br          x12
+   100:     .hword -4
+            .hword 101f-100b
+            .hword 102f-100b
+            .hword 103f-100b
+            .hword 104f-100b
+            .hword 105f-100b
+            .hword 106f-100b
+            .hword 107f-100b
+            .hword 108f-100b
+            .hword 109f-100b
+            .hword 110f-100b
+            .hword 111f-100b
+            .hword 112f-100b
+            .hword 113f-100b
+            .hword 114f-100b
+            .hword 115f-100b
+            .hword 116f-100b
+            .hword 117f-100b
+            .hword 118f-100b
+            .hword 119f-100b
+            .hword 120f-100b
+            .align 4
+
+    120:    umlal       v14.4s, v18.4h, v2.h[4]
+            umlal2      v15.4s, v18.8h, v2.h[4]
+            umlal       v14.4s, v10.4h, v2.h[4]
+            umlal2      v15.4s, v10.8h, v2.h[4]
+    119:    umlal2      v14.4s, v18.8h, v2.h[3]
+            umlal       v15.4s, v19.4h, v2.h[3]
+            umlal2      v14.4s, v9.8h,  v2.h[3]
+            umlal       v15.4s, v10.4h, v2.h[3]
+    118:    umlal       v14.4s, v19.4h, v2.h[2]
+            umlal2      v15.4s, v19.8h, v2.h[2]
+            umlal       v14.4s, v9.4h,  v2.h[2]
+            umlal2      v15.4s, v9.8h,  v2.h[2]
+    117:    umlal2      v14.4s, v19.8h, v2.h[1]
+            umlal       v15.4s, v20.4h, v2.h[1]
+            umlal2      v14.4s, v8.8h,  v2.h[1]
+            umlal       v15.4s, v9.4h,  v2.h[1]
+    116:    umlal       v14.4s, v20.4h, v2.h[0]
+            umlal2      v15.4s, v20.8h, v2.h[0]
+            umlal       v14.4s, v8.4h,  v2.h[0]
+            umlal2      v15.4s, v8.8h,  v2.h[0]
+    115:    umlal2      v14.4s, v20.8h, v1.h[7]
+            umlal       v15.4s, v21.4h, v1.h[7]
+            umlal2      v14.4s, v7.8h,  v1.h[7]
+            umlal       v15.4s, v8.4h,  v1.h[7]
+    114:    umlal       v14.4s, v21.4h, v1.h[6]
+            umlal2      v15.4s, v21.8h, v1.h[6]
+            umlal       v14.4s, v7.4h,  v1.h[6]
+            umlal2      v15.4s, v7.8h,  v1.h[6]
+    113:    umlal2      v14.4s, v21.8h, v1.h[5]
+            umlal       v15.4s, v22.4h, v1.h[5]
+            umlal2      v14.4s, v6.8h,  v1.h[5]
+            umlal       v15.4s, v7.4h,  v1.h[5]
+    112:    umlal       v14.4s, v22.4h, v1.h[4]
+            umlal2      v15.4s, v22.8h, v1.h[4]
+            umlal       v14.4s, v6.4h,  v1.h[4]
+            umlal2      v15.4s, v6.8h,  v1.h[4]
+    111:    umlal2      v14.4s, v22.8h, v1.h[3]
+            umlal       v15.4s, v23.4h, v1.h[3]
+            umlal2      v14.4s, v5.8h,  v1.h[3]
+            umlal       v15.4s, v6.4h,  v1.h[3]
+    110:    umlal       v14.4s, v23.4h, v1.h[2]
+            umlal2      v15.4s, v23.8h, v1.h[2]
+            umlal       v14.4s, v5.4h,  v1.h[2]
+            umlal2      v15.4s, v5.8h,  v1.h[2]
+    109:    umlal2      v14.4s, v23.8h, v1.h[1]
+            umlal       v15.4s, v24.4h, v1.h[1]
+            umlal2      v14.4s, v4.8h,  v1.h[1]
+            umlal       v15.4s, v5.4h,  v1.h[1]
+    108:    umlal       v14.4s, v24.4h, v1.h[0]
+            umlal2      v15.4s, v24.8h, v1.h[0]
+            umlal       v14.4s, v4.4h,  v1.h[0]
+            umlal2      v15.4s, v4.8h,  v1.h[0]
+    107:    umlal2      v14.4s, v24.8h, v0.h[7]
+            umlal       v15.4s, v25.4h, v0.h[7]
+            umlal2      v14.4s, v31.8h, v0.h[7]
+            umlal       v15.4s, v4.4h,  v0.h[7]
+    106:    umlal       v14.4s, v25.4h, v0.h[6]
+            umlal2      v15.4s, v25.8h, v0.h[6]
+            umlal       v14.4s, v31.4h, v0.h[6]
+            umlal2      v15.4s, v31.8h, v0.h[6]
+    105:    umlal2      v14.4s, v25.8h, v0.h[5]
+            umlal       v15.4s, v26.4h, v0.h[5]
+            umlal2      v14.4s, v30.8h, v0.h[5]
+            umlal       v15.4s, v31.4h, v0.h[5]
+    104:    umlal       v14.4s, v26.4h, v0.h[4]
+            umlal2      v15.4s, v26.8h, v0.h[4]
+            umlal       v14.4s, v30.4h, v0.h[4]
+            umlal2      v15.4s, v30.8h, v0.h[4]
+    103:    umlal2      v14.4s, v26.8h, v0.h[3]
+            umlal       v15.4s, v27.4h, v0.h[3]
+            umlal2      v14.4s, v29.8h, v0.h[3]
+            umlal       v15.4s, v30.4h, v0.h[3]
+    102:    umlal       v14.4s, v27.4h, v0.h[2]
+            umlal2      v15.4s, v27.8h, v0.h[2]
+            umlal       v14.4s, v29.4h, v0.h[2]
+            umlal2      v15.4s, v29.8h, v0.h[2]
+    101:    umlal2      v14.4s, v27.8h, v0.h[1]
+            umlal       v15.4s, v28.4h, v0.h[1]
+            umlal2      v14.4s, v28.8h, v0.h[1]
+            umlal       v15.4s, v29.4h, v0.h[1]
+
+            uqrshrn     v14.4h, v14.4s, #16
+            uqrshrn2    v14.8h, v15.4s, #16
+            uqrshrn     v15.8b, v14.8h, #FRACTION_BITS
+
+            mov         v18.16b, v19.16b
+            mov         v19.16b, v20.16b
+            mov         v20.16b, v21.16b
+            mov         v21.16b, v22.16b
+            mov         v22.16b, v23.16b
+            mov         v23.16b, v24.16b
+            mov         v24.16b, v25.16b
+            mov         v25.16b, v26.16b
+            mov         v26.16b, v27.16b
+            mov         v27.16b, v28.16b
+            mov         v28.16b, v29.16b
+            mov         v29.16b, v30.16b
+            mov         v30.16b, v31.16b
+            mov         v31.16b, v4.16b
             mov         v4.16b, v5.16b
             mov         v5.16b, v6.16b
             mov         v6.16b, v7.16b
@@ -754,13 +851,8 @@ nop
 .endm/*}}}*/
 
 .macro hconv4_25/*{{{*/
-            add         x12, x9, #0x198
-            bic         x12, x12, #0x200
-            ld1         {v12.4h}, [x12], #8
-            bic         x12, x12, #0x200
-            ld1         {v13.4h}, [x12]
-            umull       v14.4s, v12.4h, v0.h[0]
-            umull       v15.4s, v13.4h, v0.h[0]
+            umull2      v14.4s, v25.8h, v0.h[0]
+            umull       v15.4s, v26.4h, v0.h[0]
 
             adr         x16, 100f
             ldrsh       x12, [x16, x5, LSL #1]
@@ -793,257 +885,157 @@ nop
             .hword 124f-100b
             .hword 125f-100b
             .align 4
-    125:    add         x12, x9, #0x0d0
-            bic         x12, x12, #0x200
-            ld1         {v12.8h}, [x12]
+
+    125:    ld1         {v12.8h}, [x9]
             umlal       v14.4s, v12.4h, v3.h[1]
             umlal2      v15.4s, v12.8h, v3.h[1]
             umlal       v14.4s, v10.4h, v3.h[1]
             umlal2      v15.4s, v10.8h, v3.h[1]
-    124:    add         x12, x9, #0x0d8
-            bic         x12, x12, #0x200
+    124:    add         x12, x9, #0x08
+            bic         x12, x12, #0x40
             ld1         {v12.4h}, [x12], #8
-            bic         x12, x12, #0x200
+            bic         x12, x12, #0x40
             ld1         {v13.4h}, [x12]
             umlal       v14.4s, v12.4h, v3.h[0]
             umlal       v15.4s, v13.4h, v3.h[0]
-            umlal2      v14.4s, v9.8h, v3.h[0]
+            umlal2      v14.4s, v9.8h,  v3.h[0]
             umlal       v15.4s, v10.4h, v3.h[0]
-    123:    add         x12, x9, #0x0e0
-            bic         x12, x12, #0x200
+    123:    add         x12, x9, #0x10
+            bic         x12, x12, #0x40
             ld1         {v12.8h}, [x12]
             umlal       v14.4s, v12.4h, v2.h[7]
             umlal2      v15.4s, v12.8h, v2.h[7]
-            umlal       v14.4s, v9.4h, v2.h[7]
-            umlal2      v15.4s, v9.8h, v2.h[7]
-    122:    add         x12, x9, #0x0e8
-            bic         x12, x12, #0x200
+            umlal       v14.4s, v9.4h,  v2.h[7]
+            umlal2      v15.4s, v9.8h,  v2.h[7]
+    122:    add         x12, x9, #0x18
+            bic         x12, x12, #0x40
             ld1         {v12.4h}, [x12], #8
-            bic         x12, x12, #0x200
+            bic         x12, x12, #0x40
             ld1         {v13.4h}, [x12]
             umlal       v14.4s, v12.4h, v2.h[6]
             umlal       v15.4s, v13.4h, v2.h[6]
-            umlal2      v14.4s, v8.8h, v2.h[6]
-            umlal       v15.4s, v9.4h, v2.h[6]
-    121:    add         x12, x9, #0x0f0
-            bic         x12, x12, #0x200
+            umlal2      v14.4s, v8.8h,  v2.h[6]
+            umlal       v15.4s, v9.4h,  v2.h[6]
+    121:    add         x12, x9, #0x20
+            bic         x12, x12, #0x40
             ld1         {v12.8h}, [x12]
             umlal       v14.4s, v12.4h, v2.h[5]
             umlal2      v15.4s, v12.8h, v2.h[5]
-            umlal       v14.4s, v8.4h, v2.h[5]
-            umlal2      v15.4s, v8.8h, v2.h[5]
-    120:    add         x12, x9, #0x0f8
-            bic         x12, x12, #0x200
+            umlal       v14.4s, v8.4h,  v2.h[5]
+            umlal2      v15.4s, v8.8h,  v2.h[5]
+    120:    add         x12, x9, #0x28
+            bic         x12, x12, #0x40
             ld1         {v12.4h}, [x12], #8
-            bic         x12, x12, #0x200
+            bic         x12, x12, #0x40
             ld1         {v13.4h}, [x12]
             umlal       v14.4s, v12.4h, v2.h[4]
             umlal       v15.4s, v13.4h, v2.h[4]
-            umlal2      v14.4s, v7.8h, v2.h[4]
-            umlal       v15.4s, v8.4h, v2.h[4]
-    119:    add         x12, x9, #0x100
-            bic         x12, x12, #0x200
+            umlal2      v14.4s, v7.8h,  v2.h[4]
+            umlal       v15.4s, v8.4h,  v2.h[4]
+    119:    add         x12, x9, #0x30
+            bic         x12, x12, #0x40
             ld1         {v12.8h}, [x12]
             umlal       v14.4s, v12.4h, v2.h[3]
             umlal2      v15.4s, v12.8h, v2.h[3]
-            umlal       v14.4s, v7.4h, v2.h[3]
-            umlal2      v15.4s, v7.8h, v2.h[3]
-    118:    add         x12, x9, #0x108
-            bic         x12, x12, #0x200
-            ld1         {v12.4h}, [x12], #8
-            bic         x12, x12, #0x200
-            ld1         {v13.4h}, [x12]
+            umlal       v14.4s, v7.4h,  v2.h[3]
+            umlal2      v15.4s, v7.8h,  v2.h[3]
+    118:    add         x12, x9, #0x38
+            bic         x12, x12, #0x40
+            ld1         {v12.4h}, [x12]
             umlal       v14.4s, v12.4h, v2.h[2]
-            umlal       v15.4s, v13.4h, v2.h[2]
-            umlal2      v14.4s, v6.8h, v2.h[2]
-            umlal       v15.4s, v7.4h, v2.h[2]
-    117:    add         x12, x9, #0x110
-            bic         x12, x12, #0x200
-            ld1         {v12.8h}, [x12]
-            umlal       v14.4s, v12.4h, v2.h[1]
-            umlal2      v15.4s, v12.8h, v2.h[1]
-            umlal       v14.4s, v6.4h, v2.h[1]
-            umlal2      v15.4s, v6.8h, v2.h[1]
-    116:    add         x12, x9, #0x118
-            bic         x12, x12, #0x200
-            ld1         {v12.4h}, [x12], #8
-            bic         x12, x12, #0x200
-            ld1         {v13.4h}, [x12]
-            umlal       v14.4s, v12.4h, v2.h[0]
-            umlal       v15.4s, v13.4h, v2.h[0]
-            umlal2      v14.4s, v5.8h, v2.h[0]
-            umlal       v15.4s, v6.4h, v2.h[0]
-    115:    add         x12, x9, #0x120
-            bic         x12, x12, #0x200
-            ld1         {v12.8h}, [x12]
-            umlal       v14.4s, v12.4h, v1.h[7]
-            umlal2      v15.4s, v12.8h, v1.h[7]
-            umlal       v14.4s, v5.4h, v1.h[7]
-            umlal2      v15.4s, v5.8h, v1.h[7]
-    114:    add         x12, x9, #0x128
-            bic         x12, x12, #0x200
-            ld1         {v12.4h}, [x12], #8
-            bic         x12, x12, #0x200
-            ld1         {v13.4h}, [x12]
-            umlal       v14.4s, v12.4h, v1.h[6]
-            umlal       v15.4s, v13.4h, v1.h[6]
+            umlal       v15.4s, v17.4h, v2.h[2]
+            umlal2      v14.4s, v6.8h,  v2.h[2]
+            umlal       v15.4s, v7.4h,  v2.h[2]
+    117:    umlal       v14.4s, v17.4h, v2.h[1]
+            umlal2      v15.4s, v17.8h, v2.h[1]
+            umlal       v14.4s, v6.4h,  v2.h[1]
+            umlal2      v15.4s, v6.8h,  v2.h[1]
+    116:    umlal2      v14.4s, v17.8h, v2.h[0]
+            umlal       v15.4s, v18.4h, v2.h[0]
+            umlal2      v14.4s, v5.8h,  v2.h[0]
+            umlal       v15.4s, v6.4h,  v2.h[0]
+    115:    umlal       v14.4s, v18.4h, v1.h[7]
+            umlal2      v15.4s, v18.8h, v1.h[7]
+            umlal       v14.4s, v5.4h,  v1.h[7]
+            umlal2      v15.4s, v5.8h,  v1.h[7]
+    114:    umlal2      v14.4s, v18.8h, v1.h[6]
+            umlal       v15.4s, v19.4h, v1.h[6]
             umlal2      v14.4s, v4.8h,  v1.h[6]
-            umlal       v15.4s, v5.4h, v1.h[6]
-    113:    add         x12, x9, #0x130
-            bic         x12, x12, #0x200
-            ld1         {v12.8h}, [x12]
-            umlal       v14.4s, v12.4h, v1.h[5]
-            umlal2      v15.4s, v12.8h, v1.h[5]
+            umlal       v15.4s, v5.4h,  v1.h[6]
+    113:    umlal       v14.4s, v19.4h, v1.h[5]
+            umlal2      v15.4s, v19.8h, v1.h[5]
             umlal       v14.4s, v4.4h,  v1.h[5]
             umlal2      v15.4s, v4.8h,  v1.h[5]
-    112:    add         x12, x9, #0x138
-            bic         x12, x12, #0x200
-            ld1         {v12.4h}, [x12], #8
-            bic         x12, x12, #0x200
-            ld1         {v16.4h}, [x12]
-                                            add         x12, x9, #0x1f8
-                                            bic         x12, x12, #0x200
-                                            ld1         {v13.4h}, [x12]
-            umlal       v14.4s, v12.4h, v1.h[4]
-            umlal       v15.4s, v16.4h, v1.h[4]
-            umlal       v14.4s, v13.4h, v1.h[4]   // Could be d7, without the load, right?
+    112:    umlal2      v14.4s, v19.8h, v1.h[4]
+            umlal       v15.4s, v20.4h, v1.h[4]
+            umlal2      v14.4s, v31.8h, v1.h[4]
             umlal       v15.4s, v4.4h,  v1.h[4]
-    111:    add         x12, x9, #0x140
-            bic         x12, x12, #0x200
-            ld1         {v12.8h}, [x12]
-                                            add         x12, x9, #0x1f0
-                                            bic         x12, x12, #0x200
-                                            ld1         {v13.8h}, [x12]
-            umlal       v14.4s, v12.4h, v1.h[3]
-            umlal2      v15.4s, v12.8h, v1.h[3]
-            umlal       v14.4s, v13.4h, v1.h[3]
-            umlal2      v15.4s, v13.8h, v1.h[3]
-    110:    add         x12, x9, #0x148
-            bic         x12, x12, #0x200
-            ld1         {v12.4h}, [x12], #8
-            bic         x12, x12, #0x200
-            ld1         {v16.4h}, [x12]
-                                            add         x12, x9, #0x1e8
-                                            bic         x12, x12, #0x200
-                                            ld1         {v13.4h}, [x12], #8
-                                            bic         x12, x12, #0x200
-                                            ld1         {v17.4h}, [x12]
-            umlal       v14.4s, v12.4h, v1.h[2]
-            umlal       v15.4s, v16.4h, v1.h[2]
-            umlal       v14.4s, v13.4h, v1.h[2]
-            umlal       v15.4s, v17.4h, v1.h[2]
-    109:    add         x12, x9, #0x150
-            bic         x12, x12, #0x200
-            ld1         {v12.8h}, [x12]
-                                            add         x12, x9, #0x1e0
-                                            bic         x12, x12, #0x200
-                                            ld1         {v13.8h}, [x12]
-            umlal       v14.4s, v12.4h, v1.h[1]
-            umlal2      v15.4s, v12.8h, v1.h[1]
-            umlal       v14.4s, v13.4h, v1.h[1]
-            umlal2      v15.4s, v13.8h, v1.h[1]
-    108:    add         x12, x9, #0x158
-            bic         x12, x12, #0x200
-            ld1         {v12.4h}, [x12], #8
-            bic         x12, x12, #0x200
-            ld1         {v16.4h}, [x12]
-                                            add         x12, x9, #0x1d8
-                                            bic         x12, x12, #0x200
-                                            ld1         {v13.4h}, [x12], #8
-                                            bic         x12, x12, #0x200
-                                            ld1         {v17.4h}, [x12]
-            umlal       v14.4s, v12.4h, v1.h[0]
-            umlal       v15.4s, v16.4h, v1.h[0]
-            umlal       v14.4s, v13.4h, v1.h[0]
-            umlal       v15.4s, v17.4h, v1.h[0]
-    107:    add         x12, x9, #0x160
-            bic         x12, x12, #0x200
-            ld1         {v12.8h}, [x12]
-                                            add         x12, x9, #0x1d0
-                                            bic         x12, x12, #0x200
-                                            ld1         {v13.8h}, [x12]
-            umlal       v14.4s, v12.4h, v0.h[7]
-            umlal2      v15.4s, v12.8h, v0.h[7]
-            umlal       v14.4s, v13.4h, v0.h[7]
-            umlal2      v15.4s, v13.8h, v0.h[7]
-    106:    add         x12, x9, #0x168
-            bic         x12, x12, #0x200
-            ld1         {v12.4h}, [x12], #8
-            bic         x12, x12, #0x200
-            ld1         {v16.4h}, [x12]
-                                            add         x12, x9, #0x1c8
-                                            bic         x12, x12, #0x200
-                                            ld1         {v13.4h}, [x12], #8
-                                            bic         x12, x12, #0x200
-                                            ld1         {v17.4h}, [x12]
-            umlal       v14.4s, v12.4h, v0.h[6]
-            umlal       v15.4s, v16.4h, v0.h[6]
-            umlal       v14.4s, v13.4h, v0.h[6]
-            umlal       v15.4s, v17.4h, v0.h[6]
-    105:    add         x12, x9, #0x170
-            bic         x12, x12, #0x200
-            ld1         {v12.8h}, [x12]
-                                            add         x12, x9, #0x1c0
-                                            bic         x12, x12, #0x200
-                                            ld1         {v13.8h}, [x12]
-            umlal       v14.4s, v12.4h, v0.h[5]
-            umlal2      v15.4s, v12.8h, v0.h[5]
-            umlal       v14.4s, v13.4h, v0.h[5]
-            umlal2      v15.4s, v13.8h, v0.h[5]
-    104:    add         x12, x9, #0x178
-            bic         x12, x12, #0x200
-            ld1         {v12.4h}, [x12], #8
-            bic         x12, x12, #0x200
-            ld1         {v16.4h}, [x12]
-                                            add         x12, x9, #0x1b8
-                                            bic         x12, x12, #0x200
-                                            ld1         {v13.4h}, [x12], #8
-                                            bic         x12, x12, #0x200
-                                            ld1         {v17.4h}, [x12]
-            umlal       v14.4s, v12.4h, v0.h[4]
-            umlal       v15.4s, v16.4h, v0.h[4]
-            umlal       v14.4s, v13.4h, v0.h[4]
-            umlal       v15.4s, v17.4h, v0.h[4]
-    103:    add         x12, x9, #0x180
-            bic         x12, x12, #0x200
-            ld1         {v12.8h}, [x12]
-                                            add         x12, x9, #0x1b0
-                                            bic         x12, x12, #0x200
-                                            ld1         {v13.8h}, [x12]
-            umlal       v14.4s, v12.4h, v0.h[3]
-            umlal2      v15.4s, v12.8h, v0.h[3]
-            umlal       v14.4s, v13.4h, v0.h[3]
-            umlal2      v15.4s, v13.8h, v0.h[3]
-    102:    add         x12, x9, #0x188
-            bic         x12, x12, #0x200
-            ld1         {v12.4h}, [x12], #8
-            bic         x12, x12, #0x200
-            ld1         {v16.4h}, [x12]
-                                            add         x12, x9, #0x1a8
-                                            bic         x12, x12, #0x200
-                                            ld1         {v13.4h}, [x12], #8
-                                            bic         x12, x12, #0x200
-                                            ld1         {v17.4h}, [x12]
-            umlal       v14.4s, v12.4h, v0.h[2]
-            umlal       v15.4s, v16.4h, v0.h[2]
-            umlal       v14.4s, v13.4h, v0.h[2]
-            umlal       v15.4s, v17.4h, v0.h[2]
-    101:    add         x12, x9, #0x190
-            bic         x12, x12, #0x200
-            ld1         {v12.8h}, [x12], #16
-            bic         x12, x12, #0x200
-            ld1         {v13.8h}, [x12]
-            umlal       v14.4s, v12.4h, v0.h[1]
-            umlal2      v15.4s, v12.8h, v0.h[1]
-            umlal       v14.4s, v13.4h, v0.h[1]
-            umlal2      v15.4s, v13.8h, v0.h[1]
+    111:    umlal       v14.4s, v20.4h, v1.h[3]
+            umlal2      v15.4s, v20.8h, v1.h[3]
+            umlal       v14.4s, v31.4h, v1.h[3]
+            umlal2      v15.4s, v31.8h, v1.h[3]
+    110:    umlal2      v14.4s, v20.8h, v1.h[2]
+            umlal       v15.4s, v21.4h, v1.h[2]
+            umlal2      v14.4s, v30.8h, v1.h[2]
+            umlal       v15.4s, v31.4h, v1.h[2]
+    109:    umlal       v14.4s, v21.4h, v1.h[1]
+            umlal2      v15.4s, v21.8h, v1.h[1]
+            umlal       v14.4s, v30.4h, v1.h[1]
+            umlal2      v15.4s, v30.8h, v1.h[1]
+    108:    umlal2      v14.4s, v21.8h, v1.h[0]
+            umlal       v15.4s, v22.4h, v1.h[0]
+            umlal2      v14.4s, v29.8h, v1.h[0]
+            umlal       v15.4s, v30.4h, v1.h[0]
+    107:    umlal       v14.4s, v22.4h, v0.h[7]
+            umlal2      v15.4s, v22.8h, v0.h[7]
+            umlal       v14.4s, v29.4h, v0.h[7]
+            umlal2      v15.4s, v29.8h, v0.h[7]
+    106:    umlal2      v14.4s, v22.8h, v0.h[6]
+            umlal       v15.4s, v23.4h, v0.h[6]
+            umlal2      v14.4s, v28.8h, v0.h[6]
+            umlal       v15.4s, v29.4h, v0.h[6]
+    105:    umlal       v14.4s, v23.4h, v0.h[5]
+            umlal2      v15.4s, v23.8h, v0.h[5]
+            umlal       v14.4s, v28.4h, v0.h[5]
+            umlal2      v15.4s, v28.8h, v0.h[5]
+    104:    umlal2      v14.4s, v23.8h, v0.h[4]
+            umlal       v15.4s, v24.4h, v0.h[4]
+            umlal2      v14.4s, v27.8h, v0.h[4]
+            umlal       v15.4s, v28.4h, v0.h[4]
+    103:    umlal       v14.4s, v24.4h, v0.h[3]
+            umlal2      v15.4s, v24.8h, v0.h[3]
+            umlal       v14.4s, v27.4h, v0.h[3]
+            umlal2      v15.4s, v27.8h, v0.h[3]
+    102:    umlal2      v14.4s, v24.8h, v0.h[2]
+            umlal       v15.4s, v25.4h, v0.h[2]
+            umlal2      v14.4s, v26.8h, v0.h[2]
+            umlal       v15.4s, v27.4h, v0.h[2]
+    101:    umlal       v14.4s, v25.4h, v0.h[1]
+            umlal2      v15.4s, v25.8h, v0.h[1]
+            umlal       v14.4s, v26.4h, v0.h[1]
+            umlal2      v15.4s, v26.8h, v0.h[1]
 
             uqrshrn     v14.4h, v14.4s, #16
             uqrshrn2    v14.8h, v15.4s, #16
             uqrshrn     v15.8b, v14.8h, #FRACTION_BITS
 
-            st1         {v4.16b}, [x9], #16
-            bic         x9, x9, #0x200
+            st1         {v17.16b}, [x9], #16
+            bic         x9, x9, #0x40
+            mov         v17.16b, v18.16b
+            mov         v18.16b, v19.16b
+            mov         v19.16b, v20.16b
+            mov         v20.16b, v21.16b
+            mov         v21.16b, v22.16b
+            mov         v22.16b, v23.16b
+            mov         v23.16b, v24.16b
+            mov         v24.16b, v25.16b
+            mov         v25.16b, v26.16b
+            mov         v26.16b, v27.16b
+            mov         v27.16b, v28.16b
+            mov         v28.16b, v29.16b
+            mov         v29.16b, v30.16b
+            mov         v30.16b, v31.16b
+            mov         v31.16b, v4.16b
             mov         v4.16b, v5.16b
             mov         v5.16b, v6.16b
             mov         v6.16b, v7.16b
@@ -1126,18 +1118,20 @@ END(prefetch_clamp4)
 /* Helpers for prefetch, below.
  */
 .macro prefetch_out qa, qb, store, qsa, qsb, qsb_hi
-  .if \store > 0
+  .if \store == 2
     .ifc \qsa,\qsb
             st1         {\qsa}, [x9], #16
             st1         {\qsb}, [x9], #16
     .else
             st1         {\qsa,\qsb}, [x9], #32
     .endif
+  .elseif \store == 1
+            bic         x9, x9, #0x40
+            st1         {\qsa}, [x9], #16
+            mov         \qb, \qsb
   .elseif \store == 0
             mov         \qa, \qsa
             mov         \qb, \qsb
-  .else
-            ins         \qb, \qsb_hi
   .endif
 .endm
 
@@ -1244,26 +1238,20 @@ END(prefetch_clamp4)
             /* it's only in the uchar2 and uchar4 cases where the register file
              * is insufficient (given MAX_R <= 25).
              */
-            prefetch_one xx, xx, 192, c=\max_r, step=\step, store=1
-            prefetch_one xx, xx, 176, c=\max_r, step=\step, store=1
-            prefetch_one xx, xx, 160, c=\max_r, step=\step, store=1
-            prefetch_one xx, xx, 144, c=\max_r, step=\step, store=1
-            prefetch_one xx, xx, 128, c=\max_r, step=\step, store=1
-            prefetch_one xx, xx, 112, c=\max_r, step=\step, store=1
-            prefetch_one xx, xx,  96, c=\max_r, step=\step, store=1
-            prefetch_one xx, xx,  80, c=\max_r, step=\step, store=1
-            prefetch_one xx, xx,  64, c=\max_r, step=\step, store=1
-            prefetch_one xx, xx,  48, c=\max_r, step=\step, store=1
-  .else
-            /* q3 normally contains the coefficient table, but it's not fully
-             * used.  In the uchar1, r=25 case the other half of q3 is used for
-             * the last two window taps to avoid falling out to memory.
-             */
-            prefetch_one xx,  v3.d[1], 48, c=\max_r, step=\step, store=-1
+            prefetch_one xx, xx, 192, c=\max_r, step=\step, store=2
+            prefetch_one xx, xx, 176, c=\max_r, step=\step, store=2
+            prefetch_one xx,      v17.16b, 160, c=\max_r, step=\step, store=1
+            prefetch_one v18.16b, v19.16b, 144, c=\max_r, step=\step, store=0
+            prefetch_one v20.16b, v21.16b, 128, c=\max_r, step=\step, store=0
+            prefetch_one v22.16b, v23.16b, 112, c=\max_r, step=\step, store=0
+            prefetch_one v24.16b, v25.16b,  96, c=\max_r, step=\step, store=0
+            prefetch_one v26.16b, v27.16b,  80, c=\max_r, step=\step, store=0
+            prefetch_one v28.16b, v29.16b,  64, c=\max_r, step=\step, store=0
   .endif
-            prefetch_one v4.16b, v5.16b, 32, c=\max_r, step=\step, store=0
-            prefetch_one v6.16b, v7.16b, 16, c=\max_r, step=\step, store=0
-            prefetch_one v8.16b, v9.16b,  0, c=\max_r, step=\step, store=0
+            prefetch_one v30.16b, v31.16b,  48, c=\max_r, step=\step, store=0
+            prefetch_one v4.16b,  v5.16b,   32, c=\max_r, step=\step, store=0
+            prefetch_one v6.16b,  v7.16b,   16, c=\max_r, step=\step, store=0
+            prefetch_one v8.16b,  v9.16b,    0, c=\max_r, step=\step, store=0
 
   .if \step == 1
             add         x10, x8, #\max_r * \step
@@ -1400,13 +1388,13 @@ END(convolve1_\r)
 
 .irep r, TUNED_LIST4, 25
 PRIVATE(convolve4_\r)
-            sub         x12, sp, #0x200
-            bic         x9, x12, #0x3fc
+            sub         x12, sp, #0x040
+            bic         x9, x12, #0x07f
             mov         sp, x9
             stp         x12,x30, [sp, #-16]!
 
             /* x9 now points to a buffer on the stack whose address has the low
-             * 10 bits clear.  This allows easy address calculation in the
+             * 7 bits clear.  This allows easy address calculation in the
              * wrap-around cases.
              */
 
@@ -1416,7 +1404,7 @@ PRIVATE(convolve4_\r)
             mainloop    core=hconv4_\r, step=4, max_r=\r, labelc=.Lcnv4_\r, labelnc=.Lcnvnc4_\r
 
             ldp         x12,x30, [sp]
-            add         sp, x12, #0x200
+            add         sp, x12, #0x40
             ret
 END(convolve4_\r)
 .endr
