@@ -112,7 +112,8 @@ protected:
     const Script *mScript;
 
 #ifndef RS_COMPATIBILITY_LIB
-    const char* findCoreLib(const bcinfo::MetadataExtractor& ME, const char* bitcode,
+    // Returns the path to the core library we'll use.
+    const char* findCoreLib(const bcinfo::MetadataExtractor& bitCodeMetaData, const char* bitcode,
                             size_t bitcodeSize);
     int (*mRoot)();
     int (*mRootExpand)();
@@ -150,9 +151,7 @@ protected:
     Allocation **mBoundAllocs;
     void * mIntrinsicData;
     bool mIsThreadable;
-
 };
-
 
 Allocation * rsdScriptGetAllocationForPointer(
                         const Context *dc,
