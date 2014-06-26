@@ -427,6 +427,7 @@ bool RsdCpuScriptImpl::init(char const *resName, char const *cacheDir,
     bcinfo::MetadataExtractor ME((const char *) bitcode, bitcodeSize);
     if (!ME.extract()) {
         ALOGE("Could not extract metadata from bitcode");
+        mCtx->unlockMutex();
         return false;
     }
 
