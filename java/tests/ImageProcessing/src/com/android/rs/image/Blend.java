@@ -90,6 +90,7 @@ public class Blend extends TestBase {
     public boolean onSpinner1Setup(Spinner s) {
         s.setAdapter(new ArrayAdapter<String>(
             act, R.layout.spinner_layout, mIntrinsicNames));
+        s.setSelection(0, false);
         s.setOnItemSelectedListener(mIntrinsicSpinnerListener);
         return true;
     }
