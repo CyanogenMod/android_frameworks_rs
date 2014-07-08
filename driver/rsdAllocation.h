@@ -168,6 +168,9 @@ void rsdAllocationElementData2D(const android::renderscript::Context *rsc,
 void rsdAllocationGenerateMipmaps(const android::renderscript::Context *rsc,
                                   const android::renderscript::Allocation *alloc);
 
+void rsdAllocationUpdateCachedObject(const android::renderscript::Context *rsc,
+                                     const android::renderscript::Allocation *alloc,
+                                     android::renderscript::rs_allocation *obj);
 
 
 #endif

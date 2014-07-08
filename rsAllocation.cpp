@@ -438,6 +438,15 @@ void Allocation::decRefs(const void *ptr, size_t ct, size_t startOff) const {
     mHal.state.type->decRefs(ptr, ct, startOff);
 }
 
+void Allocation::callUpdateCacheObject(const Context *rsc, void *dstObj) const {
+    if (rsc->mHal.funcs.allocation.updateCachedObject != NULL) {
+        rsc->mHal.funcs.allocation.updateCachedObject(rsc, this, (rs_allocation *)dstObj);
+    } else {
+        *((const void **)dstObj) = this;
+    }
+}
+
+
 void Allocation::freeChildrenUnlocked () {
     void *ptr = mRSC->mHal.funcs.allocation.lock1D(mRSC, this);
     decRefs(ptr, mHal.state.type->getCellCount(), 0);

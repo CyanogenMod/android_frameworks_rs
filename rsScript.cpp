@@ -91,8 +91,15 @@ void Script::setVarObj(uint32_t slot, ObjectBase *val) {
         return;
     }
     mHasObjectSlots = true;
-    //ALOGE("setvarobj  %i %p", slot, val);
     mRSC->mHal.funcs.script.setGlobalObj(mRSC, this, slot, val);
+}
+
+void Script::callUpdateCacheObject(const Context *rsc, void *dstObj) const {
+    if (rsc->mHal.funcs.script.updateCachedObject != NULL) {
+        rsc->mHal.funcs.script.updateCachedObject(rsc, this, (rs_script *)dstObj);
+    } else {
+        *((const void **)dstObj) = this;
+    }
 }
 
 bool Script::freeChildren() {
