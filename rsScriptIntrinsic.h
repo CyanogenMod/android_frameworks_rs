@@ -48,6 +48,15 @@ public:
                             size_t usrBytes,
                             const RsScriptCall *sc = NULL);
 
+    virtual void runForEach(Context* rsc,
+                            uint32_t slot,
+                            const Allocation** ains,
+                            size_t inLen,
+                            Allocation* aout,
+                            const void* usr,
+                            size_t usrBytes,
+                            const RsScriptCall* sc = NULL);
+
     virtual void Invoke(Context *rsc, uint32_t slot, const void *data, size_t len);
     virtual void setupScript(Context *rsc);
     virtual uint32_t run(Context *);

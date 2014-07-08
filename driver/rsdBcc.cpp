@@ -77,6 +77,20 @@ void rsdScriptInvokeForEach(const Context *rsc,
     cs->invokeForEach(slot, ain, aout, usr, usrLen, sc);
 }
 
+void rsdScriptInvokeForEachMulti(const Context *rsc,
+                                 Script *s,
+                                 uint32_t slot,
+                                 const Allocation ** ains,
+                                 size_t inLen,
+                                 Allocation * aout,
+                                 const void * usr,
+                                 size_t usrLen,
+                                 const RsScriptCall *sc) {
+
+    RsdCpuReference::CpuScript *cs = (RsdCpuReference::CpuScript *)s->mHal.drv;
+    cs->invokeForEachMulti(slot, ains, inLen, aout, usr, usrLen, sc);
+}
+
 
 int rsdScriptInvokeRoot(const Context *dc, Script *s) {
     RsdCpuReference::CpuScript *cs = (RsdCpuReference::CpuScript *)s->mHal.drv;
@@ -145,4 +159,3 @@ Allocation * rsdScriptGetAllocationForPointer(const android::renderscript::Conte
     RsdCpuReference::CpuScript *cs = (RsdCpuReference::CpuScript *)sc->mHal.drv;
     return cs->getAllocationForPointer(ptr);
 }
-
