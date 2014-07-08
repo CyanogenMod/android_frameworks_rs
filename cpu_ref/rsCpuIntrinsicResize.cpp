@@ -46,13 +46,13 @@ protected:
     ObjectBaseRef<const Allocation> mAlloc;
     ObjectBaseRef<const Element> mElement;
 
-    static void kernelU1(const RsForEachStubParamStruct *p,
+    static void kernelU1(const RsExpandKernelParams *p,
                          uint32_t xstart, uint32_t xend,
                          uint32_t instep, uint32_t outstep);
-    static void kernelU2(const RsForEachStubParamStruct *p,
+    static void kernelU2(const RsExpandKernelParams *p,
                          uint32_t xstart, uint32_t xend,
                          uint32_t instep, uint32_t outstep);
-    static void kernelU4(const RsForEachStubParamStruct *p,
+    static void kernelU4(const RsExpandKernelParams *p,
                          uint32_t xstart, uint32_t xend,
                          uint32_t instep, uint32_t outstep);
 };
@@ -179,7 +179,7 @@ static uchar OneBiCubic(const uchar *yp0, const uchar *yp1, const uchar *yp2, co
     return (uchar)p;
 }
 
-void RsdCpuScriptIntrinsicResize::kernelU4(const RsForEachStubParamStruct *p,
+void RsdCpuScriptIntrinsicResize::kernelU4(const RsExpandKernelParams *p,
                                                 uint32_t xstart, uint32_t xend,
                                                 uint32_t instep, uint32_t outstep) {
     RsdCpuScriptIntrinsicResize *cp = (RsdCpuScriptIntrinsicResize *)p->usr;
@@ -219,7 +219,7 @@ void RsdCpuScriptIntrinsicResize::kernelU4(const RsForEachStubParamStruct *p,
     }
 }
 
-void RsdCpuScriptIntrinsicResize::kernelU2(const RsForEachStubParamStruct *p,
+void RsdCpuScriptIntrinsicResize::kernelU2(const RsExpandKernelParams *p,
                                                 uint32_t xstart, uint32_t xend,
                                                 uint32_t instep, uint32_t outstep) {
     RsdCpuScriptIntrinsicResize *cp = (RsdCpuScriptIntrinsicResize *)p->usr;
@@ -259,7 +259,7 @@ void RsdCpuScriptIntrinsicResize::kernelU2(const RsForEachStubParamStruct *p,
     }
 }
 
-void RsdCpuScriptIntrinsicResize::kernelU1(const RsForEachStubParamStruct *p,
+void RsdCpuScriptIntrinsicResize::kernelU1(const RsExpandKernelParams *p,
                                                 uint32_t xstart, uint32_t xend,
                                                 uint32_t instep, uint32_t outstep) {
     RsdCpuScriptIntrinsicResize *cp = (RsdCpuScriptIntrinsicResize *)p->usr;

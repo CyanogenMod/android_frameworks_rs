@@ -34,32 +34,18 @@ namespace bcc {
 namespace android {
 namespace renderscript {
 
-typedef struct {
+struct StridePair {
   uint32_t eStride;
   uint32_t yStride;
-} StridePair;
+};
 
-typedef struct {
-    const void *in;
-    void *out;
+struct RsExpandKernelDriverInfo {
     const void *usr;
     uint32_t usrLen;
-    uint32_t x;
-    uint32_t y;
-    uint32_t z;
-    uint32_t lod;
-    RsAllocationCubemapFace face;
-    uint32_t ar[16];
-
-    const void **ins;
-    uint32_t *eStrideIns;
-
-    uint32_t lid;
 
     uint32_t dimX;
     uint32_t dimY;
     uint32_t dimZ;
-    uint32_t dimArray;
 
     const uint8_t *ptrIn;
     uint8_t *ptrOut;
@@ -71,7 +57,54 @@ typedef struct {
 
     const uint8_t** ptrIns;
     StridePair* inStrides;
-} RsForEachStubParamStruct;
+
+    ~RsExpandKernelDriverInfo() {
+        if (ptrIns != NULL) {
+            delete[] ptrIns;
+        }
+
+        if (inStrides != NULL) {
+            delete[] inStrides;
+        }
+    }
+};
+
+struct RsExpandKernelParams {
+
+    // Used by kernels
+    const void *in;
+    void *out;
+    uint32_t y;
+    uint32_t z;
+    uint32_t lid;
+
+    const void **ins;
+    uint32_t *eStrideIns;
+
+    // Used by ScriptGroup and user kernels.
+    const void *usr;
+
+    // Used by intrinsics
+    uint32_t dimX;
+    uint32_t dimY;
+    uint32_t dimZ;
+
+    /*
+     * FIXME: This is only used by the blend intrinsic.  If possible, we should
+     *        modify blur to not need it.
+     */
+    uint32_t slot;
+
+    /// Copy fields needed by a kernel from a driver struct.
+    void takeFields(const RsExpandKernelDriverInfo &dstruct) {
+        this->usr  = dstruct.usr;
+        this->slot = dstruct.slot;
+
+        this->dimX = dstruct.dimX;
+        this->dimY = dstruct.dimY;
+        this->dimZ = dstruct.dimZ;
+    }
+};
 
 extern bool gArchUseSIMD;
 
@@ -89,7 +122,7 @@ typedef struct ScriptTLSStructRec {
 } ScriptTLSStruct;
 
 typedef struct {
-    RsForEachStubParamStruct fep;
+    RsExpandKernelDriverInfo fep;
 
     RsdCpuReferenceImpl *rsc;
     RsdCpuScriptImpl *script;
