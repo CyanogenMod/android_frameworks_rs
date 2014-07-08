@@ -238,7 +238,14 @@ ObjectBaseRef<const Element> Element::createRef(Context *rsc, RsDataType dt, RsD
     }
     ObjectBase::asyncUnlock();
 
-    Element *e = new Element(rsc);
+    // Element objects must use allocator specified by the driver
+    void* allocMem = rsc->mHal.funcs.allocRuntimeMem(sizeof(Element), 0);
+    if (!allocMem) {
+        rsc->setError(RS_ERROR_FATAL_DRIVER, "Couldn't allocate memory for Element");
+        return NULL;
+    }
+
+    Element *e = new (allocMem) Element(rsc);
     returnRef.set(e);
     e->mComponent.set(dt, dk, isNorm, vecSize);
     e->compute();
@@ -295,7 +302,14 @@ ObjectBaseRef<const Element> Element::createRef(Context *rsc, size_t count, cons
     }
     ObjectBase::asyncUnlock();
 
-    Element *e = new Element(rsc);
+    // Element objects must use allocator specified by the driver
+    void* allocMem = rsc->mHal.funcs.allocRuntimeMem(sizeof(Element), 0);
+    if (!allocMem) {
+        rsc->setError(RS_ERROR_FATAL_DRIVER, "Couldn't allocate memory for Element");
+        return NULL;
+    }
+
+    Element *e = new (allocMem) Element(rsc);
     returnRef.set(e);
     e->mFields = new ElementField_t [count];
     e->mFieldCount = count;
