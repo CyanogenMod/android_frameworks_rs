@@ -382,6 +382,14 @@ void Element::decRefs(const void *ptr) const {
     }
 }
 
+void Element::callUpdateCacheObject(const Context *rsc, void *dstObj) const {
+    if (rsc->mHal.funcs.element.updateCachedObject != NULL) {
+        rsc->mHal.funcs.element.updateCachedObject(rsc, this, (rs_element *)dstObj);
+    } else {
+        *((const void **)dstObj) = this;
+    }
+}
+
 ElementState::ElementState() {
 }
 

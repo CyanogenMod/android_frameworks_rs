@@ -1196,3 +1196,22 @@ uint32_t rsdAllocationGrallocBits(const android::renderscript::Context *rsc,
     return 0;
 }
 
+void rsdAllocationUpdateCachedObject(const Context *rsc,
+                                     const Allocation *alloc,
+                                     rs_allocation *obj)
+{
+    obj->p = alloc;
+#ifdef __LP64__
+    if (alloc != NULL) {
+        obj->r = alloc->mHal.drvState.lod[0].mallocPtr;
+        obj->v1 = alloc->mHal.drv;
+        obj->v2 = (void *)alloc->mHal.drvState.lod[0].stride;
+    } else {
+        obj->r = NULL;
+        obj->v1 = NULL;
+        obj->v2 = NULL;
+    }
+#endif
+}
+
+

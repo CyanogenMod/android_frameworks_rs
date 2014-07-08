@@ -132,6 +132,8 @@ public:
     bool hasObjectSlots() const {
         return mHasObjectSlots;
     }
+    virtual void callUpdateCacheObject(const Context *rsc, void *dstObj) const;
+
 protected:
     bool mInitialized;
     bool mHasObjectSlots;

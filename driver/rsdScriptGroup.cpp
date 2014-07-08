@@ -53,4 +53,20 @@ void rsdScriptGroupDestroy(const Context *rsc, const ScriptGroup *sg) {
     delete sgi;
 }
 
+void rsdScriptGroupUpdateCachedObject(const Context *rsc,
+                                      const ScriptGroup *sg,
+                                      rs_script_group *obj)
+{
+    obj->p = sg;
+#ifdef __LP64__
+    obj->r = NULL;
+    if (sg != NULL) {
+        obj->v1 = sg->mHal.drv;
+    } else {
+        obj->v1 = NULL;
+    }
+    obj->v2 = NULL;
+#endif
+}
+
 

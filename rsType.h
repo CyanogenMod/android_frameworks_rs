@@ -111,6 +111,7 @@ public:
 
     void incRefs(const void *ptr, size_t ct, size_t startOff = 0) const;
     void decRefs(const void *ptr, size_t ct, size_t startOff = 0) const;
+    virtual void callUpdateCacheObject(const Context *rsc, void *dstObj) const;
 
 protected:
     void makeLODTable();
