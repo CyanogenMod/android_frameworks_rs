@@ -109,7 +109,7 @@ void RsdCpuScriptIntrinsic::invokeForEach(uint32_t slot,
 
 void RsdCpuScriptIntrinsic::invokeForEachMulti(uint32_t slot,
                                                const Allocation ** ains,
-                                               size_t inLen,
+                                               uint32_t inLen,
                                                Allocation * aout,
                                                const void * usr,
                                                uint32_t usrLen,
