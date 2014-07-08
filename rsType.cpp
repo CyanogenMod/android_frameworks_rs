@@ -226,8 +226,14 @@ ObjectBaseRef<Type> Type::getTypeRef(Context *rsc, const Element *e,
     }
     ObjectBase::asyncUnlock();
 
+    // Type objects must use allocator specified by the driver
+    void* allocMem = rsc->mHal.funcs.allocRuntimeMem(sizeof(Type), 0);
+    if (!allocMem) {
+        rsc->setError(RS_ERROR_FATAL_DRIVER, "Couldn't allocate memory for Type");
+        return NULL;
+    }
 
-    Type *nt = new Type(rsc);
+    Type *nt = new (allocMem) Type(rsc);
 
 #ifdef RS_FIND_OFFSETS
     ALOGE("pointer for type: %p", nt);
