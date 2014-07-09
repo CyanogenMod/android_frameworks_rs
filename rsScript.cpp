@@ -198,6 +198,28 @@ void rsi_ScriptForEach(Context *rsc, RsScript vs, uint32_t slot,
 
 }
 
+void rsi_ScriptForEachMulti(Context *rsc, RsScript vs, uint32_t slot,
+                            RsAllocation *vains, size_t inLen,
+                            RsAllocation vaout, const void *params,
+                            size_t paramLen, const RsScriptCall *sc,
+                            size_t scLen) {
+    Script *s = static_cast<Script *>(vs);
+    // The rs.spec generated code does not handle the absence of an actual
+    // input for sc. Instead, it retains an existing pointer value (the prior
+    // field in the packed data object). This can cause confusion because
+    // drivers might now inspect bogus sc data.
+    if (scLen == 0) {
+        sc = NULL;
+    }
+
+    Allocation **ains = (Allocation**)(vains);
+
+    s->runForEach(rsc, slot,
+                  const_cast<const Allocation **>(ains), inLen,
+                  static_cast<Allocation *>(vaout), params, paramLen, sc);
+
+}
+
 void rsi_ScriptInvoke(Context *rsc, RsScript vs, uint32_t slot) {
     Script *s = static_cast<Script *>(vs);
     s->Invoke(rsc, slot, NULL, 0);
@@ -260,4 +282,3 @@ void rsi_ScriptSetVarVE(Context *rsc, RsScript vs, uint32_t slot,
 
 }
 }
-

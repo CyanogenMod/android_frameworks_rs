@@ -50,6 +50,15 @@ public:
                             size_t usrBytes,
                             const RsScriptCall *sc = NULL);
 
+    virtual void runForEach(Context *rsc,
+                            uint32_t slot,
+                            const Allocation ** ains,
+                            size_t inLen,
+                            Allocation * aout,
+                            const void * usr,
+                            size_t usrBytes,
+                            const RsScriptCall *sc = NULL);
+
     virtual void serialize(Context *rsc, OStream *stream) const {    }
     virtual RsA3DClassID getClassId() const { return RS_A3D_CLASS_ID_SCRIPT_C; }
     static Type *createFromStream(Context *rsc, IStream *stream) { return NULL; }

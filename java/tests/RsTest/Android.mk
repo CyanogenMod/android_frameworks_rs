@@ -21,6 +21,8 @@ LOCAL_MODULE_TAGS := tests
 
 LOCAL_SRC_FILES := $(call all-java-files-under, src) $(call all-renderscript-files-under, src)
 
+LOCAL_RENDERSCRIPT_FLAGS := -target-api 0
+
 LOCAL_PACKAGE_NAME := RSTest
 
 include $(BUILD_PACKAGE)
