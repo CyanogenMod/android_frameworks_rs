@@ -429,10 +429,19 @@ static void SC_FontColor(float r, float g, float b, float a) {
 //
 //////////////////////////////////////////////////////////////////////////////
 
-static void SC_SetObject(ObjectBase **dst, ObjectBase * src) {
+#ifndef RS_COMPATIBILITY_LIB
+static void SC_SetObject(ObjectBase **dst, rs_allocation src) {
+    //    ALOGE("SC_SetObject: dst = %p, src = %p", dst, src.p);
+    //    ALOGE("SC_SetObject: dst[0] = %p", dst[0]);
+    Context *rsc = RsdCpuReference::getTlsContext();
+    rsrSetObject(rsc, dst, (ObjectBase*)src.p);
+}
+#else
+static void SC_SetObject(ObjectBase **dst, ObjectBase *src) {
     Context *rsc = RsdCpuReference::getTlsContext();
     rsrSetObject(rsc, dst, src);
 }
+#endif
 
 static void SC_ClearObject(ObjectBase **dst) {
     Context *rsc = RsdCpuReference::getTlsContext();
@@ -1236,41 +1245,41 @@ static RsdCpuReference::CpuSymbol gSyms[] = {
         return SC_SetObject((ObjectBase**) dst, (ObjectBase*) src.p); \
     }
 
-IS_CLEAR_SET_OBJ(rs_element)
-IS_CLEAR_SET_OBJ(rs_type)
-IS_CLEAR_SET_OBJ(rs_allocation)
-IS_CLEAR_SET_OBJ(rs_sampler)
-IS_CLEAR_SET_OBJ(rs_script)
+IS_CLEAR_SET_OBJ(android::renderscript::rs_element)
+IS_CLEAR_SET_OBJ(android::renderscript::rs_type)
+IS_CLEAR_SET_OBJ(android::renderscript::rs_allocation)
+IS_CLEAR_SET_OBJ(android::renderscript::rs_sampler)
+IS_CLEAR_SET_OBJ(android::renderscript::rs_script)
 #undef IS_CLEAR_SET_OBJ
 
 const Allocation * rsGetAllocation(const void *ptr) {
     return SC_GetAllocation(ptr);
 }
 
-void __attribute__((overloadable)) rsAllocationIoSend(rs_allocation a) {
+void __attribute__((overloadable)) rsAllocationIoSend(::rs_allocation a) {
     SC_AllocationIoSend((Allocation *)a.p);
 }
 
-void __attribute__((overloadable)) rsAllocationIoReceive(rs_allocation a) {
+void __attribute__((overloadable)) rsAllocationIoReceive(::rs_allocation a) {
     SC_AllocationIoReceive((Allocation *)a.p);
 }
 
 
 void __attribute__((overloadable)) rsAllocationCopy1DRange(
-        rs_allocation dstAlloc,
+        ::rs_allocation dstAlloc,
         uint32_t dstOff, uint32_t dstMip, uint32_t count,
-        rs_allocation srcAlloc,
+        ::rs_allocation srcAlloc,
         uint32_t srcOff, uint32_t srcMip) {
     SC_AllocationCopy1DRange((Allocation *)dstAlloc.p, dstOff, dstMip, count,
                              (Allocation *)srcAlloc.p, srcOff, srcMip);
 }
 
 void __attribute__((overloadable)) rsAllocationCopy2DRange(
-        rs_allocation dstAlloc,
+        ::rs_allocation dstAlloc,
         uint32_t dstXoff, uint32_t dstYoff,
         uint32_t dstMip, rs_allocation_cubemap_face dstFace,
         uint32_t width, uint32_t height,
-        rs_allocation srcAlloc,
+        ::rs_allocation srcAlloc,
         uint32_t srcXoff, uint32_t srcYoff,
         uint32_t srcMip, rs_allocation_cubemap_face srcFace) {
     SC_AllocationCopy2DRange((Allocation *)dstAlloc.p, dstXoff, dstYoff,
@@ -1279,31 +1288,31 @@ void __attribute__((overloadable)) rsAllocationCopy2DRange(
                              srcMip, srcFace);
 }
 
-void __attribute__((overloadable)) rsForEach(rs_script script,
-                                             rs_allocation in,
-                                             rs_allocation out,
+void __attribute__((overloadable)) rsForEach(::rs_script script,
+                                             ::rs_allocation in,
+                                             ::rs_allocation out,
                                              const void *usr,
                                              const rs_script_call *call) {
     return SC_ForEach_SAAUS((Script *)script.p, (Allocation*)in.p, (Allocation*)out.p, usr, (RsScriptCall*)call);
 }
 
-void __attribute__((overloadable)) rsForEach(rs_script script,
-                                             rs_allocation in,
-                                             rs_allocation out) {
+void __attribute__((overloadable)) rsForEach(::rs_script script,
+                                             ::rs_allocation in,
+                                             ::rs_allocation out) {
     return SC_ForEach_SAA((Script *)script.p, (Allocation*)in.p, (Allocation*)out.p);
 }
 
-void __attribute__((overloadable)) rsForEach(rs_script script,
-                                             rs_allocation in,
-                                             rs_allocation out,
+void __attribute__((overloadable)) rsForEach(::rs_script script,
+                                             ::rs_allocation in,
+                                             ::rs_allocation out,
                                              const void *usr,
                                              uint32_t usrLen) {
     return SC_ForEach_SAAUL((Script *)script.p, (Allocation*)in.p, (Allocation*)out.p, usr, usrLen);
 }
 
-void __attribute__((overloadable)) rsForEach(rs_script script,
-                                             rs_allocation in,
-                                             rs_allocation out,
+void __attribute__((overloadable)) rsForEach(::rs_script script,
+                                             ::rs_allocation in,
+                                             ::rs_allocation out,
                                              const void *usr,
                                              uint32_t usrLen,
                                              const rs_script_call *call) {
