@@ -39,7 +39,7 @@ public:
 
     virtual void invokeForEachMulti(uint32_t slot,
                        const Allocation ** ain,
-                       size_t inLen,
+                       uint32_t inLen,
                        Allocation * aout,
                        const void * usr,
                        uint32_t usrLen,
