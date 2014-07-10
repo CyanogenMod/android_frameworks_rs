@@ -733,7 +733,7 @@ const char* RsdCpuScriptImpl::findCoreLib(const bcinfo::MetadataExtractor& ME, c
     // Check for a platform specific library
 #if defined(ARCH_ARM_HAVE_NEON) && !defined(DISABLE_CLCORE_NEON)
     enum bcinfo::RSFloatPrecision prec = ME.getRSFloatPrecision();
-    if (prec == bcinfo::RS_FP_Imprecise || prec == bcinfo::RS_FP_Relaxed) {
+    if (prec == bcinfo::RS_FP_Relaxed) {
         // NEON-capable ARMv7a devices can use an accelerated math library
         // for all reduced precision scripts.
         // ARMv8 does not use NEON, as ASIMD can be used with all precision
