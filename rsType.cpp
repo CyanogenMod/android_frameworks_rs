@@ -45,6 +45,13 @@ Type::~Type() {
     clear();
 }
 
+void Type::operator delete(void* ptr) {
+    if (ptr) {
+        Type *t = (Type*) ptr;
+        t->getContext()->mHal.funcs.freeRuntimeMem(ptr);
+    }
+}
+
 void Type::clear() {
     if (mHal.state.lodCount) {
         delete [] mHal.state.lodDimX;

@@ -34,6 +34,13 @@ Element::~Element() {
     clear();
 }
 
+void Element::operator delete(void* ptr) {
+    if (ptr) {
+        Element *e = (Element*) ptr;
+        e->getContext()->mHal.funcs.freeRuntimeMem(ptr);
+    }
+}
+
 void Element::preDestroy() const {
     for (uint32_t ct = 0; ct < mRSC->mStateElement.mElements.size(); ct++) {
         if (mRSC->mStateElement.mElements[ct] == this) {
