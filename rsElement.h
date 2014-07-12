@@ -57,6 +57,8 @@ public:
     };
     Hal mHal;
 
+    void operator delete(void* ptr);
+
     uint32_t getGLType() const;
     uint32_t getGLFormat() const;
 
