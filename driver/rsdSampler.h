@@ -26,5 +26,8 @@ bool rsdSamplerInit(const android::renderscript::Context *rsc,
 void rsdSamplerDestroy(const android::renderscript::Context *rsc,
                        const android::renderscript::Sampler *);
 
+void rsdSamplerUpdateCachedObject(const android::renderscript::Context *rsc,
+                                  const android::renderscript::Sampler *,
+                                  android::renderscript::rs_sampler *obj);
 
 #endif // RSD_SAMPLER_H

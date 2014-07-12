@@ -33,6 +33,8 @@ void rsdScriptGroupExecute(const android::renderscript::Context *rsc,
                            const android::renderscript::ScriptGroup *sg);
 void rsdScriptGroupDestroy(const android::renderscript::Context *rsc,
                            const android::renderscript::ScriptGroup *sg);
-
+void rsdScriptGroupUpdateCachedObject(const android::renderscript::Context *rsc,
+                                      const android::renderscript::ScriptGroup *sg,
+                                      android::renderscript::rs_script_group *obj);
 
 #endif // RSD_SCRIPT_GROUP_H

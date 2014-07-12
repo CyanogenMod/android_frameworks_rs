@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 The Android Open Source Project
+ * Copyright (C) 2014 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,43 +16,27 @@
 
 
 #include "rsdCore.h"
-#include "rsdSampler.h"
-
-#include "rsContext.h"
-#include "rsSampler.h"
-
-#ifndef RS_COMPATIBILITY_LIB
-#include "rsProgramVertex.h"
-#include "rsProgramFragment.h"
-
-#include <GLES/gl.h>
-#include <GLES/glext.h>
-#endif
+#include "rsElement.h"
 
 using namespace android;
 using namespace android::renderscript;
 
 
-bool rsdSamplerInit(const Context *, const Sampler *s) {
+bool rsdElementInit(const Context *, const Element *e) {
     return true;
 }
 
-void rsdSamplerDestroy(const android::renderscript::Context *rsc,
-                       const android::renderscript::Sampler *s) {
+void rsdElementDestroy(const Context *rsc, const Element *e) {
 }
 
-void rsdSamplerUpdateCachedObject(const Context *rsc,
-                                  const Sampler *alloc,
-                                  rs_sampler *obj)
+void rsdElementUpdateCachedObject(const Context *rsc,
+                                  const Element *element,
+                                  rs_element *obj)
 {
-    obj->p = alloc;
+    obj->p = element;
 #ifdef __LP64__
     obj->r = NULL;
-    if (alloc != NULL) {
-        obj->v1 = alloc->mHal.drv;
-    } else {
-        obj->v1 = NULL;
-    }
+    obj->v1 = NULL;
     obj->v2 = NULL;
 #endif
 }

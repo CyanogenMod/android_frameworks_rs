@@ -98,5 +98,10 @@ android::renderscript::Allocation * rsdScriptGetAllocationForPointer(
                         const android::renderscript::Script *script,
                         const void *);
 
+void rsdScriptUpdateCachedObject(const android::renderscript::Context *rsc,
+                                 const android::renderscript::Script *script,
+                                 android::renderscript::rs_script *obj);
+
+
 
 #endif
