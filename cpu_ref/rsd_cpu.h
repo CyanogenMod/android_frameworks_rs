@@ -75,6 +75,15 @@ public:
                            const void * usr,
                            uint32_t usrLen,
                            const RsScriptCall *sc) = 0;
+                           
+        virtual void invokeForEachMulti(uint32_t slot,
+                                         const Allocation** ains,
+                                         uint32_t inLen,
+                                         Allocation * aout,
+                                         const void * usr,
+                                         uint32_t usrLen,
+                                         const RsScriptCall *sc) = 0;
+        
         virtual void invokeInit() = 0;
         virtual void invokeFreeChildren() = 0;
 
