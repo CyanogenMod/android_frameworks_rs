@@ -64,7 +64,7 @@ void RsdCpuScriptIntrinsic3DLUT::kernel(const RsExpandKernelParams *p,
     RsdCpuScriptIntrinsic3DLUT *cp = (RsdCpuScriptIntrinsic3DLUT *)p->usr;
 
     uchar4 *out = (uchar4 *)p->out + xstart;
-    uchar4 *in = (uchar4 *)p->in + xstart;
+    uchar4 *in = (uchar4 *)p->ins[0] + xstart;
     uint32_t x1 = xstart;
     uint32_t x2 = xend;
 
@@ -161,9 +161,9 @@ void RsdCpuScriptIntrinsic3DLUT::kernel(const RsExpandKernelParams *p,
     }
 }
 
-RsdCpuScriptIntrinsic3DLUT::RsdCpuScriptIntrinsic3DLUT(RsdCpuReferenceImpl *ctx,
-                                                     const Script *s, const Element *e)
-            : RsdCpuScriptIntrinsic(ctx, s, e, RS_SCRIPT_INTRINSIC_ID_3DLUT) {
+RsdCpuScriptIntrinsic3DLUT::RsdCpuScriptIntrinsic3DLUT(
+    RsdCpuReferenceImpl *ctx, const Script *s, const Element *e) :
+        RsdCpuScriptIntrinsic(ctx, s, e, RS_SCRIPT_INTRINSIC_ID_3DLUT) {
 
     mRootPtr = &kernel;
 }
@@ -185,5 +185,3 @@ RsdCpuScriptImpl * rsdIntrinsic_3DLUT(RsdCpuReferenceImpl *ctx,
 
     return new RsdCpuScriptIntrinsic3DLUT(ctx, s, e);
 }
-
-

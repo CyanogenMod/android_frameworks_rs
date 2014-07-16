@@ -59,7 +59,7 @@ void RsdCpuScriptIntrinsicLUT::kernel(const RsExpandKernelParams *p,
     RsdCpuScriptIntrinsicLUT *cp = (RsdCpuScriptIntrinsicLUT *)p->usr;
 
     uchar *out = (uchar *)p->out;
-    const uchar *in = (uchar *)p->in;
+    const uchar *in = (uchar *)p->ins[0];
     uint32_t x1 = xstart;
     uint32_t x2 = xend;
 
@@ -103,5 +103,3 @@ RsdCpuScriptImpl * rsdIntrinsic_LUT(RsdCpuReferenceImpl *ctx,
 
     return new RsdCpuScriptIntrinsicLUT(ctx, s, e);
 }
-
-
