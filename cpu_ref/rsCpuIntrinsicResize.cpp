@@ -35,8 +35,8 @@ public:
     virtual ~RsdCpuScriptIntrinsicResize();
     RsdCpuScriptIntrinsicResize(RsdCpuReferenceImpl *ctx, const Script *s, const Element *);
 
-    virtual void preLaunch(uint32_t slot, const Allocation * ain,
-                           Allocation * aout, const void * usr,
+    virtual void preLaunch(uint32_t slot, const Allocation ** ains,
+                           uint32_t inLen, Allocation * aout, const void * usr,
                            uint32_t usrLen, const RsScriptCall *sc);
 
     float scaleX;
@@ -308,9 +308,11 @@ RsdCpuScriptIntrinsicResize::RsdCpuScriptIntrinsicResize (
 RsdCpuScriptIntrinsicResize::~RsdCpuScriptIntrinsicResize() {
 }
 
-void RsdCpuScriptIntrinsicResize::preLaunch(uint32_t slot, const Allocation * ain,
-                                            Allocation * aout, const void * usr,
-                                            uint32_t usrLen, const RsScriptCall *sc)
+void RsdCpuScriptIntrinsicResize::preLaunch(uint32_t slot,
+                                            const Allocation ** ains,
+                                            uint32_t inLen, Allocation * aout,
+                                            const void * usr, uint32_t usrLen,
+                                            const RsScriptCall *sc)
 {
     if (!mAlloc.get()) {
         ALOGE("Resize executed without input, skipping");
@@ -351,5 +353,3 @@ RsdCpuScriptImpl * rsdIntrinsic_Resize(RsdCpuReferenceImpl *ctx, const Script *s
 
     return new RsdCpuScriptIntrinsicResize(ctx, s, e);
 }
-
-

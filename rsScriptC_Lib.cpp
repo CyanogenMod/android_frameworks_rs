@@ -230,7 +230,17 @@ void rsrForEach(Context *rsc,
                 Allocation *in, Allocation *out,
                 const void *usr, uint32_t usrBytes,
                 const RsScriptCall *call) {
-    target->runForEach(rsc, /* root slot */ 0, in, out, usr, usrBytes, call);
+
+    if (in == NULL) {
+        target->runForEach(rsc, /* root slot */ 0, NULL, 0, out, usr,
+                           usrBytes, call);
+
+    } else {
+        const Allocation *ins[1] = {in};
+        target->runForEach(rsc, /* root slot */ 0, ins,
+                           sizeof(ins) / sizeof(RsAllocation), out, usr,
+                           usrBytes, call);
+    }
 }
 
 void rsrAllocationSyncAll(Context *rsc, Allocation *a, RsAllocationUsageType usage) {
