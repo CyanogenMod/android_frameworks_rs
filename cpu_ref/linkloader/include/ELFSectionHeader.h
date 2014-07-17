@@ -19,7 +19,6 @@
 
 #include "ELFTypes.h"
 
-#include <llvm/ADT/OwningPtr.h>
 #include <stdint.h>
 
 class ELFSectionHeaderHelperMixin {

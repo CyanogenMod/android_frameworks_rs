@@ -57,7 +57,7 @@ ELFSectionRelTable<Bitwidth>::read(Archiver &AR,
 
   rsl_assert(sh->getType() == SHT_REL || sh->getType() == SHT_RELA);
 
-  llvm::OwningPtr<ELFSectionRelTable> rt(new ELFSectionRelTable());
+  std::unique_ptr<ELFSectionRelTable> rt(new ELFSectionRelTable());
 
   // Seek to the start of the table
   AR.seek(sh->getOffset(), true);
@@ -84,7 +84,7 @@ ELFSectionRelTable<Bitwidth>::read(Archiver &AR,
     return 0;
   }
 
-  return rt.take();
+  return rt.release();
 }
 
 template <unsigned Bitwidth>
