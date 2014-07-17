@@ -19,8 +19,6 @@
 #include "utils/serialize.h"
 #include "ELF.h"
 
-#include <llvm/ADT/OwningPtr.h>
-
 #include <fcntl.h>
 #include <stdlib.h>
 #include <sys/mman.h>
@@ -142,7 +140,7 @@ void *find_sym(void *context, char const *name) {
 
 template <unsigned Bitwidth, typename Archiver>
 void dump_and_run_object(Archiver &AR, int argc, char **argv) {
-  llvm::OwningPtr<ELFObject<Bitwidth> > object(ELFObject<Bitwidth>::read(AR));
+  std::unique_ptr<ELFObject<Bitwidth> > object(ELFObject<Bitwidth>::read(AR));
 
   if (!object) {
     llvm::errs() << "ERROR: Unable to load object\n";
