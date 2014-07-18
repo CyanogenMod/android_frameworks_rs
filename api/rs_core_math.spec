@@ -1487,3 +1487,424 @@ version: 18
 # test: limited
 test: noverify
 end:
+
+
+start:
+w: 1, 2, 3, 4
+t: f32
+name: native_acos
+ret: #2#1
+arg: #2#1 v range(-1,1)
+comment:
+ acos
+version: 21
+test: noverify
+end:
+
+start:
+w: 1, 2, 3, 4
+t: f32
+name: native_acosh
+ret: #2#1
+arg: #2#1
+comment:
+ acosh
+version: 21
+test: noverify
+end:
+
+start:
+w: 1, 2, 3, 4
+t: f32
+name: native_acospi
+ret: #2#1
+arg: #2#1 v range(-1,1)
+comment:
+ acospi
+version: 21
+test: noverify
+end:
+
+start:
+w: 1, 2, 3, 4
+t: f32
+name: native_asin
+ret: #2#1
+arg: #2#1 v range(-1,1)
+comment:
+ asin
+version: 21
+test: noverify
+end:
+
+start:
+w: 1, 2, 3, 4
+t: f32
+name: native_asinh
+ret: #2#1
+arg: #2#1
+comment:
+ asinh
+version: 21
+test: noverify
+end:
+
+start:
+w: 1, 2, 3, 4
+t: f32
+name: native_asinpi
+ret: #2#1
+arg: #2#1 v range(-1,1)
+comment:
+ Return the inverse sine divided by PI.
+version: 21
+test: noverify
+end:
+
+start:
+w: 1, 2, 3, 4
+t: f32
+name: native_atan
+ret: #2#1
+arg: #2#1 v range(-1,1)
+comment:
+ Return the inverse tangent.
+version: 21
+test: noverify
+end:
+
+start:
+w: 1, 2, 3, 4
+t: f32
+name: native_atan2
+ret: #2#1
+arg: #2#1 y
+arg: #2#1 x
+comment:
+ Return the inverse tangent of y / x.
+version: 21
+test: noverify
+end:
+
+start:
+w: 1, 2, 3, 4
+t: f32
+name: native_atanh
+ret: #2#1
+arg: #2#1
+comment:
+ Return the inverse hyperbolic tangent.
+version: 21
+test: noverify
+end:
+
+start:
+w: 1, 2, 3, 4
+t: f32
+name: native_atanpi
+ret: #2#1
+arg: #2#1 v range(-1,1)
+comment:
+ Return the inverse tangent divided by PI.
+version: 21
+test: noverify
+end:
+
+start:
+w: 1, 2, 3, 4
+t: f32
+name: native_atan2pi
+ret: #2#1
+arg: #2#1 y
+arg: #2#1 x
+comment:
+ Return the inverse tangent of y / x, divided by PI.
+version: 21
+test: noverify
+end:
+
+start:
+w: 1, 2, 3, 4
+t: f32
+name: native_cbrt
+ret: #2#1
+arg: #2#1
+comment:
+ Return the cube root.
+version: 21
+test: noverify
+end:
+
+start:
+w: 1, 2, 3, 4
+t: f32
+name: native_cos
+ret: #2#1
+arg: #2#1
+comment:
+ Return the cosine.
+version: 21
+test: noverify
+end:
+
+start:
+w: 1, 2, 3, 4
+t: f32
+name: native_cosh
+ret: #2#1
+arg: #2#1
+comment:
+ Return the hypebolic cosine.
+version: 21
+test: noverify
+end:
+
+start:
+w: 1, 2, 3, 4
+t: f32
+name: native_cospi
+ret: #2#1
+arg: #2#1
+comment:
+ Return the cosine of the value * PI.
+version: 21
+test: noverify
+end:
+
+start:
+w: 1, 2, 3, 4
+t: f32
+name: native_expm1
+ret: #2#1
+arg: #2#1
+comment:
+ Return (e ^ value) - 1.
+version: 21
+test: noverify
+end:
+
+start:
+w: 1, 2, 3, 4
+t: f32
+name: native_distance
+ret: #2
+arg: #2#1 lhs
+arg: #2#1 rhs
+comment:
+ Compute the approximate distance between two points.
+version: 21
+test: noverify
+end:
+
+start:
+w: 1, 2, 3, 4
+t: f32
+name: native_divide
+ret: #2#1
+arg: #2#1 lhs
+arg: #2#1 rhs
+comment:
+ Compute the approximate division result of two values.
+version: 21
+test: noverify
+end:
+
+start:
+w: 1, 2, 3, 4
+t: f32
+name: native_hypot
+ret: #2#1
+arg: #2#1 x
+arg: #2#1 y
+comment:
+ Return native_sqrt(x*x + y*y)
+version: 21
+test: noverify
+end:
+
+start:
+w: 1, 2, 3, 4
+t: f32
+name: native_normalize
+ret: #2#1
+arg: #2#1 v
+comment:
+ Normalize a vector.
+version: 21
+test: vector
+end:
+
+start:
+w: 1, 2, 3, 4
+t: f32
+name: native_length
+ret: #2
+arg: #2#1 v
+comment:
+ Compute the approximate length of a vector.
+version: 21
+test: vector
+end:
+
+start:
+w: 1, 2, 3, 4
+t: f32
+name: native_log1p
+ret: #2#1
+arg: #2#1
+comment:
+ Return the natural logarithm of (v + 1.0f)
+version: 21
+test: noverify
+end:
+
+start:
+w: 1, 2, 3, 4
+t: f32
+name: native_recip
+ret: #2#1
+arg: #2#1 v
+comment:
+ Return the approximate reciprocal of a value.
+version: 21
+end:
+
+start:
+w: 1, 2, 3, 4
+t: f32
+name: native_rootn
+ret: #2#1
+arg: #2#1 v
+arg: int#1 n
+comment:
+ Compute the Nth root of a value.
+version: 21
+test: noverify
+end:
+
+start:
+w: 1, 2, 3, 4
+t: f32
+name: native_rsqrt
+ret: #2#1
+arg: #2#1
+comment:
+ Return (1 / sqrt(value)).
+version: 21
+test: noverify
+end:
+
+start:
+w: 1, 2, 3, 4
+t: f32
+name: native_sqrt
+ret: #2#1
+arg: #2#1
+comment:
+ Return the square root of a value.
+version: 21
+test: noverify
+end:
+
+start:
+w: 1, 2, 3, 4
+t: f32
+name: native_sin
+ret: #2#1
+arg: #2#1
+comment:
+ Return the sine of a value specified in radians.
+version: 21
+test: noverify
+end:
+
+start:
+w: 1, 2, 3, 4
+t: f32
+name: native_sincos
+ret: #2#1
+arg: #2#1 v
+arg: #2#1 *cosptr
+comment:
+ Return the sine and cosine of a value.
+
+ @return sine
+ @param v The incoming value in radians
+ @param *cosptr cosptr[0] will be set to the cosine value.
+version: 21
+test: noverify
+end:
+
+start:
+w: 1, 2, 3, 4
+t: f32
+name: native_sinh
+ret: #2#1
+arg: #2#1
+comment:
+ Return the hyperbolic sine of a value specified in radians.
+version: 21
+test: noverify
+end:
+
+start:
+w: 1, 2, 3, 4
+t: f32
+name: native_sinpi
+ret: #2#1
+arg: #2#1
+comment:
+ Return the sin(v * PI).
+version: 21
+test: noverify
+end:
+
+start:
+w: 1, 2, 3, 4
+t: f32
+name: native_sqrt
+ret: #2#1
+arg: #2#1
+comment:
+ Return the aproximate sqrt(v).
+version: 21
+test: noverify
+end:
+
+start:
+w: 1, 2, 3, 4
+t: f32
+name: native_tan
+ret: #2#1
+arg: #2#1
+comment:
+ Return the tangent of a value.
+version: 21
+test: noverify
+end:
+
+start:
+w: 1, 2, 3, 4
+t: f32
+name: native_tanh
+ret: #2#1
+arg: #2#1
+comment:
+ Return the hyperbolic tangent of a value.
+version: 21
+test: noverify
+end:
+
+start:
+w: 1, 2, 3, 4
+t: f32
+name: native_tanpi
+ret: #2#1
+arg: #2#1
+comment:
+ Return tan(v * PI)
+version: 21
+test: noverify
+end:
+
+
