@@ -590,6 +590,10 @@ extern float __attribute__((overloadable)) rsqrt(float v) {
 
 #if !defined(__i386__) && !defined(__x86_64__)
 FN_FUNC_FN(sqrt)
+#else
+extern float2 __attribute__((overloadable)) sqrt(float2);
+extern float3 __attribute__((overloadable)) sqrt(float3);
+extern float4 __attribute__((overloadable)) sqrt(float4);
 #endif // !defined(__i386__) && !defined(__x86_64__)
 
 FN_FUNC_FN(rsqrt)
@@ -1415,6 +1419,92 @@ extern ulong4 _Z3maxDv4_yS_(ulong4 v1, ulong4 v2) {
     r.w = v1.w > v2.w ? v1.w : v2.w;
     return r;
 }
+
+#define THUNK_NATIVE_F(fn) \
+    float __attribute__((overloadable)) native_##fn(float v) { return fn(v);} \
+    float2 __attribute__((overloadable)) native_##fn(float2 v) { return fn(v);} \
+    float3 __attribute__((overloadable)) native_##fn(float3 v) { return fn(v);} \
+    float4 __attribute__((overloadable)) native_##fn(float4 v) { return fn(v);}
+
+#define THUNK_NATIVE_F_F(fn) \
+    float __attribute__((overloadable)) native_##fn(float v1, float v2) { return fn(v1, v2);} \
+    float2 __attribute__((overloadable)) native_##fn(float2 v1, float2 v2) { return fn(v1, v2);} \
+    float3 __attribute__((overloadable)) native_##fn(float3 v1, float3 v2) { return fn(v1, v2);} \
+    float4 __attribute__((overloadable)) native_##fn(float4 v1, float4 v2) { return fn(v1, v2);}
+
+#define THUNK_NATIVE_F_FP(fn) \
+    float __attribute__((overloadable)) native_##fn(float v1, float *v2) { return fn(v1, v2);} \
+    float2 __attribute__((overloadable)) native_##fn(float2 v1, float2 *v2) { return fn(v1, v2);} \
+    float3 __attribute__((overloadable)) native_##fn(float3 v1, float3 *v2) { return fn(v1, v2);} \
+    float4 __attribute__((overloadable)) native_##fn(float4 v1, float4 *v2) { return fn(v1, v2);}
+
+#define THUNK_NATIVE_F_I(fn) \
+    float __attribute__((overloadable)) native_##fn(float v1, int v2) { return fn(v1, v2);} \
+    float2 __attribute__((overloadable)) native_##fn(float2 v1, int2 v2) { return fn(v1, v2);} \
+    float3 __attribute__((overloadable)) native_##fn(float3 v1, int3 v2) { return fn(v1, v2);} \
+    float4 __attribute__((overloadable)) native_##fn(float4 v1, int4 v2) { return fn(v1, v2);}
+
+THUNK_NATIVE_F(acos)
+THUNK_NATIVE_F(acosh)
+THUNK_NATIVE_F(acospi)
+THUNK_NATIVE_F(asin)
+THUNK_NATIVE_F(asinh)
+THUNK_NATIVE_F(asinpi)
+THUNK_NATIVE_F(atan)
+THUNK_NATIVE_F_F(atan2)
+THUNK_NATIVE_F(atanh)
+THUNK_NATIVE_F(atanpi)
+THUNK_NATIVE_F_F(atan2pi)
+THUNK_NATIVE_F(cbrt)
+THUNK_NATIVE_F(cos)
+THUNK_NATIVE_F(cosh)
+THUNK_NATIVE_F(cospi)
+THUNK_NATIVE_F(expm1)
+THUNK_NATIVE_F_F(hypot)
+THUNK_NATIVE_F(log1p)
+THUNK_NATIVE_F_I(rootn)
+THUNK_NATIVE_F(rsqrt)
+THUNK_NATIVE_F(sqrt)
+THUNK_NATIVE_F(sin)
+THUNK_NATIVE_F_FP(sincos)
+THUNK_NATIVE_F(sinh)
+THUNK_NATIVE_F(sinpi)
+THUNK_NATIVE_F(tan)
+THUNK_NATIVE_F(tanh)
+THUNK_NATIVE_F(tanpi)
+
+#undef THUNK_NATIVE_F
+#undef THUNK_NATIVE_F_F
+#undef THUNK_NATIVE_F_I
+#undef THUNK_NATIVE_F_FP
+
+float __attribute__((overloadable)) native_normalize(float v) { return fast_normalize(v);}
+float2 __attribute__((overloadable)) native_normalize(float2 v) { return fast_normalize(v);}
+float3 __attribute__((overloadable)) native_normalize(float3 v) { return fast_normalize(v);}
+float4 __attribute__((overloadable)) native_normalize(float4 v) { return fast_normalize(v);}
+
+float __attribute__((overloadable)) native_distance(float v1, float v2) { return fast_distance(v1, v2);}
+float __attribute__((overloadable)) native_distance(float2 v1, float2 v2) { return fast_distance(v1, v2);}
+float __attribute__((overloadable)) native_distance(float3 v1, float3 v2) { return fast_distance(v1, v2);}
+float __attribute__((overloadable)) native_distance(float4 v1, float4 v2) { return fast_distance(v1, v2);}
+
+float __attribute__((overloadable)) native_length(float v) { return fast_length(v);}
+float __attribute__((overloadable)) native_length(float2 v) { return fast_length(v);}
+float __attribute__((overloadable)) native_length(float3 v) { return fast_length(v);}
+float __attribute__((overloadable)) native_length(float4 v) { return fast_length(v);}
+
+float __attribute__((overloadable)) native_divide(float v1, float v2) { return v1 / v2;}
+float2 __attribute__((overloadable)) native_divide(float2 v1, float2 v2) { return v1 / v2;}
+float3 __attribute__((overloadable)) native_divide(float3 v1, float3 v2) { return v1 / v2;}
+float4 __attribute__((overloadable)) native_divide(float4 v1, float4 v2) { return v1 / v2;}
+
+float __attribute__((overloadable)) native_recip(float v) { return 1.f / v;}
+float2 __attribute__((overloadable)) native_recip(float2 v) { return ((float2)1.f) / v;}
+float3 __attribute__((overloadable)) native_recip(float3 v) { return ((float3)1.f) / v;}
+float4 __attribute__((overloadable)) native_recip(float4 v) { return ((float4)1.f) / v;}
+
+
+
 
 
 #undef FN_FUNC_FN
