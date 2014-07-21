@@ -7397,6 +7397,618 @@ extern float4 __attribute__((overloadable))modf(float4 x, float4* iret);
 extern float __attribute__((const, overloadable))nan(uint);
 #endif
 
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * acos
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float __attribute__((const, overloadable))native_acos(float v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * acos
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float2 __attribute__((const, overloadable))native_acos(float2 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * acos
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float3 __attribute__((const, overloadable))native_acos(float3 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * acos
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float4 __attribute__((const, overloadable))native_acos(float4 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * acosh
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float __attribute__((const, overloadable))native_acosh(float);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * acosh
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float2 __attribute__((const, overloadable))native_acosh(float2);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * acosh
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float3 __attribute__((const, overloadable))native_acosh(float3);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * acosh
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float4 __attribute__((const, overloadable))native_acosh(float4);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * acospi
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float __attribute__((const, overloadable))native_acospi(float v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * acospi
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float2 __attribute__((const, overloadable))native_acospi(float2 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * acospi
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float3 __attribute__((const, overloadable))native_acospi(float3 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * acospi
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float4 __attribute__((const, overloadable))native_acospi(float4 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * asin
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float __attribute__((const, overloadable))native_asin(float v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * asin
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float2 __attribute__((const, overloadable))native_asin(float2 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * asin
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float3 __attribute__((const, overloadable))native_asin(float3 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * asin
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float4 __attribute__((const, overloadable))native_asin(float4 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * asinh
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float __attribute__((const, overloadable))native_asinh(float);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * asinh
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float2 __attribute__((const, overloadable))native_asinh(float2);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * asinh
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float3 __attribute__((const, overloadable))native_asinh(float3);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * asinh
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float4 __attribute__((const, overloadable))native_asinh(float4);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Return the inverse sine divided by PI.
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float __attribute__((const, overloadable))native_asinpi(float v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Return the inverse sine divided by PI.
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float2 __attribute__((const, overloadable))native_asinpi(float2 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Return the inverse sine divided by PI.
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float3 __attribute__((const, overloadable))native_asinpi(float3 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Return the inverse sine divided by PI.
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float4 __attribute__((const, overloadable))native_asinpi(float4 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Return the inverse tangent.
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float __attribute__((const, overloadable))native_atan(float v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Return the inverse tangent.
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float2 __attribute__((const, overloadable))native_atan(float2 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Return the inverse tangent.
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float3 __attribute__((const, overloadable))native_atan(float3 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Return the inverse tangent.
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float4 __attribute__((const, overloadable))native_atan(float4 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Return the inverse tangent of y / x.
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float __attribute__((const, overloadable))native_atan2(float y, float x);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Return the inverse tangent of y / x.
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float2 __attribute__((const, overloadable))native_atan2(float2 y, float2 x);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Return the inverse tangent of y / x.
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float3 __attribute__((const, overloadable))native_atan2(float3 y, float3 x);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Return the inverse tangent of y / x.
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float4 __attribute__((const, overloadable))native_atan2(float4 y, float4 x);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Return the inverse tangent of y / x, divided by PI.
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float __attribute__((const, overloadable))native_atan2pi(float y, float x);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Return the inverse tangent of y / x, divided by PI.
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float2 __attribute__((const, overloadable))native_atan2pi(float2 y, float2 x);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Return the inverse tangent of y / x, divided by PI.
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float3 __attribute__((const, overloadable))native_atan2pi(float3 y, float3 x);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Return the inverse tangent of y / x, divided by PI.
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float4 __attribute__((const, overloadable))native_atan2pi(float4 y, float4 x);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Return the inverse hyperbolic tangent.
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float __attribute__((const, overloadable))native_atanh(float);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Return the inverse hyperbolic tangent.
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float2 __attribute__((const, overloadable))native_atanh(float2);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Return the inverse hyperbolic tangent.
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float3 __attribute__((const, overloadable))native_atanh(float3);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Return the inverse hyperbolic tangent.
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float4 __attribute__((const, overloadable))native_atanh(float4);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Return the inverse tangent divided by PI.
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float __attribute__((const, overloadable))native_atanpi(float v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Return the inverse tangent divided by PI.
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float2 __attribute__((const, overloadable))native_atanpi(float2 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Return the inverse tangent divided by PI.
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float3 __attribute__((const, overloadable))native_atanpi(float3 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Return the inverse tangent divided by PI.
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float4 __attribute__((const, overloadable))native_atanpi(float4 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Return the cube root.
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float __attribute__((const, overloadable))native_cbrt(float);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Return the cube root.
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float2 __attribute__((const, overloadable))native_cbrt(float2);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Return the cube root.
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float3 __attribute__((const, overloadable))native_cbrt(float3);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Return the cube root.
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float4 __attribute__((const, overloadable))native_cbrt(float4);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Return the cosine.
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float __attribute__((const, overloadable))native_cos(float);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Return the cosine.
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float2 __attribute__((const, overloadable))native_cos(float2);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Return the cosine.
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float3 __attribute__((const, overloadable))native_cos(float3);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Return the cosine.
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float4 __attribute__((const, overloadable))native_cos(float4);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Return the hypebolic cosine.
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float __attribute__((const, overloadable))native_cosh(float);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Return the hypebolic cosine.
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float2 __attribute__((const, overloadable))native_cosh(float2);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Return the hypebolic cosine.
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float3 __attribute__((const, overloadable))native_cosh(float3);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Return the hypebolic cosine.
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float4 __attribute__((const, overloadable))native_cosh(float4);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Return the cosine of the value * PI.
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float __attribute__((const, overloadable))native_cospi(float);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Return the cosine of the value * PI.
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float2 __attribute__((const, overloadable))native_cospi(float2);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Return the cosine of the value * PI.
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float3 __attribute__((const, overloadable))native_cospi(float3);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Return the cosine of the value * PI.
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float4 __attribute__((const, overloadable))native_cospi(float4);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Compute the approximate distance between two points.
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float __attribute__((const, overloadable))native_distance(float lhs, float rhs);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Compute the approximate distance between two points.
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float __attribute__((const, overloadable))native_distance(float2 lhs, float2 rhs);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Compute the approximate distance between two points.
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float __attribute__((const, overloadable))native_distance(float3 lhs, float3 rhs);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Compute the approximate distance between two points.
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float __attribute__((const, overloadable))native_distance(float4 lhs, float4 rhs);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Compute the approximate division result of two values.
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float __attribute__((const, overloadable))native_divide(float lhs, float rhs);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Compute the approximate division result of two values.
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float2 __attribute__((const, overloadable))native_divide(float2 lhs, float2 rhs);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Compute the approximate division result of two values.
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float3 __attribute__((const, overloadable))native_divide(float3 lhs, float3 rhs);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Compute the approximate division result of two values.
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float4 __attribute__((const, overloadable))native_divide(float4 lhs, float4 rhs);
+#endif
+
 #if (defined(RS_VERSION) && (RS_VERSION >= 18))
 /*
  * Fast approximate exp
@@ -7529,6 +8141,114 @@ extern float3 __attribute__((const, overloadable))native_exp2(float3 v);
 extern float4 __attribute__((const, overloadable))native_exp2(float4 v);
 #endif
 
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Return (e ^ value) - 1.
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float __attribute__((const, overloadable))native_expm1(float);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Return (e ^ value) - 1.
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float2 __attribute__((const, overloadable))native_expm1(float2);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Return (e ^ value) - 1.
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float3 __attribute__((const, overloadable))native_expm1(float3);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Return (e ^ value) - 1.
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float4 __attribute__((const, overloadable))native_expm1(float4);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Return native_sqrt(x*x + y*y)
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float __attribute__((const, overloadable))native_hypot(float x, float y);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Return native_sqrt(x*x + y*y)
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float2 __attribute__((const, overloadable))native_hypot(float2 x, float2 y);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Return native_sqrt(x*x + y*y)
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float3 __attribute__((const, overloadable))native_hypot(float3 x, float3 y);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Return native_sqrt(x*x + y*y)
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float4 __attribute__((const, overloadable))native_hypot(float4 x, float4 y);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Compute the approximate length of a vector.
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float __attribute__((const, overloadable))native_length(float v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Compute the approximate length of a vector.
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float __attribute__((const, overloadable))native_length(float2 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Compute the approximate length of a vector.
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float __attribute__((const, overloadable))native_length(float3 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Compute the approximate length of a vector.
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float __attribute__((const, overloadable))native_length(float4 v);
+#endif
+
 #if (defined(RS_VERSION) && (RS_VERSION >= 18))
 /*
  * Fast approximate log
@@ -7601,6 +8321,42 @@ extern float3 __attribute__((const, overloadable))native_log10(float3 v);
 extern float4 __attribute__((const, overloadable))native_log10(float4 v);
 #endif
 
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Return the natural logarithm of (v + 1.0f)
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float __attribute__((const, overloadable))native_log1p(float);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Return the natural logarithm of (v + 1.0f)
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float2 __attribute__((const, overloadable))native_log1p(float2);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Return the natural logarithm of (v + 1.0f)
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float3 __attribute__((const, overloadable))native_log1p(float3);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Return the natural logarithm of (v + 1.0f)
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float4 __attribute__((const, overloadable))native_log1p(float4);
+#endif
+
 #if (defined(RS_VERSION) && (RS_VERSION >= 18))
 /*
  * Fast approximate log2
@@ -7635,6 +8391,42 @@ extern float3 __attribute__((const, overloadable))native_log2(float3 v);
  * Supported by API versions 18 and newer.
  */
 extern float4 __attribute__((const, overloadable))native_log2(float4 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Normalize a vector.
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float __attribute__((const, overloadable))native_normalize(float v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Normalize a vector.
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float2 __attribute__((const, overloadable))native_normalize(float2 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Normalize a vector.
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float3 __attribute__((const, overloadable))native_normalize(float3 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Normalize a vector.
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float4 __attribute__((const, overloadable))native_normalize(float4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 18))
@@ -7679,6 +8471,454 @@ extern float3 __attribute__((const, overloadable))native_powr(float3 v, float3 y
  * Supported by API versions 18 and newer.
  */
 extern float4 __attribute__((const, overloadable))native_powr(float4 v, float4 y);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Return the approximate reciprocal of a value.
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float __attribute__((const, overloadable))native_recip(float v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Return the approximate reciprocal of a value.
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float2 __attribute__((const, overloadable))native_recip(float2 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Return the approximate reciprocal of a value.
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float3 __attribute__((const, overloadable))native_recip(float3 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Return the approximate reciprocal of a value.
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float4 __attribute__((const, overloadable))native_recip(float4 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Compute the Nth root of a value.
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float __attribute__((const, overloadable))native_rootn(float v, int n);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Compute the Nth root of a value.
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float2 __attribute__((const, overloadable))native_rootn(float2 v, int2 n);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Compute the Nth root of a value.
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float3 __attribute__((const, overloadable))native_rootn(float3 v, int3 n);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Compute the Nth root of a value.
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float4 __attribute__((const, overloadable))native_rootn(float4 v, int4 n);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Return (1 / sqrt(value)).
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float __attribute__((const, overloadable))native_rsqrt(float);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Return (1 / sqrt(value)).
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float2 __attribute__((const, overloadable))native_rsqrt(float2);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Return (1 / sqrt(value)).
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float3 __attribute__((const, overloadable))native_rsqrt(float3);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Return (1 / sqrt(value)).
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float4 __attribute__((const, overloadable))native_rsqrt(float4);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Return the sine of a value specified in radians.
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float __attribute__((const, overloadable))native_sin(float);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Return the sine of a value specified in radians.
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float2 __attribute__((const, overloadable))native_sin(float2);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Return the sine of a value specified in radians.
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float3 __attribute__((const, overloadable))native_sin(float3);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Return the sine of a value specified in radians.
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float4 __attribute__((const, overloadable))native_sin(float4);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Return the sine and cosine of a value.
+ *
+ * @return sine
+ * @param v The incoming value in radians
+ * @param *cosptr cosptr[0] will be set to the cosine value.
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float __attribute__((overloadable))native_sincos(float v, float* cosptr);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Return the sine and cosine of a value.
+ *
+ * @return sine
+ * @param v The incoming value in radians
+ * @param *cosptr cosptr[0] will be set to the cosine value.
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float2 __attribute__((overloadable))native_sincos(float2 v, float2* cosptr);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Return the sine and cosine of a value.
+ *
+ * @return sine
+ * @param v The incoming value in radians
+ * @param *cosptr cosptr[0] will be set to the cosine value.
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float3 __attribute__((overloadable))native_sincos(float3 v, float3* cosptr);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Return the sine and cosine of a value.
+ *
+ * @return sine
+ * @param v The incoming value in radians
+ * @param *cosptr cosptr[0] will be set to the cosine value.
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float4 __attribute__((overloadable))native_sincos(float4 v, float4* cosptr);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Return the hyperbolic sine of a value specified in radians.
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float __attribute__((const, overloadable))native_sinh(float);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Return the hyperbolic sine of a value specified in radians.
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float2 __attribute__((const, overloadable))native_sinh(float2);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Return the hyperbolic sine of a value specified in radians.
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float3 __attribute__((const, overloadable))native_sinh(float3);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Return the hyperbolic sine of a value specified in radians.
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float4 __attribute__((const, overloadable))native_sinh(float4);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Return the sin(v * PI).
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float __attribute__((const, overloadable))native_sinpi(float);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Return the sin(v * PI).
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float2 __attribute__((const, overloadable))native_sinpi(float2);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Return the sin(v * PI).
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float3 __attribute__((const, overloadable))native_sinpi(float3);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Return the sin(v * PI).
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float4 __attribute__((const, overloadable))native_sinpi(float4);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Return the square root of a value.
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float __attribute__((const, overloadable))native_sqrt(float);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Return the square root of a value.
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float2 __attribute__((const, overloadable))native_sqrt(float2);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Return the square root of a value.
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float3 __attribute__((const, overloadable))native_sqrt(float3);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Return the square root of a value.
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float4 __attribute__((const, overloadable))native_sqrt(float4);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Return the aproximate sqrt(v).
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float __attribute__((const, overloadable))native_sqrt(float);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Return the aproximate sqrt(v).
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float2 __attribute__((const, overloadable))native_sqrt(float2);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Return the aproximate sqrt(v).
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float3 __attribute__((const, overloadable))native_sqrt(float3);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Return the aproximate sqrt(v).
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float4 __attribute__((const, overloadable))native_sqrt(float4);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Return the tangent of a value.
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float __attribute__((const, overloadable))native_tan(float);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Return the tangent of a value.
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float2 __attribute__((const, overloadable))native_tan(float2);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Return the tangent of a value.
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float3 __attribute__((const, overloadable))native_tan(float3);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Return the tangent of a value.
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float4 __attribute__((const, overloadable))native_tan(float4);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Return the hyperbolic tangent of a value.
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float __attribute__((const, overloadable))native_tanh(float);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Return the hyperbolic tangent of a value.
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float2 __attribute__((const, overloadable))native_tanh(float2);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Return the hyperbolic tangent of a value.
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float3 __attribute__((const, overloadable))native_tanh(float3);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Return the hyperbolic tangent of a value.
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float4 __attribute__((const, overloadable))native_tanh(float4);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Return tan(v * PI)
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float __attribute__((const, overloadable))native_tanpi(float);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Return tan(v * PI)
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float2 __attribute__((const, overloadable))native_tanpi(float2);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Return tan(v * PI)
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float3 __attribute__((const, overloadable))native_tanpi(float3);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/*
+ * Return tan(v * PI)
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float4 __attribute__((const, overloadable))native_tanpi(float4);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
