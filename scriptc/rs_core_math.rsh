@@ -8743,42 +8743,6 @@ extern float4 __attribute__((const, overloadable))native_sinpi(float4);
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
- * Return the square root of a value.
- *
- * Supported by API versions 21 and newer.
- */
-extern float __attribute__((const, overloadable))native_sqrt(float);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 21))
-/*
- * Return the square root of a value.
- *
- * Supported by API versions 21 and newer.
- */
-extern float2 __attribute__((const, overloadable))native_sqrt(float2);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 21))
-/*
- * Return the square root of a value.
- *
- * Supported by API versions 21 and newer.
- */
-extern float3 __attribute__((const, overloadable))native_sqrt(float3);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 21))
-/*
- * Return the square root of a value.
- *
- * Supported by API versions 21 and newer.
- */
-extern float4 __attribute__((const, overloadable))native_sqrt(float4);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 21))
-/*
  * Return the aproximate sqrt(v).
  *
  * Supported by API versions 21 and newer.
