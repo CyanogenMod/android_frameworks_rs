@@ -1797,18 +1797,6 @@ end:
 start:
 w: 1, 2, 3, 4
 t: f32
-name: native_sqrt
-ret: #2#1
-arg: #2#1
-comment:
- Return the square root of a value.
-version: 21
-test: noverify
-end:
-
-start:
-w: 1, 2, 3, 4
-t: f32
 name: native_sin
 ret: #2#1
 arg: #2#1
