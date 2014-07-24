@@ -20,7 +20,6 @@
 #include "ELFTypes.h"
 #include "utils/rsl_assert.h"
 
-#include <llvm/ADT/OwningPtr.h>
 #include <string>
 #include <stdint.h>
 

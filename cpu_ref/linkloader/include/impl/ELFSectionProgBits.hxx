@@ -35,7 +35,7 @@ ELFSectionProgBits<Bitwidth>::read(Archiver &AR,
                                    ELFSectionHeaderTy const *sh) {
   int machine = owner->getHeader()->getMachine();
   ELFSectionProgBits *secp = new ELFSectionProgBits(machine);
-  llvm::OwningPtr<ELFSectionProgBits> result(secp);
+  std::unique_ptr<ELFSectionProgBits> result(secp);
   size_t max_num_stubs = 0;
   // Align section boundary to 4 bytes.
   size_t section_size = (sh->getSize() + 3) / 4 * 4;
@@ -82,7 +82,7 @@ ELFSectionProgBits<Bitwidth>::read(Archiver &AR,
     return NULL;
   }
 
-  return result.take();
+  return result.release();
 }
 
 #endif // ELF_SECTION_PROGBITS_HXX

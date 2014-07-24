@@ -36,7 +36,7 @@ template <unsigned Bitwidth>
 template <typename Archiver>
 inline ELFObject<Bitwidth> *
 ELFObject<Bitwidth>::read(Archiver &AR) {
-  llvm::OwningPtr<ELFObjectTy> object(new ELFObjectTy());
+  std::unique_ptr<ELFObjectTy> object(new ELFObjectTy());
 
   // Read header
   object->header.reset(ELFHeaderTy::read(AR));
@@ -57,9 +57,9 @@ ELFObject<Bitwidth>::read(Archiver &AR) {
       object->stab.push_back(NULL);
       progbits_ndx.push_back(i);
     } else {
-      llvm::OwningPtr<ELFSectionTy> sec(
+      std::unique_ptr<ELFSectionTy> sec(
         ELFSectionTy::read(AR, object.get(), (*object->shtab)[i]));
-      object->stab.push_back(sec.take());
+      object->stab.push_back(sec.release());
     }
   }
 
@@ -72,12 +72,12 @@ ELFObject<Bitwidth>::read(Archiver &AR) {
   for (size_t i = 0; i < progbits_ndx.size(); ++i) {
     size_t index = progbits_ndx[i];
 
-    llvm::OwningPtr<ELFSectionTy> sec(
+    std::unique_ptr<ELFSectionTy> sec(
       ELFSectionTy::read(AR, object.get(), (*object->shtab)[index]));
-    object->stab[index] = sec.take();
+    object->stab[index] = sec.release();
   }
 
-  return object.take();
+  return object.release();
 }
 
 template <unsigned Bitwidth>

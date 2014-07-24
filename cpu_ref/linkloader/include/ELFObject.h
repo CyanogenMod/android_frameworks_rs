@@ -22,8 +22,6 @@
 
 #include "utils/rsl_assert.h"
 
-#include <llvm/ADT/OwningPtr.h>
-
 #include <string>
 #include <vector>
 
@@ -33,8 +31,8 @@ public:
   ELF_TYPE_INTRO_TO_TEMPLATE_SCOPE(Bitwidth);
 
 private:
-  llvm::OwningPtr<ELFHeaderTy> header;
-  llvm::OwningPtr<ELFSectionHeaderTableTy> shtab;
+  std::unique_ptr<ELFHeaderTy> header;
+  std::unique_ptr<ELFSectionHeaderTableTy> shtab;
   std::vector<ELFSectionTy *> stab;
 
   MemChunk SHNCommonData;
