@@ -20,8 +20,6 @@
 #include "ELFTypes.h"
 #include "ELF.h"
 
-#include <llvm/ADT/OwningPtr.h>
-
 #include <string.h>
 
 class ELFHeaderHelperMixin {
@@ -155,7 +153,7 @@ public:
       return 0;
     }
 
-    llvm::OwningPtr<ELFHeader> header(new ELFHeader());
+    std::unique_ptr<ELFHeader> header(new ELFHeader());
     if (!header->serialize(AR)) {
       // Unable to read the structure.  Return NULL.
       return 0;
@@ -166,7 +164,7 @@ public:
       return 0;
     }
 
-    return header.take();
+    return header.release();
   }
 
   void print();

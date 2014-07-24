@@ -89,7 +89,7 @@ ELFSectionSymTab<Bitwidth>::read(Archiver &AR,
                                  ELFObjectTy *owner,
                                  ELFSectionHeaderTy const *sh) {
 
-  llvm::OwningPtr<ELFSectionSymTabTy> st(new ELFSectionSymTabTy());
+  std::unique_ptr<ELFSectionSymTabTy> st(new ELFSectionSymTabTy());
 
   // Assert that entry size will be the same as standard.
   rsl_assert(sh->getEntrySize() == TypeTraits<ELFSymbolTy>::size);
@@ -108,7 +108,7 @@ ELFSectionSymTab<Bitwidth>::read(Archiver &AR,
     return 0;
   }
 
-  return st.take();
+  return st.release();
 }
 
 template <unsigned Bitwidth>

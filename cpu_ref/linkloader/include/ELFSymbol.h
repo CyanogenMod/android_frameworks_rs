@@ -20,8 +20,6 @@
 #include "ELFTypes.h"
 #include "ELF.h"
 
-#include <llvm/ADT/OwningPtr.h>
-
 #include <string>
 #include <algorithm>
 

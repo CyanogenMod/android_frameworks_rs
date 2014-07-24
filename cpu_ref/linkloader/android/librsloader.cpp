@@ -25,7 +25,6 @@
 #define LOG_TAG "bcc"
 #include "cutils/log.h"
 
-#include <llvm/ADT/OwningPtr.h>
 #include <llvm/Support/ELF.h>
 
 #if defined(__LP64__) || defined(__x86_64__)
@@ -70,16 +69,16 @@ extern "C" RSExecRef rsloaderLoadExecutable(unsigned char const *buf,
   ArchiveReaderLE AR(buf, buf_size);
 
 #if defined(__LP64__) || defined(__x86_64__)
-  llvm::OwningPtr<ELFObject<64> > object(ELFObject<64>::read(AR));
+  std::unique_ptr<ELFObject<64> > object(ELFObject<64>::read(AR));
 #else
-  llvm::OwningPtr<ELFObject<32> > object(ELFObject<32>::read(AR));
+  std::unique_ptr<ELFObject<32> > object(ELFObject<32>::read(AR));
 #endif
   if (!object) {
     ALOGE("Unable to load the ELF object.");
     return NULL;
   }
 
-  return wrap(object.take());
+  return wrap(object.release());
 }
 
 extern "C" int rsloaderRelocateExecutable(RSExecRef object_,
