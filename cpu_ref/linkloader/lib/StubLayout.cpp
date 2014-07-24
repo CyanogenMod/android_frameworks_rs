@@ -77,7 +77,7 @@ void StubLayoutAARCH64::setStubAddress(void *stub_, void *addr) {
   // Little endian.
   stub[0] = 0x50;
   stub[1] = 0x00;
-  stub[2] = 0x0f;
+  stub[2] = 0x00;
   stub[3] = 0x58;
 
   // Next Instruction:
