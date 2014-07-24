@@ -41,7 +41,7 @@ ELFSectionHeader_CRTP<Bitwidth>::read(Archiver &AR,
     return 0;
   }
 
-  llvm::OwningPtr<ELFSectionHeaderTy> sh(new ELFSectionHeaderTy());
+  std::unique_ptr<ELFSectionHeaderTy> sh(new ELFSectionHeaderTy());
 
   if (!sh->serialize(AR)) {
     // Unable to read the structure.  Return NULL.
@@ -59,7 +59,7 @@ ELFSectionHeader_CRTP<Bitwidth>::read(Archiver &AR,
   // Set the owner elf object
   sh->owner = owner;
 
-  return sh.take();
+  return sh.release();
 }
 
 template <unsigned Bitwidth>
