@@ -312,6 +312,11 @@ void * Context::threadProc(void *vrsc) {
     rsc->props.mLogVisual = getProp("debug.rs.visual") != 0;
     rsc->props.mDebugMaxThreads = getProp("debug.rs.max-threads");
 
+    if (getProp("debug.rs.debug") != 0) {
+        ALOGD("Forcing debug context due to debug.rs.debug.");
+        rsc->mContextType = RS_CONTEXT_TYPE_DEBUG;
+    }
+
     bool loadDefault = true;
 
     // Provide a mechanism for dropping in a different RS driver.
