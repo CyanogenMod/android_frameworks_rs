@@ -1213,5 +1213,3 @@ void rsdAllocationUpdateCachedObject(const Context *rsc,
     }
 #endif
 }
-
-
