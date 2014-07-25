@@ -38,7 +38,7 @@ public:
 protected:
     ObjectBaseRef<Allocation> lut;
 
-    static void kernel(const RsForEachStubParamStruct *p,
+    static void kernel(const RsExpandKernelParams *p,
                        uint32_t xstart, uint32_t xend,
                        uint32_t instep, uint32_t outstep);
 };
@@ -53,7 +53,7 @@ void RsdCpuScriptIntrinsicLUT::setGlobalObj(uint32_t slot, ObjectBase *data) {
 }
 
 
-void RsdCpuScriptIntrinsicLUT::kernel(const RsForEachStubParamStruct *p,
+void RsdCpuScriptIntrinsicLUT::kernel(const RsExpandKernelParams *p,
                                       uint32_t xstart, uint32_t xend,
                                       uint32_t instep, uint32_t outstep) {
     RsdCpuScriptIntrinsicLUT *cp = (RsdCpuScriptIntrinsicLUT *)p->usr;

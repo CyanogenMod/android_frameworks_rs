@@ -33,7 +33,7 @@ public:
     RsdCpuScriptIntrinsicBlend(RsdCpuReferenceImpl *ctx, const Script *s, const Element *e);
 
 protected:
-    static void kernel(const RsForEachStubParamStruct *p,
+    static void kernel(const RsExpandKernelParams *p,
                           uint32_t xstart, uint32_t xend,
                           uint32_t instep, uint32_t outstep);
 };
@@ -110,7 +110,7 @@ extern "C" void rsdIntrinsicBlendAdd_K(void *dst, const void *src, uint32_t coun
 extern "C" void rsdIntrinsicBlendSub_K(void *dst, const void *src, uint32_t count8);
 #endif
 
-void RsdCpuScriptIntrinsicBlend::kernel(const RsForEachStubParamStruct *p,
+void RsdCpuScriptIntrinsicBlend::kernel(const RsExpandKernelParams *p,
                                         uint32_t xstart, uint32_t xend,
                                         uint32_t instep, uint32_t outstep) {
     RsdCpuScriptIntrinsicBlend *cp = (RsdCpuScriptIntrinsicBlend *)p->usr;

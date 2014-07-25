@@ -44,66 +44,71 @@ void CpuScriptGroupImpl::setOutput(const ScriptKernelID *kid, Allocation *a) {
 }
 
 
-typedef void (*ScriptGroupRootFunc_t)(const RsForEachStubParamStruct *p,
+typedef void (*ScriptGroupRootFunc_t)(const RsExpandKernelParams *kparams,
                                       uint32_t xstart, uint32_t xend,
                                       uint32_t instep, uint32_t outstep);
 
-void CpuScriptGroupImpl::scriptGroupRoot(const RsForEachStubParamStruct *p,
+void CpuScriptGroupImpl::scriptGroupRoot(const RsExpandKernelParams *kparams,
                                          uint32_t xstart, uint32_t xend,
                                          uint32_t instep, uint32_t outstep) {
 
 
-    const ScriptList *sl = (const ScriptList *)p->usr;
-    RsForEachStubParamStruct *mp = (RsForEachStubParamStruct *)p;
-    const void *oldUsr = p->usr;
+    const ScriptList *sl            = (const ScriptList *)kparams->usr;
+    RsExpandKernelParams *mkparams = (RsExpandKernelParams *)kparams;
 
-    for(size_t ct=0; ct < sl->count; ct++) {
+    for (size_t ct = 0; ct < sl->count; ct++) {
         ScriptGroupRootFunc_t func;
-        func = (ScriptGroupRootFunc_t)sl->fnPtrs[ct];
-        mp->usr = sl->usrPtrs[ct];
+        func          = (ScriptGroupRootFunc_t)sl->fnPtrs[ct];
+        mkparams->usr = sl->usrPtrs[ct];
 
-        mp->ptrIn = NULL;
-        mp->in = NULL;
-        mp->ptrOut = NULL;
-        mp->out = NULL;
+        mkparams->in  = NULL;
+        mkparams->out = NULL;
 
         uint32_t istep = 0;
         uint32_t ostep = 0;
 
         if (sl->ins[ct]) {
-            mp->ptrIn = (const uint8_t *)sl->ins[ct]->mHal.drvState.lod[0].mallocPtr;
+            mkparams->in =
+              (const uint8_t *)sl->ins[ct]->mHal.drvState.lod[0].mallocPtr;
+
             istep = sl->ins[ct]->mHal.state.elementSizeBytes;
-            mp->in = mp->ptrIn;
+
             if (sl->inExts[ct]) {
-                mp->in = mp->ptrIn + sl->ins[ct]->mHal.drvState.lod[0].stride * p->y;
-            } else {
-                if (sl->ins[ct]->mHal.drvState.lod[0].dimY > p->lid) {
-                    mp->in = mp->ptrIn + sl->ins[ct]->mHal.drvState.lod[0].stride * p->lid;
-                }
+                mkparams->in =
+                  (const uint8_t *)mkparams->in +
+                  sl->ins[ct]->mHal.drvState.lod[0].stride * kparams->y;
+
+            } else if (sl->ins[ct]->mHal.drvState.lod[0].dimY > kparams->lid) {
+                mkparams->in =
+                  (const uint8_t *)mkparams->in +
+                  sl->ins[ct]->mHal.drvState.lod[0].stride * kparams->lid;
             }
         }
 
         if (sl->outs[ct]) {
-            mp->ptrOut = (uint8_t *)sl->outs[ct]->mHal.drvState.lod[0].mallocPtr;
-            mp->out = mp->ptrOut;
+            mkparams->out =
+              (uint8_t *)sl->outs[ct]->mHal.drvState.lod[0].mallocPtr;
+
             ostep = sl->outs[ct]->mHal.state.elementSizeBytes;
+
             if (sl->outExts[ct]) {
-                mp->out = mp->ptrOut + sl->outs[ct]->mHal.drvState.lod[0].stride * p->y;
-            } else {
-                if (sl->outs[ct]->mHal.drvState.lod[0].dimY > p->lid) {
-                    mp->out = mp->ptrOut + sl->outs[ct]->mHal.drvState.lod[0].stride * p->lid;
-                }
+                mkparams->out =
+                  (uint8_t *)mkparams->out +
+                  sl->outs[ct]->mHal.drvState.lod[0].stride * kparams->y;
+
+            } else if (sl->outs[ct]->mHal.drvState.lod[0].dimY > kparams->lid) {
+                mkparams->out =
+                  (uint8_t *)mkparams->out +
+                  sl->outs[ct]->mHal.drvState.lod[0].stride * kparams->lid;
             }
         }
 
         //ALOGE("kernel %i %p,%p  %p,%p", ct, mp->ptrIn, mp->in, mp->ptrOut, mp->out);
-        func(p, xstart, xend, istep, ostep);
+        func(kparams, xstart, xend, istep, ostep);
     }
     //ALOGE("script group root");
 
-    //ConvolveParams *cp = (ConvolveParams *)p->usr;
-
-    mp->usr = oldUsr;
+    mkparams->usr = sl;
 }
 
 
@@ -245,5 +250,3 @@ void CpuScriptGroupImpl::execute() {
         }
     }
 }
-
-

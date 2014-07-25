@@ -42,22 +42,22 @@ protected:
     ObjectBaseRef<const Allocation> mAlloc;
     ObjectBaseRef<const Element> mElement;
 
-    static void kernelU1(const RsForEachStubParamStruct *p,
+    static void kernelU1(const RsExpandKernelParams *p,
                          uint32_t xstart, uint32_t xend,
                          uint32_t instep, uint32_t outstep);
-    static void kernelU2(const RsForEachStubParamStruct *p,
+    static void kernelU2(const RsExpandKernelParams *p,
                          uint32_t xstart, uint32_t xend,
                          uint32_t instep, uint32_t outstep);
-    static void kernelU4(const RsForEachStubParamStruct *p,
+    static void kernelU4(const RsExpandKernelParams *p,
                          uint32_t xstart, uint32_t xend,
                          uint32_t instep, uint32_t outstep);
-    static void kernelF1(const RsForEachStubParamStruct *p,
+    static void kernelF1(const RsExpandKernelParams *p,
                          uint32_t xstart, uint32_t xend,
                          uint32_t instep, uint32_t outstep);
-    static void kernelF2(const RsForEachStubParamStruct *p,
+    static void kernelF2(const RsExpandKernelParams *p,
                          uint32_t xstart, uint32_t xend,
                          uint32_t instep, uint32_t outstep);
-    static void kernelF4(const RsForEachStubParamStruct *p,
+    static void kernelF4(const RsExpandKernelParams *p,
                          uint32_t xstart, uint32_t xend,
                          uint32_t instep, uint32_t outstep);
 };
@@ -88,7 +88,7 @@ extern "C" void rsdIntrinsicConvolve3x3_K(void *dst, const void *y0, const void 
                                           const void *y2, const short *coef, uint32_t count);
 
 
-static void ConvolveOneU4(const RsForEachStubParamStruct *p, uint32_t x, uchar4 *out,
+static void ConvolveOneU4(const RsExpandKernelParams *p, uint32_t x, uchar4 *out,
                           const uchar4 *py0, const uchar4 *py1, const uchar4 *py2,
                           const float* coeff) {
 
@@ -110,7 +110,7 @@ static void ConvolveOneU4(const RsForEachStubParamStruct *p, uint32_t x, uchar4 
     *out = o;
 }
 
-static void ConvolveOneU2(const RsForEachStubParamStruct *p, uint32_t x, uchar2 *out,
+static void ConvolveOneU2(const RsExpandKernelParams *p, uint32_t x, uchar2 *out,
                           const uchar2 *py0, const uchar2 *py1, const uchar2 *py2,
                           const float* coeff) {
 
@@ -131,7 +131,7 @@ static void ConvolveOneU2(const RsForEachStubParamStruct *p, uint32_t x, uchar2 
     *out = convert_uchar2(px);
 }
 
-static void ConvolveOneU1(const RsForEachStubParamStruct *p, uint32_t x, uchar *out,
+static void ConvolveOneU1(const RsExpandKernelParams *p, uint32_t x, uchar *out,
                           const uchar *py0, const uchar *py1, const uchar *py2,
                           const float* coeff) {
 
@@ -150,7 +150,7 @@ static void ConvolveOneU1(const RsForEachStubParamStruct *p, uint32_t x, uchar *
     *out = clamp(px, 0.f, 255.f);
 }
 
-static void ConvolveOneF4(const RsForEachStubParamStruct *p, uint32_t x, float4 *out,
+static void ConvolveOneF4(const RsExpandKernelParams *p, uint32_t x, float4 *out,
                           const float4 *py0, const float4 *py1, const float4 *py2,
                           const float* coeff) {
 
@@ -161,7 +161,7 @@ static void ConvolveOneF4(const RsForEachStubParamStruct *p, uint32_t x, float4 
            (py2[x1] * coeff[6]) + (py2[x] * coeff[7]) + (py2[x2] * coeff[8]);
 }
 
-static void ConvolveOneF2(const RsForEachStubParamStruct *p, uint32_t x, float2 *out,
+static void ConvolveOneF2(const RsExpandKernelParams *p, uint32_t x, float2 *out,
                           const float2 *py0, const float2 *py1, const float2 *py2,
                           const float* coeff) {
 
@@ -172,7 +172,7 @@ static void ConvolveOneF2(const RsForEachStubParamStruct *p, uint32_t x, float2 
            (py2[x1] * coeff[6]) + (py2[x] * coeff[7]) + (py2[x2] * coeff[8]);
 }
 
-static void ConvolveOneF1(const RsForEachStubParamStruct *p, uint32_t x, float *out,
+static void ConvolveOneF1(const RsExpandKernelParams *p, uint32_t x, float *out,
                           const float *py0, const float *py1, const float *py2,
                           const float* coeff) {
 
@@ -183,7 +183,7 @@ static void ConvolveOneF1(const RsForEachStubParamStruct *p, uint32_t x, float *
            (py2[x1] * coeff[6]) + (py2[x] * coeff[7]) + (py2[x2] * coeff[8]);
 }
 
-void RsdCpuScriptIntrinsicConvolve3x3::kernelU4(const RsForEachStubParamStruct *p,
+void RsdCpuScriptIntrinsicConvolve3x3::kernelU4(const RsExpandKernelParams *p,
                                                 uint32_t xstart, uint32_t xend,
                                                 uint32_t instep, uint32_t outstep) {
     RsdCpuScriptIntrinsicConvolve3x3 *cp = (RsdCpuScriptIntrinsicConvolve3x3 *)p->usr;
@@ -230,7 +230,7 @@ void RsdCpuScriptIntrinsicConvolve3x3::kernelU4(const RsForEachStubParamStruct *
     }
 }
 
-void RsdCpuScriptIntrinsicConvolve3x3::kernelU2(const RsForEachStubParamStruct *p,
+void RsdCpuScriptIntrinsicConvolve3x3::kernelU2(const RsExpandKernelParams *p,
                                                 uint32_t xstart, uint32_t xend,
                                                 uint32_t instep, uint32_t outstep) {
     RsdCpuScriptIntrinsicConvolve3x3 *cp = (RsdCpuScriptIntrinsicConvolve3x3 *)p->usr;
@@ -275,7 +275,7 @@ void RsdCpuScriptIntrinsicConvolve3x3::kernelU2(const RsForEachStubParamStruct *
     }
 }
 
-void RsdCpuScriptIntrinsicConvolve3x3::kernelU1(const RsForEachStubParamStruct *p,
+void RsdCpuScriptIntrinsicConvolve3x3::kernelU1(const RsExpandKernelParams *p,
                                                 uint32_t xstart, uint32_t xend,
                                                 uint32_t instep, uint32_t outstep) {
     RsdCpuScriptIntrinsicConvolve3x3 *cp = (RsdCpuScriptIntrinsicConvolve3x3 *)p->usr;
@@ -320,7 +320,7 @@ void RsdCpuScriptIntrinsicConvolve3x3::kernelU1(const RsForEachStubParamStruct *
     }
 }
 
-void RsdCpuScriptIntrinsicConvolve3x3::kernelF4(const RsForEachStubParamStruct *p,
+void RsdCpuScriptIntrinsicConvolve3x3::kernelF4(const RsExpandKernelParams *p,
                                                 uint32_t xstart, uint32_t xend,
                                                 uint32_t instep, uint32_t outstep) {
     RsdCpuScriptIntrinsicConvolve3x3 *cp = (RsdCpuScriptIntrinsicConvolve3x3 *)p->usr;
@@ -365,7 +365,7 @@ void RsdCpuScriptIntrinsicConvolve3x3::kernelF4(const RsForEachStubParamStruct *
     }
 }
 
-void RsdCpuScriptIntrinsicConvolve3x3::kernelF2(const RsForEachStubParamStruct *p,
+void RsdCpuScriptIntrinsicConvolve3x3::kernelF2(const RsExpandKernelParams *p,
                                                 uint32_t xstart, uint32_t xend,
                                                 uint32_t instep, uint32_t outstep) {
     RsdCpuScriptIntrinsicConvolve3x3 *cp = (RsdCpuScriptIntrinsicConvolve3x3 *)p->usr;
@@ -409,7 +409,7 @@ void RsdCpuScriptIntrinsicConvolve3x3::kernelF2(const RsForEachStubParamStruct *
         }
     }
 }
-void RsdCpuScriptIntrinsicConvolve3x3::kernelF1(const RsForEachStubParamStruct *p,
+void RsdCpuScriptIntrinsicConvolve3x3::kernelF1(const RsExpandKernelParams *p,
                                                 uint32_t xstart, uint32_t xend,
                                                 uint32_t instep, uint32_t outstep) {
     RsdCpuScriptIntrinsicConvolve3x3 *cp = (RsdCpuScriptIntrinsicConvolve3x3 *)p->usr;
