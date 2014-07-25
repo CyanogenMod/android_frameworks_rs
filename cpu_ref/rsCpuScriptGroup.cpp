@@ -46,11 +46,11 @@ void CpuScriptGroupImpl::setOutput(const ScriptKernelID *kid, Allocation *a) {
 
 typedef void (*ScriptGroupRootFunc_t)(const RsExpandKernelParams *kparams,
                                       uint32_t xstart, uint32_t xend,
-                                      uint32_t instep, uint32_t outstep);
+                                      uint32_t outstep);
 
 void CpuScriptGroupImpl::scriptGroupRoot(const RsExpandKernelParams *kparams,
                                          uint32_t xstart, uint32_t xend,
-                                         uint32_t instep, uint32_t outstep) {
+                                         uint32_t outstep) {
 
 
     const ScriptList *sl           = (const ScriptList *)kparams->usr;
@@ -114,11 +114,7 @@ void CpuScriptGroupImpl::scriptGroupRoot(const RsExpandKernelParams *kparams,
         }
 
         //ALOGE("kernel %i %p,%p  %p,%p", ct, mp->ptrIn, mp->in, mp->ptrOut, mp->out);
-        /*
-         * The fourth argument is zero here because kernels get their stride
-         * information from a member of p that points to an array.
-         */
-        func(kparams, xstart, xend, 0, ostep);
+        func(kparams, xstart, xend, ostep);
     }
     //ALOGE("script group root");
 

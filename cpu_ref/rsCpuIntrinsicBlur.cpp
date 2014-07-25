@@ -46,10 +46,10 @@ protected:
 
     static void kernelU4(const RsExpandKernelParams *p,
                          uint32_t xstart, uint32_t xend,
-                         uint32_t instep, uint32_t outstep);
+                         uint32_t outstep);
     static void kernelU1(const RsExpandKernelParams *p,
                          uint32_t xstart, uint32_t xend,
-                         uint32_t instep, uint32_t outstep);
+                         uint32_t outstep);
     void ComputeGaussianWeights();
 };
 
@@ -276,7 +276,7 @@ static void OneHU1(const RsExpandKernelParams *p, uchar *out, int32_t x,
 
 void RsdCpuScriptIntrinsicBlur::kernelU4(const RsExpandKernelParams *p,
                                          uint32_t xstart, uint32_t xend,
-                                         uint32_t instep, uint32_t outstep) {
+                                         uint32_t outstep) {
 
     float4 stackbuf[2048];
     float4 *buf = &stackbuf[0];
@@ -347,7 +347,7 @@ void RsdCpuScriptIntrinsicBlur::kernelU4(const RsExpandKernelParams *p,
 
 void RsdCpuScriptIntrinsicBlur::kernelU1(const RsExpandKernelParams *p,
                                          uint32_t xstart, uint32_t xend,
-                                         uint32_t instep, uint32_t outstep) {
+                                         uint32_t outstep) {
     float buf[4 * 2048];
     RsdCpuScriptIntrinsicBlur *cp = (RsdCpuScriptIntrinsicBlur *)p->usr;
     if (!cp->mAlloc.get()) {
@@ -464,5 +464,3 @@ RsdCpuScriptImpl * rsdIntrinsic_Blur(RsdCpuReferenceImpl *ctx, const Script *s, 
 
     return new RsdCpuScriptIntrinsicBlur(ctx, s, e);
 }
-
-

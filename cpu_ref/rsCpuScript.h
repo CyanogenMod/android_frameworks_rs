@@ -49,7 +49,7 @@ public:
     typedef void (*outer_foreach_t)(
         const RsExpandKernelParams *,
         uint32_t x1, uint32_t x2,
-        uint32_t instep, uint32_t outstep);
+        uint32_t outstep);
 #ifdef RS_COMPATIBILITY_LIB
     typedef void (* InvokeFunc_t)(void);
     typedef void (* ForEachFunc_t)(void);
