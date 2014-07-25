@@ -281,7 +281,30 @@ void ScriptGroup::setOutput(Context *rsc, ScriptKernelID *kid, Allocation *a) {
     rsAssert(!"ScriptGroup:setOutput kid not found");
 }
 
+bool ScriptGroup::validateInputAndOutput(Context *rsc) {
+    for(size_t i = 0; i < mInputs.size(); i++) {
+        if (mInputs[i]->mAlloc.get() == NULL) {
+            rsc->setError(RS_ERROR_BAD_VALUE, "ScriptGroup missing input.");
+            return false;
+        }
+    }
+
+    for(size_t i = 0; i < mOutputs.size(); i++) {
+        if (mOutputs[i]->mAlloc.get() == NULL) {
+            rsc->setError(RS_ERROR_BAD_VALUE, "ScriptGroup missing output.");
+            return false;
+        }
+    }
+
+    return true;
+}
+
 void ScriptGroup::execute(Context *rsc) {
+
+    if (!validateInputAndOutput(rsc)) {
+        return;
+    }
+
     //ALOGE("ScriptGroup::execute");
     if (rsc->mHal.funcs.scriptgroup.execute) {
         rsc->mHal.funcs.scriptgroup.execute(rsc, this);
