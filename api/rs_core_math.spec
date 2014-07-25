@@ -1505,7 +1505,6 @@ arg: #2#1 v range(-1,1)
 comment:
  acos
 version: 21
-test: noverify
 end:
 
 start:
@@ -1517,7 +1516,6 @@ arg: #2#1
 comment:
  acosh
 version: 21
-test: noverify
 end:
 
 start:
@@ -1529,7 +1527,6 @@ arg: #2#1 v range(-1,1)
 comment:
  acospi
 version: 21
-test: noverify
 end:
 
 start:
@@ -1541,7 +1538,6 @@ arg: #2#1 v range(-1,1)
 comment:
  asin
 version: 21
-test: noverify
 end:
 
 start:
@@ -1553,7 +1549,6 @@ arg: #2#1
 comment:
  asinh
 version: 21
-test: noverify
 end:
 
 start:
@@ -1565,7 +1560,6 @@ arg: #2#1 v range(-1,1)
 comment:
  Return the inverse sine divided by PI.
 version: 21
-test: noverify
 end:
 
 start:
@@ -1577,7 +1571,6 @@ arg: #2#1 v range(-1,1)
 comment:
  Return the inverse tangent.
 version: 21
-test: noverify
 end:
 
 start:
@@ -1590,7 +1583,6 @@ arg: #2#1 x
 comment:
  Return the inverse tangent of y / x.
 version: 21
-test: noverify
 end:
 
 start:
@@ -1602,7 +1594,6 @@ arg: #2#1
 comment:
  Return the inverse hyperbolic tangent.
 version: 21
-test: noverify
 end:
 
 start:
@@ -1614,7 +1605,6 @@ arg: #2#1 v range(-1,1)
 comment:
  Return the inverse tangent divided by PI.
 version: 21
-test: noverify
 end:
 
 start:
@@ -1627,7 +1617,6 @@ arg: #2#1 x
 comment:
  Return the inverse tangent of y / x, divided by PI.
 version: 21
-test: noverify
 end:
 
 start:
@@ -1639,7 +1628,6 @@ arg: #2#1
 comment:
  Return the cube root.
 version: 21
-test: noverify
 end:
 
 start:
@@ -1651,7 +1639,6 @@ arg: #2#1
 comment:
  Return the cosine.
 version: 21
-test: noverify
 end:
 
 start:
@@ -1663,7 +1650,6 @@ arg: #2#1
 comment:
  Return the hypebolic cosine.
 version: 21
-test: noverify
 end:
 
 start:
@@ -1675,7 +1661,6 @@ arg: #2#1
 comment:
  Return the cosine of the value * PI.
 version: 21
-test: noverify
 end:
 
 start:
@@ -1687,7 +1672,6 @@ arg: #2#1
 comment:
  Return (e ^ value) - 1.
 version: 21
-test: noverify
 end:
 
 start:
@@ -1700,7 +1684,7 @@ arg: #2#1 rhs
 comment:
  Compute the approximate distance between two points.
 version: 21
-test: noverify
+test: vector
 end:
 
 start:
@@ -1713,7 +1697,6 @@ arg: #2#1 rhs
 comment:
  Compute the approximate division result of two values.
 version: 21
-test: noverify
 end:
 
 start:
@@ -1726,7 +1709,6 @@ arg: #2#1 y
 comment:
  Return native_sqrt(x*x + y*y)
 version: 21
-test: noverify
 end:
 
 start:
@@ -1762,7 +1744,6 @@ arg: #2#1
 comment:
  Return the natural logarithm of (v + 1.0f)
 version: 21
-test: noverify
 end:
 
 start:
@@ -1786,6 +1767,7 @@ arg: int#1 n
 comment:
  Compute the Nth root of a value.
 version: 21
+# TODO re-enable once how to handle zero is decided
 test: noverify
 end:
 
@@ -1798,7 +1780,6 @@ arg: #2#1
 comment:
  Return (1 / sqrt(value)).
 version: 21
-test: noverify
 end:
 
 start:
@@ -1810,7 +1791,6 @@ arg: #2#1
 comment:
  Return the sine of a value specified in radians.
 version: 21
-test: noverify
 end:
 
 start:
@@ -1827,7 +1807,6 @@ comment:
  @param v The incoming value in radians
  @param *cosptr cosptr[0] will be set to the cosine value.
 version: 21
-test: noverify
 end:
 
 start:
@@ -1839,7 +1818,6 @@ arg: #2#1
 comment:
  Return the hyperbolic sine of a value specified in radians.
 version: 21
-test: noverify
 end:
 
 start:
@@ -1851,7 +1829,6 @@ arg: #2#1
 comment:
  Return the sin(v * PI).
 version: 21
-test: noverify
 end:
 
 start:
@@ -1863,7 +1840,6 @@ arg: #2#1
 comment:
  Return the aproximate sqrt(v).
 version: 21
-test: noverify
 end:
 
 start:
@@ -1875,7 +1851,6 @@ arg: #2#1
 comment:
  Return the tangent of a value.
 version: 21
-test: noverify
 end:
 
 start:
@@ -1887,7 +1862,6 @@ arg: #2#1
 comment:
  Return the hyperbolic tangent of a value.
 version: 21
-test: noverify
 end:
 
 start:
@@ -1899,7 +1873,6 @@ arg: #2#1
 comment:
  Return tan(v * PI)
 version: 21
-test: noverify
 end:
 
 
