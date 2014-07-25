@@ -31,6 +31,7 @@ public class UT_foreach_multi extends UnitTest {
     private Allocation Out0;
     private Allocation Out1;
     private Allocation Out2;
+    private Allocation Out3;
 
     protected UT_foreach_multi(RSTestCore rstc, Resources res, Context ctx) {
         super(rstc, "Foreach Multi-input", ctx);
@@ -77,6 +78,12 @@ public class UT_foreach_multi extends UnitTest {
         Out2 = Allocation.createTyped(RS, type32Builder.create());
         s.set_aout2(Out2);
 
+        // RetStruct output allocations
+
+        ScriptField_RetStruct StructType = new ScriptField_RetStruct(RS, Xdim);
+        Out3 = StructType.getAllocation();
+        s.set_aout3(Out3);
+
         return;
     }
 
@@ -91,6 +98,7 @@ public class UT_foreach_multi extends UnitTest {
         s.forEach_sum2(Ain0, Ain1, Out0);
         s.forEach_sum3(Ain0, Ain1, Ain2, Out1);
         s.forEach_sum_mixed(Ain0, Ain3, Out2);
+        s.forEach_sum2_struct(Ain0, Ain1, Out3);
 
         s.invoke_test_outputs();
         s.invoke_check_test_results();
