@@ -174,7 +174,7 @@ protected:
     ObjectBaseRef<Allocation> mFrameBuffer;
 
     void doLoopFilter();
-    static void kernel(const RsForEachStubParamStruct *p,
+    static void kernel(const RsExpandKernelParams *p,
                        uint32_t xstart, uint32_t xend,
                        uint32_t instep, uint32_t outstep);
 };
@@ -182,7 +182,7 @@ protected:
 }
 }
 
-void RsdCpuScriptIntrinsicLoopFilter::kernel(const RsForEachStubParamStruct *p,
+void RsdCpuScriptIntrinsicLoopFilter::kernel(const RsExpandKernelParams *p,
                                              uint32_t xstart, uint32_t xend,
                                              uint32_t instep, uint32_t outstep) {
     RsdCpuScriptIntrinsicLoopFilter *cp = (RsdCpuScriptIntrinsicLoopFilter*)p->usr;

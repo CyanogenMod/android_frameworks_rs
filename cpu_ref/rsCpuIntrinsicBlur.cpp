@@ -44,10 +44,10 @@ protected:
     int mIradius;
     ObjectBaseRef<Allocation> mAlloc;
 
-    static void kernelU4(const RsForEachStubParamStruct *p,
+    static void kernelU4(const RsExpandKernelParams *p,
                          uint32_t xstart, uint32_t xend,
                          uint32_t instep, uint32_t outstep);
-    static void kernelU1(const RsForEachStubParamStruct *p,
+    static void kernelU1(const RsExpandKernelParams *p,
                          uint32_t xstart, uint32_t xend,
                          uint32_t instep, uint32_t outstep);
     void ComputeGaussianWeights();
@@ -113,7 +113,7 @@ void RsdCpuScriptIntrinsicBlur::setGlobalVar(uint32_t slot, const void *data, si
 
 
 
-static void OneVU4(const RsForEachStubParamStruct *p, float4 *out, int32_t x, int32_t y,
+static void OneVU4(const RsExpandKernelParams *p, float4 *out, int32_t x, int32_t y,
                    const uchar *ptrIn, int iStride, const float* gPtr, int iradius) {
 
     const uchar *pi = ptrIn + x*4;
@@ -131,7 +131,7 @@ static void OneVU4(const RsForEachStubParamStruct *p, float4 *out, int32_t x, in
     out->xyzw = blurredPixel;
 }
 
-static void OneVU1(const RsForEachStubParamStruct *p, float *out, int32_t x, int32_t y,
+static void OneVU1(const RsExpandKernelParams *p, float *out, int32_t x, int32_t y,
                    const uchar *ptrIn, int iStride, const float* gPtr, int iradius) {
 
     const uchar *pi = ptrIn + x;
@@ -243,7 +243,7 @@ static void OneVFU1(float *out,
     }
 }
 
-static void OneHU4(const RsForEachStubParamStruct *p, uchar4 *out, int32_t x,
+static void OneHU4(const RsExpandKernelParams *p, uchar4 *out, int32_t x,
                    const float4 *ptrIn, const float* gPtr, int iradius) {
 
     float4 blurredPixel = 0;
@@ -258,7 +258,7 @@ static void OneHU4(const RsForEachStubParamStruct *p, uchar4 *out, int32_t x,
     out->xyzw = convert_uchar4(blurredPixel);
 }
 
-static void OneHU1(const RsForEachStubParamStruct *p, uchar *out, int32_t x,
+static void OneHU1(const RsExpandKernelParams *p, uchar *out, int32_t x,
                    const float *ptrIn, const float* gPtr, int iradius) {
 
     float blurredPixel = 0;
@@ -274,7 +274,7 @@ static void OneHU1(const RsForEachStubParamStruct *p, uchar *out, int32_t x,
 }
 
 
-void RsdCpuScriptIntrinsicBlur::kernelU4(const RsForEachStubParamStruct *p,
+void RsdCpuScriptIntrinsicBlur::kernelU4(const RsExpandKernelParams *p,
                                          uint32_t xstart, uint32_t xend,
                                          uint32_t instep, uint32_t outstep) {
 
@@ -345,7 +345,7 @@ void RsdCpuScriptIntrinsicBlur::kernelU4(const RsForEachStubParamStruct *p,
     }
 }
 
-void RsdCpuScriptIntrinsicBlur::kernelU1(const RsForEachStubParamStruct *p,
+void RsdCpuScriptIntrinsicBlur::kernelU1(const RsExpandKernelParams *p,
                                          uint32_t xstart, uint32_t xend,
                                          uint32_t instep, uint32_t outstep) {
     float buf[4 * 2048];

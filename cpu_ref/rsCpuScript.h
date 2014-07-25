@@ -47,7 +47,7 @@ namespace renderscript {
 class RsdCpuScriptImpl : public RsdCpuReferenceImpl::CpuScript {
 public:
     typedef void (*outer_foreach_t)(
-        const RsForEachStubParamStruct *,
+        const RsExpandKernelParams *,
         uint32_t x1, uint32_t x2,
         uint32_t instep, uint32_t outstep);
 #ifdef RS_COMPATIBILITY_LIB

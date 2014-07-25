@@ -33,7 +33,7 @@ public:
     CpuScriptGroupImpl(RsdCpuReferenceImpl *ctx, const ScriptGroup *sg);
     bool init();
 
-    static void scriptGroupRoot(const RsForEachStubParamStruct *p,
+    static void scriptGroupRoot(const RsExpandKernelParams *p,
                                 uint32_t xstart, uint32_t xend,
                                 uint32_t instep, uint32_t outstep);
 
