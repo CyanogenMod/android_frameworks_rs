@@ -363,6 +363,9 @@ relocateAARCH64(void *(*find_sym)(void *context, char const *name),
   // FIXME: Should be implement in independent files.
   rsl_assert(Bitwidth == 64 && "AARCH64 only have 64 bits.");
 
+  // Change this to true to enable some debugging in the log.
+  const bool kDebugSymbolPrint = false;
+
   ELFSectionSymTabTy *symtab =
     static_cast<ELFSectionSymTabTy *>(getSectionByName(".symtab"));
   rsl_assert(symtab && "Symtab is required.");
@@ -387,6 +390,11 @@ relocateAARCH64(void *(*find_sym)(void *context, char const *name),
       }
       S = (Inst_t)(uintptr_t)ext_sym;
       sym->setAddress(ext_sym);
+    }
+
+    if (kDebugSymbolPrint) {
+      __android_log_print(ANDROID_LOG_INFO, "rs", "AARCH64 relocation symbol %s value is %llx\n",
+          sym->getName(), (unsigned long long)S);
     }
 
     // TODO: add other relocations when we know what ones are used.
