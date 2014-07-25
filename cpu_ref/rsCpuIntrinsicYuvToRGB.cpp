@@ -46,7 +46,7 @@ public:
 protected:
     ObjectBaseRef<Allocation> alloc;
 
-    static void kernel(const RsForEachStubParamStruct *p,
+    static void kernel(const RsExpandKernelParams *p,
                        uint32_t xstart, uint32_t xend,
                        uint32_t instep, uint32_t outstep);
 };
@@ -101,7 +101,7 @@ extern "C" void rsdIntrinsicYuv_K(void *dst, const uchar *Y, const uchar *uv, ui
 extern "C" void rsdIntrinsicYuvR_K(void *dst, const uchar *Y, const uchar *uv, uint32_t xstart, size_t xend);
 extern "C" void rsdIntrinsicYuv2_K(void *dst, const uchar *Y, const uchar *u, const uchar *v, size_t xstart, size_t xend);
 
-void RsdCpuScriptIntrinsicYuvToRGB::kernel(const RsForEachStubParamStruct *p,
+void RsdCpuScriptIntrinsicYuvToRGB::kernel(const RsExpandKernelParams *p,
                                            uint32_t xstart, uint32_t xend,
                                            uint32_t instep, uint32_t outstep) {
     RsdCpuScriptIntrinsicYuvToRGB *cp = (RsdCpuScriptIntrinsicYuvToRGB *)p->usr;

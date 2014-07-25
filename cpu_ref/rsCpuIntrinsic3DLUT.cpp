@@ -38,7 +38,7 @@ public:
 protected:
     ObjectBaseRef<Allocation> mLUT;
 
-    static void kernel(const RsForEachStubParamStruct *p,
+    static void kernel(const RsExpandKernelParams *p,
                        uint32_t xstart, uint32_t xend,
                        uint32_t instep, uint32_t outstep);
 };
@@ -58,7 +58,7 @@ extern "C" void rsdIntrinsic3DLUT_K(void *dst, void const *in, size_t count,
                                       int dimx, int dimy, int dimz);
 
 
-void RsdCpuScriptIntrinsic3DLUT::kernel(const RsForEachStubParamStruct *p,
+void RsdCpuScriptIntrinsic3DLUT::kernel(const RsExpandKernelParams *p,
                                       uint32_t xstart, uint32_t xend,
                                       uint32_t instep, uint32_t outstep) {
     RsdCpuScriptIntrinsic3DLUT *cp = (RsdCpuScriptIntrinsic3DLUT *)p->usr;

@@ -48,7 +48,7 @@ using namespace android;
 using namespace android::renderscript;
 
 typedef void (*outer_foreach_t)(
-    const android::renderscript::RsForEachStubParamStruct *,
+    const android::renderscript::RsExpandKernelParams *,
     uint32_t x1, uint32_t x2,
     uint32_t instep, uint32_t outstep);
 
@@ -353,17 +353,21 @@ typedef void (*rs_t)(const void *, void *, const void *, uint32_t, uint32_t, uin
 
 static void wc_xy(void *usr, uint32_t idx) {
     MTLaunchStruct *mtls = (MTLaunchStruct *)usr;
-    RsForEachStubParamStruct p;
-    memcpy(&p, &mtls->fep, sizeof(p));
-    p.lid = idx;
-    uint32_t sig = mtls->sig;
+
+    RsExpandKernelParams kparams;
+    kparams.takeFields(mtls->fep);
+
+    // Used by CpuScriptGroup, IntrinsicBlur, and IntrinsicHistogram
+    kparams.lid = idx;
 
     outer_foreach_t fn = (outer_foreach_t) mtls->kernel;
     while (1) {
-        uint32_t slice = (uint32_t)__sync_fetch_and_add(&mtls->mSliceNum, 1);
+        uint32_t slice  = (uint32_t)__sync_fetch_and_add(&mtls->mSliceNum, 1);
         uint32_t yStart = mtls->yStart + slice * mtls->mSliceSize;
-        uint32_t yEnd = yStart + mtls->mSliceSize;
+        uint32_t yEnd   = yStart + mtls->mSliceSize;
+
         yEnd = rsMin(yEnd, mtls->yEnd);
+
         if (yEnd <= yStart) {
             return;
         }
@@ -371,29 +375,39 @@ static void wc_xy(void *usr, uint32_t idx) {
         //ALOGE("usr idx %i, x %i,%i  y %i,%i", idx, mtls->xStart, mtls->xEnd, yStart, yEnd);
         //ALOGE("usr ptr in %p,  out %p", mtls->fep.ptrIn, mtls->fep.ptrOut);
 
-        for (p.y = yStart; p.y < yEnd; p.y++) {
-            p.out = mtls->fep.ptrOut + (mtls->fep.yStrideOut * p.y) +
-                    (mtls->fep.eStrideOut * mtls->xStart);
-            p.in = mtls->fep.ptrIn + (mtls->fep.yStrideIn * p.y) +
-                   (mtls->fep.eStrideIn * mtls->xStart);
-            fn(&p, mtls->xStart, mtls->xEnd, mtls->fep.eStrideIn, mtls->fep.eStrideOut);
+        for (kparams.y = yStart; kparams.y < yEnd; kparams.y++) {
+            kparams.out = mtls->fep.ptrOut +
+                          (mtls->fep.yStrideOut * kparams.y) +
+                          (mtls->fep.eStrideOut * mtls->xStart);
+
+            kparams.in = mtls->fep.ptrIn +
+                         (mtls->fep.yStrideIn * kparams.y) +
+                         (mtls->fep.eStrideIn * mtls->xStart);
+
+
+            fn(&kparams, mtls->xStart, mtls->xEnd, mtls->fep.eStrideIn,
+               mtls->fep.eStrideOut);
         }
     }
 }
 
 static void wc_x(void *usr, uint32_t idx) {
     MTLaunchStruct *mtls = (MTLaunchStruct *)usr;
-    RsForEachStubParamStruct p;
-    memcpy(&p, &mtls->fep, sizeof(p));
-    p.lid = idx;
-    uint32_t sig = mtls->sig;
+
+    RsExpandKernelParams kparams;
+    kparams.takeFields(mtls->fep);
+
+    // Used by CpuScriptGroup, IntrinsicBlur, and IntrisicHistogram
+    kparams.lid = idx;
 
     outer_foreach_t fn = (outer_foreach_t) mtls->kernel;
     while (1) {
-        uint32_t slice = (uint32_t)__sync_fetch_and_add(&mtls->mSliceNum, 1);
+        uint32_t slice  = (uint32_t)__sync_fetch_and_add(&mtls->mSliceNum, 1);
         uint32_t xStart = mtls->xStart + slice * mtls->mSliceSize;
-        uint32_t xEnd = xStart + mtls->mSliceSize;
+        uint32_t xEnd   = xStart + mtls->mSliceSize;
+
         xEnd = rsMin(xEnd, mtls->xEnd);
+
         if (xEnd <= xStart) {
             return;
         }
@@ -401,14 +415,15 @@ static void wc_x(void *usr, uint32_t idx) {
         //ALOGE("usr slice %i idx %i, x %i,%i", slice, idx, xStart, xEnd);
         //ALOGE("usr ptr in %p,  out %p", mtls->fep.ptrIn, mtls->fep.ptrOut);
 
-        p.out = mtls->fep.ptrOut + (mtls->fep.eStrideOut * xStart);
-        p.in = mtls->fep.ptrIn + (mtls->fep.eStrideIn * xStart);
-        fn(&p, xStart, xEnd, mtls->fep.eStrideIn, mtls->fep.eStrideOut);
+        kparams.out = mtls->fep.ptrOut + (mtls->fep.eStrideOut * xStart);
+        kparams.in  = mtls->fep.ptrIn  + (mtls->fep.eStrideIn  * xStart);
+
+        fn(&kparams, xStart, xEnd, mtls->fep.eStrideIn, mtls->fep.eStrideOut);
     }
 }
 
 void RsdCpuReferenceImpl::launchThreads(const Allocation * ain, Allocation * aout,
-                                     const RsScriptCall *sc, MTLaunchStruct *mtls) {
+                                        const RsScriptCall *sc, MTLaunchStruct *mtls) {
 
     //android::StopWatch kernel_time("kernel time");
 
@@ -457,22 +472,34 @@ void RsdCpuReferenceImpl::launchThreads(const Allocation * ain, Allocation * aou
 
         //ALOGE("launch 1");
     } else {
-        RsForEachStubParamStruct p;
-        memcpy(&p, &mtls->fep, sizeof(p));
-        uint32_t sig = mtls->sig;
+        RsExpandKernelParams kparams;
+        kparams.takeFields(mtls->fep);
 
         //ALOGE("launch 3");
         outer_foreach_t fn = (outer_foreach_t) mtls->kernel;
-        for (p.ar[0] = mtls->arrayStart; p.ar[0] < mtls->arrayEnd; p.ar[0]++) {
-            for (p.z = mtls->zStart; p.z < mtls->zEnd; p.z++) {
-                for (p.y = mtls->yStart; p.y < mtls->yEnd; p.y++) {
-                    uint32_t offset = mtls->fep.dimY * mtls->fep.dimZ * p.ar[0] +
-                                      mtls->fep.dimY * p.z + p.y;
-                    p.out = mtls->fep.ptrOut + (mtls->fep.yStrideOut * offset) +
-                            (mtls->fep.eStrideOut * mtls->xStart);
-                    p.in = mtls->fep.ptrIn + (mtls->fep.yStrideIn * offset) +
-                           (mtls->fep.eStrideIn * mtls->xStart);
-                    fn(&p, mtls->xStart, mtls->xEnd, mtls->fep.eStrideIn, mtls->fep.eStrideOut);
+        for (uint32_t arrayIndex = mtls->arrayStart;
+             arrayIndex < mtls->arrayEnd; arrayIndex++) {
+
+            for (kparams.z = mtls->zStart; kparams.z < mtls->zEnd;
+                 kparams.z++) {
+
+                for (kparams.y = mtls->yStart; kparams.y < mtls->yEnd;
+                     kparams.y++) {
+
+                    uint32_t offset =
+                      kparams.dimY * kparams.dimZ * arrayIndex +
+                      kparams.dimY * kparams.z + kparams.y;
+
+                    kparams.out = mtls->fep.ptrOut +
+                                  (mtls->fep.yStrideOut * offset) +
+                                  (mtls->fep.eStrideOut * mtls->xStart);
+
+                    kparams.in = mtls->fep.ptrIn +
+                                 (mtls->fep.yStrideIn * offset) +
+                                 (mtls->fep.eStrideIn * mtls->xStart);
+
+                    fn(&kparams, mtls->xStart, mtls->xEnd, mtls->fep.eStrideIn,
+                       mtls->fep.eStrideOut);
                 }
             }
         }
@@ -529,41 +556,46 @@ void RsdCpuReferenceImpl::launchThreads(const Allocation** ains, uint32_t inLen,
 
         //ALOGE("launch 1");
     } else {
-        RsForEachStubParamStruct p;
-        memcpy(&p, &mtls->fep, sizeof(p));
-        uint32_t sig = mtls->sig;
+        RsExpandKernelParams kparams;
+        kparams.takeFields(mtls->fep);
 
         // Allocate space for our input base pointers.
-        p.ins = new const void*[inLen];
+        kparams.ins = new const void*[inLen];
 
         // Allocate space for our input stride information.
-        p.eStrideIns = new uint32_t[inLen];
+        kparams.eStrideIns = new uint32_t[inLen];
 
         // Fill our stride information.
-        for (int index = inLen; --index >= 0;) {
-          p.eStrideIns[index] = mtls->fep.inStrides[index].eStride;
+        for (int inIndex = inLen; --inIndex >= 0;) {
+          kparams.eStrideIns[inIndex] = mtls->fep.inStrides[inIndex].eStride;
         }
 
         //ALOGE("launch 3");
         outer_foreach_t fn = (outer_foreach_t) mtls->kernel;
-        uint32_t offset_invariant = mtls->fep.dimY * mtls->fep.dimZ * p.ar[0];
+        for (uint32_t arrayIndex = mtls->arrayStart;
+             arrayIndex < mtls->arrayEnd; arrayIndex++) {
 
-        for (p.ar[0] = mtls->arrayStart; p.ar[0] < mtls->arrayEnd; p.ar[0]++) {
-            uint32_t offset_part = offset_invariant * p.ar[0];
+            for (kparams.z = mtls->zStart; kparams.z < mtls->zEnd;
+                 kparams.z++) {
 
-            for (p.z = mtls->zStart; p.z < mtls->zEnd; p.z++) {
-                for (p.y = mtls->yStart; p.y < mtls->yEnd; p.y++) {
-                    uint32_t offset = offset_part + mtls->fep.dimY * p.z + p.y;
+                for (kparams.y = mtls->yStart; kparams.y < mtls->yEnd;
+                     kparams.y++) {
 
-                    p.out = mtls->fep.ptrOut + (mtls->fep.yStrideOut * offset) +
-                            (mtls->fep.eStrideOut * mtls->xStart);
+                    uint32_t offset =
+                      mtls->fep.dimY * mtls->fep.dimZ * arrayIndex +
+                      mtls->fep.dimY * kparams.z + kparams.y;
 
-                    for (int index = inLen; --index >= 0;) {
-                        StridePair &strides = mtls->fep.inStrides[index];
+                    kparams.out = mtls->fep.ptrOut +
+                                  (mtls->fep.yStrideOut * offset) +
+                                  (mtls->fep.eStrideOut * mtls->xStart);
 
-                        p.ins[index] = mtls->fep.ptrIns[index] +
-                                       (strides.yStride * offset) +
-                                       (strides.eStride * mtls->xStart);
+                    for (int inIndex = inLen; --inIndex >= 0;) {
+                        StridePair &strides = mtls->fep.inStrides[inIndex];
+
+                        kparams.ins[inIndex] =
+                          mtls->fep.ptrIns[inIndex] +
+                          (strides.yStride * offset) +
+                          (strides.eStride * mtls->xStart);
                     }
 
                     /*
@@ -571,14 +603,15 @@ void RsdCpuReferenceImpl::launchThreads(const Allocation** ains, uint32_t inLen,
                      * kernels get their stride information from a member of p
                      * that points to an array.
                      */
-                    fn(&p, mtls->xStart, mtls->xEnd, 0, mtls->fep.eStrideOut);
+                    fn(&kparams, mtls->xStart, mtls->xEnd, 0,
+                       mtls->fep.eStrideOut);
                 }
             }
         }
 
         // Free our arrays.
-        delete[] p.ins;
-        delete[] p.eStrideIns;
+        delete[] kparams.ins;
+        delete[] kparams.eStrideIns;
     }
 }
 

@@ -49,29 +49,29 @@ protected:
     int *mSums;
     ObjectBaseRef<Allocation> mAllocOut;
 
-    static void kernelP1U4(const RsForEachStubParamStruct *p,
+    static void kernelP1U4(const RsExpandKernelParams *p,
                           uint32_t xstart, uint32_t xend,
                           uint32_t instep, uint32_t outstep);
-    static void kernelP1U3(const RsForEachStubParamStruct *p,
+    static void kernelP1U3(const RsExpandKernelParams *p,
                           uint32_t xstart, uint32_t xend,
                           uint32_t instep, uint32_t outstep);
-    static void kernelP1U2(const RsForEachStubParamStruct *p,
+    static void kernelP1U2(const RsExpandKernelParams *p,
                           uint32_t xstart, uint32_t xend,
                           uint32_t instep, uint32_t outstep);
-    static void kernelP1U1(const RsForEachStubParamStruct *p,
+    static void kernelP1U1(const RsExpandKernelParams *p,
                           uint32_t xstart, uint32_t xend,
                           uint32_t instep, uint32_t outstep);
 
-    static void kernelP1L4(const RsForEachStubParamStruct *p,
+    static void kernelP1L4(const RsExpandKernelParams *p,
                            uint32_t xstart, uint32_t xend,
                            uint32_t instep, uint32_t outstep);
-    static void kernelP1L3(const RsForEachStubParamStruct *p,
+    static void kernelP1L3(const RsExpandKernelParams *p,
                            uint32_t xstart, uint32_t xend,
                            uint32_t instep, uint32_t outstep);
-    static void kernelP1L2(const RsForEachStubParamStruct *p,
+    static void kernelP1L2(const RsExpandKernelParams *p,
                            uint32_t xstart, uint32_t xend,
                            uint32_t instep, uint32_t outstep);
-    static void kernelP1L1(const RsForEachStubParamStruct *p,
+    static void kernelP1L1(const RsExpandKernelParams *p,
                            uint32_t xstart, uint32_t xend,
                            uint32_t instep, uint32_t outstep);
 
@@ -160,7 +160,7 @@ void RsdCpuScriptIntrinsicHistogram::postLaunch(uint32_t slot, const Allocation 
     }
 }
 
-void RsdCpuScriptIntrinsicHistogram::kernelP1U4(const RsForEachStubParamStruct *p,
+void RsdCpuScriptIntrinsicHistogram::kernelP1U4(const RsExpandKernelParams *p,
                                                 uint32_t xstart, uint32_t xend,
                                                 uint32_t instep, uint32_t outstep) {
 
@@ -177,7 +177,7 @@ void RsdCpuScriptIntrinsicHistogram::kernelP1U4(const RsForEachStubParamStruct *
     }
 }
 
-void RsdCpuScriptIntrinsicHistogram::kernelP1U3(const RsForEachStubParamStruct *p,
+void RsdCpuScriptIntrinsicHistogram::kernelP1U3(const RsExpandKernelParams *p,
                                                 uint32_t xstart, uint32_t xend,
                                                 uint32_t instep, uint32_t outstep) {
 
@@ -193,7 +193,7 @@ void RsdCpuScriptIntrinsicHistogram::kernelP1U3(const RsForEachStubParamStruct *
     }
 }
 
-void RsdCpuScriptIntrinsicHistogram::kernelP1U2(const RsForEachStubParamStruct *p,
+void RsdCpuScriptIntrinsicHistogram::kernelP1U2(const RsExpandKernelParams *p,
                                                 uint32_t xstart, uint32_t xend,
                                                 uint32_t instep, uint32_t outstep) {
 
@@ -208,7 +208,7 @@ void RsdCpuScriptIntrinsicHistogram::kernelP1U2(const RsForEachStubParamStruct *
     }
 }
 
-void RsdCpuScriptIntrinsicHistogram::kernelP1L4(const RsForEachStubParamStruct *p,
+void RsdCpuScriptIntrinsicHistogram::kernelP1L4(const RsExpandKernelParams *p,
                                                 uint32_t xstart, uint32_t xend,
                                                 uint32_t instep, uint32_t outstep) {
 
@@ -226,7 +226,7 @@ void RsdCpuScriptIntrinsicHistogram::kernelP1L4(const RsForEachStubParamStruct *
     }
 }
 
-void RsdCpuScriptIntrinsicHistogram::kernelP1L3(const RsForEachStubParamStruct *p,
+void RsdCpuScriptIntrinsicHistogram::kernelP1L3(const RsExpandKernelParams *p,
                                                 uint32_t xstart, uint32_t xend,
                                                 uint32_t instep, uint32_t outstep) {
 
@@ -243,7 +243,7 @@ void RsdCpuScriptIntrinsicHistogram::kernelP1L3(const RsForEachStubParamStruct *
     }
 }
 
-void RsdCpuScriptIntrinsicHistogram::kernelP1L2(const RsForEachStubParamStruct *p,
+void RsdCpuScriptIntrinsicHistogram::kernelP1L2(const RsExpandKernelParams *p,
                                                 uint32_t xstart, uint32_t xend,
                                                 uint32_t instep, uint32_t outstep) {
 
@@ -259,7 +259,7 @@ void RsdCpuScriptIntrinsicHistogram::kernelP1L2(const RsForEachStubParamStruct *
     }
 }
 
-void RsdCpuScriptIntrinsicHistogram::kernelP1L1(const RsForEachStubParamStruct *p,
+void RsdCpuScriptIntrinsicHistogram::kernelP1L1(const RsExpandKernelParams *p,
                                                 uint32_t xstart, uint32_t xend,
                                                 uint32_t instep, uint32_t outstep) {
 
@@ -274,7 +274,7 @@ void RsdCpuScriptIntrinsicHistogram::kernelP1L1(const RsForEachStubParamStruct *
     }
 }
 
-void RsdCpuScriptIntrinsicHistogram::kernelP1U1(const RsForEachStubParamStruct *p,
+void RsdCpuScriptIntrinsicHistogram::kernelP1U1(const RsExpandKernelParams *p,
                                                 uint32_t xstart, uint32_t xend,
                                                 uint32_t instep, uint32_t outstep) {
 

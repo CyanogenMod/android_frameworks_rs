@@ -187,7 +187,7 @@ protected:
     FunctionTab_t mFnTab;
 #endif
 
-    static void kernel(const RsForEachStubParamStruct *p,
+    static void kernel(const RsExpandKernelParams *p,
                        uint32_t xstart, uint32_t xend,
                        uint32_t instep, uint32_t outstep);
     void updateCoeffCache(float fpMul, float addMul);
@@ -777,7 +777,7 @@ void RsdCpuScriptIntrinsicColorMatrix::setGlobalVar(uint32_t slot, const void *d
 }
 
 
-static void One(const RsForEachStubParamStruct *p, void *out,
+static void One(const RsExpandKernelParams *p, void *out,
                 const void *py, const float* coeff, const float *add,
                 uint32_t vsin, uint32_t vsout, bool fin, bool fout) {
 
@@ -878,7 +878,7 @@ static void One(const RsForEachStubParamStruct *p, void *out,
     //ALOGE("out %p %f %f %f %f", out, ((float *)out)[0], ((float *)out)[1], ((float *)out)[2], ((float *)out)[3]);
 }
 
-void RsdCpuScriptIntrinsicColorMatrix::kernel(const RsForEachStubParamStruct *p,
+void RsdCpuScriptIntrinsicColorMatrix::kernel(const RsExpandKernelParams *p,
                                               uint32_t xstart, uint32_t xend,
                                               uint32_t instep, uint32_t outstep) {
     RsdCpuScriptIntrinsicColorMatrix *cp = (RsdCpuScriptIntrinsicColorMatrix *)p->usr;
