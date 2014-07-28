@@ -33,10 +33,14 @@ Type::Type(Context *rsc) : ObjectBase(rsc) {
 }
 
 void Type::preDestroy() const {
-    for (uint32_t ct = 0; ct < mRSC->mStateType.mTypes.size(); ct++) {
-        if (mRSC->mStateType.mTypes[ct] == this) {
-            mRSC->mStateType.mTypes.removeAt(ct);
-            break;
+    auto &types = mRSC->mStateType.mTypes;
+
+    for (auto typeIter = types.begin(), endIter = types.end();
+         typeIter != endIter; typeIter++) {
+
+        if (this == *typeIter) {
+            types.erase(typeIter);
+            return;
         }
     }
 }
@@ -258,7 +262,7 @@ ObjectBaseRef<Type> Type::getTypeRef(Context *rsc, const Element *e,
     nt->compute();
 
     ObjectBase::asyncLock();
-    stc->mTypes.push(nt);
+    stc->mTypes.push_back(nt);
     ObjectBase::asyncUnlock();
 
     return returnRef;

@@ -176,7 +176,7 @@ static void *loadSharedLibrary(const char *cacheDir, const char *resName) {
         // library fallback path. Those applications don't have a private
         // library path, so they need to install to the system directly.
         // Note that this is really just a testing path.
-        android::String8 scriptSONameSystem("/system/lib/librs.");
+        std::string scriptSONameSystem("/system/lib/librs.");
         scriptSONameSystem.append(resName);
         scriptSONameSystem.append(".so");
         loaded = loadSOHelper(scriptSONameSystem.c_str(), cacheDir,

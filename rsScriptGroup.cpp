@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+#include <algorithm>
+
 #include "rsContext.h"
 #include <time.h>
 
@@ -28,8 +30,8 @@ ScriptGroup::~ScriptGroup() {
         mRSC->mHal.funcs.scriptgroup.destroy(mRSC, this);
     }
 
-    for (size_t ct=0; ct < mLinks.size(); ct++) {
-        delete mLinks[ct];
+    for (auto link : mLinks) {
+        delete link;
     }
 }
 
@@ -44,148 +46,116 @@ ScriptGroup::Node::Node(Script *s) {
 }
 
 ScriptGroup::Node * ScriptGroup::findNode(Script *s) const {
-    //ALOGE("find %p   %i", s, (int)mNodes.size());
-    for (size_t ct=0; ct < mNodes.size(); ct++) {
-        Node *n = mNodes[ct];
-        for (size_t ct2=0; ct2 < n->mKernels.size(); ct2++) {
-            if (n->mKernels[ct2]->mScript == s) {
-                return n;
+    for (auto node : mNodes) {
+        for (auto kernelRef : node->mKernels) {
+            if (kernelRef->mScript == s) {
+                return node;
             }
         }
     }
+
     return NULL;
 }
 
-bool ScriptGroup::calcOrderRecurse(Node *n, int depth) {
-    n->mSeen = true;
-    if (n->mOrder < depth) {
-        n->mOrder = depth;
+bool ScriptGroup::calcOrderRecurse(Node *node0, int depth) {
+    node0->mSeen = true;
+    if (node0->mOrder < depth) {
+        node0->mOrder = depth;
     }
     bool ret = true;
-    for (size_t ct=0; ct < n->mOutputs.size(); ct++) {
-        const Link *l = n->mOutputs[ct];
-        Node *nt = NULL;
-        if (l->mDstField.get()) {
-            nt = findNode(l->mDstField->mScript);
+
+    for (auto link : node0->mOutputs) {
+        Node *node1 = NULL;
+        if (link->mDstField.get()) {
+            node1 = findNode(link->mDstField->mScript);
         } else {
-            nt = findNode(l->mDstKernel->mScript);
+            node1 = findNode(link->mDstKernel->mScript);
         }
-        if (nt->mSeen) {
+        if (node1->mSeen) {
             return false;
         }
-        ret &= calcOrderRecurse(nt, n->mOrder + 1);
+        ret &= calcOrderRecurse(node1, node0->mOrder + 1);
     }
+
     return ret;
 }
 
-#if !defined(RS_SERVER) && !defined(RS_COMPATIBILITY_LIB)
-static int CompareNodeForSort(ScriptGroup::Node *const* lhs,
-                              ScriptGroup::Node *const* rhs) {
-    if (lhs[0]->mOrder > rhs[0]->mOrder) {
-        return 1;
-    }
-    return 0;
-}
-#else
-class NodeCompare {
-public:
-    bool operator() (const ScriptGroup::Node* lhs,
-                     const ScriptGroup::Node* rhs) {
-        if (lhs->mOrder > rhs->mOrder) {
-            return true;
-        }
-        return false;
-    }
-};
-#endif
-
 bool ScriptGroup::calcOrder() {
     // Make nodes
-    for (size_t ct=0; ct < mKernels.size(); ct++) {
-        const ScriptKernelID *k = mKernels[ct].get();
-        //ALOGE(" kernel %i, %p  s=%p", (int)ct, k, mKernels[ct]->mScript);
-        Node *n = findNode(k->mScript);
-        //ALOGE("    n = %p", n);
-        if (n == NULL) {
-            n = new Node(k->mScript);
-            mNodes.add(n);
+
+    for (auto kernelRef : mKernels) {
+        const ScriptKernelID *kernel = kernelRef.get();
+        Node *node = findNode(kernel->mScript);
+        if (node == NULL) {
+            node = new Node(kernel->mScript);
+            mNodes.push_back(node);
         }
-        n->mKernels.add(k);
+        node->mKernels.push_back(kernel);
     }
 
     // add links
-    //ALOGE("link count %i", (int)mLinks.size());
-    for (size_t ct=0; ct < mLinks.size(); ct++) {
-        Link *l = mLinks[ct];
-        //ALOGE("link  %i %p", (int)ct, l);
-        Node *n = findNode(l->mSource->mScript);
-        //ALOGE("link n %p", n);
-        n->mOutputs.add(l);
+    for (auto link : mLinks) {
+        Node *node = findNode(link->mSource->mScript);
+        node->mOutputs.push_back(link);
 
-        if (l->mDstKernel.get()) {
-            //ALOGE("l->mDstKernel.get() %p", l->mDstKernel.get());
-            n = findNode(l->mDstKernel->mScript);
-            //ALOGE("  n1 %p", n);
-            n->mInputs.add(l);
+        if (link->mDstKernel.get()) {
+            node = findNode(link->mDstKernel->mScript);
+            node->mInputs.push_back(link);
         } else {
-            n = findNode(l->mDstField->mScript);
-            //ALOGE("  n2 %p", n);
-            n->mInputs.add(l);
+            node = findNode(link->mDstField->mScript);
+            node->mInputs.push_back(link);
         }
     }
 
-    //ALOGE("node count %i", (int)mNodes.size());
     // Order nodes
     bool ret = true;
-    for (size_t ct=0; ct < mNodes.size(); ct++) {
-        Node *n = mNodes[ct];
-        if (n->mInputs.size() == 0) {
-            for (size_t ct2=0; ct2 < mNodes.size(); ct2++) {
-                mNodes[ct2]->mSeen = false;
+    for (auto n0 : mNodes) {
+        if (n0->mInputs.size() == 0) {
+            for (auto n1 : mNodes) {
+                n1->mSeen = false;
             }
-            ret &= calcOrderRecurse(n, 0);
+            ret &= calcOrderRecurse(n0, 1);
         }
     }
 
-    for (size_t ct=0; ct < mKernels.size(); ct++) {
-        const ScriptKernelID *k = mKernels[ct].get();
-        const Node *n = findNode(k->mScript);
+    for (auto kernelRef : mKernels) {
+        const ScriptKernelID *kernel = kernelRef.get();
+        const Node *node = findNode(kernel->mScript);
 
-        if (k->mHasKernelOutput) {
+        if (kernel->mHasKernelOutput) {
             bool found = false;
-            for (size_t ct2=0; ct2 < n->mOutputs.size(); ct2++) {
-                if (n->mOutputs[ct2]->mSource.get() == k) {
+            for (auto output : node->mOutputs) {
+                if (output->mSource.get() == kernel) {
                     found = true;
                     break;
                 }
             }
+
             if (!found) {
-                //ALOGE("add io out %p", k);
-                mOutputs.add(new IO(k));
+                mOutputs.push_back(new IO(kernel));
             }
         }
 
-        if (k->mHasKernelInput) {
+        if (kernel->mHasKernelInput) {
             bool found = false;
-            for (size_t ct2=0; ct2 < n->mInputs.size(); ct2++) {
-                if (n->mInputs[ct2]->mDstKernel.get() == k) {
+            for (auto input : node->mInputs) {
+                if (input->mDstKernel.get() == kernel) {
                     found = true;
                     break;
                 }
             }
             if (!found) {
-                //ALOGE("add io in %p", k);
-                mInputs.add(new IO(k));
+                mInputs.push_back(new IO(kernel));
             }
         }
     }
 
     // sort
-#if !defined(RS_SERVER) && !defined(RS_COMPATIBILITY_LIB)
-    mNodes.sort(&CompareNodeForSort);
-#else
-    std::sort(mNodes.begin(), mNodes.end(), NodeCompare());
-#endif
+    std::stable_sort(mNodes.begin(), mNodes.end(),
+                     [](const ScriptGroup::Node* lhs,
+                        const ScriptGroup::Node* rhs) {
+        return lhs->mOrder < rhs->mOrder;
+    });
 
     return ret;
 }
@@ -209,7 +179,7 @@ ScriptGroup * ScriptGroup::create(Context *rsc,
 
     sg->mKernels.reserve(kernelCount);
     for (size_t ct=0; ct < kernelCount; ct++) {
-        sg->mKernels.add(kernels[ct]);
+        sg->mKernels.push_back(kernels[ct]);
     }
 
     sg->mLinks.reserve(linkCount);
@@ -219,7 +189,7 @@ ScriptGroup * ScriptGroup::create(Context *rsc,
         l->mSource = src[ct];
         l->mDstField = dstF[ct];
         l->mDstKernel = dstK[ct];
-        sg->mLinks.add(l);
+        sg->mLinks.push_back(l);
     }
 
     sg->calcOrder();
@@ -254,9 +224,9 @@ ScriptGroup * ScriptGroup::create(Context *rsc,
 }
 
 void ScriptGroup::setInput(Context *rsc, ScriptKernelID *kid, Allocation *a) {
-    for (size_t ct=0; ct < mInputs.size(); ct++) {
-        if (mInputs[ct]->mKernel == kid) {
-            mInputs[ct]->mAlloc = a;
+    for (auto input : mInputs) {
+        if (input->mKernel == kid) {
+            input->mAlloc = a;
 
             if (rsc->mHal.funcs.scriptgroup.setInput) {
                 rsc->mHal.funcs.scriptgroup.setInput(rsc, this, kid, a);
@@ -268,9 +238,9 @@ void ScriptGroup::setInput(Context *rsc, ScriptKernelID *kid, Allocation *a) {
 }
 
 void ScriptGroup::setOutput(Context *rsc, ScriptKernelID *kid, Allocation *a) {
-    for (size_t ct=0; ct < mOutputs.size(); ct++) {
-        if (mOutputs[ct]->mKernel == kid) {
-            mOutputs[ct]->mAlloc = a;
+    for (auto output : mOutputs) {
+        if (output->mKernel == kid) {
+            output->mAlloc = a;
 
             if (rsc->mHal.funcs.scriptgroup.setOutput) {
                 rsc->mHal.funcs.scriptgroup.setOutput(rsc, this, kid, a);
@@ -311,52 +281,45 @@ void ScriptGroup::execute(Context *rsc) {
         return;
     }
 
-    for (size_t ct=0; ct < mNodes.size(); ct++) {
-        Node *n = mNodes[ct];
-        //ALOGE("node %i, order %i, in %i out %i", (int)ct, n->mOrder, (int)n->mInputs.size(), (int)n->mOutputs.size());
-
-        for (size_t ct2=0; ct2 < n->mKernels.size(); ct2++) {
-            const ScriptKernelID *k = n->mKernels[ct2];
-            Allocation *ain = NULL;
+    for (auto node : mNodes) {
+        for (auto kernel : node->mKernels) {
+            Allocation *ain  = NULL;
             Allocation *aout = NULL;
 
-            for (size_t ct3=0; ct3 < n->mInputs.size(); ct3++) {
-                if (n->mInputs[ct3]->mDstKernel.get() == k) {
-                    ain = n->mInputs[ct3]->mAlloc.get();
-                    //ALOGE(" link in %p", ain);
-                }
-            }
-            for (size_t ct3=0; ct3 < mInputs.size(); ct3++) {
-                if (mInputs[ct3]->mKernel == k) {
-                    ain = mInputs[ct3]->mAlloc.get();
-                    //ALOGE(" io in %p", ain);
+            for (auto nodeInput : node->mInputs) {
+                if (nodeInput->mDstKernel.get() == kernel) {
+                    ain = nodeInput->mAlloc.get();
                 }
             }
 
-            for (size_t ct3=0; ct3 < n->mOutputs.size(); ct3++) {
-                if (n->mOutputs[ct3]->mSource.get() == k) {
-                    aout = n->mOutputs[ct3]->mAlloc.get();
-                    //ALOGE(" link out %p", aout);
+            for (auto sgInput : mInputs) {
+                if (sgInput->mKernel == kernel) {
+                    ain = sgInput->mAlloc.get();
                 }
             }
-            for (size_t ct3=0; ct3 < mOutputs.size(); ct3++) {
-                if (mOutputs[ct3]->mKernel == k) {
-                    aout = mOutputs[ct3]->mAlloc.get();
-                    //ALOGE(" io out %p", aout);
+
+            for (auto nodeOutput : node->mOutputs) {
+                if (nodeOutput->mDstKernel.get() == kernel) {
+                    aout = nodeOutput->mAlloc.get();
+                }
+            }
+
+            for (auto sgOutput : mOutputs) {
+                if (sgOutput->mKernel == kernel) {
+                    aout = sgOutput->mAlloc.get();
                 }
             }
 
             if (ain == NULL) {
-                n->mScript->runForEach(rsc, k->mSlot, NULL, 0, aout, NULL, 0);
-
+                node->mScript->runForEach(rsc, kernel->mSlot, NULL, 0, aout,
+                                          NULL, 0);
             } else {
                 const Allocation *ains[1] = {ain};
-                n->mScript->runForEach(rsc, k->mSlot, ains,
-                                       sizeof(ains) / sizeof(RsAllocation),
-                                       aout, NULL, 0);
+                node->mScript->runForEach(rsc, kernel->mSlot, ains,
+                                          sizeof(ains) / sizeof(RsAllocation),
+                                          aout, NULL, 0);
             }
         }
-
     }
 
 }
@@ -397,20 +360,17 @@ RsScriptGroup rsi_ScriptGroupCreate(Context *rsc,
 
 void rsi_ScriptGroupSetInput(Context *rsc, RsScriptGroup sg, RsScriptKernelID kid,
         RsAllocation alloc) {
-    //ALOGE("rsi_ScriptGroupSetInput");
     ScriptGroup *s = (ScriptGroup *)sg;
     s->setInput(rsc, (ScriptKernelID *)kid, (Allocation *)alloc);
 }
 
 void rsi_ScriptGroupSetOutput(Context *rsc, RsScriptGroup sg, RsScriptKernelID kid,
         RsAllocation alloc) {
-    //ALOGE("rsi_ScriptGroupSetOutput");
     ScriptGroup *s = (ScriptGroup *)sg;
     s->setOutput(rsc, (ScriptKernelID *)kid, (Allocation *)alloc);
 }
 
 void rsi_ScriptGroupExecute(Context *rsc, RsScriptGroup sg) {
-    //ALOGE("rsi_ScriptGroupExecute");
     ScriptGroup *s = (ScriptGroup *)sg;
     s->execute(rsc);
 }

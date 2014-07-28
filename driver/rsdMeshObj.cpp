@@ -114,7 +114,7 @@ bool RsdMeshObj::init(const Context *rsc) {
             mAttribs[userNum].stride = stride;
             String8 tmp(RS_SHADER_ATTR);
             tmp.append(elem->mHal.state.fieldNames[fieldI]);
-            mAttribs[userNum].name.setTo(tmp.string());
+            mAttribs[userNum].name = tmp.string();
 
             // Remember which allocation this attribute came from
             mAttribAllocationIndex[userNum] = ct;

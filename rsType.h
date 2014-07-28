@@ -146,7 +146,7 @@ public:
     ~TypeState();
 
     // Cache of all existing types.
-    Vector<Type *> mTypes;
+    std::vector<Type *> mTypes;
 };
 
 
