@@ -28,7 +28,11 @@
  * Calendar time interpreted as seconds elapsed since the Epoch (00:00:00 on
  * January 1, 1970, Coordinated Universal Time (UTC)).
  */
+#ifndef __LP64__
 typedef int rs_time_t;
+#else
+typedef long rs_time_t;
+#endif
 
 /**
  * Data structure for broken-down time components.
