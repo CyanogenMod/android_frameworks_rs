@@ -103,6 +103,10 @@ private:
     bool calcOrderRecurse(Node *n, int depth);
     bool calcOrder();
     Node * findNode(Script *s) const;
+    // Check if input/output Allocations are correctly set for a ScriptGroup.
+    // Send any error back to the client (app). Called before the ScriptGroup
+    // executes. Skips the exeuction if validation fails.
+    bool validateInputAndOutput(Context *);
 
     ScriptGroup(Context *);
 };
