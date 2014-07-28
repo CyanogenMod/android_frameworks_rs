@@ -400,32 +400,32 @@ relocateAARCH64(void *(*find_sym)(void *context, char const *name),
       break;
 
     case R_AARCH64_ABS64:
-        A = *inst;
+        A = *inst + rel->getAddend();
         *inst = S + A;
       break;
 
     case R_AARCH64_ABS32:
-        A = *inst32;
+        A = *inst + rel->getAddend();
         *inst32 = static_cast<int32_t>(S + A);
       break;
 
     case R_AARCH64_ABS16:
-        A = *inst16;
+        A = *inst + rel->getAddend();
         *inst16 = static_cast<int16_t>(S + A);
       break;
 
     case R_AARCH64_PREL64:
-        A = *inst;
+        A = *inst + rel->getAddend();
         *inst = S + A - P;
       break;
 
     case R_AARCH64_PREL32:
-        A = *inst32;
+        A = *inst32 + rel->getAddend();
         *inst32 = static_cast<int32_t>(S + A - P);
       break;
 
     case R_AARCH64_PREL16:
-        A = *inst16;
+        A = *inst16 + rel->getAddend();
         *inst16 = static_cast<int16_t>(S + A - P);
       break;
 
