@@ -62,6 +62,7 @@ class FBOCache;
 #define RS_BASE_OBJ(_t_) typedef struct { const _t_* p; const void* r; const void* v1; const void* v2; }
 #endif
 
+RS_BASE_OBJ(ObjectBase) rs_object_base;
 RS_BASE_OBJ(Element) rs_element;
 RS_BASE_OBJ(Type) rs_type;
 RS_BASE_OBJ(Allocation) rs_allocation;
