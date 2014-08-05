@@ -429,28 +429,21 @@ static void SC_FontColor(float r, float g, float b, float a) {
 //
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef RS_COMPATIBILITY_LIB
-static void SC_SetObject(ObjectBase **dst, rs_allocation src) {
+static void SC_SetObject(rs_object_base *dst, const ObjectBase *src) {
     //    ALOGE("SC_SetObject: dst = %p, src = %p", dst, src.p);
     //    ALOGE("SC_SetObject: dst[0] = %p", dst[0]);
     Context *rsc = RsdCpuReference::getTlsContext();
-    rsrSetObject(rsc, dst, (ObjectBase*)src.p);
-}
-#else
-static void SC_SetObject(ObjectBase **dst, ObjectBase *src) {
-    Context *rsc = RsdCpuReference::getTlsContext();
     rsrSetObject(rsc, dst, src);
 }
-#endif
 
-static void SC_ClearObject(ObjectBase **dst) {
+static void SC_ClearObject(rs_object_base *dst) {
     Context *rsc = RsdCpuReference::getTlsContext();
     rsrClearObject(rsc, dst);
 }
 
-static bool SC_IsObject(const ObjectBase *src) {
+static bool SC_IsObject(rs_object_base o) {
     Context *rsc = RsdCpuReference::getTlsContext();
-    return rsrIsObject(rsc, src);
+    return rsrIsObject(rsc, o);
 }
 
 
@@ -1236,20 +1229,20 @@ static RsdCpuReference::CpuSymbol gSyms[] = {
 
 #define IS_CLEAR_SET_OBJ(t) \
     bool rsIsObject(t src) { \
-        return SC_IsObject((ObjectBase*)src.p); \
+        return src.p != NULL; \
     } \
     void __attribute__((overloadable)) rsClearObject(t *dst) { \
-        return SC_ClearObject((ObjectBase**) dst); \
+        return SC_ClearObject(reinterpret_cast<rs_object_base *>(dst)); \
     } \
     void __attribute__((overloadable)) rsSetObject(t *dst, t src) { \
-        return SC_SetObject((ObjectBase**) dst, (ObjectBase*) src.p); \
+        return SC_SetObject(reinterpret_cast<rs_object_base *>(dst), (const ObjectBase *)src.p); \
     }
 
-IS_CLEAR_SET_OBJ(android::renderscript::rs_element)
-IS_CLEAR_SET_OBJ(android::renderscript::rs_type)
-IS_CLEAR_SET_OBJ(android::renderscript::rs_allocation)
-IS_CLEAR_SET_OBJ(android::renderscript::rs_sampler)
-IS_CLEAR_SET_OBJ(android::renderscript::rs_script)
+IS_CLEAR_SET_OBJ(::rs_element)
+IS_CLEAR_SET_OBJ(::rs_type)
+IS_CLEAR_SET_OBJ(::rs_allocation)
+IS_CLEAR_SET_OBJ(::rs_sampler)
+IS_CLEAR_SET_OBJ(::rs_script)
 #undef IS_CLEAR_SET_OBJ
 
 const Allocation * rsGetAllocation(const void *ptr) {

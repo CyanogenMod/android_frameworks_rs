@@ -146,6 +146,7 @@ static void SetObjectRef(const Context *rsc, const ObjectBase *dst, const Object
     }
 }
 
+// Legacy, remove when drivers are updated
 void rsrSetObject(const Context *rsc, void *dst, ObjectBase *src) {
     ObjectBase **odst = (ObjectBase **)dst;
     //ALOGE("rsrSetObject (base) %p,%p  %p", dst, *odst, src);
@@ -155,7 +156,16 @@ void rsrSetObject(const Context *rsc, void *dst, ObjectBase *src) {
     }
 }
 
+void rsrSetObject(const Context *rsc, rs_object_base *dst, const ObjectBase *src) {
+    ObjectBase **odst = (ObjectBase **)dst;
+    //ALOGE("rsrSetObject (base) %p,%p  %p", dst, *odst, src);
+    SetObjectRef(rsc, odst[0], src);
+    if (src != NULL) {
+        src->callUpdateCacheObject(rsc, dst);
+    }
+}
 
+// Legacy, remove when drivers are updated
 void rsrClearObject(const Context *rsc, void *dst) {
     ObjectBase **odst = (ObjectBase **)dst;
     //ALOGE("rsrClearObject  %p,%p", odst, *odst);
@@ -166,8 +176,23 @@ void rsrClearObject(const Context *rsc, void *dst) {
     *odst = NULL;
 }
 
-bool rsrIsObject(const Context *rsc, const ObjectBase *src) {
-    return src != NULL;
+void rsrClearObject(const Context *rsc, rs_object_base *dst) {
+    //ALOGE("rsrClearObject  %p,%p", odst, *odst);
+    if (dst->p) {
+        CHECK_OBJ(dst->p);
+        dst->p->decSysRef();
+    }
+    dst->p = NULL;
+}
+
+// Legacy, remove when drivers are updated
+bool rsrIsObject(const Context *rsc, const void *src) {
+    ObjectBase **osrc = (ObjectBase **)src;
+    return osrc != NULL;
+}
+
+bool rsrIsObject(const Context *rsc, rs_object_base o) {
+    return o.p != NULL;
 }
 
 
