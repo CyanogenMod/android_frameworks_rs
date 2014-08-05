@@ -1249,7 +1249,7 @@ void RsdCpuScriptImpl::setGlobalObj(uint32_t slot, ObjectBase *data) {
         return;
     }
 
-    rsrSetObject(mCtx->getContext(), (ObjectBase **)destPtr, data);
+    rsrSetObject(mCtx->getContext(), (rs_object_base *)destPtr, data);
 }
 
 RsdCpuScriptImpl::~RsdCpuScriptImpl() {
@@ -1269,8 +1269,8 @@ RsdCpuScriptImpl::~RsdCpuScriptImpl() {
                (is_object_iter != is_object_end)) {
             // The field address can be NULL if the script-side has optimized
             // the corresponding global variable away.
-            ObjectBase **obj_addr =
-                reinterpret_cast<ObjectBase **>(*var_addr_iter);
+            rs_object_base *obj_addr =
+                reinterpret_cast<rs_object_base *>(*var_addr_iter);
             if (*is_object_iter) {
                 if (*var_addr_iter != NULL && mCtx->getContext() != NULL) {
                     rsrClearObject(mCtx->getContext(), obj_addr);
@@ -1302,8 +1302,8 @@ RsdCpuScriptImpl::~RsdCpuScriptImpl() {
         for (size_t i = 0; i < mExportedVariableCount; ++i) {
             if (mFieldIsObject[i]) {
                 if (mFieldAddress[i] != NULL) {
-                    ObjectBase **obj_addr =
-                        reinterpret_cast<ObjectBase **>(mFieldAddress[i]);
+                    rs_object_base *obj_addr =
+                        reinterpret_cast<rs_object_base *>(mFieldAddress[i]);
                     rsrClearObject(mCtx->getContext(), obj_addr);
                 }
             }
