@@ -79,7 +79,11 @@ void Type::compute() {
         mHal.state.lodCount = rsMax(l2x, l2y);
         mHal.state.lodCount = rsMax(mHal.state.lodCount, l2z);
     } else {
-        mHal.state.lodCount = 1;
+        if (mHal.state.dimYuv) {
+            mHal.state.lodCount = 3;
+        } else {
+            mHal.state.lodCount = 1;
+        }
     }
     if (mHal.state.lodCount != oldLODCount) {
         if (oldLODCount) {
@@ -96,14 +100,16 @@ void Type::compute() {
     uint32_t ty = mHal.state.dimY;
     uint32_t tz = mHal.state.dimZ;
     mCellCount = 0;
-    for (uint32_t lod=0; lod < mHal.state.lodCount; lod++) {
-        mHal.state.lodDimX[lod] = tx;
-        mHal.state.lodDimY[lod] = ty;
-        mHal.state.lodDimZ[lod]  = tz;
-        mCellCount += tx * rsMax(ty, 1u) * rsMax(tz, 1u);
-        if (tx > 1) tx >>= 1;
-        if (ty > 1) ty >>= 1;
-        if (tz > 1) tz >>= 1;
+    if (!mHal.state.dimYuv) {
+        for (uint32_t lod=0; lod < mHal.state.lodCount; lod++) {
+            mHal.state.lodDimX[lod] = tx;
+            mHal.state.lodDimY[lod] = ty;
+            mHal.state.lodDimZ[lod]  = tz;
+            mCellCount += tx * rsMax(ty, 1u) * rsMax(tz, 1u);
+            if (tx > 1) tx >>= 1;
+            if (ty > 1) ty >>= 1;
+            if (tz > 1) tz >>= 1;
+        }
     }
 
     if (mHal.state.faces) {
@@ -117,6 +123,7 @@ void Type::compute() {
         mHal.state.lodDimY[1] = mHal.state.lodDimY[0] / 2;
         mHal.state.lodDimX[2] = mHal.state.lodDimX[0] / 2;
         mHal.state.lodDimY[2] = mHal.state.lodDimY[0] / 2;
+        mCellCount += mHal.state.lodDimX[0] * mHal.state.lodDimY[0];
         mCellCount += mHal.state.lodDimX[1] * mHal.state.lodDimY[1];
         mCellCount += mHal.state.lodDimX[2] * mHal.state.lodDimY[2];
 

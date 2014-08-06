@@ -317,7 +317,13 @@ static size_t AllocationBuildPointerTable(const Context *rsc, const Allocation *
 
     size_t o = alloc->mHal.drvState.lod[0].stride * rsMax(alloc->mHal.drvState.lod[0].dimY, 1u) *
             rsMax(alloc->mHal.drvState.lod[0].dimZ, 1u);
-    if(alloc->mHal.drvState.lodCount > 1) {
+    if (alloc->mHal.state.yuv) {
+        o += DeriveYUVLayout(alloc->mHal.state.yuv, &alloc->mHal.drvState);
+
+        for (uint32_t ct = 1; ct < alloc->mHal.drvState.lodCount; ct++) {
+            offsets[ct] = (size_t)alloc->mHal.drvState.lod[ct].mallocPtr;
+        }
+    } else if(alloc->mHal.drvState.lodCount > 1) {
         uint32_t tx = alloc->mHal.drvState.lod[0].dimX;
         uint32_t ty = alloc->mHal.drvState.lod[0].dimY;
         uint32_t tz = alloc->mHal.drvState.lod[0].dimZ;
@@ -332,12 +338,6 @@ static size_t AllocationBuildPointerTable(const Context *rsc, const Allocation *
             if (tx > 1) tx >>= 1;
             if (ty > 1) ty >>= 1;
             if (tz > 1) tz >>= 1;
-        }
-    } else if (alloc->mHal.state.yuv) {
-        o += DeriveYUVLayout(alloc->mHal.state.yuv, &alloc->mHal.drvState);
-
-        for (uint32_t ct = 1; ct < alloc->mHal.drvState.lodCount; ct++) {
-            offsets[ct] = (size_t)alloc->mHal.drvState.lod[ct].mallocPtr;
         }
     }
 
