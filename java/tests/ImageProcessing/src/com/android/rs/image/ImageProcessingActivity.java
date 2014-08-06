@@ -409,6 +409,7 @@ public class ImageProcessingActivity extends Activity
         mBitmapOut = Bitmap.createBitmap(mInPixelsAllocation.getType().getX(),
                                          mInPixelsAllocation.getType().getY(),
                                          Bitmap.Config.ARGB_8888);
+        mBitmapOut.setHasAlpha(false);
         mOutPixelsAllocation = Allocation.createFromBitmap(mRS, mBitmapOut);
 
         mDisplayView = (ImageView) findViewById(R.id.display);
