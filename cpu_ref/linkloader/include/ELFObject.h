@@ -140,6 +140,11 @@ private:
                     void *context,
                     ELFSectionRelTableTy *reltab,
                     ELFSectionProgBitsTy *text);
+
+  void relocateMIPS64(void *(*find_sym)(void *context, char const *name),
+                      void *context,
+                      ELFSectionRelTableTy *reltab,
+                      ELFSectionProgBitsTy *text);
 };
 
 #include "impl/ELFObject.hxx"
