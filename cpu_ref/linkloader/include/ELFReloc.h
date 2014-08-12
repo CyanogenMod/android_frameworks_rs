@@ -134,13 +134,27 @@ private:
 
 public:
   xword_t getSymTabIndex() const {
+#if defined(__mips__)
+/*
+ * Packed r_info on MIPS is:
+ * r_sym (4) - r_ssym (1) - r_type3 (1) - r_type2 (1) - r_type (1)
+ * Each entry represents up to three actual relocations.
+ * Thus, the macros look different.
+ */
+#define ELF64_R_SYM(i)    ((i)&0xffffffffL)
+#else
 #define ELF64_R_SYM(i)    ((i)>>32)
+#endif
     return ELF64_R_SYM(this->r_info);
 #undef ELF64_R_SYM
   }
 
   xword_t getType() const {
+#if defined(__mips__)
+#define ELF64_R_TYPE(i)   ((i)>>32)
+#else
 #define ELF64_R_TYPE(i)   ((i)&0xffffffffL)
+#endif
     return ELF64_R_TYPE(this->r_info);
 #undef ELF64_R_TYPE
   }

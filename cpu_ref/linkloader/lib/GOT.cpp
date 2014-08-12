@@ -33,7 +33,12 @@ int search_got(int symbol_index, void *addr, uint8_t bind_type)
   // For local symbols (R_MIPS_GOT16), we only store the high 16-bit value
   // after adding 0x8000.
   if (bind_type == STB_LOCAL)
+#ifdef __LP64__
+    addr = (void *)(((intptr_t)addr + 0x8000) & 0xFFFFFFFFFFFF0000);
+#else
     addr = (void *)(((intptr_t)addr + 0x8000) & 0xFFFF0000);
+#endif
+
 
   for (i = 0; i < got_symbol_count; i++) {
     if (got_symbol_indexes[i] == symbol_index) {
