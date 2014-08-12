@@ -31,6 +31,19 @@
 
 #include <sys/stat.h>
 
+#ifdef USE_MINGW
+/* Define the default path separator for the platform. */
+#define OS_PATH_SEPARATOR     '\\'
+#define OS_PATH_SEPARATOR_STR "\\"
+
+#else /* not USE_MINGW */
+
+/* Define the default path separator for the platform. */
+#define OS_PATH_SEPARATOR     '/'
+#define OS_PATH_SEPARATOR_STR "/"
+
+#endif
+
 using namespace android;
 using namespace android::renderscript;
 
@@ -60,29 +73,45 @@ ScriptC::~ScriptC() {
 
 #ifndef RS_COMPATIBILITY_LIB
 bool ScriptC::createCacheDir(const char *cacheDir) {
-    String8 cacheDirString, currentDir;
+    std::string currentDir;
+    const std::string cacheDirString(cacheDir);
+
     struct stat statBuf;
     int statReturn = stat(cacheDir, &statBuf);
     if (!statReturn) {
         return true;
     }
 
-    // String8 path functions strip leading /'s
-    // insert if necessary
-    if (cacheDir[0] == '/') {
-        currentDir += "/";
-    }
+    // Start from the beginning of the cacheDirString.
+    int currPos = 0;
 
-    cacheDirString.setPathName(cacheDir);
+    // Reserve space in currentDir for the entire cacheDir path.
+    currentDir.reserve(cacheDirString.length());
 
-    while (cacheDirString.length()) {
-        currentDir += (cacheDirString.walkPath(&cacheDirString));
-        statReturn = stat(currentDir.string(), &statBuf);
+    while (currPos >= 0) {
+        /*
+         * The character at currPos should be a path separator.  We need to look
+         * for the next one.
+         */
+        int nextPos = cacheDirString.find(OS_PATH_SEPARATOR_STR, currPos + 1);
+
+        if (nextPos > 0) {
+            // A new path separator has been found.
+            currentDir += cacheDirString.substr(currPos, nextPos - currPos);
+        } else {
+            // There are no more path separators.
+            currentDir += cacheDirString.substr(currPos);
+        }
+
+        currPos = nextPos;
+
+        statReturn = stat(currentDir.c_str(), &statBuf);
+
         if (statReturn) {
             if (errno == ENOENT) {
-                if (mkdir(currentDir.string(), S_IRUSR | S_IWUSR | S_IXUSR)) {
+                if (mkdir(currentDir.c_str(), S_IRUSR | S_IWUSR | S_IXUSR)) {
                     ALOGE("Couldn't create cache directory: %s",
-                          currentDir.string());
+                          currentDir.c_str());
                     ALOGE("Error: %s", strerror(errno));
                     return false;
                 }
@@ -91,7 +120,6 @@ bool ScriptC::createCacheDir(const char *cacheDir) {
                 return false;
             }
         }
-        currentDir += "/";
     }
     return true;
 }
