@@ -186,7 +186,7 @@ void rsrClearObject(const Context *rsc, rs_object_base *dst) {
 }
 
 // Legacy, remove when drivers are updated
-bool rsrIsObject(const Context *rsc, const void *src) {
+bool rsrIsObject(const Context *, ObjectBase* src) {
     ObjectBase **osrc = (ObjectBase **)src;
     return osrc != NULL;
 }
@@ -194,6 +194,7 @@ bool rsrIsObject(const Context *rsc, const void *src) {
 bool rsrIsObject(const Context *rsc, rs_object_base o) {
     return o.p != NULL;
 }
+
 
 
 uint32_t rsrToClient(Context *rsc, int cmdID, const void *data, int len) {
@@ -262,4 +263,3 @@ void rsrAllocationCopy2DRange(Context *rsc, Allocation *dstAlloc,
 
 }
 }
-
