@@ -125,7 +125,8 @@ typedef union {
     } u;
 } Key_t;
 
-#if defined(ARCH_ARM64_USE_INTRINSICS)
+//Re-enable when intrinsic is fixed
+#if 0 && defined(ARCH_ARM64_USE_INTRINSICS)
 typedef struct {
     void (*column[4])(void);
     void (*store)(void);
@@ -183,7 +184,7 @@ protected:
     int ipa[4];
     float tmpFp[16];
     float tmpFpa[4];
-#if defined(ARCH_ARM64_USE_INTRINSICS)
+#if 0 && defined(ARCH_ARM64_USE_INTRINSICS)
     FunctionTab_t mFnTab;
 #endif
 
@@ -908,7 +909,7 @@ void RsdCpuScriptIntrinsicColorMatrix::kernel(const RsExpandKernelParams *p,
                 out += outstep * len;
                 in += instep * len;
             }
-#if defined(ARCH_ARM64_USE_INTRINSICS)
+#if 0 && defined(ARCH_ARM64_USE_INTRINSICS)
             else {
                 if (cp->mLastKey.u.inType == RS_TYPE_FLOAT_32 || cp->mLastKey.u.outType == RS_TYPE_FLOAT_32) {
                     rsdIntrinsicColorMatrix_float_K(out, in, len, &cp->mFnTab, cp->tmpFp, cp->tmpFpa);
@@ -969,7 +970,7 @@ void RsdCpuScriptIntrinsicColorMatrix::preLaunch(
         if (build(key)) {
             mOptKernel = (void (*)(void *, const void *, const short *, uint32_t)) mBuf;
         }
-#if defined(ARCH_ARM64_USE_INTRINSICS)
+#if 0 && defined(ARCH_ARM64_USE_INTRINSICS)
         else {
             int dt = key.u.outVecSize + (key.u.outType == RS_TYPE_FLOAT_32 ? 4 : 0);
             int st = key.u.inVecSize + (key.u.inType == RS_TYPE_FLOAT_32 ? 4 : 0);
@@ -1035,6 +1036,3 @@ RsdCpuScriptImpl * rsdIntrinsic_ColorMatrix(RsdCpuReferenceImpl *ctx,
 
     return new RsdCpuScriptIntrinsicColorMatrix(ctx, s, e);
 }
-
-
-
