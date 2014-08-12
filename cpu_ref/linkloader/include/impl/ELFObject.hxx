@@ -1022,6 +1022,167 @@ relocateMIPS(void *(*find_sym)(void *context, char const *name),
   }
 }
 
+template <unsigned Bitwidth>
+inline void ELFObject<Bitwidth>::
+relocateMIPS64(void *(*find_sym)(void *context, char const *name),
+               void *context,
+               ELFSectionRelTableTy *reltab,
+               ELFSectionProgBitsTy *text) {
+  ELFSectionSymTabTy *symtab =
+    static_cast<ELFSectionSymTabTy *>(getSectionByName(".symtab"));
+  rsl_assert(symtab && "Symtab is required.");
+
+  int64_t calculatedValue;
+  bool applyRelocation = true;
+  bool useCalculatedValue;
+
+  for (size_t i = 0; i < reltab->size(); ++i) {
+    ELFRelocTy *rel = (*reltab)[i];
+    ELFSymbolTy *sym = (*symtab)[rel->getSymTabIndex()];
+
+    typedef int64_t Inst_t;
+    Inst_t *inst = (Inst_t *)&(*text)[rel->getOffset()];
+    Inst_t P = (Inst_t)(uintptr_t)inst;
+    Inst_t A = (Inst_t)rel->getAddend();
+    Inst_t S = (Inst_t)(uintptr_t)sym->getAddress(EM_MIPS);
+
+    if (S == 0) {
+      S = (Inst_t)(uintptr_t)find_sym(context, sym->getName());
+      if (!S) {
+        missingSymbols = true;
+      }
+      sym->setAddress((void *)S);
+    }
+
+    uint8_t rtype[3];
+    rtype[0] = (rel->getType() >> 24) & 0xFF;
+    rtype[1] = (rel->getType() >> 16) & 0xFF;
+    rtype[2] = (rel->getType() >> 8) & 0xFF;
+
+    for (size_t j = 0; j < 3; ++j) {
+      useCalculatedValue = !applyRelocation;
+      if (j < 2) {
+        applyRelocation = (rtype[j+1] == R_MIPS_NONE);
+      } else if ((i + 1) < reltab->size()) {
+        // Enter here if there are more relocations left in the table
+        // and check if the next one affects the same instruction.
+        ELFRelocTy *next_rel = (*reltab)[i + 1];
+        Inst_t *next_inst = (Inst_t *)&(*text)[next_rel->getOffset()];
+        applyRelocation = (inst != next_inst);
+      }
+
+      if (useCalculatedValue) {
+        S = 0;
+        A = calculatedValue;
+      }
+
+      switch (rtype[j]) {
+      default:
+        rsl_assert(0 && "Not implemented relocation type.");
+        break;
+
+      case R_MIPS_NONE:
+        break;
+
+      case R_MIPS_64:
+        calculatedValue = S + A;
+        if (applyRelocation) {
+          *inst = calculatedValue;
+        }
+        break;
+
+      case R_MIPS_26:
+        if (sym->getBindingAttribute() == STB_LOCAL) {
+          // Local binding.
+          A |= ((P + 4) & 0xF0000000);
+          A += S;
+          calculatedValue = (A >> 2);
+          if (applyRelocation) {
+            *inst |= (calculatedValue & 0x3FFFFFF);
+          }
+        } else {
+          // External binding.
+          A += S;
+          calculatedValue = (A >> 2);
+          if (applyRelocation) {
+            *inst |= (calculatedValue & 0x3FFFFFF);
+          }
+        }
+        break;
+
+      case R_MIPS_CALL16:
+      case R_MIPS_GOT_PAGE:
+      case R_MIPS_GOT_DISP: {
+        A = A & 0xFFFF;
+        int got_index = search_got((int)rel->getSymTabIndex(),
+                                   (void *)(S + A),
+                                   sym->getBindingAttribute());
+        calculatedValue = (got_index << 3) - 0x7FF0;
+        if (applyRelocation) {
+          *inst |= (calculatedValue & 0xFFFF);
+        }
+        break;
+      }
+
+      case R_MIPS_GPREL32:
+        calculatedValue = A + S - ((int64_t)got_address() + 0x7FF0);
+        if (applyRelocation) {
+          *inst |= calculatedValue;
+        }
+        break;
+
+      case R_MIPS_GOT_OFST:
+        calculatedValue = (S + A) & 0xFFFF;
+        if (applyRelocation) {
+          *inst |= calculatedValue;
+        }
+        break;
+
+      case R_MIPS_GPREL16:
+        calculatedValue = A + S - ((int64_t)got_address() + 0x7FF0);
+        if (applyRelocation) {
+          *inst |= (calculatedValue & 0xFFFF);
+        }
+        break;
+
+      case R_MIPS_SUB:
+        calculatedValue = S - A;
+        if (applyRelocation) {
+          *inst = calculatedValue;
+        }
+        break;
+
+      case R_MIPS_HI16:
+        calculatedValue = ((S + A + 0x8000) >> 16) & 0xFFFF;
+        if (applyRelocation) {
+          *inst |= calculatedValue;
+        }
+        break;
+
+      case R_MIPS_LO16:
+        calculatedValue = (S + A) & 0xFFFF;
+        if (applyRelocation) {
+          *inst |= calculatedValue;
+        }
+        break;
+
+      case R_MIPS_HIGHER:
+        calculatedValue = ((S + A + 0x80008000) >> 32) & 0xFFFF;
+        if (applyRelocation) {
+          *inst |= calculatedValue;
+        }
+        break;
+
+      case R_MIPS_HIGHEST:
+        calculatedValue = ((S + A + 0x800080008000) >> 48) & 0xFFFF;
+        if (applyRelocation) {
+          *inst |= calculatedValue;
+        }
+        break;
+      }
+    }
+  }
+}
 
 // TODO: Refactor all relocations.
 template <unsigned Bitwidth>
@@ -1121,7 +1282,11 @@ relocate(void *(*find_sym)(void *context, char const *name), void *context) {
         relocateX86_64(find_sym, context, reltab, need_rel);
         break;
       case EM_MIPS:
-        relocateMIPS(find_sym, context, reltab, need_rel);
+        if (getHeader()->getClass() == ELFCLASS64) {
+          relocateMIPS64(find_sym, context, reltab, need_rel);
+        } else {
+          relocateMIPS(find_sym, context, reltab, need_rel);
+        }
         break;
 
       default:
