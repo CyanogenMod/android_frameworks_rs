@@ -14,7 +14,7 @@ include $(CLEAR_VARS)
 
 include frameworks/compile/slang/rs_version.mk
 local_cflags_for_rs_cpp += $(RS_VERSION_DEFINE)
-local_cflags_for_rs_cpp += -Wno-unused-parameter
+local_cflags_for_rs_cpp += -Wno-unused-parameter -std=c++11
 
 LOCAL_SRC_FILES := $(rs_cpp_SRC_FILES)
 

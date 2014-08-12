@@ -115,7 +115,7 @@ public:
                             Allocation* aout,
                             const void* usr,
                             size_t usrBytes,
-                            const RsScriptCall *sc = NULL) = 0;
+                            const RsScriptCall *sc = nullptr) = 0;
 
     virtual void Invoke(Context *rsc, uint32_t slot, const void *data, size_t len) = 0;
     virtual void setupScript(Context *rsc) = 0;

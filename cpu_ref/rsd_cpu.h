@@ -112,9 +112,9 @@ public:
     static RsdCpuReference * create(Context *c, uint32_t version_major,
                                     uint32_t version_minor, sym_lookup_t lfn, script_lookup_t slfn
 #ifndef RS_COMPATIBILITY_LIB
-                                    , bcc::RSLinkRuntimeCallback pLinkRuntimeCallback = NULL,
-                                    RSSelectRTCallback pSelectRTCallback = NULL,
-                                    const char *pBccPluginName = NULL
+                                    , bcc::RSLinkRuntimeCallback pLinkRuntimeCallback = nullptr,
+                                    RSSelectRTCallback pSelectRTCallback = nullptr,
+                                    const char *pBccPluginName = nullptr
 #endif
                                     );
     virtual ~RsdCpuReference();

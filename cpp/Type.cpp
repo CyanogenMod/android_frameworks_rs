@@ -72,7 +72,7 @@ Type::Type(void *id, sp<RS> rs) : BaseObj(id, rs) {
     mDimZ = 0;
     mDimMipmaps = false;
     mDimFaces = false;
-    mElement = NULL;
+    mElement = nullptr;
     mYuvFormat = RS_YUV_NONE;
 }
 

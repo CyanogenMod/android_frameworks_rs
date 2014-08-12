@@ -275,7 +275,7 @@ typedef struct Mesh {
             void **vertexBuffers;
             uint32_t vertexBuffersCount;
 
-            // indexBuffers[i] could be NULL, in which case only primitives[i] is used
+            // indexBuffers[i] could be nullptr, in which case only primitives[i] is used
             void **indexBuffers;
             uint32_t indexBuffersCount;
             rs_primitive *primitives;

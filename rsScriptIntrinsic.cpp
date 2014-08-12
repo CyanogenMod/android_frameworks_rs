@@ -64,7 +64,7 @@ void ScriptIntrinsic::runForEach(Context* rsc,
                          size_t usrBytes,
                          const RsScriptCall* sc) {
 
-    if (rsc->mHal.funcs.script.invokeForEachMulti != NULL) {
+    if (rsc->mHal.funcs.script.invokeForEachMulti != nullptr) {
         rsc->mHal.funcs.script.invokeForEachMulti(rsc, this, slot, ains, inLen,
                                                   aout, usr, usrBytes, sc);
 
@@ -98,7 +98,7 @@ RsScript rsi_ScriptIntrinsicCreate(Context *rsc, uint32_t id, RsElement ve) {
     ScriptIntrinsic *si = new ScriptIntrinsic(rsc);
     if (!si->init(rsc, (RsScriptIntrinsicID)id, (Element *)ve)) {
         delete si;
-        return NULL;
+        return nullptr;
     }
     si->incUserRef();
     return si;

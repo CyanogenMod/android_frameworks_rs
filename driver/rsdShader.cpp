@@ -65,16 +65,16 @@ void RsdShader::initMemberVars() {
     mAttribCount = 0;
     mUniformCount = 0;
 
-    mAttribNames = NULL;
-    mUniformNames = NULL;
-    mUniformArraySizes = NULL;
-    mCurrentState = NULL;
+    mAttribNames = nullptr;
+    mUniformNames = nullptr;
+    mUniformArraySizes = nullptr;
+    mCurrentState = nullptr;
 
     mIsValid = false;
 }
 
 RsdShader::StateBasedKey *RsdShader::getExistingState() {
-    RsdShader::StateBasedKey *returnKey = NULL;
+    RsdShader::StateBasedKey *returnKey = nullptr;
 
     for (uint32_t i = 0; i < mStateBasedShaders.size(); i ++) {
         returnKey = mStateBasedShaders[i];
@@ -92,7 +92,7 @@ RsdShader::StateBasedKey *RsdShader::getExistingState() {
                 texType = GL_TEXTURE_CUBE_MAP;
             }
             if (texType != returnKey->mTextureTargets[ct]) {
-                returnKey = NULL;
+                returnKey = nullptr;
                 break;
             }
         }
@@ -102,7 +102,7 @@ RsdShader::StateBasedKey *RsdShader::getExistingState() {
 
 uint32_t RsdShader::getStateBasedShaderID(const Context *rsc) {
     StateBasedKey *state = getExistingState();
-    if (state != NULL) {
+    if (state != nullptr) {
         mCurrentState = state;
         return mCurrentState->mShaderID;
     }
@@ -121,7 +121,7 @@ void RsdShader::init(const char** textureNames, size_t textureNamesCount,
     uint32_t uniformCount = 0;
     for (uint32_t ct=0; ct < mRSProgram->mHal.state.inputElementsCount; ct++) {
         initAddUserElement(mRSProgram->mHal.state.inputElements[ct], mAttribNames,
-                           NULL, &attribCount, RS_SHADER_ATTR);
+                           nullptr, &attribCount, RS_SHADER_ATTR);
     }
     for (uint32_t ct=0; ct < mRSProgram->mHal.state.constantsCount; ct++) {
         initAddUserElement(mRSProgram->mHal.state.constantTypes[ct]->getElement(),
@@ -243,7 +243,7 @@ bool RsdShader::loadShader(const Context *rsc) {
 
     if (mCurrentState->mShaderID) {
         const char * ss = mShader.c_str();
-        RSD_CALL_GL(glShaderSource, mCurrentState->mShaderID, 1, &ss, NULL);
+        RSD_CALL_GL(glShaderSource, mCurrentState->mShaderID, 1, &ss, nullptr);
         RSD_CALL_GL(glCompileShader, mCurrentState->mShaderID);
 
         GLint compiled = 0;
@@ -254,7 +254,7 @@ bool RsdShader::loadShader(const Context *rsc) {
             if (infoLen) {
                 char* buf = (char*) malloc(infoLen);
                 if (buf) {
-                    RSD_CALL_GL(glGetShaderInfoLog, mCurrentState->mShaderID, infoLen, NULL, buf);
+                    RSD_CALL_GL(glGetShaderInfoLog, mCurrentState->mShaderID, infoLen, nullptr, buf);
                     rsc->setError(RS_ERROR_FATAL_PROGRAM_LINK, buf);
                     free(buf);
                 }

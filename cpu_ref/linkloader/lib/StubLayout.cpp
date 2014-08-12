@@ -23,7 +23,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-StubLayout::StubLayout() : table(NULL), count(0) {
+StubLayout::StubLayout() : table(nullptr), count(0) {
 }
 
 void StubLayout::initStubTable(unsigned char *table_, size_t count_) {
@@ -42,7 +42,7 @@ void *StubLayout::allocateStub(void *addr) {
   // We have to create a new stub
   if (count == 0) {
     // No free stub slot is available
-    return NULL;
+    return nullptr;
   }
 
   // Initialize the stub

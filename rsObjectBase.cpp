@@ -26,10 +26,10 @@ ObjectBase::ObjectBase(Context *rsc) {
     mUserRefCount = 0;
     mSysRefCount = 0;
     mRSC = rsc;
-    mNext = NULL;
-    mPrev = NULL;
-    mDH = NULL;
-    mName = NULL;
+    mNext = nullptr;
+    mPrev = nullptr;
+    mDH = nullptr;
+    mName = nullptr;
 
 #if RS_OBJECT_DEBUG
     mDH = new DebugHelper();
@@ -45,7 +45,7 @@ ObjectBase::~ObjectBase() {
 #if RS_OBJECT_DEBUG
     mDH->dump();
     delete mDH;
-    mDH = NULL;
+    mDH = nullptr;
 #endif
 
     free(const_cast<char *>(mName));
@@ -203,8 +203,8 @@ void ObjectBase::remove() const {
     if (mNext) {
         mNext->mPrev = mPrev;
     }
-    mPrev = NULL;
-    mNext = NULL;
+    mPrev = nullptr;
+    mNext = nullptr;
 }
 
 void ObjectBase::zeroAllUserRef(Context *rsc) {

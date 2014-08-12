@@ -166,7 +166,7 @@ bool RsdShaderCache::link(const Context *rsc) {
             if (bufLength) {
                 char* buf = (char*) malloc(bufLength);
                 if (buf) {
-                    glGetProgramInfoLog(pgm, bufLength, NULL, buf);
+                    glGetProgramInfoLog(pgm, bufLength, nullptr, buf);
                     rsc->setError(RS_ERROR_FATAL_PROGRAM_LINK, buf);
                     free(buf);
                 }
@@ -189,7 +189,7 @@ bool RsdShaderCache::link(const Context *rsc) {
         populateUniformData(frag, pgm, e->fragUniforms);
 
         // Only populate this list if we have arrays in our uniforms
-        UniformQueryData **uniformList = NULL;
+        UniformQueryData **uniformList = nullptr;
         GLint numUniforms = 0;
         bool hasArrays = hasArrayUniforms(vtx, frag);
         if (hasArrays) {
@@ -221,12 +221,12 @@ bool RsdShaderCache::link(const Context *rsc) {
                                uniformList, (uint32_t)numUniforms);
 
         // Clean up the uniform data from GL
-        if (uniformList != NULL) {
+        if (uniformList != nullptr) {
             for (uint32_t ct = 0; ct < (uint32_t)numUniforms; ct++) {
                 delete uniformList[ct];
             }
             delete[] uniformList;
-            uniformList = NULL;
+            uniformList = nullptr;
         }
     }
 

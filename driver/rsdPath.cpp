@@ -71,13 +71,13 @@ static void cleanup(const Context *rsc, const Path *m) {
 
 bool rsdPathInitStatic(const Context *rsc, const Path *m,
                        const Allocation *vtx, const Allocation *loops) {
-    DrvPathStatic *drv = NULL;
+    DrvPathStatic *drv = nullptr;
     cleanup(rsc, m);
 
     DrvPathStatic *dps = new DrvPathStatic(vtx, loops);
     //LOGE("init path m %p,  %p", m, dps);
     m->mHal.drv = dps;
-    return dps != NULL;
+    return dps != nullptr;
 }
 
 bool rsdPathInitDynamic(const Context *rsc, const Path *m) {
@@ -97,7 +97,7 @@ void rsdPathDraw(const Context *rsc, const Path *m) {
 
 void rsdPathDestroy(const Context *rsc, const Path *m) {
     cleanup(rsc, m);
-    m->mHal.drv = NULL;
+    m->mHal.drv = nullptr;
 }
 
 

@@ -248,7 +248,7 @@ RsdCpuScriptIntrinsicLoopFilter::~RsdCpuScriptIntrinsicLoopFilter() {
         pthread_cond_signal(&mPrch.start_cond[i]);
     }
     for (i = 0; i < mWorkerCount; ++i) {
-        pthread_join(mPrch.tid[i], NULL);
+        pthread_join(mPrch.tid[i], nullptr);
     }
     free(mPrch.tid);
 }
@@ -1127,7 +1127,7 @@ static void *vp9_loop_filter_rows_work_proc(void *data) {
         pthread_cond_wait(&param->start_cond[wid], &param->mutex[wid]);
         pthread_mutex_unlock(&param->mutex[wid]);
 
-        if (android_atomic_release_load(&param->quit)) return NULL;
+        if (android_atomic_release_load(&param->quit)) return nullptr;
 
         buf_start[0] = param->buffer_alloc + buf_info->y_offset;
         buf_start[1] = param->buffer_alloc + buf_info->u_offset;
@@ -1196,7 +1196,7 @@ static void *vp9_loop_filter_rows_work_proc(void *data) {
         pthread_mutex_unlock(param->hmutex);
     }
 
-    return NULL;
+    return nullptr;
 }
 
 RsdCpuScriptIntrinsicLoopFilter::RsdCpuScriptIntrinsicLoopFilter(
@@ -1221,14 +1221,14 @@ RsdCpuScriptIntrinsicLoopFilter::RsdCpuScriptIntrinsicLoopFilter(
     mPrch.finish = (pthread_cond_t *) (mPrch.hmutex + 1);
     int i = 0;
     int rv = 0;
-    pthread_mutex_init(mPrch.hmutex, NULL);
-    pthread_cond_init(mPrch.finish, NULL);
+    pthread_mutex_init(mPrch.hmutex, nullptr);
+    pthread_cond_init(mPrch.finish, nullptr);
     for (i = 0; i < mWorkerCount; ++i) {
-        pthread_mutex_init(&mPrch.mutex[i], NULL);
-        pthread_cond_init(&mPrch.start_cond[i], NULL);
+        pthread_mutex_init(&mPrch.mutex[i], nullptr);
+        pthread_cond_init(&mPrch.start_cond[i], nullptr);
     }
     for (i = 0; i < mWorkerCount; ++i) {
-        rv = pthread_create(&mPrch.tid[i], NULL, &vp9_loop_filter_rows_work_proc, &mPrch);
+        rv = pthread_create(&mPrch.tid[i], nullptr, &vp9_loop_filter_rows_work_proc, &mPrch);
         rsAssert(rv == 0);
     }
 }

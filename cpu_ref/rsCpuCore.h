@@ -65,11 +65,11 @@ struct RsExpandKernelDriverInfo {
 
     ~RsExpandKernelDriverInfo() {
         if (heapAllocatedArrays) {
-            if (inPtrs != NULL) {
+            if (inPtrs != nullptr) {
                 delete[] inPtrs;
             }
 
-            if (inStrides != NULL) {
+            if (inStrides != nullptr) {
                 delete[] inStrides;
             }
         }

@@ -28,7 +28,7 @@ protected:
   MemChunk chunk;
 
 protected:
-  ELFSectionBits() : sh(NULL) { }
+  ELFSectionBits() : sh(nullptr) { }
 
 public:
   virtual void print() const;
