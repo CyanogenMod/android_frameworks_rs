@@ -55,18 +55,6 @@ uint32_t ScriptIntrinsic::run(Context *rsc) {
     return 0;
 }
 
-
-void ScriptIntrinsic::runForEach(Context *rsc,
-                         uint32_t slot,
-                         const Allocation * ain,
-                         Allocation * aout,
-                         const void * usr,
-                         size_t usrBytes,
-                         const RsScriptCall *sc) {
-
-    rsc->mHal.funcs.script.invokeForEach(rsc, this, slot, ain, aout, usr, usrBytes, sc);
-}
-
 void ScriptIntrinsic::runForEach(Context* rsc,
                          uint32_t slot,
                          const Allocation** ains,
@@ -76,7 +64,18 @@ void ScriptIntrinsic::runForEach(Context* rsc,
                          size_t usrBytes,
                          const RsScriptCall* sc) {
 
-    rsc->mHal.funcs.script.invokeForEachMulti(rsc, this, slot, ains, inLen, aout, usr, usrBytes, sc);
+    if (rsc->mHal.funcs.script.invokeForEachMulti != NULL) {
+        rsc->mHal.funcs.script.invokeForEachMulti(rsc, this, slot, ains, inLen,
+                                                  aout, usr, usrBytes, sc);
+
+    } else if (inLen == 1) {
+        rsc->mHal.funcs.script.invokeForEach(rsc, this, slot, ains[0], aout,
+                                             usr, usrBytes, sc);
+
+    } else {
+        rsc->setError(RS_ERROR_FATAL_DRIVER,
+                      "Driver support for multi-input not present");
+    }
 }
 
 void ScriptIntrinsic::Invoke(Context *rsc, uint32_t slot, const void *data, size_t len) {
@@ -107,5 +106,3 @@ RsScript rsi_ScriptIntrinsicCreate(Context *rsc, uint32_t id, RsElement ve) {
 
 }
 }
-
-
