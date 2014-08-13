@@ -265,6 +265,8 @@ LOCAL_SRC_FILES:= \
 
 LOCAL_STATIC_LIBRARIES := libcutils libutils liblog
 
+LOCAL_CLANG := true
+
 include $(BUILD_HOST_STATIC_LIBRARY)
 
 LLVM_ROOT_PATH := external/llvm
