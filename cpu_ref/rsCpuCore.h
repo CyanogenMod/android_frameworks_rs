@@ -25,8 +25,6 @@
 
 #include <string>
 
-#define RS_KERNEL_INPUT_THRESHOLD 32
-
 namespace bcc {
     class BCCContext;
     class RSCompilerDriver;
@@ -42,36 +40,31 @@ struct StridePair {
 };
 
 struct RsExpandKernelDriverInfo {
-    const uint8_t **inPtrs;
-    uint32_t inLen;
-
-    uint8_t *outPtr;
-
-    StridePair *inStrides;
-    StridePair  outStride;
+    const void *usr;
+    uint32_t usrLen;
 
     uint32_t dimX;
     uint32_t dimY;
     uint32_t dimZ;
 
+    const uint8_t *ptrIn;
+    uint8_t *ptrOut;
+    uint32_t eStrideIn;
+    uint32_t eStrideOut;
+    uint32_t yStrideIn;
+    uint32_t yStrideOut;
     uint32_t slot;
 
-    const void *usr;
-    uint32_t usrLen;
-
-    bool heapAllocatedArrays;
-
-    RsExpandKernelDriverInfo() : heapAllocatedArrays(false) {}
+    const uint8_t** ptrIns;
+    StridePair* inStrides;
 
     ~RsExpandKernelDriverInfo() {
-        if (heapAllocatedArrays) {
-            if (inPtrs != NULL) {
-                delete[] inPtrs;
-            }
+        if (ptrIns != NULL) {
+            delete[] ptrIns;
+        }
 
-            if (inStrides != NULL) {
-                delete[] inStrides;
-            }
+        if (inStrides != NULL) {
+            delete[] inStrides;
         }
     }
 };
@@ -79,12 +72,14 @@ struct RsExpandKernelDriverInfo {
 struct RsExpandKernelParams {
 
     // Used by kernels
-    const void **ins;
-    uint32_t *inEStrides;
+    const void *in;
     void *out;
     uint32_t y;
     uint32_t z;
     uint32_t lid;
+
+    const void **ins;
+    uint32_t *eStrideIns;
 
     // Used by ScriptGroup and user kernels.
     const void *usr;
@@ -120,13 +115,13 @@ typedef void (*WorkerCallback_t)(void *usr, uint32_t idx);
 class RsdCpuScriptImpl;
 class RsdCpuReferenceImpl;
 
-struct ScriptTLSStruct {
+typedef struct ScriptTLSStructRec {
     android::renderscript::Context * mContext;
     const android::renderscript::Script * mScript;
     RsdCpuScriptImpl *mImpl;
-};
+} ScriptTLSStruct;
 
-struct MTLaunchStruct {
+typedef struct {
     RsExpandKernelDriverInfo fep;
 
     RsdCpuReferenceImpl *rsc;
@@ -134,7 +129,7 @@ struct MTLaunchStruct {
 
     ForEachFunc_t kernel;
     uint32_t sig;
-    const Allocation ** ains;
+    const Allocation * ain;
     Allocation * aout;
 
     uint32_t mSliceSize;
@@ -150,9 +145,12 @@ struct MTLaunchStruct {
     uint32_t arrayStart;
     uint32_t arrayEnd;
 
-    const uint8_t *inPtrsBuff[RS_KERNEL_INPUT_THRESHOLD];
-    StridePair     inStridesBuff[RS_KERNEL_INPUT_THRESHOLD];
-};
+    // Multi-input data.
+    const Allocation ** ains;
+} MTLaunchStruct;
+
+
+
 
 class RsdCpuReferenceImpl : public RsdCpuReference {
 public:
@@ -172,6 +170,9 @@ public:
     uint32_t getThreadCount() const {
         return mWorkers.mCount + 1;
     }
+
+    void launchThreads(const Allocation * ain, Allocation * aout,
+                       const RsScriptCall *sc, MTLaunchStruct *mtls);
 
     void launchThreads(const Allocation** ains, uint32_t inLen, Allocation* aout,
                        const RsScriptCall* sc, MTLaunchStruct* mtls);
