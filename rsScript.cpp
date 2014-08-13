@@ -187,36 +187,29 @@ void rsi_ScriptSetTimeZone(Context * rsc, RsScript vs, const char * timeZone, si
     free(tz);
 }
 
+void rsi_ScriptForEach(Context *rsc, RsScript vs, uint32_t slot,
+                       RsAllocation vain, RsAllocation vaout,
+                       const void *params, size_t paramLen,
+                       const RsScriptCall *sc, size_t scLen) {
+    Script *s = static_cast<Script *>(vs);
+    s->runForEach(rsc, slot,
+                  static_cast<const Allocation *>(vain), static_cast<Allocation *>(vaout),
+                  params, paramLen, sc);
+
+}
+
 void rsi_ScriptForEachMulti(Context *rsc, RsScript vs, uint32_t slot,
                             RsAllocation *vains, size_t inLen,
                             RsAllocation vaout, const void *params,
                             size_t paramLen, const RsScriptCall *sc,
                             size_t scLen) {
-
-    Script      *s    = static_cast<Script *>(vs);
+    Script *s = static_cast<Script *>(vs);
     Allocation **ains = (Allocation**)(vains);
 
     s->runForEach(rsc, slot,
                   const_cast<const Allocation **>(ains), inLen,
                   static_cast<Allocation *>(vaout), params, paramLen, sc);
 
-}
-
-void rsi_ScriptForEach(Context *rsc, RsScript vs, uint32_t slot,
-                       RsAllocation vain, RsAllocation vaout,
-                       const void *params, size_t paramLen,
-                       const RsScriptCall *sc, size_t scLen) {
-
-    if (vain == NULL) {
-        rsi_ScriptForEachMulti(rsc, vs, slot, NULL, 0, vaout, params, paramLen,
-                               sc, scLen);
-    } else {
-        RsAllocation ains[1] = {vain};
-
-        rsi_ScriptForEachMulti(rsc, vs, slot, ains,
-                               sizeof(ains) / sizeof(RsAllocation), vaout,
-                               params, paramLen, sc, scLen);
-    }
 }
 
 void rsi_ScriptInvoke(Context *rsc, RsScript vs, uint32_t slot) {
