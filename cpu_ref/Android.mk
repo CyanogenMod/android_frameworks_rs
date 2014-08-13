@@ -91,7 +91,7 @@ include external/libcxx/libcxx.mk
 endif
 include frameworks/compile/libbcc/libbcc-targets.mk
 
-LOCAL_CFLAGS += $(rs_base_CFLAGS) -std=c++11
+LOCAL_CFLAGS += $(rs_base_CFLAGS)
 
 LOCAL_MODULE_TAGS := optional
 

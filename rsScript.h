@@ -108,9 +108,17 @@ public:
 
     virtual bool freeChildren();
 
+    virtual void runForEach(Context *rsc,
+                            uint32_t slot,
+                            const Allocation * ain,
+                            Allocation * aout,
+                            const void * usr,
+                            size_t usrBytes,
+                            const RsScriptCall *sc = NULL) = 0;
+
     virtual void runForEach(Context* rsc,
                             uint32_t slot,
-                            const Allocation ** ains,
+                            const Allocation** ains,
                             size_t inLen,
                             Allocation* aout,
                             const void* usr,
