@@ -156,36 +156,6 @@ uint32_t ScriptC::run(Context *rsc) {
 
 void ScriptC::runForEach(Context *rsc,
                          uint32_t slot,
-                         const Allocation * ain,
-                         Allocation * aout,
-                         const void * usr,
-                         size_t usrBytes,
-                         const RsScriptCall *sc) {
-    // Trace this function call.
-    // To avoid overhead, we only build the string, if tracing is actually
-    // enabled.
-    String8 *AString = NULL;
-    const char *String = "";
-    if (ATRACE_ENABLED()) {
-        AString = new String8("runForEach_");
-        AString->append(mHal.info.exportedForeachFuncList[slot].first);
-        String = AString->string();
-    }
-    ATRACE_NAME(String);
-    (void)String;
-
-    Context::PushState ps(rsc);
-
-    setupGLState(rsc);
-    setupScript(rsc);
-    rsc->mHal.funcs.script.invokeForEach(rsc, this, slot, ain, aout, usr, usrBytes, sc);
-
-    if (AString)
-        delete AString;
-}
-
-void ScriptC::runForEach(Context *rsc,
-                         uint32_t slot,
                          const Allocation ** ains,
                          size_t inLen,
                          Allocation * aout,
@@ -210,10 +180,22 @@ void ScriptC::runForEach(Context *rsc,
     setupGLState(rsc);
     setupScript(rsc);
 
-    rsc->mHal.funcs.script.invokeForEachMulti(rsc, this, slot, ains, inLen, aout, usr, usrBytes, sc);
+    if (rsc->mHal.funcs.script.invokeForEachMulti != NULL) {
+        rsc->mHal.funcs.script.invokeForEachMulti(rsc, this, slot, ains, inLen,
+                                                  aout, usr, usrBytes, sc);
 
-    if (AString)
+    } else if (inLen == 1) {
+        rsc->mHal.funcs.script.invokeForEach(rsc, this, slot, ains[0], aout,
+                                             usr, usrBytes, sc);
+
+    } else {
+        rsc->setError(RS_ERROR_FATAL_DRIVER,
+                      "Driver support for multi-input not present");
+    }
+
+    if (AString) {
         delete AString;
+    }
 }
 
 void ScriptC::Invoke(Context *rsc, uint32_t slot, const void *data, size_t len) {

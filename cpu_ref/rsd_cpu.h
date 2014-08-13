@@ -69,21 +69,15 @@ public:
         virtual void populateScript(Script *) = 0;
         virtual void invokeFunction(uint32_t slot, const void *params, size_t paramLength) = 0;
         virtual int invokeRoot() = 0;
+
         virtual void invokeForEach(uint32_t slot,
-                           const Allocation * ain,
-                           Allocation * aout,
-                           const void * usr,
-                           uint32_t usrLen,
-                           const RsScriptCall *sc) = 0;
-                           
-        virtual void invokeForEachMulti(uint32_t slot,
-                                         const Allocation** ains,
-                                         uint32_t inLen,
-                                         Allocation * aout,
-                                         const void * usr,
-                                         uint32_t usrLen,
-                                         const RsScriptCall *sc) = 0;
-        
+                                   const Allocation ** ains,
+                                   uint32_t inLen,
+                                   Allocation * aout,
+                                   const void * usr,
+                                   uint32_t usrLen,
+                                   const RsScriptCall *sc) = 0;
+
         virtual void invokeInit() = 0;
         virtual void invokeFreeChildren() = 0;
 

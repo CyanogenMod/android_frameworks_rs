@@ -350,9 +350,15 @@ RsdCpuReferenceImpl::~RsdCpuReferenceImpl() {
 }
 
 typedef void (*rs_t)(const void *, void *, const void *, uint32_t, uint32_t, uint32_t, uint32_t);
+typedef void (*walk_loop_t)(MTLaunchStruct*,
+                            RsExpandKernelParams&,
+                            outer_foreach_t);
 
-static void wc_xy(void *usr, uint32_t idx) {
+
+static void walk_wrapper(void* usr, uint32_t idx, walk_loop_t walk_loop) {
     MTLaunchStruct *mtls = (MTLaunchStruct *)usr;
+
+    uint32_t inLen = mtls->fep.inLen;
 
     RsExpandKernelParams kparams;
     kparams.takeFields(mtls->fep);
@@ -360,170 +366,118 @@ static void wc_xy(void *usr, uint32_t idx) {
     // Used by CpuScriptGroup, IntrinsicBlur, and IntrinsicHistogram
     kparams.lid = idx;
 
-    outer_foreach_t fn = (outer_foreach_t) mtls->kernel;
-    while (1) {
-        uint32_t slice  = (uint32_t)__sync_fetch_and_add(&mtls->mSliceNum, 1);
-        uint32_t yStart = mtls->yStart + slice * mtls->mSliceSize;
-        uint32_t yEnd   = yStart + mtls->mSliceSize;
+    if (inLen > 0) {
+        // Allocate space for our input base pointers.
+        kparams.ins = (const void**)alloca(inLen * sizeof(void*));
 
-        yEnd = rsMin(yEnd, mtls->yEnd);
+        // Allocate space for our input stride information.
+        kparams.inEStrides = (uint32_t*)alloca(inLen * sizeof(uint32_t));
 
-        if (yEnd <= yStart) {
-            return;
-        }
-
-        //ALOGE("usr idx %i, x %i,%i  y %i,%i", idx, mtls->xStart, mtls->xEnd, yStart, yEnd);
-        //ALOGE("usr ptr in %p,  out %p", mtls->fep.ptrIn, mtls->fep.ptrOut);
-
-        for (kparams.y = yStart; kparams.y < yEnd; kparams.y++) {
-            kparams.out = mtls->fep.ptrOut +
-                          (mtls->fep.yStrideOut * kparams.y) +
-                          (mtls->fep.eStrideOut * mtls->xStart);
-
-            kparams.in = mtls->fep.ptrIn +
-                         (mtls->fep.yStrideIn * kparams.y) +
-                         (mtls->fep.eStrideIn * mtls->xStart);
-
-
-            fn(&kparams, mtls->xStart, mtls->xEnd, mtls->fep.eStrideIn,
-               mtls->fep.eStrideOut);
+        // Fill our stride information.
+        for (int inIndex = inLen; --inIndex >= 0;) {
+          kparams.inEStrides[inIndex] = mtls->fep.inStrides[inIndex].eStride;
         }
     }
-}
-
-static void wc_x(void *usr, uint32_t idx) {
-    MTLaunchStruct *mtls = (MTLaunchStruct *)usr;
-
-    RsExpandKernelParams kparams;
-    kparams.takeFields(mtls->fep);
-
-    // Used by CpuScriptGroup, IntrinsicBlur, and IntrisicHistogram
-    kparams.lid = idx;
 
     outer_foreach_t fn = (outer_foreach_t) mtls->kernel;
-    while (1) {
-        uint32_t slice  = (uint32_t)__sync_fetch_and_add(&mtls->mSliceNum, 1);
-        uint32_t xStart = mtls->xStart + slice * mtls->mSliceSize;
-        uint32_t xEnd   = xStart + mtls->mSliceSize;
 
-        xEnd = rsMin(xEnd, mtls->xEnd);
-
-        if (xEnd <= xStart) {
-            return;
-        }
-
-        //ALOGE("usr slice %i idx %i, x %i,%i", slice, idx, xStart, xEnd);
-        //ALOGE("usr ptr in %p,  out %p", mtls->fep.ptrIn, mtls->fep.ptrOut);
-
-        kparams.out = mtls->fep.ptrOut + (mtls->fep.eStrideOut * xStart);
-        kparams.in  = mtls->fep.ptrIn  + (mtls->fep.eStrideIn  * xStart);
-
-        fn(&kparams, xStart, xEnd, mtls->fep.eStrideIn, mtls->fep.eStrideOut);
-    }
+    walk_loop(mtls, kparams, fn);
 }
 
-void RsdCpuReferenceImpl::launchThreads(const Allocation * ain, Allocation * aout,
-                                        const RsScriptCall *sc, MTLaunchStruct *mtls) {
+static void walk_2d(void *usr, uint32_t idx) {
+    walk_wrapper(usr, idx, [](MTLaunchStruct *mtls,
+                              RsExpandKernelParams &kparams,
+                              outer_foreach_t fn) {
 
-    //android::StopWatch kernel_time("kernel time");
+        while (1) {
+            uint32_t slice  = (uint32_t)__sync_fetch_and_add(&mtls->mSliceNum, 1);
+            uint32_t yStart = mtls->yStart + slice * mtls->mSliceSize;
+            uint32_t yEnd   = yStart + mtls->mSliceSize;
 
-    if ((mWorkers.mCount >= 1) && mtls->isThreadable && !mInForEach) {
-        const size_t targetByteChunk = 16 * 1024;
-        mInForEach = true;
-        if (mtls->fep.dimY > 1) {
-            uint32_t s1 = mtls->fep.dimY / ((mWorkers.mCount + 1) * 4);
-            uint32_t s2 = 0;
+            yEnd = rsMin(yEnd, mtls->yEnd);
 
-            // This chooses our slice size to rate limit atomic ops to
-            // one per 16k bytes of reads/writes.
-            if (mtls->fep.yStrideOut) {
-                s2 = targetByteChunk / mtls->fep.yStrideOut;
-            } else {
-                s2 = targetByteChunk / mtls->fep.yStrideIn;
-            }
-            mtls->mSliceSize = rsMin(s1, s2);
-
-            if(mtls->mSliceSize < 1) {
-                mtls->mSliceSize = 1;
+            if (yEnd <= yStart) {
+                return;
             }
 
-         //   mtls->mSliceSize = 2;
-            launchThreads(wc_xy, mtls);
-        } else {
-            uint32_t s1 = mtls->fep.dimX / ((mWorkers.mCount + 1) * 4);
-            uint32_t s2 = 0;
+            for (kparams.y = yStart; kparams.y < yEnd; kparams.y++) {
+                kparams.out = mtls->fep.outPtr +
+                              (mtls->fep.outStride.yStride * kparams.y) +
+                              (mtls->fep.outStride.eStride * mtls->xStart);
 
-            // This chooses our slice size to rate limit atomic ops to
-            // one per 16k bytes of reads/writes.
-            if (mtls->fep.eStrideOut) {
-                s2 = targetByteChunk / mtls->fep.eStrideOut;
-            } else {
-                s2 = targetByteChunk / mtls->fep.eStrideIn;
-            }
-            mtls->mSliceSize = rsMin(s1, s2);
+                for (int inIndex = mtls->fep.inLen; --inIndex >= 0;) {
+                    StridePair &strides = mtls->fep.inStrides[inIndex];
 
-            if(mtls->mSliceSize < 1) {
-                mtls->mSliceSize = 1;
-            }
-
-            launchThreads(wc_x, mtls);
-        }
-        mInForEach = false;
-
-        //ALOGE("launch 1");
-    } else {
-        RsExpandKernelParams kparams;
-        kparams.takeFields(mtls->fep);
-
-        //ALOGE("launch 3");
-        outer_foreach_t fn = (outer_foreach_t) mtls->kernel;
-        for (uint32_t arrayIndex = mtls->arrayStart;
-             arrayIndex < mtls->arrayEnd; arrayIndex++) {
-
-            for (kparams.z = mtls->zStart; kparams.z < mtls->zEnd;
-                 kparams.z++) {
-
-                for (kparams.y = mtls->yStart; kparams.y < mtls->yEnd;
-                     kparams.y++) {
-
-                    uint32_t offset =
-                      kparams.dimY * kparams.dimZ * arrayIndex +
-                      kparams.dimY * kparams.z + kparams.y;
-
-                    kparams.out = mtls->fep.ptrOut +
-                                  (mtls->fep.yStrideOut * offset) +
-                                  (mtls->fep.eStrideOut * mtls->xStart);
-
-                    kparams.in = mtls->fep.ptrIn +
-                                 (mtls->fep.yStrideIn * offset) +
-                                 (mtls->fep.eStrideIn * mtls->xStart);
-
-                    fn(&kparams, mtls->xStart, mtls->xEnd, mtls->fep.eStrideIn,
-                       mtls->fep.eStrideOut);
+                    kparams.ins[inIndex] =
+                      mtls->fep.inPtrs[inIndex] +
+                      (strides.yStride * kparams.y) +
+                      (strides.eStride * mtls->xStart);
                 }
+
+                // Kernels now get their input strides from kparams.
+                fn(&kparams, mtls->xStart, mtls->xEnd, 0,
+                   mtls->fep.outStride.eStride);
             }
         }
-    }
+    });
 }
 
-void RsdCpuReferenceImpl::launchThreads(const Allocation** ains, uint32_t inLen, Allocation* aout,
-                                        const RsScriptCall* sc, MTLaunchStruct* mtls) {
+static void walk_1d(void *usr, uint32_t idx) {
+    walk_wrapper(usr, idx, [](MTLaunchStruct *mtls,
+                              RsExpandKernelParams &kparams,
+                              outer_foreach_t fn) {
+
+        while (1) {
+            uint32_t slice  = (uint32_t)__sync_fetch_and_add(&mtls->mSliceNum, 1);
+            uint32_t xStart = mtls->xStart + slice * mtls->mSliceSize;
+            uint32_t xEnd   = xStart + mtls->mSliceSize;
+
+            xEnd = rsMin(xEnd, mtls->xEnd);
+
+            if (xEnd <= xStart) {
+                return;
+            }
+
+            kparams.out = mtls->fep.outPtr +
+                          (mtls->fep.outStride.eStride * xStart);
+
+            for (int inIndex = mtls->fep.inLen; --inIndex >= 0;) {
+                StridePair &strides = mtls->fep.inStrides[inIndex];
+
+                kparams.ins[inIndex] =
+                  mtls->fep.inPtrs[inIndex] + (strides.eStride * xStart);
+            }
+
+            // Kernels now get their input strides from kparams.
+            fn(&kparams, xStart, xEnd, 0, mtls->fep.outStride.eStride);
+        }
+    });
+}
+
+
+void RsdCpuReferenceImpl::launchThreads(const Allocation ** ains,
+                                        uint32_t inLen,
+                                        Allocation* aout,
+                                        const RsScriptCall* sc,
+                                        MTLaunchStruct* mtls) {
 
     //android::StopWatch kernel_time("kernel time");
 
     if ((mWorkers.mCount >= 1) && mtls->isThreadable && !mInForEach) {
         const size_t targetByteChunk = 16 * 1024;
         mInForEach = true;
+
         if (mtls->fep.dimY > 1) {
             uint32_t s1 = mtls->fep.dimY / ((mWorkers.mCount + 1) * 4);
             uint32_t s2 = 0;
 
             // This chooses our slice size to rate limit atomic ops to
             // one per 16k bytes of reads/writes.
-            if (mtls->fep.yStrideOut) {
-                s2 = targetByteChunk / mtls->fep.yStrideOut;
+            if (mtls->fep.outStride.yStride) {
+                s2 = targetByteChunk / mtls->fep.outStride.yStride;
             } else {
-                s2 = targetByteChunk / mtls->fep.yStrideIn;
+                // We know that there is either an output or an input.
+                s2 = targetByteChunk / mtls->fep.inStrides[0].yStride;
             }
             mtls->mSliceSize = rsMin(s1, s2);
 
@@ -531,18 +485,18 @@ void RsdCpuReferenceImpl::launchThreads(const Allocation** ains, uint32_t inLen,
                 mtls->mSliceSize = 1;
             }
 
-         //   mtls->mSliceSize = 2;
-            launchThreads(wc_xy, mtls);
+            launchThreads(walk_2d, mtls);
         } else {
             uint32_t s1 = mtls->fep.dimX / ((mWorkers.mCount + 1) * 4);
             uint32_t s2 = 0;
 
             // This chooses our slice size to rate limit atomic ops to
             // one per 16k bytes of reads/writes.
-            if (mtls->fep.eStrideOut) {
-                s2 = targetByteChunk / mtls->fep.eStrideOut;
+            if (mtls->fep.outStride.eStride) {
+                s2 = targetByteChunk / mtls->fep.outStride.eStride;
             } else {
-                s2 = targetByteChunk / mtls->fep.eStrideIn;
+                // We know that there is either an output or an input.
+                s2 = targetByteChunk / mtls->fep.inStrides[0].eStride;
             }
             mtls->mSliceSize = rsMin(s1, s2);
 
@@ -550,24 +504,26 @@ void RsdCpuReferenceImpl::launchThreads(const Allocation** ains, uint32_t inLen,
                 mtls->mSliceSize = 1;
             }
 
-            launchThreads(wc_x, mtls);
+            launchThreads(walk_1d, mtls);
         }
         mInForEach = false;
 
-        //ALOGE("launch 1");
     } else {
         RsExpandKernelParams kparams;
         kparams.takeFields(mtls->fep);
 
-        // Allocate space for our input base pointers.
-        kparams.ins = new const void*[inLen];
+        if (inLen > 0) {
+            // Allocate space for our input base pointers.
+            kparams.ins = (const void**)alloca(inLen * sizeof(void*));
 
-        // Allocate space for our input stride information.
-        kparams.eStrideIns = new uint32_t[inLen];
+            // Allocate space for our input stride information.
+            kparams.inEStrides = (uint32_t*)alloca(inLen * sizeof(uint32_t));
 
-        // Fill our stride information.
-        for (int inIndex = inLen; --inIndex >= 0;) {
-          kparams.eStrideIns[inIndex] = mtls->fep.inStrides[inIndex].eStride;
+            // Fill our stride information.
+            for (int inIndex = inLen; --inIndex >= 0;) {
+                kparams.inEStrides[inIndex] =
+                    mtls->fep.inStrides[inIndex].eStride;
+            }
         }
 
         //ALOGE("launch 3");
@@ -585,15 +541,15 @@ void RsdCpuReferenceImpl::launchThreads(const Allocation** ains, uint32_t inLen,
                       mtls->fep.dimY * mtls->fep.dimZ * arrayIndex +
                       mtls->fep.dimY * kparams.z + kparams.y;
 
-                    kparams.out = mtls->fep.ptrOut +
-                                  (mtls->fep.yStrideOut * offset) +
-                                  (mtls->fep.eStrideOut * mtls->xStart);
+                    kparams.out = mtls->fep.outPtr +
+                                  (mtls->fep.outStride.yStride * offset) +
+                                  (mtls->fep.outStride.eStride * mtls->xStart);
 
                     for (int inIndex = inLen; --inIndex >= 0;) {
                         StridePair &strides = mtls->fep.inStrides[inIndex];
 
                         kparams.ins[inIndex] =
-                          mtls->fep.ptrIns[inIndex] +
+                          mtls->fep.inPtrs[inIndex] +
                           (strides.yStride * offset) +
                           (strides.eStride * mtls->xStart);
                     }
@@ -604,14 +560,10 @@ void RsdCpuReferenceImpl::launchThreads(const Allocation** ains, uint32_t inLen,
                      * that points to an array.
                      */
                     fn(&kparams, mtls->xStart, mtls->xEnd, 0,
-                       mtls->fep.eStrideOut);
+                       mtls->fep.outStride.eStride);
                 }
             }
         }
-
-        // Free our arrays.
-        delete[] kparams.ins;
-        delete[] kparams.eStrideIns;
     }
 }
 

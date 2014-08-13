@@ -169,10 +169,9 @@ public:
     virtual ~RsdCpuScriptIntrinsicColorMatrix();
     RsdCpuScriptIntrinsicColorMatrix(RsdCpuReferenceImpl *ctx, const Script *s, const Element *e);
 
-    virtual void preLaunch(uint32_t slot, const Allocation * ain, Allocation * aout,
-                           const void * usr, uint32_t usrLen, const RsScriptCall *sc);
-    virtual void postLaunch(uint32_t slot, const Allocation * ain, Allocation * aout,
-                            const void * usr, uint32_t usrLen, const RsScriptCall *sc);
+    virtual void preLaunch(uint32_t slot, const Allocation ** ains,
+                           uint32_t inLen, Allocation * aout, const void * usr,
+                           uint32_t usrLen, const RsScriptCall *sc);
 
 protected:
     float fp[16];
@@ -883,8 +882,13 @@ void RsdCpuScriptIntrinsicColorMatrix::kernel(const RsExpandKernelParams *p,
                                               uint32_t xstart, uint32_t xend,
                                               uint32_t instep, uint32_t outstep) {
     RsdCpuScriptIntrinsicColorMatrix *cp = (RsdCpuScriptIntrinsicColorMatrix *)p->usr;
-    uchar *out = (uchar *)p->out + outstep * xstart;
-    uchar *in = (uchar *)p->in + instep * xstart;
+
+    // Update the instep due to change in parameter passing.
+    instep = p->inEStrides[0];
+
+    uchar *out = (uchar *)p->out    + outstep * xstart;
+    uchar *in  = (uchar *)p->ins[0] + instep  * xstart;
+
     uint32_t x1 = xstart;
     uint32_t x2 = xend;
 
@@ -932,11 +936,15 @@ void RsdCpuScriptIntrinsicColorMatrix::kernel(const RsExpandKernelParams *p,
     }
 }
 
-void RsdCpuScriptIntrinsicColorMatrix::preLaunch(
-        uint32_t slot, const Allocation * ain, Allocation * aout,
-        const void * usr, uint32_t usrLen, const RsScriptCall *sc) {
+void RsdCpuScriptIntrinsicColorMatrix::preLaunch(uint32_t slot,
+                                                 const Allocation ** ains,
+                                                 uint32_t inLen,
+                                                 Allocation * aout,
+                                                 const void * usr,
+                                                 uint32_t usrLen,
+                                                 const RsScriptCall *sc) {
 
-    const Element *ein = ain->mHal.state.type->getElement();
+    const Element *ein = ains[0]->mHal.state.type->getElement();
     const Element *eout = aout->mHal.state.type->getElement();
 
     if (ein->getType() == eout->getType()) {
@@ -953,8 +961,8 @@ void RsdCpuScriptIntrinsicColorMatrix::preLaunch(
         }
     }
 
-    Key_t key = computeKey(ain->mHal.state.type->getElement(),
-                           aout->mHal.state.type->getElement());
+    Key_t key = computeKey(ein, eout);
+
 #if defined(ARCH_X86_HAVE_SSSE3)
     if ((mOptKernel == NULL) || (mLastKey.key != key.key)) {
         // FIXME: Disable mOptKernel to pass RS color matrix CTS cases
@@ -994,12 +1002,6 @@ void RsdCpuScriptIntrinsicColorMatrix::preLaunch(
         mLastKey = key;
     }
 #endif //if !defined(ARCH_X86_HAVE_SSSE3)
-}
-
-void RsdCpuScriptIntrinsicColorMatrix::postLaunch(
-        uint32_t slot, const Allocation * ain, Allocation * aout,
-        const void * usr, uint32_t usrLen, const RsScriptCall *sc) {
-
 }
 
 RsdCpuScriptIntrinsicColorMatrix::RsdCpuScriptIntrinsicColorMatrix(
