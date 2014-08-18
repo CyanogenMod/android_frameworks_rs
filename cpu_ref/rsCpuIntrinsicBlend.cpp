@@ -117,7 +117,7 @@ void RsdCpuScriptIntrinsicBlend::kernel(const RsExpandKernelParams *p,
 
     // instep/outstep can be ignored--sizeof(uchar4) known at compile time
     uchar4 *out = (uchar4 *)p->out;
-    uchar4 *in = (uchar4 *)p->in;
+    uchar4 *in = (uchar4 *)p->ins[0];
     uint32_t x1 = xstart;
     uint32_t x2 = xend;
 
@@ -509,6 +509,3 @@ RsdCpuScriptImpl * rsdIntrinsic_Blend(RsdCpuReferenceImpl *ctx,
                                       const Script *s, const Element *e) {
     return new RsdCpuScriptIntrinsicBlend(ctx, s, e);
 }
-
-
-
