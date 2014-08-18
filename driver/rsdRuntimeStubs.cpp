@@ -484,10 +484,26 @@ static void SC_SetObject(rs_object_base *dst, rs_object_base  src) {
     rsrSetObject(rsc, dst, (ObjectBase*)src.p);
 }
 
+#ifdef __LP64__
+static void SC_SetObject_ByRef(rs_object_base *dst, rs_object_base *src) {
+    //    ALOGE("SC_SetObject2: dst = %p, src = %p", dst, src->p);
+    Context *rsc = RsdCpuReference::getTlsContext();
+    rsrSetObject(rsc, dst, (ObjectBase*)src->p);
+}
+#endif
+
 static bool SC_IsObject(rs_object_base o) {
     Context *rsc = RsdCpuReference::getTlsContext();
     return rsrIsObject(rsc, o);
 }
+
+#ifdef __LP64__
+static bool SC_IsObject_ByRef(rs_object_base *o) {
+    Context *rsc = RsdCpuReference::getTlsContext();
+    return rsrIsObject(rsc, *o);
+}
+#endif
+
 #else
 static void SC_SetObject(rs_object_base *dst, ObjectBase*  src) {
     //    ALOGE("SC_SetObject: dst = %p, src = %p", dst, src.p);
@@ -511,13 +527,23 @@ static const Allocation * SC_GetAllocation(const void *ptr) {
 }
 
 #ifndef RS_COMPATIBILITY_LIB
+#ifndef __LP64__
 static void SC_ForEach_SAA(android::renderscript::rs_script target,
                             android::renderscript::rs_allocation in,
                             android::renderscript::rs_allocation out) {
     Context *rsc = RsdCpuReference::getTlsContext();
     rsrForEach(rsc, (Script*)target.p, (Allocation*)in.p, (Allocation*)out.p, NULL, 0, NULL);
 }
+#else
+static void SC_ForEach_SAA(android::renderscript::rs_script *target,
+                            android::renderscript::rs_allocation *in,
+                            android::renderscript::rs_allocation *out) {
+    Context *rsc = RsdCpuReference::getTlsContext();
+    rsrForEach(rsc, (Script*)target->p, (Allocation*)in->p, (Allocation*)out->p, NULL, 0, NULL);
+}
+#endif
 
+#ifndef __LP64__
 static void SC_ForEach_SAAU(android::renderscript::rs_script target,
                             android::renderscript::rs_allocation in,
                             android::renderscript::rs_allocation out,
@@ -525,7 +551,17 @@ static void SC_ForEach_SAAU(android::renderscript::rs_script target,
     Context *rsc = RsdCpuReference::getTlsContext();
     rsrForEach(rsc, (Script*)target.p, (Allocation*)in.p, (Allocation*)out.p, usr, 0, NULL);
 }
+#else
+static void SC_ForEach_SAAU(android::renderscript::rs_script *target,
+                            android::renderscript::rs_allocation *in,
+                            android::renderscript::rs_allocation *out,
+                            const void *usr) {
+    Context *rsc = RsdCpuReference::getTlsContext();
+    rsrForEach(rsc, (Script*)target->p, (Allocation*)in->p, (Allocation*)out->p, usr, 0, NULL);
+}
+#endif
 
+#ifndef __LP64__
 static void SC_ForEach_SAAUS(android::renderscript::rs_script target,
                              android::renderscript::rs_allocation in,
                              android::renderscript::rs_allocation out,
@@ -534,7 +570,18 @@ static void SC_ForEach_SAAUS(android::renderscript::rs_script target,
     Context *rsc = RsdCpuReference::getTlsContext();
     rsrForEach(rsc, (Script*)target.p, (Allocation*)in.p, (Allocation*)out.p, usr, 0, call);
 }
+#else
+static void SC_ForEach_SAAUS(android::renderscript::rs_script *target,
+                             android::renderscript::rs_allocation *in,
+                             android::renderscript::rs_allocation *out,
+                             const void *usr,
+                             const RsScriptCall *call) {
+    Context *rsc = RsdCpuReference::getTlsContext();
+    rsrForEach(rsc, (Script*)target->p, (Allocation*)in->p, (Allocation*)out->p, usr, 0, call);
+}
+#endif
 
+#ifndef __LP64__
 static void SC_ForEach_SAAUL(android::renderscript::rs_script target,
                              android::renderscript::rs_allocation in,
                              android::renderscript::rs_allocation out,
@@ -543,7 +590,18 @@ static void SC_ForEach_SAAUL(android::renderscript::rs_script target,
     Context *rsc = RsdCpuReference::getTlsContext();
     rsrForEach(rsc, (Script*)target.p, (Allocation*)in.p, (Allocation*)out.p, usr, usrLen, NULL);
 }
+#else
+static void SC_ForEach_SAAUL(android::renderscript::rs_script *target,
+                             android::renderscript::rs_allocation *in,
+                             android::renderscript::rs_allocation *out,
+                             const void *usr,
+                             uint32_t usrLen) {
+    Context *rsc = RsdCpuReference::getTlsContext();
+    rsrForEach(rsc, (Script*)target->p, (Allocation*)in->p, (Allocation*)out->p, usr, usrLen, NULL);
+}
+#endif
 
+#ifndef __LP64__
 static void SC_ForEach_SAAULS(android::renderscript::rs_script target,
                               android::renderscript::rs_allocation in,
                               android::renderscript::rs_allocation out,
@@ -553,6 +611,17 @@ static void SC_ForEach_SAAULS(android::renderscript::rs_script target,
     Context *rsc = RsdCpuReference::getTlsContext();
     rsrForEach(rsc, (Script*)target.p, (Allocation*)in.p, (Allocation*)out.p, usr, usrLen, call);
 }
+#else
+static void SC_ForEach_SAAULS(android::renderscript::rs_script *target,
+                              android::renderscript::rs_allocation *in,
+                              android::renderscript::rs_allocation *out,
+                              const void *usr,
+                              uint32_t usrLen,
+                              const RsScriptCall *call) {
+    Context *rsc = RsdCpuReference::getTlsContext();
+    rsrForEach(rsc, (Script*)target->p, (Allocation*)in->p, (Allocation*)out->p, usr, usrLen, call);
+}
+#endif
 #endif
 
 
@@ -1136,25 +1205,42 @@ static RsdCpuReference::CpuSymbol gSyms[] = {
 
 
     // Refcounting
+#ifndef __LP64__
     { "_Z11rsSetObjectP10rs_elementS_", (void *)&SC_SetObject, true },
-    { "_Z13rsClearObjectP10rs_element", (void *)&SC_ClearObject, true },
     { "_Z10rsIsObject10rs_element", (void *)&SC_IsObject, true },
 
     { "_Z11rsSetObjectP7rs_typeS_", (void *)&SC_SetObject, true },
-    { "_Z13rsClearObjectP7rs_type", (void *)&SC_ClearObject, true },
     { "_Z10rsIsObject7rs_type", (void *)&SC_IsObject, true },
 
     { "_Z11rsSetObjectP13rs_allocationS_", (void *)&SC_SetObject, true },
-    { "_Z13rsClearObjectP13rs_allocation", (void *)&SC_ClearObject, true },
     { "_Z10rsIsObject13rs_allocation", (void *)&SC_IsObject, true },
 
     { "_Z11rsSetObjectP10rs_samplerS_", (void *)&SC_SetObject, true },
-    { "_Z13rsClearObjectP10rs_sampler", (void *)&SC_ClearObject, true },
     { "_Z10rsIsObject10rs_sampler", (void *)&SC_IsObject, true },
 
     { "_Z11rsSetObjectP9rs_scriptS_", (void *)&SC_SetObject, true },
-    { "_Z13rsClearObjectP9rs_script", (void *)&SC_ClearObject, true },
     { "_Z10rsIsObject9rs_script", (void *)&SC_IsObject, true },
+#else
+    { "_Z11rsSetObjectP10rs_elementS_", (void *)&SC_SetObject_ByRef, true },
+    { "_Z10rsIsObject10rs_element", (void *)&SC_IsObject_ByRef, true },
+
+    { "_Z11rsSetObjectP7rs_typeS_", (void *)&SC_SetObject_ByRef, true },
+    { "_Z10rsIsObject7rs_type", (void *)&SC_IsObject_ByRef, true },
+
+    { "_Z11rsSetObjectP13rs_allocationS_", (void *)&SC_SetObject_ByRef, true },
+    { "_Z10rsIsObject13rs_allocation", (void *)&SC_IsObject_ByRef, true },
+
+    { "_Z11rsSetObjectP10rs_samplerS_", (void *)&SC_SetObject_ByRef, true },
+    { "_Z10rsIsObject10rs_sampler", (void *)&SC_IsObject_ByRef, true },
+
+    { "_Z11rsSetObjectP9rs_scriptS_", (void *)&SC_SetObject_ByRef, true },
+    { "_Z10rsIsObject9rs_script", (void *)&SC_IsObject_ByRef, true },
+#endif
+    { "_Z13rsClearObjectP10rs_element", (void *)&SC_ClearObject, true },
+    { "_Z13rsClearObjectP7rs_type", (void *)&SC_ClearObject, true },
+    { "_Z13rsClearObjectP13rs_allocation", (void *)&SC_ClearObject, true },
+    { "_Z13rsClearObjectP10rs_sampler", (void *)&SC_ClearObject, true },
+    { "_Z13rsClearObjectP9rs_script", (void *)&SC_ClearObject, true },
 
     { "_Z11rsSetObjectP7rs_pathS_", (void *)&SC_SetObject, true },
     { "_Z13rsClearObjectP7rs_path", (void *)&SC_ClearObject, true },
