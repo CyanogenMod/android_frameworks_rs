@@ -43,8 +43,9 @@ bool rsdScriptInit(const Context *rsc,
                      size_t bitcodeSize,
                      uint32_t flags) {
     RsdHal *dc = (RsdHal *)rsc->mHal.drv;
-    RsdCpuReference::CpuScript * cs = dc->mCpuRef->createScript(script, resName, cacheDir,
-                                                                bitcode, bitcodeSize, flags);
+    RsdCpuReference::CpuScript * cs =
+        dc->mCpuRef->createScript(script, resName, cacheDir, bitcode,
+                                  bitcodeSize, flags);
     if (cs == NULL) {
         return false;
     }
@@ -53,7 +54,8 @@ bool rsdScriptInit(const Context *rsc,
     return true;
 }
 
-bool rsdInitIntrinsic(const Context *rsc, Script *s, RsScriptIntrinsicID iid, Element *e) {
+bool rsdInitIntrinsic(const Context *rsc, Script *s, RsScriptIntrinsicID iid,
+                      Element *e) {
     RsdHal *dc = (RsdHal *)rsc->mHal.drv;
     RsdCpuReference::CpuScript * cs = dc->mCpuRef->createIntrinsic(s, iid, e);
     if (cs == NULL) {
@@ -73,8 +75,15 @@ void rsdScriptInvokeForEach(const Context *rsc,
                             size_t usrLen,
                             const RsScriptCall *sc) {
 
-    RsdCpuReference::CpuScript *cs = (RsdCpuReference::CpuScript *)s->mHal.drv;
-    cs->invokeForEach(slot, ain, aout, usr, usrLen, sc);
+    if (ain == NULL) {
+        rsdScriptInvokeForEachMulti(rsc, s, slot, NULL, 0, aout, usr, usrLen,
+                                    sc);
+    } else {
+        const Allocation *ains[1] = {ain};
+
+        rsdScriptInvokeForEachMulti(rsc, s, slot, ains, 1, aout, usr, usrLen,
+                                    sc);
+    }
 }
 
 void rsdScriptInvokeForEachMulti(const Context *rsc,
@@ -88,7 +97,7 @@ void rsdScriptInvokeForEachMulti(const Context *rsc,
                                  const RsScriptCall *sc) {
 
     RsdCpuReference::CpuScript *cs = (RsdCpuReference::CpuScript *)s->mHal.drv;
-    cs->invokeForEachMulti(slot, ains, inLen, aout, usr, usrLen, sc);
+    cs->invokeForEach(slot, ains, inLen, aout, usr, usrLen, sc);
 }
 
 

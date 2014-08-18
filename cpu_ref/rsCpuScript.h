@@ -64,26 +64,22 @@ public:
 
     virtual void invokeFunction(uint32_t slot, const void *params, size_t paramLength);
     virtual int invokeRoot();
-    virtual void preLaunch(uint32_t slot, const Allocation * ain,
-                           Allocation * aout, const void * usr,
+    virtual void preLaunch(uint32_t slot, const Allocation ** ains,
+                           uint32_t inLen, Allocation * aout, const void * usr,
                            uint32_t usrLen, const RsScriptCall *sc);
-    virtual void postLaunch(uint32_t slot, const Allocation * ain,
-                            Allocation * aout, const void * usr,
-                            uint32_t usrLen, const RsScriptCall *sc);
-    virtual void invokeForEach(uint32_t slot,
-                       const Allocation * ain,
-                       Allocation * aout,
-                       const void * usr,
-                       uint32_t usrLen,
-                       const RsScriptCall *sc);
+    virtual void postLaunch(uint32_t slot, const Allocation ** ains,
+                            uint32_t inLen, Allocation * aout,
+                            const void * usr, uint32_t usrLen,
+                            const RsScriptCall *sc);
 
-    virtual void invokeForEachMulti(uint32_t slot,
-                                     const Allocation** ains,
-                                     uint32_t inLen,
-                                     Allocation* aout,
-                                     const void* usr,
-                                     uint32_t usrLen,
-                                     const RsScriptCall* sc);
+    virtual void invokeForEach(uint32_t slot,
+                               const Allocation ** ains,
+                               uint32_t inLen,
+                               Allocation* aout,
+                               const void* usr,
+                               uint32_t usrLen,
+                               const RsScriptCall* sc);
+
     virtual void invokeInit();
     virtual void invokeFreeChildren();
 
@@ -99,10 +95,6 @@ public:
     RsdCpuScriptImpl(RsdCpuReferenceImpl *ctx, const Script *s);
 
     const Script * getScript() {return mScript;}
-
-    void forEachMtlsSetup(const Allocation * ain, Allocation * aout,
-                          const void * usr, uint32_t usrLen,
-                          const RsScriptCall *sc, MTLaunchStruct *mtls);
 
     void forEachMtlsSetup(const Allocation ** ains, uint32_t inLen,
                           Allocation * aout, const void * usr, uint32_t usrLen,
