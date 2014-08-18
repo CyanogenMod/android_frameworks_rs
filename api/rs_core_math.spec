@@ -35,8 +35,7 @@ arg: #2#1 v compatible(#3)
 ret: #3#1
 comment:
  Component wise conversion from #2#1 to #3#1
-# TODO this should be 21
-version: 20
+version: 21
 end:
 
 start:
@@ -48,8 +47,7 @@ arg: #2#1 v compatible(#3)
 ret: #3#1
 comment:
  Component wise conversion from #2#1 to #3#1
-# TODO this should be 21
-version: 20
+version: 21
 end:
 
 start:
@@ -61,8 +59,7 @@ arg: #2#1 v compatible(#3)
 ret: #3#1
 comment:
  Component wise conversion from #2#1 to #3#1
-# TODO this should be 21
-version: 20
+version: 21
 end:
 
 start:
@@ -990,8 +987,7 @@ arg: #2#1 v1
 arg: #2#1 v2
 comment:
  Return the minimum value from two arguments
-# TODO this should be 21
-version: 20
+version: 21
 end:
 
 start:
@@ -1083,8 +1079,7 @@ arg: #2#1 v1
 arg: #2#1 v2
 comment:
  Return the maximum value from two arguments
-# TODO this should be 21
-version: 20
+version: 21
 end:
 
 start:
@@ -1245,8 +1240,7 @@ comment:
      return 0.f;
  else
      return 1.f;
-# TODO this should be 21
-version: 20
+version: 21
 end:
 
 start:
