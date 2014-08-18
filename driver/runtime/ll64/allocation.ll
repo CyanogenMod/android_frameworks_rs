@@ -1,5 +1,5 @@
 target datalayout = "e-m:e-i64:64-i128:128-n32:64-S128"
-target triple = "aarch64-none-linux-gnueabi"
+target triple = "aarch64-linux-android"
 
 %struct.rs_allocation = type { i64*, i64*, i64*, i64* }
 
@@ -43,10 +43,11 @@ define signext i8 @rsGetElementAtImpl_char(%struct.rs_allocation* %a, i32 %x, i3
 }
 
 !22 = metadata !{metadata !"char2", metadata !15}
-define void @rsSetElementAtImpl_char2(%struct.rs_allocation* %a, <2 x i8> %val, i32 %x, i32 %y, i32 %z) #2 {
+define void @rsSetElementAtImpl_char2(%struct.rs_allocation* %a, i16 %val, i32 %x, i32 %y, i32 %z) #2 {
   %1 = tail call i8* @rsOffset(%struct.rs_allocation* %a, i32 2, i32 %x, i32 %y, i32 %z) #10
   %2 = bitcast i8* %1 to <2 x i8>*
-  store <2 x i8> %val, <2 x i8>* %2, align 2, !tbaa !22
+  %3 = bitcast i16 %val to <2 x i8>
+  store <2 x i8> %3, <2 x i8>* %2, align 2, !tbaa !26
   ret void
 }
 
@@ -58,11 +59,12 @@ define <2 x i8> @rsGetElementAtImpl_char2(%struct.rs_allocation* %a, i32 %x, i32
 }
 
 !23 = metadata !{metadata !"char3", metadata !15}
-define void @rsSetElementAtImpl_char3(%struct.rs_allocation* %a, <3 x i8> %val, i32 %x, i32 %y, i32 %z) #2 {
+define void @rsSetElementAtImpl_char3(%struct.rs_allocation* %a, i32 %val, i32 %x, i32 %y, i32 %z) #2 {
   %1 = tail call i8* @rsOffset(%struct.rs_allocation* %a, i32 4, i32 %x, i32 %y, i32 %z) #10
-  %2 = shufflevector <3 x i8> %val, <3 x i8> undef, <4 x i32> <i32 0, i32 1, i32 2, i32 undef>
-  %3 = bitcast i8* %1 to <4 x i8>*
-  store <4 x i8> %2, <4 x i8>* %3, align 4, !tbaa !23
+  %2 = bitcast i32 %val to <4 x i8>
+  %3 = shufflevector <4 x i8> %2, <4 x i8> undef, <4 x i32> <i32 0, i32 1, i32 2, i32 undef>
+  %4 = bitcast i8* %1 to <4 x i8>*
+  store <4 x i8> %3, <4 x i8>* %4, align 4, !tbaa !27
   ret void
 }
 
@@ -103,10 +105,11 @@ define zeroext i8 @rsGetElementAtImpl_uchar(%struct.rs_allocation* %a, i32 %x, i
 }
 
 !26 = metadata !{metadata !"uchar2", metadata !15}
-define void @rsSetElementAtImpl_uchar2(%struct.rs_allocation* %a, <2 x i8> %val, i32 %x, i32 %y, i32 %z) #2 {
+define void @rsSetElementAtImpl_uchar2(%struct.rs_allocation* %a, i16 %val, i32 %x, i32 %y, i32 %z) #2 {
   %1 = tail call i8* @rsOffset(%struct.rs_allocation* %a, i32 2, i32 %x, i32 %y, i32 %z) #10
   %2 = bitcast i8* %1 to <2 x i8>*
-  store <2 x i8> %val, <2 x i8>* %2, align 2, !tbaa !26
+  %3 = bitcast i16 %val to <2 x i8>
+  store <2 x i8> %3, <2 x i8>* %2, align 2, !tbaa !26
   ret void
 }
 
@@ -118,11 +121,12 @@ define <2 x i8> @rsGetElementAtImpl_uchar2(%struct.rs_allocation* %a, i32 %x, i3
 }
 
 !27 = metadata !{metadata !"uchar3", metadata !15}
-define void @rsSetElementAtImpl_uchar3(%struct.rs_allocation* %a, <3 x i8> %val, i32 %x, i32 %y, i32 %z) #2 {
+define void @rsSetElementAtImpl_uchar3(%struct.rs_allocation* %a, i32 %val, i32 %x, i32 %y, i32 %z) #2 {
   %1 = tail call i8* @rsOffset(%struct.rs_allocation* %a, i32 4, i32 %x, i32 %y, i32 %z) #10
-  %2 = shufflevector <3 x i8> %val, <3 x i8> undef, <4 x i32> <i32 0, i32 1, i32 2, i32 undef>
-  %3 = bitcast i8* %1 to <4 x i8>*
-  store <4 x i8> %2, <4 x i8>* %3, align 4, !tbaa !27
+  %2 = bitcast i32 %val to <4 x i8>
+  %3 = shufflevector <4 x i8> %2, <4 x i8> undef, <4 x i32> <i32 0, i32 1, i32 2, i32 undef>
+  %4 = bitcast i8* %1 to <4 x i8>*
+  store <4 x i8> %3, <4 x i8>* %4, align 4, !tbaa !27
   ret void
 }
 

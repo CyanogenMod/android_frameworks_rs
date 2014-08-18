@@ -1,5 +1,5 @@
 target datalayout = "e-m:e-i64:64-i128:128-n32:64-S128"
-target triple = "aarch64-none-linux-gnueabi"
+target triple = "aarch64-linux-android"
 
 declare float @llvm.sqrt.f32(float)
 declare float @llvm.pow.f32(float, float)

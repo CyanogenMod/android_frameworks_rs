@@ -160,7 +160,7 @@ include $(LOCAL_PATH)/build_bc_lib.mk
 
 include $(CLEAR_VARS)
 
-BCC_RS_TRIPLE := aarch64-none-linux-gnueabi
+BCC_RS_TRIPLE := aarch64-linux-android
 RS_TRIPLE_CFLAGS :=
 LOCAL_MODULE := librsrt_arm64.bc
 LOCAL_IS_HOST_MODULE := true
