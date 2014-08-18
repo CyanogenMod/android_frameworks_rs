@@ -44,14 +44,6 @@ public:
 
     virtual void runForEach(Context *rsc,
                             uint32_t slot,
-                            const Allocation * ain,
-                            Allocation * aout,
-                            const void * usr,
-                            size_t usrBytes,
-                            const RsScriptCall *sc = NULL);
-
-    virtual void runForEach(Context *rsc,
-                            uint32_t slot,
                             const Allocation ** ains,
                             size_t inLen,
                             Allocation * aout,
