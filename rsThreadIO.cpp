@@ -213,7 +213,7 @@ bool ThreadIO::sendToClient(RsMessageToClientType cmdID, uint32_t usrID, const v
 
     //ALOGE("sendToClient %i %i %i", cmdID, usrID, (int)dataLen);
     ClientCmdHeader hdr;
-    hdr.bytes = dataLen;
+    hdr.bytes = (uint32_t)dataLen;
     hdr.cmdID = cmdID;
     hdr.userID = usrID;
 
