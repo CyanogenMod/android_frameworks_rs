@@ -50,30 +50,30 @@ protected:
     ObjectBaseRef<Allocation> mAllocOut;
 
     static void kernelP1U4(const RsExpandKernelParams *p,
-                          uint32_t xstart, uint32_t xend,
-                          uint32_t instep, uint32_t outstep);
+                           uint32_t xstart, uint32_t xend,
+                           uint32_t outstep);
     static void kernelP1U3(const RsExpandKernelParams *p,
-                          uint32_t xstart, uint32_t xend,
-                          uint32_t instep, uint32_t outstep);
+                           uint32_t xstart, uint32_t xend,
+                           uint32_t outstep);
     static void kernelP1U2(const RsExpandKernelParams *p,
-                          uint32_t xstart, uint32_t xend,
-                          uint32_t instep, uint32_t outstep);
+                           uint32_t xstart, uint32_t xend,
+                           uint32_t outstep);
     static void kernelP1U1(const RsExpandKernelParams *p,
-                          uint32_t xstart, uint32_t xend,
-                          uint32_t instep, uint32_t outstep);
+                           uint32_t xstart, uint32_t xend,
+                           uint32_t outstep);
 
     static void kernelP1L4(const RsExpandKernelParams *p,
                            uint32_t xstart, uint32_t xend,
-                           uint32_t instep, uint32_t outstep);
+                           uint32_t outstep);
     static void kernelP1L3(const RsExpandKernelParams *p,
                            uint32_t xstart, uint32_t xend,
-                           uint32_t instep, uint32_t outstep);
+                           uint32_t outstep);
     static void kernelP1L2(const RsExpandKernelParams *p,
                            uint32_t xstart, uint32_t xend,
-                           uint32_t instep, uint32_t outstep);
+                           uint32_t outstep);
     static void kernelP1L1(const RsExpandKernelParams *p,
                            uint32_t xstart, uint32_t xend,
-                           uint32_t instep, uint32_t outstep);
+                           uint32_t outstep);
 
 };
 
@@ -168,7 +168,7 @@ RsdCpuScriptIntrinsicHistogram::postLaunch(uint32_t slot,
 
 void RsdCpuScriptIntrinsicHistogram::kernelP1U4(const RsExpandKernelParams *p,
                                                 uint32_t xstart, uint32_t xend,
-                                                uint32_t instep, uint32_t outstep) {
+                                                uint32_t outstep) {
 
     RsdCpuScriptIntrinsicHistogram *cp = (RsdCpuScriptIntrinsicHistogram *)p->usr;
     uchar *in = (uchar *)p->ins[0];
@@ -185,7 +185,7 @@ void RsdCpuScriptIntrinsicHistogram::kernelP1U4(const RsExpandKernelParams *p,
 
 void RsdCpuScriptIntrinsicHistogram::kernelP1U3(const RsExpandKernelParams *p,
                                                 uint32_t xstart, uint32_t xend,
-                                                uint32_t instep, uint32_t outstep) {
+                                                uint32_t outstep) {
 
     RsdCpuScriptIntrinsicHistogram *cp = (RsdCpuScriptIntrinsicHistogram *)p->usr;
     uchar *in = (uchar *)p->ins[0];
@@ -201,7 +201,7 @@ void RsdCpuScriptIntrinsicHistogram::kernelP1U3(const RsExpandKernelParams *p,
 
 void RsdCpuScriptIntrinsicHistogram::kernelP1U2(const RsExpandKernelParams *p,
                                                 uint32_t xstart, uint32_t xend,
-                                                uint32_t instep, uint32_t outstep) {
+                                                uint32_t outstep) {
 
     RsdCpuScriptIntrinsicHistogram *cp = (RsdCpuScriptIntrinsicHistogram *)p->usr;
     uchar *in = (uchar *)p->ins[0];
@@ -216,7 +216,7 @@ void RsdCpuScriptIntrinsicHistogram::kernelP1U2(const RsExpandKernelParams *p,
 
 void RsdCpuScriptIntrinsicHistogram::kernelP1L4(const RsExpandKernelParams *p,
                                                 uint32_t xstart, uint32_t xend,
-                                                uint32_t instep, uint32_t outstep) {
+                                                uint32_t outstep) {
 
     RsdCpuScriptIntrinsicHistogram *cp = (RsdCpuScriptIntrinsicHistogram *)p->usr;
     uchar *in = (uchar *)p->ins[0];
@@ -234,7 +234,7 @@ void RsdCpuScriptIntrinsicHistogram::kernelP1L4(const RsExpandKernelParams *p,
 
 void RsdCpuScriptIntrinsicHistogram::kernelP1L3(const RsExpandKernelParams *p,
                                                 uint32_t xstart, uint32_t xend,
-                                                uint32_t instep, uint32_t outstep) {
+                                                uint32_t outstep) {
 
     RsdCpuScriptIntrinsicHistogram *cp = (RsdCpuScriptIntrinsicHistogram *)p->usr;
     uchar *in = (uchar *)p->ins[0];
@@ -251,7 +251,7 @@ void RsdCpuScriptIntrinsicHistogram::kernelP1L3(const RsExpandKernelParams *p,
 
 void RsdCpuScriptIntrinsicHistogram::kernelP1L2(const RsExpandKernelParams *p,
                                                 uint32_t xstart, uint32_t xend,
-                                                uint32_t instep, uint32_t outstep) {
+                                                uint32_t outstep) {
 
     RsdCpuScriptIntrinsicHistogram *cp = (RsdCpuScriptIntrinsicHistogram *)p->usr;
     uchar *in = (uchar *)p->ins[0];
@@ -267,7 +267,7 @@ void RsdCpuScriptIntrinsicHistogram::kernelP1L2(const RsExpandKernelParams *p,
 
 void RsdCpuScriptIntrinsicHistogram::kernelP1L1(const RsExpandKernelParams *p,
                                                 uint32_t xstart, uint32_t xend,
-                                                uint32_t instep, uint32_t outstep) {
+                                                uint32_t outstep) {
 
     RsdCpuScriptIntrinsicHistogram *cp = (RsdCpuScriptIntrinsicHistogram *)p->usr;
     uchar *in = (uchar *)p->ins[0];
@@ -282,7 +282,7 @@ void RsdCpuScriptIntrinsicHistogram::kernelP1L1(const RsExpandKernelParams *p,
 
 void RsdCpuScriptIntrinsicHistogram::kernelP1U1(const RsExpandKernelParams *p,
                                                 uint32_t xstart, uint32_t xend,
-                                                uint32_t instep, uint32_t outstep) {
+                                                uint32_t outstep) {
 
     RsdCpuScriptIntrinsicHistogram *cp = (RsdCpuScriptIntrinsicHistogram *)p->usr;
     uchar *in = (uchar *)p->ins[0];

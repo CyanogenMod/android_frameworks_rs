@@ -44,22 +44,22 @@ protected:
 
     static void kernelU1(const RsExpandKernelParams *p,
                          uint32_t xstart, uint32_t xend,
-                         uint32_t instep, uint32_t outstep);
+                         uint32_t outstep);
     static void kernelU2(const RsExpandKernelParams *p,
                          uint32_t xstart, uint32_t xend,
-                         uint32_t instep, uint32_t outstep);
+                         uint32_t outstep);
     static void kernelU4(const RsExpandKernelParams *p,
                          uint32_t xstart, uint32_t xend,
-                         uint32_t instep, uint32_t outstep);
+                         uint32_t outstep);
     static void kernelF1(const RsExpandKernelParams *p,
                          uint32_t xstart, uint32_t xend,
-                         uint32_t instep, uint32_t outstep);
+                         uint32_t outstep);
     static void kernelF2(const RsExpandKernelParams *p,
                          uint32_t xstart, uint32_t xend,
-                         uint32_t instep, uint32_t outstep);
+                         uint32_t outstep);
     static void kernelF4(const RsExpandKernelParams *p,
                          uint32_t xstart, uint32_t xend,
-                         uint32_t instep, uint32_t outstep);
+                         uint32_t outstep);
 };
 
 }
@@ -185,7 +185,7 @@ static void ConvolveOneF1(const RsExpandKernelParams *p, uint32_t x, float *out,
 
 void RsdCpuScriptIntrinsicConvolve3x3::kernelU4(const RsExpandKernelParams *p,
                                                 uint32_t xstart, uint32_t xend,
-                                                uint32_t instep, uint32_t outstep) {
+                                                uint32_t outstep) {
     RsdCpuScriptIntrinsicConvolve3x3 *cp = (RsdCpuScriptIntrinsicConvolve3x3 *)p->usr;
 
     if (!cp->mAlloc.get()) {
@@ -232,7 +232,7 @@ void RsdCpuScriptIntrinsicConvolve3x3::kernelU4(const RsExpandKernelParams *p,
 
 void RsdCpuScriptIntrinsicConvolve3x3::kernelU2(const RsExpandKernelParams *p,
                                                 uint32_t xstart, uint32_t xend,
-                                                uint32_t instep, uint32_t outstep) {
+                                                uint32_t outstep) {
     RsdCpuScriptIntrinsicConvolve3x3 *cp = (RsdCpuScriptIntrinsicConvolve3x3 *)p->usr;
 
     if (!cp->mAlloc.get()) {
@@ -277,7 +277,7 @@ void RsdCpuScriptIntrinsicConvolve3x3::kernelU2(const RsExpandKernelParams *p,
 
 void RsdCpuScriptIntrinsicConvolve3x3::kernelU1(const RsExpandKernelParams *p,
                                                 uint32_t xstart, uint32_t xend,
-                                                uint32_t instep, uint32_t outstep) {
+                                                uint32_t outstep) {
     RsdCpuScriptIntrinsicConvolve3x3 *cp = (RsdCpuScriptIntrinsicConvolve3x3 *)p->usr;
 
     if (!cp->mAlloc.get()) {
@@ -322,7 +322,7 @@ void RsdCpuScriptIntrinsicConvolve3x3::kernelU1(const RsExpandKernelParams *p,
 
 void RsdCpuScriptIntrinsicConvolve3x3::kernelF4(const RsExpandKernelParams *p,
                                                 uint32_t xstart, uint32_t xend,
-                                                uint32_t instep, uint32_t outstep) {
+                                                uint32_t outstep) {
     RsdCpuScriptIntrinsicConvolve3x3 *cp = (RsdCpuScriptIntrinsicConvolve3x3 *)p->usr;
 
     if (!cp->mAlloc.get()) {
@@ -367,7 +367,7 @@ void RsdCpuScriptIntrinsicConvolve3x3::kernelF4(const RsExpandKernelParams *p,
 
 void RsdCpuScriptIntrinsicConvolve3x3::kernelF2(const RsExpandKernelParams *p,
                                                 uint32_t xstart, uint32_t xend,
-                                                uint32_t instep, uint32_t outstep) {
+                                                uint32_t outstep) {
     RsdCpuScriptIntrinsicConvolve3x3 *cp = (RsdCpuScriptIntrinsicConvolve3x3 *)p->usr;
 
     if (!cp->mAlloc.get()) {
@@ -411,7 +411,7 @@ void RsdCpuScriptIntrinsicConvolve3x3::kernelF2(const RsExpandKernelParams *p,
 }
 void RsdCpuScriptIntrinsicConvolve3x3::kernelF1(const RsExpandKernelParams *p,
                                                 uint32_t xstart, uint32_t xend,
-                                                uint32_t instep, uint32_t outstep) {
+                                                uint32_t outstep) {
     RsdCpuScriptIntrinsicConvolve3x3 *cp = (RsdCpuScriptIntrinsicConvolve3x3 *)p->usr;
 
     if (!cp->mAlloc.get()) {
@@ -507,5 +507,3 @@ RsdCpuScriptImpl * rsdIntrinsic_Convolve3x3(RsdCpuReferenceImpl *ctx, const Scri
 
     return new RsdCpuScriptIntrinsicConvolve3x3(ctx, s, e);
 }
-
-

@@ -35,7 +35,7 @@ public:
 
     static void scriptGroupRoot(const RsExpandKernelParams *p,
                                 uint32_t xstart, uint32_t xend,
-                                uint32_t instep, uint32_t outstep);
+                                uint32_t outstep);
 
 protected:
     struct ScriptList {

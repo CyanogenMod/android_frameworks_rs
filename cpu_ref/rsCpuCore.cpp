@@ -49,8 +49,7 @@ using namespace android::renderscript;
 
 typedef void (*outer_foreach_t)(
     const android::renderscript::RsExpandKernelParams *,
-    uint32_t x1, uint32_t x2,
-    uint32_t instep, uint32_t outstep);
+    uint32_t x1, uint32_t x2, uint32_t outstep);
 
 
 static pthread_key_t gThreadTLSKey = 0;
@@ -414,8 +413,7 @@ static void walk_2d(void *usr, uint32_t idx) {
                       (strides.eStride * mtls->xStart);
                 }
 
-                // Kernels now get their input strides from kparams.
-                fn(&kparams, mtls->xStart, mtls->xEnd, 0,
+                fn(&kparams, mtls->xStart, mtls->xEnd,
                    mtls->fep.outStride.eStride);
             }
         }
@@ -448,8 +446,7 @@ static void walk_1d(void *usr, uint32_t idx) {
                   mtls->fep.inPtrs[inIndex] + (strides.eStride * xStart);
             }
 
-            // Kernels now get their input strides from kparams.
-            fn(&kparams, xStart, xEnd, 0, mtls->fep.outStride.eStride);
+            fn(&kparams, xStart, xEnd, mtls->fep.outStride.eStride);
         }
     });
 }
@@ -554,12 +551,7 @@ void RsdCpuReferenceImpl::launchThreads(const Allocation ** ains,
                           (strides.eStride * mtls->xStart);
                     }
 
-                    /*
-                     * The fourth argument is zero here because multi-input
-                     * kernels get their stride information from a member of p
-                     * that points to an array.
-                     */
-                    fn(&kparams, mtls->xStart, mtls->xEnd, 0,
+                    fn(&kparams, mtls->xStart, mtls->xEnd,
                        mtls->fep.outStride.eStride);
                 }
             }
