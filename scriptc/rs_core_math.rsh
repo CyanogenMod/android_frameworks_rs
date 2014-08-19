@@ -2952,1379 +2952,1379 @@ extern uint3 __attribute__((const, overloadable))convert_uint3(uint3 v);
 extern uint4 __attribute__((const, overloadable))convert_uint4(uint4 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from double2 to double2
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern double2 __attribute__((const, overloadable))convert_double2(double2 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from double3 to double3
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern double3 __attribute__((const, overloadable))convert_double3(double3 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from double4 to double4
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern double4 __attribute__((const, overloadable))convert_double4(double4 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from long2 to double2
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern double2 __attribute__((const, overloadable))convert_double2(long2 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from long3 to double3
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern double3 __attribute__((const, overloadable))convert_double3(long3 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from long4 to double4
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern double4 __attribute__((const, overloadable))convert_double4(long4 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from ulong2 to double2
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern double2 __attribute__((const, overloadable))convert_double2(ulong2 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from ulong3 to double3
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern double3 __attribute__((const, overloadable))convert_double3(ulong3 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from ulong4 to double4
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern double4 __attribute__((const, overloadable))convert_double4(ulong4 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from double2 to long2
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern long2 __attribute__((const, overloadable))convert_long2(double2 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from double3 to long3
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern long3 __attribute__((const, overloadable))convert_long3(double3 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from double4 to long4
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern long4 __attribute__((const, overloadable))convert_long4(double4 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from long2 to long2
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern long2 __attribute__((const, overloadable))convert_long2(long2 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from long3 to long3
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern long3 __attribute__((const, overloadable))convert_long3(long3 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from long4 to long4
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern long4 __attribute__((const, overloadable))convert_long4(long4 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from ulong2 to long2
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern long2 __attribute__((const, overloadable))convert_long2(ulong2 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from ulong3 to long3
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern long3 __attribute__((const, overloadable))convert_long3(ulong3 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from ulong4 to long4
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern long4 __attribute__((const, overloadable))convert_long4(ulong4 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from double2 to ulong2
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern ulong2 __attribute__((const, overloadable))convert_ulong2(double2 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from double3 to ulong3
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern ulong3 __attribute__((const, overloadable))convert_ulong3(double3 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from double4 to ulong4
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern ulong4 __attribute__((const, overloadable))convert_ulong4(double4 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from long2 to ulong2
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern ulong2 __attribute__((const, overloadable))convert_ulong2(long2 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from long3 to ulong3
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern ulong3 __attribute__((const, overloadable))convert_ulong3(long3 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from long4 to ulong4
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern ulong4 __attribute__((const, overloadable))convert_ulong4(long4 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from ulong2 to ulong2
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern ulong2 __attribute__((const, overloadable))convert_ulong2(ulong2 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from ulong3 to ulong3
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern ulong3 __attribute__((const, overloadable))convert_ulong3(ulong3 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from ulong4 to ulong4
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern ulong4 __attribute__((const, overloadable))convert_ulong4(ulong4 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from double2 to float2
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern float2 __attribute__((const, overloadable))convert_float2(double2 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from double3 to float3
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern float3 __attribute__((const, overloadable))convert_float3(double3 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from double4 to float4
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern float4 __attribute__((const, overloadable))convert_float4(double4 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from long2 to float2
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern float2 __attribute__((const, overloadable))convert_float2(long2 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from long3 to float3
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern float3 __attribute__((const, overloadable))convert_float3(long3 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from long4 to float4
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern float4 __attribute__((const, overloadable))convert_float4(long4 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from ulong2 to float2
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern float2 __attribute__((const, overloadable))convert_float2(ulong2 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from ulong3 to float3
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern float3 __attribute__((const, overloadable))convert_float3(ulong3 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from ulong4 to float4
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern float4 __attribute__((const, overloadable))convert_float4(ulong4 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from double2 to char2
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern char2 __attribute__((const, overloadable))convert_char2(double2 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from double3 to char3
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern char3 __attribute__((const, overloadable))convert_char3(double3 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from double4 to char4
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern char4 __attribute__((const, overloadable))convert_char4(double4 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from long2 to char2
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern char2 __attribute__((const, overloadable))convert_char2(long2 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from long3 to char3
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern char3 __attribute__((const, overloadable))convert_char3(long3 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from long4 to char4
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern char4 __attribute__((const, overloadable))convert_char4(long4 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from ulong2 to char2
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern char2 __attribute__((const, overloadable))convert_char2(ulong2 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from ulong3 to char3
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern char3 __attribute__((const, overloadable))convert_char3(ulong3 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from ulong4 to char4
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern char4 __attribute__((const, overloadable))convert_char4(ulong4 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from double2 to uchar2
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern uchar2 __attribute__((const, overloadable))convert_uchar2(double2 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from double3 to uchar3
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern uchar3 __attribute__((const, overloadable))convert_uchar3(double3 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from double4 to uchar4
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern uchar4 __attribute__((const, overloadable))convert_uchar4(double4 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from long2 to uchar2
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern uchar2 __attribute__((const, overloadable))convert_uchar2(long2 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from long3 to uchar3
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern uchar3 __attribute__((const, overloadable))convert_uchar3(long3 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from long4 to uchar4
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern uchar4 __attribute__((const, overloadable))convert_uchar4(long4 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from ulong2 to uchar2
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern uchar2 __attribute__((const, overloadable))convert_uchar2(ulong2 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from ulong3 to uchar3
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern uchar3 __attribute__((const, overloadable))convert_uchar3(ulong3 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from ulong4 to uchar4
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern uchar4 __attribute__((const, overloadable))convert_uchar4(ulong4 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from double2 to short2
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern short2 __attribute__((const, overloadable))convert_short2(double2 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from double3 to short3
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern short3 __attribute__((const, overloadable))convert_short3(double3 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from double4 to short4
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern short4 __attribute__((const, overloadable))convert_short4(double4 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from long2 to short2
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern short2 __attribute__((const, overloadable))convert_short2(long2 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from long3 to short3
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern short3 __attribute__((const, overloadable))convert_short3(long3 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from long4 to short4
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern short4 __attribute__((const, overloadable))convert_short4(long4 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from ulong2 to short2
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern short2 __attribute__((const, overloadable))convert_short2(ulong2 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from ulong3 to short3
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern short3 __attribute__((const, overloadable))convert_short3(ulong3 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from ulong4 to short4
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern short4 __attribute__((const, overloadable))convert_short4(ulong4 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from double2 to ushort2
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern ushort2 __attribute__((const, overloadable))convert_ushort2(double2 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from double3 to ushort3
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern ushort3 __attribute__((const, overloadable))convert_ushort3(double3 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from double4 to ushort4
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern ushort4 __attribute__((const, overloadable))convert_ushort4(double4 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from long2 to ushort2
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern ushort2 __attribute__((const, overloadable))convert_ushort2(long2 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from long3 to ushort3
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern ushort3 __attribute__((const, overloadable))convert_ushort3(long3 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from long4 to ushort4
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern ushort4 __attribute__((const, overloadable))convert_ushort4(long4 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from ulong2 to ushort2
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern ushort2 __attribute__((const, overloadable))convert_ushort2(ulong2 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from ulong3 to ushort3
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern ushort3 __attribute__((const, overloadable))convert_ushort3(ulong3 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from ulong4 to ushort4
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern ushort4 __attribute__((const, overloadable))convert_ushort4(ulong4 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from double2 to int2
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern int2 __attribute__((const, overloadable))convert_int2(double2 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from double3 to int3
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern int3 __attribute__((const, overloadable))convert_int3(double3 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from double4 to int4
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern int4 __attribute__((const, overloadable))convert_int4(double4 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from long2 to int2
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern int2 __attribute__((const, overloadable))convert_int2(long2 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from long3 to int3
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern int3 __attribute__((const, overloadable))convert_int3(long3 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from long4 to int4
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern int4 __attribute__((const, overloadable))convert_int4(long4 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from ulong2 to int2
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern int2 __attribute__((const, overloadable))convert_int2(ulong2 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from ulong3 to int3
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern int3 __attribute__((const, overloadable))convert_int3(ulong3 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from ulong4 to int4
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern int4 __attribute__((const, overloadable))convert_int4(ulong4 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from double2 to uint2
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern uint2 __attribute__((const, overloadable))convert_uint2(double2 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from double3 to uint3
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern uint3 __attribute__((const, overloadable))convert_uint3(double3 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from double4 to uint4
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern uint4 __attribute__((const, overloadable))convert_uint4(double4 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from long2 to uint2
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern uint2 __attribute__((const, overloadable))convert_uint2(long2 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from long3 to uint3
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern uint3 __attribute__((const, overloadable))convert_uint3(long3 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from long4 to uint4
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern uint4 __attribute__((const, overloadable))convert_uint4(long4 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from ulong2 to uint2
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern uint2 __attribute__((const, overloadable))convert_uint2(ulong2 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from ulong3 to uint3
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern uint3 __attribute__((const, overloadable))convert_uint3(ulong3 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from ulong4 to uint4
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern uint4 __attribute__((const, overloadable))convert_uint4(ulong4 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from float2 to double2
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern double2 __attribute__((const, overloadable))convert_double2(float2 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from float3 to double3
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern double3 __attribute__((const, overloadable))convert_double3(float3 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from float4 to double4
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern double4 __attribute__((const, overloadable))convert_double4(float4 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from char2 to double2
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern double2 __attribute__((const, overloadable))convert_double2(char2 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from char3 to double3
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern double3 __attribute__((const, overloadable))convert_double3(char3 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from char4 to double4
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern double4 __attribute__((const, overloadable))convert_double4(char4 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from uchar2 to double2
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern double2 __attribute__((const, overloadable))convert_double2(uchar2 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from uchar3 to double3
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern double3 __attribute__((const, overloadable))convert_double3(uchar3 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from uchar4 to double4
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern double4 __attribute__((const, overloadable))convert_double4(uchar4 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from short2 to double2
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern double2 __attribute__((const, overloadable))convert_double2(short2 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from short3 to double3
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern double3 __attribute__((const, overloadable))convert_double3(short3 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from short4 to double4
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern double4 __attribute__((const, overloadable))convert_double4(short4 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from ushort2 to double2
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern double2 __attribute__((const, overloadable))convert_double2(ushort2 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from ushort3 to double3
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern double3 __attribute__((const, overloadable))convert_double3(ushort3 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from ushort4 to double4
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern double4 __attribute__((const, overloadable))convert_double4(ushort4 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from int2 to double2
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern double2 __attribute__((const, overloadable))convert_double2(int2 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from int3 to double3
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern double3 __attribute__((const, overloadable))convert_double3(int3 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from int4 to double4
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern double4 __attribute__((const, overloadable))convert_double4(int4 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from uint2 to double2
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern double2 __attribute__((const, overloadable))convert_double2(uint2 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from uint3 to double3
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern double3 __attribute__((const, overloadable))convert_double3(uint3 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from uint4 to double4
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern double4 __attribute__((const, overloadable))convert_double4(uint4 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from float2 to long2
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern long2 __attribute__((const, overloadable))convert_long2(float2 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from float3 to long3
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern long3 __attribute__((const, overloadable))convert_long3(float3 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from float4 to long4
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern long4 __attribute__((const, overloadable))convert_long4(float4 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from char2 to long2
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern long2 __attribute__((const, overloadable))convert_long2(char2 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from char3 to long3
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern long3 __attribute__((const, overloadable))convert_long3(char3 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from char4 to long4
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern long4 __attribute__((const, overloadable))convert_long4(char4 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from uchar2 to long2
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern long2 __attribute__((const, overloadable))convert_long2(uchar2 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from uchar3 to long3
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern long3 __attribute__((const, overloadable))convert_long3(uchar3 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from uchar4 to long4
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern long4 __attribute__((const, overloadable))convert_long4(uchar4 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from short2 to long2
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern long2 __attribute__((const, overloadable))convert_long2(short2 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from short3 to long3
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern long3 __attribute__((const, overloadable))convert_long3(short3 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from short4 to long4
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern long4 __attribute__((const, overloadable))convert_long4(short4 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from ushort2 to long2
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern long2 __attribute__((const, overloadable))convert_long2(ushort2 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from ushort3 to long3
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern long3 __attribute__((const, overloadable))convert_long3(ushort3 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from ushort4 to long4
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern long4 __attribute__((const, overloadable))convert_long4(ushort4 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from int2 to long2
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern long2 __attribute__((const, overloadable))convert_long2(int2 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from int3 to long3
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern long3 __attribute__((const, overloadable))convert_long3(int3 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from int4 to long4
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern long4 __attribute__((const, overloadable))convert_long4(int4 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from uint2 to long2
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern long2 __attribute__((const, overloadable))convert_long2(uint2 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from uint3 to long3
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern long3 __attribute__((const, overloadable))convert_long3(uint3 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from uint4 to long4
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern long4 __attribute__((const, overloadable))convert_long4(uint4 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from float2 to ulong2
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern ulong2 __attribute__((const, overloadable))convert_ulong2(float2 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from float3 to ulong3
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern ulong3 __attribute__((const, overloadable))convert_ulong3(float3 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from float4 to ulong4
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern ulong4 __attribute__((const, overloadable))convert_ulong4(float4 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from char2 to ulong2
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern ulong2 __attribute__((const, overloadable))convert_ulong2(char2 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from char3 to ulong3
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern ulong3 __attribute__((const, overloadable))convert_ulong3(char3 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from char4 to ulong4
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern ulong4 __attribute__((const, overloadable))convert_ulong4(char4 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from uchar2 to ulong2
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern ulong2 __attribute__((const, overloadable))convert_ulong2(uchar2 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from uchar3 to ulong3
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern ulong3 __attribute__((const, overloadable))convert_ulong3(uchar3 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from uchar4 to ulong4
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern ulong4 __attribute__((const, overloadable))convert_ulong4(uchar4 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from short2 to ulong2
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern ulong2 __attribute__((const, overloadable))convert_ulong2(short2 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from short3 to ulong3
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern ulong3 __attribute__((const, overloadable))convert_ulong3(short3 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from short4 to ulong4
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern ulong4 __attribute__((const, overloadable))convert_ulong4(short4 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from ushort2 to ulong2
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern ulong2 __attribute__((const, overloadable))convert_ulong2(ushort2 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from ushort3 to ulong3
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern ulong3 __attribute__((const, overloadable))convert_ulong3(ushort3 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from ushort4 to ulong4
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern ulong4 __attribute__((const, overloadable))convert_ulong4(ushort4 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from int2 to ulong2
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern ulong2 __attribute__((const, overloadable))convert_ulong2(int2 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from int3 to ulong3
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern ulong3 __attribute__((const, overloadable))convert_ulong3(int3 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from int4 to ulong4
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern ulong4 __attribute__((const, overloadable))convert_ulong4(int4 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from uint2 to ulong2
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern ulong2 __attribute__((const, overloadable))convert_ulong2(uint2 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from uint3 to ulong3
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern ulong3 __attribute__((const, overloadable))convert_ulong3(uint3 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Component wise conversion from uint4 to ulong4
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern ulong4 __attribute__((const, overloadable))convert_ulong4(uint4 v);
 #endif
@@ -6325,290 +6325,290 @@ static uint4 __attribute__((const, overloadable))max(uint4 v1, uint4 v2) {
 }
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the maximum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern char __attribute__((const, overloadable))max(char v1, char v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the maximum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern char2 __attribute__((const, overloadable))max(char2 v1, char2 v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the maximum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern char3 __attribute__((const, overloadable))max(char3 v1, char3 v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the maximum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern char4 __attribute__((const, overloadable))max(char4 v1, char4 v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the maximum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern uchar __attribute__((const, overloadable))max(uchar v1, uchar v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the maximum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern uchar2 __attribute__((const, overloadable))max(uchar2 v1, uchar2 v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the maximum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern uchar3 __attribute__((const, overloadable))max(uchar3 v1, uchar3 v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the maximum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern uchar4 __attribute__((const, overloadable))max(uchar4 v1, uchar4 v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the maximum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern short __attribute__((const, overloadable))max(short v1, short v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the maximum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern short2 __attribute__((const, overloadable))max(short2 v1, short2 v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the maximum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern short3 __attribute__((const, overloadable))max(short3 v1, short3 v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the maximum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern short4 __attribute__((const, overloadable))max(short4 v1, short4 v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the maximum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern ushort __attribute__((const, overloadable))max(ushort v1, ushort v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the maximum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern ushort2 __attribute__((const, overloadable))max(ushort2 v1, ushort2 v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the maximum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern ushort3 __attribute__((const, overloadable))max(ushort3 v1, ushort3 v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the maximum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern ushort4 __attribute__((const, overloadable))max(ushort4 v1, ushort4 v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the maximum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern int __attribute__((const, overloadable))max(int v1, int v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the maximum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern int2 __attribute__((const, overloadable))max(int2 v1, int2 v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the maximum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern int3 __attribute__((const, overloadable))max(int3 v1, int3 v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the maximum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern int4 __attribute__((const, overloadable))max(int4 v1, int4 v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the maximum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern uint __attribute__((const, overloadable))max(uint v1, uint v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the maximum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern uint2 __attribute__((const, overloadable))max(uint2 v1, uint2 v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the maximum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern uint3 __attribute__((const, overloadable))max(uint3 v1, uint3 v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the maximum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern uint4 __attribute__((const, overloadable))max(uint4 v1, uint4 v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the maximum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern long __attribute__((const, overloadable))max(long v1, long v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the maximum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern long2 __attribute__((const, overloadable))max(long2 v1, long2 v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the maximum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern long3 __attribute__((const, overloadable))max(long3 v1, long3 v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the maximum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern long4 __attribute__((const, overloadable))max(long4 v1, long4 v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the maximum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern ulong __attribute__((const, overloadable))max(ulong v1, ulong v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the maximum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern ulong2 __attribute__((const, overloadable))max(ulong2 v1, ulong2 v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the maximum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern ulong3 __attribute__((const, overloadable))max(ulong3 v1, ulong3 v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the maximum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern ulong4 __attribute__((const, overloadable))max(ulong4 v1, ulong4 v2);
 #endif
@@ -6985,290 +6985,290 @@ static uint4 __attribute__((const, overloadable))min(uint4 v1, uint4 v2) {
 }
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the minimum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern char __attribute__((const, overloadable))min(char v1, char v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the minimum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern char2 __attribute__((const, overloadable))min(char2 v1, char2 v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the minimum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern char3 __attribute__((const, overloadable))min(char3 v1, char3 v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the minimum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern char4 __attribute__((const, overloadable))min(char4 v1, char4 v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the minimum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern uchar __attribute__((const, overloadable))min(uchar v1, uchar v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the minimum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern uchar2 __attribute__((const, overloadable))min(uchar2 v1, uchar2 v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the minimum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern uchar3 __attribute__((const, overloadable))min(uchar3 v1, uchar3 v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the minimum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern uchar4 __attribute__((const, overloadable))min(uchar4 v1, uchar4 v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the minimum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern short __attribute__((const, overloadable))min(short v1, short v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the minimum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern short2 __attribute__((const, overloadable))min(short2 v1, short2 v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the minimum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern short3 __attribute__((const, overloadable))min(short3 v1, short3 v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the minimum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern short4 __attribute__((const, overloadable))min(short4 v1, short4 v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the minimum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern ushort __attribute__((const, overloadable))min(ushort v1, ushort v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the minimum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern ushort2 __attribute__((const, overloadable))min(ushort2 v1, ushort2 v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the minimum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern ushort3 __attribute__((const, overloadable))min(ushort3 v1, ushort3 v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the minimum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern ushort4 __attribute__((const, overloadable))min(ushort4 v1, ushort4 v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the minimum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern int __attribute__((const, overloadable))min(int v1, int v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the minimum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern int2 __attribute__((const, overloadable))min(int2 v1, int2 v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the minimum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern int3 __attribute__((const, overloadable))min(int3 v1, int3 v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the minimum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern int4 __attribute__((const, overloadable))min(int4 v1, int4 v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the minimum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern uint __attribute__((const, overloadable))min(uint v1, uint v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the minimum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern uint2 __attribute__((const, overloadable))min(uint2 v1, uint2 v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the minimum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern uint3 __attribute__((const, overloadable))min(uint3 v1, uint3 v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the minimum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern uint4 __attribute__((const, overloadable))min(uint4 v1, uint4 v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the minimum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern long __attribute__((const, overloadable))min(long v1, long v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the minimum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern long2 __attribute__((const, overloadable))min(long2 v1, long2 v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the minimum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern long3 __attribute__((const, overloadable))min(long3 v1, long3 v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the minimum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern long4 __attribute__((const, overloadable))min(long4 v1, long4 v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the minimum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern ulong __attribute__((const, overloadable))min(ulong v1, ulong v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the minimum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern ulong2 __attribute__((const, overloadable))min(ulong2 v1, ulong2 v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the minimum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern ulong3 __attribute__((const, overloadable))min(ulong3 v1, ulong3 v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the minimum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern ulong4 __attribute__((const, overloadable))min(ulong4 v1, ulong4 v2);
 #endif
@@ -9653,38 +9653,38 @@ extern float3 __attribute__((const, overloadable))step(float3 edge, float v);
 extern float4 __attribute__((const, overloadable))step(float4 edge, float v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * if (v < edge)
  * return 0.f;
  * else
  * return 1.f;
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern float2 __attribute__((const, overloadable))step(float edge, float2 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * if (v < edge)
  * return 0.f;
  * else
  * return 1.f;
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern float3 __attribute__((const, overloadable))step(float edge, float3 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * if (v < edge)
  * return 0.f;
  * else
  * return 1.f;
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern float4 __attribute__((const, overloadable))step(float edge, float4 v);
 #endif
