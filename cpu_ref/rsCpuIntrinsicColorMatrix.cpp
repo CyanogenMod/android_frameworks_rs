@@ -189,7 +189,7 @@ protected:
 
     static void kernel(const RsExpandKernelParams *p,
                        uint32_t xstart, uint32_t xend,
-                       uint32_t instep, uint32_t outstep);
+                       uint32_t outstep);
     void updateCoeffCache(float fpMul, float addMul);
 
     Key_t mLastKey;
@@ -880,11 +880,10 @@ static void One(const RsExpandKernelParams *p, void *out,
 
 void RsdCpuScriptIntrinsicColorMatrix::kernel(const RsExpandKernelParams *p,
                                               uint32_t xstart, uint32_t xend,
-                                              uint32_t instep, uint32_t outstep) {
+                                              uint32_t outstep) {
     RsdCpuScriptIntrinsicColorMatrix *cp = (RsdCpuScriptIntrinsicColorMatrix *)p->usr;
 
-    // Update the instep due to change in parameter passing.
-    instep = p->inEStrides[0];
+    uint32_t instep = p->inEStrides[0];
 
     uchar *out = (uchar *)p->out    + outstep * xstart;
     uchar *in  = (uchar *)p->ins[0] + instep  * xstart;

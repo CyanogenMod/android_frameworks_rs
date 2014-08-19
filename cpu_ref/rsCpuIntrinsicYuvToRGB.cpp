@@ -48,7 +48,7 @@ protected:
 
     static void kernel(const RsExpandKernelParams *p,
                        uint32_t xstart, uint32_t xend,
-                       uint32_t instep, uint32_t outstep);
+                       uint32_t outstep);
 };
 
 }
@@ -103,7 +103,7 @@ extern "C" void rsdIntrinsicYuv2_K(void *dst, const uchar *Y, const uchar *u, co
 
 void RsdCpuScriptIntrinsicYuvToRGB::kernel(const RsExpandKernelParams *p,
                                            uint32_t xstart, uint32_t xend,
-                                           uint32_t instep, uint32_t outstep) {
+                                           uint32_t outstep) {
     RsdCpuScriptIntrinsicYuvToRGB *cp = (RsdCpuScriptIntrinsicYuvToRGB *)p->usr;
     if (!cp->alloc.get()) {
         ALOGE("YuvToRGB executed without input, skipping");

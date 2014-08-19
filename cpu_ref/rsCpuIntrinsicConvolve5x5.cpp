@@ -44,22 +44,22 @@ protected:
 
     static void kernelU1(const RsExpandKernelParams *p,
                          uint32_t xstart, uint32_t xend,
-                         uint32_t instep, uint32_t outstep);
+                         uint32_t outstep);
     static void kernelU2(const RsExpandKernelParams *p,
                          uint32_t xstart, uint32_t xend,
-                         uint32_t instep, uint32_t outstep);
+                         uint32_t outstep);
     static void kernelU4(const RsExpandKernelParams *p,
                          uint32_t xstart, uint32_t xend,
-                         uint32_t instep, uint32_t outstep);
+                         uint32_t outstep);
     static void kernelF1(const RsExpandKernelParams *p,
                          uint32_t xstart, uint32_t xend,
-                         uint32_t instep, uint32_t outstep);
+                         uint32_t outstep);
     static void kernelF2(const RsExpandKernelParams *p,
                          uint32_t xstart, uint32_t xend,
-                         uint32_t instep, uint32_t outstep);
+                         uint32_t outstep);
     static void kernelF4(const RsExpandKernelParams *p,
                          uint32_t xstart, uint32_t xend,
-                         uint32_t instep, uint32_t outstep);
+                         uint32_t outstep);
 
 
 };
@@ -348,7 +348,7 @@ extern "C" void rsdIntrinsicConvolve5x5_K(void *dst, const void *y0, const void 
 
 void RsdCpuScriptIntrinsicConvolve5x5::kernelU4(const RsExpandKernelParams *p,
                                                 uint32_t xstart, uint32_t xend,
-                                                uint32_t instep, uint32_t outstep) {
+                                                uint32_t outstep) {
     RsdCpuScriptIntrinsicConvolve5x5 *cp = (RsdCpuScriptIntrinsicConvolve5x5 *)p->usr;
     if (!cp->alloc.get()) {
         ALOGE("Convolve5x5 executed without input, skipping");
@@ -408,7 +408,7 @@ void RsdCpuScriptIntrinsicConvolve5x5::kernelU4(const RsExpandKernelParams *p,
 
 void RsdCpuScriptIntrinsicConvolve5x5::kernelU2(const RsExpandKernelParams *p,
                                                 uint32_t xstart, uint32_t xend,
-                                                uint32_t instep, uint32_t outstep) {
+                                                uint32_t outstep) {
     RsdCpuScriptIntrinsicConvolve5x5 *cp = (RsdCpuScriptIntrinsicConvolve5x5 *)p->usr;
     if (!cp->alloc.get()) {
         ALOGE("Convolve5x5 executed without input, skipping");
@@ -457,7 +457,7 @@ void RsdCpuScriptIntrinsicConvolve5x5::kernelU2(const RsExpandKernelParams *p,
 
 void RsdCpuScriptIntrinsicConvolve5x5::kernelU1(const RsExpandKernelParams *p,
                                                 uint32_t xstart, uint32_t xend,
-                                                uint32_t instep, uint32_t outstep) {
+                                                uint32_t outstep) {
     RsdCpuScriptIntrinsicConvolve5x5 *cp = (RsdCpuScriptIntrinsicConvolve5x5 *)p->usr;
     if (!cp->alloc.get()) {
         ALOGE("Convolve5x5 executed without input, skipping");
@@ -506,7 +506,7 @@ void RsdCpuScriptIntrinsicConvolve5x5::kernelU1(const RsExpandKernelParams *p,
 
 void RsdCpuScriptIntrinsicConvolve5x5::kernelF4(const RsExpandKernelParams *p,
                                                 uint32_t xstart, uint32_t xend,
-                                                uint32_t instep, uint32_t outstep) {
+                                                uint32_t outstep) {
     RsdCpuScriptIntrinsicConvolve5x5 *cp = (RsdCpuScriptIntrinsicConvolve5x5 *)p->usr;
     if (!cp->alloc.get()) {
         ALOGE("Convolve5x5 executed without input, skipping");
@@ -555,7 +555,7 @@ void RsdCpuScriptIntrinsicConvolve5x5::kernelF4(const RsExpandKernelParams *p,
 
 void RsdCpuScriptIntrinsicConvolve5x5::kernelF2(const RsExpandKernelParams *p,
                                                 uint32_t xstart, uint32_t xend,
-                                                uint32_t instep, uint32_t outstep) {
+                                                uint32_t outstep) {
     RsdCpuScriptIntrinsicConvolve5x5 *cp = (RsdCpuScriptIntrinsicConvolve5x5 *)p->usr;
     if (!cp->alloc.get()) {
         ALOGE("Convolve5x5 executed without input, skipping");
@@ -604,7 +604,7 @@ void RsdCpuScriptIntrinsicConvolve5x5::kernelF2(const RsExpandKernelParams *p,
 
 void RsdCpuScriptIntrinsicConvolve5x5::kernelF1(const RsExpandKernelParams *p,
                                                 uint32_t xstart, uint32_t xend,
-                                                uint32_t instep, uint32_t outstep) {
+                                                uint32_t outstep) {
     RsdCpuScriptIntrinsicConvolve5x5 *cp = (RsdCpuScriptIntrinsicConvolve5x5 *)p->usr;
     if (!cp->alloc.get()) {
         ALOGE("Convolve5x5 executed without input, skipping");
@@ -705,6 +705,3 @@ RsdCpuScriptImpl * rsdIntrinsic_Convolve5x5(RsdCpuReferenceImpl *ctx,
 
     return new RsdCpuScriptIntrinsicConvolve5x5(ctx, s, e);
 }
-
-
-
