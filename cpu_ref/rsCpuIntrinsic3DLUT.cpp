@@ -40,7 +40,7 @@ protected:
 
     static void kernel(const RsExpandKernelParams *p,
                        uint32_t xstart, uint32_t xend,
-                       uint32_t instep, uint32_t outstep);
+                       uint32_t outstep);
 };
 
 }
@@ -59,8 +59,8 @@ extern "C" void rsdIntrinsic3DLUT_K(void *dst, void const *in, size_t count,
 
 
 void RsdCpuScriptIntrinsic3DLUT::kernel(const RsExpandKernelParams *p,
-                                      uint32_t xstart, uint32_t xend,
-                                      uint32_t instep, uint32_t outstep) {
+                                        uint32_t xstart, uint32_t xend,
+                                        uint32_t outstep) {
     RsdCpuScriptIntrinsic3DLUT *cp = (RsdCpuScriptIntrinsic3DLUT *)p->usr;
 
     uchar4 *out = (uchar4 *)p->out + xstart;

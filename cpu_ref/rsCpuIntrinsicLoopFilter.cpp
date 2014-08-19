@@ -176,7 +176,7 @@ protected:
     void doLoopFilter();
     static void kernel(const RsExpandKernelParams *p,
                        uint32_t xstart, uint32_t xend,
-                       uint32_t instep, uint32_t outstep);
+                       uint32_t outstep);
 };
 
 }
@@ -184,7 +184,7 @@ protected:
 
 void RsdCpuScriptIntrinsicLoopFilter::kernel(const RsExpandKernelParams *p,
                                              uint32_t xstart, uint32_t xend,
-                                             uint32_t instep, uint32_t outstep) {
+                                             uint32_t outstep) {
     RsdCpuScriptIntrinsicLoopFilter *cp = (RsdCpuScriptIntrinsicLoopFilter*)p->usr;
     memset((void*)&cp->mPrch.chart, 0, sizeof(cp->mPrch.chart));
     cp->mPrch.chart[0] = 0x0fffffff;
@@ -1232,4 +1232,3 @@ RsdCpuScriptIntrinsicLoopFilter::RsdCpuScriptIntrinsicLoopFilter(
         rsAssert(rv == 0);
     }
 }
-
