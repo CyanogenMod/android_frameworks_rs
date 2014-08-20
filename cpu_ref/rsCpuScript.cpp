@@ -176,7 +176,7 @@ static void *loadSharedLibrary(const char *cacheDir, const char *resName) {
         // library fallback path. Those applications don't have a private
         // library path, so they need to install to the system directly.
         // Note that this is really just a testing path.
-        android::String8 scriptSONameSystem("/system/lib/librs.");
+        std::string scriptSONameSystem("/system/lib/librs.");
         scriptSONameSystem.append(resName);
         scriptSONameSystem.append(".so");
         loaded = loadSOHelper(scriptSONameSystem.c_str(), cacheDir,
@@ -760,9 +760,9 @@ void RsdCpuScriptImpl::populateScript(Script *script) {
     script->mHal.info.exportedForeachFuncList = &mExportedForEachFuncList[0];
     script->mHal.info.exportedPragmaCount = mExecutable->getPragmaKeys().size();
     script->mHal.info.exportedPragmaKeyList =
-        const_cast<const char**>(mExecutable->getPragmaKeys().array());
+        const_cast<const char**>(&mExecutable->getPragmaKeys().front());
     script->mHal.info.exportedPragmaValueList =
-        const_cast<const char**>(mExecutable->getPragmaValues().array());
+        const_cast<const char**>(&mExecutable->getPragmaValues().front());
 
     if (mRootExpand) {
         script->mHal.info.root = mRootExpand;
@@ -1141,9 +1141,9 @@ void RsdCpuScriptImpl::setGlobalObj(uint32_t slot, ObjectBase *data) {
 RsdCpuScriptImpl::~RsdCpuScriptImpl() {
 #ifndef RS_COMPATIBILITY_LIB
     if (mExecutable) {
-        Vector<void *>::const_iterator var_addr_iter =
+        std::vector<void *>::const_iterator var_addr_iter =
             mExecutable->getExportVarAddrs().begin();
-        Vector<void *>::const_iterator var_addr_end =
+        std::vector<void *>::const_iterator var_addr_end =
             mExecutable->getExportVarAddrs().end();
 
         bcc::RSInfo::ObjectSlotListTy::const_iterator is_object_iter =

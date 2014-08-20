@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+#include <vector>
+
 #include "../cpu_ref/rsd_cpu.h"
 
 #include "rsdCore.h"
@@ -26,7 +28,6 @@
 #include "rsScriptC.h"
 
 #if !defined(RS_SERVER) && !defined(RS_COMPATIBILITY_LIB)
-#include "utils/Vector.h"
 #include "utils/Timers.h"
 #include "utils/StopWatch.h"
 #endif

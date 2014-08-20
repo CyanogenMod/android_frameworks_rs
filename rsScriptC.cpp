@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+#include <string>
+
 #include "rsContext.h"
 #include "rsScriptC.h"
 
@@ -165,15 +167,14 @@ void ScriptC::runForEach(Context *rsc,
     // Trace this function call.
     // To avoid overhead we only build the string if tracing is actually
     // enabled.
-    String8 *AString = NULL;
-    const char *String = "";
+    std::string *traceString = NULL;
+    const char  *stringData  = "";
     if (ATRACE_ENABLED()) {
-        AString = new String8("runForEach_");
-        AString->append(mHal.info.exportedForeachFuncList[slot].first);
-        String = AString->string();
+        traceString = new std::string("runForEach_");
+        traceString->append(mHal.info.exportedForeachFuncList[slot].first);
+        stringData = traceString->c_str();
     }
-    ATRACE_NAME(String);
-    (void)String;
+    ATRACE_NAME(stringData);
 
     Context::PushState ps(rsc);
 
@@ -193,8 +194,8 @@ void ScriptC::runForEach(Context *rsc,
                       "Driver support for multi-input not present");
     }
 
-    if (AString) {
-        delete AString;
+    if (traceString) {
+        delete traceString;
     }
 }
 
