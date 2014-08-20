@@ -176,6 +176,9 @@ LOCAL_C_INCLUDES += frameworks/compile/libbcc/include
 LOCAL_C_INCLUDES += external/libcxx/include
 
 LOCAL_CFLAGS += $(rs_base_CFLAGS)
+# TODO: external/freetype still uses the register keyword
+# Bug: 17163086
+LOCAL_CFLAGS += -Wno-deprecated-register
 
 LOCAL_CPPFLAGS += -fno-exceptions
 
