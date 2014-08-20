@@ -17,6 +17,8 @@
 #ifndef ANDROID_STRUCTURED_ELEMENT_H
 #define ANDROID_STRUCTURED_ELEMENT_H
 
+#include <vector>
+
 #include "rsComponent.h"
 #include "rsUtils.h"
 #include "rsDefines.h"
@@ -170,7 +172,7 @@ public:
     ~ElementState();
 
     // Cache of all existing elements.
-    Vector<Element *> mElements;
+    std::vector<Element *> mElements;
 };
 
 

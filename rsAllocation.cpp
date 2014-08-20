@@ -223,34 +223,40 @@ void Allocation::elementData(Context *rsc, uint32_t x, uint32_t y,
     }
 
     if (y >= mHal.drvState.lod[0].dimY) {
-        rsc->setError(RS_ERROR_BAD_VALUE, "subElementData X offset out of range.");
+        rsc->setError(RS_ERROR_BAD_VALUE,
+                      "subElementData X offset out of range.");
         return;
     }
 
     if (cIdx >= mHal.state.type->getElement()->getFieldCount()) {
-        rsc->setError(RS_ERROR_BAD_VALUE, "subElementData component out of range.");
+        rsc->setError(RS_ERROR_BAD_VALUE,
+                      "subElementData component out of range.");
         return;
     }
 
     const Element * e = mHal.state.type->getElement()->getField(cIdx);
-    uint32_t elemArraySize = mHal.state.type->getElement()->getFieldArraySize(cIdx);
+    uint32_t elemArraySize =
+        mHal.state.type->getElement()->getFieldArraySize(cIdx);
     if (sizeBytes != e->getSizeBytes() * elemArraySize) {
         rsc->setError(RS_ERROR_BAD_VALUE, "subElementData bad size.");
         return;
     }
 
-    rsc->mHal.funcs.allocation.elementData2D(rsc, this, x, y, data, cIdx, sizeBytes);
+    rsc->mHal.funcs.allocation.elementData2D(rsc, this, x, y, data, cIdx,
+                                             sizeBytes);
     sendDirty(rsc);
 }
 
 void Allocation::addProgramToDirty(const Program *p) {
-    mToDirtyList.push(p);
+    mToDirtyList.push_back(p);
 }
 
 void Allocation::removeProgramToDirty(const Program *p) {
-    for (size_t ct=0; ct < mToDirtyList.size(); ct++) {
-        if (mToDirtyList[ct] == p) {
-            mToDirtyList.removeAt(ct);
+    for (auto entryIter = mToDirtyList.begin(), endIter = mToDirtyList.end();
+         entryIter != endIter; entryIter++) {
+
+        if (p == *entryIter) {
+            mToDirtyList.erase(entryIter);
             return;
         }
     }
@@ -268,7 +274,8 @@ void Allocation::dumpLOGV(const char *prefix) const {
         }
     }
     ALOGV("%s allocation ptr=%p  mUsageFlags=0x04%x, mMipmapControl=0x%04x",
-         prefix, mHal.drvState.lod[0].mallocPtr, mHal.state.usageFlags, mHal.state.mipmapControl);
+          prefix, mHal.drvState.lod[0].mallocPtr, mHal.state.usageFlags,
+          mHal.state.mipmapControl);
 }
 
 uint32_t Allocation::getPackedSize() const {

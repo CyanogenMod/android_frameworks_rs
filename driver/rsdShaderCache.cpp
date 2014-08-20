@@ -29,7 +29,7 @@ using namespace android::renderscript;
 
 
 RsdShaderCache::RsdShaderCache() {
-    mEntries.setCapacity(16);
+    mEntries.reserve(16);
     mVertexDirty = true;
     mFragmentDirty = true;
 }
@@ -132,7 +132,7 @@ bool RsdShaderCache::link(const Context *rsc) {
     ProgramEntry *e = new ProgramEntry(vtx->getAttribCount(),
                                        vtx->getUniformCount(),
                                        frag->getUniformCount());
-    mEntries.push(e);
+    mEntries.push_back(e);
     mCurrent = e;
     e->vtx = vID;
     e->frag = fID;
@@ -228,7 +228,7 @@ bool RsdShaderCache::link(const Context *rsc) {
     return true;
 }
 
-int32_t RsdShaderCache::vtxAttribSlot(const String8 &attrName) const {
+int32_t RsdShaderCache::vtxAttribSlot(const std::string &attrName) const {
     for (uint32_t ct=0; ct < mCurrent->vtxAttrCount; ct++) {
         if (attrName == mCurrent->vtxAttrs[ct].name) {
             return mCurrent->vtxAttrs[ct].slot;
@@ -238,46 +238,45 @@ int32_t RsdShaderCache::vtxAttribSlot(const String8 &attrName) const {
 }
 
 void RsdShaderCache::cleanupVertex(RsdShader *s) {
-    int32_t numEntries = (int32_t)mEntries.size();
     uint32_t numShaderIDs = s->getStateBasedIDCount();
     for (uint32_t sId = 0; sId < numShaderIDs; sId ++) {
         uint32_t id = s->getStateBasedID(sId);
-        for (int32_t ct = 0; ct < numEntries; ct ++) {
-            if (mEntries[ct]->vtx == id) {
-                glDeleteProgram(mEntries[ct]->program);
 
-                delete mEntries[ct];
-                mEntries.removeAt(ct);
-                numEntries = (int32_t)mEntries.size();
-                ct --;
+        for (auto entry = mEntries.begin(); entry != mEntries.end();) {
+            if ((*entry)->vtx == id) {
+                glDeleteProgram((*entry)->program);
+
+                delete *entry;
+                entry = mEntries.erase(entry);
+            } else {
+                entry++;
             }
         }
     }
 }
 
 void RsdShaderCache::cleanupFragment(RsdShader *s) {
-    int32_t numEntries = (int32_t)mEntries.size();
     uint32_t numShaderIDs = s->getStateBasedIDCount();
     for (uint32_t sId = 0; sId < numShaderIDs; sId ++) {
         uint32_t id = s->getStateBasedID(sId);
-        for (int32_t ct = 0; ct < numEntries; ct ++) {
-            if (mEntries[ct]->frag == id) {
-                glDeleteProgram(mEntries[ct]->program);
 
-                delete mEntries[ct];
-                mEntries.removeAt(ct);
-                numEntries = (int32_t)mEntries.size();
-                ct --;
+        for (auto entry = mEntries.begin(); entry != mEntries.end();) {
+            if ((*entry)->frag == id) {
+                glDeleteProgram((*entry)->program);
+
+                delete *entry;
+                entry = mEntries.erase(entry);
+            } else {
+                entry++;
             }
         }
     }
 }
 
 void RsdShaderCache::cleanupAll() {
-    for (uint32_t ct=0; ct < mEntries.size(); ct++) {
-        glDeleteProgram(mEntries[ct]->program);
-        free(mEntries[ct]);
+    for (auto entry : mEntries) {
+        glDeleteProgram(entry->program);
+        delete entry;
     }
     mEntries.clear();
 }
-
