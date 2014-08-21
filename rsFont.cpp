@@ -33,7 +33,7 @@
 using namespace android;
 using namespace android::renderscript;
 
-Font::Font(Context *rsc) : ObjectBase(rsc), mCachedGlyphs(NULL) {
+Font::Font(Context *rsc) : ObjectBase(rsc) {
     mInitialized = false;
     mHasKerning = false;
     mFace = NULL;
@@ -76,17 +76,21 @@ bool Font::init(const char *name, float fontSize, uint32_t dpi, const void *data
 }
 
 void Font::preDestroy() const {
-    for (uint32_t ct = 0; ct < mRSC->mStateFont.mActiveFonts.size(); ct++) {
-        if (mRSC->mStateFont.mActiveFonts[ct] == this) {
-            mRSC->mStateFont.mActiveFonts.removeAt(ct);
-            break;
+    auto &activeFonts = mRSC->mStateFont.mActiveFonts;
+
+    for (auto font = activeFonts.begin(), end = activeFonts.end(); font != end;
+         font++) {
+
+        if (this == *font) {
+            activeFonts.erase(font);
+            return;
         }
     }
 }
 
 void Font::invalidateTextureCache() {
     for (uint32_t i = 0; i < mCachedGlyphs.size(); i ++) {
-        mCachedGlyphs.valueAt(i)->mIsValid = false;
+        mCachedGlyphs[i]->mIsValid = false;
     }
 }
 
@@ -224,7 +228,7 @@ void Font::renderUTF(const char *text, uint32_t len, int32_t x, int32_t y,
 
 Font::CachedGlyphInfo* Font::getCachedUTFChar(int32_t utfChar) {
 
-    CachedGlyphInfo *cachedGlyph = mCachedGlyphs.valueFor((uint32_t)utfChar);
+    CachedGlyphInfo *cachedGlyph = mCachedGlyphs[(uint32_t)utfChar];
     if (cachedGlyph == NULL) {
         cachedGlyph = cacheGlyph((uint32_t)utfChar);
     }
@@ -283,7 +287,7 @@ void Font::updateGlyphCache(CachedGlyphInfo *glyph) {
 
 Font::CachedGlyphInfo *Font::cacheGlyph(uint32_t glyph) {
     CachedGlyphInfo *newGlyph = new CachedGlyphInfo();
-    mCachedGlyphs.add(glyph, newGlyph);
+    mCachedGlyphs[glyph] = newGlyph;
 #ifndef ANDROID_RS_SERIALIZE
     newGlyph->mGlyphIndex = FT_Get_Char_Index(mFace, glyph);
     newGlyph->mIsValid = false;
@@ -296,11 +300,14 @@ Font::CachedGlyphInfo *Font::cacheGlyph(uint32_t glyph) {
 Font * Font::create(Context *rsc, const char *name, float fontSize, uint32_t dpi,
                     const void *data, uint32_t dataLen) {
     rsc->mStateFont.checkInit();
-    Vector<Font*> &activeFonts = rsc->mStateFont.mActiveFonts;
+    std::vector<Font*> &activeFonts = rsc->mStateFont.mActiveFonts;
 
     for (uint32_t i = 0; i < activeFonts.size(); i ++) {
         Font *ithFont = activeFonts[i];
-        if (ithFont->mFontName == name && ithFont->mFontSize == fontSize && ithFont->mDpi == dpi) {
+        if (ithFont->mFontName == name &&
+            ithFont->mFontSize == fontSize &&
+            ithFont->mDpi == dpi) {
+
             return ithFont;
         }
     }
@@ -308,7 +315,7 @@ Font * Font::create(Context *rsc, const char *name, float fontSize, uint32_t dpi
     Font *newFont = new Font(rsc);
     bool isInitialized = newFont->init(name, fontSize, dpi, data, dataLen);
     if (isInitialized) {
-        activeFonts.push(newFont);
+        activeFonts.push_back(newFont);
         rsc->mStateFont.precacheLatin(newFont);
         return newFont;
     }
@@ -325,7 +332,7 @@ Font::~Font() {
 #endif
 
     for (uint32_t i = 0; i < mCachedGlyphs.size(); i ++) {
-        CachedGlyphInfo *glyph = mCachedGlyphs.valueAt(i);
+        CachedGlyphInfo *glyph = mCachedGlyphs[i];
         delete glyph;
     }
 }
@@ -551,29 +558,39 @@ void FontState::initTextTexture() {
     mCacheHeight = 256;
     mCacheWidth = 1024;
     ObjectBaseRef<Type> texType = Type::getTypeRef(mRSC, alphaElem.get(),
-                                                   mCacheWidth, mCacheHeight, 0, false, false, 0);
+                                                   mCacheWidth, mCacheHeight,
+                                                   0, false, false, 0);
+
     mCacheBuffer = new uint8_t[mCacheWidth * mCacheHeight];
 
 
-    Allocation *cacheAlloc = Allocation::createAllocation(mRSC, texType.get(),
-                                RS_ALLOCATION_USAGE_GRAPHICS_TEXTURE);
+    Allocation *cacheAlloc =
+        Allocation::createAllocation(mRSC, texType.get(),
+                                     RS_ALLOCATION_USAGE_GRAPHICS_TEXTURE);
     mTextTexture.set(cacheAlloc);
 
     // Split up our cache texture into lines of certain widths
     int32_t nextLine = 0;
-    mCacheLines.push(new CacheTextureLine(16, texType->getDimX(), nextLine, 0));
-    nextLine += mCacheLines.top()->mMaxHeight;
-    mCacheLines.push(new CacheTextureLine(24, texType->getDimX(), nextLine, 0));
-    nextLine += mCacheLines.top()->mMaxHeight;
-    mCacheLines.push(new CacheTextureLine(24, texType->getDimX(), nextLine, 0));
-    nextLine += mCacheLines.top()->mMaxHeight;
-    mCacheLines.push(new CacheTextureLine(32, texType->getDimX(), nextLine, 0));
-    nextLine += mCacheLines.top()->mMaxHeight;
-    mCacheLines.push(new CacheTextureLine(32, texType->getDimX(), nextLine, 0));
-    nextLine += mCacheLines.top()->mMaxHeight;
-    mCacheLines.push(new CacheTextureLine(40, texType->getDimX(), nextLine, 0));
-    nextLine += mCacheLines.top()->mMaxHeight;
-    mCacheLines.push(new CacheTextureLine(texType->getDimY() - nextLine, texType->getDimX(), nextLine, 0));
+    mCacheLines.push_back(new CacheTextureLine(16, texType->getDimX(),
+                          nextLine, 0));
+    nextLine += mCacheLines.back()->mMaxHeight;
+    mCacheLines.push_back(new CacheTextureLine(24, texType->getDimX(),
+                          nextLine, 0));
+    nextLine += mCacheLines.back()->mMaxHeight;
+    mCacheLines.push_back(new CacheTextureLine(24, texType->getDimX(),
+                          nextLine, 0));
+    nextLine += mCacheLines.back()->mMaxHeight;
+    mCacheLines.push_back(new CacheTextureLine(32, texType->getDimX(),
+                          nextLine, 0));
+    nextLine += mCacheLines.back()->mMaxHeight;
+    mCacheLines.push_back(new CacheTextureLine(32, texType->getDimX(),
+                          nextLine, 0));
+    nextLine += mCacheLines.back()->mMaxHeight;
+    mCacheLines.push_back(new CacheTextureLine(40, texType->getDimX(),
+                          nextLine, 0));
+    nextLine += mCacheLines.back()->mMaxHeight;
+    mCacheLines.push_back(new CacheTextureLine(texType->getDimY() - nextLine,
+                          texType->getDimX(), nextLine, 0));
 }
 
 // Avoid having to reallocate memory and render quad by quad

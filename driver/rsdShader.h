@@ -49,7 +49,7 @@ public:
     // Add ability to get all ID's to clean up the cached program objects
     uint32_t getStateBasedIDCount() const { return mStateBasedShaders.size(); }
     uint32_t getStateBasedID(uint32_t index) const {
-        return mStateBasedShaders.itemAt(index)->mShaderID;
+        return mStateBasedShaders[index]->mShaderID;
     }
 
     uint32_t getAttribCount() const {return mAttribCount;}
@@ -116,9 +116,9 @@ protected:
     android::String8 *mUniformNames;
     uint32_t *mUniformArraySizes;
 
-    android::Vector<android::String8> mTextureNames;
+    std::vector<android::String8> mTextureNames;
 
-    android::Vector<StateBasedKey*> mStateBasedShaders;
+    std::vector<StateBasedKey*> mStateBasedShaders;
 
     int32_t mTextureUniformIndexStart;
 
@@ -133,7 +133,3 @@ protected:
 };
 
 #endif //ANDROID_RSD_SHADER_H
-
-
-
-
