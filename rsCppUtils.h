@@ -19,7 +19,6 @@
 
 #if !defined(RS_SERVER) && !defined(RS_COMPATIBILITY_LIB)
 #include <utils/Log.h>
-#include <utils/String8.h>
 #include <cutils/atomic.h>
 #endif
 
