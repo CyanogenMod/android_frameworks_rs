@@ -38,9 +38,13 @@ RsdShaderCache::~RsdShaderCache() {
     cleanupAll();
 }
 
-void RsdShaderCache::updateUniformArrayData(const Context *rsc, RsdShader *prog, uint32_t linkedID,
-                                         UniformData *data, const char* logTag,
-                                         UniformQueryData **uniformList, uint32_t uniListSize) {
+void RsdShaderCache::updateUniformArrayData(const Context *rsc,
+                                            RsdShader *prog,
+                                            uint32_t linkedID,
+                                            UniformData *data,
+                                            const char* logTag,
+                                            UniformQueryData **uniformList,
+                                            uint32_t uniListSize) {
 
     for (uint32_t ct=0; ct < prog->getUniformCount(); ct++) {
         if (data[ct].slot >= 0 && data[ct].arraySize > 1) {
@@ -55,14 +59,17 @@ void RsdShaderCache::updateUniformArrayData(const Context *rsc, RsdShader *prog,
 
         if (rsc->props.mLogShaders) {
              ALOGV("%s U, %s = %d, arraySize = %d\n", logTag,
-                  prog->getUniformName(ct).string(), data[ct].slot, data[ct].arraySize);
+                   prog->getUniformName(ct).c_str(), data[ct].slot,
+                   data[ct].arraySize);
         }
     }
 }
 
-void RsdShaderCache::populateUniformData(RsdShader *prog, uint32_t linkedID, UniformData *data) {
+void RsdShaderCache::populateUniformData(RsdShader *prog, uint32_t linkedID,
+                                         UniformData *data) {
     for (uint32_t ct=0; ct < prog->getUniformCount(); ct++) {
-       data[ct].slot = glGetUniformLocation(linkedID, prog->getUniformName(ct));
+       data[ct].slot = glGetUniformLocation(linkedID,
+                                            prog->getUniformName(ct).c_str());
        data[ct].arraySize = prog->getUniformArraySize(ct);
     }
 }
@@ -169,10 +176,12 @@ bool RsdShaderCache::link(const Context *rsc) {
         }
 
         for (uint32_t ct=0; ct < e->vtxAttrCount; ct++) {
-            e->vtxAttrs[ct].slot = glGetAttribLocation(pgm, vtx->getAttribName(ct));
-            e->vtxAttrs[ct].name = vtx->getAttribName(ct).string();
+            e->vtxAttrs[ct].slot =
+                glGetAttribLocation(pgm, vtx->getAttribName(ct).c_str());
+            e->vtxAttrs[ct].name = vtx->getAttribName(ct).c_str();
             if (rsc->props.mLogShaders) {
-                ALOGV("vtx A %i, %s = %d\n", ct, vtx->getAttribName(ct).string(), e->vtxAttrs[ct].slot);
+                ALOGV("vtx A %i, %s = %d\n", ct,
+                      vtx->getAttribName(ct).c_str(), e->vtxAttrs[ct].slot);
             }
         }
 
