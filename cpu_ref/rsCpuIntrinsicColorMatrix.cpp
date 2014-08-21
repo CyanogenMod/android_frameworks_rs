@@ -883,8 +883,8 @@ void RsdCpuScriptIntrinsicColorMatrix::kernel(const RsForEachStubParamStruct *p,
                                               uint32_t xstart, uint32_t xend,
                                               uint32_t instep, uint32_t outstep) {
     RsdCpuScriptIntrinsicColorMatrix *cp = (RsdCpuScriptIntrinsicColorMatrix *)p->usr;
-    uchar *out = (uchar *)p->out + outstep * xstart;
-    uchar *in = (uchar *)p->in + instep * xstart;
+    uchar *out = (uchar *)p->out;
+    uchar *in = (uchar *)p->in;
     uint32_t x1 = xstart;
     uint32_t x2 = xend;
 
