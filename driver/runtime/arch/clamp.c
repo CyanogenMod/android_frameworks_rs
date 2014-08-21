@@ -16,6 +16,11 @@
 
 #include "rs_types.rsh"
 
+typedef unsigned long long ull;
+typedef unsigned long long ull2 __attribute__((ext_vector_type(2)));
+typedef unsigned long long ull3 __attribute__((ext_vector_type(3)));
+typedef unsigned long long ull4 __attribute__((ext_vector_type(4)));
+
 #define S_CLAMP(T) \
 extern T __attribute__((overloadable)) clamp(T amount, T low, T high) {             \
     return amount < low ? low : (amount > high ? high : amount);                    \
@@ -97,6 +102,7 @@ V_CLAMP(ushort);
 #endif
 V_CLAMP(long);
 V_CLAMP(ulong);
+V_CLAMP(ull);
 
 #undef _CLAMP
 
