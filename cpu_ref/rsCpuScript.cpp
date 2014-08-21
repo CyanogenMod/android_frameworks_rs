@@ -216,9 +216,11 @@ static bool is_force_recompile() {
 
 const static char *BCC_EXE_PATH = "/system/bin/bcc";
 
-static void setCompileArguments(std::vector<const char*>* args, const android::String8& bcFileName,
-                                const char* cacheDir, const char* resName, const char* core_lib,
-                                bool useRSDebugContext, const char* bccPluginName) {
+static void setCompileArguments(std::vector<const char*>* args,
+                                const std::string& bcFileName,
+                                const char* cacheDir, const char* resName,
+                                const char* core_lib, bool useRSDebugContext,
+                                const char* bccPluginName) {
     rsAssert(cacheDir && resName && core_lib);
     args->push_back(BCC_EXE_PATH);
     args->push_back("-o");
@@ -242,27 +244,27 @@ static void setCompileArguments(std::vector<const char*>* args, const android::S
         }
     }
 
-    args->push_back(bcFileName.string());
+    args->push_back(bcFileName.c_str());
     args->push_back(NULL);
 }
 
-static bool compileBitcode(const android::String8& bcFileName,
+static bool compileBitcode(const std::string &bcFileName,
                            const char *bitcode,
                            size_t bitcodeSize,
-                           const char** compileArguments,
-                           const std::string& compileCommandLine) {
+                           const char **compileArguments,
+                           const std::string &compileCommandLine) {
     rsAssert(bitcode && bitcodeSize);
 
-    FILE *bcfile = fopen(bcFileName.string(), "w");
+    FILE *bcfile = fopen(bcFileName.c_str(), "w");
     if (!bcfile) {
-        ALOGE("Could not write to %s", bcFileName.string());
+        ALOGE("Could not write to %s", bcFileName.c_str());
         return false;
     }
     size_t nwritten = fwrite(bitcode, 1, bitcodeSize, bcfile);
     fclose(bcfile);
     if (nwritten != bitcodeSize) {
         ALOGE("Could not write %zu bytes to %s", bitcodeSize,
-              bcFileName.string());
+              bcFileName.c_str());
         return false;
     }
 
@@ -426,7 +428,7 @@ bool RsdCpuScriptImpl::init(char const *resName, char const *cacheDir,
         useRSDebugContext = true;
     }
 
-    android::String8 bcFileName(cacheDir);
+    std::string bcFileName(cacheDir);
     bcFileName.append("/");
     bcFileName.append(resName);
     bcFileName.append(".bc");

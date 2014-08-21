@@ -23,7 +23,6 @@
 
 #include <ui/GraphicBuffer.h>
 
-#include <utils/String8.h>
 #include <utils/threads.h>
 
 
