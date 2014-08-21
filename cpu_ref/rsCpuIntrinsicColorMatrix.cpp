@@ -885,9 +885,8 @@ void RsdCpuScriptIntrinsicColorMatrix::kernel(const RsExpandKernelParams *p,
 
     uint32_t instep = p->inEStrides[0];
 
-    uchar *out = (uchar *)p->out    + outstep * xstart;
-    uchar *in  = (uchar *)p->ins[0] + instep  * xstart;
-
+    uchar *out = (uchar *)p->out;
+    uchar *in = (uchar *)p->in;
     uint32_t x1 = xstart;
     uint32_t x2 = xend;
 
