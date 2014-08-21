@@ -393,7 +393,7 @@ void RsdCpuScriptIntrinsicConvolve5x5::kernelU4(const RsForEachStubParamStruct *
 #if defined(ARCH_ARM_USE_INTRINSICS)
     if(gArchUseSIMD && ((x1 + 3) < x2)) {
         uint32_t len = (x2 - x1 - 3) >> 1;
-        rsdIntrinsicConvolve5x5_K(out, py0, py1, py2, py3, py4, cp->mIp, len);
+        rsdIntrinsicConvolve5x5_K(out, py0 + x1 - 2, py1 + x1 - 2, py2 + x1 - 2, py3 + x1 - 2, py4 + x1 - 2, cp->mIp, len);
         out += len << 1;
         x1 += len << 1;
     }
