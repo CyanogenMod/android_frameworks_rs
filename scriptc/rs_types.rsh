@@ -72,7 +72,11 @@ typedef int int32_t;
 /**
  * 64 bit integer type
  */
-typedef long long int64_t;
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+    typedef long int64_t;
+#else
+    typedef long long int64_t;
+#endif
 /**
  * 8 bit unsigned integer type
  */
@@ -88,7 +92,11 @@ typedef unsigned int uint32_t;
 /**
  * 64 bit unsigned integer type
  */
-typedef unsigned long long uint64_t;
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+    typedef unsigned long uint64_t;
+#else
+    typedef unsigned long long uint64_t;
+#endif
 /**
  * 8 bit unsigned integer type
  */
