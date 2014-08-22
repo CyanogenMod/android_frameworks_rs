@@ -63,8 +63,8 @@ void RsdCpuScriptIntrinsic3DLUT::kernel(const RsExpandKernelParams *p,
                                         uint32_t outstep) {
     RsdCpuScriptIntrinsic3DLUT *cp = (RsdCpuScriptIntrinsic3DLUT *)p->usr;
 
-    uchar4 *out = (uchar4 *)p->out + xstart;
-    uchar4 *in = (uchar4 *)p->ins[0] + xstart;
+    uchar4 *out = (uchar4 *)p->out;
+    uchar4 *in = (uchar4 *)p->ins[0];
     uint32_t x1 = xstart;
     uint32_t x2 = xend;
 
