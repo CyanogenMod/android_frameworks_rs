@@ -464,7 +464,7 @@ extern "C" void rsdIntrinsicColorMatrix4x4_K(void *dst, const void *src,
 
 void * selectKernel(Key_t key)
 {
-    void * kernel = NULL;
+    void * kernel = nullptr;
 
     // inType, outType float if nonzero
     if (!(key.u.inType || key.u.outType)) {
@@ -491,7 +491,7 @@ bool RsdCpuScriptIntrinsicColorMatrix::build(Key_t key) {
     }
 
     uint8_t *buf = mBuf;
-    uint8_t *buf2 = NULL;
+    uint8_t *buf2 = nullptr;
 
     int ops[5][4];  // 0=unused, 1 = set, 2 = accumulate, 3 = final
     int opInit[4] = {0, 0, 0, 0};
@@ -900,7 +900,7 @@ void RsdCpuScriptIntrinsicColorMatrix::kernel(const RsExpandKernelParams *p,
     if(x2 > x1) {
         int32_t len = x2 - x1;
         if (gArchUseSIMD) {
-            if((cp->mOptKernel != NULL) && (len >= 4)) {
+            if((cp->mOptKernel != nullptr) && (len >= 4)) {
                 // The optimized kernel processes 4 pixels at once
                 // and requires a minimum of 1 chunk of 4
                 cp->mOptKernel(out, in, cp->ip, len >> 2);
@@ -962,17 +962,17 @@ void RsdCpuScriptIntrinsicColorMatrix::preLaunch(uint32_t slot,
     Key_t key = computeKey(ein, eout);
 
 #if defined(ARCH_X86_HAVE_SSSE3)
-    if ((mOptKernel == NULL) || (mLastKey.key != key.key)) {
+    if ((mOptKernel == nullptr) || (mLastKey.key != key.key)) {
         // FIXME: Disable mOptKernel to pass RS color matrix CTS cases
         // mOptKernel = (void (*)(void *, const void *, const short *, uint32_t)) selectKernel(key);
         mLastKey = key;
     }
 
 #else //if !defined(ARCH_X86_HAVE_SSSE3)
-    if ((mOptKernel == NULL) || (mLastKey.key != key.key)) {
+    if ((mOptKernel == nullptr) || (mLastKey.key != key.key)) {
         if (mBuf) munmap(mBuf, mBufSize);
-        mBuf = NULL;
-        mOptKernel = NULL;
+        mBuf = nullptr;
+        mOptKernel = nullptr;
         if (build(key)) {
             mOptKernel = (void (*)(void *, const void *, const short *, uint32_t)) mBuf;
         }
@@ -1007,9 +1007,9 @@ RsdCpuScriptIntrinsicColorMatrix::RsdCpuScriptIntrinsicColorMatrix(
             : RsdCpuScriptIntrinsic(ctx, s, e, RS_SCRIPT_INTRINSIC_ID_COLOR_MATRIX) {
 
     mLastKey.key = 0;
-    mBuf = NULL;
+    mBuf = nullptr;
     mBufSize = 0;
-    mOptKernel = NULL;
+    mOptKernel = nullptr;
     const static float defaultMatrix[] = {
         1.f, 0.f, 0.f, 0.f,
         0.f, 1.f, 0.f, 0.f,
@@ -1023,8 +1023,8 @@ RsdCpuScriptIntrinsicColorMatrix::RsdCpuScriptIntrinsicColorMatrix(
 
 RsdCpuScriptIntrinsicColorMatrix::~RsdCpuScriptIntrinsicColorMatrix() {
     if (mBuf) munmap(mBuf, mBufSize);
-    mBuf = NULL;
-    mOptKernel = NULL;
+    mBuf = nullptr;
+    mOptKernel = nullptr;
 }
 
 void RsdCpuScriptIntrinsicColorMatrix::populateScript(Script *s) {

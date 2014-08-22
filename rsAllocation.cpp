@@ -55,7 +55,7 @@ Allocation * Allocation::createAllocation(Context *rsc, const Type *type, uint32
 
     if (!allocMem) {
         rsc->setError(RS_ERROR_FATAL_DRIVER, "Couldn't allocate memory for Allocation");
-        return NULL;
+        return nullptr;
     }
 
     Allocation *a = new (allocMem) Allocation(rsc, type, usages, mc, ptr);
@@ -63,7 +63,7 @@ Allocation * Allocation::createAllocation(Context *rsc, const Type *type, uint32
     if (!rsc->mHal.funcs.allocation.init(rsc, a, type->getElement()->getHasReferences())) {
         rsc->setError(RS_ERROR_FATAL_DRIVER, "Allocation::Allocation, alloc failure");
         delete a;
-        return NULL;
+        return nullptr;
     }
 
     return a;
@@ -82,7 +82,7 @@ Allocation::~Allocation() {
 #if !defined(RS_SERVER) && !defined(RS_COMPATIBILITY_LIB)
     if (mGrallocConsumer.get()) {
         mGrallocConsumer->unlockBuffer();
-        mGrallocConsumer = NULL;
+        mGrallocConsumer = nullptr;
     }
 #endif
 
@@ -101,12 +101,12 @@ void * Allocation::getPointer(const Context *rsc, uint32_t lod, RsAllocationCube
         (z && (z >= mHal.drvState.lod[lod].dimZ)) ||
         ((face != RS_ALLOCATION_CUBEMAP_FACE_POSITIVE_X) && !mHal.state.hasFaces) ||
         (array != 0)) {
-        return NULL;
+        return nullptr;
     }
 
     size_t s = 0;
     //void *ptr = mRSC->mHal.funcs.allocation.lock1D(rsc, this);
-    if ((stride != NULL) && mHal.drvState.lod[0].dimY) {
+    if ((stride != nullptr) && mHal.drvState.lod[0].dimY) {
         *stride = mHal.drvState.lod[lod].stride;
     }
     return mHal.drvState.lod[lod].mallocPtr;
@@ -385,14 +385,14 @@ Allocation *Allocation::createFromStream(Context *rsc, IStream *stream) {
     if (classID != RS_A3D_CLASS_ID_ALLOCATION) {
         rsc->setError(RS_ERROR_FATAL_DRIVER,
                       "allocation loading failed due to corrupt file. (invalid id)\n");
-        return NULL;
+        return nullptr;
     }
 
     const char *name = stream->loadString();
 
     Type *type = Type::createFromStream(rsc, stream);
     if (!type) {
-        return NULL;
+        return nullptr;
     }
     type->compute();
 
@@ -409,7 +409,7 @@ Allocation *Allocation::createFromStream(Context *rsc, IStream *stream) {
                       "allocation loading failed due to corrupt file. (invalid size)\n");
         ObjectBase::checkDelete(alloc);
         ObjectBase::checkDelete(type);
-        return NULL;
+        return nullptr;
     }
 
     alloc->assignName(name);
@@ -446,7 +446,7 @@ void Allocation::decRefs(const void *ptr, size_t ct, size_t startOff) const {
 }
 
 void Allocation::callUpdateCacheObject(const Context *rsc, void *dstObj) const {
-    if (rsc->mHal.funcs.allocation.updateCachedObject != NULL) {
+    if (rsc->mHal.funcs.allocation.updateCachedObject != nullptr) {
         rsc->mHal.funcs.allocation.updateCachedObject(rsc, this, (rs_allocation *)dstObj);
     } else {
         *((const void **)dstObj) = this;
@@ -506,7 +506,7 @@ void * Allocation::getSurface(const Context *rsc) {
     sp<IGraphicBufferConsumer> bc;
     BufferQueue::createBufferQueue(&bp, &bc);
     mGrallocConsumer = new GrallocConsumer(this, bc);
-    bp->incStrong(NULL);
+    bp->incStrong(nullptr);
 
     mBufferListener = new NewBufferListener();
     mBufferListener->rsc = rsc;
@@ -515,7 +515,7 @@ void * Allocation::getSurface(const Context *rsc) {
     mGrallocConsumer->setFrameAvailableListener(mBufferListener);
     return bp.get();
 #else
-    return NULL;
+    return nullptr;
 #endif
     //return rsc->mHal.funcs.allocation.getSurface(rsc, this);
 }
@@ -530,7 +530,7 @@ void Allocation::ioSend(const Context *rsc) {
 }
 
 void Allocation::ioReceive(const Context *rsc) {
-    void *ptr = NULL;
+    void *ptr = nullptr;
     size_t stride = 0;
 #ifndef RS_COMPATIBILITY_LIB
     if (mHal.state.usageFlags & RS_ALLOCATION_USAGE_SCRIPT) {
@@ -644,7 +644,7 @@ RsAllocation rsi_AllocationCreateTyped(Context *rsc, RsType vtype,
                                        uint32_t usages, uintptr_t ptr) {
     Allocation * alloc = Allocation::createAllocation(rsc, static_cast<Type *>(vtype), usages, mipmaps, (void*)ptr);
     if (!alloc) {
-        return NULL;
+        return nullptr;
     }
     alloc->incUserRef();
     return alloc;
@@ -657,9 +657,9 @@ RsAllocation rsi_AllocationCreateFromBitmap(Context *rsc, RsType vtype,
 
     RsAllocation vTexAlloc = rsi_AllocationCreateTyped(rsc, vtype, mipmaps, usages, 0);
     Allocation *texAlloc = static_cast<Allocation *>(vTexAlloc);
-    if (texAlloc == NULL) {
+    if (texAlloc == nullptr) {
         ALOGE("Memory allocation failure");
-        return NULL;
+        return nullptr;
     }
 
     texAlloc->data(rsc, 0, 0, 0, RS_ALLOCATION_CUBEMAP_FACE_POSITIVE_X,
@@ -682,9 +682,9 @@ RsAllocation rsi_AllocationCubeCreateFromBitmap(Context *rsc, RsType vtype,
     // Error checking is done in the java layer
     RsAllocation vTexAlloc = rsi_AllocationCreateTyped(rsc, vtype, mipmaps, usages, 0);
     Allocation *texAlloc = static_cast<Allocation *>(vTexAlloc);
-    if (texAlloc == NULL) {
+    if (texAlloc == nullptr) {
         ALOGE("Memory allocation failure");
-        return NULL;
+        return nullptr;
     }
 
     uint32_t faceSize = t->getDimX();

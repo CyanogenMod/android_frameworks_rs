@@ -231,7 +231,7 @@ void Context::displayDebugStats() {
     uint32_t bufferLen = strlen(buffer);
 
     ObjectBaseRef<Font> lastFont(getFont());
-    setFont(NULL);
+    setFont(nullptr);
     float shadowCol = 0.1f;
     mStateFont.setFontColor(shadowCol, shadowCol, shadowCol, 1.0f);
     mStateFont.renderText(buffer, bufferLen, 5, getHeight() - 6);
@@ -247,10 +247,10 @@ void Context::displayDebugStats() {
 bool Context::loadRuntime(const char* filename, Context* rsc) {
 
     // TODO: store the driverSO somewhere so we can dlclose later
-    void *driverSO = NULL;
+    void *driverSO = nullptr;
 
     driverSO = dlopen(filename, RTLD_LAZY);
-    if (driverSO == NULL) {
+    if (driverSO == nullptr) {
         ALOGE("Failed loading RS driver: %s", dlerror());
         return false;
     }
@@ -261,13 +261,13 @@ bool Context::loadRuntime(const char* filename, Context* rsc) {
     HalSig halInit = (HalSig) dlsym(driverSO, "rsdHalInit");
 
     // If we can't find the C variant, we go looking for the C++ version.
-    if (halInit == NULL) {
+    if (halInit == nullptr) {
         ALOGW("Falling back to find C++ rsdHalInit: %s", dlerror());
         halInit = (HalSig) dlsym(driverSO,
                 "_Z10rsdHalInitPN7android12renderscript7ContextEjj");
     }
 
-    if (halInit == NULL) {
+    if (halInit == nullptr) {
         dlclose(driverSO);
         ALOGE("Failed to find rsdHalInit: %s", dlerror());
         return false;
@@ -349,12 +349,12 @@ void * Context::threadProc(void *vrsc) {
         if (!loadRuntime("libRSDriver.so", rsc)) {
             ALOGE("Failed to load default runtime!");
             rsc->setError(RS_ERROR_FATAL_DRIVER, "Failed loading RS driver");
-            return NULL;
+            return nullptr;
         }
     }
 #else // RS_COMPATIBILITY_LIB
     if (rsdHalInit(rsc, 0, 0) != true) {
-        return NULL;
+        return nullptr;
     }
 #endif
 
@@ -365,19 +365,19 @@ void * Context::threadProc(void *vrsc) {
     if (rsc->mIsGraphicsContext) {
         if (!rsc->initGLThread()) {
             rsc->setError(RS_ERROR_OUT_OF_MEMORY, "Failed initializing GL");
-            return NULL;
+            return nullptr;
         }
 
         rsc->mStateRaster.init(rsc);
-        rsc->setProgramRaster(NULL);
+        rsc->setProgramRaster(nullptr);
         rsc->mStateVertex.init(rsc);
-        rsc->setProgramVertex(NULL);
+        rsc->setProgramVertex(nullptr);
         rsc->mStateFragment.init(rsc);
-        rsc->setProgramFragment(NULL);
+        rsc->setProgramFragment(nullptr);
         rsc->mStateFragmentStore.init(rsc);
-        rsc->setProgramStore(NULL);
+        rsc->setProgramStore(nullptr);
         rsc->mStateFont.init(rsc);
-        rsc->setFont(NULL);
+        rsc->setFont(nullptr);
         rsc->mStateSampler.init(rsc);
         rsc->mFBOCache.init(rsc);
     }
@@ -386,7 +386,7 @@ void * Context::threadProc(void *vrsc) {
     rsc->mRunning = true;
 
     if (rsc->isSynchronous()) {
-        return NULL;
+        return nullptr;
     }
 
     if (!rsc->mIsGraphicsContext) {
@@ -426,7 +426,7 @@ void * Context::threadProc(void *vrsc) {
                 drawOnce |= rsc->mIO.playCoreCommands(rsc, -1);
             }
 
-            if ((rsc->mRootScript.get() != NULL) && rsc->mHasSurface &&
+            if ((rsc->mRootScript.get() != nullptr) && rsc->mHasSurface &&
                 (targetRate || drawOnce) && !rsc->mPaused) {
 
                 drawOnce = false;
@@ -458,7 +458,7 @@ void * Context::threadProc(void *vrsc) {
 #endif
 
     //ALOGV("%p RS Thread exited", rsc);
-    return NULL;
+    return nullptr;
 }
 
 void Context::destroyWorkerThreadResources() {
@@ -508,11 +508,11 @@ void Context::setPriority(int32_t p) {
 }
 
 Context::Context() {
-    mDev = NULL;
+    mDev = nullptr;
     mRunning = false;
     mExit = false;
     mPaused = false;
-    mObjHead = NULL;
+    mObjHead = nullptr;
     mError = RS_ERROR_NONE;
     mTargetSdkVersion = 14;
     mDPI = 96;
@@ -539,7 +539,7 @@ Context * Context::createContext(Device *dev, const RsSurfaceConfig *sc,
 
     if (!rsc->initContext(dev, sc)) {
         delete rsc;
-        return NULL;
+        return nullptr;
     }
     return rsc;
 }
@@ -564,7 +564,7 @@ bool Context::initContext(Device *dev, const RsSurfaceConfig *sc) {
         memset(&mUserSurfaceConfig, 0, sizeof(mUserSurfaceConfig));
     }
 
-    mIsGraphicsContext = sc != NULL;
+    mIsGraphicsContext = sc != nullptr;
 
     int status;
     pthread_attr_t threadAttr;
@@ -631,7 +631,7 @@ Context::~Context() {
         pthread_mutex_lock(&gInitMutex);
         if (mDev) {
             mDev->removeContext(this);
-            mDev = NULL;
+            mDev = nullptr;
         }
         pthread_mutex_unlock(&gInitMutex);
     }
@@ -643,7 +643,7 @@ void Context::setSurface(uint32_t w, uint32_t h, RsNativeWindow sur) {
     rsAssert(mIsGraphicsContext);
     mHal.funcs.setSurface(this, w, h, sur);
 
-    mHasSurface = sur != NULL;
+    mHasSurface = sur != nullptr;
     mWidth = w;
     mHeight = h;
 
@@ -655,11 +655,11 @@ void Context::setSurface(uint32_t w, uint32_t h, RsNativeWindow sur) {
 
 uint32_t Context::getCurrentSurfaceWidth() const {
     for (uint32_t i = 0; i < mFBOCache.mHal.state.colorTargetsCount; i ++) {
-        if (mFBOCache.mHal.state.colorTargets[i] != NULL) {
+        if (mFBOCache.mHal.state.colorTargets[i] != nullptr) {
             return mFBOCache.mHal.state.colorTargets[i]->getType()->getDimX();
         }
     }
-    if (mFBOCache.mHal.state.depthTarget != NULL) {
+    if (mFBOCache.mHal.state.depthTarget != nullptr) {
         return mFBOCache.mHal.state.depthTarget->getType()->getDimX();
     }
     return mWidth;
@@ -667,11 +667,11 @@ uint32_t Context::getCurrentSurfaceWidth() const {
 
 uint32_t Context::getCurrentSurfaceHeight() const {
     for (uint32_t i = 0; i < mFBOCache.mHal.state.colorTargetsCount; i ++) {
-        if (mFBOCache.mHal.state.colorTargets[i] != NULL) {
+        if (mFBOCache.mHal.state.colorTargets[i] != nullptr) {
             return mFBOCache.mHal.state.colorTargets[i]->getType()->getDimY();
         }
     }
-    if (mFBOCache.mHal.state.depthTarget != NULL) {
+    if (mFBOCache.mHal.state.depthTarget != nullptr) {
         return mFBOCache.mHal.state.depthTarget->getType()->getDimY();
     }
     return mHeight;
@@ -694,7 +694,7 @@ void Context::setRootScript(Script *s) {
 
 void Context::setProgramStore(ProgramStore *pfs) {
     rsAssert(mIsGraphicsContext);
-    if (pfs == NULL) {
+    if (pfs == nullptr) {
         mFragmentStore.set(mStateFragmentStore.mDefault);
     } else {
         mFragmentStore.set(pfs);
@@ -703,7 +703,7 @@ void Context::setProgramStore(ProgramStore *pfs) {
 
 void Context::setProgramFragment(ProgramFragment *pf) {
     rsAssert(mIsGraphicsContext);
-    if (pf == NULL) {
+    if (pf == nullptr) {
         mFragment.set(mStateFragment.mDefault);
     } else {
         mFragment.set(pf);
@@ -712,7 +712,7 @@ void Context::setProgramFragment(ProgramFragment *pf) {
 
 void Context::setProgramRaster(ProgramRaster *pr) {
     rsAssert(mIsGraphicsContext);
-    if (pr == NULL) {
+    if (pr == nullptr) {
         mRaster.set(mStateRaster.mDefault);
     } else {
         mRaster.set(pr);
@@ -721,7 +721,7 @@ void Context::setProgramRaster(ProgramRaster *pr) {
 
 void Context::setProgramVertex(ProgramVertex *pv) {
     rsAssert(mIsGraphicsContext);
-    if (pv == NULL) {
+    if (pv == nullptr) {
         mVertex.set(mStateVertex.mDefault);
     } else {
         mVertex.set(pv);
@@ -730,7 +730,7 @@ void Context::setProgramVertex(ProgramVertex *pv) {
 
 void Context::setFont(Font *f) {
     rsAssert(mIsGraphicsContext);
-    if (f == NULL) {
+    if (f == nullptr) {
         mFont.set(mStateFont.mDefault);
     } else {
         mFont.set(f);
@@ -961,7 +961,7 @@ extern "C" RsContext rsContextCreate(RsDevice vdev, uint32_t version, uint32_t s
                                      RsContextType ct, uint32_t flags) {
     //ALOGV("rsContextCreate dev=%p", vdev);
     Device * dev = static_cast<Device *>(vdev);
-    Context *rsc = Context::createContext(dev, NULL, ct, flags);
+    Context *rsc = Context::createContext(dev, nullptr, ct, flags);
     if (rsc) {
         rsc->setTargetSdkVersion(sdkVersion);
     }

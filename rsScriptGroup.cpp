@@ -54,7 +54,7 @@ ScriptGroup::Node * ScriptGroup::findNode(Script *s) const {
         }
     }
 
-    return NULL;
+    return nullptr;
 }
 
 bool ScriptGroup::calcOrderRecurse(Node *node0, int depth) {
@@ -65,7 +65,7 @@ bool ScriptGroup::calcOrderRecurse(Node *node0, int depth) {
     bool ret = true;
 
     for (auto link : node0->mOutputs) {
-        Node *node1 = NULL;
+        Node *node1 = nullptr;
         if (link->mDstField.get()) {
             node1 = findNode(link->mDstField->mScript);
         } else {
@@ -86,7 +86,7 @@ bool ScriptGroup::calcOrder() {
     for (auto kernelRef : mKernels) {
         const ScriptKernelID *kernel = kernelRef.get();
         Node *node = findNode(kernel->mScript);
-        if (node == NULL) {
+        if (node == nullptr) {
             node = new Node(kernel->mScript);
             mNodes.push_back(node);
         }
@@ -253,14 +253,14 @@ void ScriptGroup::setOutput(Context *rsc, ScriptKernelID *kid, Allocation *a) {
 
 bool ScriptGroup::validateInputAndOutput(Context *rsc) {
     for(size_t i = 0; i < mInputs.size(); i++) {
-        if (mInputs[i]->mAlloc.get() == NULL) {
+        if (mInputs[i]->mAlloc.get() == nullptr) {
             rsc->setError(RS_ERROR_BAD_VALUE, "ScriptGroup missing input.");
             return false;
         }
     }
 
     for(size_t i = 0; i < mOutputs.size(); i++) {
-        if (mOutputs[i]->mAlloc.get() == NULL) {
+        if (mOutputs[i]->mAlloc.get() == nullptr) {
             rsc->setError(RS_ERROR_BAD_VALUE, "ScriptGroup missing output.");
             return false;
         }
@@ -283,8 +283,8 @@ void ScriptGroup::execute(Context *rsc) {
 
     for (auto node : mNodes) {
         for (auto kernel : node->mKernels) {
-            Allocation *ain  = NULL;
-            Allocation *aout = NULL;
+            Allocation *ain  = nullptr;
+            Allocation *aout = nullptr;
 
             for (auto nodeInput : node->mInputs) {
                 if (nodeInput->mDstKernel.get() == kernel) {
@@ -310,14 +310,14 @@ void ScriptGroup::execute(Context *rsc) {
                 }
             }
 
-            if (ain == NULL) {
-                node->mScript->runForEach(rsc, kernel->mSlot, NULL, 0, aout,
-                                          NULL, 0);
+            if (ain == nullptr) {
+                node->mScript->runForEach(rsc, kernel->mSlot, nullptr, 0, aout,
+                                          nullptr, 0);
             } else {
                 const Allocation *ains[1] = {ain};
                 node->mScript->runForEach(rsc, kernel->mSlot, ains,
                                           sizeof(ains) / sizeof(RsAllocation),
-                                          aout, NULL, 0);
+                                          aout, nullptr, 0);
             }
         }
     }

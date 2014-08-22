@@ -54,7 +54,7 @@ private:
   }
 
 private:
-  ELFObject() : SHNCommonDataPtr(NULL), missingSymbols(false) { }
+  ELFObject() : SHNCommonDataPtr(nullptr), missingSymbols(false) { }
 
 public:
   template <typename Archiver>
@@ -92,7 +92,7 @@ public:
 
     // Ensure the free size is sufficient
     if (SHNCommonDataFreeSize < size) {
-      return NULL;
+      return nullptr;
     }
 
     // Allcoate

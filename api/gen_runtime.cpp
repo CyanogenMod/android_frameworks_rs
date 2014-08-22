@@ -702,7 +702,7 @@ bool SpecFile::readSpecFile() {
     mLargestVersionNumber = 0;
     while (1) {
         Specification* spec = Specification::scanSpecification(specFile);
-        if (spec == NULL) {
+        if (spec == nullptr) {
             break;
         }
         getFunction(spec->getCleanName())->addSpecification(spec);
@@ -983,7 +983,7 @@ Specification* Specification::scanSpecification(FILE* in) {
                 return spec;
             } else {
                 delete spec;
-                return NULL;
+                return nullptr;
             }
         }
 
@@ -1046,7 +1046,7 @@ Specification* Specification::scanSpecification(FILE* in) {
     }
 
     delete spec;
-    return NULL;
+    return nullptr;
 }
 
 void Specification::writeFiles(ofstream& headerFile, ofstream& rsFile, ofstream& javaFile,

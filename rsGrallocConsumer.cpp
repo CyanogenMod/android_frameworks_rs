@@ -87,7 +87,7 @@ status_t GrallocConsumer::lockNextBuffer() {
         }
     }
 
-    void *bufferPointer = NULL;
+    void *bufferPointer = nullptr;
     android_ycbcr ycbcr = android_ycbcr();
 
     if (mSlots[buf].mGraphicBuffer->getPixelFormat() ==
@@ -182,7 +182,7 @@ status_t GrallocConsumer::releaseAcquiredBufferLocked() {
     }
 
     mAcquiredBuffer.mSlot = BufferQueue::INVALID_BUFFER_SLOT;
-    mAcquiredBuffer.mBufferPointer = NULL;
+    mAcquiredBuffer.mBufferPointer = nullptr;
     mAcquiredBuffer.mGraphicBuffer.clear();
     return OK;
 }

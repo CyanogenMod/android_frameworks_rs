@@ -20,7 +20,7 @@
 #include <rs_hal.h>
 #include <EGL/egl.h>
 
-#define RSD_CALL_GL(x, ...) rsc->setWatchdogGL(#x, __LINE__, __FILE__); x(__VA_ARGS__); rsc->setWatchdogGL(NULL, 0, NULL)
+#define RSD_CALL_GL(x, ...) rsc->setWatchdogGL(#x, __LINE__, __FILE__); x(__VA_ARGS__); rsc->setWatchdogGL(nullptr, 0, nullptr)
 
 class RsdShaderCache;
 class RsdVertexArrayState;

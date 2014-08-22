@@ -92,11 +92,11 @@ static void *loadSOHelper(const char *origName, const char *cacheDir,
     // independent).
     static std::set<std::string> LoadedLibraries;
 
-    void *loaded = NULL;
+    void *loaded = nullptr;
 
     // Skip everything if we don't even have the original library available.
     if (access(origName, F_OK) != 0) {
-        return NULL;
+        return nullptr;
     }
 
     // Common path is that we have not loaded this Script/library before.
@@ -113,7 +113,7 @@ static void *loadSOHelper(const char *origName, const char *cacheDir,
 
     if (!ensureCacheDirExists(newName.c_str())) {
         ALOGE("Could not verify or create cache dir: %s", cacheDir);
-        return NULL;
+        return nullptr;
     }
 
     // Construct an appropriately randomized filename for the symlink.
@@ -126,7 +126,7 @@ static void *loadSOHelper(const char *origName, const char *cacheDir,
     int r = symlink(origName, newName.c_str());
     if (r != 0) {
         ALOGE("Could not create symlink %s -> %s", newName.c_str(), origName);
-        return NULL;
+        return nullptr;
     }
     loaded = dlopen(newName.c_str(), RTLD_NOW | RTLD_LOCAL);
     r = unlink(newName.c_str());
@@ -146,7 +146,7 @@ static void *loadSOHelper(const char *origName, const char *cacheDir,
 // This is required behavior to implement script instancing for the support
 // library, since shared objects are loaded and de-duped by name only.
 static void *loadSharedLibrary(const char *cacheDir, const char *resName) {
-    void *loaded = NULL;
+    void *loaded = nullptr;
     //arc4random_stir();
 #ifndef RS_SERVER
     std::string scriptSOName(cacheDir);
@@ -167,7 +167,7 @@ static void *loadSharedLibrary(const char *cacheDir, const char *resName) {
     // location for shared libraries first.
     loaded = loadSOHelper(scriptSOName.c_str(), cacheDir, resName);
 
-    if (loaded == NULL) {
+    if (loaded == nullptr) {
         ALOGE("Unable to open shared library (%s): %s",
               scriptSOName.c_str(), dlerror());
 
@@ -181,7 +181,7 @@ static void *loadSharedLibrary(const char *cacheDir, const char *resName) {
         scriptSONameSystem.append(".so");
         loaded = loadSOHelper(scriptSONameSystem.c_str(), cacheDir,
                               resName);
-        if (loaded == NULL) {
+        if (loaded == nullptr) {
             ALOGE("Unable to open system shared library (%s): %s",
                   scriptSONameSystem.c_str(), dlerror());
         }
@@ -245,7 +245,7 @@ static void setCompileArguments(std::vector<const char*>* args,
     }
 
     args->push_back(bcFileName.c_str());
-    args->push_back(NULL);
+    args->push_back(nullptr);
 }
 
 static bool compileBitcode(const std::string &bcFileName,
@@ -318,10 +318,10 @@ namespace renderscript {
 #define OBJECT_SLOT_STR "objectSlotCount: "
 
 // Copy up to a newline or size chars from str -> s, updating str
-// Returns s when successful and NULL when '\0' is finally reached.
+// Returns s when successful and nullptr when '\0' is finally reached.
 static char* strgets(char *s, int size, const char **ppstr) {
     if (!ppstr || !*ppstr || **ppstr == '\0' || size < 1) {
-        return NULL;
+        return nullptr;
     }
 
     int i;
@@ -348,27 +348,27 @@ RsdCpuScriptImpl::RsdCpuScriptImpl(RsdCpuReferenceImpl *ctx, const Script *s) {
     mScript = s;
 
 #ifdef RS_COMPATIBILITY_LIB
-    mScriptSO = NULL;
-    mInvokeFunctions = NULL;
-    mForEachFunctions = NULL;
-    mFieldAddress = NULL;
-    mFieldIsObject = NULL;
-    mForEachSignatures = NULL;
+    mScriptSO = nullptr;
+    mInvokeFunctions = nullptr;
+    mForEachFunctions = nullptr;
+    mFieldAddress = nullptr;
+    mFieldIsObject = nullptr;
+    mForEachSignatures = nullptr;
 #else
-    mCompilerContext = NULL;
-    mCompilerDriver = NULL;
-    mExecutable = NULL;
+    mCompilerContext = nullptr;
+    mCompilerDriver = nullptr;
+    mExecutable = nullptr;
 #endif
 
 
-    mRoot = NULL;
-    mRootExpand = NULL;
-    mInit = NULL;
-    mFreeChildren = NULL;
+    mRoot = nullptr;
+    mRootExpand = nullptr;
+    mInit = nullptr;
+    mFreeChildren = nullptr;
 
 
-    mBoundAllocs = NULL;
-    mIntrinsicData = NULL;
+    mBoundAllocs = nullptr;
+    mIntrinsicData = nullptr;
     mIsThreadable = true;
 }
 
@@ -383,19 +383,19 @@ bool RsdCpuScriptImpl::init(char const *resName, char const *cacheDir,
 #ifndef RS_COMPATIBILITY_LIB
     bool useRSDebugContext = false;
 
-    mCompilerContext = NULL;
-    mCompilerDriver = NULL;
-    mExecutable = NULL;
+    mCompilerContext = nullptr;
+    mCompilerDriver = nullptr;
+    mExecutable = nullptr;
 
     mCompilerContext = new bcc::BCCContext();
-    if (mCompilerContext == NULL) {
+    if (mCompilerContext == nullptr) {
         ALOGE("bcc: FAILS to create compiler context (out of memory)");
         mCtx->unlockMutex();
         return false;
     }
 
     mCompilerDriver = new bcc::RSCompilerDriver();
-    if (mCompilerDriver == NULL) {
+    if (mCompilerDriver == nullptr) {
         ALOGE("bcc: FAILS to create compiler driver (out of memory)");
         mCtx->unlockMutex();
         return false;
@@ -410,7 +410,7 @@ bool RsdCpuScriptImpl::init(char const *resName, char const *cacheDir,
     // Run any compiler setup functions we have been provided with.
     RSSetupCompilerCallback setupCompilerCallback =
             mCtx->getSetupCompilerCallback();
-    if (setupCompilerCallback != NULL) {
+    if (setupCompilerCallback != nullptr) {
         setupCompilerCallback(mCompilerDriver);
     }
 
@@ -436,7 +436,7 @@ bool RsdCpuScriptImpl::init(char const *resName, char const *cacheDir,
     std::vector<const char*> compileArguments;
     setCompileArguments(&compileArguments, bcFileName, cacheDir, resName, core_lib,
                         useRSDebugContext, bccPluginName);
-    // The last argument of compileArguments ia a NULL, so remove 1 from the size.
+    // The last argument of compileArguments ia a nullptr, so remove 1 from the size.
     std::string compileCommandLine =
                 bcc::getCommandLine(compileArguments.size() - 1, compileArguments.data());
 
@@ -449,7 +449,7 @@ bool RsdCpuScriptImpl::init(char const *resName, char const *cacheDir,
 
     // If we can't, it's either not there or out of date.  We compile the bit code and try loading
     // again.
-    if (mExecutable == NULL) {
+    if (mExecutable == nullptr) {
         if (!compileBitcode(bcFileName, (const char*)bitcode, bitcodeSize, compileArguments.data(),
                             compileCommandLine)) {
             ALOGE("bcc: FAILS to compile '%s'", resName);
@@ -459,7 +459,7 @@ bool RsdCpuScriptImpl::init(char const *resName, char const *cacheDir,
         mExecutable = bcc::RSCompilerDriver::loadScript(cacheDir, resName, (const char*)bitcode,
                                                         bitcodeSize, compileCommandLine.c_str(),
                                                         mResolver);
-        if (mExecutable == NULL) {
+        if (mExecutable == nullptr) {
             ALOGE("bcc: FAILS to load freshly compiled executable for '%s'", resName);
             mCtx->unlockMutex();
             return false;
@@ -519,7 +519,7 @@ bool RsdCpuScriptImpl::init(char const *resName, char const *cacheDir,
         }
 
         size_t varCount = 0;
-        if (strgets(line, MAXLINE, &rsInfo) == NULL) {
+        if (strgets(line, MAXLINE, &rsInfo) == nullptr) {
             goto error;
         }
         if (sscanf(line, EXPORT_VAR_STR "%zu", &varCount) != 1) {
@@ -533,16 +533,16 @@ bool RsdCpuScriptImpl::init(char const *resName, char const *cacheDir,
             // Start by creating/zeroing this member, since we don't want to
             // accidentally clean up invalid pointers later (if we error out).
             mFieldIsObject = new bool[varCount];
-            if (mFieldIsObject == NULL) {
+            if (mFieldIsObject == nullptr) {
                 goto error;
             }
             memset(mFieldIsObject, 0, varCount * sizeof(*mFieldIsObject));
             mFieldAddress = new void*[varCount];
-            if (mFieldAddress == NULL) {
+            if (mFieldAddress == nullptr) {
                 goto error;
             }
             for (size_t i = 0; i < varCount; ++i) {
-                if (strgets(line, MAXLINE, &rsInfo) == NULL) {
+                if (strgets(line, MAXLINE, &rsInfo) == nullptr) {
                     goto error;
                 }
                 char *c = strrchr(line, '\n');
@@ -550,7 +550,7 @@ bool RsdCpuScriptImpl::init(char const *resName, char const *cacheDir,
                     *c = '\0';
                 }
                 mFieldAddress[i] = dlsym(mScriptSO, line);
-                if (mFieldAddress[i] == NULL) {
+                if (mFieldAddress[i] == nullptr) {
                     ALOGE("Failed to find variable address for %s: %s",
                           line, dlerror());
                     // Not a critical error if we don't find a global variable.
@@ -563,7 +563,7 @@ bool RsdCpuScriptImpl::init(char const *resName, char const *cacheDir,
         }
 
         size_t funcCount = 0;
-        if (strgets(line, MAXLINE, &rsInfo) == NULL) {
+        if (strgets(line, MAXLINE, &rsInfo) == nullptr) {
             goto error;
         }
         if (sscanf(line, EXPORT_FUNC_STR "%zu", &funcCount) != 1) {
@@ -576,11 +576,11 @@ bool RsdCpuScriptImpl::init(char const *resName, char const *cacheDir,
 
         if (funcCount > 0) {
             mInvokeFunctions = new InvokeFunc_t[funcCount];
-            if (mInvokeFunctions == NULL) {
+            if (mInvokeFunctions == nullptr) {
                 goto error;
             }
             for (size_t i = 0; i < funcCount; ++i) {
-                if (strgets(line, MAXLINE, &rsInfo) == NULL) {
+                if (strgets(line, MAXLINE, &rsInfo) == nullptr) {
                     goto error;
                 }
                 char *c = strrchr(line, '\n');
@@ -589,7 +589,7 @@ bool RsdCpuScriptImpl::init(char const *resName, char const *cacheDir,
                 }
 
                 mInvokeFunctions[i] = (InvokeFunc_t) dlsym(mScriptSO, line);
-                if (mInvokeFunctions[i] == NULL) {
+                if (mInvokeFunctions[i] == nullptr) {
                     ALOGE("Failed to get function address for %s(): %s",
                           line, dlerror());
                     goto error;
@@ -601,7 +601,7 @@ bool RsdCpuScriptImpl::init(char const *resName, char const *cacheDir,
         }
 
         size_t forEachCount = 0;
-        if (strgets(line, MAXLINE, &rsInfo) == NULL) {
+        if (strgets(line, MAXLINE, &rsInfo) == nullptr) {
             goto error;
         }
         if (sscanf(line, EXPORT_FOREACH_STR "%zu", &forEachCount) != 1) {
@@ -612,18 +612,18 @@ bool RsdCpuScriptImpl::init(char const *resName, char const *cacheDir,
         if (forEachCount > 0) {
 
             mForEachSignatures = new uint32_t[forEachCount];
-            if (mForEachSignatures == NULL) {
+            if (mForEachSignatures == nullptr) {
                 goto error;
             }
             mForEachFunctions = new ForEachFunc_t[forEachCount];
-            if (mForEachFunctions == NULL) {
+            if (mForEachFunctions == nullptr) {
                 goto error;
             }
             for (size_t i = 0; i < forEachCount; ++i) {
                 unsigned int tmpSig = 0;
                 char tmpName[MAXLINE];
 
-                if (strgets(line, MAXLINE, &rsInfo) == NULL) {
+                if (strgets(line, MAXLINE, &rsInfo) == nullptr) {
                     goto error;
                 }
                 if (sscanf(line, "%u - %" MAKE_STR(MAXLINE) "s",
@@ -637,7 +637,7 @@ bool RsdCpuScriptImpl::init(char const *resName, char const *cacheDir,
                 mForEachSignatures[i] = tmpSig;
                 mForEachFunctions[i] =
                         (ForEachFunc_t) dlsym(mScriptSO, tmpName);
-                if (i != 0 && mForEachFunctions[i] == NULL) {
+                if (i != 0 && mForEachFunctions[i] == nullptr) {
                     // Ignore missing root.expand functions.
                     // root() is always specified at location 0.
                     ALOGE("Failed to find forEach function address for %s: %s",
@@ -651,7 +651,7 @@ bool RsdCpuScriptImpl::init(char const *resName, char const *cacheDir,
         }
 
         size_t objectSlotCount = 0;
-        if (strgets(line, MAXLINE, &rsInfo) == NULL) {
+        if (strgets(line, MAXLINE, &rsInfo) == nullptr) {
             goto error;
         }
         if (sscanf(line, OBJECT_SLOT_STR "%zu", &objectSlotCount) != 1) {
@@ -663,7 +663,7 @@ bool RsdCpuScriptImpl::init(char const *resName, char const *cacheDir,
             rsAssert(varCount > 0);
             for (size_t i = 0; i < objectSlotCount; ++i) {
                 uint32_t varNum = 0;
-                if (strgets(line, MAXLINE, &rsInfo) == NULL) {
+                if (strgets(line, MAXLINE, &rsInfo) == nullptr) {
                     goto error;
                 }
                 if (sscanf(line, "%u", &varNum) != 1) {
@@ -728,7 +728,7 @@ const char* RsdCpuScriptImpl::findCoreLib(const bcinfo::MetadataExtractor& ME, c
 
     // If a callback has been registered to specify a library, use that.
     RSSelectRTCallback selectRTCallback = mCtx->getSelectRTCallback();
-    if (selectRTCallback != NULL) {
+    if (selectRTCallback != nullptr) {
         return selectRTCallback((const char*)bitcode, bitcodeSize);
     }
 
@@ -804,14 +804,18 @@ void RsdCpuScriptImpl::forEachMtlsSetup(const Allocation ** ains,
         const Allocation* ain = ains[index];
 
         // possible for this to occur if IO_OUTPUT/IO_INPUT with no bound surface
-        if (ain != NULL && (const uint8_t *)ain->mHal.drvState.lod[0].mallocPtr == NULL) {
+        if (ain != nullptr &&
+            (const uint8_t *)ain->mHal.drvState.lod[0].mallocPtr == nullptr) {
+
             mCtx->getContext()->setError(RS_ERROR_BAD_SCRIPT,
                                          "rsForEach called with null in allocations");
             return;
         }
     }
 
-    if (aout && (const uint8_t *)aout->mHal.drvState.lod[0].mallocPtr == NULL) {
+    if (aout &&
+        (const uint8_t *)aout->mHal.drvState.lod[0].mallocPtr == nullptr) {
+
         mCtx->getContext()->setError(RS_ERROR_BAD_SCRIPT,
                                      "rsForEach called with null out allocations");
         return;
@@ -834,7 +838,7 @@ void RsdCpuScriptImpl::forEachMtlsSetup(const Allocation ** ains,
             }
         }
 
-    } else if (aout != NULL) {
+    } else if (aout != nullptr) {
         const Type *outType = aout->getType();
 
         mtls->fep.dimX = outType->getDimX();
@@ -847,7 +851,7 @@ void RsdCpuScriptImpl::forEachMtlsSetup(const Allocation ** ains,
         return;
     }
 
-    if (inLen > 0 && aout != NULL) {
+    if (inLen > 0 && aout != nullptr) {
         if (!ains[0]->hasSameDims(aout)) {
             mCtx->getContext()->setError(RS_ERROR_BAD_SCRIPT,
               "Failed to launch kernel; dimensions of input and output allocations do not match.");
@@ -904,8 +908,8 @@ void RsdCpuScriptImpl::forEachMtlsSetup(const Allocation ** ains,
     mtls->mSliceSize = 1;
     mtls->mSliceNum  = 0;
 
-    mtls->fep.inPtrs    = NULL;
-    mtls->fep.inStrides = NULL;
+    mtls->fep.inPtrs    = nullptr;
+    mtls->fep.inStrides = nullptr;
     mtls->isThreadable  = mIsThreadable;
 
     if (inLen > 0) {
@@ -935,10 +939,10 @@ void RsdCpuScriptImpl::forEachMtlsSetup(const Allocation ** ains,
         }
     }
 
-    mtls->fep.outPtr            = NULL;
+    mtls->fep.outPtr            = nullptr;
     mtls->fep.outStride.eStride = 0;
     mtls->fep.outStride.yStride = 0;
-    if (aout != NULL) {
+    if (aout != nullptr) {
         mtls->fep.outPtr = (uint8_t *)aout->mHal.drvState.lod[0].mallocPtr;
 
         mtls->fep.outStride.eStride = aout->getType()->getElementSizeBytes();
@@ -972,11 +976,11 @@ void RsdCpuScriptImpl::forEachKernelSetup(uint32_t slot, MTLaunchStruct *mtls) {
     rsAssert(slot < mExecutable->getExportForeachFuncAddrs().size());
     mtls->kernel = reinterpret_cast<ForEachFunc_t>(
                       mExecutable->getExportForeachFuncAddrs()[slot]);
-    rsAssert(mtls->kernel != NULL);
+    rsAssert(mtls->kernel != nullptr);
     mtls->sig = mExecutable->getInfo().getExportForeachFuncs()[slot].second;
 #else
     mtls->kernel = reinterpret_cast<ForEachFunc_t>(mForEachFunctions[slot]);
-    rsAssert(mtls->kernel != NULL);
+    rsAssert(mtls->kernel != nullptr);
     mtls->sig = mForEachSignatures[slot];
 #endif
 }
@@ -1112,7 +1116,7 @@ void RsdCpuScriptImpl::setGlobalBind(uint32_t slot, Allocation *data) {
         return;
     }
 
-    void *ptr = NULL;
+    void *ptr = nullptr;
     mBoundAllocs[slot] = data;
     if(data) {
         ptr = data->mHal.drvState.lod[0].mallocPtr;
@@ -1155,12 +1159,12 @@ RsdCpuScriptImpl::~RsdCpuScriptImpl() {
 
         while ((var_addr_iter != var_addr_end) &&
                (is_object_iter != is_object_end)) {
-            // The field address can be NULL if the script-side has optimized
+            // The field address can be nullptr if the script-side has optimized
             // the corresponding global variable away.
             rs_object_base *obj_addr =
                 reinterpret_cast<rs_object_base *>(*var_addr_iter);
             if (*is_object_iter) {
-                if (*var_addr_iter != NULL && mCtx->getContext() != NULL) {
+                if (*var_addr_iter != nullptr && mCtx->getContext() != nullptr) {
                     rsrClearObject(mCtx->getContext(), obj_addr);
                 }
             }
@@ -1189,7 +1193,7 @@ RsdCpuScriptImpl::~RsdCpuScriptImpl() {
     if (mFieldIsObject) {
         for (size_t i = 0; i < mExportedVariableCount; ++i) {
             if (mFieldIsObject[i]) {
-                if (mFieldAddress[i] != NULL) {
+                if (mFieldAddress[i] != nullptr) {
                     rs_object_base *obj_addr =
                         reinterpret_cast<rs_object_base *>(mFieldAddress[i]);
                     rsrClearObject(mCtx->getContext(), obj_addr);
@@ -1212,7 +1216,7 @@ RsdCpuScriptImpl::~RsdCpuScriptImpl() {
 
 Allocation * RsdCpuScriptImpl::getAllocationForPointer(const void *ptr) const {
     if (!ptr) {
-        return NULL;
+        return nullptr;
     }
 
     for (uint32_t ct=0; ct < mScript->mHal.info.exportedVariableCount; ct++) {
@@ -1223,7 +1227,7 @@ Allocation * RsdCpuScriptImpl::getAllocationForPointer(const void *ptr) const {
         }
     }
     ALOGE("rsGetAllocation, failed to find %p", ptr);
-    return NULL;
+    return nullptr;
 }
 
 void RsdCpuScriptImpl::preLaunch(uint32_t slot, const Allocation ** ains,

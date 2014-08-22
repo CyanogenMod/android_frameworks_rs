@@ -299,7 +299,7 @@ RsdCpuScriptIntrinsicHistogram::RsdCpuScriptIntrinsicHistogram(RsdCpuReferenceIm
                                                      const Script *s, const Element *e)
             : RsdCpuScriptIntrinsic(ctx, s, e, RS_SCRIPT_INTRINSIC_ID_HISTOGRAM) {
 
-    mRootPtr = NULL;
+    mRootPtr = nullptr;
     mSums = new int[256 * 4 * mCtx->getThreadCount()];
     mDot[0] = 0.299f;
     mDot[1] = 0.587f;

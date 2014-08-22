@@ -96,7 +96,7 @@ template<class T>
 class ObjectBaseRef {
 public:
     ObjectBaseRef() {
-        mRef = NULL;
+        mRef = nullptr;
     }
 
     ObjectBaseRef(const ObjectBaseRef &ref) {
@@ -142,7 +142,7 @@ public:
         if (mRef) {
             mRef->decSysRef();
         }
-        mRef = NULL;
+        mRef = nullptr;
     }
 
     inline T * get() const {

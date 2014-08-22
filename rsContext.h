@@ -234,7 +234,7 @@ public:
     static void printWatchdogInfo(void *ctx);
 
     void dumpDebug() const;
-    void setError(RsError e, const char *msg = NULL) const;
+    void setError(RsError e, const char *msg = nullptr) const;
 
     mutable const ObjectBase * mObjHead;
 

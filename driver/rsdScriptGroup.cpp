@@ -32,7 +32,7 @@ bool rsdScriptGroupInit(const Context *rsc, ScriptGroup *sg) {
     RsdHal *dc = (RsdHal *)rsc->mHal.drv;
 
     sg->mHal.drv = dc->mCpuRef->createScriptGroup(sg);
-    return sg->mHal.drv != NULL;
+    return sg->mHal.drv != nullptr;
 }
 
 void rsdScriptGroupSetInput(const Context *rsc, const ScriptGroup *sg,
@@ -59,13 +59,13 @@ void rsdScriptGroupUpdateCachedObject(const Context *rsc,
 {
     obj->p = sg;
 #ifdef __LP64__
-    obj->r = NULL;
-    if (sg != NULL) {
+    obj->r = nullptr;
+    if (sg != nullptr) {
         obj->v1 = sg->mHal.drv;
     } else {
-        obj->v1 = NULL;
+        obj->v1 = nullptr;
     }
-    obj->v2 = NULL;
+    obj->v2 = nullptr;
 #endif
 }
 
