@@ -312,7 +312,7 @@ static RsdCpuReference::CpuSymbol gSyms[] = {
     { "_Z6rsRandff", (void *)&SC_randf2, true },
     { "_Z6rsFracf", (void *)&SC_frac, true },
 
-    { NULL, NULL, false }
+    { nullptr, nullptr, false }
 };
 
 const RsdCpuReference::CpuSymbol * RsdCpuScriptImpl::lookupSymbolMath(const char *sym) {
@@ -324,6 +324,6 @@ const RsdCpuReference::CpuSymbol * RsdCpuScriptImpl::lookupSymbolMath(const char
         }
         syms++;
     }
-    return NULL;
+    return nullptr;
 }
 

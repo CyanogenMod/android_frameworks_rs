@@ -66,21 +66,21 @@ private:
   bool good;
 
 public:
-  ArchiveReader(unsigned char const *buf = NULL, size_t size = 0)
+  ArchiveReader(unsigned char const *buf = nullptr, size_t size = 0)
   : buf_begin(buf), buf_end(buf + size),
-    cursor(buf), cursor_base(NULL), good(buf != NULL) {
+    cursor(buf), cursor_base(nullptr), good(buf != nullptr) {
   }
 
   void prologue(size_t size) {
-    rsl_assert(cursor_base == NULL);
+    rsl_assert(cursor_base == nullptr);
     cursor_base = cursor;
   }
 
   void epilogue(size_t size) {
-    rsl_assert(cursor_base != NULL);
+    rsl_assert(cursor_base != nullptr);
     rsl_assert(cursor_base + size >= cursor);
     cursor = cursor_base + size;
-    cursor_base = NULL;
+    cursor_base = nullptr;
   }
 
   void seek(off_t off, bool from_begin = false) {

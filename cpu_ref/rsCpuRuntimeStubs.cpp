@@ -301,14 +301,14 @@ static RsdCpuReference::CpuSymbol gSyms[] = {
     { "_Z7rsDebugPKcPKDv4_y", (void *)&SC_debugUL4, true },
     { "_Z7rsDebugPKcPKv", (void *)&SC_debugP, true },
 
-    { NULL, NULL, false }
+    { nullptr, nullptr, false }
 };
 
 
 void * RsdCpuScriptImpl::lookupRuntimeStub(void* pContext, char const* name) {
     RsdCpuScriptImpl *s = (RsdCpuScriptImpl *)pContext;
     const RsdCpuReference::CpuSymbol *syms = gSyms;
-    const RsdCpuReference::CpuSymbol *sym = NULL;
+    const RsdCpuReference::CpuSymbol *sym = nullptr;
 
     sym = s->mCtx->symLookup(name);
     if (!sym) {
@@ -328,7 +328,7 @@ void * RsdCpuScriptImpl::lookupRuntimeStub(void* pContext, char const* name) {
         return sym->fnPtr;
     }
     ALOGE("ScriptC sym lookup failed for %s", name);
-    return NULL;
+    return nullptr;
 }
 
 

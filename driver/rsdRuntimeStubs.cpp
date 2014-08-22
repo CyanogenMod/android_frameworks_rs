@@ -532,7 +532,8 @@ static void SC_ForEach_SAA(android::renderscript::rs_script target,
                             android::renderscript::rs_allocation in,
                             android::renderscript::rs_allocation out) {
     Context *rsc = RsdCpuReference::getTlsContext();
-    rsrForEach(rsc, (Script*)target.p, (Allocation*)in.p, (Allocation*)out.p, NULL, 0, NULL);
+    rsrForEach(rsc, (Script*)target.p, (Allocation*)in.p, (Allocation*)out.p,
+               nullptr, 0, nullptr);
 }
 #else
 static void SC_ForEach_SAA(android::renderscript::rs_script *target,
@@ -549,7 +550,8 @@ static void SC_ForEach_SAAU(android::renderscript::rs_script target,
                             android::renderscript::rs_allocation out,
                             const void *usr) {
     Context *rsc = RsdCpuReference::getTlsContext();
-    rsrForEach(rsc, (Script*)target.p, (Allocation*)in.p, (Allocation*)out.p, usr, 0, NULL);
+    rsrForEach(rsc, (Script*)target.p, (Allocation*)in.p, (Allocation*)out.p,
+               usr, 0, nullptr);
 }
 #else
 static void SC_ForEach_SAAU(android::renderscript::rs_script *target,
@@ -588,7 +590,8 @@ static void SC_ForEach_SAAUL(android::renderscript::rs_script target,
                              const void *usr,
                              uint32_t usrLen) {
     Context *rsc = RsdCpuReference::getTlsContext();
-    rsrForEach(rsc, (Script*)target.p, (Allocation*)in.p, (Allocation*)out.p, usr, usrLen, NULL);
+    rsrForEach(rsc, (Script*)target.p, (Allocation*)in.p, (Allocation*)out.p,
+               usr, usrLen, nullptr);
 }
 #else
 static void SC_ForEach_SAAUL(android::renderscript::rs_script *target,
@@ -673,7 +676,7 @@ static uint32_t SC_ToClient2(int cmdID, const void *data, uint32_t len) {
 
 static uint32_t SC_ToClient(int cmdID) {
     Context *rsc = RsdCpuReference::getTlsContext();
-    return rsrToClient(rsc, cmdID, (const void *)NULL, 0);
+    return rsrToClient(rsc, cmdID, (const void *)nullptr, 0);
 }
 
 static uint32_t SC_ToClientBlocking2(int cmdID, const void *data, uint32_t len) {
@@ -683,7 +686,7 @@ static uint32_t SC_ToClientBlocking2(int cmdID, const void *data, uint32_t len) 
 
 static uint32_t SC_ToClientBlocking(int cmdID) {
     Context *rsc = RsdCpuReference::getTlsContext();
-    return rsrToClientBlocking(rsc, cmdID, (const void *)NULL, 0);
+    return rsrToClientBlocking(rsc, cmdID, (const void *)nullptr, 0);
 }
 
 
@@ -696,20 +699,20 @@ static void * ElementAt1D(Allocation *a, RsDataType dt, uint32_t vecSize, uint32
     if (x >= t->getLODDimX(0)) {
         sprintf(buf, "Out range ElementAt X %i of %i", x, t->getLODDimX(0));
         rsc->setError(RS_ERROR_FATAL_DEBUG, buf);
-        return NULL;
+        return nullptr;
     }
 
     if (vecSize > 0) {
         if (vecSize != e->getVectorSize()) {
             sprintf(buf, "Vector size mismatch for ElementAt %i of %i", vecSize, e->getVectorSize());
             rsc->setError(RS_ERROR_FATAL_DEBUG, buf);
-            return NULL;
+            return nullptr;
         }
 
         if (dt != e->getType()) {
             sprintf(buf, "Data type mismatch for ElementAt %i of %i", dt, e->getType());
             rsc->setError(RS_ERROR_FATAL_DEBUG, buf);
-            return NULL;
+            return nullptr;
         }
     }
 
@@ -727,26 +730,26 @@ static void * ElementAt2D(Allocation *a, RsDataType dt, uint32_t vecSize, uint32
     if (x >= t->getLODDimX(0)) {
         sprintf(buf, "Out range ElementAt X %i of %i", x, t->getLODDimX(0));
         rsc->setError(RS_ERROR_FATAL_DEBUG, buf);
-        return NULL;
+        return nullptr;
     }
 
     if (y >= t->getLODDimY(0)) {
         sprintf(buf, "Out range ElementAt Y %i of %i", y, t->getLODDimY(0));
         rsc->setError(RS_ERROR_FATAL_DEBUG, buf);
-        return NULL;
+        return nullptr;
     }
 
     if (vecSize > 0) {
         if (vecSize != e->getVectorSize()) {
             sprintf(buf, "Vector size mismatch for ElementAt %i of %i", vecSize, e->getVectorSize());
             rsc->setError(RS_ERROR_FATAL_DEBUG, buf);
-            return NULL;
+            return nullptr;
         }
 
         if (dt != e->getType()) {
             sprintf(buf, "Data type mismatch for ElementAt %i of %i", dt, e->getType());
             rsc->setError(RS_ERROR_FATAL_DEBUG, buf);
-            return NULL;
+            return nullptr;
         }
     }
 
@@ -765,32 +768,32 @@ static void * ElementAt3D(Allocation *a, RsDataType dt, uint32_t vecSize, uint32
     if (x >= t->getLODDimX(0)) {
         sprintf(buf, "Out range ElementAt X %i of %i", x, t->getLODDimX(0));
         rsc->setError(RS_ERROR_FATAL_DEBUG, buf);
-        return NULL;
+        return nullptr;
     }
 
     if (y >= t->getLODDimY(0)) {
         sprintf(buf, "Out range ElementAt Y %i of %i", y, t->getLODDimY(0));
         rsc->setError(RS_ERROR_FATAL_DEBUG, buf);
-        return NULL;
+        return nullptr;
     }
 
     if (z >= t->getLODDimZ(0)) {
         sprintf(buf, "Out range ElementAt Z %i of %i", z, t->getLODDimZ(0));
         rsc->setError(RS_ERROR_FATAL_DEBUG, buf);
-        return NULL;
+        return nullptr;
     }
 
     if (vecSize > 0) {
         if (vecSize != e->getVectorSize()) {
             sprintf(buf, "Vector size mismatch for ElementAt %i of %i", vecSize, e->getVectorSize());
             rsc->setError(RS_ERROR_FATAL_DEBUG, buf);
-            return NULL;
+            return nullptr;
         }
 
         if (dt != e->getType()) {
             sprintf(buf, "Data type mismatch for ElementAt %i of %i", dt, e->getType());
             rsc->setError(RS_ERROR_FATAL_DEBUG, buf);
-            return NULL;
+            return nullptr;
         }
     }
 
@@ -814,7 +817,7 @@ static void SC_SetElementAt1D(android::renderscript::rs_allocation a, const void
     const Type *t = ((Allocation*)a.p)->getType();
     const Element *e = t->getElement();
     void *tmp = ElementAt1D((Allocation*)a.p, RS_TYPE_UNSIGNED_8, 0, x);
-    if (tmp != NULL) {
+    if (tmp != nullptr) {
         memcpy(tmp, ptr, e->getSizeBytes());
     }
 }
@@ -822,7 +825,7 @@ static void SC_SetElementAt2D(android::renderscript::rs_allocation a, const void
     const Type *t = ((Allocation*)a.p)->getType();
     const Element *e = t->getElement();
     void *tmp = ElementAt2D((Allocation*)a.p, RS_TYPE_UNSIGNED_8, 0, x, y);
-    if (tmp != NULL) {
+    if (tmp != nullptr) {
         memcpy(tmp, ptr, e->getSizeBytes());
     }
 }
@@ -830,41 +833,41 @@ static void SC_SetElementAt3D(android::renderscript::rs_allocation a, const void
     const Type *t = ((Allocation*)a.p)->getType();
     const Element *e = t->getElement();
     void *tmp = ElementAt3D((Allocation*)a.p, RS_TYPE_UNSIGNED_8, 0, x, y, z);
-    if (tmp != NULL) {
+    if (tmp != nullptr) {
         memcpy(tmp, ptr, e->getSizeBytes());
     }
 }
 
 #define ELEMENT_AT(T, DT, VS)                                               \
     static void SC_SetElementAt1_##T(android::renderscript::rs_allocation a, const T *val, uint32_t x) { \
-        void *r = ElementAt1D((Allocation*)a.p, DT, VS, x);               \
-        if (r != NULL) ((T *)r)[0] = *val;                               \
+        void *r = ElementAt1D((Allocation*)a.p, DT, VS, x);             \
+        if (r != nullptr) ((T *)r)[0] = *val;                           \
         else ALOGE("Error from %s", __PRETTY_FUNCTION__);               \
     }                                                                   \
     static void SC_SetElementAt2_##T(android::renderscript::rs_allocation a, const T * val, uint32_t x, uint32_t y) { \
-        void *r = ElementAt2D((Allocation*)a.p, DT, VS, x, y);            \
-        if (r != NULL) ((T *)r)[0] = *val;                               \
+        void *r = ElementAt2D((Allocation*)a.p, DT, VS, x, y);          \
+        if (r != nullptr) ((T *)r)[0] = *val;                           \
         else ALOGE("Error from %s", __PRETTY_FUNCTION__);               \
     }                                                                   \
     static void SC_SetElementAt3_##T(android::renderscript::rs_allocation a, const T * val, uint32_t x, uint32_t y, uint32_t z) { \
-        void *r = ElementAt3D((Allocation*)a.p, DT, VS, x, y, z);         \
-        if (r != NULL) ((T *)r)[0] = *val;                               \
+        void *r = ElementAt3D((Allocation*)a.p, DT, VS, x, y, z);       \
+        if (r != nullptr) ((T *)r)[0] = *val;                           \
         else ALOGE("Error from %s", __PRETTY_FUNCTION__);               \
     }                                                                   \
     static void SC_GetElementAt1_##T(android::renderscript::rs_allocation a, T *val, uint32_t x) {                  \
-        void *r = ElementAt1D((Allocation*)a.p, DT, VS, x);               \
-        if (r != NULL) *val = ((T *)r)[0];                              \
-        else ALOGE("Error from %s", __PRETTY_FUNCTION__);                    \
+        void *r = ElementAt1D((Allocation*)a.p, DT, VS, x);             \
+        if (r != nullptr) *val = ((T *)r)[0];                           \
+        else ALOGE("Error from %s", __PRETTY_FUNCTION__);               \
     }                                                                   \
     static void SC_GetElementAt2_##T(android::renderscript::rs_allocation a, T *val, uint32_t x, uint32_t y) {      \
-        void *r = ElementAt2D((Allocation*)a.p, DT, VS, x, y);            \
-        if (r != NULL) *val = ((T *)r)[0];                              \
-        else ALOGE("Error from %s", __PRETTY_FUNCTION__);                    \
-    }                                                                   \
+        void *r = ElementAt2D((Allocation*)a.p, DT, VS, x, y);           \
+        if (r != nullptr) *val = ((T *)r)[0];                            \
+        else ALOGE("Error from %s", __PRETTY_FUNCTION__);                \
+    }                                                                    \
     static void SC_GetElementAt3_##T(android::renderscript::rs_allocation a, T *val, uint32_t x, uint32_t y, uint32_t z) { \
-        void *r = ElementAt3D((Allocation*)a.p, DT, VS, x, y, z);         \
-        if (r != NULL) *val = ((T *)r)[0];                              \
-        else ALOGE("Error from %s", __PRETTY_FUNCTION__);                    \
+        void *r = ElementAt3D((Allocation*)a.p, DT, VS, x, y, z);        \
+        if (r != nullptr) *val = ((T *)r)[0];                            \
+        else ALOGE("Error from %s", __PRETTY_FUNCTION__);                \
     }
 
 ELEMENT_AT(char, RS_TYPE_SIGNED_8, 1)
@@ -1367,7 +1370,7 @@ static RsdCpuReference::CpuSymbol gSyms[] = {
     { "_Z9rsgFinishv", (void *)&SC_Finish, false },
 #endif
 
-    { NULL, NULL, false }
+    { nullptr, nullptr, false }
 };
 
 #ifdef RS_COMPATIBILITY_LIB
@@ -1378,7 +1381,7 @@ static RsdCpuReference::CpuSymbol gSyms[] = {
 
 #define IS_CLEAR_SET_OBJ(t) \
     bool rsIsObject(t src) { \
-        return src.p != NULL; \
+        return src.p != nullptr; \
     } \
     void __attribute__((overloadable)) rsClearObject(t *dst) { \
         return SC_ClearObject(reinterpret_cast<rs_object_base *>(dst)); \
@@ -1398,7 +1401,8 @@ static void SC_ForEach_SAA(::rs_script target,
                            ::rs_allocation in,
                            ::rs_allocation out) {
     Context *rsc = RsdCpuReference::getTlsContext();
-    rsrForEach(rsc, (Script*)target.p, (Allocation*)in.p, (Allocation*)out.p, NULL, 0, NULL);
+    rsrForEach(rsc, (Script*)target.p, (Allocation*)in.p, (Allocation*)out.p,
+               nullptr, 0, nullptr);
 }
 
 static void SC_ForEach_SAAUS(::rs_script target,
@@ -1407,7 +1411,8 @@ static void SC_ForEach_SAAUS(::rs_script target,
                              const void *usr,
                              const RsScriptCall *call) {
     Context *rsc = RsdCpuReference::getTlsContext();
-    rsrForEach(rsc, (Script*)target.p, (Allocation*)in.p, (Allocation*)out.p, usr, 0, call);
+    rsrForEach(rsc, (Script*)target.p, (Allocation*)in.p, (Allocation*)out.p,
+               usr, 0, call);
 }
 
 static void SC_ForEach_SAAUL(::rs_script target,
@@ -1416,7 +1421,8 @@ static void SC_ForEach_SAAUL(::rs_script target,
                              const void *usr,
                              uint32_t usrLen) {
     Context *rsc = RsdCpuReference::getTlsContext();
-    rsrForEach(rsc, (Script*)target.p, (Allocation*)in.p, (Allocation*)out.p, usr, usrLen, NULL);
+    rsrForEach(rsc, (Script*)target.p, (Allocation*)in.p, (Allocation*)out.p,
+               usr, usrLen, nullptr);
 }
 
 static void SC_ForEach_SAAULS(::rs_script target,
@@ -1426,7 +1432,8 @@ static void SC_ForEach_SAAULS(::rs_script target,
                               uint32_t usrLen,
                               const RsScriptCall *call) {
     Context *rsc = RsdCpuReference::getTlsContext();
-    rsrForEach(rsc, (Script*)target.p, (Allocation*)in.p, (Allocation*)out.p, usr, usrLen, call);
+    rsrForEach(rsc, (Script*)target.p, (Allocation*)in.p, (Allocation*)out.p,
+               usr, usrLen, call);
 }
 
 const Allocation * rsGetAllocation(const void *ptr) {
@@ -1897,7 +1904,7 @@ void rsDebug(const char *s, const void *p) {
 extern const RsdCpuReference::CpuSymbol * rsdLookupRuntimeStub(Context * pContext, char const* name) {
     ScriptC *s = (ScriptC *)pContext;
     const RsdCpuReference::CpuSymbol *syms = gSyms;
-    const RsdCpuReference::CpuSymbol *sym = NULL;
+    const RsdCpuReference::CpuSymbol *sym = nullptr;
 
     if (!sym) {
         while (syms->fnPtr) {
@@ -1908,5 +1915,5 @@ extern const RsdCpuReference::CpuSymbol * rsdLookupRuntimeStub(Context * pContex
         }
     }
 
-    return NULL;
+    return nullptr;
 }

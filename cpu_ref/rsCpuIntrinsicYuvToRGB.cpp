@@ -110,7 +110,7 @@ void RsdCpuScriptIntrinsicYuvToRGB::kernel(const RsExpandKernelParams *p,
         return;
     }
     const uchar *pinY = (const uchar *)cp->alloc->mHal.drvState.lod[0].mallocPtr;
-    if (pinY == NULL) {
+    if (pinY == nullptr) {
         ALOGE("YuvToRGB executed without data, skipping");
         return;
     }
@@ -143,7 +143,7 @@ void RsdCpuScriptIntrinsicYuvToRGB::kernel(const RsExpandKernelParams *p,
     //ALOGE("dimX, %d, dimY, %d", cp->alloc->mHal.drvState.lod[0].dimX, cp->alloc->mHal.drvState.lod[0].dimY);
     //ALOGE("p->dimX, %d, p->dimY, %d", p->dimX, p->dimY);
 
-    if (pinU == NULL) {
+    if (pinU == nullptr) {
         // Legacy yuv support didn't fill in uv
         v = ((uint8_t *)cp->alloc->mHal.drvState.lod[0].mallocPtr) +
             (strideY * p->dimY) +

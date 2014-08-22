@@ -53,7 +53,7 @@ static void SetPriority(const Context *rsc, int32_t priority);
 #ifndef RS_COMPATIBILITY_LIB
     #define NATIVE_FUNC(a) a
 #else
-    #define NATIVE_FUNC(a) NULL
+    #define NATIVE_FUNC(a) nullptr
 #endif
 
 
@@ -64,7 +64,7 @@ static RsdHalFunctions FunctionTable = {
     NATIVE_FUNC(rsdGLSwap),
 
     Shutdown,
-    NULL,
+    nullptr,
     SetPriority,
     rsdAllocRuntimeMem,
     rsdFreeRuntimeMem,
@@ -169,7 +169,7 @@ static RsdHalFunctions FunctionTable = {
         rsdScriptGroupSetOutput,
         rsdScriptGroupExecute,
         rsdScriptGroupDestroy,
-        NULL
+        nullptr
     },
 
     {
@@ -184,7 +184,7 @@ static RsdHalFunctions FunctionTable = {
         rsdElementUpdateCachedObject
     },
 
-    NULL // finish
+    nullptr // finish
 };
 
 extern const RsdCpuReference::CpuSymbol * rsdLookupRuntimeStub(Context * pContext, char const* name);
@@ -209,7 +209,7 @@ extern "C" bool rsdHalInit(RsContext c, uint32_t version_major,
                                           &rsdLookupRuntimeStub, &LookupScript);
     if (!dc->mCpuRef) {
         ALOGE("RsdCpuReference::create for driver hal failed.");
-        rsc->mHal.drv = NULL;
+        rsc->mHal.drv = nullptr;
         free(dc);
         return false;
     }
@@ -217,7 +217,7 @@ extern "C" bool rsdHalInit(RsContext c, uint32_t version_major,
 #ifndef RS_COMPATIBILITY_LIB
     // Set a callback for compiler setup here.
     if (false) {
-        dc->mCpuRef->setSetupCompilerCallback(NULL);
+        dc->mCpuRef->setSetupCompilerCallback(nullptr);
     }
 
     // Set a callback for switching MemChunk's allocator here.
@@ -251,7 +251,7 @@ void Shutdown(Context *rsc) {
     RsdHal *dc = (RsdHal *)rsc->mHal.drv;
     delete dc->mCpuRef;
     free(dc);
-    rsc->mHal.drv = NULL;
+    rsc->mHal.drv = nullptr;
 }
 
 void* rsdAllocRuntimeMem(size_t size, uint32_t flags) {

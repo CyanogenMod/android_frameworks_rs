@@ -64,7 +64,7 @@ Allocation::Allocation(void *id, sp<RS> rs, sp<const Type> t, uint32_t usage) :
     mType = t;
     mUsage = usage;
 
-    if (t != NULL) {
+    if (t != nullptr) {
         updateCacheInfo(t);
     }
 
@@ -125,7 +125,7 @@ void Allocation::updateFromNative() {
     BaseObj::updateFromNative();
 
     const void *typeID = RS::dispatch->AllocationGetType(mRS->getContext(), getID());
-    if(typeID != NULL) {
+    if(typeID != nullptr) {
         sp<const Type> old = mType;
         sp<Type> t = new Type((void *)typeID, mRS);
         t->updateFromNative();
@@ -170,23 +170,23 @@ void Allocation::ioGetInput() {
 }
 
 void * Allocation::getPointer(size_t *stride) {
-    void *p = NULL;
+    void *p = nullptr;
     if (!(mUsage & RS_ALLOCATION_USAGE_SHARED)) {
         mRS->throwError(RS_ERROR_INVALID_PARAMETER, "Allocation does not support USAGE_SHARED.");
-        return NULL;
+        return nullptr;
     }
 
     // FIXME: decide if lack of getPointer should cause compat mode
-    if (RS::dispatch->AllocationGetPointer == NULL) {
+    if (RS::dispatch->AllocationGetPointer == nullptr) {
         mRS->throwError(RS_ERROR_RUNTIME_ERROR, "Can't use getPointer on older APIs");
-        return NULL;
+        return nullptr;
     }
 
     p = RS::dispatch->AllocationGetPointer(mRS->getContext(), getIDSafe(), 0,
                                            RS_ALLOCATION_CUBEMAP_FACE_POSITIVE_X, 0, 0, stride);
     if (mRS->getError() != RS_SUCCESS) {
         mRS->throwError(RS_ERROR_RUNTIME_ERROR, "Allocation lock failed");
-        p = NULL;
+        p = nullptr;
     }
     return p;
 }
@@ -241,7 +241,7 @@ void Allocation::copy1DTo(void* data) {
 
 
 void Allocation::validate2DRange(uint32_t xoff, uint32_t yoff, uint32_t w, uint32_t h) {
-    if (mAdaptedAllocation != NULL) {
+    if (mAdaptedAllocation != nullptr) {
 
     } else {
         if (((xoff + w) > mCurrentDimX) || ((yoff + h) > mCurrentDimY)) {
@@ -303,7 +303,7 @@ void Allocation::copy2DStridedTo(void* data, size_t stride) {
 
 void Allocation::validate3DRange(uint32_t xoff, uint32_t yoff, uint32_t zoff, uint32_t w,
                                  uint32_t h, uint32_t d) {
-    if (mAdaptedAllocation != NULL) {
+    if (mAdaptedAllocation != nullptr) {
 
     } else {
         if (((xoff + w) > mCurrentDimX) || ((yoff + h) > mCurrentDimY) || ((zoff + d) > mCurrentDimZ)) {
@@ -338,7 +338,7 @@ sp<Allocation> Allocation::createTyped(sp<RS> rs, sp<const Type> type,
     }
     if (id == 0) {
         rs->throwError(RS_ERROR_RUNTIME_ERROR, "Allocation creation failed");
-        return NULL;
+        return nullptr;
     }
     return new Allocation(id, rs, type, usage);
 }
@@ -353,7 +353,7 @@ sp<Allocation> Allocation::createTyped(sp<RS> rs, sp<const Type> type,
     }
     if (id == 0) {
         rs->throwError(RS_ERROR_RUNTIME_ERROR, "Allocation creation failed");
-        return NULL;
+        return nullptr;
     }
     return new Allocation(id, rs, type, usage);
 }

@@ -193,7 +193,7 @@ static void UploadToTexture(const Context *rsc, const Allocation *alloc) {
     if (!(alloc->mHal.state.usageFlags & RS_ALLOCATION_USAGE_SCRIPT)) {
         if (alloc->mHal.drvState.lod[0].mallocPtr) {
             free(alloc->mHal.drvState.lod[0].mallocPtr);
-            alloc->mHal.drvState.lod[0].mallocPtr = NULL;
+            alloc->mHal.drvState.lod[0].mallocPtr = nullptr;
         }
     }
     rsdGLCheckError(rsc, "UploadToTexture");
@@ -360,7 +360,7 @@ static uint8_t* allocAlignedMemory(size_t allocSize, bool forceZero) {
     // We align all allocations to a 16-byte boundary.
     uint8_t* ptr = (uint8_t *)memalign(16, allocSize);
     if (!ptr) {
-        return NULL;
+        return nullptr;
     }
     if (forceZero) {
         memset(ptr, 0, allocSize);
@@ -376,15 +376,15 @@ bool rsdAllocationInit(const Context *rsc, Allocation *alloc, bool forceZero) {
     alloc->mHal.drv = drv;
 
     // Calculate the object size.
-    size_t allocSize = AllocationBuildPointerTable(rsc, alloc, alloc->getType(), NULL);
+    size_t allocSize = AllocationBuildPointerTable(rsc, alloc, alloc->getType(), nullptr);
 
-    uint8_t * ptr = NULL;
+    uint8_t * ptr = nullptr;
     if (alloc->mHal.state.usageFlags & RS_ALLOCATION_USAGE_IO_OUTPUT) {
 
     } else if (alloc->mHal.state.usageFlags & RS_ALLOCATION_USAGE_IO_INPUT) {
         // Allocation is allocated when the surface is created
         // in getSurface
-    } else if (alloc->mHal.state.userProvidedPtr != NULL) {
+    } else if (alloc->mHal.state.userProvidedPtr != nullptr) {
         // user-provided allocation
         // limitations: no faces, no LOD, USAGE_SCRIPT or SCRIPT+TEXTURE only
         if (!(alloc->mHal.state.usageFlags == (RS_ALLOCATION_USAGE_SCRIPT | RS_ALLOCATION_USAGE_SHARED) ||
@@ -405,7 +405,7 @@ bool rsdAllocationInit(const Context *rsc, Allocation *alloc, bool forceZero) {
 
             ptr = allocAlignedMemory(allocSize, forceZero);
             if (!ptr) {
-                alloc->mHal.drv = NULL;
+                alloc->mHal.drv = nullptr;
                 free(drv);
                 return false;
             }
@@ -417,7 +417,7 @@ bool rsdAllocationInit(const Context *rsc, Allocation *alloc, bool forceZero) {
     } else {
         ptr = allocAlignedMemory(allocSize, forceZero);
         if (!ptr) {
-            alloc->mHal.drv = NULL;
+            alloc->mHal.drv = nullptr;
             free(drv);
             return false;
         }
@@ -456,7 +456,7 @@ bool rsdAllocationInit(const Context *rsc, Allocation *alloc, bool forceZero) {
     }
 
 
-    drv->readBackFBO = NULL;
+    drv->readBackFBO = nullptr;
 
     // fill out the initial state of the buffer if we couldn't use the user-provided ptr and USAGE_SHARED was accepted
     if ((alloc->mHal.state.userProvidedPtr != 0) && (drv->useUserProvidedPtr == false)) {
@@ -500,13 +500,13 @@ void rsdAllocationDestroy(const Context *rsc, Allocation *alloc) {
             !(alloc->mHal.state.usageFlags & RS_ALLOCATION_USAGE_IO_OUTPUT)) {
                 free(alloc->mHal.drvState.lod[0].mallocPtr);
         }
-        alloc->mHal.drvState.lod[0].mallocPtr = NULL;
+        alloc->mHal.drvState.lod[0].mallocPtr = nullptr;
     }
 
 #ifndef RS_COMPATIBILITY_LIB
-    if (drv->readBackFBO != NULL) {
+    if (drv->readBackFBO != nullptr) {
         delete drv->readBackFBO;
-        drv->readBackFBO = NULL;
+        drv->readBackFBO = nullptr;
     }
 
     if ((alloc->mHal.state.usageFlags & RS_ALLOCATION_USAGE_IO_OUTPUT) &&
@@ -519,15 +519,15 @@ void rsdAllocationDestroy(const Context *rsc, Allocation *alloc) {
             mapper.unlock(drv->wndBuffer->handle);
             int32_t r = nw->queueBuffer(nw, drv->wndBuffer, -1);
 
-            drv->wndSurface = NULL;
+            drv->wndSurface = nullptr;
             native_window_api_disconnect(nw, NATIVE_WINDOW_API_CPU);
-            nw->decStrong(NULL);
+            nw->decStrong(nullptr);
         }
     }
 #endif
 
     free(drv);
-    alloc->mHal.drv = NULL;
+    alloc->mHal.drv = nullptr;
 }
 
 void rsdAllocationResize(const Context *rsc, const Allocation *alloc,
@@ -542,7 +542,7 @@ void rsdAllocationResize(const Context *rsc, const Allocation *alloc,
     }
     void * oldPtr = alloc->mHal.drvState.lod[0].mallocPtr;
     // Calculate the object size
-    size_t s = AllocationBuildPointerTable(rsc, alloc, newType, NULL);
+    size_t s = AllocationBuildPointerTable(rsc, alloc, newType, nullptr);
     uint8_t *ptr = (uint8_t *)realloc(oldPtr, s);
     // Build the relative pointer tables.
     size_t verifySize = AllocationBuildPointerTable(rsc, alloc, newType, ptr);
@@ -571,7 +571,7 @@ static void rsdAllocationSyncFromFBO(const Context *rsc, const Allocation *alloc
     if (!drv->textureID && !drv->renderTargetID) {
         return; // nothing was rendered here yet, so nothing to sync
     }
-    if (drv->readBackFBO == NULL) {
+    if (drv->readBackFBO == nullptr) {
         drv->readBackFBO = new RsdFrameBufferObj();
         drv->readBackFBO->setColorTarget(drv, 0);
         drv->readBackFBO->setDimensions(alloc->getType()->getDimX(),
@@ -656,7 +656,7 @@ static bool IoGetBuffer(const Context *rsc, Allocation *alloc, ANativeWindow *nw
     GraphicBufferMapper &mapper = GraphicBufferMapper::get();
     Rect bounds(drv->wndBuffer->width, drv->wndBuffer->height);
 
-    void *dst = NULL;
+    void *dst = nullptr;
     mapper.lock(drv->wndBuffer->handle,
             GRALLOC_USAGE_SW_READ_NEVER | GRALLOC_USAGE_SW_WRITE_OFTEN,
             bounds, &dst);
@@ -674,7 +674,7 @@ void rsdAllocationSetSurface(const Context *rsc, Allocation *alloc, ANativeWindo
     ANativeWindow *old = drv->wndSurface;
 
     if (nw) {
-        nw->incStrong(NULL);
+        nw->incStrong(nullptr);
     }
 
     if (alloc->mHal.state.usageFlags & RS_ALLOCATION_USAGE_GRAPHICS_RENDER_TARGET) {
@@ -689,13 +689,13 @@ void rsdAllocationSetSurface(const Context *rsc, Allocation *alloc, ANativeWindo
         GraphicBufferMapper &mapper = GraphicBufferMapper::get();
         mapper.unlock(drv->wndBuffer->handle);
         old->cancelBuffer(old, drv->wndBuffer, -1);
-        drv->wndSurface = NULL;
+        drv->wndSurface = nullptr;
 
         native_window_api_disconnect(old, NATIVE_WINDOW_API_CPU);
-        old->decStrong(NULL);
+        old->decStrong(nullptr);
     }
 
-    if (nw != NULL) {
+    if (nw != nullptr) {
         int32_t r;
         uint32_t flags = 0;
 
@@ -747,7 +747,7 @@ void rsdAllocationSetSurface(const Context *rsc, Allocation *alloc, ANativeWindo
  error:
 
     if (nw) {
-        nw->decStrong(NULL);
+        nw->decStrong(nullptr);
     }
 
 
@@ -1202,14 +1202,14 @@ void rsdAllocationUpdateCachedObject(const Context *rsc,
 {
     obj->p = alloc;
 #ifdef __LP64__
-    if (alloc != NULL) {
+    if (alloc != nullptr) {
         obj->r = alloc->mHal.drvState.lod[0].mallocPtr;
         obj->v1 = alloc->mHal.drv;
         obj->v2 = (void *)alloc->mHal.drvState.lod[0].stride;
     } else {
-        obj->r = NULL;
-        obj->v1 = NULL;
-        obj->v2 = NULL;
+        obj->r = nullptr;
+        obj->v1 = nullptr;
+        obj->v2 = nullptr;
     }
 #endif
 }

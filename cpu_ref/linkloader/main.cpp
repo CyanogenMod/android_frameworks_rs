@@ -54,7 +54,7 @@ int main(int argc, char **argv) {
 
   // Open the file
   int fd = -1;
-  unsigned char const *image = NULL;
+  unsigned char const *image = nullptr;
   size_t image_size = 0;
 
   if (!open_mmap_file(filename, fd, image, image_size)) {
@@ -135,7 +135,7 @@ void *find_sym(void *context, char const *name) {
   }
 
   assert(0 && "Can't find symbol.");
-  return 0;
+  return nullptr;
 }
 
 template <unsigned Bitwidth, typename Archiver>

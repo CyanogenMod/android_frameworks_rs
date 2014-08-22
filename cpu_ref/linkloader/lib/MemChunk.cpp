@@ -41,10 +41,10 @@
 static uintptr_t StartAddr = 0x7e000000UL;
 #endif
 
-AllocFunc MemChunk::VendorAlloc = NULL;
-FreeFunc MemChunk::VendorFree = NULL;
+AllocFunc MemChunk::VendorAlloc = nullptr;
+FreeFunc MemChunk::VendorFree = nullptr;
 
-MemChunk::MemChunk() : buf(NULL), buf_size(0), bVendorBuf(true) {
+MemChunk::MemChunk() : buf(nullptr), buf_size(0), bVendorBuf(true) {
 }
 
 MemChunk::~MemChunk() {

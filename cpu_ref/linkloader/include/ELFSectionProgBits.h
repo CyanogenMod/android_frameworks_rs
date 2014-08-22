@@ -64,7 +64,7 @@ public:
       break;
 
     default:
-      stubs = NULL;
+      stubs = nullptr;
     }
   }
 

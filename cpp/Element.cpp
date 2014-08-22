@@ -26,11 +26,11 @@ using namespace RSC;
 android::RSC::sp<const Element> Element::getSubElement(uint32_t index) {
     if (!mVisibleElementMap.size()) {
         mRS->throwError(RS_ERROR_INVALID_PARAMETER, "Element contains no sub-elements");
-        return NULL;
+        return nullptr;
     }
     if (index >= mVisibleElementMap.size()) {
         mRS->throwError(RS_ERROR_INVALID_PARAMETER, "Illegal sub-element index");
-        return NULL;
+        return nullptr;
     }
     return mElements[mVisibleElementMap[index]];
 }
@@ -38,11 +38,11 @@ android::RSC::sp<const Element> Element::getSubElement(uint32_t index) {
 const char * Element::getSubElementName(uint32_t index) {
     if (!mVisibleElementMap.size()) {
         mRS->throwError(RS_ERROR_INVALID_PARAMETER, "Element contains no sub-elements");
-        return NULL;
+        return nullptr;
     }
     if (index >= mVisibleElementMap.size()) {
         mRS->throwError(RS_ERROR_INVALID_PARAMETER, "Illegal sub-element index");
-        return NULL;
+        return nullptr;
     }
     return mElementNames[mVisibleElementMap[index]].c_str();
 }
@@ -73,7 +73,7 @@ uint32_t Element::getSubElementOffsetBytes(uint32_t index) {
 
 
 #define CREATE_USER(N, T) android::RSC::sp<const Element> Element::N(android::RSC::sp<RS> rs) { \
-    if (rs->mElements.N == NULL) {                                  \
+    if (rs->mElements.N == nullptr) {                               \
         rs->mElements.N = (createUser(rs, RS_TYPE_##T));            \
     }                                                               \
     return rs->mElements.N;                                         \
@@ -100,10 +100,10 @@ CREATE_USER(MATRIX_3X3, MATRIX_3X3);
 CREATE_USER(MATRIX_2X2, MATRIX_2X2);
 
 #define CREATE_PIXEL(N, T, K) android::RSC::sp<const Element> Element::N(android::RSC::sp<RS> rs) { \
-    if (rs->mElements.N == NULL) {                                  \
-        rs->mElements.N = createPixel(rs, RS_TYPE_##T, RS_KIND_##K);    \
-    }                                                                   \
-    return rs->mElements.N;                                             \
+    if (rs->mElements.N == nullptr) {                                \
+        rs->mElements.N = createPixel(rs, RS_TYPE_##T, RS_KIND_##K); \
+    }                                                                \
+    return rs->mElements.N;                                          \
 }
 
 CREATE_PIXEL(A_8, UNSIGNED_8, PIXEL_A);
@@ -115,22 +115,22 @@ CREATE_PIXEL(YUV, UNSIGNED_8, PIXEL_YUV);
 CREATE_PIXEL(RGBA_5551, UNSIGNED_5_5_5_1, PIXEL_RGBA);
 
 #define CREATE_VECTOR(N, T) android::RSC::sp<const Element> Element::N##_2(android::RSC::sp<RS> rs) { \
-    if (rs->mElements.N##_2 == NULL) {                                  \
-        rs->mElements.N##_2 = createVector(rs, RS_TYPE_##T, 2);         \
-    }                                                                   \
-    return rs->mElements.N##_2;                                         \
-}                                                                       \
+    if (rs->mElements.N##_2 == nullptr) {                                 \
+        rs->mElements.N##_2 = createVector(rs, RS_TYPE_##T, 2);           \
+    }                                                                     \
+    return rs->mElements.N##_2;                                           \
+}                                                                         \
 android::RSC::sp<const Element> Element::N##_3(android::RSC::sp<RS> rs) { \
-    if (rs->mElements.N##_3 == NULL) {                                  \
-        rs->mElements.N##_3 = createVector(rs, RS_TYPE_##T, 3);         \
-    }                                                                   \
-    return rs->mElements.N##_3;                                         \
+    if (rs->mElements.N##_3 == nullptr) {                                 \
+        rs->mElements.N##_3 = createVector(rs, RS_TYPE_##T, 3);           \
+    }                                                                     \
+    return rs->mElements.N##_3;                                           \
 } \
 android::RSC::sp<const Element> Element::N##_4(android::RSC::sp<RS> rs) { \
-    if (rs->mElements.N##_4 == NULL) {                                  \
-        rs->mElements.N##_4 = createVector(rs, RS_TYPE_##T, 4);         \
-    }                                                                   \
-    return rs->mElements.N##_4;                                         \
+    if (rs->mElements.N##_4 == nullptr) {                                 \
+        rs->mElements.N##_4 = createVector(rs, RS_TYPE_##T, 4);           \
+    }                                                                     \
+    return rs->mElements.N##_4;                                           \
 }
 CREATE_VECTOR(U8, UNSIGNED_8);
 CREATE_VECTOR(I8, SIGNED_8);
@@ -279,7 +279,7 @@ android::RSC::sp<const Element> Element::createUser(android::RSC::sp<RS> rs, RsD
 android::RSC::sp<const Element> Element::createVector(android::RSC::sp<RS> rs, RsDataType dt, uint32_t size) {
     if (size < 2 || size > 4) {
         rs->throwError(RS_ERROR_INVALID_PARAMETER, "Vector size out of range 2-4.");
-        return NULL;
+        return nullptr;
     }
     void *id = RS::dispatch->ElementCreate(rs->getContext(), dt, RS_KIND_USER, false, size);
     return new Element(id, rs, dt, RS_KIND_USER, false, size);
@@ -293,7 +293,7 @@ android::RSC::sp<const Element> Element::createPixel(android::RSC::sp<RS> rs, Rs
           dk == RS_KIND_PIXEL_RGBA ||
           dk == RS_KIND_PIXEL_DEPTH)) {
         rs->throwError(RS_ERROR_INVALID_PARAMETER, "Unsupported DataKind");
-        return NULL;
+        return nullptr;
     }
     if (!(dt == RS_TYPE_UNSIGNED_8 ||
           dt == RS_TYPE_UNSIGNED_16 ||
@@ -301,23 +301,23 @@ android::RSC::sp<const Element> Element::createPixel(android::RSC::sp<RS> rs, Rs
           dt == RS_TYPE_UNSIGNED_4_4_4_4 ||
           dt == RS_TYPE_UNSIGNED_5_5_5_1)) {
         rs->throwError(RS_ERROR_INVALID_PARAMETER, "Unsupported DataType");
-        return NULL;
+        return nullptr;
     }
     if (dt == RS_TYPE_UNSIGNED_5_6_5 && dk != RS_KIND_PIXEL_RGB) {
         rs->throwError(RS_ERROR_INVALID_PARAMETER, "Bad kind and type combo");
-        return NULL;
+        return nullptr;
     }
     if (dt == RS_TYPE_UNSIGNED_5_5_5_1 && dk != RS_KIND_PIXEL_RGBA) {
         rs->throwError(RS_ERROR_INVALID_PARAMETER, "Bad kind and type combo");
-        return NULL;
+        return nullptr;
     }
     if (dt == RS_TYPE_UNSIGNED_4_4_4_4 && dk != RS_KIND_PIXEL_RGBA) {
         rs->throwError(RS_ERROR_INVALID_PARAMETER, "Bad kind and type combo");
-        return NULL;
+        return nullptr;
     }
     if (dt == RS_TYPE_UNSIGNED_16 && dk != RS_KIND_PIXEL_DEPTH) {
         rs->throwError(RS_ERROR_INVALID_PARAMETER, "Bad kind and type combo");
-        return NULL;
+        return nullptr;
     }
 
     int size = 1;
@@ -411,4 +411,3 @@ android::RSC::sp<const Element> Element::Builder::create() {
     free(elementArray);
     return new Element(id, mRS, mElements, mElementNames, mArraySizes);
 }
-

@@ -24,8 +24,8 @@ Script::Script(Context *rsc) : ObjectBase(rsc) {
     memset(&mEnviroment, 0, sizeof(mEnviroment));
     memset(&mHal, 0, sizeof(mHal));
 
-    mSlots = NULL;
-    mTypes = NULL;
+    mSlots = nullptr;
+    mTypes = nullptr;
     mInitialized = false;
     mHasObjectSlots = false;
 }
@@ -33,11 +33,11 @@ Script::Script(Context *rsc) : ObjectBase(rsc) {
 Script::~Script() {
     if (mSlots) {
         delete [] mSlots;
-        mSlots = NULL;
+        mSlots = nullptr;
     }
     if (mTypes) {
         delete [] mTypes;
-        mTypes = NULL;
+        mTypes = nullptr;
     }
 }
 
@@ -95,7 +95,7 @@ void Script::setVarObj(uint32_t slot, ObjectBase *val) {
 }
 
 void Script::callUpdateCacheObject(const Context *rsc, void *dstObj) const {
-    if (rsc->mHal.funcs.script.updateCachedObject != NULL) {
+    if (rsc->mHal.funcs.script.updateCachedObject != nullptr) {
         rsc->mHal.funcs.script.updateCachedObject(rsc, this, (rs_script *)dstObj);
     } else {
         *((const void **)dstObj) = this;
@@ -170,7 +170,7 @@ void rsi_ScriptBindAllocation(Context * rsc, RsScript vs, RsAllocation va, uint3
 
 void rsi_ScriptSetTimeZone(Context * rsc, RsScript vs, const char * timeZone, size_t length) {
     // We unfortunately need to make a new copy of the string, since it is
-    // not NULL-terminated. We then use setenv(), which properly handles
+    // not nullptr-terminated. We then use setenv(), which properly handles
     // freeing/duplicating the actual string for the environment.
     char *tz = (char *) malloc(length + 1);
     if (!tz) {
@@ -207,8 +207,8 @@ void rsi_ScriptForEach(Context *rsc, RsScript vs, uint32_t slot,
                        const void *params, size_t paramLen,
                        const RsScriptCall *sc, size_t scLen) {
 
-    if (vain == NULL) {
-        rsi_ScriptForEachMulti(rsc, vs, slot, NULL, 0, vaout, params, paramLen,
+    if (vain == nullptr) {
+        rsi_ScriptForEachMulti(rsc, vs, slot, nullptr, 0, vaout, params, paramLen,
                                sc, scLen);
     } else {
         RsAllocation ains[1] = {vain};
@@ -221,13 +221,13 @@ void rsi_ScriptForEach(Context *rsc, RsScript vs, uint32_t slot,
 
 void rsi_ScriptInvoke(Context *rsc, RsScript vs, uint32_t slot) {
     Script *s = static_cast<Script *>(vs);
-    s->Invoke(rsc, slot, NULL, 0);
+    s->Invoke(rsc, slot, nullptr, 0);
 }
 
 
 void rsi_ScriptInvokeData(Context *rsc, RsScript vs, uint32_t slot, void *data) {
     Script *s = static_cast<Script *>(vs);
-    s->Invoke(rsc, slot, NULL, 0);
+    s->Invoke(rsc, slot, nullptr, 0);
 }
 
 void rsi_ScriptInvokeV(Context *rsc, RsScript vs, uint32_t slot, const void *data, size_t len) {
