@@ -128,7 +128,7 @@ static void OneVU4(const RsExpandKernelParams *p, float4 *out, int32_t x, int32_
         gPtr++;
     }
 
-    out->xyzw = blurredPixel;
+    out[0] = blurredPixel;
 }
 
 static void OneVU1(const RsExpandKernelParams *p, float *out, int32_t x, int32_t y,
@@ -163,6 +163,7 @@ extern "C" void rsdIntrinsicBlurHFU1_K(void *dst, const void *pin, const void *g
 static void OneVFU4(float4 *out,
                     const uchar *ptrIn, int iStride, const float* gPtr, int ct,
                     int x1, int x2) {
+    out += x1;
 #if defined(ARCH_X86_HAVE_SSSE3)
     if (gArchUseSIMD) {
         int t = (x2 - x1);
@@ -195,6 +196,7 @@ static void OneVFU1(float *out,
                     const uchar *ptrIn, int iStride, const float* gPtr, int ct, int x1, int x2) {
 
     int len = x2 - x1;
+    out += x1;
 
     while((x2 > x1) && (((uintptr_t)ptrIn) & 0x3)) {
         const uchar *pi = ptrIn;
@@ -293,7 +295,7 @@ void RsdCpuScriptIntrinsicBlur::kernelU4(const RsExpandKernelParams *p,
     uint32_t x2 = xend;
 
 #if defined(ARCH_ARM_USE_INTRINSICS)
-    if (gArchUseSIMD) {
+    if (gArchUseSIMD && !xstart && (xend == p->dimX)) {
         rsdIntrinsicBlurU4_K(out, (uchar4 const *)(pin + stride * p->y), p->dimX, p->dimY,
                  stride, x1, p->y, x2 - x1, cp->mIradius, cp->mIp + cp->mIradius);
         return;
@@ -313,9 +315,10 @@ void RsdCpuScriptIntrinsicBlur::kernelU4(const RsExpandKernelParams *p,
     int y = p->y;
     if ((y > cp->mIradius) && (y < ((int)p->dimY - cp->mIradius))) {
         const uchar *pi = pin + (y - cp->mIradius) * stride;
-        OneVFU4(fout, pi, stride, cp->mFp, cp->mIradius * 2 + 1, x1, x2);
+        OneVFU4(fout, pi, stride, cp->mFp, cp->mIradius * 2 + 1, 0, p->dimX);
     } else {
-        while(x2 > x1) {
+        x1 = 0;
+        while(p->dimX > x1) {
             OneVU4(p, fout, x1, y, pin, stride, cp->mFp, cp->mIradius);
             fout++;
             x1++;
@@ -362,9 +365,9 @@ void RsdCpuScriptIntrinsicBlur::kernelU1(const RsExpandKernelParams *p,
     uint32_t x2 = xend;
 
 #if defined(ARCH_ARM_USE_INTRINSICS)
-    if (gArchUseSIMD) {
+    if (gArchUseSIMD && !xstart && (xend == p->dimX)) {
         rsdIntrinsicBlurU1_K(out, pin + stride * p->y, p->dimX, p->dimY,
-                 stride, x1, p->y, x2 - x1, cp->mIradius, cp->mIp + cp->mIradius);
+                 stride, 0, p->y, p->dimX, cp->mIradius, cp->mIp + cp->mIradius);
         return;
     }
 #endif
@@ -373,9 +376,10 @@ void RsdCpuScriptIntrinsicBlur::kernelU1(const RsExpandKernelParams *p,
     int y = p->y;
     if ((y > cp->mIradius) && (y < ((int)p->dimY - cp->mIradius -1))) {
         const uchar *pi = pin + (y - cp->mIradius) * stride;
-        OneVFU1(fout, pi, stride, cp->mFp, cp->mIradius * 2 + 1, x1, x2);
+        OneVFU1(fout, pi, stride, cp->mFp, cp->mIradius * 2 + 1, 0, p->dimX);
     } else {
-        while(x2 > x1) {
+        x1 = 0;
+        while(p->dimX > x1) {
             OneVU1(p, fout, x1, y, pin, stride, cp->mFp, cp->mIradius);
             fout++;
             x1++;
