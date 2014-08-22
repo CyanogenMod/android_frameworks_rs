@@ -175,14 +175,14 @@ Type *Type::createFromStream(Context *rsc, IStream *stream) {
     RsA3DClassID classID = (RsA3DClassID)stream->loadU32();
     if (classID != RS_A3D_CLASS_ID_TYPE) {
         ALOGE("type loading skipped due to invalid class id\n");
-        return NULL;
+        return nullptr;
     }
 
     const char *name = stream->loadString();
 
     Element *elem = Element::createFromStream(rsc, stream);
     if (!elem) {
-        return NULL;
+        return nullptr;
     }
 
     uint32_t x = stream->loadU32();
@@ -241,7 +241,7 @@ ObjectBaseRef<Type> Type::getTypeRef(Context *rsc, const Element *e,
     void* allocMem = rsc->mHal.funcs.allocRuntimeMem(sizeof(Type), 0);
     if (!allocMem) {
         rsc->setError(RS_ERROR_FATAL_DRIVER, "Couldn't allocate memory for Type");
-        return NULL;
+        return nullptr;
     }
 
     Type *nt = new (allocMem) Type(rsc);
@@ -312,7 +312,7 @@ void Type::decRefs(const void *ptr, size_t ct, size_t startOff) const {
 }
 
 void Type::callUpdateCacheObject(const Context *rsc, void *dstObj) const {
-    if (rsc->mHal.funcs.type.updateCachedObject != NULL) {
+    if (rsc->mHal.funcs.type.updateCachedObject != nullptr) {
         rsc->mHal.funcs.type.updateCachedObject(rsc, this, (rs_type *)dstObj);
     } else {
         *((const void **)dstObj) = this;

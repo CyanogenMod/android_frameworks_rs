@@ -149,19 +149,19 @@ public:
   static ELFHeader *read(Archiver &AR) {
     if (!AR) {
       // Archiver is in bad state before calling read function.
-      // Return NULL and do nothing.
-      return 0;
+      // Return nullptr and do nothing.
+      return nullptr;
     }
 
     std::unique_ptr<ELFHeader> header(new ELFHeader());
     if (!header->serialize(AR)) {
-      // Unable to read the structure.  Return NULL.
-      return 0;
+      // Unable to read the structure.  Return nullptr.
+      return nullptr;
     }
 
     if (!header->isValid()) {
-      // Header read from archiver is not valid.  Return NULL.
-      return 0;
+      // Header read from archiver is not valid.  Return nullptr.
+      return nullptr;
     }
 
     return header.release();

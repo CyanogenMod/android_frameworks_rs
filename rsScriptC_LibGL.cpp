@@ -103,12 +103,12 @@ void rsrBindFrameBufferObjectDepthTarget(Context *rsc, Allocation *a) {
 }
 
 void rsrClearFrameBufferObjectColorTarget(Context *rsc, uint32_t slot) {
-    rsc->mFBOCache.bindColorTarget(rsc, NULL, slot);
+    rsc->mFBOCache.bindColorTarget(rsc, nullptr, slot);
     rsc->mStateVertex.updateSize(rsc);
 }
 
 void rsrClearFrameBufferObjectDepthTarget(Context *rsc) {
-    rsc->mFBOCache.bindDepthTarget(rsc, NULL);
+    rsc->mFBOCache.bindDepthTarget(rsc, nullptr);
     rsc->mStateVertex.updateSize(rsc);
 }
 

@@ -53,12 +53,12 @@ extern "C" RSExecRef rsloaderCreateExec(unsigned char const *buf,
                                         void *find_symbol_context) {
   RSExecRef object = rsloaderLoadExecutable(buf, buf_size);
   if (!object) {
-    return NULL;
+    return nullptr;
   }
 
   if (!rsloaderRelocateExecutable(object, find_symbol, find_symbol_context)) {
     rsloaderDisposeExec(object);
-    return NULL;
+    return nullptr;
   }
 
   return object;
@@ -75,7 +75,7 @@ extern "C" RSExecRef rsloaderLoadExecutable(unsigned char const *buf,
 #endif
   if (!object) {
     ALOGE("Unable to load the ELF object.");
-    return NULL;
+    return nullptr;
   }
 
   return wrap(object.release());
@@ -156,7 +156,7 @@ extern "C" void *rsloaderGetSymbolAddress(RSExecRef object_,
 #endif
 
   if (!symtab) {
-    return NULL;
+    return nullptr;
   }
 
 #if defined(__LP64__) || defined(__x86_64__)
@@ -167,7 +167,7 @@ extern "C" void *rsloaderGetSymbolAddress(RSExecRef object_,
 
   if (!symbol) {
     ALOGV("Symbol not found: %s\n", name);
-    return NULL;
+    return nullptr;
   }
 
   int machine = object->getHeader()->getMachine();

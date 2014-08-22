@@ -72,11 +72,11 @@ RsdCpuReference * RsdCpuReference::create(Context *rsc, uint32_t version_major,
 
     RsdCpuReferenceImpl *cpu = new RsdCpuReferenceImpl(rsc);
     if (!cpu) {
-        return NULL;
+        return nullptr;
     }
     if (!cpu->init(version_major, version_minor, lfn, slfn)) {
         delete cpu;
-        return NULL;
+        return nullptr;
     }
 
 #ifndef RS_COMPATIBILITY_LIB
@@ -116,9 +116,9 @@ RsdCpuReferenceImpl::RsdCpuReferenceImpl(Context *rsc) {
     memset(&mTlsStruct, 0, sizeof(mTlsStruct));
     mExit = false;
 #ifndef RS_COMPATIBILITY_LIB
-    mLinkRuntimeCallback = NULL;
-    mSelectRTCallback = NULL;
-    mSetupCompilerCallback = NULL;
+    mLinkRuntimeCallback = nullptr;
+    mSelectRTCallback = nullptr;
+    mSetupCompilerCallback = nullptr;
 #endif
 }
 
@@ -160,7 +160,7 @@ void * RsdCpuReferenceImpl::helperThreadProc(void *vrsc) {
     }
 
     //ALOGV("RS helperThread exited %p idx=%i", dc, idx);
-    return NULL;
+    return nullptr;
 }
 
 void RsdCpuReferenceImpl::launchThreads(WorkerCallback_t cbk, void *data) {
@@ -246,7 +246,7 @@ bool RsdCpuReferenceImpl::init(uint32_t version_major, uint32_t version_minor,
 
     lockMutex();
     if (!gThreadTLSKeyCount) {
-        int status = pthread_key_create(&gThreadTLSKey, NULL);
+        int status = pthread_key_create(&gThreadTLSKey, nullptr);
         if (status) {
             ALOGE("Failed to init thread tls key.");
             unlockMutex();
@@ -257,7 +257,7 @@ bool RsdCpuReferenceImpl::init(uint32_t version_major, uint32_t version_minor,
     unlockMutex();
 
     mTlsStruct.mContext = mRSC;
-    mTlsStruct.mScript = NULL;
+    mTlsStruct.mScript = nullptr;
     int status = pthread_setspecific(gThreadTLSKey, &mTlsStruct);
     if (status) {
         ALOGE("pthread_setspecific %i", status);
@@ -282,7 +282,7 @@ bool RsdCpuReferenceImpl::init(uint32_t version_major, uint32_t version_minor,
     mWorkers.mThreadId = (pthread_t *) calloc(mWorkers.mCount, sizeof(pthread_t));
     mWorkers.mNativeThreadId = (pid_t *) calloc(mWorkers.mCount, sizeof(pid_t));
     mWorkers.mLaunchSignals = new Signal[mWorkers.mCount];
-    mWorkers.mLaunchCallback = NULL;
+    mWorkers.mLaunchCallback = nullptr;
 
     mWorkers.mCompleteSignal.init();
 
@@ -322,8 +322,8 @@ void RsdCpuReferenceImpl::setPriority(int32_t priority) {
 
 RsdCpuReferenceImpl::~RsdCpuReferenceImpl() {
     mExit = true;
-    mWorkers.mLaunchData = NULL;
-    mWorkers.mLaunchCallback = NULL;
+    mWorkers.mLaunchData = nullptr;
+    mWorkers.mLaunchCallback = nullptr;
     mWorkers.mRunningCount = mWorkers.mCount;
     __sync_synchronize();
     for (uint32_t ct = 0; ct < mWorkers.mCount; ct++) {
@@ -569,7 +569,7 @@ RsdCpuScriptImpl * RsdCpuReferenceImpl::setTLS(RsdCpuScriptImpl *sc) {
     if (sc) {
         tls->mScript = sc->getScript();
     } else {
-        tls->mScript = NULL;
+        tls->mScript = nullptr;
     }
     return old;
 }
@@ -591,7 +591,7 @@ RsdCpuReference::CpuScript * RsdCpuReferenceImpl::createScript(const ScriptC *s,
 #endif
         )) {
         delete i;
-        return NULL;
+        return nullptr;
     }
     return i;
 }
@@ -622,7 +622,7 @@ extern RsdCpuScriptImpl * rsdIntrinsic_Resize(RsdCpuReferenceImpl *ctx,
 RsdCpuReference::CpuScript * RsdCpuReferenceImpl::createIntrinsic(const Script *s,
                                     RsScriptIntrinsicID iid, Element *e) {
 
-    RsdCpuScriptImpl *i = NULL;
+    RsdCpuScriptImpl *i = nullptr;
     switch (iid) {
     case RS_SCRIPT_INTRINSIC_ID_3DLUT:
         i = rsdIntrinsic_3DLUT(this, s, e);
@@ -671,7 +671,7 @@ RsdCpuReference::CpuScriptGroup * RsdCpuReferenceImpl::createScriptGroup(const S
     CpuScriptGroupImpl *sgi = new CpuScriptGroupImpl(this, sg);
     if (!sgi->init()) {
         delete sgi;
-        return NULL;
+        return nullptr;
     }
     return sgi;
 }

@@ -56,10 +56,10 @@ sp<Sampler> Sampler::create(sp<RS> rs, RsSamplerValue min, RsSamplerValue mag, R
 }
 
 #define CREATE_SAMPLER(N, MIN, MAG, WRAPS, WRAPT) sp<const Sampler> Sampler::N(sp<RS> rs) { \
-        if (rs->mSamplers.N == NULL) {                                  \
+        if (rs->mSamplers.N == nullptr) {                                \
             rs->mSamplers.N = (create(rs, MIN, MAG, WRAPS, WRAPT, 0.f)); \
-        }                                                               \
-        return rs->mSamplers.N;                                         \
+        }                                                                \
+        return rs->mSamplers.N;                                          \
     }
 
 CREATE_SAMPLER(CLAMP_NEAREST, RS_SAMPLER_CLAMP, RS_SAMPLER_CLAMP, RS_SAMPLER_NEAREST, RS_SAMPLER_NEAREST);

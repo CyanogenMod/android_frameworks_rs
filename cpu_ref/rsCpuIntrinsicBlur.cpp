@@ -414,7 +414,7 @@ RsdCpuScriptIntrinsicBlur::RsdCpuScriptIntrinsicBlur(RsdCpuReferenceImpl *ctx,
                                                      const Script *s, const Element *e)
             : RsdCpuScriptIntrinsic(ctx, s, e, RS_SCRIPT_INTRINSIC_ID_BLUR) {
 
-    mRootPtr = NULL;
+    mRootPtr = nullptr;
     if (e->getType() == RS_TYPE_UNSIGNED_8) {
         switch (e->getVectorSize()) {
         case 1:

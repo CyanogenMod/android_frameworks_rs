@@ -54,7 +54,7 @@ using namespace android::renderscript;
 
 ScriptC::ScriptC(Context *rsc) : Script(rsc) {
 #if !defined(RS_COMPATIBILITY_LIB) && !defined(ANDROID_RS_SERIALIZE)
-    BT = NULL;
+    BT = nullptr;
 #endif
 }
 
@@ -62,7 +62,7 @@ ScriptC::~ScriptC() {
 #if !defined(RS_COMPATIBILITY_LIB) && !defined(ANDROID_RS_SERIALIZE)
     if (BT) {
         delete BT;
-        BT = NULL;
+        BT = nullptr;
     }
 #endif
     if (mInitialized) {
@@ -160,7 +160,7 @@ void ScriptC::setupGLState(Context *rsc) {
 }
 
 uint32_t ScriptC::run(Context *rsc) {
-    if (mHal.info.root == NULL) {
+    if (mHal.info.root == nullptr) {
         rsc->setError(RS_ERROR_BAD_SCRIPT, "Attempted to run bad script");
         return 0;
     }
@@ -195,7 +195,7 @@ void ScriptC::runForEach(Context *rsc,
     // Trace this function call.
     // To avoid overhead we only build the string if tracing is actually
     // enabled.
-    std::string *traceString = NULL;
+    std::string *traceString = nullptr;
     const char  *stringData  = "";
     if (ATRACE_ENABLED()) {
         traceString = new std::string("runForEach_");
@@ -209,7 +209,7 @@ void ScriptC::runForEach(Context *rsc,
     setupGLState(rsc);
     setupScript(rsc);
 
-    if (rsc->mHal.funcs.script.invokeForEachMulti != NULL) {
+    if (rsc->mHal.funcs.script.invokeForEachMulti != nullptr) {
         rsc->mHal.funcs.script.invokeForEachMulti(rsc, this, slot, ains, inLen,
                                                   aout, usr, usrBytes, sc);
 
@@ -276,7 +276,7 @@ bool ScriptC::runCompiler(Context *rsc,
     if (!BT->translate()) {
         ALOGE("Failed to translate bitcode from version: %u", sdkVersion);
         delete BT;
-        BT = NULL;
+        BT = nullptr;
         return false;
     }
     bitcode = (const uint8_t *) BT->getTranslatedBitcode();
@@ -392,7 +392,7 @@ RsScript rsi_ScriptCCreate(Context *rsc,
     if (!s->runCompiler(rsc, resName, cacheDir, (uint8_t *)text, text_length)) {
         // Error during compile, destroy s and return null.
         ObjectBase::checkDelete(s);
-        return NULL;
+        return nullptr;
     }
 
     s->incUserRef();
