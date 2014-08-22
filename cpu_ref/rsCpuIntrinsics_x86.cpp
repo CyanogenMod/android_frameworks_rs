@@ -76,9 +76,9 @@ static inline __m128i blendv_epi8(__m128i x, __m128i y, __m128i mask) {
 #endif
 }
 
-void rsdIntrinsicConvolve3x3_K(void *dst,
-                               const void *y0, const void *y1, const void *y2,
-                               const short *coef, uint32_t count) {
+extern "C" void rsdIntrinsicConvolve3x3_K(void *dst, const void *y0,
+                                          const void *y1, const void *y2,
+                                          const short *coef, uint32_t count) {
     __m128i x;
     __m128i c0, c2, c4, c6, c8;
     __m128i r0, r1, r2;
@@ -593,9 +593,10 @@ void rsdIntrinsicYuv2_K(void *dst,
     }
 }
 
-void rsdIntrinsicConvolve5x5_K(void *dst, const void *y0, const void *y1,
-                               const void *y2, const void *y3, const void *y4,
-                               const short *coef, uint32_t count) {
+extern "C" void rsdIntrinsicConvolve5x5_K(void *dst, const void *y0,
+                                          const void *y1, const void *y2,
+                                          const void *y3, const void *y4,
+                                          const short *coef, uint32_t count) {
     __m128i x;
     __m128i c0, c2, c4, c6, c8, c10, c12;
     __m128i c14, c16, c18, c20, c22, c24;

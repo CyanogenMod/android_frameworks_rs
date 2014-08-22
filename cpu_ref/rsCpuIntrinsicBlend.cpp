@@ -95,18 +95,18 @@ extern "C" int rsdIntrinsicBlend_K(uchar4 *out, uchar4 const *in, int slot,
 #endif
 
 #if defined(ARCH_X86_HAVE_SSSE3)
-extern "C" void rsdIntrinsicBlendSrcOver_K(void *dst, const void *src, uint32_t count8);
-extern "C" void rsdIntrinsicBlendDstOver_K(void *dst, const void *src, uint32_t count8);
-extern "C" void rsdIntrinsicBlendSrcIn_K(void *dst, const void *src, uint32_t count8);
-extern "C" void rsdIntrinsicBlendDstIn_K(void *dst, const void *src, uint32_t count8);
-extern "C" void rsdIntrinsicBlendSrcOut_K(void *dst, const void *src, uint32_t count8);
-extern "C" void rsdIntrinsicBlendDstOut_K(void *dst, const void *src, uint32_t count8);
-extern "C" void rsdIntrinsicBlendSrcAtop_K(void *dst, const void *src, uint32_t count8);
-extern "C" void rsdIntrinsicBlendDstAtop_K(void *dst, const void *src, uint32_t count8);
-extern "C" void rsdIntrinsicBlendXor_K(void *dst, const void *src, uint32_t count8);
-extern "C" void rsdIntrinsicBlendMultiply_K(void *dst, const void *src, uint32_t count8);
-extern "C" void rsdIntrinsicBlendAdd_K(void *dst, const void *src, uint32_t count8);
-extern "C" void rsdIntrinsicBlendSub_K(void *dst, const void *src, uint32_t count8);
+extern void rsdIntrinsicBlendSrcOver_K(void *dst, const void *src, uint32_t count8);
+extern void rsdIntrinsicBlendDstOver_K(void *dst, const void *src, uint32_t count8);
+extern void rsdIntrinsicBlendSrcIn_K(void *dst, const void *src, uint32_t count8);
+extern void rsdIntrinsicBlendDstIn_K(void *dst, const void *src, uint32_t count8);
+extern void rsdIntrinsicBlendSrcOut_K(void *dst, const void *src, uint32_t count8);
+extern void rsdIntrinsicBlendDstOut_K(void *dst, const void *src, uint32_t count8);
+extern void rsdIntrinsicBlendSrcAtop_K(void *dst, const void *src, uint32_t count8);
+extern void rsdIntrinsicBlendDstAtop_K(void *dst, const void *src, uint32_t count8);
+extern void rsdIntrinsicBlendXor_K(void *dst, const void *src, uint32_t count8);
+extern void rsdIntrinsicBlendMultiply_K(void *dst, const void *src, uint32_t count8);
+extern void rsdIntrinsicBlendAdd_K(void *dst, const void *src, uint32_t count8);
+extern void rsdIntrinsicBlendSub_K(void *dst, const void *src, uint32_t count8);
 #endif
 
 void RsdCpuScriptIntrinsicBlend::kernel(const RsExpandKernelParams *p,
