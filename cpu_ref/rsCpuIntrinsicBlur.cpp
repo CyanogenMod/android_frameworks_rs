@@ -155,9 +155,9 @@ extern "C" void rsdIntrinsicBlurU4_K(uchar4 *out, uchar4 const *in, size_t w, si
                  size_t p, size_t x, size_t y, size_t count, size_t r, uint16_t const *tab);
 
 #if defined(ARCH_X86_HAVE_SSSE3)
-extern "C" void rsdIntrinsicBlurVFU4_K(void *dst, const void *pin, int stride, const void *gptr, int rct, int x1, int ct);
-extern "C" void rsdIntrinsicBlurHFU4_K(void *dst, const void *pin, const void *gptr, int rct, int x1, int ct);
-extern "C" void rsdIntrinsicBlurHFU1_K(void *dst, const void *pin, const void *gptr, int rct, int x1, int ct);
+extern void rsdIntrinsicBlurVFU4_K(void *dst, const void *pin, int stride, const void *gptr, int rct, int x1, int ct);
+extern void rsdIntrinsicBlurHFU4_K(void *dst, const void *pin, const void *gptr, int rct, int x1, int ct);
+extern void rsdIntrinsicBlurHFU1_K(void *dst, const void *pin, const void *gptr, int rct, int x1, int ct);
 #endif
 
 static void OneVFU4(float4 *out,
