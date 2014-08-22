@@ -455,11 +455,11 @@ static uint8_t * addVADD_F32(uint8_t *buf, uint32_t dest_q, uint32_t src_q1, uin
 #endif
 
 #if defined(ARCH_X86_HAVE_SSSE3)
-extern "C" void rsdIntrinsicColorMatrixDot_K(void *dst, const void *src,
+extern void rsdIntrinsicColorMatrixDot_K(void *dst, const void *src,
                                   const short *coef, uint32_t count);
-extern "C" void rsdIntrinsicColorMatrix3x3_K(void *dst, const void *src,
+extern void rsdIntrinsicColorMatrix3x3_K(void *dst, const void *src,
                                   const short *coef, uint32_t count);
-extern "C" void rsdIntrinsicColorMatrix4x4_K(void *dst, const void *src,
+extern void rsdIntrinsicColorMatrix4x4_K(void *dst, const void *src,
                                   const short *coef, uint32_t count);
 
 void * selectKernel(Key_t key)
