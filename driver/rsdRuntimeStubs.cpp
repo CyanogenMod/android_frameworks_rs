@@ -518,13 +518,28 @@ static bool SC_IsObject(ObjectBase* o) {
 }
 #endif
 
-
-
-static const Allocation * SC_GetAllocation(const void *ptr) {
+// this may need to change for other CPU architectures
+#ifndef RS_COMPATIBILITY_LIB
+#ifndef __LP64__
+static const android::renderscript::rs_allocation SC_GetAllocation(const void *ptr) {
     Context *rsc = RsdCpuReference::getTlsContext();
     const Script *sc = RsdCpuReference::getTlsScript();
-    return rsdScriptGetAllocationForPointer(rsc, sc, ptr);
+    Allocation* alloc = rsdScriptGetAllocationForPointer(rsc, sc, ptr);
+    android::renderscript::rs_allocation obj = {0};
+    alloc->callUpdateCacheObject(rsc, &obj);
+    return obj;
 }
+#else
+static const android::renderscript::rs_allocation SC_GetAllocation(const void *ptr) {
+    Context *rsc = RsdCpuReference::getTlsContext();
+    const Script *sc = RsdCpuReference::getTlsScript();
+    Allocation* alloc = rsdScriptGetAllocationForPointer(rsc, sc, ptr);
+    android::renderscript::rs_allocation obj = {0, 0, 0, 0};
+    alloc->callUpdateCacheObject(rsc, &obj);
+    return obj;
+}
+#endif
+#endif
 
 #ifndef RS_COMPATIBILITY_LIB
 #ifndef __LP64__
@@ -1275,8 +1290,8 @@ static RsdCpuReference::CpuSymbol gSyms[] = {
     { "_Z20rsgAllocationSyncAll13rs_allocation", (void *)&SC_AllocationSyncAll, false },
     { "_Z20rsgAllocationSyncAll13rs_allocationj", (void *)&SC_AllocationSyncAll2, false },
     { "_Z20rsgAllocationSyncAll13rs_allocation24rs_allocation_usage_type", (void *)&SC_AllocationSyncAll2, false },
-    { "_Z15rsGetAllocationPKv", (void *)&SC_GetAllocation, true },
 #ifndef RS_COMPATIBILITY_LIB
+    { "_Z15rsGetAllocationPKv", (void *)&SC_GetAllocation, true },
     { "_Z18rsAllocationIoSend13rs_allocation", (void *)&SC_AllocationIoSend, false },
     { "_Z21rsAllocationIoReceive13rs_allocation", (void *)&SC_AllocationIoReceive, false },
 #endif
@@ -1427,6 +1442,12 @@ static void SC_ForEach_SAAULS(::rs_script target,
                               const RsScriptCall *call) {
     Context *rsc = RsdCpuReference::getTlsContext();
     rsrForEach(rsc, (Script*)target.p, (Allocation*)in.p, (Allocation*)out.p, usr, usrLen, call);
+}
+
+static const Allocation * SC_GetAllocation(const void *ptr) {
+    Context *rsc = RsdCpuReference::getTlsContext();
+    const Script *sc = RsdCpuReference::getTlsScript();
+    return rsdScriptGetAllocationForPointer(rsc, sc, ptr);
 }
 
 const Allocation * rsGetAllocation(const void *ptr) {
