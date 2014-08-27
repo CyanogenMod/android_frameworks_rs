@@ -96,10 +96,11 @@ V_CLAMP(char);
 V_CLAMP(uchar);
 V_CLAMP(short);
 V_CLAMP(ushort);
-#ifndef ARCH_ARM_HAVE_NEON
+#if !defined(ARCH_ARM_HAVE_NEON) && !defined (ARCH_ARM64_HAVE_NEON)
     V_CLAMP(int);  //implemented in .ll
     V_CLAMP(uint);  //implemented in .ll
 #endif
+
 V_CLAMP(long);
 V_CLAMP(ulong);
 V_CLAMP(ull);
