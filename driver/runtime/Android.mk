@@ -54,7 +54,6 @@ clcore_neon_files := \
     arch/clamp.c
 
 clcore_arm64_files := \
-    $(clcore_base_files) \
     $(clcore_files_64) \
     arch/asimd.ll \
     arch/clamp.c
@@ -72,13 +71,13 @@ include frameworks/compile/slang/rs_version.mk
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := libclcore.bc
-LOCAL_SRC_FILES := $(clcore_files)
+LOCAL_SRC_FILES := $(clcore_base_files)
 LOCAL_SRC_FILES_32 := $(clcore_files_32)
+LOCAL_SRC_FILES_32 += arch/generic.c
 
 ifeq ($(TARGET_ARCH),$(filter $(TARGET_ARCH),arm64))
-LOCAL_SRC_FILES :=
 LOCAL_SRC_FILES_64 := $(clcore_arm64_files)
-LOCAL_CFLAGS += -DARCH_ARM64_HAVE_NEON
+LOCAL_CFLAGS_64 += -DARCH_ARM64_HAVE_NEON
 else
 LOCAL_SRC_FILES_64 := $(clcore_files_64)
 endif
@@ -90,9 +89,16 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE := libclcore_debug.bc
 rs_debug_runtime := 1
-LOCAL_SRC_FILES := $(clcore_files)
+LOCAL_SRC_FILES := $(clcore_base_files)
 LOCAL_SRC_FILES_32 := $(clcore_files_32)
+LOCAL_SRC_FILES_32 += arch/generic.c
+
+ifeq ($(TARGET_ARCH),$(filter $(TARGET_ARCH),arm64))
+LOCAL_SRC_FILES_64 := $(clcore_arm64_files)
+LOCAL_CFLAGS_64 += -DARCH_ARM64_HAVE_NEON
+else
 LOCAL_SRC_FILES_64 := $(clcore_files_64)
+endif
 
 include $(LOCAL_PATH)/build_bc_lib.mk
 rs_debug_runtime :=
@@ -164,9 +170,6 @@ LOCAL_IS_HOST_MODULE := true
 LOCAL_SRC_FILES := $(clcore_x86_files)
 LOCAL_SRC_FILES_32 := $(clcore_base_files_32)
 include $(LOCAL_PATH)/build_bc_lib.mk
-
-
-
 
 include $(CLEAR_VARS)
 
