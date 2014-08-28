@@ -156,7 +156,7 @@ w: 1, 2, 3, 4
 t: f32
 name: atanh
 ret: #2#1
-arg: #2#1
+arg: #2#1 v range(-1,1)
 comment:
  Return the inverse hyperbolic tangent.
 version: 9
@@ -706,10 +706,11 @@ name: remquo
 ret: #2#1
 arg: #2#1 b
 arg: #2#1 c
-arg: int#1 *d conditional
+arg: int#1 *d
 comment:
- Return the quotient and the remainder of b/c
+ Return the quotient and the remainder of b/c.  Only the sign and lowest three bits of the quotient are guaranteed to be accurate.
 version: 9
+test: custom
 end:
 
 start:
@@ -733,8 +734,6 @@ arg: int#1 n
 comment:
  Compute the Nth root of a value.
 version: 9
-# TODO re-enable once how to handle zero is decided
-test: noverify
 end:
 
 start:
@@ -1441,9 +1440,9 @@ ret: #2#1
 arg: #2#1 v range(10e-10,10e10)
 comment:
  Fast approximate log
+ It is not accurate for values very close to zero.
 version: 18
-# TODO Is this the precision we want?
-test: limited(0.0002)
+test: limited
 end:
 
 start:
@@ -1454,9 +1453,9 @@ ret: #2#1
 arg: #2#1 v range(10e-10,10e10)
 comment:
  Fast approximate log2
+ It is not accurate for values very close to zero.
 version: 18
-# TODO Is this the precision we want?
-test: limited(0.0002)
+test: limited
 end:
 
 start:
@@ -1467,9 +1466,9 @@ ret: #2#1
 arg: #2#1 v range(10e-10,10e10)
 comment:
  Fast approximate log10
+ It is not accurate for values very close to zero.
 version: 18
-# TODO Is this the precision we want?
-test: limited(0.00005)
+test: limited
 end:
 
 start:
@@ -1483,10 +1482,9 @@ comment:
  Fast approximate v ^ y
  v must be between 0.f and 256.f
  y must be between -15.f and 15.f
+ It is not accurate for values of v very close to zero.
 version: 18
-# TODO enable once 0 ^ x is handled better
-# test: limited
-test: noverify
+test: limited
 end:
 
 
@@ -1584,7 +1582,7 @@ w: 1, 2, 3, 4
 t: f32
 name: native_atanh
 ret: #2#1
-arg: #2#1
+arg: #2#1 in range(-1,1)
 comment:
  Return the inverse hyperbolic tangent.
 version: 21
@@ -1761,8 +1759,6 @@ arg: int#1 n
 comment:
  Compute the Nth root of a value.
 version: 21
-# TODO re-enable once how to handle zero is decided
-test: noverify
 end:
 
 start:
