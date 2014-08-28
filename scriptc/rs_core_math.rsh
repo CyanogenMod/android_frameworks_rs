@@ -456,7 +456,7 @@ extern float4 __attribute__((const, overloadable))atan2pi(float4 y, float4 x);
  *
  * Supported by API versions 9 and newer.
  */
-extern float __attribute__((const, overloadable))atanh(float);
+extern float __attribute__((const, overloadable))atanh(float v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -465,7 +465,7 @@ extern float __attribute__((const, overloadable))atanh(float);
  *
  * Supported by API versions 9 and newer.
  */
-extern float2 __attribute__((const, overloadable))atanh(float2);
+extern float2 __attribute__((const, overloadable))atanh(float2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -474,7 +474,7 @@ extern float2 __attribute__((const, overloadable))atanh(float2);
  *
  * Supported by API versions 9 and newer.
  */
-extern float3 __attribute__((const, overloadable))atanh(float3);
+extern float3 __attribute__((const, overloadable))atanh(float3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -483,7 +483,7 @@ extern float3 __attribute__((const, overloadable))atanh(float3);
  *
  * Supported by API versions 9 and newer.
  */
-extern float4 __attribute__((const, overloadable))atanh(float4);
+extern float4 __attribute__((const, overloadable))atanh(float4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -7727,7 +7727,7 @@ extern float4 __attribute__((const, overloadable))native_atan2pi(float4 y, float
  *
  * Supported by API versions 21 and newer.
  */
-extern float __attribute__((const, overloadable))native_atanh(float);
+extern float __attribute__((const, overloadable))native_atanh(float in);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
@@ -7736,7 +7736,7 @@ extern float __attribute__((const, overloadable))native_atanh(float);
  *
  * Supported by API versions 21 and newer.
  */
-extern float2 __attribute__((const, overloadable))native_atanh(float2);
+extern float2 __attribute__((const, overloadable))native_atanh(float2 in);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
@@ -7745,7 +7745,7 @@ extern float2 __attribute__((const, overloadable))native_atanh(float2);
  *
  * Supported by API versions 21 and newer.
  */
-extern float3 __attribute__((const, overloadable))native_atanh(float3);
+extern float3 __attribute__((const, overloadable))native_atanh(float3 in);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
@@ -7754,7 +7754,7 @@ extern float3 __attribute__((const, overloadable))native_atanh(float3);
  *
  * Supported by API versions 21 and newer.
  */
-extern float4 __attribute__((const, overloadable))native_atanh(float4);
+extern float4 __attribute__((const, overloadable))native_atanh(float4 in);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
@@ -8252,6 +8252,7 @@ extern float __attribute__((const, overloadable))native_length(float4 v);
 #if (defined(RS_VERSION) && (RS_VERSION >= 18))
 /*
  * Fast approximate log
+ * It is not accurate for values very close to zero.
  *
  * Supported by API versions 18 and newer.
  */
@@ -8261,6 +8262,7 @@ extern float __attribute__((const, overloadable))native_log(float v);
 #if (defined(RS_VERSION) && (RS_VERSION >= 18))
 /*
  * Fast approximate log
+ * It is not accurate for values very close to zero.
  *
  * Supported by API versions 18 and newer.
  */
@@ -8270,6 +8272,7 @@ extern float2 __attribute__((const, overloadable))native_log(float2 v);
 #if (defined(RS_VERSION) && (RS_VERSION >= 18))
 /*
  * Fast approximate log
+ * It is not accurate for values very close to zero.
  *
  * Supported by API versions 18 and newer.
  */
@@ -8279,6 +8282,7 @@ extern float3 __attribute__((const, overloadable))native_log(float3 v);
 #if (defined(RS_VERSION) && (RS_VERSION >= 18))
 /*
  * Fast approximate log
+ * It is not accurate for values very close to zero.
  *
  * Supported by API versions 18 and newer.
  */
@@ -8288,6 +8292,7 @@ extern float4 __attribute__((const, overloadable))native_log(float4 v);
 #if (defined(RS_VERSION) && (RS_VERSION >= 18))
 /*
  * Fast approximate log10
+ * It is not accurate for values very close to zero.
  *
  * Supported by API versions 18 and newer.
  */
@@ -8297,6 +8302,7 @@ extern float __attribute__((const, overloadable))native_log10(float v);
 #if (defined(RS_VERSION) && (RS_VERSION >= 18))
 /*
  * Fast approximate log10
+ * It is not accurate for values very close to zero.
  *
  * Supported by API versions 18 and newer.
  */
@@ -8306,6 +8312,7 @@ extern float2 __attribute__((const, overloadable))native_log10(float2 v);
 #if (defined(RS_VERSION) && (RS_VERSION >= 18))
 /*
  * Fast approximate log10
+ * It is not accurate for values very close to zero.
  *
  * Supported by API versions 18 and newer.
  */
@@ -8315,6 +8322,7 @@ extern float3 __attribute__((const, overloadable))native_log10(float3 v);
 #if (defined(RS_VERSION) && (RS_VERSION >= 18))
 /*
  * Fast approximate log10
+ * It is not accurate for values very close to zero.
  *
  * Supported by API versions 18 and newer.
  */
@@ -8360,6 +8368,7 @@ extern float4 __attribute__((const, overloadable))native_log1p(float4);
 #if (defined(RS_VERSION) && (RS_VERSION >= 18))
 /*
  * Fast approximate log2
+ * It is not accurate for values very close to zero.
  *
  * Supported by API versions 18 and newer.
  */
@@ -8369,6 +8378,7 @@ extern float __attribute__((const, overloadable))native_log2(float v);
 #if (defined(RS_VERSION) && (RS_VERSION >= 18))
 /*
  * Fast approximate log2
+ * It is not accurate for values very close to zero.
  *
  * Supported by API versions 18 and newer.
  */
@@ -8378,6 +8388,7 @@ extern float2 __attribute__((const, overloadable))native_log2(float2 v);
 #if (defined(RS_VERSION) && (RS_VERSION >= 18))
 /*
  * Fast approximate log2
+ * It is not accurate for values very close to zero.
  *
  * Supported by API versions 18 and newer.
  */
@@ -8387,6 +8398,7 @@ extern float3 __attribute__((const, overloadable))native_log2(float3 v);
 #if (defined(RS_VERSION) && (RS_VERSION >= 18))
 /*
  * Fast approximate log2
+ * It is not accurate for values very close to zero.
  *
  * Supported by API versions 18 and newer.
  */
@@ -8434,6 +8446,7 @@ extern float4 __attribute__((const, overloadable))native_normalize(float4 v);
  * Fast approximate v ^ y
  * v must be between 0.f and 256.f
  * y must be between -15.f and 15.f
+ * It is not accurate for values of v very close to zero.
  *
  * Supported by API versions 18 and newer.
  */
@@ -8445,6 +8458,7 @@ extern float __attribute__((const, overloadable))native_powr(float v, float y);
  * Fast approximate v ^ y
  * v must be between 0.f and 256.f
  * y must be between -15.f and 15.f
+ * It is not accurate for values of v very close to zero.
  *
  * Supported by API versions 18 and newer.
  */
@@ -8456,6 +8470,7 @@ extern float2 __attribute__((const, overloadable))native_powr(float2 v, float2 y
  * Fast approximate v ^ y
  * v must be between 0.f and 256.f
  * y must be between -15.f and 15.f
+ * It is not accurate for values of v very close to zero.
  *
  * Supported by API versions 18 and newer.
  */
@@ -8467,6 +8482,7 @@ extern float3 __attribute__((const, overloadable))native_powr(float3 v, float3 y
  * Fast approximate v ^ y
  * v must be between 0.f and 256.f
  * y must be between -15.f and 15.f
+ * It is not accurate for values of v very close to zero.
  *
  * Supported by API versions 18 and newer.
  */
@@ -9143,7 +9159,7 @@ extern float4 __attribute__((const, overloadable))remainder(float4 x, float4 y);
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /*
- * Return the quotient and the remainder of b/c
+ * Return the quotient and the remainder of b/c.  Only the sign and lowest three bits of the quotient are guaranteed to be accurate.
  *
  * Supported by API versions 9 and newer.
  */
@@ -9152,7 +9168,7 @@ extern float __attribute__((overloadable))remquo(float b, float c, int* d);
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /*
- * Return the quotient and the remainder of b/c
+ * Return the quotient and the remainder of b/c.  Only the sign and lowest three bits of the quotient are guaranteed to be accurate.
  *
  * Supported by API versions 9 and newer.
  */
@@ -9161,7 +9177,7 @@ extern float2 __attribute__((overloadable))remquo(float2 b, float2 c, int2* d);
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /*
- * Return the quotient and the remainder of b/c
+ * Return the quotient and the remainder of b/c.  Only the sign and lowest three bits of the quotient are guaranteed to be accurate.
  *
  * Supported by API versions 9 and newer.
  */
@@ -9170,7 +9186,7 @@ extern float3 __attribute__((overloadable))remquo(float3 b, float3 c, int3* d);
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /*
- * Return the quotient and the remainder of b/c
+ * Return the quotient and the remainder of b/c.  Only the sign and lowest three bits of the quotient are guaranteed to be accurate.
  *
  * Supported by API versions 9 and newer.
  */
