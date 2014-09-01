@@ -70,5 +70,8 @@ define float @_Z6lengthDv2_f(<2 x float> %in) nounwind readnone alwaysinline {
 }
 
 define float @_Z6lengthf(float %in) nounwind readnone alwaysinline {
-  ret float %in
+  %1 = bitcast float %in to i32
+  %2 = and i32 %1, 2147483647
+  %3 = bitcast i32 %2 to float
+  ret float %3
 }

@@ -172,6 +172,8 @@ static void OneVFU4(float4 *out,
             rsdIntrinsicBlurVFU4_K(out, ptrIn, iStride, gPtr, ct, x1, x1 + t);
         }
         x1 += t;
+        out += t;
+        ptrIn += t << 2;
     }
 #endif
     while(x2 > x1) {
