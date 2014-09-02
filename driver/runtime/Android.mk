@@ -139,6 +139,7 @@ include $(CLEAR_VARS)
 LOCAL_32_BIT_ONLY := true
 
 BCC_RS_TRIPLE := armv7-none-linux-gnueabi
+RS_TRIPLE_CFLAGS :=
 LOCAL_MODULE := librsrt_arm.bc
 LOCAL_IS_HOST_MODULE := true
 LOCAL_SRC_FILES := $(clcore_files)
@@ -151,7 +152,8 @@ include $(CLEAR_VARS)
 # FIXME for 64-bit
 LOCAL_32_BIT_ONLY := true
 
-BCC_RS_TRIPLE := mipsel-unknown-linux
+BCC_RS_TRIPLE := armv7-none-linux-gnueabi
+RS_TRIPLE_CFLAGS :=
 LOCAL_MODULE := librsrt_mips.bc
 LOCAL_IS_HOST_MODULE := true
 LOCAL_SRC_FILES := $(clcore_files)
@@ -164,16 +166,18 @@ include $(CLEAR_VARS)
 # FIXME for 64-bit
 LOCAL_32_BIT_ONLY := true
 
-BCC_RS_TRIPLE := i686-unknown-linux
+BCC_RS_TRIPLE := armv7-none-linux-gnueabi
+RS_TRIPLE_CFLAGS := -D__i386__
 LOCAL_MODULE := librsrt_x86.bc
 LOCAL_IS_HOST_MODULE := true
 LOCAL_SRC_FILES := $(clcore_x86_files)
-LOCAL_SRC_FILES_32 := $(clcore_base_files_32)
+LOCAL_SRC_FILES_32 := $(clcore_files_32)
 include $(LOCAL_PATH)/build_bc_lib.mk
 
 include $(CLEAR_VARS)
 
 BCC_RS_TRIPLE := aarch64-linux-android
+RS_TRIPLE_CFLAGS :=
 LOCAL_MODULE := librsrt_arm64.bc
 LOCAL_IS_HOST_MODULE := true
 LOCAL_SRC_FILES := $(clcore_files)
