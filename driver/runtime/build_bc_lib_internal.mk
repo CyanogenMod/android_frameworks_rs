@@ -44,6 +44,7 @@ bc_cflags := -MD \
              -emit-llvm \
              -target $(BCC_RS_TRIPLE) \
              -fsigned-char \
+             $($(LOCAL_2ND_ARCH_VAR_PREFIX)RS_TRIPLE_CFLAGS) \
              $(LOCAL_CFLAGS) \
              $(bc_translated_clang_cc1_cflags)
 
