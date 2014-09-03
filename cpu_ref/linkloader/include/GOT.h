@@ -32,5 +32,6 @@
 
 void *got_address();
 int search_got(int symbol_index, void *addr, uint8_t bind_type);
+void set_got_address(void *addr);
 
 #endif // GOT_H
