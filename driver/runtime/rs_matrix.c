@@ -170,33 +170,33 @@ rsMatrixLoad(rs_matrix2x2 *m, const rs_matrix2x2 *s) {
 
 
 extern void __attribute__((overloadable))
-rsMatrixSet(rs_matrix4x4 *m, uint32_t row, uint32_t col, float v) {
-    m->m[row * 4 + col] = v;
+rsMatrixSet(rs_matrix4x4 *m, uint32_t col, uint32_t row, float v) {
+    m->m[col * 4 + row] = v;
 }
 
 extern float __attribute__((overloadable))
-rsMatrixGet(const rs_matrix4x4 *m, uint32_t row, uint32_t col) {
-    return m->m[row * 4 + col];
+rsMatrixGet(const rs_matrix4x4 *m, uint32_t col, uint32_t row) {
+    return m->m[col * 4 + row];
 }
 
 extern void __attribute__((overloadable))
-rsMatrixSet(rs_matrix3x3 *m, uint32_t row, uint32_t col, float v) {
-    m->m[row * 3 + col] = v;
+rsMatrixSet(rs_matrix3x3 *m, uint32_t col, uint32_t row, float v) {
+    m->m[col * 3 + row] = v;
 }
 
 extern float __attribute__((overloadable))
-rsMatrixGet(const rs_matrix3x3 *m, uint32_t row, uint32_t col) {
-    return m->m[row * 3 + col];
+rsMatrixGet(const rs_matrix3x3 *m, uint32_t col, uint32_t row) {
+    return m->m[col * 3 + row];
 }
 
 extern void __attribute__((overloadable))
-rsMatrixSet(rs_matrix2x2 *m, uint32_t row, uint32_t col, float v) {
-    m->m[row * 2 + col] = v;
+rsMatrixSet(rs_matrix2x2 *m, uint32_t col, uint32_t row, float v) {
+    m->m[col * 2 + row] = v;
 }
 
 extern float __attribute__((overloadable))
-rsMatrixGet(const rs_matrix2x2 *m, uint32_t row, uint32_t col) {
-    return m->m[row * 2 + col];
+rsMatrixGet(const rs_matrix2x2 *m, uint32_t col, uint32_t row) {
+    return m->m[col * 2 + row];
 }
 
 extern float2 __attribute__((overloadable))
@@ -238,6 +238,9 @@ rsMatrixMultiply(rs_matrix3x3 *m, float2 in) {
 
 extern void __attribute__((overloadable))
 rsMatrixLoadMultiply(rs_matrix4x4 *ret, const rs_matrix4x4 *lhs, const rs_matrix4x4 *rhs) {
+    // Use a temporary variable to support the case where one of the inputs
+    // is also the destination, e.g. rsMatrixLoadMultiply(&left, &left, &right);
+    rs_matrix4x4 result;
     for (int i=0 ; i<4 ; i++) {
         float ri0 = 0;
         float ri1 = 0;
@@ -250,22 +253,24 @@ rsMatrixLoadMultiply(rs_matrix4x4 *ret, const rs_matrix4x4 *lhs, const rs_matrix
             ri2 += rsMatrixGet(lhs, j, 2) * rhs_ij;
             ri3 += rsMatrixGet(lhs, j, 3) * rhs_ij;
         }
-        rsMatrixSet(ret, i, 0, ri0);
-        rsMatrixSet(ret, i, 1, ri1);
-        rsMatrixSet(ret, i, 2, ri2);
-        rsMatrixSet(ret, i, 3, ri3);
+        rsMatrixSet(&result, i, 0, ri0);
+        rsMatrixSet(&result, i, 1, ri1);
+        rsMatrixSet(&result, i, 2, ri2);
+        rsMatrixSet(&result, i, 3, ri3);
     }
+    rsMatrixLoad(ret, &result);
 }
 
 extern void __attribute__((overloadable))
 rsMatrixMultiply(rs_matrix4x4 *lhs, const rs_matrix4x4 *rhs) {
-    rs_matrix4x4 r;
-    rsMatrixLoadMultiply(&r, lhs, rhs);
-    rsMatrixLoad(lhs, &r);
+    rsMatrixLoadMultiply(lhs, lhs, rhs);
 }
 
 extern void __attribute__((overloadable))
 rsMatrixLoadMultiply(rs_matrix3x3 *ret, const rs_matrix3x3 *lhs, const rs_matrix3x3 *rhs) {
+    // Use a temporary variable to support the case where one of the inputs
+    // is also the destination, e.g. rsMatrixLoadMultiply(&left, &left, &right);
+    rs_matrix3x3 result;
     for (int i=0 ; i<3 ; i++) {
         float ri0 = 0;
         float ri1 = 0;
@@ -276,21 +281,23 @@ rsMatrixLoadMultiply(rs_matrix3x3 *ret, const rs_matrix3x3 *lhs, const rs_matrix
             ri1 += rsMatrixGet(lhs, j, 1) * rhs_ij;
             ri2 += rsMatrixGet(lhs, j, 2) * rhs_ij;
         }
-        rsMatrixSet(ret, i, 0, ri0);
-        rsMatrixSet(ret, i, 1, ri1);
-        rsMatrixSet(ret, i, 2, ri2);
+        rsMatrixSet(&result, i, 0, ri0);
+        rsMatrixSet(&result, i, 1, ri1);
+        rsMatrixSet(&result, i, 2, ri2);
     }
+    rsMatrixLoad(ret, &result);
 }
 
 extern void __attribute__((overloadable))
 rsMatrixMultiply(rs_matrix3x3 *lhs, const rs_matrix3x3 *rhs) {
-    rs_matrix3x3 r;
-    rsMatrixLoadMultiply(&r, lhs, rhs);
-    rsMatrixLoad(lhs, &r);
+    rsMatrixLoadMultiply(lhs, lhs, rhs);
 }
 
 extern void __attribute__((overloadable))
 rsMatrixLoadMultiply(rs_matrix2x2 *ret, const rs_matrix2x2 *lhs, const rs_matrix2x2 *rhs) {
+    // Use a temporary variable to support the case where one of the inputs
+    // is also the destination, e.g. rsMatrixLoadMultiply(&left, &left, &right);
+    rs_matrix2x2 result;
     for (int i=0 ; i<2 ; i++) {
         float ri0 = 0;
         float ri1 = 0;
@@ -299,15 +306,14 @@ rsMatrixLoadMultiply(rs_matrix2x2 *ret, const rs_matrix2x2 *lhs, const rs_matrix
             ri0 += rsMatrixGet(lhs, j, 0) * rhs_ij;
             ri1 += rsMatrixGet(lhs, j, 1) * rhs_ij;
         }
-        rsMatrixSet(ret, i, 0, ri0);
-        rsMatrixSet(ret, i, 1, ri1);
+        rsMatrixSet(&result, i, 0, ri0);
+        rsMatrixSet(&result, i, 1, ri1);
     }
+    rsMatrixLoad(ret, &result);
 }
 
 extern void __attribute__((overloadable))
 rsMatrixMultiply(rs_matrix2x2 *lhs, const rs_matrix2x2 *rhs) {
-    rs_matrix2x2 r;
-    rsMatrixLoadMultiply(&r, lhs, rhs);
-    rsMatrixLoad(lhs, &r);
+    rsMatrixLoadMultiply(lhs, lhs, rhs);
 }
 
