@@ -250,6 +250,9 @@ void Matrix4x4::loadTranslate(float x, float y, float z) {
 }
 
 void Matrix4x4::loadMultiply(const rs_matrix4x4 *lhs, const rs_matrix4x4 *rhs) {
+    // Use a temporary variable to support the case where one of the inputs
+    // is also the destination, e.g. left.loadMultiply(left, right);
+    Matrix4x4 temp;
     for (int i=0 ; i<4 ; i++) {
         float ri0 = 0;
         float ri1 = 0;
@@ -262,11 +265,12 @@ void Matrix4x4::loadMultiply(const rs_matrix4x4 *lhs, const rs_matrix4x4 *rhs) {
             ri2 += ((const Matrix4x4 *)lhs)->get(j,2) * rhs_ij;
             ri3 += ((const Matrix4x4 *)lhs)->get(j,3) * rhs_ij;
         }
-        set(i,0, ri0);
-        set(i,1, ri1);
-        set(i,2, ri2);
-        set(i,3, ri3);
+        temp.set(i,0, ri0);
+        temp.set(i,1, ri1);
+        temp.set(i,2, ri2);
+        temp.set(i,3, ri3);
     }
+    load(&temp);
 }
 
 void Matrix4x4::loadOrtho(float left, float right, float bottom, float top, float near, float far) {
@@ -299,6 +303,7 @@ void Matrix4x4::loadPerspective(float fovy, float aspect, float near, float far)
     loadFrustum(left, right, bottom, top, near, far);
 }
 
+// Note: This assumes that the input vector (in) is of length 3.
 void Matrix4x4::vectorMultiply(float *out, const float *in) const {
     out[0] = (m[0] * in[0]) + (m[4] * in[1]) + (m[8] * in[2]) + m[12];
     out[1] = (m[1] * in[0]) + (m[5] * in[1]) + (m[9] * in[2]) + m[13];
