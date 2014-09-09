@@ -42,6 +42,9 @@ void Matrix2x2::load(const rs_matrix2x2 *v) {
 }
 
 void Matrix2x2::loadMultiply(const rs_matrix2x2 *lhs, const rs_matrix2x2 *rhs) {
+    // Use a temporary variable to support the case where one of the inputs
+    // is also the destination, e.g. left.loadMultiply(left, right);
+    Matrix2x2 temp;
     for (int i=0 ; i<2 ; i++) {
         float ri0 = 0;
         float ri1 = 0;
@@ -50,9 +53,10 @@ void Matrix2x2::loadMultiply(const rs_matrix2x2 *lhs, const rs_matrix2x2 *rhs) {
             ri0 += ((const Matrix2x2 *)lhs)->get(j, 0) * rhs_ij;
             ri1 += ((const Matrix2x2 *)lhs)->get(j, 1) * rhs_ij;
         }
-        set(i, 0, ri0);
-        set(i, 1, ri1);
+        temp.set(i, 0, ri0);
+        temp.set(i, 1, ri1);
     }
+    load(&temp);
 }
 
 void Matrix2x2::transpose() {
