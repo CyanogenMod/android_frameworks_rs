@@ -518,9 +518,22 @@ static bool SC_IsObject(ObjectBase* o) {
 }
 #endif
 
-// this may need to change for other CPU architectures
+
 #ifndef RS_COMPATIBILITY_LIB
 #ifndef __LP64__
+
+// i386 has different struct return passing to ARM; emulate with void*
+#ifdef __i386__
+static const void* SC_GetAllocation(const void *ptr) {
+    Context *rsc = RsdCpuReference::getTlsContext();
+    const Script *sc = RsdCpuReference::getTlsScript();
+    Allocation* alloc = rsdScriptGetAllocationForPointer(rsc, sc, ptr);
+    android::renderscript::rs_allocation obj = {0};
+    alloc->callUpdateCacheObject(rsc, &obj);
+    return (void*)obj.p;
+}
+#else
+// ARMv7/MIPS
 static const android::renderscript::rs_allocation SC_GetAllocation(const void *ptr) {
     Context *rsc = RsdCpuReference::getTlsContext();
     const Script *sc = RsdCpuReference::getTlsScript();
@@ -529,7 +542,9 @@ static const android::renderscript::rs_allocation SC_GetAllocation(const void *p
     alloc->callUpdateCacheObject(rsc, &obj);
     return obj;
 }
+#endif
 #else
+// AArch64/x86_64/MIPS64
 static const android::renderscript::rs_allocation SC_GetAllocation(const void *ptr) {
     Context *rsc = RsdCpuReference::getTlsContext();
     const Script *sc = RsdCpuReference::getTlsScript();
