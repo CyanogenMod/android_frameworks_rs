@@ -333,12 +333,16 @@ void * Context::threadProc(void *vrsc) {
     } else if (rsc->getContextType() == RS_CONTEXT_TYPE_DEBUG) {
         ALOGV("Application requested debug context");
     } else {
+#if defined(__LP64__) && defined(DISABLE_RS_64_BIT_DRIVER)
+        // skip load
+#else
         if (loadRuntime(OVERRIDE_RS_DRIVER_STRING, rsc)) {
             ALOGV("Successfully loaded runtime: %s", OVERRIDE_RS_DRIVER_STRING);
             loadDefault = false;
         } else {
             ALOGE("Failed to load runtime %s, loading default", OVERRIDE_RS_DRIVER_STRING);
         }
+#endif
     }
 
 #undef XSTR
