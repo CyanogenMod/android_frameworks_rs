@@ -18,6 +18,7 @@
 #define ELF_SECTION_PROGBITS_HXX
 
 #include "ELFTypes.h"
+#include "GOT.h"
 #include "StubLayout.h"
 
 #include <llvm/Support/Format.h>
@@ -65,6 +66,13 @@ ELFSectionProgBits<Bitwidth>::read(Archiver &AR,
     alloc_size += stub_table_size;
   }
 
+#if defined(__mips__)
+  // Add GOT section after the text section.
+  if (strcmp(sh->getName(), ".text") == 0) {
+    alloc_size += GOT_SIZE;
+  }
+#endif
+
   // Allocate text section
   if (!result->chunk.allocate(alloc_size)) {
     return NULL;
@@ -74,6 +82,12 @@ ELFSectionProgBits<Bitwidth>::read(Archiver &AR,
     stubs->initStubTable(result->chunk.getBuffer() + section_size,
                          max_num_stubs);
   }
+
+#if defined(__mips__)
+  if (strcmp(sh->getName(), ".text") == 0) {
+    set_got_address(result->chunk.getBuffer() + alloc_size - GOT_SIZE);
+  }
+#endif
 
   result->sh = sh;
 
