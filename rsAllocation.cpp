@@ -757,13 +757,13 @@ void rsi_AllocationIoReceive(Context *rsc, RsAllocation valloc) {
     alloc->ioReceive(rsc);
 }
 
-void rsi_AllocationGetPointer(Context *rsc, RsAllocation valloc,
+void *rsi_AllocationGetPointer(Context *rsc, RsAllocation valloc,
                           uint32_t lod, RsAllocationCubemapFace face,
                           uint32_t z, uint32_t array, size_t *stride, size_t strideLen) {
     Allocation *alloc = static_cast<Allocation *>(valloc);
     rsAssert(strideLen == sizeof(size_t));
 
-    alloc->getPointer(rsc, lod, face, z, array, stride);
+    return alloc->getPointer(rsc, lod, face, z, array, stride);
 }
 
 void rsi_Allocation1DRead(Context *rsc, RsAllocation va, uint32_t xoff, uint32_t lod,
