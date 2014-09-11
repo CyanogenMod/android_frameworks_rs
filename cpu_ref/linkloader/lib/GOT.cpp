@@ -17,13 +17,19 @@
 #include <stdio.h>
 #include "GOT.h"
 
-void *got_symbol_addresses[NUM_OF_GOT_ENTRY];
-int got_symbol_indexes[NUM_OF_GOT_ENTRY];
-size_t got_symbol_count = 0;
+static void **got_symbol_addresses = NULL;
+static int got_symbol_indexes[NUM_OF_GOT_ENTRY];
+static size_t got_symbol_count = 0;
 
 void *got_address()
 {
   return &got_symbol_addresses[0];
+}
+
+void set_got_address(void *addr)
+{
+  got_symbol_addresses = (void **) addr;
+  got_symbol_count = 0;
 }
 
 int search_got(int symbol_index, void *addr, uint8_t bind_type)
