@@ -11,6 +11,7 @@ rs_cpp_SRC_FILES := \
 
 LOCAL_PATH:= $(call my-dir)
 include $(CLEAR_VARS)
+LOCAL_ADDITIONAL_DEPENDENCIES := $(LOCAL_PATH)/Android.mk
 
 include frameworks/compile/slang/rs_version.mk
 local_cflags_for_rs_cpp += $(RS_VERSION_DEFINE)
@@ -29,20 +30,20 @@ LOCAL_SHARED_LIBRARIES := \
 	libutils \
 	liblog \
 	libdl \
-	libstlport
 
 LOCAL_MODULE:= libRScpp
 
 LOCAL_MODULE_TAGS := optional
 
 LOCAL_C_INCLUDES += frameworks/rs
-LOCAL_C_INCLUDES += external/stlport/stlport bionic/ bionic/libstdc++/include
 LOCAL_C_INCLUDES += $(intermediates)
 
+include external/stlport/libstlport.mk
 include $(BUILD_SHARED_LIBRARY)
 
 
 include $(CLEAR_VARS)
+LOCAL_ADDITIONAL_DEPENDENCIES := $(LOCAL_PATH)/Android.mk
 
 ifneq ($(HOST_OS),windows)
 LOCAL_CLANG := true
