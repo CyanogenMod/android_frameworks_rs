@@ -1201,7 +1201,7 @@ static void *vp9_loop_filter_rows_work_proc(void *data) {
 
 RsdCpuScriptIntrinsicLoopFilter::RsdCpuScriptIntrinsicLoopFilter(
             RsdCpuReferenceImpl *ctx, const Script *s, const Element *e)
-            : RsdCpuScriptIntrinsic(ctx, s, e, RS_SCRIPT_INTRINSIC_ID_YUV_TO_RGB) {
+            : RsdCpuScriptIntrinsic(ctx, s, e, RS_SCRIPT_INTRINSIC_ID_LOOP_FILTER) {
     mRootPtr = &kernel;
     mWorkerCount = sysconf(_SC_NPROCESSORS_ONLN);
     mPrch.quit = 0;
