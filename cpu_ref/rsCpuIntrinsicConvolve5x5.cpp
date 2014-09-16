@@ -384,7 +384,7 @@ void RsdCpuScriptIntrinsicConvolve5x5::kernelU4(const RsExpandKernelParams *p,
     if (gArchUseSIMD &&((x1 + 6) < x2)) {
         // subtract 3 for end boundary
         uint32_t len = (x2 - x1 - 3) >> 2;
-        rsdIntrinsicConvolve5x5_K(out, py0, py1, py2, py3, py4, cp->mIp, len);
+        rsdIntrinsicConvolve5x5_K(out, py0 + x1 - 2, py1 + x1 - 2, py2 + x1 - 2, py3 + x1 - 2, py4 + x1 - 2, cp->mIp, len);
         out += len << 2;
         x1 += len << 2;
     }
