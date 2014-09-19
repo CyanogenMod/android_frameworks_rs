@@ -527,7 +527,7 @@ name: lgamma
 ret: #2#1
 arg: #2#1
 comment:
- Return the log gamma and sign
+ Return the log gamma
 version: 9
 end:
 
@@ -541,6 +541,8 @@ arg: int#1 *y
 comment:
  Return the log gamma and sign
 version: 9
+#TODO Temporary until bionic & associated drivers are fixed
+test: custom
 end:
 
 start:
