@@ -1497,6 +1497,8 @@ arg: #2#1 v range(-1,1)
 comment:
  acos
 version: 21
+# TODO Temporary
+test: limited(0.0005)
 end:
 
 start:
@@ -1508,6 +1510,8 @@ arg: #2#1
 comment:
  acosh
 version: 21
+# TODO Temporary
+test: limited(0.0005)
 end:
 
 start:
@@ -1519,6 +1523,8 @@ arg: #2#1 v range(-1,1)
 comment:
  acospi
 version: 21
+# TODO Temporary
+test: limited(0.0005)
 end:
 
 start:
@@ -1530,6 +1536,8 @@ arg: #2#1 v range(-1,1)
 comment:
  asin
 version: 21
+# TODO Temporary
+test: limited(0.0005)
 end:
 
 start:
@@ -1541,6 +1549,8 @@ arg: #2#1
 comment:
  asinh
 version: 21
+# TODO Temporary
+test: limited(0.0005)
 end:
 
 start:
@@ -1552,6 +1562,8 @@ arg: #2#1 v range(-1,1)
 comment:
  Return the inverse sine divided by PI.
 version: 21
+# TODO Temporary
+test: limited(0.0005)
 end:
 
 start:
@@ -1563,6 +1575,8 @@ arg: #2#1 v range(-1,1)
 comment:
  Return the inverse tangent.
 version: 21
+# TODO Temporary
+test: limited(0.0005)
 end:
 
 start:
@@ -1575,6 +1589,8 @@ arg: #2#1 x
 comment:
  Return the inverse tangent of y / x.
 version: 21
+# TODO Temporary
+test: limited(0.0005)
 end:
 
 start:
@@ -1586,6 +1602,8 @@ arg: #2#1 in range(-1,1)
 comment:
  Return the inverse hyperbolic tangent.
 version: 21
+# TODO Temporary
+test: limited(0.0005)
 end:
 
 start:
@@ -1597,6 +1615,8 @@ arg: #2#1 v range(-1,1)
 comment:
  Return the inverse tangent divided by PI.
 version: 21
+# TODO Temporary
+test: limited(0.0005)
 end:
 
 start:
@@ -1609,6 +1629,8 @@ arg: #2#1 x
 comment:
  Return the inverse tangent of y / x, divided by PI.
 version: 21
+# TODO Temporary
+test: limited(0.0005)
 end:
 
 start:
@@ -1797,6 +1819,8 @@ comment:
  @param v The incoming value in radians
  @param *cosptr cosptr[0] will be set to the cosine value.
 version: 21
+# TODO Temporary
+test: limited(0.0005)
 end:
 
 start:
