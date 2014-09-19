@@ -380,7 +380,7 @@ relocateAARCH64(void *(*find_sym)(void *context, char const *name),
     int16_t* inst16 = reinterpret_cast<int16_t*>(inst);
     Inst_t P = (Inst_t)(int64_t)inst;
     Inst_t A = 0;
-    Inst_t S = (Inst_t)(int64_t)sym->getAddress(EM_ARM);
+    Inst_t S = (Inst_t)(int64_t)sym->getAddress(EM_AARCH64);
     Inst_t Page_P = P & ~0xfff;         // Page address.
 
     if (S == 0 && sym->getType() == STT_NOTYPE) {
