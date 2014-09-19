@@ -5667,7 +5667,7 @@ extern float __attribute__((const, overloadable))length(float4 v);
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /*
- * Return the log gamma and sign
+ * Return the log gamma
  *
  * Supported by API versions 9 and newer.
  */
@@ -5676,7 +5676,7 @@ extern float __attribute__((const, overloadable))lgamma(float);
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /*
- * Return the log gamma and sign
+ * Return the log gamma
  *
  * Supported by API versions 9 and newer.
  */
@@ -5685,7 +5685,7 @@ extern float2 __attribute__((const, overloadable))lgamma(float2);
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /*
- * Return the log gamma and sign
+ * Return the log gamma
  *
  * Supported by API versions 9 and newer.
  */
@@ -5694,7 +5694,7 @@ extern float3 __attribute__((const, overloadable))lgamma(float3);
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /*
- * Return the log gamma and sign
+ * Return the log gamma
  *
  * Supported by API versions 9 and newer.
  */
