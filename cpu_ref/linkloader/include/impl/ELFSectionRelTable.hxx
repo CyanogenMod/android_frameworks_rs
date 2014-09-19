@@ -90,11 +90,10 @@ ELFSectionRelTable<Bitwidth>::read(Archiver &AR,
 template <unsigned Bitwidth>
 size_t ELFSectionRelTable<Bitwidth>::
 getMaxNumStubs(ELFObjectTy const *obj) const {
+  std::set<uint32_t> sym_index_set;
   switch (obj->getHeader()->getMachine()) {
   case EM_ARM:
     {
-      std::set<uint32_t> sym_index_set;
-
       for (size_t i = 0; i < size(); ++i) {
         ELFRelocTy *rel = table[i];
 
@@ -113,8 +112,6 @@ getMaxNumStubs(ELFObjectTy const *obj) const {
 
   case EM_AARCH64:
     {
-      std::set<uint32_t> sym_index_set;
-
       for (size_t i = 0; i < size(); ++i) {
         ELFRelocTy *rel = table[i];
 
@@ -131,8 +128,6 @@ getMaxNumStubs(ELFObjectTy const *obj) const {
 
   case EM_MIPS:
     {
-      std::set<uint32_t> sym_index_set;
-
       for (size_t i = 0; i < size(); ++i) {
         ELFRelocTy *rel = table[i];
 
@@ -145,8 +140,34 @@ getMaxNumStubs(ELFObjectTy const *obj) const {
     }
 
   case EM_386:
+    {
+      for (size_t i = 0; i < size(); ++i) {
+        ELFRelocTy *rel = table[i];
+
+        switch (rel->getType()) {
+        case R_386_PC32:
+          sym_index_set.insert(rel->getSymTabIndex());
+          break;
+        }
+      }
+
+      return sym_index_set.size();
+    }
+
   case EM_X86_64:
-    return 0;
+    {
+      for (size_t i = 0; i < size(); ++i) {
+        ELFRelocTy *rel = table[i];
+
+        switch (rel->getType()) {
+        case R_X86_64_PC32:
+          sym_index_set.insert(rel->getSymTabIndex());
+          break;
+        }
+      }
+
+      return sym_index_set.size();
+    }
 
   default:
     rsl_assert(0 && "Only support ARM, MIPS, X86, and X86_64 relocation.");
