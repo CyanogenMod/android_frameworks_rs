@@ -15,7 +15,7 @@
  */
 
 #include "ip.rsh"
-//#pragma rs_fp_relaxed
+#pragma rs_fp_relaxed
 
 static int histR[256] = {0}, histG[256] = {0}, histB[256] = {0};
 
@@ -23,9 +23,7 @@ rs_allocation histogramSource;
 uint32_t histogramHeight;
 uint32_t histogramWidth;
 
-static float scaleR;
-static float scaleG;
-static float scaleB;
+static float3 scale;
 
 static uchar4 estimateWhite() {
 
@@ -115,28 +113,19 @@ void prepareWhiteBalance() {
     int maximum = max(estimation.r, max(estimation.g, estimation.b));
     float avg = (minimum + maximum) / 2.f;
 
-    scaleR =  avg/estimation.r;
-    scaleG =  avg/estimation.g;
-    scaleB =  avg/estimation.b;
-
+    scale.r =  avg/estimation.r;
+    scale.g =  avg/estimation.g;
+    scale.b =  avg/estimation.b;
 }
 
-static unsigned char contrastClamp(int c)
-{
-    int N = 255;
-    c &= ~(c >> 31);
-    c -= N;
-    c &= (c >> 31);
-    c += N;
-    return  (unsigned char) c;
+uchar4 RS_KERNEL whiteBalanceKernel(uchar4 in) {
+    float3 t = convert_float3(in.rgb);
+    t *= scale;
+    t = min(t, 255.f);
+
+    uchar4 out;
+    out.rgb = convert_uchar3(t);
+    out.a = 255;
+    return out;
 }
 
-void whiteBalanceKernel(const uchar4 *in, uchar4 *out) {
-    float Rc =  in->r*scaleR;
-    float Gc =  in->g*scaleG;
-    float Bc =  in->b*scaleB;
-
-    out->r = contrastClamp(Rc);
-    out->g = contrastClamp(Gc);
-    out->b = contrastClamp(Bc);
-}
