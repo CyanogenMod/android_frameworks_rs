@@ -123,8 +123,7 @@ BCC_RS_TRIPLE := armv7-none-linux-gnueabi
 RS_TRIPLE_CFLAGS :=
 LOCAL_MODULE := librsrt_arm.bc
 LOCAL_IS_HOST_MODULE := true
-LOCAL_SRC_FILES := $(clcore_files)
-LOCAL_SRC_FILES_32 := $(clcore_files_32)
+LOCAL_SRC_FILES := $(clcore_files) $(clcore_files_32)
 include $(LOCAL_PATH)/build_bc_lib.mk
 
 # Build the MIPS version of the library
@@ -137,8 +136,7 @@ BCC_RS_TRIPLE := armv7-none-linux-gnueabi
 RS_TRIPLE_CFLAGS :=
 LOCAL_MODULE := librsrt_mips.bc
 LOCAL_IS_HOST_MODULE := true
-LOCAL_SRC_FILES := $(clcore_files)
-LOCAL_SRC_FILES_32 := $(clcore_files_32)
+LOCAL_SRC_FILES := $(clcore_files) $(clcore_files_32)
 include $(LOCAL_PATH)/build_bc_lib.mk
 
 # Build the x86 version of the library
@@ -151,8 +149,7 @@ BCC_RS_TRIPLE := armv7-none-linux-gnueabi
 RS_TRIPLE_CFLAGS := -D__i386__
 LOCAL_MODULE := librsrt_x86.bc
 LOCAL_IS_HOST_MODULE := true
-LOCAL_SRC_FILES := $(clcore_x86_files)
-LOCAL_SRC_FILES_32 := $(clcore_files_32)
+LOCAL_SRC_FILES := $(clcore_x86_files) $(clcore_base_files_32)
 include $(LOCAL_PATH)/build_bc_lib.mk
 
 
@@ -164,6 +161,5 @@ BCC_RS_TRIPLE := aarch64-linux-android
 RS_TRIPLE_CFLAGS :=
 LOCAL_MODULE := librsrt_arm64.bc
 LOCAL_IS_HOST_MODULE := true
-LOCAL_SRC_FILES := $(clcore_files)
-LOCAL_SRC_FILES_64 := $(clcore_files_64)
+LOCAL_SRC_FILES := $(clcore_files) $(clcore_files_64)
 include $(LOCAL_PATH)/build_bc_lib.mk
