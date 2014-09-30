@@ -637,8 +637,6 @@ extern RsdCpuScriptImpl * rsdIntrinsic_Blend(RsdCpuReferenceImpl *ctx,
                                              const Script *s, const Element *e);
 extern RsdCpuScriptImpl * rsdIntrinsic_Histogram(RsdCpuReferenceImpl *ctx,
                                                  const Script *s, const Element *e);
-extern RsdCpuScriptImpl * rsdIntrinsic_LoopFilter(RsdCpuReferenceImpl *ctx,
-                                                  const Script *s, const Element *e);
 extern RsdCpuScriptImpl * rsdIntrinsic_Resize(RsdCpuReferenceImpl *ctx,
                                               const Script *s, const Element *e);
 
@@ -674,11 +672,6 @@ RsdCpuReference::CpuScript * RsdCpuReferenceImpl::createIntrinsic(const Script *
     case RS_SCRIPT_INTRINSIC_ID_HISTOGRAM:
         i = rsdIntrinsic_Histogram(this, s, e);
         break;
-#ifndef RS_COMPATIBILITY_LIB
-    case RS_SCRIPT_INTRINSIC_ID_LOOP_FILTER:
-        i = rsdIntrinsic_LoopFilter(this, s, e);
-        break;
-#endif
     case RS_SCRIPT_INTRINSIC_ID_RESIZE:
         i = rsdIntrinsic_Resize(this, s, e);
         break;
