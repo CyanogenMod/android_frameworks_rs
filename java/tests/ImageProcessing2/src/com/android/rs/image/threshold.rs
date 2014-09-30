@@ -15,7 +15,7 @@
  */
 
 #include "ip.rsh"
-
+#pragma rs_fp_relaxed
 
 int height;
 int width;

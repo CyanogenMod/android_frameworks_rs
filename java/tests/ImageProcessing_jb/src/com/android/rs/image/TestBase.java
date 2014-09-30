@@ -44,7 +44,7 @@ public class TestBase  {
     protected RenderScript mRS;
     protected Allocation mInPixelsAllocation;
     protected Allocation mInPixelsAllocation2;
-    protected Allocation mOutPixelsAllocation;
+    public Allocation mOutPixelsAllocation;
     protected ImageProcessingActivityJB act;
 
     private class MessageProcessor extends RenderScript.RSMessageHandler {
