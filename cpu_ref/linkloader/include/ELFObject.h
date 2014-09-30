@@ -22,6 +22,7 @@
 
 #include "utils/rsl_assert.h"
 
+#include <memory>
 #include <string>
 #include <vector>
 
