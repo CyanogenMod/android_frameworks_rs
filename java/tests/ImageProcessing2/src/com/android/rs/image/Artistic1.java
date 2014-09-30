@@ -16,22 +16,26 @@
 
 package com.android.rs.image2;
 
-import java.lang.Math;
+import android.support.v8.renderscript.*;
 
-
-public class WhiteBalance extends TestBase {
-    private ScriptC_wbalance mScript;
+public class Artistic1 extends TestBase {
+    private ScriptC_artistic1 mScript;
+    private Allocation mBlured;
 
     public void createTest(android.content.res.Resources res) {
-        mScript = new ScriptC_wbalance(mRS);
+        mScript = new ScriptC_artistic1(mRS);
+        mBlured = Allocation.createTyped(mRS, mInPixelsAllocation.getType());
+        mScript.set_gBlur(mBlured);
+
+        ScriptIntrinsicBlur blur = ScriptIntrinsicBlur.create(mRS, Element.U8_4(mRS));
+        blur.setRadius(20);
+        blur.setInput(mInPixelsAllocation);
+        blur.forEach(mBlured);
     }
 
     public void runTest() {
-        mScript.set_histogramSource(mInPixelsAllocation);
-        mScript.set_histogramWidth(mInPixelsAllocation.getType().getX());
-        mScript.set_histogramHeight(mInPixelsAllocation.getType().getY());
-        mScript.invoke_prepareWhiteBalance();
-        mScript.forEach_whiteBalanceKernel(mInPixelsAllocation, mOutPixelsAllocation);
+        mScript.invoke_setup();
+        mScript.forEach_process(mInPixelsAllocation, mOutPixelsAllocation);
     }
 
 }

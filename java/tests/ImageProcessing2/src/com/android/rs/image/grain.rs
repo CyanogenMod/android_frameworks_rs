@@ -15,6 +15,7 @@
  */
 
 #include "ip.rsh"
+#pragma rs_fp_relaxed
 
 uchar RS_KERNEL genRand() {
     return (uchar)rsRand(0xff);

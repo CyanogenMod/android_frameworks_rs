@@ -15,6 +15,10 @@
  */
 
 #include "ip.rsh"
+#pragma rs_fp_relaxed
 
-#include "vignette_approx.rsh"
+uchar4 RS_KERNEL root(uchar4 v_in) {
+    return v_in;
+}
+
 
