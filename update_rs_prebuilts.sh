@@ -45,6 +45,9 @@ ANDROID_HOST_OUT=$MY_ANDROID_DIR/out/host/$SHORT_OSNAME-x86/
 # HOST_LIB_DIR allows us to pick up the built librsrt_*.bc libraries.
 HOST_LIB_DIR=$ANDROID_HOST_OUT/lib
 
+# HOST_LIB64_DIR
+HOST_LIB64_DIR=$ANDROID_HOST_OUT/lib64
+
 # PREBUILTS_DIR is where we want to copy our new files to.
 PREBUILTS_DIR=$MY_ANDROID_DIR/prebuilts/sdk/
 
@@ -130,7 +133,7 @@ if [ $DARWIN -eq 0 ]; then
 
     for a in `find renderscript/lib/$t -name \*.bc`; do
       file=`basename $a`
-      cp `find $HOST_LIB_DIR $sys_lib_dir $obj_lib_dir -name $file | head -1` $a || exit 5
+      cp `find $HOST_LIB_DIR $HOST_LIB64_DIR $sys_lib_dir $obj_lib_dir -name $file | head -1` $a || exit 5
     done
   done
 
