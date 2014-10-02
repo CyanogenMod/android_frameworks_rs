@@ -1032,7 +1032,7 @@ relocateMIPS64(void *(*find_sym)(void *context, char const *name),
     static_cast<ELFSectionSymTabTy *>(getSectionByName(".symtab"));
   rsl_assert(symtab && "Symtab is required.");
 
-  int64_t calculatedValue;
+  int64_t calculatedValue = 0;
   bool applyRelocation = true;
   bool useCalculatedValue;
 
