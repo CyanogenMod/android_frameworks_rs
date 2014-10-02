@@ -20,6 +20,7 @@
 #include "ELFTypes.h"
 #include "ELF.h"
 
+#include <memory>
 #include <string.h>
 
 class ELFHeaderHelperMixin {
