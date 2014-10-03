@@ -44,7 +44,7 @@ LOCAL_SRC_FILES:= \
 	driver/rsdVertexArray.cpp
 
 
-LOCAL_SHARED_LIBRARIES += libRS libRSCpuRef libc++
+LOCAL_SHARED_LIBRARIES += libRS libRSCpuRef
 LOCAL_SHARED_LIBRARIES += liblog libcutils libutils libEGL libGLESv1_CM libGLESv2
 LOCAL_SHARED_LIBRARIES += libui libgui libsync
 
@@ -52,7 +52,8 @@ LOCAL_SHARED_LIBRARIES += libbcc libbcinfo libLLVM
 
 LOCAL_C_INCLUDES += frameworks/compile/libbcc/include
 LOCAL_C_INCLUDES += frameworks/rs/cpu_ref/linkloader/include
-LOCAL_C_INCLUDES += external/libcxx/include
+
+LOCAL_CXX_STL := libc++
 
 LOCAL_CFLAGS += $(rs_base_CFLAGS)
 LOCAL_CPPFLAGS += -fno-exceptions
@@ -165,7 +166,7 @@ LOCAL_SRC_FILES:= \
 	rsThreadIO.cpp \
 	rsType.cpp
 
-LOCAL_SHARED_LIBRARIES += liblog libcutils libutils libEGL libGLESv1_CM libGLESv2 libc++
+LOCAL_SHARED_LIBRARIES += liblog libcutils libutils libEGL libGLESv1_CM libGLESv2
 LOCAL_SHARED_LIBRARIES += libgui libsync libdl libui
 LOCAL_SHARED_LIBRARIES += libft2 libpng libz
 
@@ -173,7 +174,8 @@ LOCAL_SHARED_LIBRARIES += libbcc libbcinfo libLLVM
 
 LOCAL_C_INCLUDES += external/freetype/include
 LOCAL_C_INCLUDES += frameworks/compile/libbcc/include
-LOCAL_C_INCLUDES += external/libcxx/include
+
+LOCAL_CXX_STL := libc++
 
 LOCAL_CFLAGS += $(rs_base_CFLAGS)
 # TODO: external/freetype still uses the register keyword
@@ -291,7 +293,6 @@ rsloader_SRC_FILES := \
 
 include $(CLEAR_VARS)
 
-
 LOCAL_MODULE := librsloader
 LOCAL_MODULE_TAGS := optional
 
@@ -299,13 +300,14 @@ LOCAL_SRC_FILES := $(rsloader_SRC_FILES)
 
 LOCAL_ADDITIONAL_DEPENDENCIES := $(LOCAL_PATH)/Android.mk
 
+LOCAL_CXX_STL := libc++
+
 LOCAL_CFLAGS += $(rs_base_CFLAGS)
 LOCAL_CPPFLAGS += -fno-exceptions
 
 LOCAL_C_INCLUDES := \
   $(LOCAL_PATH)/cpu_ref/linkloader \
   $(LOCAL_PATH)/cpu_ref/linkloader/include \
-  external/libcxx/include \
   $(LOCAL_C_INCLUDES)
 
 include $(LLVM_ROOT_PATH)/llvm-device-build.mk
@@ -332,6 +334,8 @@ endif
 
 LOCAL_ADDITIONAL_DEPENDENCIES := $(LOCAL_PATH)/Android.mk
 
+LOCAL_CXX_STL := libc++
+
 LOCAL_CFLAGS += $(rs_base_CFLAGS)
 LOCAL_CFLAGS += -D__HOST__
 LOCAL_CPPFLAGS += -fno-exceptions
@@ -345,7 +349,6 @@ else
 LOCAL_C_INCLUDES := \
   $(LOCAL_PATH)/cpu_ref/linkloader \
   $(LOCAL_PATH)/cpu_ref/linkloader/include \
-  external/libcxx/include \
   $(LOCAL_C_INCLUDES)
 endif
 
