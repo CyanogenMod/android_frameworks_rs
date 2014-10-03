@@ -52,6 +52,9 @@ LOCAL_SRC_FILES_arm64 += \
     rsCpuIntrinsics_advsimd_YuvToRGB.S
 #    rsCpuIntrinsics_advsimd_Blend.S \
 
+# Clang does not compile rsCpuIntrinsics_advsimd_3DLUT.S.
+LOCAL_CLANG_ASFLAGS_arm64 += -no-integrated-as
+
 ifeq ($(ARCH_ARM_HAVE_NEON),true)
     LOCAL_CFLAGS_arm += -DARCH_ARM_HAVE_NEON
 endif
@@ -69,6 +72,8 @@ ifeq ($(ARCH_ARM_HAVE_VFP),true)
     vp9_loopfilter_neon.S \
     vp9_mb_lpf_neon.S
     LOCAL_ASFLAGS_arm := -mfpu=neon
+    # Clang does not compile rsCpuIntrinsics_neon_3DLUT.S.
+    LOCAL_CLANG_ASFLAGS_arm += -no-integrated-as
 endif
 
 ifeq ($(ARCH_X86_HAVE_SSSE3),true)
