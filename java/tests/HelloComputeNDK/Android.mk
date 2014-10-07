@@ -26,7 +26,6 @@ LOCAL_SRC_FILES := $(call all-java-files-under, src) \
 
 LOCAL_PACKAGE_NAME := HelloComputeNDK
 LOCAL_SDK_VERSION := 14
-LOCAL_32_BIT_ONLY := true
 
 LOCAL_JNI_SHARED_LIBRARIES := libhellocomputendk
 
