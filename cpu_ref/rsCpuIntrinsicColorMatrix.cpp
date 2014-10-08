@@ -487,7 +487,8 @@ bool RsdCpuScriptIntrinsicColorMatrix::build(Key_t key) {
     //StopWatch build_time("rs cm: build time");
     mBuf = (uint8_t *)mmap(0, mBufSize, PROT_READ | PROT_WRITE,
                                   MAP_PRIVATE | MAP_ANON, -1, 0);
-    if (!mBuf) {
+    if (mBuf == MAP_FAILED) {
+        mBuf = NULL;
         return false;
     }
 
