@@ -32,7 +32,6 @@ LOCAL_CFLAGS := -std=c++11
 LOCAL_LDFLAGS := -Wl,-Bsymbolic
 LOCAL_SHARED_LIBRARIES := libdl liblog libjnigraphics
 LOCAL_STATIC_LIBRARIES := libRScpp_static
-LOCAL_32_BIT_ONLY := true
 
 include external/stlport/libstlport.mk
 include $(BUILD_SHARED_LIBRARY)
