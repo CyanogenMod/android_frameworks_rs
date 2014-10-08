@@ -50,7 +50,11 @@ LOCAL_CLANG := true
 endif
 LOCAL_CFLAGS += $(local_cflags_for_rs_cpp)
 
+ifeq ($(my_32_64_bit_suffix),32)
 LOCAL_SDK_VERSION := 8
+else
+LOCAL_SDK_VERSION := 21
+endif
 LOCAL_CFLAGS += -DRS_COMPATIBILITY_LIB
 
 LOCAL_SRC_FILES := $(rs_cpp_SRC_FILES)
