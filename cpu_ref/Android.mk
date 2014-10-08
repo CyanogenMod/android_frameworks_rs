@@ -37,7 +37,6 @@ LOCAL_SRC_FILES:= \
 	rsCpuIntrinsicConvolve3x3.cpp \
 	rsCpuIntrinsicConvolve5x5.cpp \
 	rsCpuIntrinsicHistogram.cpp \
-	rsCpuIntrinsicLoopFilter.cpp \
 	rsCpuIntrinsicYuvToRGB.cpp \
 	rsCpuIntrinsicResize.cpp \
 	rsCpuIntrinsicLUT.cpp
@@ -68,9 +67,7 @@ ifeq ($(ARCH_ARM_HAVE_VFP),true)
     rsCpuIntrinsics_neon_Convolve.S \
     rsCpuIntrinsics_neon_ColorMatrix.S \
     rsCpuIntrinsics_neon_YuvToRGB.S \
-    vp9_loopfilter_16_neon.S \
-    vp9_loopfilter_neon.S \
-    vp9_mb_lpf_neon.S
+
     LOCAL_ASFLAGS_arm := -mfpu=neon
     # Clang does not compile rsCpuIntrinsics_neon_3DLUT.S.
     LOCAL_CLANG_ASFLAGS_arm += -no-integrated-as
@@ -90,7 +87,6 @@ LOCAL_SHARED_LIBRARIES += libbcc libbcinfo
 
 LOCAL_C_INCLUDES += frameworks/compile/libbcc/include
 LOCAL_C_INCLUDES += frameworks/rs
-LOCAL_C_INCLUDES += system/core/include
 
 ifneq ($(HOST_OS),windows)
 include external/libcxx/libcxx.mk
