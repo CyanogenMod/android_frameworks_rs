@@ -176,12 +176,17 @@
          * same time as loading only part of a register.  So the data is loaded
          * linearly and unpacked manually at this point if necessary.
          */
-1:      uzp1        v8.16b, v8.16b, v9.16b
+1:      mov         v18.8b, v8.8b
+        uzp1        v8.8b, v18.8b, v9.8b
+        uzp2        v9.8b, v18.8b, v9.8b
   .if \interleaved
+        mov         v18.8b, v16.8b
     .if \swapuv
-        uzp1        v16.16b, v17.16b, v16.16b
+        uzp1        v16.8b, v17.8b, v18.8b
+        uzp2        v17.8b, v17.8b, v18.8b
     .else
-        uzp1        v16.16b, v16.16b, v17.16b
+        uzp1        v16.8b, v18.8b, v17.8b
+        uzp2        v17.8b, v18.8b, v17.8b
     .endif
   .endif
 
@@ -225,7 +230,7 @@ ENTRY(rsdIntrinsicYuv2_K)
         add         x1, x1, x4
         add         x4, x3, x6
         add         x3, x2, x6
-        sub         x2, x5, x6, LSL #2
+        sub         x2, x5, x6, LSL #1
 
         sub         x6, sp, #32
         sub         sp, sp, #64
