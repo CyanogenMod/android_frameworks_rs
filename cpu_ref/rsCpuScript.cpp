@@ -26,6 +26,8 @@
     #include <string.h>
     #include <sys/stat.h>
     #include <unistd.h>
+    #include <fstream>
+    #include <iostream>
 #else
     #include <bcc/BCCContext.h>
     #include <bcc/Config/Config.h>
@@ -79,13 +81,38 @@ static bool ensureCacheDirExists(const char *path) {
     return false;
 }
 
+// Copy the file named \p srcFile to \p dstFile.
+// Return 0 on success and -1 if anything wasn't copied.
+static int copyFile(const char *dstFile, const char *srcFile) {
+    std::ifstream srcStream(srcFile);
+    if (!srcStream) {
+        ALOGE("Could not verify or read source file: %s", srcFile);
+        return -1;
+    }
+    std::ofstream dstStream(dstFile);
+    if (!dstStream) {
+        ALOGE("Could not verify or write destination file: %s", dstFile);
+        return -1;
+    }
+    dstStream << srcStream.rdbuf();
+    if (!dstStream) {
+        ALOGE("Could not write destination file: %s", dstFile);
+        return -1;
+    }
+
+    srcStream.close();
+    dstStream.close();
+
+    return 0;
+}
+
 // Attempt to load the shared library from origName, but then fall back to
-// creating the symlinked shared library if necessary (to ensure instancing).
+// creating a copy of the shared library if necessary (to ensure instancing).
 // This function returns the dlopen()-ed handle if successful.
 static void *loadSOHelper(const char *origName, const char *cacheDir,
                           const char *resName) {
     // Keep track of which .so libraries have been loaded. Once a library is
-    // in the set (per-process granularity), we must instead make a symlink to
+    // in the set (per-process granularity), we must instead make a copy of
     // the original shared object (randomly named .so file) and load that one
     // instead. If we don't do this, we end up aliasing global data between
     // the various Script instances (which are supposed to be completely
@@ -116,22 +143,22 @@ static void *loadSOHelper(const char *origName, const char *cacheDir,
         return nullptr;
     }
 
-    // Construct an appropriately randomized filename for the symlink.
+    // Construct an appropriately randomized filename for the copy.
     newName.append("librs.");
     newName.append(resName);
     newName.append("#");
     newName.append(getRandomString(6));  // 62^6 potential filename variants.
     newName.append(".so");
 
-    int r = symlink(origName, newName.c_str());
+    int r = copyFile(newName.c_str(), origName);
     if (r != 0) {
-        ALOGE("Could not create symlink %s -> %s", newName.c_str(), origName);
+        ALOGE("Could not create copy %s -> %s", origName, newName.c_str());
         return nullptr;
     }
     loaded = dlopen(newName.c_str(), RTLD_NOW | RTLD_LOCAL);
     r = unlink(newName.c_str());
     if (r != 0) {
-        ALOGE("Could not unlink symlink %s", newName.c_str());
+        ALOGE("Could not unlink copy %s", newName.c_str());
     }
     if (loaded) {
         LoadedLibraries.insert(newName.c_str());
@@ -141,13 +168,12 @@ static void *loadSOHelper(const char *origName, const char *cacheDir,
 }
 
 // Load the shared library referred to by cacheDir and resName. If we have
-// already loaded this library, we instead create a new symlink (in the
-// cache dir) and then load that. We then immediately destroy the symlink.
+// already loaded this library, we instead create a new copy (in the
+// cache dir) and then load that. We then immediately destroy the copy.
 // This is required behavior to implement script instancing for the support
 // library, since shared objects are loaded and de-duped by name only.
 static void *loadSharedLibrary(const char *cacheDir, const char *resName) {
     void *loaded = nullptr;
-    //arc4random_stir();
 #ifndef RS_SERVER
     std::string scriptSOName(cacheDir);
     size_t cutPos = scriptSOName.rfind("cache");
