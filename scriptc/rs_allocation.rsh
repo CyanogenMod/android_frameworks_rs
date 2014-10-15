@@ -374,8 +374,8 @@ extern const uchar __attribute__((overloadable))
 
 #endif // (defined(RS_VERSION) && (RS_VERSION >= 18))
 
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 999))
+// FIXME: this needs to be set to 22
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 
 #define VOP(T)                                                                   \
     extern T __attribute__((overloadable))                                       \
@@ -424,7 +424,8 @@ VOP(double4)
 
 #undef VOP
 
-#endif //(defined(RS_VERSION) && (RS_VERSION >= 999))
+// FIXME
+#endif //(defined(RS_VERSION) && (RS_VERSION >= 21))
 
 
 #endif
