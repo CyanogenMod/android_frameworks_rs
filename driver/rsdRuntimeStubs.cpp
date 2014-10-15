@@ -1960,6 +1960,31 @@ void rsDebug(const char *s, const ul4 *c) {
     SC_debugUL4(s, *(const ulong4 *)c);
 }
 
+void rsDebug(const char *s, const long2 c) {
+    SC_debugL2(s, c);
+}
+
+void rsDebug(const char *s, const long3 c) {
+    SC_debugL3(s, c);
+}
+
+void rsDebug(const char *s, const long4 c) {
+    SC_debugL4(s, c);
+}
+
+void rsDebug(const char *s, const ulong2 c) {
+    SC_debugUL2(s, c);
+}
+
+void rsDebug(const char *s, const ulong3 c) {
+    SC_debugUL3(s, c);
+}
+
+void rsDebug(const char *s, const ulong4 c) {
+    SC_debugUL4(s, c);
+}
+
+
 void rsDebug(const char *s, const void *p) {
     SC_debugP(s, p);
 }
