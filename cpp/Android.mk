@@ -1,3 +1,22 @@
+LOCAL_PATH:= $(call my-dir)
+include $(CLEAR_VARS)
+
+LOCAL_SRC_FILES:= \
+    rsDispatch.cpp
+
+LOCAL_C_INCLUDES += \
+	frameworks/rs
+
+LOCAL_CFLAGS += -Wno-unused-parameter
+
+LOCAL_MODULE:= libRSDispatch
+LOCAL_MODULE_TAGS := optional
+LOCAL_LDFLAGS += -ldl
+
+include $(BUILD_STATIC_LIBRARY)
+
+include $(CLEAR_VARS)
+
 rs_cpp_SRC_FILES := \
 	RenderScript.cpp \
 	BaseObj.cpp \
@@ -9,10 +28,7 @@ rs_cpp_SRC_FILES := \
 	ScriptIntrinsics.cpp \
 	Sampler.cpp
 
-LOCAL_PATH:= $(call my-dir)
-include $(CLEAR_VARS)
 LOCAL_ADDITIONAL_DEPENDENCIES := $(LOCAL_PATH)/Android.mk
-
 include frameworks/compile/slang/rs_version.mk
 local_cflags_for_rs_cpp += $(RS_VERSION_DEFINE)
 local_cflags_for_rs_cpp += -Wno-unused-parameter -std=c++11
@@ -30,6 +46,9 @@ LOCAL_SHARED_LIBRARIES := \
 	libutils \
 	liblog \
 	libdl \
+
+LOCAL_STATIC_LIBRARIES := \
+        libRSDispatch
 
 LOCAL_MODULE:= libRScpp
 
@@ -63,7 +82,8 @@ LOCAL_SRC_FILES += ../rsCompatibilityLib.cpp
 
 LOCAL_WHOLE_STATIC_LIBRARIES := \
 	libutils \
-	libstlport_static
+	libstlport_static \
+	libRSDispatch
 
 LOCAL_MODULE:= libRScpp_static
 
