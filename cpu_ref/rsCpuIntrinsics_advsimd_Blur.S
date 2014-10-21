@@ -52,17 +52,17 @@
  *      x6 -- rup
  *      x7 -- rdn
  *      x12 -- switch index
- *      q0-q3 -- coefficient table
+ *      v0-v3 -- coefficient table
  *      x13 = -pitch
  *      x15 = top-row in
  *      x19 = bottom-row in
  * Output:
  *      x1 += 16
- *      q10,q11 -- 16 convolved columns
+ *      v10,v11 -- 16 convolved columns
  * Modifies:
  *      x10 = upper row pointer
  *      x11 = lower row pointer
- *      q12-q15 = temporary sums
+ *      v12-v15 = temporary sums
  */
 .macro fetch, max_r=MAX_R, labelc=1, labelnc=2, reg=x12 /*{{{*/
   .ifc \reg,x12 ; .set cc, 1 ; .else ; .set cc, 0 ; .endif
@@ -146,15 +146,15 @@ nop
  * When the buffer gets too big the buffer at [x9] is used.
  *
  * Input:
- *      q4-q11 -- convoltion window
+ *      v16-v31,v4-v11 -- convoltion window
  *      x9 -- pointer to additional convolution window data
  * Output:
  *      x9 -- updated buffer pointer (if used)
  *      d31 -- result to be stored
  * Modifies:
  *      x12 -- temp buffer pointer
- *      q12-q13 -- temporaries for load and vext operations.
- *      q14-q15 -- intermediate sums
+ *      v12-v13 -- temporaries for load and vext operations.
+ *      v14-v15 -- intermediate sums
  */
 #define TUNED_LIST1 8, 16
 .macro hconv1_8/*{{{*/
@@ -407,7 +407,7 @@ nop
             umlal2      v15.4s, v12.8h, v3.h[1]
             umlal       v14.4s, v13.4h, v3.h[1]
             umlal2      v15.4s, v13.8h, v3.h[1]
-    124:    ext         v12.16b, v3.16b, v4.16b, #7*2
+    124:    ext         v12.16b, v31.16b, v4.16b, #7*2
             ext         v13.16b, v9.16b, v10.16b, #7*2
             umlal       v14.4s, v12.4h, v3.h[0]
             umlal2      v15.4s, v12.8h, v3.h[0]
@@ -1055,7 +1055,7 @@ PRIVATE(fetch_generic_asm)
             ret
 END(fetch_generic_asm)
 
-/* Given values in q10 and q11, and an index in x11, sweep the (x11&15)th value
+/* Given values in v10 and v11, and an index in x11, sweep the (x11&15)th value
  * across to fill the rest of the register pair.  Used for filling the right
  * hand edge of the window when starting too close to the right hand edge of
  * the image.
@@ -1448,7 +1448,7 @@ ENTRY(rsdIntrinsicBlurU1_K)
             cmp         x8, x5
             csel        x8, x5, x8, hs
             cmp         x9, x5
-            csel        x9, x5, x8, hs
+            csel        x9, x5, x9, hs
 
             add         x4, x8, x9
             add         x4, x4, x3
