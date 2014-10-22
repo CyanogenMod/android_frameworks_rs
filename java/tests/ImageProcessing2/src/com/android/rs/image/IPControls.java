@@ -50,20 +50,18 @@ public class IPControls extends Activity {
     private final String TAG = "Img";
     public final String RESULT_FILE = "ip_compat_result.csv";
 
-    private Spinner mResSpinner;
+    private Spinner mResolutionSpinner;
     private ListView mTestListView;
     private TextView mResultView;
 
     private ArrayAdapter<String> mTestListAdapter;
     private ArrayList<String> mTestList = new ArrayList<String>();
 
-    private boolean mSettings[] = {true, true, true, false, false, false};
-    // Not supported in compatibility library version
-    //private static final int SETTING_USE_IO = 0;
-    private static final int SETTING_ANIMATE = 1;
-    private static final int SETTING_DISPLAY = 2;
-    private static final int SETTING_LONG_RUN = 3;
-    private static final int SETTING_PAUSE = 4;
+    private boolean mSettings[] = {true, true, false, false};
+    private static final int SETTING_ANIMATE = 0;
+    private static final int SETTING_DISPLAY = 1;
+    private static final int SETTING_LONG_RUN = 2;
+    private static final int SETTING_PAUSE = 3;
 
     private float mResults[];
 
@@ -87,7 +85,7 @@ public class IPControls extends Activity {
             return name;
         }
     }
-    private Resolutions mRes;
+    private Resolutions mResolution;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -96,32 +94,38 @@ public class IPControls extends Activity {
         inflater.inflate(R.menu.main_activity_actions, menu);
 
         MenuItem searchItem = menu.findItem(R.id.action_res);
-        mResSpinner = (Spinner) searchItem.getActionView();
+        mResolutionSpinner = (Spinner) searchItem.getActionView();
 
-        mResSpinner.setOnItemSelectedListener(mResSpinnerListener);
-        mResSpinner.setAdapter(new ArrayAdapter<Resolutions>(
+        mResolutionSpinner.setOnItemSelectedListener(mResolutionSpinnerListener);
+        mResolutionSpinner.setAdapter(new ArrayAdapter<Resolutions>(
             this, R.layout.spinner_layout, Resolutions.values()));
 
-        // Choose one of the image sizes that close to the resolution
+        // Choose one of the image sizes that is close to the resolution
         // of the screen.
         Point size = new Point();
         getWindowManager().getDefaultDisplay().getSize(size);
+        boolean didSet = false;
         int md = (size.x > size.y) ? size.x : size.y;
         for (int ct=0; ct < Resolutions.values().length; ct++) {
             if (Resolutions.values()[ct].width <= (int)(md * 1.2)) {
-                mResSpinner.setSelection(ct);
+                mResolutionSpinner.setSelection(ct);
+                didSet = true;
                 break;
             }
+        }
+        if (!didSet) {
+            // If no good resolution was found, pick the lowest one.
+            mResolutionSpinner.setSelection(Resolutions.values().length - 1);
         }
 
         return super.onCreateOptionsMenu(menu);
     }
 
 
-    private AdapterView.OnItemSelectedListener mResSpinnerListener =
+    private AdapterView.OnItemSelectedListener mResolutionSpinnerListener =
             new AdapterView.OnItemSelectedListener() {
                 public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-                    mRes = Resolutions.values()[pos];
+                    mResolution = Resolutions.values()[pos];
                 }
 
                 public void onNothingSelected(AdapterView parent) {
@@ -129,8 +133,6 @@ public class IPControls extends Activity {
             };
 
     void launchDemo(int id) {
-        IPTestList.TestName t[] = IPTestList.TestName.values();
-
         int testList[] = new int[1];
         testList[0] = id;
 
@@ -176,16 +178,12 @@ public class IPControls extends Activity {
     @Override
     protected void onPause() {
         super.onPause();
-
-        //cleanup();
     }
 
 
     @Override
     protected void onResume() {
         super.onResume();
-
-       // init();
     }
 
     private void checkGroup(int group) {
@@ -201,8 +199,8 @@ public class IPControls extends Activity {
         intent.putExtra("enable pause", mSettings[SETTING_PAUSE]);
         intent.putExtra("enable animate", mSettings[SETTING_ANIMATE]);
         intent.putExtra("enable display", mSettings[SETTING_DISPLAY]);
-        intent.putExtra("resolution X", mRes.width);
-        intent.putExtra("resolution Y", mRes.height);
+        intent.putExtra("resolution X", mResolution.width);
+        intent.putExtra("resolution Y", mResolution.height);
         return intent;
     }
 
@@ -232,11 +230,13 @@ public class IPControls extends Activity {
         startActivityForResult(intent, 0);
     }
 
+    // Rebase normalizes the performance result for the resolution and
+    // compares it to a baseline device.
     float rebase(float v, IPTestList.TestName t) {
         if (v > 0.001) {
             v = t.baseline / v;
         }
-        float pr = (1920.f / mRes.width) * (1080.f / mRes.height);
+        float pr = (1920.f / mResolution.width) * (1080.f / mResolution.height);
         return v / pr;
     }
 
@@ -286,30 +286,23 @@ public class IPControls extends Activity {
                     mResults[id[ct]] = r[ct];
                 }
 
-                double gm[] = {1.0, 1.0, 1.0};
+                double geometricMean[] = {1.0, 1.0, 1.0};
                 double count[] = {0, 0, 0};
                 for (int ct=0; ct < IPTestList.TestName.values().length; ct++) {
                     IPTestList.TestName t = IPTestList.TestName.values()[ct];
-                    gm[t.group] *= rebase(mResults[ct], t);
+                    geometricMean[t.group] *= rebase(mResults[ct], t);
                     count[t.group] += 1.0;
                 }
-                gm[0] = java.lang.Math.pow(gm[0], 1.0 / count[0]);
-                gm[1] = java.lang.Math.pow(gm[1], 1.0 / count[1]);
-                gm[2] = java.lang.Math.pow(gm[2], 1.0 / count[2]);
+                geometricMean[0] = java.lang.Math.pow(geometricMean[0], 1.0 / count[0]);
+                geometricMean[1] = java.lang.Math.pow(geometricMean[1], 1.0 / count[1]);
+                geometricMean[2] = java.lang.Math.pow(geometricMean[2], 1.0 / count[2]);
 
-                String s = "Results:  fp full=" + df.format(gm[0]) +
-                        ",  fp relaxed=" +df.format(gm[1]) +
-                        ",  intrinsics=" + df.format(gm[2]);
+                String s = "Results:  fp full=" + df.format(geometricMean[0]) +
+                        ",  fp relaxed=" +df.format(geometricMean[1]) +
+                        ",  intrinsics=" + df.format(geometricMean[2]);
                 mResultView.setText(s);
                 writeResults();
             }
-        }
-    }
-
-    public void btnSelAll(View v) {
-        IPTestList.TestName t[] = IPTestList.TestName.values();
-        for (int i=0; i < t.length; i++) {
-            mTestListView.setItemChecked(i, true);
         }
     }
 
@@ -325,16 +318,15 @@ public class IPControls extends Activity {
         }
     }
 
+    public void btnSelAll(View v) {
+        IPTestList.TestName t[] = IPTestList.TestName.values();
+        for (int i=0; i < t.length; i++) {
+            mTestListView.setItemChecked(i, true);
+        }
+    }
+
     public void btnSelNone(View v) {
         checkGroup(-1);
-    }
-
-    public void btnSelHp(View v) {
-        checkGroup(0);
-    }
-
-    public void btnSelLp(View v) {
-        checkGroup(1);
     }
 
     public void btnSettings(View v) {
@@ -343,7 +335,7 @@ public class IPControls extends Activity {
     }
 
     public void btnSelIntrinsic(View v) {
-        checkGroup(2);
+        checkGroup(IPTestList.INTRINSIC);
     }
 
 

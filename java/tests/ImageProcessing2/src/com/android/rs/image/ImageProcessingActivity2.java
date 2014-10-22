@@ -71,20 +71,16 @@ public class ImageProcessingActivity2 extends Activity
     private boolean mDemoMode;
 
     // Updates pending is a counter of how many kernels have been
-    // sent to RS for processing
-    //
-    // In benchmark this is incremented each time a kernel is launched and
-    // decremented each time a kernel completes
-    //
-    // In demo mode, each UI input increments the counter and it is zeroed
-    // when the latest settings are sent to RS for processing.
+    // sent to RS for processing and are not yet started.
     private int mUpdatesPending;
 
-    // In demo mode this is used to count updates in the pipeline.  It's
-    // incremented when work is submitted to RS and decremented when invalidate is
-    // called to display a result.
+    // This is used to count updates in the pipeline.  It's
+    // incremented when work is submitted to RS and decremented when we
+    // receive the callback the kernel has finished.
     private int mShowsPending;
 
+    private boolean mTestNameChanged = true;
+    private String mTestName;
 
 
     /////////////////////////////////////////////////////////////////////////
@@ -96,7 +92,7 @@ public class ImageProcessingActivity2 extends Activity
 
         public void run() {
             synchronized(mProcessor) {
-                // In demo mode, decrement the pending displays and notify the
+                // Decrement the pending displays and notify the
                 // UI processor it can now enqueue more work if additional updates
                 // are blocked by a full pipeline.
                 if (mShowsPending > 0) {
@@ -135,6 +131,9 @@ public class ImageProcessingActivity2 extends Activity
         // We don't want to call the "changed" methods excessively as this
         // can cause extra work for drivers.  Before running a test update
         // any bars which have changed.
+        //
+        // These are UI elements which can be used to control the operation of
+        // a filter.  For example, blur radius or white level.
         void runTest() {
             if (mBars[0] != mBarsOld[0]) {
                 mTest.onBar1Changed(mBars[0]);
@@ -189,6 +188,8 @@ public class ImageProcessingActivity2 extends Activity
                 mBitmapOut1 = Bitmap.createBitmap(800, 450, Bitmap.Config.ARGB_8888);
                 mBitmapOut2 = Bitmap.createBitmap(800, 450, Bitmap.Config.ARGB_8888);
                 break;
+            default:
+                throw new RuntimeException("unhandled bitmap width.");
             }
 
             mBitmapOut1.setHasAlpha(false);
@@ -201,7 +202,7 @@ public class ImageProcessingActivity2 extends Activity
 
         class Result {
             float totalTime;
-            int itterations;
+            int iterations;
         }
 
         // Run one loop of kernels for at least the specified minimum time.
@@ -238,7 +239,7 @@ public class ImageProcessingActivity2 extends Activity
                     mTest.mOutPixelsAllocation = mOutDisplayAllocation2;
                 }
                 mTest.runTest();
-                r.itterations ++;
+                r.iterations ++;
 
                 if (mToggleDisplay) {
                     if (mActiveBitmap == 0) {
@@ -249,20 +250,21 @@ public class ImageProcessingActivity2 extends Activity
                 }
 
                 // Send our RS message handler a message so we know when this work has completed
-                //mRS.sendMessage(mActiveBitmap, null);
                 mScriptUtils.invoke_utilSendMessage(mActiveBitmap);
                 mActiveBitmap ^= 1;
 
                 long t2 = java.lang.System.currentTimeMillis();
-                r.totalTime += (t2 - t) / 1000.f;
-                t = t2;
+                r.totalTime = (t2 - t) / 1000.f;
             } while (r.totalTime < minTime);
 
             // Wait for any stray operations to complete and update the final time
             mRS.finish();
             long t2 = java.lang.System.currentTimeMillis();
-            r.totalTime += (t2 - t) / 1000.f;
-            t = t2;
+            r.totalTime = (t2 - t) / 1000.f;
+
+            // Even if we are not displaying as we go, show the final output
+            mOutDisplayAllocation1.copyTo(mBitmapOut1);
+            mOutDisplayAllocation2.copyTo(mBitmapOut2);
             return r;
         }
 
@@ -285,17 +287,21 @@ public class ImageProcessingActivity2 extends Activity
             // Run the actual benchmark
             Result r = runBenchmarkLoop(runtime);
 
-            Log.v("rs", "Test: time=" + r.totalTime +"s,  frames=" + r.itterations +
-                  ", avg=" + r.totalTime / r.itterations * 1000.f);
+            Log.v("rs", "Test: time=" + r.totalTime +"s,  frames=" + r.iterations +
+                  ", avg=" + r.totalTime / r.iterations * 1000.f);
 
             mDoingBenchmark = false;
-            return r.totalTime / r.itterations * 1000.f;
+            return r.totalTime / r.iterations * 1000.f;
         }
 
         private int mDisplayedBitmap;
         private Handler mHandler = new Handler() {
             @Override
             public void handleMessage(Message msg) {
+                if (mTestNameChanged) {
+                    getActionBar().setTitle("IP-Compat test: " + mTestName);
+                }
+
                 if (mDisplayedBitmap == 0) {
                     mDisplayView.setImageBitmap(mBitmapOut1);
                 } else {
@@ -388,7 +394,6 @@ public class ImageProcessingActivity2 extends Activity
                         }
 
                         // Send our RS message handler a message so we know when this work has completed
-                        //mRS.sendMessage(mActiveBitmap, null);
                         mScriptUtils.invoke_utilSendMessage(mActiveBitmap);
                         mActiveBitmap ^= 1;
                     }
@@ -398,8 +403,8 @@ public class ImageProcessingActivity2 extends Activity
         }
 
         public void update() {
-            // something UI related has changed, enqueue an update if one is not
-            // already pending.  Wake the worker if needed
+            // Something UI related has changed, enqueue an update if one is not
+            // already pending.  Wake the worker if needed.
             synchronized(this) {
                 if (mUpdatesPending < 2) {
                     mUpdatesPending++;
@@ -446,6 +451,10 @@ public class ImageProcessingActivity2 extends Activity
 
     TestBase changeTest(IPTestList.TestName t, boolean setupUI) {
         TestBase tb = IPTestList.newTest(t);
+
+        mTestNameChanged = true;
+        mTestName = t.toString();
+        mProcessor.mHandler.sendMessage(Message.obtain());
 
         tb.createBaseTest(this);
         if (setupUI) {
