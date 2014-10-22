@@ -1423,8 +1423,7 @@ ENTRY(rsdIntrinsicBlurU1_K)
 
             ldr         r12, [sp,#124]
 
-            add         r0, r0, r8 @, LSL #2 /* for blur4 option */
-            add         r1, r1, r8 @, LSL #2 /* for blur4 option */
+            add         r1, r1, r8
 
             cmp         r6, r5
             movhi       r6, r5
@@ -1479,7 +1478,6 @@ ENTRY(rsdIntrinsicBlurU4_K)
 
             ldr         r12, [sp,#124]
 
-            add         r0, r0, r8, LSL #2
             add         r1, r1, r8, LSL #2
 
             cmp         r6, r5
