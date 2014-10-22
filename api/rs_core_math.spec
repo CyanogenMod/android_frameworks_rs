@@ -156,7 +156,7 @@ w: 1, 2, 3, 4
 t: f32
 name: atanh
 ret: #2#1
-arg: #2#1
+arg: #2#1 v range(-1,1)
 comment:
  Return the inverse hyperbolic tangent.
 version: 9
@@ -489,6 +489,7 @@ arg: float#1
 comment:
  Return the integer exponent of a value
 version: 9
+test: custom
 end:
 
 start:
@@ -526,7 +527,7 @@ name: lgamma
 ret: #2#1
 arg: #2#1
 comment:
- Return the log gamma and sign
+ Return the log gamma
 version: 9
 end:
 
@@ -540,6 +541,8 @@ arg: int#1 *y
 comment:
  Return the log gamma and sign
 version: 9
+#TODO Temporary until bionic & associated drivers are fixed
+test: custom
 end:
 
 start:
@@ -705,10 +708,11 @@ name: remquo
 ret: #2#1
 arg: #2#1 b
 arg: #2#1 c
-arg: int#1 *d conditional
+arg: int#1 *d
 comment:
- Return the quotient and the remainder of b/c
+ Return the quotient and the remainder of b/c.  Only the sign and lowest three bits of the quotient are guaranteed to be accurate.
 version: 9
+test: custom
 end:
 
 start:
@@ -732,8 +736,6 @@ arg: int#1 n
 comment:
  Compute the Nth root of a value.
 version: 9
-# TODO re-enable once how to handle zero is decided
-test: noverify
 end:
 
 start:
@@ -986,7 +988,7 @@ arg: #2#1 v1
 arg: #2#1 v2
 comment:
  Return the minimum value from two arguments
-version: 20
+version: 21
 end:
 
 start:
@@ -1078,7 +1080,7 @@ arg: #2#1 v1
 arg: #2#1 v2
 comment:
  Return the maximum value from two arguments
-version: 20
+version: 21
 end:
 
 start:
@@ -1239,7 +1241,7 @@ comment:
      return 0.f;
  else
      return 1.f;
-version: 20
+version: 21
 end:
 
 start:
@@ -1440,9 +1442,9 @@ ret: #2#1
 arg: #2#1 v range(10e-10,10e10)
 comment:
  Fast approximate log
+ It is not accurate for values very close to zero.
 version: 18
-# TODO Is this the precision we want?
-test: limited(0.0002)
+test: limited
 end:
 
 start:
@@ -1453,9 +1455,9 @@ ret: #2#1
 arg: #2#1 v range(10e-10,10e10)
 comment:
  Fast approximate log2
+ It is not accurate for values very close to zero.
 version: 18
-# TODO Is this the precision we want?
-test: limited(0.0002)
+test: limited
 end:
 
 start:
@@ -1466,9 +1468,9 @@ ret: #2#1
 arg: #2#1 v range(10e-10,10e10)
 comment:
  Fast approximate log10
+ It is not accurate for values very close to zero.
 version: 18
-# TODO Is this the precision we want?
-test: limited(0.00005)
+test: limited
 end:
 
 start:
@@ -1482,10 +1484,9 @@ comment:
  Fast approximate v ^ y
  v must be between 0.f and 256.f
  y must be between -15.f and 15.f
+ It is not accurate for values of v very close to zero.
 version: 18
-# TODO enable once 0 ^ x is handled better
-# test: limited
-test: noverify
+test: limited
 end:
 
 
@@ -1498,7 +1499,8 @@ arg: #2#1 v range(-1,1)
 comment:
  acos
 version: 21
-test: noverify
+# TODO Temporary
+test: limited(0.0005)
 end:
 
 start:
@@ -1510,7 +1512,8 @@ arg: #2#1
 comment:
  acosh
 version: 21
-test: noverify
+# TODO Temporary
+test: limited(0.0005)
 end:
 
 start:
@@ -1522,7 +1525,8 @@ arg: #2#1 v range(-1,1)
 comment:
  acospi
 version: 21
-test: noverify
+# TODO Temporary
+test: limited(0.0005)
 end:
 
 start:
@@ -1534,7 +1538,8 @@ arg: #2#1 v range(-1,1)
 comment:
  asin
 version: 21
-test: noverify
+# TODO Temporary
+test: limited(0.0005)
 end:
 
 start:
@@ -1546,7 +1551,8 @@ arg: #2#1
 comment:
  asinh
 version: 21
-test: noverify
+# TODO Temporary
+test: limited(0.0005)
 end:
 
 start:
@@ -1558,7 +1564,8 @@ arg: #2#1 v range(-1,1)
 comment:
  Return the inverse sine divided by PI.
 version: 21
-test: noverify
+# TODO Temporary
+test: limited(0.0005)
 end:
 
 start:
@@ -1570,7 +1577,8 @@ arg: #2#1 v range(-1,1)
 comment:
  Return the inverse tangent.
 version: 21
-test: noverify
+# TODO Temporary
+test: limited(0.0005)
 end:
 
 start:
@@ -1583,7 +1591,8 @@ arg: #2#1 x
 comment:
  Return the inverse tangent of y / x.
 version: 21
-test: noverify
+# TODO Temporary
+test: limited(0.0005)
 end:
 
 start:
@@ -1591,11 +1600,12 @@ w: 1, 2, 3, 4
 t: f32
 name: native_atanh
 ret: #2#1
-arg: #2#1
+arg: #2#1 in range(-1,1)
 comment:
  Return the inverse hyperbolic tangent.
 version: 21
-test: noverify
+# TODO Temporary
+test: limited(0.0005)
 end:
 
 start:
@@ -1607,7 +1617,8 @@ arg: #2#1 v range(-1,1)
 comment:
  Return the inverse tangent divided by PI.
 version: 21
-test: noverify
+# TODO Temporary
+test: limited(0.0005)
 end:
 
 start:
@@ -1620,7 +1631,8 @@ arg: #2#1 x
 comment:
  Return the inverse tangent of y / x, divided by PI.
 version: 21
-test: noverify
+# TODO Temporary
+test: limited(0.0005)
 end:
 
 start:
@@ -1632,7 +1644,6 @@ arg: #2#1
 comment:
  Return the cube root.
 version: 21
-test: noverify
 end:
 
 start:
@@ -1644,7 +1655,6 @@ arg: #2#1
 comment:
  Return the cosine.
 version: 21
-test: noverify
 end:
 
 start:
@@ -1656,7 +1666,6 @@ arg: #2#1
 comment:
  Return the hypebolic cosine.
 version: 21
-test: noverify
 end:
 
 start:
@@ -1668,7 +1677,6 @@ arg: #2#1
 comment:
  Return the cosine of the value * PI.
 version: 21
-test: noverify
 end:
 
 start:
@@ -1680,7 +1688,6 @@ arg: #2#1
 comment:
  Return (e ^ value) - 1.
 version: 21
-test: noverify
 end:
 
 start:
@@ -1693,7 +1700,7 @@ arg: #2#1 rhs
 comment:
  Compute the approximate distance between two points.
 version: 21
-test: noverify
+test: vector
 end:
 
 start:
@@ -1706,7 +1713,6 @@ arg: #2#1 rhs
 comment:
  Compute the approximate division result of two values.
 version: 21
-test: noverify
 end:
 
 start:
@@ -1719,7 +1725,6 @@ arg: #2#1 y
 comment:
  Return native_sqrt(x*x + y*y)
 version: 21
-test: noverify
 end:
 
 start:
@@ -1755,7 +1760,6 @@ arg: #2#1
 comment:
  Return the natural logarithm of (v + 1.0f)
 version: 21
-test: noverify
 end:
 
 start:
@@ -1779,7 +1783,6 @@ arg: int#1 n
 comment:
  Compute the Nth root of a value.
 version: 21
-test: noverify
 end:
 
 start:
@@ -1791,7 +1794,6 @@ arg: #2#1
 comment:
  Return (1 / sqrt(value)).
 version: 21
-test: noverify
 end:
 
 start:
@@ -1803,7 +1805,6 @@ arg: #2#1
 comment:
  Return the sine of a value specified in radians.
 version: 21
-test: noverify
 end:
 
 start:
@@ -1820,7 +1821,8 @@ comment:
  @param v The incoming value in radians
  @param *cosptr cosptr[0] will be set to the cosine value.
 version: 21
-test: noverify
+# TODO Temporary
+test: limited(0.0005)
 end:
 
 start:
@@ -1832,7 +1834,6 @@ arg: #2#1
 comment:
  Return the hyperbolic sine of a value specified in radians.
 version: 21
-test: noverify
 end:
 
 start:
@@ -1844,7 +1845,6 @@ arg: #2#1
 comment:
  Return the sin(v * PI).
 version: 21
-test: noverify
 end:
 
 start:
@@ -1856,7 +1856,6 @@ arg: #2#1
 comment:
  Return the aproximate sqrt(v).
 version: 21
-test: noverify
 end:
 
 start:
@@ -1868,7 +1867,6 @@ arg: #2#1
 comment:
  Return the tangent of a value.
 version: 21
-test: noverify
 end:
 
 start:
@@ -1880,7 +1878,6 @@ arg: #2#1
 comment:
  Return the hyperbolic tangent of a value.
 version: 21
-test: noverify
 end:
 
 start:
@@ -1892,7 +1889,6 @@ arg: #2#1
 comment:
  Return tan(v * PI)
 version: 21
-test: noverify
 end:
 
 

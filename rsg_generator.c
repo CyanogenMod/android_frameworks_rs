@@ -712,19 +712,6 @@ int main(int argc, char **argv) {
             printPlaybackCpp(f);
         }
         break;
-
-        case '4': // rsgApiStream.cpp
-        {
-            printFileHeader(f);
-            printPlaybackCpp(f);
-        }
-
-        case '5': // rsgApiStreamReplay.cpp
-        {
-            printFileHeader(f);
-            printPlaybackCpp(f);
-        }
-        break;
     }
     fclose(f);
     return 0;

@@ -101,7 +101,9 @@ public class ImageProcessingActivity extends Activity
         USAGE_IO ("Usage io"),
         ARTISTIC_1("Artistic 1"),
         HISTOGRAM ("Histogram"),
-        MANDELBROT_DOUBLE ("Mandelbrot fp64");
+        MANDELBROT_DOUBLE ("Mandelbrot fp64"),
+        RESIZE_BICUBIC_SCRIPT ("Resize BiCubic Script"),
+        RESIZE_BICUBIC_INTRINSIC ("Resize BiCubic Intrinsic");
 
 
         private final String name;
@@ -366,6 +368,12 @@ public class ImageProcessingActivity extends Activity
         case MANDELBROT_DOUBLE:
             mTest = new Mandelbrot(true);
             break;
+        case RESIZE_BICUBIC_SCRIPT:
+            mTest = new Resize(false);
+            break;
+        case RESIZE_BICUBIC_INTRINSIC:
+            mTest = new Resize(true);
+            break;
         }
 
         mTest.createBaseTest(this);
@@ -401,6 +409,7 @@ public class ImageProcessingActivity extends Activity
         mBitmapOut = Bitmap.createBitmap(mInPixelsAllocation.getType().getX(),
                                          mInPixelsAllocation.getType().getY(),
                                          Bitmap.Config.ARGB_8888);
+        mBitmapOut.setHasAlpha(false);
         mOutPixelsAllocation = Allocation.createFromBitmap(mRS, mBitmapOut);
 
         mDisplayView = (ImageView) findViewById(R.id.display);

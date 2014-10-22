@@ -18,13 +18,15 @@
 #pragma rs java_package_name(com.example.android.rs.computeperf)
 
 const int dim = 2048;
-uint8_t *buf;
+rs_allocation gBuf;
 
-void root(uchar *v_out, uint32_t x) {
-    uint8_t *p = buf;
-    p += x * dim;
+void __attribute__((kernel)) k_x(uchar in, uint32_t x) {
     for (int i=0; i<dim; i++) {
-        p[i] = 1;
+        rsSetElementAt_uchar(gBuf, 1, i, x);
     }
+}
+
+uchar __attribute__((kernel)) k_xy(uint32_t x, uint32_t y) {
+    return 0;
 }
 

@@ -432,7 +432,7 @@ static bool loadSO(const char* filename) {
 }
 
 static uint32_t getProp(const char *str) {
-#if !defined(RS_SERVER) && defined(HAVE_ANDROID_OS)
+#if !defined(__LP64__) && !defined(RS_SERVER) && defined(HAVE_ANDROID_OS)
     char buf[256];
     property_get(str, buf, "0");
     return atoi(buf);

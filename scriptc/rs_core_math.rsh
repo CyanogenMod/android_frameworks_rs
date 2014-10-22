@@ -456,7 +456,7 @@ extern float4 __attribute__((const, overloadable))atan2pi(float4 y, float4 x);
  *
  * Supported by API versions 9 and newer.
  */
-extern float __attribute__((const, overloadable))atanh(float);
+extern float __attribute__((const, overloadable))atanh(float v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -465,7 +465,7 @@ extern float __attribute__((const, overloadable))atanh(float);
  *
  * Supported by API versions 9 and newer.
  */
-extern float2 __attribute__((const, overloadable))atanh(float2);
+extern float2 __attribute__((const, overloadable))atanh(float2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -474,7 +474,7 @@ extern float2 __attribute__((const, overloadable))atanh(float2);
  *
  * Supported by API versions 9 and newer.
  */
-extern float3 __attribute__((const, overloadable))atanh(float3);
+extern float3 __attribute__((const, overloadable))atanh(float3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -483,7 +483,7 @@ extern float3 __attribute__((const, overloadable))atanh(float3);
  *
  * Supported by API versions 9 and newer.
  */
-extern float4 __attribute__((const, overloadable))atanh(float4);
+extern float4 __attribute__((const, overloadable))atanh(float4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -5667,7 +5667,7 @@ extern float __attribute__((const, overloadable))length(float4 v);
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /*
- * Return the log gamma and sign
+ * Return the log gamma
  *
  * Supported by API versions 9 and newer.
  */
@@ -5676,7 +5676,7 @@ extern float __attribute__((const, overloadable))lgamma(float);
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /*
- * Return the log gamma and sign
+ * Return the log gamma
  *
  * Supported by API versions 9 and newer.
  */
@@ -5685,7 +5685,7 @@ extern float2 __attribute__((const, overloadable))lgamma(float2);
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /*
- * Return the log gamma and sign
+ * Return the log gamma
  *
  * Supported by API versions 9 and newer.
  */
@@ -5694,7 +5694,7 @@ extern float3 __attribute__((const, overloadable))lgamma(float3);
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /*
- * Return the log gamma and sign
+ * Return the log gamma
  *
  * Supported by API versions 9 and newer.
  */
@@ -6325,290 +6325,290 @@ static uint4 __attribute__((const, overloadable))max(uint4 v1, uint4 v2) {
 }
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the maximum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern char __attribute__((const, overloadable))max(char v1, char v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the maximum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern char2 __attribute__((const, overloadable))max(char2 v1, char2 v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the maximum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern char3 __attribute__((const, overloadable))max(char3 v1, char3 v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the maximum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern char4 __attribute__((const, overloadable))max(char4 v1, char4 v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the maximum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern uchar __attribute__((const, overloadable))max(uchar v1, uchar v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the maximum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern uchar2 __attribute__((const, overloadable))max(uchar2 v1, uchar2 v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the maximum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern uchar3 __attribute__((const, overloadable))max(uchar3 v1, uchar3 v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the maximum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern uchar4 __attribute__((const, overloadable))max(uchar4 v1, uchar4 v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the maximum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern short __attribute__((const, overloadable))max(short v1, short v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the maximum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern short2 __attribute__((const, overloadable))max(short2 v1, short2 v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the maximum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern short3 __attribute__((const, overloadable))max(short3 v1, short3 v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the maximum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern short4 __attribute__((const, overloadable))max(short4 v1, short4 v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the maximum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern ushort __attribute__((const, overloadable))max(ushort v1, ushort v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the maximum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern ushort2 __attribute__((const, overloadable))max(ushort2 v1, ushort2 v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the maximum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern ushort3 __attribute__((const, overloadable))max(ushort3 v1, ushort3 v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the maximum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern ushort4 __attribute__((const, overloadable))max(ushort4 v1, ushort4 v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the maximum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern int __attribute__((const, overloadable))max(int v1, int v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the maximum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern int2 __attribute__((const, overloadable))max(int2 v1, int2 v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the maximum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern int3 __attribute__((const, overloadable))max(int3 v1, int3 v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the maximum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern int4 __attribute__((const, overloadable))max(int4 v1, int4 v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the maximum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern uint __attribute__((const, overloadable))max(uint v1, uint v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the maximum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern uint2 __attribute__((const, overloadable))max(uint2 v1, uint2 v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the maximum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern uint3 __attribute__((const, overloadable))max(uint3 v1, uint3 v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the maximum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern uint4 __attribute__((const, overloadable))max(uint4 v1, uint4 v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the maximum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern long __attribute__((const, overloadable))max(long v1, long v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the maximum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern long2 __attribute__((const, overloadable))max(long2 v1, long2 v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the maximum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern long3 __attribute__((const, overloadable))max(long3 v1, long3 v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the maximum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern long4 __attribute__((const, overloadable))max(long4 v1, long4 v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the maximum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern ulong __attribute__((const, overloadable))max(ulong v1, ulong v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the maximum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern ulong2 __attribute__((const, overloadable))max(ulong2 v1, ulong2 v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the maximum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern ulong3 __attribute__((const, overloadable))max(ulong3 v1, ulong3 v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the maximum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern ulong4 __attribute__((const, overloadable))max(ulong4 v1, ulong4 v2);
 #endif
@@ -6985,290 +6985,290 @@ static uint4 __attribute__((const, overloadable))min(uint4 v1, uint4 v2) {
 }
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the minimum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern char __attribute__((const, overloadable))min(char v1, char v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the minimum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern char2 __attribute__((const, overloadable))min(char2 v1, char2 v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the minimum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern char3 __attribute__((const, overloadable))min(char3 v1, char3 v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the minimum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern char4 __attribute__((const, overloadable))min(char4 v1, char4 v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the minimum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern uchar __attribute__((const, overloadable))min(uchar v1, uchar v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the minimum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern uchar2 __attribute__((const, overloadable))min(uchar2 v1, uchar2 v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the minimum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern uchar3 __attribute__((const, overloadable))min(uchar3 v1, uchar3 v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the minimum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern uchar4 __attribute__((const, overloadable))min(uchar4 v1, uchar4 v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the minimum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern short __attribute__((const, overloadable))min(short v1, short v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the minimum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern short2 __attribute__((const, overloadable))min(short2 v1, short2 v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the minimum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern short3 __attribute__((const, overloadable))min(short3 v1, short3 v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the minimum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern short4 __attribute__((const, overloadable))min(short4 v1, short4 v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the minimum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern ushort __attribute__((const, overloadable))min(ushort v1, ushort v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the minimum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern ushort2 __attribute__((const, overloadable))min(ushort2 v1, ushort2 v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the minimum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern ushort3 __attribute__((const, overloadable))min(ushort3 v1, ushort3 v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the minimum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern ushort4 __attribute__((const, overloadable))min(ushort4 v1, ushort4 v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the minimum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern int __attribute__((const, overloadable))min(int v1, int v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the minimum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern int2 __attribute__((const, overloadable))min(int2 v1, int2 v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the minimum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern int3 __attribute__((const, overloadable))min(int3 v1, int3 v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the minimum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern int4 __attribute__((const, overloadable))min(int4 v1, int4 v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the minimum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern uint __attribute__((const, overloadable))min(uint v1, uint v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the minimum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern uint2 __attribute__((const, overloadable))min(uint2 v1, uint2 v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the minimum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern uint3 __attribute__((const, overloadable))min(uint3 v1, uint3 v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the minimum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern uint4 __attribute__((const, overloadable))min(uint4 v1, uint4 v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the minimum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern long __attribute__((const, overloadable))min(long v1, long v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the minimum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern long2 __attribute__((const, overloadable))min(long2 v1, long2 v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the minimum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern long3 __attribute__((const, overloadable))min(long3 v1, long3 v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the minimum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern long4 __attribute__((const, overloadable))min(long4 v1, long4 v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the minimum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern ulong __attribute__((const, overloadable))min(ulong v1, ulong v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the minimum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern ulong2 __attribute__((const, overloadable))min(ulong2 v1, ulong2 v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the minimum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern ulong3 __attribute__((const, overloadable))min(ulong3 v1, ulong3 v2);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * Return the minimum value from two arguments
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern ulong4 __attribute__((const, overloadable))min(ulong4 v1, ulong4 v2);
 #endif
@@ -7727,7 +7727,7 @@ extern float4 __attribute__((const, overloadable))native_atan2pi(float4 y, float
  *
  * Supported by API versions 21 and newer.
  */
-extern float __attribute__((const, overloadable))native_atanh(float);
+extern float __attribute__((const, overloadable))native_atanh(float in);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
@@ -7736,7 +7736,7 @@ extern float __attribute__((const, overloadable))native_atanh(float);
  *
  * Supported by API versions 21 and newer.
  */
-extern float2 __attribute__((const, overloadable))native_atanh(float2);
+extern float2 __attribute__((const, overloadable))native_atanh(float2 in);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
@@ -7745,7 +7745,7 @@ extern float2 __attribute__((const, overloadable))native_atanh(float2);
  *
  * Supported by API versions 21 and newer.
  */
-extern float3 __attribute__((const, overloadable))native_atanh(float3);
+extern float3 __attribute__((const, overloadable))native_atanh(float3 in);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
@@ -7754,7 +7754,7 @@ extern float3 __attribute__((const, overloadable))native_atanh(float3);
  *
  * Supported by API versions 21 and newer.
  */
-extern float4 __attribute__((const, overloadable))native_atanh(float4);
+extern float4 __attribute__((const, overloadable))native_atanh(float4 in);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
@@ -8252,6 +8252,7 @@ extern float __attribute__((const, overloadable))native_length(float4 v);
 #if (defined(RS_VERSION) && (RS_VERSION >= 18))
 /*
  * Fast approximate log
+ * It is not accurate for values very close to zero.
  *
  * Supported by API versions 18 and newer.
  */
@@ -8261,6 +8262,7 @@ extern float __attribute__((const, overloadable))native_log(float v);
 #if (defined(RS_VERSION) && (RS_VERSION >= 18))
 /*
  * Fast approximate log
+ * It is not accurate for values very close to zero.
  *
  * Supported by API versions 18 and newer.
  */
@@ -8270,6 +8272,7 @@ extern float2 __attribute__((const, overloadable))native_log(float2 v);
 #if (defined(RS_VERSION) && (RS_VERSION >= 18))
 /*
  * Fast approximate log
+ * It is not accurate for values very close to zero.
  *
  * Supported by API versions 18 and newer.
  */
@@ -8279,6 +8282,7 @@ extern float3 __attribute__((const, overloadable))native_log(float3 v);
 #if (defined(RS_VERSION) && (RS_VERSION >= 18))
 /*
  * Fast approximate log
+ * It is not accurate for values very close to zero.
  *
  * Supported by API versions 18 and newer.
  */
@@ -8288,6 +8292,7 @@ extern float4 __attribute__((const, overloadable))native_log(float4 v);
 #if (defined(RS_VERSION) && (RS_VERSION >= 18))
 /*
  * Fast approximate log10
+ * It is not accurate for values very close to zero.
  *
  * Supported by API versions 18 and newer.
  */
@@ -8297,6 +8302,7 @@ extern float __attribute__((const, overloadable))native_log10(float v);
 #if (defined(RS_VERSION) && (RS_VERSION >= 18))
 /*
  * Fast approximate log10
+ * It is not accurate for values very close to zero.
  *
  * Supported by API versions 18 and newer.
  */
@@ -8306,6 +8312,7 @@ extern float2 __attribute__((const, overloadable))native_log10(float2 v);
 #if (defined(RS_VERSION) && (RS_VERSION >= 18))
 /*
  * Fast approximate log10
+ * It is not accurate for values very close to zero.
  *
  * Supported by API versions 18 and newer.
  */
@@ -8315,6 +8322,7 @@ extern float3 __attribute__((const, overloadable))native_log10(float3 v);
 #if (defined(RS_VERSION) && (RS_VERSION >= 18))
 /*
  * Fast approximate log10
+ * It is not accurate for values very close to zero.
  *
  * Supported by API versions 18 and newer.
  */
@@ -8360,6 +8368,7 @@ extern float4 __attribute__((const, overloadable))native_log1p(float4);
 #if (defined(RS_VERSION) && (RS_VERSION >= 18))
 /*
  * Fast approximate log2
+ * It is not accurate for values very close to zero.
  *
  * Supported by API versions 18 and newer.
  */
@@ -8369,6 +8378,7 @@ extern float __attribute__((const, overloadable))native_log2(float v);
 #if (defined(RS_VERSION) && (RS_VERSION >= 18))
 /*
  * Fast approximate log2
+ * It is not accurate for values very close to zero.
  *
  * Supported by API versions 18 and newer.
  */
@@ -8378,6 +8388,7 @@ extern float2 __attribute__((const, overloadable))native_log2(float2 v);
 #if (defined(RS_VERSION) && (RS_VERSION >= 18))
 /*
  * Fast approximate log2
+ * It is not accurate for values very close to zero.
  *
  * Supported by API versions 18 and newer.
  */
@@ -8387,6 +8398,7 @@ extern float3 __attribute__((const, overloadable))native_log2(float3 v);
 #if (defined(RS_VERSION) && (RS_VERSION >= 18))
 /*
  * Fast approximate log2
+ * It is not accurate for values very close to zero.
  *
  * Supported by API versions 18 and newer.
  */
@@ -8434,6 +8446,7 @@ extern float4 __attribute__((const, overloadable))native_normalize(float4 v);
  * Fast approximate v ^ y
  * v must be between 0.f and 256.f
  * y must be between -15.f and 15.f
+ * It is not accurate for values of v very close to zero.
  *
  * Supported by API versions 18 and newer.
  */
@@ -8445,6 +8458,7 @@ extern float __attribute__((const, overloadable))native_powr(float v, float y);
  * Fast approximate v ^ y
  * v must be between 0.f and 256.f
  * y must be between -15.f and 15.f
+ * It is not accurate for values of v very close to zero.
  *
  * Supported by API versions 18 and newer.
  */
@@ -8456,6 +8470,7 @@ extern float2 __attribute__((const, overloadable))native_powr(float2 v, float2 y
  * Fast approximate v ^ y
  * v must be between 0.f and 256.f
  * y must be between -15.f and 15.f
+ * It is not accurate for values of v very close to zero.
  *
  * Supported by API versions 18 and newer.
  */
@@ -8467,6 +8482,7 @@ extern float3 __attribute__((const, overloadable))native_powr(float3 v, float3 y
  * Fast approximate v ^ y
  * v must be between 0.f and 256.f
  * y must be between -15.f and 15.f
+ * It is not accurate for values of v very close to zero.
  *
  * Supported by API versions 18 and newer.
  */
@@ -9143,7 +9159,7 @@ extern float4 __attribute__((const, overloadable))remainder(float4 x, float4 y);
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /*
- * Return the quotient and the remainder of b/c
+ * Return the quotient and the remainder of b/c.  Only the sign and lowest three bits of the quotient are guaranteed to be accurate.
  *
  * Supported by API versions 9 and newer.
  */
@@ -9152,7 +9168,7 @@ extern float __attribute__((overloadable))remquo(float b, float c, int* d);
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /*
- * Return the quotient and the remainder of b/c
+ * Return the quotient and the remainder of b/c.  Only the sign and lowest three bits of the quotient are guaranteed to be accurate.
  *
  * Supported by API versions 9 and newer.
  */
@@ -9161,7 +9177,7 @@ extern float2 __attribute__((overloadable))remquo(float2 b, float2 c, int2* d);
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /*
- * Return the quotient and the remainder of b/c
+ * Return the quotient and the remainder of b/c.  Only the sign and lowest three bits of the quotient are guaranteed to be accurate.
  *
  * Supported by API versions 9 and newer.
  */
@@ -9170,7 +9186,7 @@ extern float3 __attribute__((overloadable))remquo(float3 b, float3 c, int3* d);
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /*
- * Return the quotient and the remainder of b/c
+ * Return the quotient and the remainder of b/c.  Only the sign and lowest three bits of the quotient are guaranteed to be accurate.
  *
  * Supported by API versions 9 and newer.
  */
@@ -9653,38 +9669,38 @@ extern float3 __attribute__((const, overloadable))step(float3 edge, float v);
 extern float4 __attribute__((const, overloadable))step(float4 edge, float v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * if (v < edge)
  * return 0.f;
  * else
  * return 1.f;
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern float2 __attribute__((const, overloadable))step(float edge, float2 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * if (v < edge)
  * return 0.f;
  * else
  * return 1.f;
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern float3 __attribute__((const, overloadable))step(float edge, float3 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 20))
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /*
  * if (v < edge)
  * return 0.f;
  * else
  * return 1.f;
  *
- * Supported by API versions 20 and newer.
+ * Supported by API versions 21 and newer.
  */
 extern float4 __attribute__((const, overloadable))step(float edge, float4 v);
 #endif

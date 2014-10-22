@@ -46,7 +46,8 @@ bc_cflags := -MD \
              -fsigned-char \
              $($(LOCAL_2ND_ARCH_VAR_PREFIX)RS_TRIPLE_CFLAGS) \
              $(LOCAL_CFLAGS) \
-             $(bc_translated_clang_cc1_cflags)
+             $(bc_translated_clang_cc1_cflags) \
+             $(LOCAL_CFLAGS_$(my_32_64_bit_suffix))
 
 ifeq ($(rs_debug_runtime),1)
     bc_cflags += -DRS_DEBUG_RUNTIME

@@ -486,7 +486,8 @@ bool RsdCpuScriptIntrinsicColorMatrix::build(Key_t key) {
     //StopWatch build_time("rs cm: build time");
     mBuf = (uint8_t *)mmap(0, mBufSize, PROT_READ | PROT_WRITE,
                                   MAP_PRIVATE | MAP_ANON, -1, 0);
-    if (!mBuf) {
+    if (mBuf == MAP_FAILED) {
+        mBuf = NULL;
         return false;
     }
 
@@ -885,9 +886,8 @@ void RsdCpuScriptIntrinsicColorMatrix::kernel(const RsExpandKernelParams *p,
 
     uint32_t instep = p->inEStrides[0];
 
-    uchar *out = (uchar *)p->out    + outstep * xstart;
-    uchar *in  = (uchar *)p->ins[0] + instep  * xstart;
-
+    uchar *out = (uchar *)p->out;
+    uchar *in = (uchar *)p->ins[0];
     uint32_t x1 = xstart;
     uint32_t x2 = xend;
 

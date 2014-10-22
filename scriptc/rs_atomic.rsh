@@ -177,7 +177,7 @@ extern uint32_t __attribute__((overloadable))
 
 #endif //defined(RS_VERSION) && (RS_VERSION >= 14)
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+#if (defined(RS_VERSION) && (RS_VERSION >= 20))   // TODO: api 21
 
 /**
  * Atomic add one to the value at addr.

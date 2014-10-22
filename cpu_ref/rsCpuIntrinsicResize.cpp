@@ -66,10 +66,6 @@ void RsdCpuScriptIntrinsicResize::setGlobalObj(uint32_t slot, ObjectBase *data) 
     mAlloc.set(static_cast<Allocation *>(data));
 }
 
-
-extern "C" void rsdIntrinsicConvolve3x3_K(void *dst, const void *y0, const void *y1,
-                                          const void *y2, const short *coef, uint32_t count);
-
 static float4 cubicInterpolate(float4 p0,float4 p1,float4 p2,float4 p3, float x) {
     return p1 + 0.5f * x * (p2 - p0 + x * (2.f * p0 - 5.f * p1 + 4.f * p2 - p3
             + x * (3.f * (p1 - p2) + p3 - p0)));

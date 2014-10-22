@@ -46,24 +46,24 @@ typedef char char4 __attribute__((ext_vector_type(4)));
 typedef unsigned char uchar2 __attribute__((ext_vector_type(2)));
 typedef unsigned char uchar3 __attribute__((ext_vector_type(3)));
 typedef unsigned char uchar4 __attribute__((ext_vector_type(4)));
-typedef short short2 __attribute__((ext_vector_type(2)));
-typedef short short3 __attribute__((ext_vector_type(3)));
-typedef short short4 __attribute__((ext_vector_type(4)));
-typedef unsigned short ushort2 __attribute__((ext_vector_type(2)));
-typedef unsigned short ushort3 __attribute__((ext_vector_type(3)));
-typedef unsigned short ushort4 __attribute__((ext_vector_type(4)));
+typedef int16_t short2 __attribute__((ext_vector_type(2)));
+typedef int16_t short3 __attribute__((ext_vector_type(3)));
+typedef int16_t short4 __attribute__((ext_vector_type(4)));
+typedef uint16_t ushort2 __attribute__((ext_vector_type(2)));
+typedef uint16_t ushort3 __attribute__((ext_vector_type(3)));
+typedef uint16_t ushort4 __attribute__((ext_vector_type(4)));
 typedef int32_t int2 __attribute__((ext_vector_type(2)));
 typedef int32_t int3 __attribute__((ext_vector_type(3)));
 typedef int32_t int4 __attribute__((ext_vector_type(4)));
 typedef uint32_t uint2 __attribute__((ext_vector_type(2)));
 typedef uint32_t uint3 __attribute__((ext_vector_type(3)));
 typedef uint32_t uint4 __attribute__((ext_vector_type(4)));
-typedef long long long2 __attribute__((ext_vector_type(2)));
-typedef long long long3 __attribute__((ext_vector_type(3)));
-typedef long long long4 __attribute__((ext_vector_type(4)));
-typedef unsigned long long ulong2 __attribute__((ext_vector_type(2)));
-typedef unsigned long long ulong3 __attribute__((ext_vector_type(3)));
-typedef unsigned long long ulong4 __attribute__((ext_vector_type(4)));
+typedef int64_t long2 __attribute__((ext_vector_type(2)));
+typedef int64_t long3 __attribute__((ext_vector_type(3)));
+typedef int64_t long4 __attribute__((ext_vector_type(4)));
+typedef uint64_t ulong2 __attribute__((ext_vector_type(2)));
+typedef uint64_t ulong3 __attribute__((ext_vector_type(3)));
+typedef uint64_t ulong4 __attribute__((ext_vector_type(4)));
 
 typedef uint8_t uchar;
 typedef uint16_t ushort;
@@ -519,12 +519,42 @@ static bool SC_IsObject(ObjectBase* o) {
 #endif
 
 
+#ifndef RS_COMPATIBILITY_LIB
+#ifndef __LP64__
 
-static const Allocation * SC_GetAllocation(const void *ptr) {
+// i386 has different struct return passing to ARM; emulate with void*
+#ifdef __i386__
+static const void* SC_GetAllocation(const void *ptr) {
     Context *rsc = RsdCpuReference::getTlsContext();
     const Script *sc = RsdCpuReference::getTlsScript();
-    return rsdScriptGetAllocationForPointer(rsc, sc, ptr);
+    Allocation* alloc = rsdScriptGetAllocationForPointer(rsc, sc, ptr);
+    android::renderscript::rs_allocation obj = {0};
+    alloc->callUpdateCacheObject(rsc, &obj);
+    return (void*)obj.p;
 }
+#else
+// ARMv7/MIPS
+static const android::renderscript::rs_allocation SC_GetAllocation(const void *ptr) {
+    Context *rsc = RsdCpuReference::getTlsContext();
+    const Script *sc = RsdCpuReference::getTlsScript();
+    Allocation* alloc = rsdScriptGetAllocationForPointer(rsc, sc, ptr);
+    android::renderscript::rs_allocation obj = {0};
+    alloc->callUpdateCacheObject(rsc, &obj);
+    return obj;
+}
+#endif
+#else
+// AArch64/x86_64/MIPS64
+static const android::renderscript::rs_allocation SC_GetAllocation(const void *ptr) {
+    Context *rsc = RsdCpuReference::getTlsContext();
+    const Script *sc = RsdCpuReference::getTlsScript();
+    Allocation* alloc = rsdScriptGetAllocationForPointer(rsc, sc, ptr);
+    android::renderscript::rs_allocation obj = {0, 0, 0, 0};
+    alloc->callUpdateCacheObject(rsc, &obj);
+    return obj;
+}
+#endif
+#endif
 
 #ifndef RS_COMPATIBILITY_LIB
 #ifndef __LP64__
@@ -1154,7 +1184,7 @@ static RsdCpuReference::CpuSymbol gSyms[] = {
     { "_Z19rsSetElementAt_int313rs_allocationPKDv3_ijjj", (void *)&SC_SetElementAt3_int3, true },
     { "_Z19rsSetElementAt_int413rs_allocationPKDv4_ijjj", (void *)&SC_SetElementAt3_int4, true },
 
-    { "_Z20rsSetElementAt_ulong13rs_allocationPKmt", (void *)&SC_SetElementAt1_ulong, true },
+    { "_Z20rsSetElementAt_ulong13rs_allocationPKmj", (void *)&SC_SetElementAt1_ulong, true },
     { "_Z21rsSetElementAt_ulong213rs_allocationPKDv2_mj", (void *)&SC_SetElementAt1_ulong2, true },
     { "_Z21rsSetElementAt_ulong313rs_allocationPKDv3_mj", (void *)&SC_SetElementAt1_ulong3, true },
     { "_Z21rsSetElementAt_ulong413rs_allocationPKDv4_mj", (void *)&SC_SetElementAt1_ulong4, true },
@@ -1166,6 +1196,20 @@ static RsdCpuReference::CpuSymbol gSyms[] = {
     { "_Z21rsSetElementAt_ulong213rs_allocationPKDv2_mjjj", (void *)&SC_SetElementAt3_ulong2, true },
     { "_Z21rsSetElementAt_ulong313rs_allocationPKDv3_mjjj", (void *)&SC_SetElementAt3_ulong3, true },
     { "_Z21rsSetElementAt_ulong413rs_allocationPKDv4_mjjj", (void *)&SC_SetElementAt3_ulong4, true },
+
+    // Pre-21 compatibility path
+    { "_Z20rsSetElementAt_ulong13rs_allocationPKyj", (void *)&SC_SetElementAt1_ulong, true },
+    { "_Z21rsSetElementAt_ulong213rs_allocationPKDv2_yj", (void *)&SC_SetElementAt1_ulong2, true },
+    { "_Z21rsSetElementAt_ulong313rs_allocationPKDv3_yj", (void *)&SC_SetElementAt1_ulong3, true },
+    { "_Z21rsSetElementAt_ulong413rs_allocationPKDv4_yj", (void *)&SC_SetElementAt1_ulong4, true },
+    { "_Z20rsSetElementAt_ulong13rs_allocationPKyjj", (void *)&SC_SetElementAt2_ulong, true },
+    { "_Z21rsSetElementAt_ulong213rs_allocationPKDv2_yjj", (void *)&SC_SetElementAt2_ulong2, true },
+    { "_Z21rsSetElementAt_ulong313rs_allocationPKDv3_yjj", (void *)&SC_SetElementAt2_ulong3, true },
+    { "_Z21rsSetElementAt_ulong413rs_allocationPKDv4_yjj", (void *)&SC_SetElementAt2_ulong4, true },
+    { "_Z20rsSetElementAt_ulong13rs_allocationPKyjjj", (void *)&SC_SetElementAt3_ulong, true },
+    { "_Z21rsSetElementAt_ulong213rs_allocationPKDv2_yjjj", (void *)&SC_SetElementAt3_ulong2, true },
+    { "_Z21rsSetElementAt_ulong313rs_allocationPKDv3_yjjj", (void *)&SC_SetElementAt3_ulong3, true },
+    { "_Z21rsSetElementAt_ulong413rs_allocationPKDv4_yjjj", (void *)&SC_SetElementAt3_ulong4, true },
 
     { "_Z19rsSetElementAt_long13rs_allocationPKlj", (void *)&SC_SetElementAt1_long, true },
     { "_Z20rsSetElementAt_long213rs_allocationPKDv2_lj", (void *)&SC_SetElementAt1_long2, true },
@@ -1179,6 +1223,20 @@ static RsdCpuReference::CpuSymbol gSyms[] = {
     { "_Z20rsSetElementAt_long213rs_allocationPKDv2_ljjj", (void *)&SC_SetElementAt3_long2, true },
     { "_Z20rsSetElementAt_long313rs_allocationPKDv3_ljjj", (void *)&SC_SetElementAt3_long3, true },
     { "_Z20rsSetElementAt_long413rs_allocationPKDv4_ljjj", (void *)&SC_SetElementAt3_long4, true },
+
+    // Pre-21 compatibility path
+    { "_Z19rsSetElementAt_long13rs_allocationPKxj", (void *)&SC_SetElementAt1_long, true },
+    { "_Z20rsSetElementAt_long213rs_allocationPKDv2_xj", (void *)&SC_SetElementAt1_long2, true },
+    { "_Z20rsSetElementAt_long313rs_allocationPKDv3_xj", (void *)&SC_SetElementAt1_long3, true },
+    { "_Z20rsSetElementAt_long413rs_allocationPKDv4_xj", (void *)&SC_SetElementAt1_long4, true },
+    { "_Z19rsSetElementAt_long13rs_allocationPKxjj", (void *)&SC_SetElementAt2_long, true },
+    { "_Z20rsSetElementAt_long213rs_allocationPKDv2_xjj", (void *)&SC_SetElementAt2_long2, true },
+    { "_Z20rsSetElementAt_long313rs_allocationPKDv3_xjj", (void *)&SC_SetElementAt2_long3, true },
+    { "_Z20rsSetElementAt_long413rs_allocationPKDv4_xjj", (void *)&SC_SetElementAt2_long4, true },
+    { "_Z19rsSetElementAt_long13rs_allocationPKxjjj", (void *)&SC_SetElementAt3_long, true },
+    { "_Z20rsSetElementAt_long213rs_allocationPKDv2_xjjj", (void *)&SC_SetElementAt3_long2, true },
+    { "_Z20rsSetElementAt_long313rs_allocationPKDv3_xjjj", (void *)&SC_SetElementAt3_long3, true },
+    { "_Z20rsSetElementAt_long413rs_allocationPKDv4_xjjj", (void *)&SC_SetElementAt3_long4, true },
 
     { "_Z20rsSetElementAt_float13rs_allocationPKft", (void *)&SC_SetElementAt1_float, true },
     { "_Z21rsSetElementAt_float213rs_allocationPKDv2_fj", (void *)&SC_SetElementAt1_float2, true },
@@ -1278,8 +1336,8 @@ static RsdCpuReference::CpuSymbol gSyms[] = {
     { "_Z20rsgAllocationSyncAll13rs_allocation", (void *)&SC_AllocationSyncAll, false },
     { "_Z20rsgAllocationSyncAll13rs_allocationj", (void *)&SC_AllocationSyncAll2, false },
     { "_Z20rsgAllocationSyncAll13rs_allocation24rs_allocation_usage_type", (void *)&SC_AllocationSyncAll2, false },
-    { "_Z15rsGetAllocationPKv", (void *)&SC_GetAllocation, true },
 #ifndef RS_COMPATIBILITY_LIB
+    { "_Z15rsGetAllocationPKv", (void *)&SC_GetAllocation, true },
     { "_Z18rsAllocationIoSend13rs_allocation", (void *)&SC_AllocationIoSend, false },
     { "_Z21rsAllocationIoReceive13rs_allocation", (void *)&SC_AllocationIoReceive, false },
 #endif
@@ -1434,6 +1492,12 @@ static void SC_ForEach_SAAULS(::rs_script target,
     Context *rsc = RsdCpuReference::getTlsContext();
     rsrForEach(rsc, (Script*)target.p, (Allocation*)in.p, (Allocation*)out.p,
                usr, usrLen, call);
+}
+
+static const Allocation * SC_GetAllocation(const void *ptr) {
+    Context *rsc = RsdCpuReference::getTlsContext();
+    const Script *sc = RsdCpuReference::getTlsScript();
+    return rsdScriptGetAllocationForPointer(rsc, sc, ptr);
 }
 
 const Allocation * rsGetAllocation(const void *ptr) {
@@ -1895,6 +1959,31 @@ void rsDebug(const char *s, const ul3 *c) {
 void rsDebug(const char *s, const ul4 *c) {
     SC_debugUL4(s, *(const ulong4 *)c);
 }
+
+void rsDebug(const char *s, const long2 c) {
+    SC_debugL2(s, c);
+}
+
+void rsDebug(const char *s, const long3 c) {
+    SC_debugL3(s, c);
+}
+
+void rsDebug(const char *s, const long4 c) {
+    SC_debugL4(s, c);
+}
+
+void rsDebug(const char *s, const ulong2 c) {
+    SC_debugUL2(s, c);
+}
+
+void rsDebug(const char *s, const ulong3 c) {
+    SC_debugUL3(s, c);
+}
+
+void rsDebug(const char *s, const ulong4 c) {
+    SC_debugUL4(s, c);
+}
+
 
 void rsDebug(const char *s, const void *p) {
     SC_debugP(s, p);

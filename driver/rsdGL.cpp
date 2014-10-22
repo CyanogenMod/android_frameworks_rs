@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-#include <ui/FramebufferNativeWindow.h>
 #include <ui/PixelFormat.h>
 
 #include <system/window.h>

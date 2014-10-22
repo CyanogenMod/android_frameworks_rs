@@ -495,16 +495,17 @@ void Allocation::resize2D(Context *rsc, uint32_t dimX, uint32_t dimY) {
 #ifndef RS_COMPATIBILITY_LIB
 void Allocation::NewBufferListener::onFrameAvailable() {
     intptr_t ip = (intptr_t)alloc;
-    rsc->sendMessageToClient(nullptr, RS_MESSAGE_TO_CLIENT_NEW_BUFFER, ip, 0, true);
+    rsc->sendMessageToClient(&ip, RS_MESSAGE_TO_CLIENT_NEW_BUFFER, 0, sizeof(ip), true);
 }
 #endif
 
 void * Allocation::getSurface(const Context *rsc) {
 #ifndef RS_COMPATIBILITY_LIB
     // Configure GrallocConsumer to be in asynchronous mode
-    sp<BufferQueue> bq = new BufferQueue();
-    mGrallocConsumer = new GrallocConsumer(this, bq);
-    sp<IGraphicBufferProducer> bp = bq;
+    sp<IGraphicBufferProducer> bp;
+    sp<IGraphicBufferConsumer> bc;
+    BufferQueue::createBufferQueue(&bp, &bc);
+    mGrallocConsumer = new GrallocConsumer(this, bc);
     bp->incStrong(nullptr);
 
     mBufferListener = new NewBufferListener();
@@ -763,13 +764,13 @@ void rsi_AllocationIoReceive(Context *rsc, RsAllocation valloc) {
     alloc->ioReceive(rsc);
 }
 
-void rsi_AllocationGetPointer(Context *rsc, RsAllocation valloc,
+void *rsi_AllocationGetPointer(Context *rsc, RsAllocation valloc,
                           uint32_t lod, RsAllocationCubemapFace face,
                           uint32_t z, uint32_t array, size_t *stride, size_t strideLen) {
     Allocation *alloc = static_cast<Allocation *>(valloc);
     rsAssert(strideLen == sizeof(size_t));
 
-    alloc->getPointer(rsc, lod, face, z, array, stride);
+    return alloc->getPointer(rsc, lod, face, z, array, stride);
 }
 
 void rsi_Allocation1DRead(Context *rsc, RsAllocation va, uint32_t xoff, uint32_t lod,

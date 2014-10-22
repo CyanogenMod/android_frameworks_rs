@@ -10,6 +10,10 @@ ifneq ($(OVERRIDE_RS_DRIVER),)
   rs_base_CFLAGS += -DOVERRIDE_RS_DRIVER=$(OVERRIDE_RS_DRIVER)
 endif
 
+ifneq ($(DISABLE_RS_64_BIT_DRIVER),)
+  rs_base_CFLAGS += -DDISABLE_RS_64_BIT_DRIVER
+endif
+
 ifeq ($(RS_FIND_OFFSETS), true)
   rs_base_CFLAGS += -DRS_FIND_OFFSETS
 endif
@@ -269,6 +273,8 @@ LOCAL_SRC_FILES:= \
 	rsType.cpp
 
 LOCAL_STATIC_LIBRARIES := libcutils libutils liblog
+
+LOCAL_CLANG := true
 
 include $(BUILD_HOST_STATIC_LIBRARY)
 

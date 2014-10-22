@@ -1292,23 +1292,23 @@ extern double4 __attribute__((overloadable)) min(double4 v1, double4 v2) {
     return r;
 }
 
-extern int64_t _Z3minll(int64_t v1, int64_t v2) {
+extern long __attribute__((overloadable)) min(long v1, long v2) {
     return v1 < v2 ? v1 : v2;
 }
-extern long2 _Z3minDv2_lS_(long2 v1, long2 v2) {
+extern long2 __attribute__((overloadable)) min(long2 v1, long2 v2) {
     long2 r;
     r.x = v1.x < v2.x ? v1.x : v2.x;
     r.y = v1.y < v2.y ? v1.y : v2.y;
     return r;
 }
-extern long3 _Z3minDv3_lS_(long3 v1, long3 v2) {
+extern long3 __attribute__((overloadable)) min(long3 v1, long3 v2) {
     long3 r;
     r.x = v1.x < v2.x ? v1.x : v2.x;
     r.y = v1.y < v2.y ? v1.y : v2.y;
     r.z = v1.z < v2.z ? v1.z : v2.z;
     return r;
 }
-extern long4 _Z3minDv4_lS_(long4 v1, long4 v2) {
+extern long4 __attribute__((overloadable)) min(long4 v1, long4 v2) {
     long4 r;
     r.x = v1.x < v2.x ? v1.x : v2.x;
     r.y = v1.y < v2.y ? v1.y : v2.y;
@@ -1317,23 +1317,23 @@ extern long4 _Z3minDv4_lS_(long4 v1, long4 v2) {
     return r;
 }
 
-extern uint64_t _Z3minyy(uint64_t v1, uint64_t v2) {
+extern ulong __attribute__((overloadable)) min(ulong v1, ulong v2) {
     return v1 < v2 ? v1 : v2;
 }
-extern ulong2 _Z3minDv2_yS_(ulong2 v1, ulong2 v2) {
+extern ulong2 __attribute__((overloadable)) min(ulong2 v1, ulong2 v2) {
     ulong2 r;
     r.x = v1.x < v2.x ? v1.x : v2.x;
     r.y = v1.y < v2.y ? v1.y : v2.y;
     return r;
 }
-extern ulong3 _Z3minDv3_yS_(ulong3 v1, ulong3 v2) {
+extern ulong3 __attribute__((overloadable)) min(ulong3 v1, ulong3 v2) {
     ulong3 r;
     r.x = v1.x < v2.x ? v1.x : v2.x;
     r.y = v1.y < v2.y ? v1.y : v2.y;
     r.z = v1.z < v2.z ? v1.z : v2.z;
     return r;
 }
-extern ulong4 _Z3minDv4_yS_(ulong4 v1, ulong4 v2) {
+extern ulong4 __attribute__((overloadable)) min(ulong4 v1, ulong4 v2) {
     ulong4 r;
     r.x = v1.x < v2.x ? v1.x : v2.x;
     r.y = v1.y < v2.y ? v1.y : v2.y;
@@ -1370,23 +1370,23 @@ extern double4 __attribute__((overloadable)) max(double4 v1, double4 v2) {
     return r;
 }
 
-extern int64_t _Z3maxll(int64_t v1, int64_t v2) {
+extern long __attribute__((overloadable)) max(long v1, long v2) {
     return v1 > v2 ? v1 : v2;
 }
-extern long2 _Z3maxDv2_lS_(long2 v1, long2 v2) {
+extern long2 __attribute__((overloadable)) max(long2 v1, long2 v2) {
     long2 r;
     r.x = v1.x > v2.x ? v1.x : v2.x;
     r.y = v1.y > v2.y ? v1.y : v2.y;
     return r;
 }
-extern long3 _Z3maxDv3_lS_(long3 v1, long3 v2) {
+extern long3 __attribute__((overloadable)) max(long3 v1, long3 v2) {
     long3 r;
     r.x = v1.x > v2.x ? v1.x : v2.x;
     r.y = v1.y > v2.y ? v1.y : v2.y;
     r.z = v1.z > v2.z ? v1.z : v2.z;
     return r;
 }
-extern long4 _Z3maxDv4_lS_(long4 v1, long4 v2) {
+extern long4 __attribute__((overloadable)) max(long4 v1, long4 v2) {
     long4 r;
     r.x = v1.x > v2.x ? v1.x : v2.x;
     r.y = v1.y > v2.y ? v1.y : v2.y;
@@ -1395,23 +1395,23 @@ extern long4 _Z3maxDv4_lS_(long4 v1, long4 v2) {
     return r;
 }
 
-extern uint64_t _Z3maxyy(uint64_t v1, uint64_t v2) {
+extern ulong __attribute__((overloadable)) max(ulong v1, ulong v2) {
     return v1 > v2 ? v1 : v2;
 }
-extern ulong2 _Z3maxDv2_yS_(ulong2 v1, ulong2 v2) {
+extern ulong2 __attribute__((overloadable)) max(ulong2 v1, ulong2 v2) {
     ulong2 r;
     r.x = v1.x > v2.x ? v1.x : v2.x;
     r.y = v1.y > v2.y ? v1.y : v2.y;
     return r;
 }
-extern ulong3 _Z3maxDv3_yS_(ulong3 v1, ulong3 v2) {
+extern ulong3 __attribute__((overloadable)) max(ulong3 v1, ulong3 v2) {
     ulong3 r;
     r.x = v1.x > v2.x ? v1.x : v2.x;
     r.y = v1.y > v2.y ? v1.y : v2.y;
     r.z = v1.z > v2.z ? v1.z : v2.z;
     return r;
 }
-extern ulong4 _Z3maxDv4_yS_(ulong4 v1, ulong4 v2) {
+extern ulong4 __attribute__((overloadable)) max(ulong4 v1, ulong4 v2) {
     ulong4 r;
     r.x = v1.x > v2.x ? v1.x : v2.x;
     r.y = v1.y > v2.y ? v1.y : v2.y;

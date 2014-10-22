@@ -368,7 +368,6 @@ enum RsScriptIntrinsicID {
     // unused 10, 11
     RS_SCRIPT_INTRINSIC_ID_RESIZE = 12,
 
-
     RS_SCRIPT_INTRINSIC_ID_OEM_START = 0x10000000
 };
 

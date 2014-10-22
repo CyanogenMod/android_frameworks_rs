@@ -25,12 +25,12 @@ namespace android {
 namespace renderscript {
 
 struct Matrix2x2 : public rs_matrix2x2 {
-    inline float get(uint32_t x, uint32_t y) const {
-        return m[x*2 + y];
+    inline float get(uint32_t col, uint32_t row) const {
+        return m[col*2 + row];
     }
 
-    inline void set(uint32_t x, uint32_t y, float v) {
-        m[x*2 + y] = v;
+    inline void set(uint32_t col, uint32_t row, float v) {
+        m[col*2 + row] = v;
     }
 
     void loadIdentity();
@@ -42,9 +42,7 @@ struct Matrix2x2 : public rs_matrix2x2 {
     void transpose();
 
     void multiply(const rs_matrix2x2 *rhs) {
-        Matrix2x2 tmp;
-        tmp.loadMultiply(this, rhs);
-        load(&tmp);
+        loadMultiply(this, rhs);
     }
 };
 

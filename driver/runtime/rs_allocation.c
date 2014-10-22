@@ -119,11 +119,11 @@ rsOffset(rs_allocation a, uint32_t sizeOf, uint32_t x, uint32_t y,
 uint8_t*
 rsOffsetNs(rs_allocation a, uint32_t x, uint32_t y, uint32_t z) {
     Allocation_t *alloc = (Allocation_t *)a.p;
-#ifdef __LP64__
-    uint8_t *p = (uint8_t *)a.r;
-#else
+    //#ifdef __LP64__
+    //    uint8_t *p = (uint8_t *)a.r;
+    //#else
     uint8_t *p = (uint8_t *)alloc->mHal.drvState.lod[0].mallocPtr;
-#endif
+    //#endif
     const uint32_t stride = alloc->mHal.drvState.lod[0].stride;
     const uint32_t dimY = alloc->mHal.drvState.lod[0].dimY;
     const uint32_t sizeOf = alloc->mHal.state.elementSizeBytes;;
@@ -132,49 +132,58 @@ rsOffsetNs(rs_allocation a, uint32_t x, uint32_t y, uint32_t z) {
     return dp;
 }
 
-#define ELEMENT_AT(T)                                                   \
+#define SET_ELEMENT_AT_TYPE(T, typename)                                    \
                                                                         \
     void                                                                \
-    rsSetElementAtImpl_##T(rs_allocation a, T val, uint32_t x,          \
-                           uint32_t y, uint32_t z);                     \
+    rsSetElementAtImpl_##typename(rs_allocation a, typename val, uint32_t x,   \
+                                  uint32_t y, uint32_t z);              \
                                                                         \
     extern void __attribute__((overloadable))                           \
-    rsSetElementAt_##T(rs_allocation a, T val, uint32_t x) {            \
-        rsSetElementAtImpl_##T(a, val, x, 0, 0);                        \
-    }                                                                   \
-                                                                        \
-    extern void __attribute__((overloadable))                           \
-    rsSetElementAt_##T(rs_allocation a, T val, uint32_t x,              \
-                       uint32_t y) {                                    \
-        rsSetElementAtImpl_##T(a, val, x, y, 0);                        \
+    rsSetElementAt_##typename(rs_allocation a, T val, uint32_t x) {     \
+        rsSetElementAtImpl_##typename(a, (typename)val, x, 0, 0);              \
     }                                                                   \
                                                                         \
     extern void __attribute__((overloadable))                           \
-    rsSetElementAt_##T(rs_allocation a, T val, uint32_t x, uint32_t y,  \
-                       uint32_t z) {                                    \
-        rsSetElementAtImpl_##T(a, val, x, y, z);                        \
+    rsSetElementAt_##typename(rs_allocation a, T val, uint32_t x,       \
+                              uint32_t y) {                             \
+        rsSetElementAtImpl_##typename(a, (typename)val, x, y, 0);              \
     }                                                                   \
                                                                         \
-    T                                                                   \
-    rsGetElementAtImpl_##T(rs_allocation a, uint32_t x, uint32_t y,     \
-                       uint32_t z);                                     \
+    extern void __attribute__((overloadable))                           \
+    rsSetElementAt_##typename(rs_allocation a, T val, uint32_t x, uint32_t y, \
+                              uint32_t z) {                             \
+        rsSetElementAtImpl_##typename(a, (typename)val, x, y, z);              \
+    }                                                                   \
+
+
+
+#define GET_ELEMENT_AT_TYPE(T, typename)                                \
+    typename                                                            \
+    rsGetElementAtImpl_##typename(rs_allocation a, uint32_t x, uint32_t y, \
+                                  uint32_t z);                          \
                                                                         \
-    extern T __attribute__((overloadable))                              \
-    rsGetElementAt_##T(rs_allocation a, uint32_t x) {                   \
-        return rsGetElementAtImpl_##T(a, x, 0, 0);                      \
+    extern typename __attribute__((overloadable))                       \
+    rsGetElementAt_##typename(rs_allocation a, uint32_t x) {            \
+        return (typename)rsGetElementAtImpl_##typename(a, x, 0, 0);     \
     }                                                                   \
                                                                         \
-    extern T __attribute__((overloadable))                              \
-    rsGetElementAt_##T(rs_allocation a, uint32_t x, uint32_t y) {       \
-        return rsGetElementAtImpl_##T(a, x, y, 0);                      \
+    extern typename __attribute__((overloadable))                       \
+    rsGetElementAt_##typename(rs_allocation a, uint32_t x, uint32_t y) { \
+        return (typename)rsGetElementAtImpl_##typename(a, x, y, 0);     \
     }                                                                   \
                                                                         \
-    extern T __attribute__((overloadable))                              \
-    rsGetElementAt_##T(rs_allocation a, uint32_t x, uint32_t y,         \
-                       uint32_t z) {                                    \
-        return rsGetElementAtImpl_##T(a, x, y, z);                      \
+    extern typename __attribute__((overloadable))                       \
+    rsGetElementAt_##typename(rs_allocation a, uint32_t x, uint32_t y,  \
+                              uint32_t z) {                             \
+        return (typename)rsGetElementAtImpl_##typename(a, x, y, z);     \
     }
 
+#define SET_ELEMENT_AT(T) SET_ELEMENT_AT_TYPE(T, T)
+#define GET_ELEMENT_AT(T) GET_ELEMENT_AT_TYPE(T, T)
+
+#define ELEMENT_AT(T)                           \
+    SET_ELEMENT_AT(T)                           \
+    GET_ELEMENT_AT(T)
 
 
 extern const void * __attribute__((overloadable))
@@ -229,7 +238,7 @@ extern void __attribute__((overloadable))
     const uint32_t dimY = alloc->mHal.drvState.lod[0].dimY;
     memcpy((void*)&p[(eSize * x) + (y * stride) + (z * stride * dimY)], ptr, eSize);
 }
-#endif
+#endif // RS_DEBUG_RUNTIME
 
 ELEMENT_AT(char)
 ELEMENT_AT(char2)
@@ -271,6 +280,22 @@ ELEMENT_AT(double)
 ELEMENT_AT(double2)
 ELEMENT_AT(double3)
 ELEMENT_AT(double4)
+
+typedef unsigned long long ull;
+typedef unsigned long long ull2 __attribute__((ext_vector_type(2)));
+typedef unsigned long long ull3 __attribute__((ext_vector_type(3)));
+typedef unsigned long long ull4 __attribute__((ext_vector_type(4)));
+
+#ifndef RS_DEBUG_RUNTIME
+SET_ELEMENT_AT_TYPE(ull, ulong)
+SET_ELEMENT_AT_TYPE(ull2, ulong2)
+SET_ELEMENT_AT_TYPE(ull3, ulong3)
+SET_ELEMENT_AT_TYPE(ull4, ulong4)
+
+#undef SET_ELEMENT_AT_TYPE
+#undef GET_ELEMENT_AT_TYPE
+#undef ELEMENT_AT_TYPE
+#endif
 
 #undef ELEMENT_AT
 

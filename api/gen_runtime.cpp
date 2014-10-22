@@ -211,7 +211,18 @@ private:
      * convert.
      */
     string mCleanName;
-    string mTest;  // How to test.  One of "scalar", "vector", "noverify", "limited", and "none".
+    /* How to test.  One of:
+     * "scalar": Generate test code that checks entries of each vector indepently.  E.g. for
+     *           sin(float3), the test code will call the CoreMathVerfier.computeSin 3 times.
+     * "vector": Generate test code that calls the CoreMathVerifier only once for each vector.
+     *           This is useful for APIs like dot() or length().
+     * "noverify": Generate test code that calls the API but don't verify the returned value.
+     * "limited": Like "scalar" but tests a limited range of input values.
+     * "custom": Like "scalar" but instead of calling CoreMathVerifier.computeXXX() to compute
+     *           the expected value, we call instead CoreMathVerifier.verifyXXX().  This method
+     *           returns a string that contains the error message, null if there's no error.
+     */
+    string mTest;
     string mPrecisionLimit;  // Maximum precision required when checking output of this function.
 
     vector<vector<string> > mReplaceables;
@@ -291,11 +302,14 @@ private:
     // The number of input and output parameters.
     int mInputCount;
     int mOutputCount;
+    // Whether one of the output parameters is a float.
+    bool mHasFloatAnswers;
 
     string mRsKernelName;
     string mJavaArgumentsClassName;
     string mJavaArgumentsNClassName;
     string mJavaVerifierComputeMethodName;
+    string mJavaVerifierVerifyMethodName;
     string mJavaCheckMethodName;
     string mJavaVerifyMethodName;
 
@@ -305,8 +319,8 @@ private:
 
     void writeJavaSection(ofstream& file) const;
     void writeJavaArgumentClass(ofstream& file, bool scalar) const;
-    void writeJavaCheckMethod(ofstream& file, bool generateCallToVerify) const;
-    void writeJavaVerifyScalarMethod(ofstream& file) const;
+    void writeJavaCheckMethod(ofstream& file, bool generateCallToVerifier) const;
+    void writeJavaVerifyScalarMethod(ofstream& file, bool verifierValidates) const;
     void writeJavaVerifyVectorMethod(ofstream& file) const;
     void writeJavaVerifyFunctionHeader(ofstream& file) const;
     void writeJavaInputAllocationDefinition(ofstream& file, const string& indent,
@@ -322,21 +336,22 @@ private:
                                                     const string& seed, char vectorSize,
                                                     const Type& compatibleType,
                                                     const Type& generatedType) const;
-    void writeJavaCallToRs(ofstream& file, bool relaxed, bool generateCallToVerify) const;
+    void writeJavaCallToRs(ofstream& file, bool relaxed, bool generateCallToVerifier) const;
 
     void writeJavaTestAndSetValid(ofstream& file, int indent, const ParameterDefinition& p,
                                   const string& argsIndex, const string& actualIndex) const;
     void writeJavaTestOneValue(ofstream& file, int indent, const ParameterDefinition& p,
                                const string& argsIndex, const string& actualIndex) const;
     void writeJavaAppendOutputToMessage(ofstream& file, int indent, const ParameterDefinition& p,
-                                        const string& argsIndex, const string& actualIndex) const;
+                                        const string& argsIndex, const string& actualIndex,
+                                        bool verifierValidates) const;
     void writeJavaAppendInputToMessage(ofstream& file, int indent, const ParameterDefinition& p,
                                        const string& actual) const;
     void writeJavaAppendNewLineToMessage(ofstream& file, int indent) const;
     void writeJavaAppendVariableToMessage(ofstream& file, int indent, const ParameterDefinition& p,
                                           const string& value) const;
-    void writeJavaAppendFloatyVariableToMessage(ofstream& file, int indent,
-                                                const string& value) const;
+    void writeJavaAppendFloatVariableToMessage(ofstream& file, int indent, const string& value,
+                                               bool regularFloat) const;
     void writeJavaVectorComparison(ofstream& file, int indent, const ParameterDefinition& p) const;
     void writeJavaAppendVectorInputToMessage(ofstream& file, int indent,
                                              const ParameterDefinition& p) const;
@@ -349,10 +364,6 @@ public:
     Permutation(Function* function, Specification* specification, int i1, int i2, int i3, int i4);
     void writeFiles(ofstream& headerFile, ofstream& rsFile, ofstream& javaFile,
                     int versionOfTestFiles);
-#define DISABLE_LONG_AND_DOUBLE_TESTS
-#ifdef DISABLE_LONG_AND_DOUBLE_TESTS
-    bool hasLongOrDoubleParameter() const;
-#endif
 };
 
 // Table of type equivalences
@@ -950,7 +961,7 @@ Specification* Specification::scanSpecification(FILE* in) {
 
         if (s.compare(0, 5, "test:") == 0) {
             trim(&s, 5);
-            if (s == "scalar" || s == "vector" || s == "noverify" || s == "none") {
+            if (s == "scalar" || s == "vector" || s == "noverify" || s == "custom" || s == "none") {
                 spec->mTest = s;
             } else if (s.compare(0, 7, "limited") == 0) {
                 spec->mTest = "limited";
@@ -1109,11 +1120,15 @@ Permutation::Permutation(Function* func, Specification* spec, int i1, int i2, in
 
     vector<string> paramDefinitions;
     spec->getParams(i1, i2, i3, i4, &paramDefinitions);
+    mHasFloatAnswers = false;
     for (size_t i = 0; i < paramDefinitions.size(); i++) {
         ParameterDefinition* def = new ParameterDefinition();
         def->parseParameterDefinition(paramDefinitions[i], false, &mInputCount, &mOutputCount);
         if (!def->isOutParameter && mFirstInputIndex < 0) {
             mFirstInputIndex = mParams.size();
+        }
+        if (def->isOutParameter && def->isFloatType) {
+            mHasFloatAnswers = true;
         }
         mParams.push_back(def);
     }
@@ -1123,6 +1138,9 @@ Permutation::Permutation(Function* func, Specification* spec, int i1, int i2, in
         ParameterDefinition* def = new ParameterDefinition();
         // Adding "*" tells the parse method it's an output.
         def->parseParameterDefinition(s, true, &mInputCount, &mOutputCount);
+        if (def->isOutParameter && def->isFloatType) {
+            mHasFloatAnswers = true;
+        }
         mReturnIndex = mParams.size();
         mParams.push_back(def);
     }
@@ -1144,32 +1162,12 @@ Permutation::Permutation(Function* func, Specification* spec, int i1, int i2, in
         mJavaVerifyMethodName += capitalize(p.rsType);
     }
     mJavaVerifierComputeMethodName = "compute" + capitalize(mCleanName);
+    mJavaVerifierVerifyMethodName = "verify" + capitalize(mCleanName);
 }
-
-#ifdef DISABLE_LONG_AND_DOUBLE_TESTS
-// TODO Remove once we have long/double copyTo/copyFrom
-bool Permutation::hasLongOrDoubleParameter() const {
-    for (size_t i = 0; i < mParams.size(); i++) {
-        const ParameterDefinition& p = *mParams[i];
-        if (p.javaBaseType == "long" || p.javaBaseType == "double") {
-            return true;
-        }
-    }
-    return false;
-}
-#endif
 
 void Permutation::writeFiles(ofstream& headerFile, ofstream& rsFile, ofstream& javaFile,
                              int versionOfTestFiles) {
     writeHeaderSection(headerFile);
-#ifdef DISABLE_LONG_AND_DOUBLE_TESTS
-    if (hasLongOrDoubleParameter()) {
-        printf("Warning: skipping a test for %s as we don't support long or double arguments (due "
-               "to Allocation not supporting them).\n",
-               mName.c_str());
-        return;
-    }
-#endif
     if (mSpecification->relevantForVersion(versionOfTestFiles) && mTest != "none") {
         writeRsSection(rsFile);
         writeJavaSection(javaFile);
@@ -1392,7 +1390,11 @@ void Permutation::writeJavaSection(ofstream& file) const {
     if (mTest == "scalar" || mTest == "limited") {
         writeJavaArgumentClass(file, true);
         writeJavaCheckMethod(file, true);
-        writeJavaVerifyScalarMethod(file);
+        writeJavaVerifyScalarMethod(file, false);
+    } else if (mTest == "custom") {
+        writeJavaArgumentClass(file, true);
+        writeJavaCheckMethod(file, true);
+        writeJavaVerifyScalarMethod(file, true);
     } else if (mTest == "vector") {
         writeJavaArgumentClass(file, false);
         writeJavaCheckMethod(file, true);
@@ -1417,8 +1419,8 @@ void Permutation::writeJavaArgumentClass(ofstream& file, bool scalar) const {
     for (size_t i = 0; i < mParams.size(); i++) {
         const ParameterDefinition& p = *mParams[i];
         s += tab(2) + "public ";
-        if (p.isOutParameter && p.isFloatType) {
-            s += "Floaty";
+        if (p.isOutParameter && p.isFloatType && mTest != "custom") {
+            s += "Target.Floaty";
         } else {
             s += p.javaBaseType;
         }
@@ -1432,7 +1434,7 @@ void Permutation::writeJavaArgumentClass(ofstream& file, bool scalar) const {
     mFunction->writeJavaArgumentClassDefinition(name, s);
 }
 
-void Permutation::writeJavaCheckMethod(ofstream& file, bool generateCallToVerify) const {
+void Permutation::writeJavaCheckMethod(ofstream& file, bool generateCallToVerifier) const {
     file << tab(1) << "private void " << mJavaCheckMethodName << "() {\n";
     // Generate the input allocations and initialization.
     for (size_t i = 0; i < mParams.size(); i++) {
@@ -1450,8 +1452,8 @@ void Permutation::writeJavaCheckMethod(ofstream& file, bool generateCallToVerify
                  << ");\n";
         }
     }
-    writeJavaCallToRs(file, false, generateCallToVerify);
-    writeJavaCallToRs(file, true, generateCallToVerify);
+    writeJavaCallToRs(file, false, generateCallToVerifier);
+    writeJavaCallToRs(file, true, generateCallToVerifier);
     file << tab(1) << "}\n\n";
 }
 
@@ -1483,7 +1485,9 @@ void Permutation::writeJavaInputAllocationDefinition(ofstream& file, const strin
         }
     } else {
         file << "createRandomAllocation(mRS, Element.DataType." << dataType << ", " << vectorSize
-             << ", " << seed << ", false)";  // TODO set to false only for native
+            // TODO set to false only for native, i.e.
+            // << ", " << seed << ", " << (mTest == "limited" ? "false" : "true") << ")";
+            << ", " << seed << ", false)";
     }
     file << ";\n";
 }
@@ -1571,7 +1575,7 @@ void Permutation::convertToRsType(const string& name, string* dataType, char* ve
     }
 }
 
-void Permutation::writeJavaVerifyScalarMethod(ofstream& file) const {
+void Permutation::writeJavaVerifyScalarMethod(ofstream& file, bool verifierValidates) const {
     writeJavaVerifyFunctionHeader(file);
     string vectorSize = "1";
     for (size_t i = 0; i < mParams.size(); i++) {
@@ -1603,16 +1607,43 @@ void Permutation::writeJavaVerifyScalarMethod(ofstream& file) const {
         }
     }
 
-    file << tab(4) << "// Figure out what the outputs should have been.\n";
-    file << tab(4) << "Floaty.setRelaxed(relaxed);\n";
-    file << tab(4) << "CoreMathVerifier." << mJavaVerifierComputeMethodName << "(args);\n";
-
-    file << tab(4) << "// Figure out what the outputs should have been.\n";
-    file << tab(4) << "boolean valid = true;\n";
-    for (size_t i = 0; i < mParams.size(); i++) {
-        const ParameterDefinition& p = *mParams[i];
-        if (p.isOutParameter) {
-            writeJavaTestAndSetValid(file, 4, p, "", "[i * " + p.vectorWidth + " + j]");
+    if (verifierValidates) {
+        file << tab(4) << "// Extract the outputs.\n";
+        for (size_t i = 0; i < mParams.size(); i++) {
+            const ParameterDefinition& p = *mParams[i];
+            if (p.isOutParameter) {
+                file << tab(4) << "args." << p.variableName << " = " << p.javaArrayName
+                     << "[i * " + p.vectorWidth + " + j];\n";
+            }
+        }
+        file << tab(4) << "// Ask the CoreMathVerifier to validate.\n";
+        if (mHasFloatAnswers) {
+            file << tab(4) << "Target target = new Target(relaxed);\n";
+        }
+        file << tab(4) << "String errorMessage = CoreMathVerifier." << mJavaVerifierVerifyMethodName
+             << "(args";
+        if (mHasFloatAnswers) {
+            file << ", target";
+        }
+        file << ");\n";
+        file << tab(4) << "boolean valid = errorMessage == null;\n";
+    } else {
+        file << tab(4) << "// Figure out what the outputs should have been.\n";
+        if (mHasFloatAnswers) {
+            file << tab(4) << "Target target = new Target(relaxed);\n";
+        }
+        file << tab(4) << "CoreMathVerifier." << mJavaVerifierComputeMethodName << "(args";
+        if (mHasFloatAnswers) {
+            file << ", target";
+        }
+        file << ");\n";
+        file << tab(4) << "// Validate the outputs.\n";
+        file << tab(4) << "boolean valid = true;\n";
+        for (size_t i = 0; i < mParams.size(); i++) {
+            const ParameterDefinition& p = *mParams[i];
+            if (p.isOutParameter) {
+                writeJavaTestAndSetValid(file, 4, p, "", "[i * " + p.vectorWidth + " + j]");
+            }
         }
     }
 
@@ -1621,10 +1652,14 @@ void Permutation::writeJavaVerifyScalarMethod(ofstream& file) const {
     for (size_t i = 0; i < mParams.size(); i++) {
         const ParameterDefinition& p = *mParams[i];
         if (p.isOutParameter) {
-            writeJavaAppendOutputToMessage(file, 5, p, "", "[i * " + p.vectorWidth + " + j]");
+            writeJavaAppendOutputToMessage(file, 5, p, "", "[i * " + p.vectorWidth + " + j]",
+                                           verifierValidates);
         } else {
             writeJavaAppendInputToMessage(file, 5, p, "args." + p.variableName);
         }
+    }
+    if (verifierValidates) {
+        file << tab(5) << "message.append(errorMessage);\n";
     }
 
     file << tab(5) << "assertTrue(\"Incorrect output for " << mJavaCheckMethodName << "\" +\n";
@@ -1666,31 +1701,42 @@ void Permutation::writeJavaTestOneValue(ofstream& file, int indent, const Parame
         file << "args." << p.variableName << argsIndex << " != " << p.javaArrayName << actualIndex;
     }
     if (p.undefinedIfOutIsNan && mReturnIndex >= 0) {
-        file << " && args." << mParams[mReturnIndex]->variableName << argsIndex << ".isNaN()";
+        file << " && !args." << mParams[mReturnIndex]->variableName << argsIndex << ".isNaN()";
     }
     file << ") {\n";
 }
 
 void Permutation::writeJavaAppendOutputToMessage(ofstream& file, int indent,
                                                  const ParameterDefinition& p,
-                                                 const string& argsIndex,
-                                                 const string& actualIndex) const {
-    const string expected = "args." + p.variableName + argsIndex;
-    const string actual = p.javaArrayName + actualIndex;
-    file << tab(indent) << "message.append(\"Expected output " + p.variableName + ": \");\n";
-    if (p.isFloatType) {
-        writeJavaAppendFloatyVariableToMessage(file, indent, expected);
+                                                 const string& argsIndex, const string& actualIndex,
+                                                 bool verifierValidates) const {
+    if (verifierValidates) {
+        const string actual = "args." + p.variableName + argsIndex;
+        file << tab(indent) << "message.append(\"Output " + p.variableName + ": \");\n";
+        if (p.isFloatType) {
+            writeJavaAppendFloatVariableToMessage(file, indent, actual, true);
+        } else {
+            writeJavaAppendVariableToMessage(file, indent, p, actual);
+        }
+        writeJavaAppendNewLineToMessage(file, indent);
     } else {
-        writeJavaAppendVariableToMessage(file, indent, p, expected);
-    }
-    writeJavaAppendNewLineToMessage(file, indent);
-    file << tab(indent) << "message.append(\"Actual   output " + p.variableName + ": \");\n";
-    writeJavaAppendVariableToMessage(file, indent, p, actual);
+        const string expected = "args." + p.variableName + argsIndex;
+        const string actual = p.javaArrayName + actualIndex;
+        file << tab(indent) << "message.append(\"Expected output " + p.variableName + ": \");\n";
+        if (p.isFloatType) {
+            writeJavaAppendFloatVariableToMessage(file, indent, expected, false);
+        } else {
+            writeJavaAppendVariableToMessage(file, indent, p, expected);
+        }
+        writeJavaAppendNewLineToMessage(file, indent);
+        file << tab(indent) << "message.append(\"Actual   output " + p.variableName + ": \");\n";
+        writeJavaAppendVariableToMessage(file, indent, p, actual);
 
-    writeJavaTestOneValue(file, indent, p, argsIndex, actualIndex);
-    file << tab(indent + 1) << "message.append(\" FAIL\");\n";
-    file << tab(indent) << "}\n";
-    writeJavaAppendNewLineToMessage(file, indent);
+        writeJavaTestOneValue(file, indent, p, argsIndex, actualIndex);
+        file << tab(indent + 1) << "message.append(\" FAIL\");\n";
+        file << tab(indent) << "}\n";
+        writeJavaAppendNewLineToMessage(file, indent);
+    }
 }
 
 void Permutation::writeJavaAppendInputToMessage(ofstream& file, int indent,
@@ -1709,11 +1755,11 @@ void Permutation::writeJavaAppendVariableToMessage(ofstream& file, int indent,
                                                    const ParameterDefinition& p,
                                                    const string& value) const {
     if (p.specType == "f16" || p.specType == "f32") {
-        file << tab(indent) << "message.append(String.format(\"%14.8g %8x %15a\",\n";
+        file << tab(indent) << "message.append(String.format(\"%14.8g {%8x} %15a\",\n";
         file << tab(indent + 2) << value << ", "
              << "Float.floatToRawIntBits(" << value << "), " << value << "));\n";
     } else if (p.specType == "f64") {
-        file << tab(indent) << "message.append(String.format(\"%24.8g %16x %31a\",\n";
+        file << tab(indent) << "message.append(String.format(\"%24.8g {%16x} %31a\",\n";
         file << tab(indent + 2) << value << ", "
              << "Double.doubleToRawLongBits(" << value << "), " << value << "));\n";
     } else if (p.specType[0] == 'u') {
@@ -1723,9 +1769,16 @@ void Permutation::writeJavaAppendVariableToMessage(ofstream& file, int indent,
     }
 }
 
-void Permutation::writeJavaAppendFloatyVariableToMessage(ofstream& file, int indent,
-                                                         const string& value) const {
-    file << tab(indent) << "message.append(" << value << ".toString());\n";
+void Permutation::writeJavaAppendFloatVariableToMessage(ofstream& file, int indent,
+                                                        const string& value,
+                                                        bool regularFloat) const {
+    file << tab(indent) << "message.append(";
+    if (regularFloat) {
+        file << "Float.toString(" << value << ")";
+    } else {
+        file << value << ".toString()";
+    }
+    file << ");\n";
 }
 
 void Permutation::writeJavaVectorComparison(ofstream& file, int indent,
@@ -1755,12 +1808,12 @@ void Permutation::writeJavaAppendVectorInputToMessage(ofstream& file, int indent
 void Permutation::writeJavaAppendVectorOutputToMessage(ofstream& file, int indent,
                                                        const ParameterDefinition& p) const {
     if (p.mVectorSize == "1") {
-        writeJavaAppendOutputToMessage(file, indent, p, "", "[i]");
+        writeJavaAppendOutputToMessage(file, indent, p, "", "[i]", false);
 
     } else {
         file << tab(indent) << "for (int j = 0; j < " << p.mVectorSize << " ; j++) {\n";
         writeJavaAppendOutputToMessage(file, indent + 1, p, "[j]",
-                                       "[i * " + p.vectorWidth + " + j]");
+                                       "[i * " + p.vectorWidth + " + j]", false);
         file << tab(indent) << "}\n";
     }
 }
@@ -1781,7 +1834,7 @@ void Permutation::writeJavaVerifyVectorMethod(ofstream& file) const {
         if (p.mVectorSize != "1") {
             string type = p.javaBaseType;
             if (p.isOutParameter && p.isFloatType) {
-                type = "Floaty";
+                type = "Target.Floaty";
             }
             file << tab(3) << "args." << p.variableName << " = new " << type << "[" << p.mVectorSize
                  << "];\n";
@@ -1804,8 +1857,9 @@ void Permutation::writeJavaVerifyVectorMethod(ofstream& file) const {
             }
         }
     }
-    file << tab(3) << "Floaty.setRelaxed(relaxed);\n";
-    file << tab(3) << "CoreMathVerifier." << mJavaVerifierComputeMethodName << "(args);\n\n";
+    file << tab(3) << "Target target = new Target(relaxed);\n";
+    file << tab(3) << "CoreMathVerifier." << mJavaVerifierComputeMethodName
+         << "(args, target);\n\n";
 
     file << tab(3) << "// Compare the expected outputs to the actual values returned by RS.\n";
     file << tab(3) << "boolean valid = true;\n";
@@ -1834,7 +1888,7 @@ void Permutation::writeJavaVerifyVectorMethod(ofstream& file) const {
     file << tab(1) << "}\n\n";
 }
 
-void Permutation::writeJavaCallToRs(ofstream& file, bool relaxed, bool generateCallToVerify) const {
+void Permutation::writeJavaCallToRs(ofstream& file, bool relaxed, bool generateCallToVerifier) const {
     string script = "script";
     if (relaxed) {
         script += "Relaxed";
@@ -1869,7 +1923,7 @@ void Permutation::writeJavaCallToRs(ofstream& file, bool relaxed, bool generateC
         file << mParams[mReturnIndex]->variableName << ");\n";
     }
 
-    if (generateCallToVerify) {
+    if (generateCallToVerifier) {
         file << tab(3) << mJavaVerifyMethodName << "(";
         for (size_t i = 0; i < mParams.size(); i++) {
             const ParameterDefinition& p = *mParams[i];

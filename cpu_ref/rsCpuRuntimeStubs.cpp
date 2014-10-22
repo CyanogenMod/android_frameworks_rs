@@ -299,6 +299,10 @@ static RsdCpuReference::CpuSymbol gSyms[] = {
     { "_Z7rsDebugPKcPKDv2_y", (void *)&SC_debugUL2, true },
     { "_Z7rsDebugPKcPKDv3_y", (void *)&SC_debugUL3, true },
     { "_Z7rsDebugPKcPKDv4_y", (void *)&SC_debugUL4, true },
+    { "_Z7rsDebugPKcDv2_y", (void *)&SC_debugUL2, true },
+    { "_Z7rsDebugPKcDv3_y", (void *)&SC_debugUL3, true },
+    { "_Z7rsDebugPKcDv4_y", (void *)&SC_debugUL4, true },
+
     { "_Z7rsDebugPKcPKv", (void *)&SC_debugP, true },
 
     { nullptr, nullptr, false }

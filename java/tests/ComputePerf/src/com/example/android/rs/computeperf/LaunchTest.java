@@ -23,26 +23,24 @@ public class LaunchTest {
     private RenderScript mRS;
     private Allocation mAllocationX;
     private Allocation mAllocationXY;
-    private ScriptC_launchtestxlw mScript_xlw;
-    private ScriptC_launchtestxyw mScript_xyw;
+    private ScriptC_launchtest mScript;
 
     LaunchTest(RenderScript rs, Resources res) {
         mRS = rs;
-        mScript_xlw = new ScriptC_launchtestxlw(mRS);
-        mScript_xyw = new ScriptC_launchtestxyw(mRS);
-        final int dim = mScript_xlw.get_dim();
+        mScript = new ScriptC_launchtest(mRS);
+        final int dim = mScript.get_dim();
 
         mAllocationX = Allocation.createSized(rs, Element.U8(rs), dim);
         Type.Builder tb = new Type.Builder(rs, Element.U8(rs));
         tb.setX(dim);
         tb.setY(dim);
         mAllocationXY = Allocation.createTyped(rs, tb.create());
-        mScript_xlw.bind_buf(mAllocationXY);
+        mScript.set_gBuf(mAllocationXY);
     }
 
     public long XLW() {
         long t = java.lang.System.currentTimeMillis();
-        mScript_xlw.forEach_root(mAllocationX);
+        mScript.forEach_k_x(mAllocationX);
         mRS.finish();
         t = java.lang.System.currentTimeMillis() - t;
         return t;
@@ -50,7 +48,7 @@ public class LaunchTest {
 
     public long XYW() {
         long t = java.lang.System.currentTimeMillis();
-        mScript_xyw.forEach_root(mAllocationXY);
+        mScript.forEach_k_xy(mAllocationXY);
         mRS.finish();
         t = java.lang.System.currentTimeMillis() - t;
         return t;
