@@ -498,7 +498,7 @@ void * Allocation::getSurface(const Context *rsc) {
     sp<IGraphicBufferProducer> bp;
     sp<IGraphicBufferConsumer> bc;
     BufferQueue::createBufferQueue(&bp, &bc);
-    mGrallocConsumer = new GrallocConsumer(this, bc);
+    mGrallocConsumer = new GrallocConsumer(this, bc, mHal.drvState.grallocFlags);
     bp->incStrong(NULL);
 
     mBufferListener = new NewBufferListener();
