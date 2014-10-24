@@ -126,7 +126,7 @@ typedef union {
 } Key_t;
 
 //Re-enable when intrinsic is fixed
-#if 0 && defined(ARCH_ARM64_USE_INTRINSICS)
+#if defined(ARCH_ARM64_USE_INTRINSICS)
 typedef struct {
     void (*column[4])(void);
     void (*store)(void);
@@ -183,7 +183,7 @@ protected:
     int ipa[4];
     float tmpFp[16];
     float tmpFpa[4];
-#if 0 && defined(ARCH_ARM64_USE_INTRINSICS)
+#if defined(ARCH_ARM64_USE_INTRINSICS)
     FunctionTab_t mFnTab;
 #endif
 
@@ -912,16 +912,20 @@ void RsdCpuScriptIntrinsicColorMatrix::kernel(const RsExpandKernelParams *p,
                 out += outstep * len;
                 in += instep * len;
             }
-#if 0 && defined(ARCH_ARM64_USE_INTRINSICS)
+#if defined(ARCH_ARM64_USE_INTRINSICS)
             else {
                 if (cp->mLastKey.u.inType == RS_TYPE_FLOAT_32 || cp->mLastKey.u.outType == RS_TYPE_FLOAT_32) {
-                    rsdIntrinsicColorMatrix_float_K(out, in, len, &cp->mFnTab, cp->tmpFp, cp->tmpFpa);
+                    // Currently this generates off by one errors.
+                    //rsdIntrinsicColorMatrix_float_K(out, in, len, &cp->mFnTab, cp->tmpFp, cp->tmpFpa);
+                    //x1 += len;
+                    //out += outstep * len;
+                    //in += instep * len;
                 } else {
                     rsdIntrinsicColorMatrix_int_K(out, in, len, &cp->mFnTab, cp->ip, cp->ipa);
+                    x1 += len;
+                    out += outstep * len;
+                    in += instep * len;
                 }
-                x1 += len;
-                out += outstep * len;
-                in += instep * len;
             }
 #endif
         }
@@ -977,7 +981,7 @@ void RsdCpuScriptIntrinsicColorMatrix::preLaunch(uint32_t slot,
         if (build(key)) {
             mOptKernel = (void (*)(void *, const void *, const short *, uint32_t)) mBuf;
         }
-#if 0 && defined(ARCH_ARM64_USE_INTRINSICS)
+#if defined(ARCH_ARM64_USE_INTRINSICS)
         else {
             int dt = key.u.outVecSize + (key.u.outType == RS_TYPE_FLOAT_32 ? 4 : 0);
             int st = key.u.inVecSize + (key.u.inType == RS_TYPE_FLOAT_32 ? 4 : 0);
