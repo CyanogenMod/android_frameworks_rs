@@ -112,7 +112,7 @@ static uchar4 OneBiCubic(const uchar4 *yp0, const uchar4 *yp1, const uchar4 *yp2
                                   convert_float4(yp3[xs3]), xf);
 
     float4 p  = cubicInterpolate(p0, p1, p2, p3, yf);
-    p = clamp(p, 0.f, 255.f);
+    p = clamp(p + 0.5f, 0.f, 255.f);
     return convert_uchar4(p);
 }
 
@@ -147,7 +147,7 @@ static uchar2 OneBiCubic(const uchar2 *yp0, const uchar2 *yp1, const uchar2 *yp2
                                   convert_float2(yp3[xs3]), xf);
 
     float2 p  = cubicInterpolate(p0, p1, p2, p3, yf);
-    p = clamp(p, 0.f, 255.f);
+    p = clamp(p + 0.5f, 0.f, 255.f);
     return convert_uchar2(p);
 }
 
@@ -171,7 +171,7 @@ static uchar OneBiCubic(const uchar *yp0, const uchar *yp1, const uchar *yp2, co
                                  (float)yp3[xs2], (float)yp3[xs3], xf);
 
     float p  = cubicInterpolate(p0, p1, p2, p3, yf);
-    p = clamp(p, 0.f, 255.f);
+    p = clamp(p + 0.5f, 0.f, 255.f);
     return (uchar)p;
 }
 
