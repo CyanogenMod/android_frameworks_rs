@@ -486,7 +486,7 @@ void Allocation::resize2D(Context *rsc, uint32_t dimX, uint32_t dimY) {
 }
 
 #ifndef RS_COMPATIBILITY_LIB
-void Allocation::NewBufferListener::onFrameAvailable() {
+void Allocation::NewBufferListener::onFrameAvailable(const BufferItem& /* item */) {
     intptr_t ip = (intptr_t)alloc;
     rsc->sendMessageToClient(&ip, RS_MESSAGE_TO_CLIENT_NEW_BUFFER, 0, sizeof(ip), true);
 }
