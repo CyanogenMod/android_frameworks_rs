@@ -57,11 +57,12 @@ public class IPControls extends Activity {
     private ArrayAdapter<String> mTestListAdapter;
     private ArrayList<String> mTestList = new ArrayList<String>();
 
-    private boolean mSettings[] = {true, true, false, false};
+    private boolean mSettings[] = {true, true, false, false, false};
     private static final int SETTING_ANIMATE = 0;
     private static final int SETTING_DISPLAY = 1;
     private static final int SETTING_LONG_RUN = 2;
     private static final int SETTING_PAUSE = 3;
+    private static final int SETTING_USAGE_IO = 4;
 
     private float mResults[];
 
@@ -199,6 +200,7 @@ public class IPControls extends Activity {
         intent.putExtra("enable pause", mSettings[SETTING_PAUSE]);
         intent.putExtra("enable animate", mSettings[SETTING_ANIMATE]);
         intent.putExtra("enable display", mSettings[SETTING_DISPLAY]);
+        intent.putExtra("enable io", mSettings[SETTING_USAGE_IO]);
         intent.putExtra("resolution X", mResolution.width);
         intent.putExtra("resolution Y", mResolution.height);
         return intent;

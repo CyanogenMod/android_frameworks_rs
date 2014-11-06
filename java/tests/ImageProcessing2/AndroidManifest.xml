@@ -4,7 +4,7 @@
     package="com.android.rs.image2">
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-sdk android:minSdkVersion="14" />
-    <application android:label="IP-Compat"
+    <application android:label="IP-Compat2"
                  android:hardwareAccelerated="true"
                  android:theme="@android:style/Theme.Holo.Light">
         <activity android:name="ImageProcessingActivity2">

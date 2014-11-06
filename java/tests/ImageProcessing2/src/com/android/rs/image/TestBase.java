@@ -89,7 +89,11 @@ public class TestBase  {
 
         mInPixelsAllocation = ipact.mProcessor.mInPixelsAllocation;
         mInPixelsAllocation2 = ipact.mProcessor.mInPixelsAllocation2;
-        mOutPixelsAllocation = ipact.mProcessor.mOutDisplayAllocation1;
+        if (ipact.mProcessor.mOutDisplayAllocation1 == null) {
+            mOutPixelsAllocation = ipact.mProcessor.mOutDisplayAllocationIO;
+        } else {
+            mOutPixelsAllocation = ipact.mProcessor.mOutDisplayAllocation1;
+        }
 
         createTest(act.getResources());
     }
