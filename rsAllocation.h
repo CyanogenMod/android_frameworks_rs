@@ -185,7 +185,7 @@ protected:
         const android::renderscript::Context *rsc;
         const android::renderscript::Allocation *alloc;
 
-        virtual void onFrameAvailable();
+        virtual void onFrameAvailable(const BufferItem& item);
     };
 
     sp<NewBufferListener> mBufferListener;
