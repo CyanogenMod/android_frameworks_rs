@@ -88,6 +88,8 @@ public:
                 uint32_t shift;
                 uint32_t step;
             } yuv;
+
+            int grallocFlags;
         };
         mutable DrvState drvState;
 
