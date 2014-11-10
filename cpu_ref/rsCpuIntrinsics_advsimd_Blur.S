@@ -1415,7 +1415,6 @@ ENTRY(rsdIntrinsicBlurU1_K)
 
             ldr         x12, [sp, #88] // tab
 
-            add         x0, x0, x8
             add         x1, x1, x8
 
             cmp         x6, x5
@@ -1481,7 +1480,6 @@ ENTRY(rsdIntrinsicBlurU4_K)
 
             ldr         x12, [sp, #88]
 
-            add         x0, x0, x8, LSL #2
             add         x1, x1, x8, LSL #2
 
             cmp         x6, x5
