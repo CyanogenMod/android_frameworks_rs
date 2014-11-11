@@ -17,7 +17,7 @@
 #ifndef ANDROID_RSDISPATCH_H
 #define ANDROID_RSDISPATCH_H
 
-#include "rsDefines.h"
+#include "rsInternalDefines.h"
 
 typedef const void* (*AllocationGetTypeFnPtr)(RsContext con, RsAllocation va);
 typedef void (*TypeGetNativeDataFnPtr)(RsContext, RsType, uintptr_t *typeData, uint32_t typeDataSize);
@@ -87,7 +87,7 @@ typedef void (*AllocationIoSendFnPtr) (RsContext, RsAllocation);
 typedef void (*AllocationIoReceiveFnPtr) (RsContext, RsAllocation);
 typedef void * (*AllocationGetPointerFnPtr) (RsContext, RsAllocation, uint32_t lod, RsAllocationCubemapFace face, uint32_t z, uint32_t array, size_t *stride);
 
-typedef struct {
+struct dispatchTable {
     // inserted by hand from rs.h
     AllocationGetTypeFnPtr AllocationGetType;
     TypeGetNativeDataFnPtr TypeGetNativeData;
@@ -158,6 +158,6 @@ typedef struct {
     AllocationIoSendFnPtr AllocationIoSend;
     AllocationIoReceiveFnPtr AllocationIoReceive;
     AllocationGetPointerFnPtr AllocationGetPointer;
-} dispatchTable;
+};
 
 #endif

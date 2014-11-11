@@ -21,6 +21,7 @@
 #include "RenderScript.h"
 #include "rsCppStructs.h"
 #include "rsCppInternal.h"
+#include "rsDispatch.h"
 
 #include <dlfcn.h>
 #include <unistd.h>

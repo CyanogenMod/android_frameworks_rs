@@ -18,7 +18,7 @@
 #define ANDROID_RS_DEBUG_HELPER_H
 
 #include "rsUtils.h"
-#include "rsDefines.h"
+#include "rsInternalDefines.h"
 
 #ifndef RS_SERVER
 // This shouldn't ever be defined with RS_SERVER

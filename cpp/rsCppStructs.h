@@ -19,7 +19,6 @@
 
 #include "rsDefines.h"
 #include "util/RefBase.h"
-#include "rsDispatch.h"
 
 #include <vector>
 #include <string>
@@ -31,8 +30,11 @@
  */
 #define RS_CPU_ALLOCATION_ALIGNMENT 16
 
+struct dispatchTable;
+
 namespace android {
 namespace RSC {
+
 
 typedef void (*ErrorHandlerFunc_t)(uint32_t errorNum, const char *errorText);
 typedef void (*MessageHandlerFunc_t)(uint32_t msgNum, const void *msgData, size_t msgLen);
