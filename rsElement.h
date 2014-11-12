@@ -21,7 +21,7 @@
 
 #include "rsComponent.h"
 #include "rsUtils.h"
-#include "rsDefines.h"
+#include "rsInternalDefines.h"
 #include "rsObjectBase.h"
 
 // ---------------------------------------------------------------------------
