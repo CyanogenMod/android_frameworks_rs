@@ -15,6 +15,7 @@
  */
 
 #include "RenderScript.h"
+#include "rsCppInternal.h"
 
 using namespace android;
 using namespace RSC;
