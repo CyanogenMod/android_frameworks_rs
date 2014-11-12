@@ -242,8 +242,10 @@ typedef struct Type {
             uint32_t *lodDimX;
             uint32_t *lodDimY;
             uint32_t *lodDimZ;
-            uint32_t *lodOffset;
+            uint32_t *arrays;
             uint32_t lodCount;
+            uint32_t dimYuv;
+            uint32_t arrayCount;
             bool faces;
         } state;
     } mHal;

@@ -197,6 +197,24 @@ typedef struct {
 
 
 
+// Structure for rs.spec functions
+
+typedef struct {
+    RsElement e;
+    uint32_t dimX;
+    uint32_t dimY;
+    uint32_t dimZ;
+    bool mipmaps;
+    bool faces;
+    uint32_t yuv;
+    uint32_t array0;
+    uint32_t array1;
+    uint32_t array2;
+    uint32_t array3;
+} RsTypeCreateParams;
+
+
+
 #ifdef __cplusplus
 };
 #endif
