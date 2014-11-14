@@ -55,6 +55,15 @@ protected:
     static void kernelU4(const RsExpandKernelParams *p,
                          uint32_t xstart, uint32_t xend,
                          uint32_t outstep);
+    static void kernelF1(const RsExpandKernelParams *p,
+                         uint32_t xstart, uint32_t xend,
+                         uint32_t outstep);
+    static void kernelF2(const RsExpandKernelParams *p,
+                         uint32_t xstart, uint32_t xend,
+                         uint32_t outstep);
+    static void kernelF4(const RsExpandKernelParams *p,
+                         uint32_t xstart, uint32_t xend,
+                         uint32_t outstep);
 };
 
 }
@@ -173,6 +182,77 @@ static uchar OneBiCubic(const uchar *yp0, const uchar *yp1, const uchar *yp2, co
     float p  = cubicInterpolate(p0, p1, p2, p3, yf);
     p = clamp(p + 0.5f, 0.f, 255.f);
     return (uchar)p;
+}
+
+
+
+static float4 OneBiCubic(const float4 *yp0, const float4 *yp1, const float4 *yp2, const float4 *yp3,
+                         float xf, float yf, int width) {
+    int startx = (int) floor(xf - 1);
+    xf = xf - floor(xf);
+    int maxx = width - 1;
+    int xs0 = rsMax(0, startx + 0);
+    int xs1 = rsMax(0, startx + 1);
+    int xs2 = rsMin(maxx, startx + 2);
+    int xs3 = rsMin(maxx, startx + 3);
+
+    float4 p0  = cubicInterpolate(yp0[xs0], yp0[xs1],
+                                  yp0[xs2], yp0[xs3], xf);
+    float4 p1  = cubicInterpolate(yp1[xs0], yp1[xs1],
+                                  yp1[xs2], yp1[xs3], xf);
+    float4 p2  = cubicInterpolate(yp2[xs0], yp2[xs1],
+                                  yp2[xs2], yp2[xs3], xf);
+    float4 p3  = cubicInterpolate(yp3[xs0], yp3[xs1],
+                                  yp3[xs2], yp3[xs3], xf);
+
+    float4 p  = cubicInterpolate(p0, p1, p2, p3, yf);
+    return p;
+}
+
+static float2 OneBiCubic(const float2 *yp0, const float2 *yp1, const float2 *yp2, const float2 *yp3,
+                         float xf, float yf, int width) {
+    int startx = (int) floor(xf - 1);
+    xf = xf - floor(xf);
+    int maxx = width - 1;
+    int xs0 = rsMax(0, startx + 0);
+    int xs1 = rsMax(0, startx + 1);
+    int xs2 = rsMin(maxx, startx + 2);
+    int xs3 = rsMin(maxx, startx + 3);
+
+    float2 p0  = cubicInterpolate(yp0[xs0], yp0[xs1],
+                                  yp0[xs2], yp0[xs3], xf);
+    float2 p1  = cubicInterpolate(yp1[xs0], yp1[xs1],
+                                  yp1[xs2], yp1[xs3], xf);
+    float2 p2  = cubicInterpolate(yp2[xs0], yp2[xs1],
+                                  yp2[xs2], yp2[xs3], xf);
+    float2 p3  = cubicInterpolate(yp3[xs0], yp3[xs1],
+                                  yp3[xs2], yp3[xs3], xf);
+
+    float2 p  = cubicInterpolate(p0, p1, p2, p3, yf);
+    return p;
+}
+
+static float OneBiCubic(const float *yp0, const float *yp1, const float *yp2, const float *yp3,
+                        float xf, float yf, int width) {
+    int startx = (int) floor(xf - 1);
+    xf = xf - floor(xf);
+    int maxx = width - 1;
+    int xs0 = rsMax(0, startx + 0);
+    int xs1 = rsMax(0, startx + 1);
+    int xs2 = rsMin(maxx, startx + 2);
+    int xs3 = rsMin(maxx, startx + 3);
+
+    float p0  = cubicInterpolate(yp0[xs0], yp0[xs1],
+                                 yp0[xs2], yp0[xs3], xf);
+    float p1  = cubicInterpolate(yp1[xs0], yp1[xs1],
+                                 yp1[xs2], yp1[xs3], xf);
+    float p2  = cubicInterpolate(yp2[xs0], yp2[xs1],
+                                 yp2[xs2], yp2[xs3], xf);
+    float p3  = cubicInterpolate(yp3[xs0], yp3[xs1],
+                                 yp3[xs2], yp3[xs3], xf);
+
+    float p  = cubicInterpolate(p0, p1, p2, p3, yf);
+    return p;
 }
 
 void RsdCpuScriptIntrinsicResize::kernelU4(const RsExpandKernelParams *p,
@@ -295,6 +375,126 @@ void RsdCpuScriptIntrinsicResize::kernelU1(const RsExpandKernelParams *p,
     }
 }
 
+void RsdCpuScriptIntrinsicResize::kernelF4(const RsExpandKernelParams *p,
+                                                uint32_t xstart, uint32_t xend,
+                                                uint32_t outstep) {
+    RsdCpuScriptIntrinsicResize *cp = (RsdCpuScriptIntrinsicResize *)p->usr;
+
+    if (!cp->mAlloc.get()) {
+        ALOGE("Resize executed without input, skipping");
+        return;
+    }
+    const uchar *pin = (const uchar *)cp->mAlloc->mHal.drvState.lod[0].mallocPtr;
+    const int srcHeight = cp->mAlloc->mHal.drvState.lod[0].dimY;
+    const int srcWidth = cp->mAlloc->mHal.drvState.lod[0].dimX;
+    const size_t stride = cp->mAlloc->mHal.drvState.lod[0].stride;
+
+    float yf = (p->y + 0.5f) * cp->scaleY - 0.5f;
+    int starty = (int) floor(yf - 1);
+    yf = yf - floor(yf);
+    int maxy = srcHeight - 1;
+    int ys0 = rsMax(0, starty + 0);
+    int ys1 = rsMax(0, starty + 1);
+    int ys2 = rsMin(maxy, starty + 2);
+    int ys3 = rsMin(maxy, starty + 3);
+
+    const float4 *yp0 = (const float4 *)(pin + stride * ys0);
+    const float4 *yp1 = (const float4 *)(pin + stride * ys1);
+    const float4 *yp2 = (const float4 *)(pin + stride * ys2);
+    const float4 *yp3 = (const float4 *)(pin + stride * ys3);
+
+    float4 *out = ((float4 *)p->out) + xstart;
+    uint32_t x1 = xstart;
+    uint32_t x2 = xend;
+
+    while(x1 < x2) {
+        float xf = (x1 + 0.5f) * cp->scaleX - 0.5f;
+        *out = OneBiCubic(yp0, yp1, yp2, yp3, xf, yf, srcWidth);
+        out++;
+        x1++;
+    }
+}
+
+void RsdCpuScriptIntrinsicResize::kernelF2(const RsExpandKernelParams *p,
+                                                uint32_t xstart, uint32_t xend,
+                                                uint32_t outstep) {
+    RsdCpuScriptIntrinsicResize *cp = (RsdCpuScriptIntrinsicResize *)p->usr;
+
+    if (!cp->mAlloc.get()) {
+        ALOGE("Resize executed without input, skipping");
+        return;
+    }
+    const uchar *pin = (const uchar *)cp->mAlloc->mHal.drvState.lod[0].mallocPtr;
+    const int srcHeight = cp->mAlloc->mHal.drvState.lod[0].dimY;
+    const int srcWidth = cp->mAlloc->mHal.drvState.lod[0].dimX;
+    const size_t stride = cp->mAlloc->mHal.drvState.lod[0].stride;
+
+    float yf = (p->y + 0.5f) * cp->scaleY - 0.5f;
+    int starty = (int) floor(yf - 1);
+    yf = yf - floor(yf);
+    int maxy = srcHeight - 1;
+    int ys0 = rsMax(0, starty + 0);
+    int ys1 = rsMax(0, starty + 1);
+    int ys2 = rsMin(maxy, starty + 2);
+    int ys3 = rsMin(maxy, starty + 3);
+
+    const float2 *yp0 = (const float2 *)(pin + stride * ys0);
+    const float2 *yp1 = (const float2 *)(pin + stride * ys1);
+    const float2 *yp2 = (const float2 *)(pin + stride * ys2);
+    const float2 *yp3 = (const float2 *)(pin + stride * ys3);
+
+    float2 *out = ((float2 *)p->out) + xstart;
+    uint32_t x1 = xstart;
+    uint32_t x2 = xend;
+
+    while(x1 < x2) {
+        float xf = (x1 + 0.5f) * cp->scaleX - 0.5f;
+        *out = OneBiCubic(yp0, yp1, yp2, yp3, xf, yf, srcWidth);
+        out++;
+        x1++;
+    }
+}
+
+void RsdCpuScriptIntrinsicResize::kernelF1(const RsExpandKernelParams *p,
+                                                uint32_t xstart, uint32_t xend,
+                                                uint32_t outstep) {
+    RsdCpuScriptIntrinsicResize *cp = (RsdCpuScriptIntrinsicResize *)p->usr;
+
+    if (!cp->mAlloc.get()) {
+        ALOGE("Resize executed without input, skipping");
+        return;
+    }
+    const uchar *pin = (const uchar *)cp->mAlloc->mHal.drvState.lod[0].mallocPtr;
+    const int srcHeight = cp->mAlloc->mHal.drvState.lod[0].dimY;
+    const int srcWidth = cp->mAlloc->mHal.drvState.lod[0].dimX;
+    const size_t stride = cp->mAlloc->mHal.drvState.lod[0].stride;
+
+    float yf = (p->y + 0.5f) * cp->scaleY - 0.5f;
+    int starty = (int) floor(yf - 1);
+    yf = yf - floor(yf);
+    int maxy = srcHeight - 1;
+    int ys0 = rsMax(0, starty + 0);
+    int ys1 = rsMax(0, starty + 1);
+    int ys2 = rsMin(maxy, starty + 2);
+    int ys3 = rsMin(maxy, starty + 3);
+
+    const float *yp0 = (const float *)(pin + stride * ys0);
+    const float *yp1 = (const float *)(pin + stride * ys1);
+    const float *yp2 = (const float *)(pin + stride * ys2);
+    const float *yp3 = (const float *)(pin + stride * ys3);
+
+    float *out = ((float *)p->out) + xstart;
+    uint32_t x1 = xstart;
+    uint32_t x2 = xend;
+
+    while(x1 < x2) {
+        float xf = (x1 + 0.5f) * cp->scaleX - 0.5f;
+        *out = OneBiCubic(yp0, yp1, yp2, yp3, xf, yf, srcWidth);
+        out++;
+        x1++;
+    }
+}
+
 RsdCpuScriptIntrinsicResize::RsdCpuScriptIntrinsicResize (
             RsdCpuReferenceImpl *ctx, const Script *s, const Element *e)
             : RsdCpuScriptIntrinsic(ctx, s, e, RS_SCRIPT_INTRINSIC_ID_RESIZE) {
@@ -318,17 +518,33 @@ void RsdCpuScriptIntrinsicResize::preLaunch(uint32_t slot,
     const uint32_t srcWidth = mAlloc->mHal.drvState.lod[0].dimX;
     const size_t stride = mAlloc->mHal.drvState.lod[0].stride;
 
-    switch(mAlloc->getType()->getElement()->getVectorSize()) {
-    case 1:
-        mRootPtr = &kernelU1;
-        break;
-    case 2:
-        mRootPtr = &kernelU2;
-        break;
-    case 3:
-    case 4:
-        mRootPtr = &kernelU4;
-        break;
+    //check the data type to determine F or U.
+    if (mAlloc->getType()->getElement()->getType() == RS_TYPE_UNSIGNED_8) {
+        switch(mAlloc->getType()->getElement()->getVectorSize()) {
+        case 1:
+            mRootPtr = &kernelU1;
+            break;
+        case 2:
+            mRootPtr = &kernelU2;
+            break;
+        case 3:
+        case 4:
+            mRootPtr = &kernelU4;
+            break;
+        }
+    } else {
+        switch(mAlloc->getType()->getElement()->getVectorSize()) {
+        case 1:
+            mRootPtr = &kernelF1;
+            break;
+        case 2:
+            mRootPtr = &kernelF2;
+            break;
+        case 3:
+        case 4:
+            mRootPtr = &kernelF4;
+            break;
+        }
     }
 
     scaleX = (float)srcWidth / aout->mHal.drvState.lod[0].dimX;
