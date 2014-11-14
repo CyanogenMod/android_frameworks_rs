@@ -1084,6 +1084,13 @@ relocateMIPS64(void *(*find_sym)(void *context, char const *name),
       case R_MIPS_NONE:
         break;
 
+      case R_MIPS_32:
+        calculatedValue = S + A;
+        if (applyRelocation) {
+          *inst |= (calculatedValue & 0xFFFFFFFF);
+        }
+        break;
+
       case R_MIPS_64:
         calculatedValue = S + A;
         if (applyRelocation) {
@@ -1113,7 +1120,6 @@ relocateMIPS64(void *(*find_sym)(void *context, char const *name),
       case R_MIPS_CALL16:
       case R_MIPS_GOT_PAGE:
       case R_MIPS_GOT_DISP: {
-        A = A & 0xFFFF;
         int got_index = search_got((int)rel->getSymTabIndex(),
                                    (void *)(S + A),
                                    sym->getBindingAttribute());
@@ -1175,6 +1181,57 @@ relocateMIPS64(void *(*find_sym)(void *context, char const *name),
 
       case R_MIPS_HIGHEST:
         calculatedValue = ((S + A + 0x800080008000) >> 48) & 0xFFFF;
+        if (applyRelocation) {
+          *inst |= calculatedValue;
+        }
+        break;
+
+      case R_MIPS_PC16:
+        calculatedValue = S + A - P;
+        if (applyRelocation) {
+          *inst |= (calculatedValue  >> 2) & 0xFFFF;
+        }
+        break;
+
+      case R_MIPS_PC18_S3:
+        rsl_assert(!((S + A) & 7) && "R_MIPS_PC18_S3 relocation out of range");
+        calculatedValue = S + A - ((P | 7) ^ 7);
+        if (applyRelocation) {
+          *inst |= (calculatedValue  >> 3) & 0x3FFFF;
+        }
+        break;
+
+      case R_MIPS_PC19_S2:
+        rsl_assert(!((S + A) & 3) && "R_MIPS_PC19_S2 relocation out of range");
+        calculatedValue = S + A - P;
+        if (applyRelocation) {
+          *inst |= (calculatedValue  >> 2) & 0x7FFFF;
+        }
+        break;
+
+      case R_MIPS_PC21_S2:
+        calculatedValue = S + A - P;
+        if (applyRelocation) {
+          *inst |= (calculatedValue  >> 2) & 0x1FFFFF;
+        }
+        break;
+
+      case R_MIPS_PC26_S2:
+        calculatedValue = S + A - P;
+        if (applyRelocation) {
+          *inst |= (calculatedValue  >> 2) & 0x3FFFFFF;
+        }
+        break;
+
+      case R_MIPS_PCHI16:
+        calculatedValue = ((S + A - P + 0x8000) >> 16) & 0xFFFF;
+        if (applyRelocation) {
+          *inst |= calculatedValue;
+        }
+        break;
+
+      case R_MIPS_PCLO16:
+        calculatedValue = (S + A - P) & 0xFFFF;
         if (applyRelocation) {
           *inst |= calculatedValue;
         }
