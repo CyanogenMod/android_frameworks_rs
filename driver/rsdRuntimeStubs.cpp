@@ -613,6 +613,7 @@ static void SC_ForEach_SAAUS(android::renderscript::rs_script *target,
 }
 #endif
 
+// These functions are only supported in 32-bit.
 #ifndef __LP64__
 static void SC_ForEach_SAAUL(android::renderscript::rs_script target,
                              android::renderscript::rs_allocation in,
@@ -623,18 +624,6 @@ static void SC_ForEach_SAAUL(android::renderscript::rs_script target,
     rsrForEach(rsc, (Script*)target.p, (Allocation*)in.p, (Allocation*)out.p,
                usr, usrLen, nullptr);
 }
-#else
-static void SC_ForEach_SAAUL(android::renderscript::rs_script *target,
-                             android::renderscript::rs_allocation *in,
-                             android::renderscript::rs_allocation *out,
-                             const void *usr,
-                             uint32_t usrLen) {
-    Context *rsc = RsdCpuReference::getTlsContext();
-    rsrForEach(rsc, (Script*)target->p, (Allocation*)in->p, (Allocation*)out->p, usr, usrLen, NULL);
-}
-#endif
-
-#ifndef __LP64__
 static void SC_ForEach_SAAULS(android::renderscript::rs_script target,
                               android::renderscript::rs_allocation in,
                               android::renderscript::rs_allocation out,
@@ -643,16 +632,6 @@ static void SC_ForEach_SAAULS(android::renderscript::rs_script target,
                               const RsScriptCall *call) {
     Context *rsc = RsdCpuReference::getTlsContext();
     rsrForEach(rsc, (Script*)target.p, (Allocation*)in.p, (Allocation*)out.p, usr, usrLen, call);
-}
-#else
-static void SC_ForEach_SAAULS(android::renderscript::rs_script *target,
-                              android::renderscript::rs_allocation *in,
-                              android::renderscript::rs_allocation *out,
-                              const void *usr,
-                              uint32_t usrLen,
-                              const RsScriptCall *call) {
-    Context *rsc = RsdCpuReference::getTlsContext();
-    rsrForEach(rsc, (Script*)target->p, (Allocation*)in->p, (Allocation*)out->p, usr, usrLen, call);
 }
 #endif
 #endif
@@ -1405,8 +1384,12 @@ static RsdCpuReference::CpuSymbol gSyms[] = {
     { "_Z9rsForEach9rs_script13rs_allocationS0_", (void *)&SC_ForEach_SAA, true },
     { "_Z9rsForEach9rs_script13rs_allocationS0_PKv", (void *)&SC_ForEach_SAAU, true },
     { "_Z9rsForEach9rs_script13rs_allocationS0_PKvPK14rs_script_call", (void *)&SC_ForEach_SAAUS, true },
+
+    //rsForEach with usrdata is not supported in 64-bit
+#ifndef __LP64__
     { "_Z9rsForEach9rs_script13rs_allocationS0_PKvj", (void *)&SC_ForEach_SAAUL, true },
     { "_Z9rsForEach9rs_script13rs_allocationS0_PKvjPK14rs_script_call", (void *)&SC_ForEach_SAAULS, true },
+#endif
 #endif // RS_COMPATIBILITY_LIB
 
 #ifndef __LP64__
