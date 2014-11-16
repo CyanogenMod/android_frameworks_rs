@@ -23,5 +23,4 @@ LOCAL_C_INCLUDES += $(intermediates)
 
 LOCAL_CLANG := true
 
-include external/stlport/libstlport.mk
 include $(BUILD_EXECUTABLE)
