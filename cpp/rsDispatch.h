@@ -160,4 +160,5 @@ struct dispatchTable {
     AllocationGetPointerFnPtr AllocationGetPointer;
 };
 
+bool loadSymbols(void* handle, dispatchTable& dispatchTab);
 #endif
