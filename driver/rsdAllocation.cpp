@@ -47,7 +47,6 @@
 using namespace android;
 using namespace android::renderscript;
 
-
 #ifndef RS_COMPATIBILITY_LIB
 const static GLenum gFaceOrder[] = {
     GL_TEXTURE_CUBE_MAP_POSITIVE_X,
