@@ -16,7 +16,7 @@
 #
 
 set -e
-g++ gen_runtime.cpp -Wall -o gen_runtime
+g++ gen_runtime.cpp -std=c++11 -Wall -o gen_runtime
 ./gen_runtime -v 21 rs_core_math.spec
 mv Test*.java ../../../cts/tests/tests/renderscript/src/android/renderscript/cts/
 mv Test*.rs ../../../cts/tests/tests/renderscript/src/android/renderscript/cts/
