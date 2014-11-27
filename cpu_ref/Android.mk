@@ -51,6 +51,7 @@ LOCAL_SRC_FILES_arm64 += \
     rsCpuIntrinsics_advsimd_Convolve.S \
     rsCpuIntrinsics_advsimd_Blur.S \
     rsCpuIntrinsics_advsimd_ColorMatrix.S \
+    rsCpuIntrinsics_advsimd_Resize.S \
     rsCpuIntrinsics_advsimd_YuvToRGB.S
 #    rsCpuIntrinsics_advsimd_Blend.S \
 
@@ -69,6 +70,7 @@ ifeq ($(ARCH_ARM_HAVE_VFP),true)
     rsCpuIntrinsics_neon_Blur.S \
     rsCpuIntrinsics_neon_Convolve.S \
     rsCpuIntrinsics_neon_ColorMatrix.S \
+    rsCpuIntrinsics_neon_Resize.S \
     rsCpuIntrinsics_neon_YuvToRGB.S \
 
     LOCAL_ASFLAGS_arm := -mfpu=neon
