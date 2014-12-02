@@ -18,16 +18,9 @@
 #include "rsCpuScript.h"
 
 #ifdef RS_COMPATIBILITY_LIB
-    #include <set>
-    #include <string>
-    #include <dlfcn.h>
     #include <stdio.h>
-    #include <stdlib.h>
-    #include <string.h>
     #include <sys/stat.h>
     #include <unistd.h>
-    #include <fstream>
-    #include <iostream>
 #else
     #include <bcc/BCCContext.h>
     #include <bcc/Config/Config.h>
@@ -45,8 +38,21 @@
     #include <vector>
 #endif
 
+#include <set>
+#include <string>
+#include <dlfcn.h>
+#include <stdlib.h>
+#include <string.h>
+#include <fstream>
+#include <iostream>
+
+#ifdef __LP64__
+#define SYSLIBPATH "/system/lib64"
+#else
+#define SYSLIBPATH "/system/lib"
+#endif
+
 namespace {
-#ifdef RS_COMPATIBILITY_LIB
 
 // Create a len length string containing random characters from [A-Za-z0-9].
 static std::string getRandomString(size_t len) {
@@ -106,6 +112,8 @@ static int copyFile(const char *dstFile, const char *srcFile) {
     return 0;
 }
 
+#define RS_CACHE_DIR "com.android.renderscript.cache"
+
 // Attempt to load the shared library from origName, but then fall back to
 // creating a copy of the shared library if necessary (to ensure instancing).
 // This function returns the dlopen()-ed handle if successful.
@@ -136,7 +144,12 @@ static void *loadSOHelper(const char *origName, const char *cacheDir,
     }
 
     std::string newName(cacheDir);
-    newName.append("/com.android.renderscript.cache/");
+
+    // Append RS_CACHE_DIR only if it is not found in cacheDir
+    // In driver mode, RS_CACHE_DIR is already appended to cacheDir.
+    if (newName.find(RS_CACHE_DIR) == std::string::npos) {
+        newName.append("/" RS_CACHE_DIR "/");
+    }
 
     if (!ensureCacheDirExists(newName.c_str())) {
         ALOGE("Could not verify or create cache dir: %s", cacheDir);
@@ -167,15 +180,12 @@ static void *loadSOHelper(const char *origName, const char *cacheDir,
     return loaded;
 }
 
-// Load the shared library referred to by cacheDir and resName. If we have
-// already loaded this library, we instead create a new copy (in the
-// cache dir) and then load that. We then immediately destroy the copy.
-// This is required behavior to implement script instancing for the support
-// library, since shared objects are loaded and de-duped by name only.
-static void *loadSharedLibrary(const char *cacheDir, const char *resName) {
-    void *loaded = nullptr;
+static std::string findSharedObjectName(const char *cacheDir,
+                                        const char *resName) {
+
 #ifndef RS_SERVER
     std::string scriptSOName(cacheDir);
+#ifdef RS_COMPATIBILITY_LIB
     size_t cutPos = scriptSOName.rfind("cache");
     if (cutPos != std::string::npos) {
         scriptSOName.erase(cutPos);
@@ -184,10 +194,27 @@ static void *loadSharedLibrary(const char *cacheDir, const char *resName) {
     }
     scriptSOName.append("/lib/librs.");
 #else
+    scriptSOName.append("/librs.");
+#endif
+
+#else
     std::string scriptSOName("lib");
 #endif
     scriptSOName.append(resName);
     scriptSOName.append(".so");
+
+    return scriptSOName;
+}
+
+// Load the shared library referred to by cacheDir and resName. If we have
+// already loaded this library, we instead create a new copy (in the
+// cache dir) and then load that. We then immediately destroy the copy.
+// This is required behavior to implement script instancing for the support
+// library, since shared objects are loaded and de-duped by name only.
+static void *loadSharedLibrary(const char *cacheDir, const char *resName) {
+    void *loaded = nullptr;
+
+    std::string scriptSOName = findSharedObjectName(cacheDir, resName);
 
     // We should check if we can load the library from the standard app
     // location for shared libraries first.
@@ -216,7 +243,29 @@ static void *loadSharedLibrary(const char *cacheDir, const char *resName) {
     return loaded;
 }
 
-#else  // RS_COMPATIBILITY_LIB is not defined
+#ifndef RS_COMPATIBILITY_LIB
+
+static bool is_skip_linkloader() {
+    char buf[PROPERTY_VALUE_MAX];
+    static bool initialized = false;
+    static bool prop = false;
+
+    if (initialized) {
+        return prop;
+    }
+
+    property_get("rs.skip.linkloader", buf, "");
+    prop = (buf[0] != '\0');
+    initialized = true;
+
+    if (prop) {
+        ALOGV("Skipping linkloader");
+    }
+    else {
+        ALOGV("Default path: using linkloader");
+    }
+    return prop;
+}
 
 static bool is_force_recompile() {
 #ifdef RS_SERVER
@@ -277,6 +326,11 @@ static void setCompileArguments(std::vector<const char*>* args,
         }
     }
 
+    if (is_skip_linkloader()) {
+        args->push_back("-fPIC");
+        args->push_back("-embedRSInfo");
+    }
+
     args->push_back(bcFileName.c_str());
     args->push_back(nullptr);
 }
@@ -335,13 +389,70 @@ static bool compileBitcode(const std::string &bcFileName,
     }
 }
 
+const static char *LD_EXE_PATH = "/system/bin/ld.mc";
+
+static bool createSharedLib(const char *cacheDir, const char *resName) {
+    std::string sharedLibName = findSharedObjectName(cacheDir, resName);
+    std::string objFileName = cacheDir;
+    objFileName.append("/");
+    objFileName.append(resName);
+    objFileName.append(".o");
+
+    const char *compiler_rt = SYSLIBPATH"/libcompiler_rt.so";
+    std::vector<const char *> args = {
+        LD_EXE_PATH,
+        "-shared",
+        "-nostdlib",
+        compiler_rt,
+        "-mtriple", DEFAULT_TARGET_TRIPLE_STRING,
+        "-L", SYSLIBPATH,
+        "-lRSDriver", "-lm", "-lc",
+        objFileName.c_str(),
+        "-o", sharedLibName.c_str(),
+        nullptr
+    };
+
+    std::string cmdLineStr = bcc::getCommandLine(args.size()-1, args.data());
+
+    pid_t pid = fork();
+
+    switch (pid) {
+    case -1: {  // Error occurred (we attempt no recovery)
+        ALOGE("Couldn't fork for linker (%s) execution", LD_EXE_PATH);
+        return false;
+    }
+    case 0: {  // Child process
+        ALOGV("Invoking ld.mc with args '%s'", cmdLineStr.c_str());
+        execv(LD_EXE_PATH, (char* const*) args.data());
+
+        ALOGE("execv() failed: %s", strerror(errno));
+        abort();
+        return false;
+    }
+    default: {  // Parent process (actual driver)
+        // Wait on child process to finish compiling the source.
+        int status = 0;
+        pid_t w = waitpid(pid, &status, 0);
+        if (w == -1) {
+            ALOGE("Could not wait for linker (%s)", LD_EXE_PATH);
+            return false;
+        }
+
+        if (WIFEXITED(status) && WEXITSTATUS(status) == 0) {
+            return true;
+        }
+
+        ALOGE("Linker (%s) terminated unexpectedly", LD_EXE_PATH);
+        return false;
+    }
+    }
+}
 #endif  // !defined(RS_COMPATIBILITY_LIB)
 }  // namespace
 
 namespace android {
 namespace renderscript {
 
-#ifdef RS_COMPATIBILITY_LIB
 #define MAXLINE 500
 #define MAKE_STR_HELPER(S) #S
 #define MAKE_STR(S) MAKE_STR_HELPER(S)
@@ -374,20 +485,20 @@ static char* strgets(char *s, int size, const char **ppstr) {
 
     return s;
 }
-#endif
 
 RsdCpuScriptImpl::RsdCpuScriptImpl(RsdCpuReferenceImpl *ctx, const Script *s) {
     mCtx = ctx;
     mScript = s;
 
-#ifdef RS_COMPATIBILITY_LIB
     mScriptSO = nullptr;
+
     mInvokeFunctions = nullptr;
     mForEachFunctions = nullptr;
     mFieldAddress = nullptr;
     mFieldIsObject = nullptr;
     mForEachSignatures = nullptr;
-#else
+
+#ifndef RS_COMPATIBILITY_LIB
     mCompilerDriver = nullptr;
     mExecutable = nullptr;
 #endif
@@ -404,6 +515,242 @@ RsdCpuScriptImpl::RsdCpuScriptImpl(RsdCpuReferenceImpl *ctx, const Script *s) {
     mIsThreadable = true;
 }
 
+bool RsdCpuScriptImpl::storeRSInfoFromSO() {
+    char line[MAXLINE];
+    size_t varCount = 0;
+    size_t funcCount = 0;
+    size_t forEachCount = 0;
+    size_t objectSlotCount = 0;
+
+    mRoot = (RootFunc_t) dlsym(mScriptSO, "root");
+    if (mRoot) {
+        //ALOGE("Found root(): %p", mRoot);
+    }
+    mRootExpand = (RootFunc_t) dlsym(mScriptSO, "root.expand");
+    if (mRootExpand) {
+        //ALOGE("Found root.expand(): %p", mRootExpand);
+    }
+    mInit = (InvokeFunc_t) dlsym(mScriptSO, "init");
+    if (mInit) {
+        //ALOGE("Found init(): %p", mInit);
+    }
+    mFreeChildren = (InvokeFunc_t) dlsym(mScriptSO, ".rs.dtor");
+    if (mFreeChildren) {
+        //ALOGE("Found .rs.dtor(): %p", mFreeChildren);
+    }
+
+    const char *rsInfo = (const char *) dlsym(mScriptSO, ".rs.info");
+    if (rsInfo) {
+        //ALOGE("Found .rs.info(): %p - %s", rsInfo, rsInfo);
+    }
+
+    if (strgets(line, MAXLINE, &rsInfo) == nullptr) {
+        goto error;
+    }
+    if (sscanf(line, EXPORT_VAR_STR "%zu", &varCount) != 1) {
+        ALOGE("Invalid export var count!: %s", line);
+        goto error;
+    }
+
+    mExportedVariableCount = varCount;
+    //ALOGE("varCount: %zu", varCount);
+    if (varCount > 0) {
+        // Start by creating/zeroing this member, since we don't want to
+        // accidentally clean up invalid pointers later (if we error out).
+        mFieldIsObject = new bool[varCount];
+        if (mFieldIsObject == nullptr) {
+            goto error;
+        }
+        memset(mFieldIsObject, 0, varCount * sizeof(*mFieldIsObject));
+        mFieldAddress = new void*[varCount];
+        if (mFieldAddress == nullptr) {
+            goto error;
+        }
+        for (size_t i = 0; i < varCount; ++i) {
+            if (strgets(line, MAXLINE, &rsInfo) == nullptr) {
+                goto error;
+            }
+            char *c = strrchr(line, '\n');
+            if (c) {
+                *c = '\0';
+            }
+            mFieldAddress[i] = dlsym(mScriptSO, line);
+            if (mFieldAddress[i] == nullptr) {
+                ALOGE("Failed to find variable address for %s: %s",
+                      line, dlerror());
+                // Not a critical error if we don't find a global variable.
+            }
+            else {
+                //ALOGE("Found variable %s at %p", line,
+                //mFieldAddress[i]);
+            }
+        }
+    }
+
+    if (strgets(line, MAXLINE, &rsInfo) == nullptr) {
+        goto error;
+    }
+    if (sscanf(line, EXPORT_FUNC_STR "%zu", &funcCount) != 1) {
+        ALOGE("Invalid export func count!: %s", line);
+        goto error;
+    }
+
+    mExportedFunctionCount = funcCount;
+    //ALOGE("funcCount: %zu", funcCount);
+
+    if (funcCount > 0) {
+        mInvokeFunctions = new InvokeFunc_t[funcCount];
+        if (mInvokeFunctions == nullptr) {
+            goto error;
+        }
+        for (size_t i = 0; i < funcCount; ++i) {
+            if (strgets(line, MAXLINE, &rsInfo) == nullptr) {
+                goto error;
+            }
+            char *c = strrchr(line, '\n');
+            if (c) {
+                *c = '\0';
+            }
+
+            mInvokeFunctions[i] = (InvokeFunc_t) dlsym(mScriptSO, line);
+            if (mInvokeFunctions[i] == nullptr) {
+                ALOGE("Failed to get function address for %s(): %s",
+                      line, dlerror());
+                goto error;
+            }
+            else {
+                //ALOGE("Found InvokeFunc_t %s at %p", line, mInvokeFunctions[i]);
+            }
+        }
+    }
+
+    if (strgets(line, MAXLINE, &rsInfo) == nullptr) {
+        goto error;
+    }
+    if (sscanf(line, EXPORT_FOREACH_STR "%zu", &forEachCount) != 1) {
+        ALOGE("Invalid export forEach count!: %s", line);
+        goto error;
+    }
+
+    if (forEachCount > 0) {
+
+        mForEachSignatures = new uint32_t[forEachCount];
+        if (mForEachSignatures == nullptr) {
+            goto error;
+        }
+        mForEachFunctions = new ForEachFunc_t[forEachCount];
+        if (mForEachFunctions == nullptr) {
+            goto error;
+        }
+        for (size_t i = 0; i < forEachCount; ++i) {
+            unsigned int tmpSig = 0;
+            char tmpName[MAXLINE];
+
+            if (strgets(line, MAXLINE, &rsInfo) == nullptr) {
+                goto error;
+            }
+            if (sscanf(line, "%u - %" MAKE_STR(MAXLINE) "s",
+                       &tmpSig, tmpName) != 2) {
+                ALOGE("Invalid export forEach!: %s", line);
+                goto error;
+            }
+
+            // Lookup the expanded ForEach kernel.
+            strncat(tmpName, ".expand", MAXLINE-1-strlen(tmpName));
+            mForEachSignatures[i] = tmpSig;
+            mForEachFunctions[i] =
+                    (ForEachFunc_t) dlsym(mScriptSO, tmpName);
+            if (i != 0 && mForEachFunctions[i] == nullptr) {
+                // Ignore missing root.expand functions.
+                // root() is always specified at location 0.
+                ALOGE("Failed to find forEach function address for %s: %s",
+                      tmpName, dlerror());
+                goto error;
+            }
+            else {
+                //ALOGE("Found forEach %s at %p", tmpName, mForEachFunctions[i]);
+            }
+        }
+    }
+
+    if (strgets(line, MAXLINE, &rsInfo) == nullptr) {
+        goto error;
+    }
+    if (sscanf(line, OBJECT_SLOT_STR "%zu", &objectSlotCount) != 1) {
+        ALOGE("Invalid object slot count!: %s", line);
+        goto error;
+    }
+
+    if (objectSlotCount > 0) {
+        rsAssert(varCount > 0);
+        for (size_t i = 0; i < objectSlotCount; ++i) {
+            uint32_t varNum = 0;
+            if (strgets(line, MAXLINE, &rsInfo) == nullptr) {
+                goto error;
+            }
+            if (sscanf(line, "%u", &varNum) != 1) {
+                ALOGE("Invalid object slot!: %s", line);
+                goto error;
+            }
+
+            if (varNum < varCount) {
+                mFieldIsObject[varNum] = true;
+            }
+        }
+    }
+
+    if (varCount > 0) {
+        mBoundAllocs = new Allocation *[varCount];
+        memset(mBoundAllocs, 0, varCount * sizeof(*mBoundAllocs));
+    }
+
+    if (mScriptSO == (void*)1) {
+        //rsdLookupRuntimeStub(script, "acos");
+    }
+
+    return true;
+
+error:
+    delete[] mInvokeFunctions;
+    delete[] mForEachFunctions;
+    delete[] mFieldAddress;
+    delete[] mFieldIsObject;
+    delete[] mForEachSignatures;
+    delete[] mBoundAllocs;
+
+    return false;
+}
+
+#ifndef RS_COMPATIBILITY_LIB
+bool RsdCpuScriptImpl::storeRSInfoFromObj(bcinfo::MetadataExtractor &bitcodeMetadata) {
+
+    mExecutable->setThreadable(mIsThreadable);
+    if (!mExecutable->syncInfo()) {
+        ALOGW("bcc: FAILS to synchronize the RS info file to the disk");
+    }
+
+    mRoot = reinterpret_cast<int (*)()>(mExecutable->getSymbolAddress("root"));
+    mRootExpand =
+        reinterpret_cast<int (*)()>(mExecutable->getSymbolAddress("root.expand"));
+    mInit = reinterpret_cast<void (*)()>(mExecutable->getSymbolAddress("init"));
+    mFreeChildren =
+        reinterpret_cast<void (*)()>(mExecutable->getSymbolAddress(".rs.dtor"));
+
+
+    if (bitcodeMetadata.getExportVarCount()) {
+        mBoundAllocs = new Allocation *[bitcodeMetadata.getExportVarCount()];
+        memset(mBoundAllocs, 0, sizeof(void *) * bitcodeMetadata.getExportVarCount());
+    }
+
+    for (size_t i = 0; i < bitcodeMetadata.getExportForEachSignatureCount(); i++) {
+        char* name = new char[strlen(bitcodeMetadata.getExportForEachNameList()[i]) + 1];
+        mExportedForEachFuncList.push_back(
+                    std::make_pair(name, bitcodeMetadata.getExportForEachSignatureList()[i]));
+    }
+
+    return true;
+}
+#endif
 
 bool RsdCpuScriptImpl::init(char const *resName, char const *cacheDir,
                             uint8_t const *bitcode, size_t bitcodeSize,
@@ -464,7 +811,12 @@ bool RsdCpuScriptImpl::init(char const *resName, char const *cacheDir,
     std::string compileCommandLine =
                 bcc::getCommandLine(compileArguments.size() - 1, compileArguments.data());
 
-    if (!is_force_recompile()) {
+    if (is_skip_linkloader()) {
+        if (!is_force_recompile()) {
+            mScriptSO = loadSharedLibrary(cacheDir, resName);
+        }
+    }
+    else if (!is_force_recompile()) {
         // Load the compiled script that's in the cache, if any.
         mExecutable = bcc::RSCompilerDriver::loadScript(cacheDir, resName, (const char*)bitcode,
                                                         bitcodeSize, compileCommandLine.c_str(),
@@ -473,7 +825,31 @@ bool RsdCpuScriptImpl::init(char const *resName, char const *cacheDir,
 
     // If we can't, it's either not there or out of date.  We compile the bit code and try loading
     // again.
-    if (mExecutable == nullptr) {
+    if (is_skip_linkloader()) {
+        if (mScriptSO == nullptr) {
+            if (!compileBitcode(bcFileName, (const char*)bitcode, bitcodeSize,
+                                compileArguments.data(), compileCommandLine))
+            {
+                ALOGE("bcc: FAILS to compile '%s'", resName);
+                mCtx->unlockMutex();
+                return false;
+            }
+
+            if (!createSharedLib(cacheDir, resName)) {
+                ALOGE("Linker: Failed to link object file '%s'", resName);
+                mCtx->unlockMutex();
+                return false;
+            }
+
+            mScriptSO = loadSharedLibrary(cacheDir, resName);
+            if (mScriptSO == nullptr) {
+                ALOGE("Unable to load '%s'", resName);
+                mCtx->unlockMutex();
+                return false;
+            }
+        }
+    }
+    else if (mExecutable == nullptr) {
         if (!compileBitcode(bcFileName, (const char*)bitcode, bitcodeSize, compileArguments.data(),
                             compileCommandLine)) {
             ALOGE("bcc: FAILS to compile '%s'", resName);
@@ -490,256 +866,45 @@ bool RsdCpuScriptImpl::init(char const *resName, char const *cacheDir,
         }
     }
 
-    mExecutable->setThreadable(mIsThreadable);
-    if (!mExecutable->syncInfo()) {
-        ALOGW("bcc: FAILS to synchronize the RS info file to the disk");
+    // if using the shared object path, read RS symbol information
+    // from the .so.  Otherwise, read from the object files
+    if (!is_skip_linkloader()) {
+        storeRSInfoFromObj(bitcodeMetadata);
     }
+    else {
+        if ( !mScriptSO) {
+            goto error;
+        }
 
-    mRoot = reinterpret_cast<int (*)()>(mExecutable->getSymbolAddress("root"));
-    mRootExpand =
-        reinterpret_cast<int (*)()>(mExecutable->getSymbolAddress("root.expand"));
-    mInit = reinterpret_cast<void (*)()>(mExecutable->getSymbolAddress("init"));
-    mFreeChildren =
-        reinterpret_cast<void (*)()>(mExecutable->getSymbolAddress(".rs.dtor"));
-
-
-    if (bitcodeMetadata.getExportVarCount()) {
-        mBoundAllocs = new Allocation *[bitcodeMetadata.getExportVarCount()];
-        memset(mBoundAllocs, 0, sizeof(void *) * bitcodeMetadata.getExportVarCount());
+        if ( !storeRSInfoFromSO()) {
+          goto error;
+        }
     }
-
-    for (size_t i = 0; i < bitcodeMetadata.getExportForEachSignatureCount(); i++) {
-        char* name = new char[strlen(bitcodeMetadata.getExportForEachNameList()[i]) + 1];
-        mExportedForEachFuncList.push_back(
-                    std::make_pair(name, bitcodeMetadata.getExportForEachSignatureList()[i]));
-    }
-
 #else  // RS_COMPATIBILITY_LIB is defined
 
     mScriptSO = loadSharedLibrary(cacheDir, resName);
 
-    if (mScriptSO) {
-        char line[MAXLINE];
-        mRoot = (RootFunc_t) dlsym(mScriptSO, "root");
-        if (mRoot) {
-            //ALOGE("Found root(): %p", mRoot);
-        }
-        mRootExpand = (RootFunc_t) dlsym(mScriptSO, "root.expand");
-        if (mRootExpand) {
-            //ALOGE("Found root.expand(): %p", mRootExpand);
-        }
-        mInit = (InvokeFunc_t) dlsym(mScriptSO, "init");
-        if (mInit) {
-            //ALOGE("Found init(): %p", mInit);
-        }
-        mFreeChildren = (InvokeFunc_t) dlsym(mScriptSO, ".rs.dtor");
-        if (mFreeChildren) {
-            //ALOGE("Found .rs.dtor(): %p", mFreeChildren);
-        }
+    if (!mScriptSO) {
+        goto error;
+    }
 
-        const char *rsInfo = (const char *) dlsym(mScriptSO, ".rs.info");
-        if (rsInfo) {
-            //ALOGE("Found .rs.info(): %p - %s", rsInfo, rsInfo);
-        }
-
-        size_t varCount = 0;
-        if (strgets(line, MAXLINE, &rsInfo) == nullptr) {
-            goto error;
-        }
-        if (sscanf(line, EXPORT_VAR_STR "%zu", &varCount) != 1) {
-            ALOGE("Invalid export var count!: %s", line);
-            goto error;
-        }
-
-        mExportedVariableCount = varCount;
-        //ALOGE("varCount: %zu", varCount);
-        if (varCount > 0) {
-            // Start by creating/zeroing this member, since we don't want to
-            // accidentally clean up invalid pointers later (if we error out).
-            mFieldIsObject = new bool[varCount];
-            if (mFieldIsObject == nullptr) {
-                goto error;
-            }
-            memset(mFieldIsObject, 0, varCount * sizeof(*mFieldIsObject));
-            mFieldAddress = new void*[varCount];
-            if (mFieldAddress == nullptr) {
-                goto error;
-            }
-            for (size_t i = 0; i < varCount; ++i) {
-                if (strgets(line, MAXLINE, &rsInfo) == nullptr) {
-                    goto error;
-                }
-                char *c = strrchr(line, '\n');
-                if (c) {
-                    *c = '\0';
-                }
-                mFieldAddress[i] = dlsym(mScriptSO, line);
-                if (mFieldAddress[i] == nullptr) {
-                    ALOGE("Failed to find variable address for %s: %s",
-                          line, dlerror());
-                    // Not a critical error if we don't find a global variable.
-                }
-                else {
-                    //ALOGE("Found variable %s at %p", line,
-                    //mFieldAddress[i]);
-                }
-            }
-        }
-
-        size_t funcCount = 0;
-        if (strgets(line, MAXLINE, &rsInfo) == nullptr) {
-            goto error;
-        }
-        if (sscanf(line, EXPORT_FUNC_STR "%zu", &funcCount) != 1) {
-            ALOGE("Invalid export func count!: %s", line);
-            goto error;
-        }
-
-        mExportedFunctionCount = funcCount;
-        //ALOGE("funcCount: %zu", funcCount);
-
-        if (funcCount > 0) {
-            mInvokeFunctions = new InvokeFunc_t[funcCount];
-            if (mInvokeFunctions == nullptr) {
-                goto error;
-            }
-            for (size_t i = 0; i < funcCount; ++i) {
-                if (strgets(line, MAXLINE, &rsInfo) == nullptr) {
-                    goto error;
-                }
-                char *c = strrchr(line, '\n');
-                if (c) {
-                    *c = '\0';
-                }
-
-                mInvokeFunctions[i] = (InvokeFunc_t) dlsym(mScriptSO, line);
-                if (mInvokeFunctions[i] == nullptr) {
-                    ALOGE("Failed to get function address for %s(): %s",
-                          line, dlerror());
-                    goto error;
-                }
-                else {
-                    //ALOGE("Found InvokeFunc_t %s at %p", line, mInvokeFunctions[i]);
-                }
-            }
-        }
-
-        size_t forEachCount = 0;
-        if (strgets(line, MAXLINE, &rsInfo) == nullptr) {
-            goto error;
-        }
-        if (sscanf(line, EXPORT_FOREACH_STR "%zu", &forEachCount) != 1) {
-            ALOGE("Invalid export forEach count!: %s", line);
-            goto error;
-        }
-
-        if (forEachCount > 0) {
-
-            mForEachSignatures = new uint32_t[forEachCount];
-            if (mForEachSignatures == nullptr) {
-                goto error;
-            }
-            mForEachFunctions = new ForEachFunc_t[forEachCount];
-            if (mForEachFunctions == nullptr) {
-                goto error;
-            }
-            for (size_t i = 0; i < forEachCount; ++i) {
-                unsigned int tmpSig = 0;
-                char tmpName[MAXLINE];
-
-                if (strgets(line, MAXLINE, &rsInfo) == nullptr) {
-                    goto error;
-                }
-                if (sscanf(line, "%u - %" MAKE_STR(MAXLINE) "s",
-                           &tmpSig, tmpName) != 2) {
-                    ALOGE("Invalid export forEach!: %s", line);
-                    goto error;
-                }
-
-                // Lookup the expanded ForEach kernel.
-                strncat(tmpName, ".expand", MAXLINE-1-strlen(tmpName));
-                mForEachSignatures[i] = tmpSig;
-                mForEachFunctions[i] =
-                        (ForEachFunc_t) dlsym(mScriptSO, tmpName);
-                if (i != 0 && mForEachFunctions[i] == nullptr) {
-                    // Ignore missing root.expand functions.
-                    // root() is always specified at location 0.
-                    ALOGE("Failed to find forEach function address for %s: %s",
-                          tmpName, dlerror());
-                    goto error;
-                }
-                else {
-                    //ALOGE("Found forEach %s at %p", tmpName, mForEachFunctions[i]);
-                }
-            }
-        }
-
-        size_t objectSlotCount = 0;
-        if (strgets(line, MAXLINE, &rsInfo) == nullptr) {
-            goto error;
-        }
-        if (sscanf(line, OBJECT_SLOT_STR "%zu", &objectSlotCount) != 1) {
-            ALOGE("Invalid object slot count!: %s", line);
-            goto error;
-        }
-
-        if (objectSlotCount > 0) {
-            rsAssert(varCount > 0);
-            for (size_t i = 0; i < objectSlotCount; ++i) {
-                uint32_t varNum = 0;
-                if (strgets(line, MAXLINE, &rsInfo) == nullptr) {
-                    goto error;
-                }
-                if (sscanf(line, "%u", &varNum) != 1) {
-                    ALOGE("Invalid object slot!: %s", line);
-                    goto error;
-                }
-
-                if (varNum < varCount) {
-                    mFieldIsObject[varNum] = true;
-                }
-            }
-        }
-
-        if (varCount > 0) {
-            mBoundAllocs = new Allocation *[varCount];
-            memset(mBoundAllocs, 0, varCount * sizeof(*mBoundAllocs));
-        }
-
-        if (mScriptSO == (void*)1) {
-            //rsdLookupRuntimeStub(script, "acos");
-        }
-    } else {
+    if (!storeRSInfoFromSO()) {
         goto error;
     }
 #endif
     mCtx->unlockMutex();
     return true;
 
-#ifdef RS_COMPATIBILITY_LIB
 error:
 
     mCtx->unlockMutex();
-    delete[] mInvokeFunctions;
-    delete[] mForEachFunctions;
-    delete[] mFieldAddress;
-    delete[] mFieldIsObject;
-    delete[] mForEachSignatures;
-    delete[] mBoundAllocs;
     if (mScriptSO) {
         dlclose(mScriptSO);
     }
     return false;
-#endif
 }
 
 #ifndef RS_COMPATIBILITY_LIB
-
-#ifdef __LP64__
-#define SYSLIBPATH "/system/lib64"
-#else
-#define SYSLIBPATH "/system/lib"
-#endif
 
 const char* RsdCpuScriptImpl::findCoreLib(const bcinfo::MetadataExtractor& ME, const char* bitcode,
                                           size_t bitcodeSize) {
@@ -781,19 +946,36 @@ const char* RsdCpuScriptImpl::findCoreLib(const bcinfo::MetadataExtractor& ME, c
 void RsdCpuScriptImpl::populateScript(Script *script) {
 #ifndef RS_COMPATIBILITY_LIB
     // Copy info over to runtime
-    script->mHal.info.exportedFunctionCount = mExecutable->getExportFuncAddrs().size();
-    script->mHal.info.exportedVariableCount = mExecutable->getExportVarAddrs().size();
-    script->mHal.info.exportedForeachFuncList = &mExportedForEachFuncList[0];
-    script->mHal.info.exportedPragmaCount = mExecutable->getPragmaKeys().size();
-    script->mHal.info.exportedPragmaKeyList =
-        const_cast<const char**>(&mExecutable->getPragmaKeys().front());
-    script->mHal.info.exportedPragmaValueList =
-        const_cast<const char**>(&mExecutable->getPragmaValues().front());
+    if (!is_skip_linkloader()) {
+        script->mHal.info.exportedFunctionCount = mExecutable->getExportFuncAddrs().size();
+        script->mHal.info.exportedVariableCount = mExecutable->getExportVarAddrs().size();
+        script->mHal.info.exportedForeachFuncList = &mExportedForEachFuncList[0];
+        script->mHal.info.exportedPragmaCount = mExecutable->getPragmaKeys().size();
+        script->mHal.info.exportedPragmaKeyList =
+            const_cast<const char**>(&mExecutable->getPragmaKeys().front());
+        script->mHal.info.exportedPragmaValueList =
+            const_cast<const char**>(&mExecutable->getPragmaValues().front());
 
-    if (mRootExpand) {
-        script->mHal.info.root = mRootExpand;
-    } else {
-        script->mHal.info.root = mRoot;
+        if (mRootExpand) {
+            script->mHal.info.root = mRootExpand;
+        } else {
+            script->mHal.info.root = mRoot;
+        }
+    }
+    else {
+        // Copy info over to runtime
+        script->mHal.info.exportedFunctionCount = mExportedFunctionCount;
+        script->mHal.info.exportedVariableCount = mExportedVariableCount;
+        script->mHal.info.exportedPragmaCount = 0;
+        script->mHal.info.exportedPragmaKeyList = 0;
+        script->mHal.info.exportedPragmaValueList = 0;
+
+        // Bug, need to stash in metadata
+        if (mRootExpand) {
+            script->mHal.info.root = mRootExpand;
+        } else {
+            script->mHal.info.root = mRoot;
+        }
     }
 #else
     // Copy info over to runtime
@@ -997,11 +1179,18 @@ void RsdCpuScriptImpl::forEachKernelSetup(uint32_t slot, MTLaunchStruct *mtls) {
     mtls->script = this;
     mtls->fep.slot = slot;
 #ifndef RS_COMPATIBILITY_LIB
-    rsAssert(slot < mExecutable->getExportForeachFuncAddrs().size());
-    mtls->kernel = reinterpret_cast<ForEachFunc_t>(
-                      mExecutable->getExportForeachFuncAddrs()[slot]);
-    rsAssert(mtls->kernel != nullptr);
-    mtls->sig = mExecutable->getInfo().getExportForeachFuncs()[slot].second;
+    if (!is_skip_linkloader()) {
+        rsAssert(slot < mExecutable->getExportForeachFuncAddrs().size());
+        mtls->kernel = reinterpret_cast<ForEachFunc_t>(
+                          mExecutable->getExportForeachFuncAddrs()[slot]);
+        rsAssert(mtls->kernel != nullptr);
+        mtls->sig = mExecutable->getInfo().getExportForeachFuncs()[slot].second;
+    }
+    else {
+        mtls->kernel = reinterpret_cast<ForEachFunc_t>(mForEachFunctions[slot]);
+        rsAssert(mtls->kernel != nullptr);
+        mtls->sig = mForEachSignatures[slot];
+    }
 #else
     mtls->kernel = reinterpret_cast<ForEachFunc_t>(mForEachFunctions[slot]);
     rsAssert(mtls->kernel != nullptr);
@@ -1030,7 +1219,7 @@ void RsdCpuScriptImpl::invokeFreeChildren() {
 
 void RsdCpuScriptImpl::invokeFunction(uint32_t slot, const void *params,
                                       size_t paramLength) {
-    //ALOGE("invoke %p %p %i %p %i", dc, script, slot, params, paramLength);
+    //ALOGE("invoke %i %p %zu", slot, params, paramLength);
     void * ap = nullptr;
 
 #if defined(__x86_64__)
@@ -1048,15 +1237,19 @@ void RsdCpuScriptImpl::invokeFunction(uint32_t slot, const void *params,
 #endif
 
     RsdCpuScriptImpl * oldTLS = mCtx->setTLS(this);
-    reinterpret_cast<void (*)(const void *, uint32_t)>(
 #ifndef RS_COMPATIBILITY_LIB
-        mExecutable->getExportFuncAddrs()[slot])(ap ? (const void *)ap : params, paramLength);
+    if (! is_skip_linkloader()) {
+        reinterpret_cast<void (*)(const void *, uint32_t)>(
+            mExecutable->getExportFuncAddrs()[slot])(
+                ap? (const void *) ap : params, paramLength);
+    }
+    else {
+        reinterpret_cast<void (*)(const void *, uint32_t)>(
+            mInvokeFunctions[slot])(ap? (const void *) ap: params, paramLength);
+    }
 #else
-        mInvokeFunctions[slot])(ap ? (const void *)ap : params, paramLength);
-#endif
-
-#if defined(__x86_64__)
-    if (ap) free(ap);
+    reinterpret_cast<void (*)(const void *, uint32_t)>(
+        mInvokeFunctions[slot])(ap? (const void *) ap: params, paramLength);
 #endif
 
     mCtx->setTLS(oldTLS);
@@ -1064,7 +1257,7 @@ void RsdCpuScriptImpl::invokeFunction(uint32_t slot, const void *params,
 
 void RsdCpuScriptImpl::setGlobalVar(uint32_t slot, const void *data, size_t dataLength) {
     //rsAssert(!script->mFieldIsObject[slot]);
-    //ALOGE("setGlobalVar %p %p %i %p %i", dc, script, slot, data, dataLength);
+    //ALOGE("setGlobalVar %i %p %zu", slot, data, dataLength);
 
     //if (mIntrinsicID) {
         //mIntrinsicFuncs.setVar(dc, script, drv->mIntrinsicData, slot, data, dataLength);
@@ -1072,8 +1265,14 @@ void RsdCpuScriptImpl::setGlobalVar(uint32_t slot, const void *data, size_t data
     //}
 
 #ifndef RS_COMPATIBILITY_LIB
-    int32_t *destPtr = reinterpret_cast<int32_t *>(
-                          mExecutable->getExportVarAddrs()[slot]);
+    int32_t *destPtr = nullptr;
+    if (!is_skip_linkloader()) {
+        destPtr = reinterpret_cast<int32_t *>(
+                               mExecutable->getExportVarAddrs()[slot]);
+    }
+    else {
+        destPtr = reinterpret_cast<int32_t *>(mFieldAddress[slot]);
+    }
 #else
     int32_t *destPtr = reinterpret_cast<int32_t *>(mFieldAddress[slot]);
 #endif
@@ -1087,11 +1286,17 @@ void RsdCpuScriptImpl::setGlobalVar(uint32_t slot, const void *data, size_t data
 
 void RsdCpuScriptImpl::getGlobalVar(uint32_t slot, void *data, size_t dataLength) {
     //rsAssert(!script->mFieldIsObject[slot]);
-    //ALOGE("getGlobalVar %p %p %i %p %i", dc, script, slot, data, dataLength);
+    //ALOGE("getGlobalVar %i %p %zu", slot, data, dataLength);
 
 #ifndef RS_COMPATIBILITY_LIB
-    int32_t *srcPtr = reinterpret_cast<int32_t *>(
-                          mExecutable->getExportVarAddrs()[slot]);
+    int32_t *srcPtr = nullptr;
+    if (!is_skip_linkloader()) {
+        srcPtr = reinterpret_cast<int32_t *>(
+                              mExecutable->getExportVarAddrs()[slot]);
+    }
+    else {
+        srcPtr = reinterpret_cast<int32_t *>(mFieldAddress[slot]);
+    }
 #else
     int32_t *srcPtr = reinterpret_cast<int32_t *>(mFieldAddress[slot]);
 #endif
@@ -1108,8 +1313,14 @@ void RsdCpuScriptImpl::setGlobalVarWithElemDims(uint32_t slot, const void *data,
                                                 const uint32_t *dims, size_t dimLength) {
 
 #ifndef RS_COMPATIBILITY_LIB
-    int32_t *destPtr = reinterpret_cast<int32_t *>(
-        mExecutable->getExportVarAddrs()[slot]);
+    int32_t *destPtr = nullptr;
+    if (!is_skip_linkloader()) {
+        destPtr = reinterpret_cast<int32_t *>(
+                               mExecutable->getExportVarAddrs()[slot]);
+    }
+    else {
+        destPtr = reinterpret_cast<int32_t *>(mFieldAddress[slot]);
+    }
 #else
     int32_t *destPtr = reinterpret_cast<int32_t *>(mFieldAddress[slot]);
 #endif
@@ -1147,11 +1358,17 @@ void RsdCpuScriptImpl::setGlobalVarWithElemDims(uint32_t slot, const void *data,
 void RsdCpuScriptImpl::setGlobalBind(uint32_t slot, Allocation *data) {
 
     //rsAssert(!script->mFieldIsObject[slot]);
-    //ALOGE("setGlobalBind %p %p %i %p", dc, script, slot, data);
+    //ALOGE("setGlobalBind %i %p", slot, data);
 
 #ifndef RS_COMPATIBILITY_LIB
-    int32_t *destPtr = reinterpret_cast<int32_t *>(
-                          mExecutable->getExportVarAddrs()[slot]);
+    int32_t *destPtr = nullptr;
+    if (!is_skip_linkloader()) {
+        destPtr = reinterpret_cast<int32_t *>(
+                               mExecutable->getExportVarAddrs()[slot]);
+    }
+    else {
+        destPtr = reinterpret_cast<int32_t *>(mFieldAddress[slot]);
+    }
 #else
     int32_t *destPtr = reinterpret_cast<int32_t *>(mFieldAddress[slot]);
 #endif
@@ -1162,7 +1379,7 @@ void RsdCpuScriptImpl::setGlobalBind(uint32_t slot, Allocation *data) {
 
     void *ptr = nullptr;
     mBoundAllocs[slot] = data;
-    if(data) {
+    if (data) {
         ptr = data->mHal.drvState.lod[0].mallocPtr;
     }
     memcpy(destPtr, &ptr, sizeof(void *));
@@ -1171,11 +1388,17 @@ void RsdCpuScriptImpl::setGlobalBind(uint32_t slot, Allocation *data) {
 void RsdCpuScriptImpl::setGlobalObj(uint32_t slot, ObjectBase *data) {
 
     //rsAssert(script->mFieldIsObject[slot]);
-    //ALOGE("setGlobalObj %p %p %i %p", dc, script, slot, data);
+    //ALOGE("setGlobalObj %i %p", slot, data);
 
 #ifndef RS_COMPATIBILITY_LIB
-    int32_t *destPtr = reinterpret_cast<int32_t *>(
-                          mExecutable->getExportVarAddrs()[slot]);
+    int32_t *destPtr = nullptr;
+    if (!is_skip_linkloader()) {
+        destPtr = reinterpret_cast<int32_t *>(
+                               mExecutable->getExportVarAddrs()[slot]);
+    }
+    else {
+        destPtr = reinterpret_cast<int32_t *>(mFieldAddress[slot]);
+    }
 #else
     int32_t *destPtr = reinterpret_cast<int32_t *>(mFieldAddress[slot]);
 #endif
@@ -1230,6 +1453,27 @@ RsdCpuScriptImpl::~RsdCpuScriptImpl() {
     for (size_t i = 0; i < mExportedForEachFuncList.size(); i++) {
         delete[] mExportedForEachFuncList[i].first;
     }
+
+    if (mFieldIsObject) {
+        for (size_t i = 0; i < mExportedVariableCount; ++i) {
+            if (mFieldIsObject[i]) {
+                if (mFieldAddress[i] != nullptr) {
+                    rs_object_base *obj_addr =
+                        reinterpret_cast<rs_object_base *>(mFieldAddress[i]);
+                    rsrClearObject(mCtx->getContext(), obj_addr);
+                }
+            }
+        }
+    }
+
+    if (is_skip_linkloader()) {
+        if (mInvokeFunctions) delete[] mInvokeFunctions;
+        if (mForEachFunctions) delete[] mForEachFunctions;
+        if (mFieldAddress) delete[] mFieldAddress;
+        if (mFieldIsObject) delete[] mFieldIsObject;
+        if (mForEachSignatures) delete[] mForEachSignatures;
+    }
+
 #else
     if (mFieldIsObject) {
         for (size_t i = 0; i < mExportedVariableCount; ++i) {
