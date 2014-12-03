@@ -167,7 +167,7 @@ for a in $TOOLS_BIN; do
 done
 
 for a in $TOOLS_LIB; do
-  cp $ANDROID_HOST_OUT/lib/$a tools/$SHORT_OSNAME/
+  cp $HOST_LIB64_DIR/$a tools/$SHORT_OSNAME/
   strip tools/$SHORT_OSNAME/$a
 done
 
