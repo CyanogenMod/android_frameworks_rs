@@ -258,6 +258,11 @@ static void setCompileArguments(std::vector<const char*>* args,
     args->push_back("-mtriple");
     args->push_back(DEFAULT_TARGET_TRIPLE_STRING);
 
+    // Enable workaround for A53 codegen by default.
+#if defined(__aarch64__) && !defined(DISABLE_A53_WORKAROUND)
+    args->push_back("-aarch64-fix-cortex-a53-835769");
+#endif
+
     // Execute the bcc compiler.
     if (useRSDebugContext) {
         args->push_back("-rs-debug-ctx");
