@@ -150,6 +150,8 @@ extern void __attribute__((overloadable))
               rs_allocation output, const void * usrData);
 #else
 
+
+#if (RS_VERSION < 21)
 /**
  * Make a script to script call to launch work. One of the input or output is
  * required to be a valid object. The input and output must be of the same
@@ -160,7 +162,7 @@ extern void __attribute__((overloadable))
  * @param input The allocation to source data from
  * @param output the allocation to write date into
  * @param usrData The user definied params to pass to the root script.  May be
- *                NULL.
+ *                NULL. Not supported in API 21 or higher.
  * @param usrDataLen The size of the userData structure.  This will be used to
  *                   perform a shallow copy of the data if necessary.
  * @param sc Extra control infomation used to select a sub-region of the
@@ -177,6 +179,8 @@ extern void __attribute__((overloadable))
 extern void __attribute__((overloadable))
     rsForEach(rs_script script, rs_allocation input, rs_allocation output,
               const void * usrData, size_t usrDataLen);
+#endif
+
 /**
  * \overload
  */
