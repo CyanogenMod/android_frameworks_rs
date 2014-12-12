@@ -47,7 +47,7 @@ extern uint32_t __attribute__((overloadable))
  * @return sub-element in this element at given index
  */
 extern rs_element __attribute__((overloadable))
-    rsElementGetSubElement(rs_element, uint32_t index);
+    rsElementGetSubElement(rs_element e, uint32_t index);
 
 /**
  * For complex elements, this function will return the length of
@@ -140,4 +140,3 @@ extern uint32_t __attribute__((overloadable))
 #endif // (defined(RS_VERSION) && (RS_VERSION >= 16))
 
 #endif // __RS_ELEMENT_RSH__
-

@@ -34,7 +34,7 @@
  * once, multiply the two source matrices, with the first transformation as the
  * right argument.  E.g. to create a transformation matrix that applies the
  * transformation \e s1 followed by \e s2, call
- * </c>rsMatrixLoadMultiply(&combined, &s2, &s1)</c>.
+ * <c>rsMatrixLoadMultiply(&combined, &s2, &s1)</c>.
  * This derives from <em>s2 * (s1 * v)</em>, which is <em>(s2 * s1) * v</em>.
  *
  * \li We have two style of functions to create transformation matrices:
@@ -60,8 +60,6 @@
  *
  * \warning The order of the column and row parameters may be
  * unexpected.
- *
- * @return void
  */
 _RS_RUNTIME void __attribute__((overloadable))
 rsMatrixSet(rs_matrix4x4 *m, uint32_t col, uint32_t row, float v);
@@ -233,7 +231,7 @@ rsMatrixLoadTranslate(rs_matrix4x4 *m, float x, float y, float z);
  * To combine two 4x4 transformaton matrices, multiply the second transformation matrix
  * by the first transformation matrix.  E.g. to create a transformation matrix that applies
  * the transformation \e s1 followed by \e s2, call
- * </c>rsMatrixLoadMultiply(&combined, &s2, &s1)</c>.
+ * <c>rsMatrixLoadMultiply(&combined, &s2, &s1)</c>.
  *
  * \warning Prior to version 21, storing the result back into right matrix is not supported and
  * will result in undefined behavior.  Use rsMatrixMulitply instead.   E.g. instead of doing

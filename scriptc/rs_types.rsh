@@ -557,6 +557,11 @@ typedef enum {
 } rs_data_kind;
 
 #ifndef __LP64__
+/**
+ * Specifies conditional drawing depending on the comparison of the incoming
+ * depth to that found in the depth buffer.
+ *
+ **/
 typedef enum {
     /**
     * Always drawn
