@@ -73,8 +73,13 @@ typedef uint64_t ulong;
 #endif
 
 #ifdef RS_COMPATIBILITY_LIB
+#ifndef __LP64__
 #define OPAQUETYPE(t) \
     typedef struct { const int* const p; } __attribute__((packed, aligned(4))) t;
+#else
+#define OPAQUETYPE(t) \
+    typedef struct { const void* p; const void* r; const void* v1; const void* v2; } t;
+#endif
 
 OPAQUETYPE(rs_element)
 OPAQUETYPE(rs_type)
@@ -484,25 +489,10 @@ static void SC_SetObject(rs_object_base *dst, rs_object_base  src) {
     rsrSetObject(rsc, dst, (ObjectBase*)src.p);
 }
 
-#ifdef __LP64__
-static void SC_SetObject_ByRef(rs_object_base *dst, rs_object_base *src) {
-    //    ALOGE("SC_SetObject2: dst = %p, src = %p", dst, src->p);
-    Context *rsc = RsdCpuReference::getTlsContext();
-    rsrSetObject(rsc, dst, (ObjectBase*)src->p);
-}
-#endif
-
 static bool SC_IsObject(rs_object_base o) {
     Context *rsc = RsdCpuReference::getTlsContext();
     return rsrIsObject(rsc, o);
 }
-
-#ifdef __LP64__
-static bool SC_IsObject_ByRef(rs_object_base *o) {
-    Context *rsc = RsdCpuReference::getTlsContext();
-    return rsrIsObject(rsc, *o);
-}
-#endif
 
 #else
 static void SC_SetObject(rs_object_base *dst, ObjectBase*  src) {
@@ -515,6 +505,19 @@ static void SC_SetObject(rs_object_base *dst, ObjectBase*  src) {
 static bool SC_IsObject(ObjectBase* o) {
     Context *rsc = RsdCpuReference::getTlsContext();
     return rsrIsObject(rsc, o);
+}
+#endif
+
+#ifdef __LP64__
+static void SC_SetObject_ByRef(rs_object_base *dst, rs_object_base *src) {
+    //    ALOGE("SC_SetObject2: dst = %p, src = %p", dst, src->p);
+    Context *rsc = RsdCpuReference::getTlsContext();
+    rsrSetObject(rsc, dst, (ObjectBase*)src->p);
+}
+
+static bool SC_IsObject_ByRef(rs_object_base *o) {
+    Context *rsc = RsdCpuReference::getTlsContext();
+    return rsrIsObject(rsc, *o);
 }
 #endif
 
@@ -1701,27 +1704,39 @@ static void SC_debugUI4(const char *s, uint4 i) {
 static void SC_debugLL64(const char *s, long long ll) {
     ALOGD("%s %lld  0x%llx", s, ll, ll);
 }
+
+template <typename T>
+static inline long long LL(const T &x) {
+    return static_cast<long long>(x);
+}
+
+template <typename T>
+static inline unsigned long long LLu(const T &x) {
+    return static_cast<unsigned long long>(x);
+}
+
 static void SC_debugL2(const char *s, long2 ll) {
-    ALOGD("%s {%lld, %lld}  0x%llx 0x%llx", s, ll.x, ll.y, ll.x, ll.y);
+    ALOGD("%s {%lld, %lld}  0x%llx 0x%llx", s, LL(ll.x), LL(ll.y), LL(ll.x), LL(ll.y));
 }
 static void SC_debugL3(const char *s, long3 ll) {
-    ALOGD("%s {%lld, %lld, %lld}  0x%llx 0x%llx 0x%llx", s, ll.x, ll.y, ll.z, ll.x, ll.y, ll.z);
+    ALOGD("%s {%lld, %lld, %lld}  0x%llx 0x%llx 0x%llx", s, LL(ll.x), LL(ll.y), LL(ll.z), LL(ll.x), LL(ll.y), LL(ll.z));
 }
 static void SC_debugL4(const char *s, long4 ll) {
-    ALOGD("%s {%lld, %lld, %lld, %lld}  0x%llx 0x%llx 0x%llx 0x%llx", s, ll.x, ll.y, ll.z, ll.w, ll.x, ll.y, ll.z, ll.w);
+    ALOGD("%s {%lld, %lld, %lld, %lld}  0x%llx 0x%llx 0x%llx 0x%llx", s, LL(ll.x), LL(ll.y), LL(ll.z), LL(ll.w), LL(ll.x), LL(ll.y), LL(ll.z), LL(ll.w));
 }
 static void SC_debugULL64(const char *s, unsigned long long ll) {
     ALOGD("%s %llu  0x%llx", s, ll, ll);
 }
 static void SC_debugUL2(const char *s, ulong2 ll) {
-    ALOGD("%s {%llu, %llu}  0x%llx 0x%llx", s, ll.x, ll.y, ll.x, ll.y);
+    ALOGD("%s {%llu, %llu}  0x%llx 0x%llx", s, LLu(ll.x), LLu(ll.y), LLu(ll.x), LLu(ll.y));
 }
 static void SC_debugUL3(const char *s, ulong3 ll) {
-    ALOGD("%s {%llu, %llu, %llu}  0x%llx 0x%llx 0x%llx", s, ll.x, ll.y, ll.z, ll.x, ll.y, ll.z);
+    ALOGD("%s {%llu, %llu, %llu}  0x%llx 0x%llx 0x%llx", s, LLu(ll.x), LLu(ll.y), LLu(ll.z), LLu(ll.x), LLu(ll.y), LLu(ll.z));
 }
 static void SC_debugUL4(const char *s, ulong4 ll) {
-    ALOGD("%s {%llu, %llu, %llu, %llu}  0x%llx 0x%llx 0x%llx 0x%llx", s, ll.x, ll.y, ll.z, ll.w, ll.x, ll.y, ll.z, ll.w);
+    ALOGD("%s {%llu, %llu, %llu, %llu}  0x%llx 0x%llx 0x%llx 0x%llx", s, LLu(ll.x), LLu(ll.y), LLu(ll.z), LLu(ll.w), LLu(ll.x), LLu(ll.y), LLu(ll.z), LLu(ll.w));
 }
+
 static void SC_debugP(const char *s, const void *p) {
     ALOGD("%s %p", s, p);
 }
@@ -1912,6 +1927,8 @@ void rsDebug(const char *s, const ulong4 *c) {
 // library. The C++ name mangling that LLVM uses for ext_vector_type requires
 // different versions for "long" vs. "long long". Note that the called
 // functions are still using the appropriate 64-bit sizes.
+
+#ifndef __LP64__
 typedef long l2 __attribute__((ext_vector_type(2)));
 typedef long l3 __attribute__((ext_vector_type(3)));
 typedef long l4 __attribute__((ext_vector_type(4)));
@@ -1942,6 +1959,7 @@ void rsDebug(const char *s, const ul3 *c) {
 void rsDebug(const char *s, const ul4 *c) {
     SC_debugUL4(s, *(const ulong4 *)c);
 }
+#endif
 
 void rsDebug(const char *s, const long2 c) {
     SC_debugL2(s, c);
