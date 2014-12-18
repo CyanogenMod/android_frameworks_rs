@@ -127,7 +127,6 @@ protected:
 
     std::vector<std::pair<const char *, uint32_t> > mExportedForEachFuncList;
 
-    bcc::BCCContext *mCompilerContext;
     bcc::RSCompilerDriver *mCompilerDriver;
     bcc::CompilerRTSymbolResolver mCompilerRuntime;
     bcc::LookupFunctionSymbolResolver<void *> mRSRuntime;

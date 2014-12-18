@@ -386,7 +386,6 @@ RsdCpuScriptImpl::RsdCpuScriptImpl(RsdCpuReferenceImpl *ctx, const Script *s) {
     mFieldIsObject = nullptr;
     mForEachSignatures = nullptr;
 #else
-    mCompilerContext = nullptr;
     mCompilerDriver = nullptr;
     mExecutable = nullptr;
 #endif
@@ -414,16 +413,8 @@ bool RsdCpuScriptImpl::init(char const *resName, char const *cacheDir,
 #ifndef RS_COMPATIBILITY_LIB
     bool useRSDebugContext = false;
 
-    mCompilerContext = nullptr;
     mCompilerDriver = nullptr;
     mExecutable = nullptr;
-
-    mCompilerContext = new bcc::BCCContext();
-    if (mCompilerContext == nullptr) {
-        ALOGE("bcc: FAILS to create compiler context (out of memory)");
-        mCtx->unlockMutex();
-        return false;
-    }
 
     mCompilerDriver = new bcc::RSCompilerDriver();
     if (mCompilerDriver == nullptr) {
@@ -1204,9 +1195,6 @@ RsdCpuScriptImpl::~RsdCpuScriptImpl() {
         }
     }
 
-    if (mCompilerContext) {
-        delete mCompilerContext;
-    }
     if (mCompilerDriver) {
         delete mCompilerDriver;
     }
