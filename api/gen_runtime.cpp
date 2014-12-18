@@ -77,6 +77,10 @@ const char* LEGAL_NOTICE =
             " * See the License for the specific language governing permissions and\n"
             " * limitations under the License.\n"
             " */\n\n";
+const char* DOX_HEADER =
+            "/** @file\n"
+            " *\n"
+            " */\n\n";
 
 class Function;
 class Specification;
@@ -745,6 +749,8 @@ bool SpecFile::generateFiles(int versionOfTestFiles) {
     }
     headerFile << LEGAL_NOTICE;
     headerFile << AUTO_GENERATED_WARNING;
+    headerFile << DOX_HEADER;
+
     writeIfdef(headerFile, headerFileName, true);
 
     // Write the functions to the header and test files.
@@ -1188,7 +1194,7 @@ void Permutation::writeHeaderSection(ofstream& file) const {
         }
     }
 
-    file << "/*\n";
+    file << "/**\n";
     for (size_t ct = 0; ct < mComment.size(); ct++) {
         if (!mComment[ct].empty()) {
             file << " * " << mComment[ct] << "\n";
