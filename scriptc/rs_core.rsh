@@ -121,6 +121,7 @@ typedef struct rs_script_call {
     uint32_t arrayEnd;
 } rs_script_call_t;
 
+#if !defined(RS_VERSION) || (RS_VERSION < 14)
 /**
  * Make a script to script call to launch work. One of the input or output is
  * required to be a valid object. The input and output must be of the same
@@ -137,7 +138,6 @@ typedef struct rs_script_call {
  *           NULL.
  *
  *  */
-#if !defined(RS_VERSION) || (RS_VERSION < 14)
 extern void __attribute__((overloadable))
     rsForEach(rs_script script, rs_allocation input,
               rs_allocation output, const void * usrData,
@@ -148,10 +148,8 @@ extern void __attribute__((overloadable))
 extern void __attribute__((overloadable))
     rsForEach(rs_script script, rs_allocation input,
               rs_allocation output, const void * usrData);
-#else
 
-
-#if (RS_VERSION < 21)
+#elif (RS_VERSION < 21)
 /**
  * Make a script to script call to launch work. One of the input or output is
  * required to be a valid object. The input and output must be of the same
@@ -172,23 +170,34 @@ extern void __attribute__((overloadable))
  */
 extern void __attribute__((overloadable))
     rsForEach(rs_script script, rs_allocation input, rs_allocation output,
-              const void * usrData, size_t usrDataLen, const rs_script_call_t *);
+              const void * usrData, size_t usrDataLen, const rs_script_call_t *sc);
 /**
  * \overload
  */
 extern void __attribute__((overloadable))
     rsForEach(rs_script script, rs_allocation input, rs_allocation output,
               const void * usrData, size_t usrDataLen);
-#endif
 
 /**
  * \overload
  */
 extern void __attribute__((overloadable))
     rsForEach(rs_script script, rs_allocation input, rs_allocation output);
+
+#else
+/**
+ * Make a script to script call to launch work. One of the input or output is
+ * required to be a valid object. The input and output must be of the same
+ * dimensions.
+ * API 21+
+ *
+ * @param script The target script to call
+ * @param input The allocation to source data from
+ * @param output the allocation to write date into
+ */
+extern void __attribute__((overloadable))
+    rsForEach(rs_script script, rs_allocation input, rs_allocation output);
 #endif
-
-
 
 #undef _RS_RUNTIME
 

@@ -26,6 +26,7 @@
 
 /**
  * Set the quaternion components
+ * @param q destination quaternion
  * @param w component
  * @param x component
  * @param y component
@@ -68,7 +69,7 @@ rsQuaternionMultiply(rs_quaternion *q, float s) {
 /**
  * Add two quaternions
  * @param q destination quaternion to add to
- * @param rsh right hand side quaternion to add
+ * @param rhs right hand side quaternion to add
  */
 static void
 rsQuaternionAdd(rs_quaternion *q, const rs_quaternion *rhs) {
@@ -84,7 +85,7 @@ rsQuaternionAdd(rs_quaternion *q, const rs_quaternion *rhs) {
  * @param rot angle to rotate by
  * @param x component of a vector
  * @param y component of a vector
- * @param x component of a vector
+ * @param z component of a vector
  */
 static void
 rsQuaternionLoadRotateUnit(rs_quaternion *q, float rot, float x, float y, float z) {
@@ -105,7 +106,7 @@ rsQuaternionLoadRotateUnit(rs_quaternion *q, float rot, float x, float y, float 
  * @param rot angle to rotate by
  * @param x component of a vector
  * @param y component of a vector
- * @param x component of a vector
+ * @param z component of a vector
  */
 static void
 rsQuaternionLoadRotate(rs_quaternion *q, float rot, float x, float y, float z) {
@@ -223,7 +224,7 @@ rsQuaternionSlerp(rs_quaternion *q, const rs_quaternion *q0, const rs_quaternion
 /**
  * Computes rotation matrix from the normalized quaternion
  * @param m resulting matrix
- * @param p normalized quaternion
+ * @param q normalized quaternion
  */
 static void rsQuaternionGetMatrixUnit(rs_matrix4x4 *m, const rs_quaternion *q) {
     float xx = q->x * q->x;
@@ -250,4 +251,3 @@ static void rsQuaternionGetMatrixUnit(rs_matrix4x4 *m, const rs_quaternion *q) {
 }
 
 #endif
-
