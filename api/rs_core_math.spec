@@ -15,67 +15,16 @@
 #
 
 start:
-w: 2, 3, 4
-t: u8, u16, u32, i8, i16, i32, f32
-t: u8, u16, u32, i8, i16, i32, f32
-name: convert_#3#1
-arg: #2#1 v compatible(#3)
-ret: #3#1
+w: 1, 2, 3, 4
+t: i8, i16, i32
+name: abs
+ret: u#2#1
+arg: #2#1 n
 comment:
- Component wise conversion from #2#1 to #3#1.
+ Returns the absolute value of the integer n.
 
- For the convert_* functions, conversions of floating point values to integer will truncate.
- Conversions of numbers too large to fit the destination type yield undefined results.
- For example, converting a float that contains 1.0e18 to a short is undefined.
+ For floats, use fabs().
 version: 9
-end:
-
-start:
-w: 2, 3, 4
-t: u64, i64, f64
-t: u64, i64, f64
-name: convert_#3#1
-arg: #2#1 v compatible(#3)
-ret: #3#1
-comment:
- Component wise conversion from #2#1 to #3#1.
-
- For the convert_* functions, conversions of floating point values to integer will truncate.
- Conversions of numbers too large to fit the destination type yield undefined results.
- For example, converting a float that contains 1.0e18 to a short is undefined.
-version: 21
-end:
-
-start:
-w: 2, 3, 4
-t: u64, i64, f64
-t: u8, u16, u32, i8, i16, i32, f32
-name: convert_#3#1
-arg: #2#1 v compatible(#3)
-ret: #3#1
-comment:
- Component wise conversion from #2#1 to #3#1.
-
- For the convert_* functions, conversions of floating point values to integer will truncate.
- Conversions of numbers too large to fit the destination type yield undefined results.
- For example, converting a float that contains 1.0e18 to a short is undefined.
-version: 21
-end:
-
-start:
-w: 2, 3, 4
-t: u8, u16, u32, i8, i16, i32, f32
-t: u64, i64, f64
-name: convert_#3#1
-arg: #2#1 v compatible(#3)
-ret: #3#1
-comment:
- Component wise conversion from #2#1 to #3#1.
-
- For the convert_* functions, conversions of floating point values to integer will truncate.
- Conversions of numbers too large to fit the destination type yield undefined results.
- For example, converting a float that contains 1.0e18 to a short is undefined.
-version: 21
 end:
 
 start:
@@ -176,6 +125,22 @@ end:
 start:
 w: 1, 2, 3, 4
 t: f32
+name: atan2pi
+ret: #2#1
+arg: #2#1 y
+arg: #2#1 x
+comment:
+ Returns the inverse tangent of y / x, in radians, divided by pi.
+
+ To get an inverse tangent measured in degrees, use atan2pi(x, y) * 180.f.
+
+ x can be 0.
+version: 9
+end:
+
+start:
+w: 1, 2, 3, 4
+t: f32
 name: atanh
 ret: #2#1
 arg: #2#1 v range(-1,1)
@@ -194,22 +159,6 @@ comment:
  Returns the inverse tangent in radians, divided by pi.
 
  To get an inverse tangent measured in degrees, use atanpi(a) * 180.f.
-version: 9
-end:
-
-start:
-w: 1, 2, 3, 4
-t: f32
-name: atan2pi
-ret: #2#1
-arg: #2#1 y
-arg: #2#1 x
-comment:
- Returns the inverse tangent of y / x, in radians, divided by pi.
-
- To get an inverse tangent measured in degrees, use atan2pi(x, y) * 180.f.
-
- x can be 0.
 version: 9
 end:
 
@@ -235,6 +184,167 @@ comment:
 
  For example, ceil(1.2f) returns 2.f, and ceil(-1.2f) returns -1.f.
 version: 9
+end:
+
+start:
+w: 1, 2, 3, 4
+t: f32
+name: clamp
+ret: #2#1
+arg: #2#1 value
+arg: #2#1 min_value
+arg: #2#1 max_value above(min_value)
+comment:
+ Clamps a value to a specified high and low bound.
+
+ clamp() returns min_value if value < min_value, max_value if value > max_value, otherwise value.
+
+ If min_value is greater than max_value, the results are undefined.
+
+ @param value Value to be clamped.  Supports 1, 2, 3, 4 components.
+ @param min_value Lower bound, must be scalar or matching vector.
+ @param max_value High bound, must match the type of low.
+version: 9
+end:
+
+start:
+w: 2, 3, 4
+t: f32
+name: clamp
+ret: #2#1
+arg: #2#1 value
+arg: #2 min_value
+arg: #2 max_value above(min_value)
+comment:
+ Clamps a value to a specified high and low bound.
+
+ clamp() returns min_value if value < min_value, max_value if value > max_value, otherwise value.
+
+ If min_value is greater than max_value, the results are undefined.
+
+ @param value Value to be clamped.  Supports 1, 2, 3, 4 components.
+ @param min_value Lower bound, must be scalar or matching vector.
+ @param max_value High bound, must match the type of low.
+version: 9
+end:
+
+start:
+w: 1, 2, 3, 4
+t: u8, u16, u32, u64, i8, i16, i32, i64
+name: clamp
+ret: #2#1
+arg: #2#1 value
+arg: #2#1 min_value
+arg: #2#1 max_value above(min_value)
+comment:
+ Clamps a value to a specified high and low bound.
+
+ clamp() returns min_value if value < min_value, max_value if value > max_value, otherwise value.
+
+ If min_value is greater than max_value, the results are undefined.
+
+ @param value Value to be clamped.  Supports 1, 2, 3, 4 components.
+ @param min_value Lower bound, must be scalar or matching vector.
+ @param max_value High bound, must match the type of low.
+version: 19
+end:
+
+start:
+w: 2, 3, 4
+t: u8, u16, u32, u64, i8, i16, i32, i64
+name: clamp
+ret: #2#1
+arg: #2#1 value
+arg: #2 min_value
+arg: #2 max_value above(min_value)
+comment:
+ Clamps a value to a specified high and low bound.
+
+ clamp() returns min_value if value < min_value, max_value if value > max_value, otherwise value.
+
+ If min_value is greater than max_value, the results are undefined.
+
+ @param value Value to be clamped.  Supports 1, 2, 3, 4 components.
+ @param min_value Lower bound, must be scalar or matching vector.
+ @param max_value High bound, must match the type of low.
+version: 19
+end:
+
+start:
+w: 1, 2, 3, 4
+t: u8, u16, u32, i8, i16, i32
+name: clz
+ret: #2#1
+arg: #2#1 value
+comment:
+ Returns the number of leading 0-bits in a value.
+
+ For example, clz((char)0x03) returns 5.
+version: 9
+end:
+
+start:
+w: 2, 3, 4
+t: u8, u16, u32, i8, i16, i32, f32
+t: u8, u16, u32, i8, i16, i32, f32
+name: convert_#3#1
+arg: #2#1 v compatible(#3)
+ret: #3#1
+comment:
+ Component wise conversion from #2#1 to #3#1.
+
+ For the convert_* functions, conversions of floating point values to integer will truncate.
+ Conversions of numbers too large to fit the destination type yield undefined results.
+ For example, converting a float that contains 1.0e18 to a short is undefined.
+version: 9
+end:
+
+start:
+w: 2, 3, 4
+t: u64, i64, f64
+t: u64, i64, f64
+name: convert_#3#1
+arg: #2#1 v compatible(#3)
+ret: #3#1
+comment:
+ Component wise conversion from #2#1 to #3#1.
+
+ For the convert_* functions, conversions of floating point values to integer will truncate.
+ Conversions of numbers too large to fit the destination type yield undefined results.
+ For example, converting a float that contains 1.0e18 to a short is undefined.
+version: 21
+end:
+
+start:
+w: 2, 3, 4
+t: u64, i64, f64
+t: u8, u16, u32, i8, i16, i32, f32
+name: convert_#3#1
+arg: #2#1 v compatible(#3)
+ret: #3#1
+comment:
+ Component wise conversion from #2#1 to #3#1.
+
+ For the convert_* functions, conversions of floating point values to integer will truncate.
+ Conversions of numbers too large to fit the destination type yield undefined results.
+ For example, converting a float that contains 1.0e18 to a short is undefined.
+version: 21
+end:
+
+start:
+w: 2, 3, 4
+t: u8, u16, u32, i8, i16, i32, f32
+t: u64, i64, f64
+name: convert_#3#1
+arg: #2#1 v compatible(#3)
+ret: #3#1
+comment:
+ Component wise conversion from #2#1 to #3#1.
+
+ For the convert_* functions, conversions of floating point values to integer will truncate.
+ Conversions of numbers too large to fit the destination type yield undefined results.
+ For example, converting a float that contains 1.0e18 to a short is undefined.
+version: 21
 end:
 
 start:
@@ -289,14 +399,53 @@ version: 9
 end:
 
 start:
+w: 3, 4
+t: f32
+name: cross
+ret: #2#1
+arg: #2#1 lhs
+arg: #2#1 rhs
+comment:
+ Computes the cross product of two vectors.
+version: 9
+test: vector
+end:
+
+start:
 w: 1, 2, 3, 4
 t: f32
-name: erfc
+name: degrees
 ret: #2#1
-arg: #2#1
+arg: #2#1 value
 comment:
- Returns the complementary error function.
+ Converts from radians to degrees.
 version: 9
+end:
+
+start:
+w: 1, 2, 3, 4
+t: f32
+name: distance
+ret: #2
+arg: #2#1 lhs
+arg: #2#1 rhs
+comment:
+ Compute the distance between two points.
+version: 9
+test: vector
+end:
+
+start:
+w: 1, 2, 3, 4
+t: f32
+name: dot
+ret: #2
+arg: #2#1 lhs
+arg: #2#1 rhs
+comment:
+ Computes the dot product of two vectors.
+version: 9
+test: vector
 end:
 
 start:
@@ -307,6 +456,17 @@ ret: #2#1
 arg: #2#1
 comment:
  Returns the error function.
+version: 9
+end:
+
+start:
+w: 1, 2, 3, 4
+t: f32
+name: erfc
+ret: #2#1
+arg: #2#1
+comment:
+ Returns the complementary error function.
 version: 9
 end:
 
@@ -324,22 +484,22 @@ end:
 start:
 w: 1, 2, 3, 4
 t: f32
-name: exp2
+name: exp10
 ret: #2#1
 arg: #2#1 x
 comment:
- Returns 2 raised to x, i.e. 2.f ^ x.
+ Returns 10 raised to x, i.e. 10.f ^ x.
 version: 9
 end:
 
 start:
 w: 1, 2, 3, 4
 t: f32
-name: exp10
+name: exp2
 ret: #2#1
 arg: #2#1 x
 comment:
- Returns 10 raised to x, i.e. 10.f ^ x.
+ Returns 2 raised to x, i.e. 2.f ^ x.
 version: 9
 end:
 
@@ -365,6 +525,51 @@ comment:
 
  For integers, use abs().
 version: 9
+end:
+
+start:
+w: 1, 2, 3, 4
+t: f32
+name: fast_distance
+ret: #2
+arg: #2#1 lhs
+arg: #2#1 rhs
+comment:
+ Computes the approximate distance between two points.
+
+ The precision is what would be expected from doing the computation using 16 bit floating point values.
+version: 17
+test: vector
+end:
+
+start:
+w: 1, 2, 3, 4
+t: f32
+name: fast_length
+ret: #2
+arg: #2#1 v
+comment:
+ Computes the approximate length of a vector.
+
+ The precision is what would be expected from doing the computation using 16 bit floating point values.
+version: 17
+test: vector
+end:
+
+start:
+w: 1, 2, 3, 4
+t: f32
+name: fast_normalize
+ret: #2#1
+arg: #2#1 v
+comment:
+ Approximately normalizes a vector.
+
+ For vectors of size 1, returns -1.f for negative values, 0.f for null values, and 1.f for positive values.
+
+ The precision is what would be expected from doing the computation using 16 bit floating point values.
+version: 17
+test: vector
 end:
 
 start:
@@ -535,6 +740,45 @@ end:
 start:
 w: 1, 2, 3, 4
 t: f32
+name: half_recip
+ret: #2#1
+arg: #2#1 v
+comment:
+ Returns the approximate reciprocal of a value.
+
+ The precision is that of a 16 bit floating point value.
+version: 17
+end:
+
+start:
+w: 1, 2, 3, 4
+t: f32
+name: half_rsqrt
+ret: #2#1
+arg: #2#1 v
+comment:
+ Returns the approximate value of (1.f / sqrt(value)).
+
+ The precision is that of a 16 bit floating point value.
+version: 17
+end:
+
+start:
+w: 1, 2, 3, 4
+t: f32
+name: half_sqrt
+ret: #2#1
+arg: #2#1 v
+comment:
+ Returns the approximate square root of a value.
+
+ The precision is that of a 16 bit floating point value.
+version: 17
+end:
+
+start:
+w: 1, 2, 3, 4
+t: f32
 name: hypot
 ret: #2#1
 arg: #2#1 x
@@ -595,6 +839,18 @@ end:
 start:
 w: 1, 2, 3, 4
 t: f32
+name: length
+ret: #2
+arg: #2#1 v
+comment:
+ Computes the length of a vector.
+version: 9
+test: vector
+end:
+
+start:
+w: 1, 2, 3, 4
+t: f32
 name: lgamma
 ret: #2#1
 arg: #2#1
@@ -637,17 +893,6 @@ end:
 start:
 w: 1, 2, 3, 4
 t: f32
-name: log2
-ret: #2#1
-arg: #2#1
-comment:
- Returns the base 2 logarithm.
-version: 9
-end:
-
-start:
-w: 1, 2, 3, 4
-t: f32
 name: log10
 ret: #2#1
 arg: #2#1
@@ -664,6 +909,17 @@ ret: #2#1
 arg: #2#1 v
 comment:
  Returns the natural logarithm of (v + 1.f).
+version: 9
+end:
+
+start:
+w: 1, 2, 3, 4
+t: f32
+name: log2
+ret: #2#1
+arg: #2#1
+comment:
+ Returns the base 2 logarithm.
 version: 9
 end:
 
@@ -696,428 +952,6 @@ comment:
 
  This function is identical to fma().
 version: 9
-end:
-
-start:
-w: 1, 2, 3, 4
-t: f32
-name: modf
-ret: #2#1
-arg: #2#1 x
-arg: #2#1 *iret
-comment:
- Returns the integral and fractional components of a number.
-
- Both components will have the same sign as x.  For example, for an input of -3.72f, iret will be set to -3.f and .72f will be returned.
-
- @param x Source value
- @param iret iret[0] will be set to the integral portion of the number.
- @return The floating point portion of the value.
-version: 9
-end:
-
-start:
-w: 1
-t: f32
-name: nan
-ret: #2#1
-arg: uint#1
-comment:
- Returns a NaN value (Not a Number).
-
- The argument is embedded into the return value and can be used to distinguish various NaNs.
-version: 9
-end:
-
-start:
-w: 1, 2, 3, 4
-t: f32
-name: nextafter
-ret: #2#1
-arg: #2#1 x
-arg: #2#1 y
-comment:
- Returns the next floating point number from x towards y.
-version: 9
-end:
-
-start:
-w: 1, 2, 3, 4
-t: f32
-name: pow
-ret: #2#1
-arg: #2#1 x
-arg: #2#1 y
-comment:
- Returns x raised to the power y, i.e. x ^ y.
-
- pown() and powr() are similar.  pown() takes an integer exponent. powr() assumes the base to be non-negative.
-version: 9
-end:
-
-start:
-w: 1, 2, 3, 4
-t: f32
-name: pown
-ret: #2#1
-arg: #2#1 x
-arg: int#1 y
-comment:
- Returns x raised to the power y, i.e. x ^ y.
-
- pow() and powr() are similar.  The both take a float exponent. powr() also assumes the base to be non-negative.
-version: 9
-end:
-
-start:
-w: 1, 2, 3, 4
-t: f32
-name: powr
-ret: #2#1
-arg: #2#1 x range(0,3000)
-arg: #2#1 y
-comment:
- Returns x raised to the power y, i.e. x ^ y.  x must be >= 0.
-
- pow() and pown() are similar.  They both make no assumptions about the base.  pow() takes a float exponent while pown() take an integer.
-version: 9
-end:
-
-start:
-w: 1, 2, 3, 4
-t: f32
-name: remainder
-ret: #2#1
-arg: #2#1 x
-arg: #2#1 y
-comment:
- Returns the remainder of x / y, where the quotient is rounded towards the nearest integer.
-
- The function fmod() is similar but rounds toward the closest interger.
- For example, fmod(-3.8f, 2.f) returns -1.8f (-3.8f - -1.f * 2.f)
- while remainder(-3.8f, 2.f) returns 0.2f (-3.8f - -2.f * 2.f).
-version: 9
-end:
-
-start:
-w: 1, 2, 3, 4
-t: f32
-name: remquo
-ret: #2#1
-arg: #2#1 b
-arg: #2#1 c
-arg: int#1 *d
-comment:
- Returns the quotient and the remainder of b / c.
-
- Only the sign and lowest three bits of the quotient are guaranteed to be accurate.
-
- This function is useful for implementing periodic functions.  The low three bits of the quotient gives the quadrant and the remainder the distance within the quadrant.  For example, an implementation of sin(x) could call remquo(x, PI / 2.f, &quadrant) to reduce very large value of x to something within a limited range.
-
- Example: remquo(-23.5f, 8.f, &quot) sets the lowest three bits of quot to 3 and the sign negative.  It returns 0.5f.
-
- @param b The numerator.
- @param c The denominator.
- @param *d d[0] will be set to the integer quotient.
- @return The remainder, precise only for the low three bits.
-version: 9
-test: custom
-end:
-
-start:
-w: 1, 2, 3, 4
-t: f32
-name: rint
-ret: #2#1
-arg: #2#1
-comment:
- Rounds to the nearest integral value.
-
- rint() rounds half values to even.  For example, rint(0.5f) returns 0.f and rint(1.5f) returns 2.f.  Similarly, rint(-0.5f) returns -0.f and rint(-1.5f) returns -2.f.
-
- round() is similar but rounds away from zero.  trunc() truncates the decimal fraction.
-version: 9
-end:
-
-start:
-w: 1, 2, 3, 4
-t: f32
-name: rootn
-ret: #2#1
-arg: #2#1 v
-arg: int#1 n
-comment:
- Compute the Nth root of a value.
-version: 9
-end:
-
-start:
-w: 1, 2, 3, 4
-t: f32
-name: round
-ret: #2#1
-arg: #2#1
-comment:
- Round to the nearest integral value.
-
- round() rounds half values away from zero.  For example, round(0.5f) returns 1.f and round(1.5f) returns 2.f.  Similarly, round(-0.5f) returns -1.f and round(-1.5f) returns -2.f.
-
- rint() is similar but rounds half values toward even.  trunc() truncates the decimal fraction.
-version: 9
-end:
-
-start:
-w: 1, 2, 3, 4
-t: f32
-name: rsqrt
-ret: #2#1
-arg: #2#1
-comment:
- Returns (1 / sqrt(value)).
-version: 9
-end:
-
-start:
-w: 1, 2, 3, 4
-t: f32
-name: sqrt
-ret: #2#1
-arg: #2#1
-comment:
- Returns the square root of a value.
-version: 9
-end:
-
-start:
-w: 1, 2, 3, 4
-t: f32
-name: sin
-ret: #2#1
-arg: #2#1
-comment:
- Returns the sine of an angle measured in radians.
-version: 9
-end:
-
-start:
-w: 1, 2, 3, 4
-t: f32
-name: sincos
-ret: #2#1
-arg: #2#1 v
-arg: #2#1 *cosptr
-comment:
- Returns the sine and cosine of a value.
-
- @return sine of v
- @param v The incoming value in radians
- @param *cosptr cosptr[0] will be set to the cosine value.
-version: 9
-end:
-
-start:
-w: 1, 2, 3, 4
-t: f32
-name: sinh
-ret: #2#1
-arg: #2#1
-comment:
- Returns the hyperbolic sine of x, where x is measured in radians.
-version: 9
-end:
-
-start:
-w: 1, 2, 3, 4
-t: f32
-name: sinpi
-ret: #2#1
-arg: #2#1 x
-comment:
- Returns the sine of (x * pi), where (x * pi) is measured in radians.
-
- To get the sine of a value measured in degrees, call sinpi(a / 180.f).
-version: 9
-end:
-
-start:
-w: 1, 2, 3, 4
-t: f32
-name: tan
-ret: #2#1
-arg: #2#1 x
-comment:
- Returns the tangent of an angle measured in radians.
-version: 9
-end:
-
-start:
-w: 1, 2, 3, 4
-t: f32
-name: tanh
-ret: #2#1
-arg: #2#1
-comment:
- Returns the hyperbolic tangent of a value.
-version: 9
-end:
-
-start:
-w: 1, 2, 3, 4
-t: f32
-name: tanpi
-ret: #2#1
-arg: #2#1 x
-comment:
- Returns the tangent of (x * pi), where (x * pi) is measured in radians.
-
- To get the tangent of a value measured in degrees, call tanpi(a / 180.f).
-version: 9
-end:
-
-start:
-w: 1, 2, 3, 4
-t: f32
-name: tgamma
-ret: #2#1
-arg: #2#1
-comment:
- Returns the gamma function of a value.
-version: 9
-end:
-
-start:
-w: 1, 2, 3, 4
-t: f32
-name: trunc
-ret: #2#1
-arg: #2#1
-comment:
- Rounds to integral using truncation.
-
- For example, trunc(1.7f) returns 1.f and trunc(-1.7f) returns -1.f.
-
- See rint() and round() for other rounding options.
-version: 9
-end:
-
-# int functions
-
-start:
-w: 1, 2, 3, 4
-t: i8, i16, i32
-name: abs
-ret: u#2#1
-arg: #2#1 n
-comment:
- Returns the absolute value of the integer n.
-
- For floats, use fabs().
-version: 9
-end:
-
-start:
-w: 1, 2, 3, 4
-t: u8, u16, u32, i8, i16, i32
-name: clz
-ret: #2#1
-arg: #2#1 value
-comment:
- Returns the number of leading 0-bits in a value.
-
- For example, clz((char)0x03) returns 5.
-version: 9
-end:
-
-start:
-w: 1, 2, 3, 4
-t: f32
-name: min
-ret: #2#1
-arg: #2#1
-arg: #2#1
-comment:
- Returns the minimum value from two arguments
-version: 9
-end:
-
-start:
-w: 1
-t: i8 i16 i32 u8 u16 u32
-name: min
-ret: #2#1
-arg: #2#1 v1
-arg: #2#1 v2
-comment:
- Returns the minimum value from two arguments
-inline:
- return (v1 < v2 ? v1 : v2);
-version: 9 19
-end:
-
-start:
-w: 2
-t: i8 i16 i32 u8 u16 u32
-name: min
-ret: #2#1
-arg: #2#1 v1
-arg: #2#1 v2
-comment:
- Returns the minimum value from two arguments
-inline:
- #2#1 tmp;
- tmp.x = (v1.x < v2.x ? v1.x : v2.x);
- tmp.y = (v1.y < v2.y ? v1.y : v2.y);
- return tmp;
-version: 9 19
-end:
-
-start:
-w: 3
-t: i8 i16 i32 u8 u16 u32
-name: min
-ret: #2#1
-arg: #2#1 v1
-arg: #2#1 v2
-comment:
- Returns the minimum value from two arguments
-inline:
- #2#1 tmp;
- tmp.x = (v1.x < v2.x ? v1.x : v2.x);
- tmp.y = (v1.y < v2.y ? v1.y : v2.y);
- tmp.z = (v1.z < v2.z ? v1.z : v2.z);
- return tmp;
-version: 9 19
-end:
-
-start:
-w: 4
-t: i8 i16 i32 u8 u16 u32
-name: min
-ret: #2#1
-arg: #2#1 v1
-arg: #2#1 v2
-comment:
- Returns the minimum value from two arguments
-inline:
- #2#1 tmp;
- tmp.x = (v1.x < v2.x ? v1.x : v2.x);
- tmp.y = (v1.y < v2.y ? v1.y : v2.y);
- tmp.z = (v1.z < v2.z ? v1.z : v2.z);
- tmp.w = (v1.w < v2.w ? v1.w : v2.w);
- return tmp;
-version: 9 19
-end:
-
-start:
-w: 1, 2, 3, 4
-t: i8 i16 i32 i64 u8 u16 u32 u64
-name: min
-ret: #2#1
-arg: #2#1 v1
-arg: #2#1 v2
-comment:
- Returns the minimum value from two arguments
-version: 21
 end:
 
 start:
@@ -1215,96 +1049,93 @@ end:
 start:
 w: 1, 2, 3, 4
 t: f32
-name: clamp
+name: min
 ret: #2#1
-arg: #2#1 value
-arg: #2#1 min_value
-arg: #2#1 max_value above(min_value)
+arg: #2#1
+arg: #2#1
 comment:
- Clamps a value to a specified high and low bound.
-
- clamp() returns min_value if value < min_value, max_value if value > max_value, otherwise value.
-
- If min_value is greater than max_value, the results are undefined.
-
- @param value Value to be clamped.  Supports 1, 2, 3, 4 components.
- @param min_value Lower bound, must be scalar or matching vector.
- @param max_value High bound, must match the type of low.
+ Returns the minimum value from two arguments
 version: 9
 end:
 
 start:
-w: 2, 3, 4
-t: f32
-name: clamp
+w: 1
+t: i8 i16 i32 u8 u16 u32
+name: min
 ret: #2#1
-arg: #2#1 value
-arg: #2 min_value
-arg: #2 max_value above(min_value)
+arg: #2#1 v1
+arg: #2#1 v2
 comment:
- Clamps a value to a specified high and low bound.
+ Returns the minimum value from two arguments
+inline:
+ return (v1 < v2 ? v1 : v2);
+version: 9 19
+end:
 
- clamp() returns min_value if value < min_value, max_value if value > max_value, otherwise value.
+start:
+w: 2
+t: i8 i16 i32 u8 u16 u32
+name: min
+ret: #2#1
+arg: #2#1 v1
+arg: #2#1 v2
+comment:
+ Returns the minimum value from two arguments
+inline:
+ #2#1 tmp;
+ tmp.x = (v1.x < v2.x ? v1.x : v2.x);
+ tmp.y = (v1.y < v2.y ? v1.y : v2.y);
+ return tmp;
+version: 9 19
+end:
 
- If min_value is greater than max_value, the results are undefined.
+start:
+w: 3
+t: i8 i16 i32 u8 u16 u32
+name: min
+ret: #2#1
+arg: #2#1 v1
+arg: #2#1 v2
+comment:
+ Returns the minimum value from two arguments
+inline:
+ #2#1 tmp;
+ tmp.x = (v1.x < v2.x ? v1.x : v2.x);
+ tmp.y = (v1.y < v2.y ? v1.y : v2.y);
+ tmp.z = (v1.z < v2.z ? v1.z : v2.z);
+ return tmp;
+version: 9 19
+end:
 
- @param value Value to be clamped.  Supports 1, 2, 3, 4 components.
- @param min_value Lower bound, must be scalar or matching vector.
- @param max_value High bound, must match the type of low.
-version: 9
+start:
+w: 4
+t: i8 i16 i32 u8 u16 u32
+name: min
+ret: #2#1
+arg: #2#1 v1
+arg: #2#1 v2
+comment:
+ Returns the minimum value from two arguments
+inline:
+ #2#1 tmp;
+ tmp.x = (v1.x < v2.x ? v1.x : v2.x);
+ tmp.y = (v1.y < v2.y ? v1.y : v2.y);
+ tmp.z = (v1.z < v2.z ? v1.z : v2.z);
+ tmp.w = (v1.w < v2.w ? v1.w : v2.w);
+ return tmp;
+version: 9 19
 end:
 
 start:
 w: 1, 2, 3, 4
-t: u8, u16, u32, u64, i8, i16, i32, i64
-name: clamp
+t: i8 i16 i32 i64 u8 u16 u32 u64
+name: min
 ret: #2#1
-arg: #2#1 value
-arg: #2#1 min_value
-arg: #2#1 max_value above(min_value)
+arg: #2#1 v1
+arg: #2#1 v2
 comment:
- Clamps a value to a specified high and low bound.
-
- clamp() returns min_value if value < min_value, max_value if value > max_value, otherwise value.
-
- If min_value is greater than max_value, the results are undefined.
-
- @param value Value to be clamped.  Supports 1, 2, 3, 4 components.
- @param min_value Lower bound, must be scalar or matching vector.
- @param max_value High bound, must match the type of low.
-version: 19
-end:
-
-start:
-w: 2, 3, 4
-t: u8, u16, u32, u64, i8, i16, i32, i64
-name: clamp
-ret: #2#1
-arg: #2#1 value
-arg: #2 min_value
-arg: #2 max_value above(min_value)
-comment:
- Clamps a value to a specified high and low bound.
-
- clamp() returns min_value if value < min_value, max_value if value > max_value, otherwise value.
-
- If min_value is greater than max_value, the results are undefined.
-
- @param value Value to be clamped.  Supports 1, 2, 3, 4 components.
- @param min_value Lower bound, must be scalar or matching vector.
- @param max_value High bound, must match the type of low.
-version: 19
-end:
-
-start:
-w: 1, 2, 3, 4
-t: f32
-name: degrees
-ret: #2#1
-arg: #2#1 value
-comment:
- Converts from radians to degrees.
-version: 9
+ Returns the minimum value from two arguments
+version: 21
 end:
 
 start:
@@ -1338,322 +1169,33 @@ end:
 start:
 w: 1, 2, 3, 4
 t: f32
-name: radians
+name: modf
 ret: #2#1
-arg: #2#1 value
+arg: #2#1 x
+arg: #2#1 *iret
 comment:
- Converts from degrees to radians.
+ Returns the integral and fractional components of a number.
+
+ Both components will have the same sign as x.  For example, for an input of -3.72f, iret will be set to -3.f and .72f will be returned.
+
+ @param x Source value
+ @param iret iret[0] will be set to the integral portion of the number.
+ @return The floating point portion of the value.
 version: 9
 end:
 
 start:
-w: 1, 2, 3, 4
+w: 1
 t: f32
-name: step
+name: nan
 ret: #2#1
-arg: #2#1 edge
-arg: #2#1 v
+arg: uint#1
 comment:
- Returns 0.f if v < edge, 1.f otherwise.
+ Returns a NaN value (Not a Number).
 
- This can be useful to create conditional computations without using loops and branching instructions.  For example, instead of computing (a[i] < b[i]) ? 0.f : atan2(a[i], b[i]) for the corresponding elements of a vector, you could instead use step(a, b) * atan2(a, b).
+ The argument is embedded into the return value and can be used to distinguish various NaNs.
 version: 9
 end:
-
-start:
-w: 2, 3, 4
-t: f32
-name: step
-ret: #2#1
-arg: #2#1 edge
-arg: #2 v
-comment:
- Returns 0.f if v < edge, 1.f otherwise.
-
- This can be useful to create conditional computations without using loops and branching instructions.  For example, instead of computing (a[i] < b) ? 0.f : atan2(a[i], b) for each element of a vector, you could instead use step(a, b) * atan2(a, b).
-version: 9
-end:
-
-start:
-w: 2, 3, 4
-t: f32
-name: step
-ret: #2#1
-arg: #2 edge
-arg: #2#1 v
-comment:
- Returns 0.f if v < edge, 1.f otherwise.
-
- This can be useful to create conditional computations without using loops and branching instructions.  For example, instead of computing (a < b[i]) ? 0.f : atan2(a, b[i]) for each element of a vector, you could instead use step(a, b) * atan2(a, b).
-version: 21
-end:
-
-start:
-w: 1, 2, 3, 4
-t: f32
-name: sign
-ret: #2#1
-arg: #2#1 v
-comment:
- Returns the sign of a value.
-
- if (v < 0) return -1.f;
- else if (v > 0) return 1.f;
- else return 0.f;
-version: 9
-end:
-
-start:
-w: 3, 4
-t: f32
-name: cross
-ret: #2#1
-arg: #2#1 lhs
-arg: #2#1 rhs
-comment:
- Computes the cross product of two vectors.
-version: 9
-test: vector
-end:
-
-start:
-w: 1, 2, 3, 4
-t: f32
-name: dot
-ret: #2
-arg: #2#1 lhs
-arg: #2#1 rhs
-comment:
- Computes the dot product of two vectors.
-version: 9
-test: vector
-end:
-
-start:
-w: 1, 2, 3, 4
-t: f32
-name: length
-ret: #2
-arg: #2#1 v
-comment:
- Computes the length of a vector.
-version: 9
-test: vector
-end:
-
-start:
-w: 1, 2, 3, 4
-t: f32
-name: distance
-ret: #2
-arg: #2#1 lhs
-arg: #2#1 rhs
-comment:
- Compute the distance between two points.
-version: 9
-test: vector
-end:
-
-start:
-w: 1, 2, 3, 4
-t: f32
-name: normalize
-ret: #2#1
-arg: #2#1 v
-comment:
- Normalize a vector.
-
- For vectors of size 1, returns -1.f for negative values, 0.f for null values, and 1.f for positive values.
-version: 9
-test: vector
-end:
-
-start:
-w: 1, 2, 3, 4
-t: f32
-name: half_recip
-ret: #2#1
-arg: #2#1 v
-comment:
- Returns the approximate reciprocal of a value.
-
- The precision is that of a 16 bit floating point value.
-version: 17
-end:
-
-start:
-w: 1, 2, 3, 4
-t: f32
-name: half_sqrt
-ret: #2#1
-arg: #2#1 v
-comment:
- Returns the approximate square root of a value.
-
- The precision is that of a 16 bit floating point value.
-version: 17
-end:
-
-start:
-w: 1, 2, 3, 4
-t: f32
-name: half_rsqrt
-ret: #2#1
-arg: #2#1 v
-comment:
- Returns the approximate value of (1.f / sqrt(value)).
-
- The precision is that of a 16 bit floating point value.
-version: 17
-end:
-
-start:
-w: 1, 2, 3, 4
-t: f32
-name: fast_length
-ret: #2
-arg: #2#1 v
-comment:
- Computes the approximate length of a vector.
-
- The precision is what would be expected from doing the computation using 16 bit floating point values.
-version: 17
-test: vector
-end:
-
-start:
-w: 1, 2, 3, 4
-t: f32
-name: fast_distance
-ret: #2
-arg: #2#1 lhs
-arg: #2#1 rhs
-comment:
- Computes the approximate distance between two points.
-
- The precision is what would be expected from doing the computation using 16 bit floating point values.
-version: 17
-test: vector
-end:
-
-start:
-w: 1, 2, 3, 4
-t: f32
-name: fast_normalize
-ret: #2#1
-arg: #2#1 v
-comment:
- Approximately normalizes a vector.
-
- For vectors of size 1, returns -1.f for negative values, 0.f for null values, and 1.f for positive values.
-
- The precision is what would be expected from doing the computation using 16 bit floating point values.
-version: 17
-test: vector
-end:
-
-start:
-w: 1, 2, 3, 4
-t: f32
-name: native_exp
-ret: #2#1
-arg: #2#1 v range(-86,86)
-comment:
- Fast approximate exp.
-
- It is valid for inputs from -86.f to 86.f.  The precision is no worse than what would be expected from using 16 bit floating point values.
-version: 18
-test: limited
-end:
-
-start:
-w: 1, 2, 3, 4
-t: f32
-name: native_exp2
-ret: #2#1
-arg: #2#1 v range(-125,125)
-comment:
- Fast approximate exp2.
-
- It is valid for inputs from -125.f to 125.f.  The precision is no worse than what would be expected from using 16 bit floating point values.
-version: 18
-test: limited
-end:
-
-start:
-w: 1, 2, 3, 4
-t: f32
-name: native_exp10
-ret: #2#1
-arg: #2#1 v range(-37,37)
-comment:
- Fast approximate exp10.
-
- It is valid for inputs from -37.f to 37.f.  The precision is no worse than what would be expected from using 16 bit floating point values.
-version: 18
-test: limited
-end:
-
-start:
-w: 1, 2, 3, 4
-t: f32
-name: native_log
-ret: #2#1
-arg: #2#1 v range(10e-10,10e10)
-comment:
- Fast approximate log.
-
- It is not accurate for values very close to zero.
-version: 18
-test: limited
-end:
-
-start:
-w: 1, 2, 3, 4
-t: f32
-name: native_log2
-ret: #2#1
-arg: #2#1 v range(10e-10,10e10)
-comment:
- Fast approximate log2.
-
- It is not accurate for values very close to zero.
-version: 18
-test: limited
-end:
-
-start:
-w: 1, 2, 3, 4
-t: f32
-name: native_log10
-ret: #2#1
-arg: #2#1 v range(10e-10,10e10)
-comment:
- Fast approximate log10.
-
- It is not accurate for values very close to zero.
-version: 18
-test: limited
-end:
-
-start:
-w: 1, 2, 3, 4
-t: f32
-name: native_powr
-ret: #2#1
-arg: #2#1 v range(0,256)
-arg: #2#1 y range(-15,15)
-comment:
- Fast approximate v ^ y.
-
- v must be between 0.f and 256.f.
- y must be between -15.f and 15.f.
-
- It is not accurate for values of v very close to zero.
-version: 18
-test: limited
-end:
-
 
 start:
 w: 1, 2, 3, 4
@@ -1769,6 +1311,24 @@ end:
 start:
 w: 1, 2, 3, 4
 t: f32
+name: native_atan2pi
+ret: #2#1
+arg: #2#1 y
+arg: #2#1 x
+comment:
+ Returns the approximate inverse tangent of y / x, in radians, divided by pi.
+
+ To get an inverse tangent measured in degrees, use atan2pi(x, y) * 180.f.
+
+ x can be 0.
+version: 21
+# TODO Temporary
+test: limited(0.0005)
+end:
+
+start:
+w: 1, 2, 3, 4
+t: f32
 name: native_atanh
 ret: #2#1
 arg: #2#1 in range(-1,1)
@@ -1789,24 +1349,6 @@ comment:
  Returns the approximate inverse tangent in radians, divided by pi.
 
  To get an inverse tangent measured in degrees, use atanpi(a) * 180.f.
-version: 21
-# TODO Temporary
-test: limited(0.0005)
-end:
-
-start:
-w: 1, 2, 3, 4
-t: f32
-name: native_atan2pi
-ret: #2#1
-arg: #2#1 y
-arg: #2#1 x
-comment:
- Returns the approximate inverse tangent of y / x, in radians, divided by pi.
-
- To get an inverse tangent measured in degrees, use atan2pi(x, y) * 180.f.
-
- x can be 0.
 version: 21
 # TODO Temporary
 test: limited(0.0005)
@@ -1861,17 +1403,6 @@ end:
 start:
 w: 1, 2, 3, 4
 t: f32
-name: native_expm1
-ret: #2#1
-arg: #2#1
-comment:
- Returns the approximate (e ^ value) - 1.
-version: 21
-end:
-
-start:
-w: 1, 2, 3, 4
-t: f32
 name: native_distance
 ret: #2
 arg: #2#1 lhs
@@ -1897,6 +1428,59 @@ end:
 start:
 w: 1, 2, 3, 4
 t: f32
+name: native_exp
+ret: #2#1
+arg: #2#1 v range(-86,86)
+comment:
+ Fast approximate exp.
+
+ It is valid for inputs from -86.f to 86.f.  The precision is no worse than what would be expected from using 16 bit floating point values.
+version: 18
+test: limited
+end:
+
+start:
+w: 1, 2, 3, 4
+t: f32
+name: native_exp10
+ret: #2#1
+arg: #2#1 v range(-37,37)
+comment:
+ Fast approximate exp10.
+
+ It is valid for inputs from -37.f to 37.f.  The precision is no worse than what would be expected from using 16 bit floating point values.
+version: 18
+test: limited
+end:
+
+start:
+w: 1, 2, 3, 4
+t: f32
+name: native_exp2
+ret: #2#1
+arg: #2#1 v range(-125,125)
+comment:
+ Fast approximate exp2.
+
+ It is valid for inputs from -125.f to 125.f.  The precision is no worse than what would be expected from using 16 bit floating point values.
+version: 18
+test: limited
+end:
+
+start:
+w: 1, 2, 3, 4
+t: f32
+name: native_expm1
+ret: #2#1
+arg: #2#1
+comment:
+ Returns the approximate (e ^ value) - 1.
+version: 21
+end:
+
+start:
+w: 1, 2, 3, 4
+t: f32
 name: native_hypot
 ret: #2#1
 arg: #2#1 x
@@ -1904,18 +1488,6 @@ arg: #2#1 y
 comment:
  Returns the approximate native_sqrt(x*x + y*y)
 version: 21
-end:
-
-start:
-w: 1, 2, 3, 4
-t: f32
-name: native_normalize
-ret: #2#1
-arg: #2#1 v
-comment:
- Approximately normalizes a vector.
-version: 21
-test: vector
 end:
 
 start:
@@ -1933,12 +1505,84 @@ end:
 start:
 w: 1, 2, 3, 4
 t: f32
+name: native_log
+ret: #2#1
+arg: #2#1 v range(10e-10,10e10)
+comment:
+ Fast approximate log.
+
+ It is not accurate for values very close to zero.
+version: 18
+test: limited
+end:
+
+start:
+w: 1, 2, 3, 4
+t: f32
+name: native_log10
+ret: #2#1
+arg: #2#1 v range(10e-10,10e10)
+comment:
+ Fast approximate log10.
+
+ It is not accurate for values very close to zero.
+version: 18
+test: limited
+end:
+
+start:
+w: 1, 2, 3, 4
+t: f32
 name: native_log1p
 ret: #2#1
 arg: #2#1
 comment:
  Returns the approximate natural logarithm of (v + 1.0f)
 version: 21
+end:
+
+start:
+w: 1, 2, 3, 4
+t: f32
+name: native_log2
+ret: #2#1
+arg: #2#1 v range(10e-10,10e10)
+comment:
+ Fast approximate log2.
+
+ It is not accurate for values very close to zero.
+version: 18
+test: limited
+end:
+
+start:
+w: 1, 2, 3, 4
+t: f32
+name: native_normalize
+ret: #2#1
+arg: #2#1 v
+comment:
+ Approximately normalizes a vector.
+version: 21
+test: vector
+end:
+
+start:
+w: 1, 2, 3, 4
+t: f32
+name: native_powr
+ret: #2#1
+arg: #2#1 v range(0,256)
+arg: #2#1 y range(-15,15)
+comment:
+ Fast approximate v ^ y.
+
+ v must be between 0.f and 256.f.
+ y must be between -15.f and 15.f.
+
+ It is not accurate for values of v very close to zero.
+version: 18
+test: limited
 end:
 
 start:
@@ -2072,4 +1716,357 @@ comment:
 
  To get the tangent of a value measured in degrees, call tanpi(a / 180.f).
 version: 21
+end:
+
+start:
+w: 1, 2, 3, 4
+t: f32
+name: nextafter
+ret: #2#1
+arg: #2#1 x
+arg: #2#1 y
+comment:
+ Returns the next floating point number from x towards y.
+version: 9
+end:
+
+start:
+w: 1, 2, 3, 4
+t: f32
+name: normalize
+ret: #2#1
+arg: #2#1 v
+comment:
+ Normalize a vector.
+
+ For vectors of size 1, returns -1.f for negative values, 0.f for null values, and 1.f for positive values.
+version: 9
+test: vector
+end:
+
+start:
+w: 1, 2, 3, 4
+t: f32
+name: pow
+ret: #2#1
+arg: #2#1 x
+arg: #2#1 y
+comment:
+ Returns x raised to the power y, i.e. x ^ y.
+
+ pown() and powr() are similar.  pown() takes an integer exponent. powr() assumes the base to be non-negative.
+version: 9
+end:
+
+start:
+w: 1, 2, 3, 4
+t: f32
+name: pown
+ret: #2#1
+arg: #2#1 x
+arg: int#1 y
+comment:
+ Returns x raised to the power y, i.e. x ^ y.
+
+ pow() and powr() are similar.  The both take a float exponent. powr() also assumes the base to be non-negative.
+version: 9
+end:
+
+start:
+w: 1, 2, 3, 4
+t: f32
+name: powr
+ret: #2#1
+arg: #2#1 x range(0,3000)
+arg: #2#1 y
+comment:
+ Returns x raised to the power y, i.e. x ^ y.  x must be >= 0.
+
+ pow() and pown() are similar.  They both make no assumptions about the base.  pow() takes a float exponent while pown() take an integer.
+version: 9
+end:
+
+start:
+w: 1, 2, 3, 4
+t: f32
+name: radians
+ret: #2#1
+arg: #2#1 value
+comment:
+ Converts from degrees to radians.
+version: 9
+end:
+
+start:
+w: 1, 2, 3, 4
+t: f32
+name: remainder
+ret: #2#1
+arg: #2#1 x
+arg: #2#1 y
+comment:
+ Returns the remainder of x / y, where the quotient is rounded towards the nearest integer.
+
+ The function fmod() is similar but rounds toward the closest interger.
+ For example, fmod(-3.8f, 2.f) returns -1.8f (-3.8f - -1.f * 2.f)
+ while remainder(-3.8f, 2.f) returns 0.2f (-3.8f - -2.f * 2.f).
+version: 9
+end:
+
+start:
+w: 1, 2, 3, 4
+t: f32
+name: remquo
+ret: #2#1
+arg: #2#1 b
+arg: #2#1 c
+arg: int#1 *d
+comment:
+ Returns the quotient and the remainder of b / c.
+
+ Only the sign and lowest three bits of the quotient are guaranteed to be accurate.
+
+ This function is useful for implementing periodic functions.  The low three bits of the quotient gives the quadrant and the remainder the distance within the quadrant.  For example, an implementation of sin(x) could call remquo(x, PI / 2.f, &quadrant) to reduce very large value of x to something within a limited range.
+
+ Example: remquo(-23.5f, 8.f, &quot) sets the lowest three bits of quot to 3 and the sign negative.  It returns 0.5f.
+
+ @param b The numerator.
+ @param c The denominator.
+ @param *d d[0] will be set to the integer quotient.
+ @return The remainder, precise only for the low three bits.
+version: 9
+test: custom
+end:
+
+start:
+w: 1, 2, 3, 4
+t: f32
+name: rint
+ret: #2#1
+arg: #2#1
+comment:
+ Rounds to the nearest integral value.
+
+ rint() rounds half values to even.  For example, rint(0.5f) returns 0.f and rint(1.5f) returns 2.f.  Similarly, rint(-0.5f) returns -0.f and rint(-1.5f) returns -2.f.
+
+ round() is similar but rounds away from zero.  trunc() truncates the decimal fraction.
+version: 9
+end:
+
+start:
+w: 1, 2, 3, 4
+t: f32
+name: rootn
+ret: #2#1
+arg: #2#1 v
+arg: int#1 n
+comment:
+ Compute the Nth root of a value.
+version: 9
+end:
+
+start:
+w: 1, 2, 3, 4
+t: f32
+name: round
+ret: #2#1
+arg: #2#1
+comment:
+ Round to the nearest integral value.
+
+ round() rounds half values away from zero.  For example, round(0.5f) returns 1.f and round(1.5f) returns 2.f.  Similarly, round(-0.5f) returns -1.f and round(-1.5f) returns -2.f.
+
+ rint() is similar but rounds half values toward even.  trunc() truncates the decimal fraction.
+version: 9
+end:
+
+start:
+w: 1, 2, 3, 4
+t: f32
+name: rsqrt
+ret: #2#1
+arg: #2#1
+comment:
+ Returns (1 / sqrt(value)).
+version: 9
+end:
+
+start:
+w: 1, 2, 3, 4
+t: f32
+name: sign
+ret: #2#1
+arg: #2#1 v
+comment:
+ Returns the sign of a value.
+
+ if (v < 0) return -1.f;
+ else if (v > 0) return 1.f;
+ else return 0.f;
+version: 9
+end:
+
+start:
+w: 1, 2, 3, 4
+t: f32
+name: sin
+ret: #2#1
+arg: #2#1
+comment:
+ Returns the sine of an angle measured in radians.
+version: 9
+end:
+
+start:
+w: 1, 2, 3, 4
+t: f32
+name: sincos
+ret: #2#1
+arg: #2#1 v
+arg: #2#1 *cosptr
+comment:
+ Returns the sine and cosine of a value.
+
+ @return sine of v
+ @param v The incoming value in radians
+ @param *cosptr cosptr[0] will be set to the cosine value.
+version: 9
+end:
+
+start:
+w: 1, 2, 3, 4
+t: f32
+name: sinh
+ret: #2#1
+arg: #2#1
+comment:
+ Returns the hyperbolic sine of x, where x is measured in radians.
+version: 9
+end:
+
+start:
+w: 1, 2, 3, 4
+t: f32
+name: sinpi
+ret: #2#1
+arg: #2#1 x
+comment:
+ Returns the sine of (x * pi), where (x * pi) is measured in radians.
+
+ To get the sine of a value measured in degrees, call sinpi(a / 180.f).
+version: 9
+end:
+
+start:
+w: 1, 2, 3, 4
+t: f32
+name: sqrt
+ret: #2#1
+arg: #2#1
+comment:
+ Returns the square root of a value.
+version: 9
+end:
+
+start:
+w: 1, 2, 3, 4
+t: f32
+name: step
+ret: #2#1
+arg: #2#1 edge
+arg: #2#1 v
+comment:
+ Returns 0.f if v < edge, 1.f otherwise.
+
+ This can be useful to create conditional computations without using loops and branching instructions.  For example, instead of computing (a[i] < b[i]) ? 0.f : atan2(a[i], b[i]) for the corresponding elements of a vector, you could instead use step(a, b) * atan2(a, b).
+version: 9
+end:
+
+start:
+w: 2, 3, 4
+t: f32
+name: step
+ret: #2#1
+arg: #2#1 edge
+arg: #2 v
+comment:
+ Returns 0.f if v < edge, 1.f otherwise.
+
+ This can be useful to create conditional computations without using loops and branching instructions.  For example, instead of computing (a[i] < b) ? 0.f : atan2(a[i], b) for each element of a vector, you could instead use step(a, b) * atan2(a, b).
+version: 9
+end:
+
+start:
+w: 2, 3, 4
+t: f32
+name: step
+ret: #2#1
+arg: #2 edge
+arg: #2#1 v
+comment:
+ Returns 0.f if v < edge, 1.f otherwise.
+
+ This can be useful to create conditional computations without using loops and branching instructions.  For example, instead of computing (a < b[i]) ? 0.f : atan2(a, b[i]) for each element of a vector, you could instead use step(a, b) * atan2(a, b).
+version: 21
+end:
+
+start:
+w: 1, 2, 3, 4
+t: f32
+name: tan
+ret: #2#1
+arg: #2#1 x
+comment:
+ Returns the tangent of an angle measured in radians.
+version: 9
+end:
+
+start:
+w: 1, 2, 3, 4
+t: f32
+name: tanh
+ret: #2#1
+arg: #2#1
+comment:
+ Returns the hyperbolic tangent of a value.
+version: 9
+end:
+
+start:
+w: 1, 2, 3, 4
+t: f32
+name: tanpi
+ret: #2#1
+arg: #2#1 x
+comment:
+ Returns the tangent of (x * pi), where (x * pi) is measured in radians.
+
+ To get the tangent of a value measured in degrees, call tanpi(a / 180.f).
+version: 9
+end:
+
+start:
+w: 1, 2, 3, 4
+t: f32
+name: tgamma
+ret: #2#1
+arg: #2#1
+comment:
+ Returns the gamma function of a value.
+version: 9
+end:
+
+start:
+w: 1, 2, 3, 4
+t: f32
+name: trunc
+ret: #2#1
+arg: #2#1
+comment:
+ Rounds to integral using truncation.
+
+ For example, trunc(1.7f) returns 1.f and trunc(-1.7f) returns -1.f.
+
+ See rint() and round() for other rounding options.
+version: 9
 end:
