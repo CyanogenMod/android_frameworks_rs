@@ -24,134 +24,134 @@
 #define __rs_core_math_rsh__
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns the absolute value of the integer n.
+ * Returns the absolute value of an integer.
  *
  * For floats, use fabs().
  *
  * Supported by API versions 9 and newer.
  */
-extern uchar __attribute__((const, overloadable))abs(char n);
+extern uchar __attribute__((const, overloadable))abs(char v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns the absolute value of the integer n.
+ * Returns the absolute value of an integer.
  *
  * For floats, use fabs().
  *
  * Supported by API versions 9 and newer.
  */
-extern uchar2 __attribute__((const, overloadable))abs(char2 n);
+extern uchar2 __attribute__((const, overloadable))abs(char2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns the absolute value of the integer n.
+ * Returns the absolute value of an integer.
  *
  * For floats, use fabs().
  *
  * Supported by API versions 9 and newer.
  */
-extern uchar3 __attribute__((const, overloadable))abs(char3 n);
+extern uchar3 __attribute__((const, overloadable))abs(char3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns the absolute value of the integer n.
+ * Returns the absolute value of an integer.
  *
  * For floats, use fabs().
  *
  * Supported by API versions 9 and newer.
  */
-extern uchar4 __attribute__((const, overloadable))abs(char4 n);
+extern uchar4 __attribute__((const, overloadable))abs(char4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns the absolute value of the integer n.
+ * Returns the absolute value of an integer.
  *
  * For floats, use fabs().
  *
  * Supported by API versions 9 and newer.
  */
-extern ushort __attribute__((const, overloadable))abs(short n);
+extern ushort __attribute__((const, overloadable))abs(short v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns the absolute value of the integer n.
+ * Returns the absolute value of an integer.
  *
  * For floats, use fabs().
  *
  * Supported by API versions 9 and newer.
  */
-extern ushort2 __attribute__((const, overloadable))abs(short2 n);
+extern ushort2 __attribute__((const, overloadable))abs(short2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns the absolute value of the integer n.
+ * Returns the absolute value of an integer.
  *
  * For floats, use fabs().
  *
  * Supported by API versions 9 and newer.
  */
-extern ushort3 __attribute__((const, overloadable))abs(short3 n);
+extern ushort3 __attribute__((const, overloadable))abs(short3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns the absolute value of the integer n.
+ * Returns the absolute value of an integer.
  *
  * For floats, use fabs().
  *
  * Supported by API versions 9 and newer.
  */
-extern ushort4 __attribute__((const, overloadable))abs(short4 n);
+extern ushort4 __attribute__((const, overloadable))abs(short4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns the absolute value of the integer n.
+ * Returns the absolute value of an integer.
  *
  * For floats, use fabs().
  *
  * Supported by API versions 9 and newer.
  */
-extern uint __attribute__((const, overloadable))abs(int n);
+extern uint __attribute__((const, overloadable))abs(int v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns the absolute value of the integer n.
+ * Returns the absolute value of an integer.
  *
  * For floats, use fabs().
  *
  * Supported by API versions 9 and newer.
  */
-extern uint2 __attribute__((const, overloadable))abs(int2 n);
+extern uint2 __attribute__((const, overloadable))abs(int2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns the absolute value of the integer n.
+ * Returns the absolute value of an integer.
  *
  * For floats, use fabs().
  *
  * Supported by API versions 9 and newer.
  */
-extern uint3 __attribute__((const, overloadable))abs(int3 n);
+extern uint3 __attribute__((const, overloadable))abs(int3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns the absolute value of the integer n.
+ * Returns the absolute value of an integer.
  *
  * For floats, use fabs().
  *
  * Supported by API versions 9 and newer.
  */
-extern uint4 __attribute__((const, overloadable))abs(int4 n);
+extern uint4 __attribute__((const, overloadable))abs(int4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -196,7 +196,7 @@ extern float4 __attribute__((const, overloadable))acos(float4 v);
  *
  * Supported by API versions 9 and newer.
  */
-extern float __attribute__((const, overloadable))acosh(float);
+extern float __attribute__((const, overloadable))acosh(float v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -205,7 +205,7 @@ extern float __attribute__((const, overloadable))acosh(float);
  *
  * Supported by API versions 9 and newer.
  */
-extern float2 __attribute__((const, overloadable))acosh(float2);
+extern float2 __attribute__((const, overloadable))acosh(float2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -214,7 +214,7 @@ extern float2 __attribute__((const, overloadable))acosh(float2);
  *
  * Supported by API versions 9 and newer.
  */
-extern float3 __attribute__((const, overloadable))acosh(float3);
+extern float3 __attribute__((const, overloadable))acosh(float3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -223,7 +223,7 @@ extern float3 __attribute__((const, overloadable))acosh(float3);
  *
  * Supported by API versions 9 and newer.
  */
-extern float4 __attribute__((const, overloadable))acosh(float4);
+extern float4 __attribute__((const, overloadable))acosh(float4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -312,7 +312,7 @@ extern float4 __attribute__((const, overloadable))asin(float4 v);
  *
  * Supported by API versions 9 and newer.
  */
-extern float __attribute__((const, overloadable))asinh(float);
+extern float __attribute__((const, overloadable))asinh(float v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -321,7 +321,7 @@ extern float __attribute__((const, overloadable))asinh(float);
  *
  * Supported by API versions 9 and newer.
  */
-extern float2 __attribute__((const, overloadable))asinh(float2);
+extern float2 __attribute__((const, overloadable))asinh(float2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -330,7 +330,7 @@ extern float2 __attribute__((const, overloadable))asinh(float2);
  *
  * Supported by API versions 9 and newer.
  */
-extern float3 __attribute__((const, overloadable))asinh(float3);
+extern float3 __attribute__((const, overloadable))asinh(float3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -339,7 +339,7 @@ extern float3 __attribute__((const, overloadable))asinh(float3);
  *
  * Supported by API versions 9 and newer.
  */
-extern float4 __attribute__((const, overloadable))asinh(float4);
+extern float4 __attribute__((const, overloadable))asinh(float4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -424,98 +424,98 @@ extern float4 __attribute__((const, overloadable))atan(float4 v);
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns the inverse tangent of y / x, in radians.
+ * Returns the inverse tangent of (numerator / denominator), in radians.
  *
- * x can be 0.
+ * denominator can be 0.
  *
  * Supported by API versions 9 and newer.
  */
-extern float __attribute__((const, overloadable))atan2(float y, float x);
+extern float __attribute__((const, overloadable))atan2(float numerator, float denominator);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns the inverse tangent of y / x, in radians.
+ * Returns the inverse tangent of (numerator / denominator), in radians.
  *
- * x can be 0.
+ * denominator can be 0.
  *
  * Supported by API versions 9 and newer.
  */
-extern float2 __attribute__((const, overloadable))atan2(float2 y, float2 x);
+extern float2 __attribute__((const, overloadable))atan2(float2 numerator, float2 denominator);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns the inverse tangent of y / x, in radians.
+ * Returns the inverse tangent of (numerator / denominator), in radians.
  *
- * x can be 0.
+ * denominator can be 0.
  *
  * Supported by API versions 9 and newer.
  */
-extern float3 __attribute__((const, overloadable))atan2(float3 y, float3 x);
+extern float3 __attribute__((const, overloadable))atan2(float3 numerator, float3 denominator);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns the inverse tangent of y / x, in radians.
+ * Returns the inverse tangent of (numerator / denominator), in radians.
  *
- * x can be 0.
+ * denominator can be 0.
  *
  * Supported by API versions 9 and newer.
  */
-extern float4 __attribute__((const, overloadable))atan2(float4 y, float4 x);
+extern float4 __attribute__((const, overloadable))atan2(float4 numerator, float4 denominator);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns the inverse tangent of y / x, in radians, divided by pi.
+ * Returns the inverse tangent of (numerator / denominator), in radians, divided by pi.
  *
- * To get an inverse tangent measured in degrees, use atan2pi(x, y) * 180.f.
+ * To get an inverse tangent measured in degrees, use atan2pi(n, d) * 180.f.
  *
- * x can be 0.
+ * denominator can be 0.
  *
  * Supported by API versions 9 and newer.
  */
-extern float __attribute__((const, overloadable))atan2pi(float y, float x);
+extern float __attribute__((const, overloadable))atan2pi(float numerator, float denominator);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns the inverse tangent of y / x, in radians, divided by pi.
+ * Returns the inverse tangent of (numerator / denominator), in radians, divided by pi.
  *
- * To get an inverse tangent measured in degrees, use atan2pi(x, y) * 180.f.
+ * To get an inverse tangent measured in degrees, use atan2pi(n, d) * 180.f.
  *
- * x can be 0.
+ * denominator can be 0.
  *
  * Supported by API versions 9 and newer.
  */
-extern float2 __attribute__((const, overloadable))atan2pi(float2 y, float2 x);
+extern float2 __attribute__((const, overloadable))atan2pi(float2 numerator, float2 denominator);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns the inverse tangent of y / x, in radians, divided by pi.
+ * Returns the inverse tangent of (numerator / denominator), in radians, divided by pi.
  *
- * To get an inverse tangent measured in degrees, use atan2pi(x, y) * 180.f.
+ * To get an inverse tangent measured in degrees, use atan2pi(n, d) * 180.f.
  *
- * x can be 0.
+ * denominator can be 0.
  *
  * Supported by API versions 9 and newer.
  */
-extern float3 __attribute__((const, overloadable))atan2pi(float3 y, float3 x);
+extern float3 __attribute__((const, overloadable))atan2pi(float3 numerator, float3 denominator);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns the inverse tangent of y / x, in radians, divided by pi.
+ * Returns the inverse tangent of (numerator / denominator), in radians, divided by pi.
  *
- * To get an inverse tangent measured in degrees, use atan2pi(x, y) * 180.f.
+ * To get an inverse tangent measured in degrees, use atan2pi(n, d) * 180.f.
  *
- * x can be 0.
+ * denominator can be 0.
  *
  * Supported by API versions 9 and newer.
  */
-extern float4 __attribute__((const, overloadable))atan2pi(float4 y, float4 x);
+extern float4 __attribute__((const, overloadable))atan2pi(float4 numerator, float4 denominator);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -604,7 +604,7 @@ extern float4 __attribute__((const, overloadable))atanpi(float4 v);
  *
  * Supported by API versions 9 and newer.
  */
-extern float __attribute__((const, overloadable))cbrt(float);
+extern float __attribute__((const, overloadable))cbrt(float v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -613,7 +613,7 @@ extern float __attribute__((const, overloadable))cbrt(float);
  *
  * Supported by API versions 9 and newer.
  */
-extern float2 __attribute__((const, overloadable))cbrt(float2);
+extern float2 __attribute__((const, overloadable))cbrt(float2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -622,7 +622,7 @@ extern float2 __attribute__((const, overloadable))cbrt(float2);
  *
  * Supported by API versions 9 and newer.
  */
-extern float3 __attribute__((const, overloadable))cbrt(float3);
+extern float3 __attribute__((const, overloadable))cbrt(float3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -631,7 +631,7 @@ extern float3 __attribute__((const, overloadable))cbrt(float3);
  *
  * Supported by API versions 9 and newer.
  */
-extern float4 __attribute__((const, overloadable))cbrt(float4);
+extern float4 __attribute__((const, overloadable))cbrt(float4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -642,7 +642,7 @@ extern float4 __attribute__((const, overloadable))cbrt(float4);
  *
  * Supported by API versions 9 and newer.
  */
-extern float __attribute__((const, overloadable))ceil(float);
+extern float __attribute__((const, overloadable))ceil(float v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -653,7 +653,7 @@ extern float __attribute__((const, overloadable))ceil(float);
  *
  * Supported by API versions 9 and newer.
  */
-extern float2 __attribute__((const, overloadable))ceil(float2);
+extern float2 __attribute__((const, overloadable))ceil(float2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -664,7 +664,7 @@ extern float2 __attribute__((const, overloadable))ceil(float2);
  *
  * Supported by API versions 9 and newer.
  */
-extern float3 __attribute__((const, overloadable))ceil(float3);
+extern float3 __attribute__((const, overloadable))ceil(float3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -675,7 +675,7 @@ extern float3 __attribute__((const, overloadable))ceil(float3);
  *
  * Supported by API versions 9 and newer.
  */
-extern float4 __attribute__((const, overloadable))ceil(float4);
+extern float4 __attribute__((const, overloadable))ceil(float4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -5915,54 +5915,54 @@ extern ulong4 __attribute__((const, overloadable))convert_ulong4(uint4 v);
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Copies the sign from y to x.
+ * Copies the sign from sign_value to magnitude_value.
  *
- * The value returned is either x or -x.
+ * The value returned is either magnitude_value or -magnitude_value.
  *
  * For example, copysign(4.0f, -2.7f) returns -4.0f and copysign(-4.0f, 2.7f) returns 4.0f.
  *
  * Supported by API versions 9 and newer.
  */
-extern float __attribute__((const, overloadable))copysign(float x, float y);
+extern float __attribute__((const, overloadable))copysign(float magnitude_value, float sign_value);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Copies the sign from y to x.
+ * Copies the sign from sign_value to magnitude_value.
  *
- * The value returned is either x or -x.
+ * The value returned is either magnitude_value or -magnitude_value.
  *
  * For example, copysign(4.0f, -2.7f) returns -4.0f and copysign(-4.0f, 2.7f) returns 4.0f.
  *
  * Supported by API versions 9 and newer.
  */
-extern float2 __attribute__((const, overloadable))copysign(float2 x, float2 y);
+extern float2 __attribute__((const, overloadable))copysign(float2 magnitude_value, float2 sign_value);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Copies the sign from y to x.
+ * Copies the sign from sign_value to magnitude_value.
  *
- * The value returned is either x or -x.
+ * The value returned is either magnitude_value or -magnitude_value.
  *
  * For example, copysign(4.0f, -2.7f) returns -4.0f and copysign(-4.0f, 2.7f) returns 4.0f.
  *
  * Supported by API versions 9 and newer.
  */
-extern float3 __attribute__((const, overloadable))copysign(float3 x, float3 y);
+extern float3 __attribute__((const, overloadable))copysign(float3 magnitude_value, float3 sign_value);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Copies the sign from y to x.
+ * Copies the sign from sign_value to magnitude_value.
  *
- * The value returned is either x or -x.
+ * The value returned is either magnitude_value or -magnitude_value.
  *
  * For example, copysign(4.0f, -2.7f) returns -4.0f and copysign(-4.0f, 2.7f) returns 4.0f.
  *
  * Supported by API versions 9 and newer.
  */
-extern float4 __attribute__((const, overloadable))copysign(float4 x, float4 y);
+extern float4 __attribute__((const, overloadable))copysign(float4 magnitude_value, float4 sign_value);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -5971,7 +5971,7 @@ extern float4 __attribute__((const, overloadable))copysign(float4 x, float4 y);
  *
  * Supported by API versions 9 and newer.
  */
-extern float __attribute__((const, overloadable))cos(float);
+extern float __attribute__((const, overloadable))cos(float v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -5980,7 +5980,7 @@ extern float __attribute__((const, overloadable))cos(float);
  *
  * Supported by API versions 9 and newer.
  */
-extern float2 __attribute__((const, overloadable))cos(float2);
+extern float2 __attribute__((const, overloadable))cos(float2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -5989,7 +5989,7 @@ extern float2 __attribute__((const, overloadable))cos(float2);
  *
  * Supported by API versions 9 and newer.
  */
-extern float3 __attribute__((const, overloadable))cos(float3);
+extern float3 __attribute__((const, overloadable))cos(float3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -5998,87 +5998,87 @@ extern float3 __attribute__((const, overloadable))cos(float3);
  *
  * Supported by API versions 9 and newer.
  */
-extern float4 __attribute__((const, overloadable))cos(float4);
+extern float4 __attribute__((const, overloadable))cos(float4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns the hypebolic cosine of x, where x is measured in radians.
+ * Returns the hypebolic cosine of v, where v is measured in radians.
  *
  * Supported by API versions 9 and newer.
  */
-extern float __attribute__((const, overloadable))cosh(float x);
+extern float __attribute__((const, overloadable))cosh(float v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns the hypebolic cosine of x, where x is measured in radians.
+ * Returns the hypebolic cosine of v, where v is measured in radians.
  *
  * Supported by API versions 9 and newer.
  */
-extern float2 __attribute__((const, overloadable))cosh(float2 x);
+extern float2 __attribute__((const, overloadable))cosh(float2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns the hypebolic cosine of x, where x is measured in radians.
+ * Returns the hypebolic cosine of v, where v is measured in radians.
  *
  * Supported by API versions 9 and newer.
  */
-extern float3 __attribute__((const, overloadable))cosh(float3 x);
+extern float3 __attribute__((const, overloadable))cosh(float3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns the hypebolic cosine of x, where x is measured in radians.
+ * Returns the hypebolic cosine of v, where v is measured in radians.
  *
  * Supported by API versions 9 and newer.
  */
-extern float4 __attribute__((const, overloadable))cosh(float4 x);
+extern float4 __attribute__((const, overloadable))cosh(float4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns the cosine of (x * pi), where (x * pi) is measured in radians.
+ * Returns the cosine of (v * pi), where (v * pi) is measured in radians.
  *
- * To get the cosine of a value measured in degrees, call cospi(a / 180.f).
+ * To get the cosine of a value measured in degrees, call cospi(v / 180.f).
  *
  * Supported by API versions 9 and newer.
  */
-extern float __attribute__((const, overloadable))cospi(float x);
+extern float __attribute__((const, overloadable))cospi(float v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns the cosine of (x * pi), where (x * pi) is measured in radians.
+ * Returns the cosine of (v * pi), where (v * pi) is measured in radians.
  *
- * To get the cosine of a value measured in degrees, call cospi(a / 180.f).
+ * To get the cosine of a value measured in degrees, call cospi(v / 180.f).
  *
  * Supported by API versions 9 and newer.
  */
-extern float2 __attribute__((const, overloadable))cospi(float2 x);
+extern float2 __attribute__((const, overloadable))cospi(float2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns the cosine of (x * pi), where (x * pi) is measured in radians.
+ * Returns the cosine of (v * pi), where (v * pi) is measured in radians.
  *
- * To get the cosine of a value measured in degrees, call cospi(a / 180.f).
+ * To get the cosine of a value measured in degrees, call cospi(v / 180.f).
  *
  * Supported by API versions 9 and newer.
  */
-extern float3 __attribute__((const, overloadable))cospi(float3 x);
+extern float3 __attribute__((const, overloadable))cospi(float3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns the cosine of (x * pi), where (x * pi) is measured in radians.
+ * Returns the cosine of (v * pi), where (v * pi) is measured in radians.
  *
- * To get the cosine of a value measured in degrees, call cospi(a / 180.f).
+ * To get the cosine of a value measured in degrees, call cospi(v / 180.f).
  *
  * Supported by API versions 9 and newer.
  */
-extern float4 __attribute__((const, overloadable))cospi(float4 x);
+extern float4 __attribute__((const, overloadable))cospi(float4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -6087,7 +6087,7 @@ extern float4 __attribute__((const, overloadable))cospi(float4 x);
  *
  * Supported by API versions 9 and newer.
  */
-extern float3 __attribute__((const, overloadable))cross(float3 lhs, float3 rhs);
+extern float3 __attribute__((const, overloadable))cross(float3 left_vector, float3 right_vector);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -6096,7 +6096,7 @@ extern float3 __attribute__((const, overloadable))cross(float3 lhs, float3 rhs);
  *
  * Supported by API versions 9 and newer.
  */
-extern float4 __attribute__((const, overloadable))cross(float4 lhs, float4 rhs);
+extern float4 __attribute__((const, overloadable))cross(float4 left_vector, float4 right_vector);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -6105,7 +6105,7 @@ extern float4 __attribute__((const, overloadable))cross(float4 lhs, float4 rhs);
  *
  * Supported by API versions 9 and newer.
  */
-extern float __attribute__((const, overloadable))degrees(float value);
+extern float __attribute__((const, overloadable))degrees(float v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -6114,7 +6114,7 @@ extern float __attribute__((const, overloadable))degrees(float value);
  *
  * Supported by API versions 9 and newer.
  */
-extern float2 __attribute__((const, overloadable))degrees(float2 value);
+extern float2 __attribute__((const, overloadable))degrees(float2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -6123,7 +6123,7 @@ extern float2 __attribute__((const, overloadable))degrees(float2 value);
  *
  * Supported by API versions 9 and newer.
  */
-extern float3 __attribute__((const, overloadable))degrees(float3 value);
+extern float3 __attribute__((const, overloadable))degrees(float3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -6132,7 +6132,7 @@ extern float3 __attribute__((const, overloadable))degrees(float3 value);
  *
  * Supported by API versions 9 and newer.
  */
-extern float4 __attribute__((const, overloadable))degrees(float4 value);
+extern float4 __attribute__((const, overloadable))degrees(float4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -6141,7 +6141,7 @@ extern float4 __attribute__((const, overloadable))degrees(float4 value);
  *
  * Supported by API versions 9 and newer.
  */
-extern float __attribute__((const, overloadable))distance(float lhs, float rhs);
+extern float __attribute__((const, overloadable))distance(float left_vector, float right_vector);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -6150,7 +6150,7 @@ extern float __attribute__((const, overloadable))distance(float lhs, float rhs);
  *
  * Supported by API versions 9 and newer.
  */
-extern float __attribute__((const, overloadable))distance(float2 lhs, float2 rhs);
+extern float __attribute__((const, overloadable))distance(float2 left_vector, float2 right_vector);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -6159,7 +6159,7 @@ extern float __attribute__((const, overloadable))distance(float2 lhs, float2 rhs
  *
  * Supported by API versions 9 and newer.
  */
-extern float __attribute__((const, overloadable))distance(float3 lhs, float3 rhs);
+extern float __attribute__((const, overloadable))distance(float3 left_vector, float3 right_vector);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -6168,7 +6168,7 @@ extern float __attribute__((const, overloadable))distance(float3 lhs, float3 rhs
  *
  * Supported by API versions 9 and newer.
  */
-extern float __attribute__((const, overloadable))distance(float4 lhs, float4 rhs);
+extern float __attribute__((const, overloadable))distance(float4 left_vector, float4 right_vector);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -6177,7 +6177,7 @@ extern float __attribute__((const, overloadable))distance(float4 lhs, float4 rhs
  *
  * Supported by API versions 9 and newer.
  */
-extern float __attribute__((const, overloadable))dot(float lhs, float rhs);
+extern float __attribute__((const, overloadable))dot(float left_vector, float right_vector);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -6186,7 +6186,7 @@ extern float __attribute__((const, overloadable))dot(float lhs, float rhs);
  *
  * Supported by API versions 9 and newer.
  */
-extern float __attribute__((const, overloadable))dot(float2 lhs, float2 rhs);
+extern float __attribute__((const, overloadable))dot(float2 left_vector, float2 right_vector);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -6195,7 +6195,7 @@ extern float __attribute__((const, overloadable))dot(float2 lhs, float2 rhs);
  *
  * Supported by API versions 9 and newer.
  */
-extern float __attribute__((const, overloadable))dot(float3 lhs, float3 rhs);
+extern float __attribute__((const, overloadable))dot(float3 left_vector, float3 right_vector);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -6204,7 +6204,7 @@ extern float __attribute__((const, overloadable))dot(float3 lhs, float3 rhs);
  *
  * Supported by API versions 9 and newer.
  */
-extern float __attribute__((const, overloadable))dot(float4 lhs, float4 rhs);
+extern float __attribute__((const, overloadable))dot(float4 left_vector, float4 right_vector);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -6213,7 +6213,7 @@ extern float __attribute__((const, overloadable))dot(float4 lhs, float4 rhs);
  *
  * Supported by API versions 9 and newer.
  */
-extern float __attribute__((const, overloadable))erf(float);
+extern float __attribute__((const, overloadable))erf(float v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -6222,7 +6222,7 @@ extern float __attribute__((const, overloadable))erf(float);
  *
  * Supported by API versions 9 and newer.
  */
-extern float2 __attribute__((const, overloadable))erf(float2);
+extern float2 __attribute__((const, overloadable))erf(float2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -6231,7 +6231,7 @@ extern float2 __attribute__((const, overloadable))erf(float2);
  *
  * Supported by API versions 9 and newer.
  */
-extern float3 __attribute__((const, overloadable))erf(float3);
+extern float3 __attribute__((const, overloadable))erf(float3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -6240,7 +6240,7 @@ extern float3 __attribute__((const, overloadable))erf(float3);
  *
  * Supported by API versions 9 and newer.
  */
-extern float4 __attribute__((const, overloadable))erf(float4);
+extern float4 __attribute__((const, overloadable))erf(float4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -6249,7 +6249,7 @@ extern float4 __attribute__((const, overloadable))erf(float4);
  *
  * Supported by API versions 9 and newer.
  */
-extern float __attribute__((const, overloadable))erfc(float);
+extern float __attribute__((const, overloadable))erfc(float v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -6258,7 +6258,7 @@ extern float __attribute__((const, overloadable))erfc(float);
  *
  * Supported by API versions 9 and newer.
  */
-extern float2 __attribute__((const, overloadable))erfc(float2);
+extern float2 __attribute__((const, overloadable))erfc(float2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -6267,7 +6267,7 @@ extern float2 __attribute__((const, overloadable))erfc(float2);
  *
  * Supported by API versions 9 and newer.
  */
-extern float3 __attribute__((const, overloadable))erfc(float3);
+extern float3 __attribute__((const, overloadable))erfc(float3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -6276,195 +6276,195 @@ extern float3 __attribute__((const, overloadable))erfc(float3);
  *
  * Supported by API versions 9 and newer.
  */
-extern float4 __attribute__((const, overloadable))erfc(float4);
+extern float4 __attribute__((const, overloadable))erfc(float4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns e raised to x, i.e. e ^ x.
+ * Returns e raised to v, i.e. e ^ v.
  *
  * Supported by API versions 9 and newer.
  */
-extern float __attribute__((const, overloadable))exp(float x);
+extern float __attribute__((const, overloadable))exp(float v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns e raised to x, i.e. e ^ x.
+ * Returns e raised to v, i.e. e ^ v.
  *
  * Supported by API versions 9 and newer.
  */
-extern float2 __attribute__((const, overloadable))exp(float2 x);
+extern float2 __attribute__((const, overloadable))exp(float2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns e raised to x, i.e. e ^ x.
+ * Returns e raised to v, i.e. e ^ v.
  *
  * Supported by API versions 9 and newer.
  */
-extern float3 __attribute__((const, overloadable))exp(float3 x);
+extern float3 __attribute__((const, overloadable))exp(float3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns e raised to x, i.e. e ^ x.
+ * Returns e raised to v, i.e. e ^ v.
  *
  * Supported by API versions 9 and newer.
  */
-extern float4 __attribute__((const, overloadable))exp(float4 x);
+extern float4 __attribute__((const, overloadable))exp(float4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns 10 raised to x, i.e. 10.f ^ x.
+ * Returns 10 raised to v, i.e. 10.f ^ v.
  *
  * Supported by API versions 9 and newer.
  */
-extern float __attribute__((const, overloadable))exp10(float x);
+extern float __attribute__((const, overloadable))exp10(float v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns 10 raised to x, i.e. 10.f ^ x.
+ * Returns 10 raised to v, i.e. 10.f ^ v.
  *
  * Supported by API versions 9 and newer.
  */
-extern float2 __attribute__((const, overloadable))exp10(float2 x);
+extern float2 __attribute__((const, overloadable))exp10(float2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns 10 raised to x, i.e. 10.f ^ x.
+ * Returns 10 raised to v, i.e. 10.f ^ v.
  *
  * Supported by API versions 9 and newer.
  */
-extern float3 __attribute__((const, overloadable))exp10(float3 x);
+extern float3 __attribute__((const, overloadable))exp10(float3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns 10 raised to x, i.e. 10.f ^ x.
+ * Returns 10 raised to v, i.e. 10.f ^ v.
  *
  * Supported by API versions 9 and newer.
  */
-extern float4 __attribute__((const, overloadable))exp10(float4 x);
+extern float4 __attribute__((const, overloadable))exp10(float4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns 2 raised to x, i.e. 2.f ^ x.
+ * Returns 2 raised to v, i.e. 2.f ^ v.
  *
  * Supported by API versions 9 and newer.
  */
-extern float __attribute__((const, overloadable))exp2(float x);
+extern float __attribute__((const, overloadable))exp2(float v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns 2 raised to x, i.e. 2.f ^ x.
+ * Returns 2 raised to v, i.e. 2.f ^ v.
  *
  * Supported by API versions 9 and newer.
  */
-extern float2 __attribute__((const, overloadable))exp2(float2 x);
+extern float2 __attribute__((const, overloadable))exp2(float2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns 2 raised to x, i.e. 2.f ^ x.
+ * Returns 2 raised to v, i.e. 2.f ^ v.
  *
  * Supported by API versions 9 and newer.
  */
-extern float3 __attribute__((const, overloadable))exp2(float3 x);
+extern float3 __attribute__((const, overloadable))exp2(float3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns 2 raised to x, i.e. 2.f ^ x.
+ * Returns 2 raised to v, i.e. 2.f ^ v.
  *
  * Supported by API versions 9 and newer.
  */
-extern float4 __attribute__((const, overloadable))exp2(float4 x);
+extern float4 __attribute__((const, overloadable))exp2(float4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns e raised to x minus 1, i.e. (e ^ x) - 1.
+ * Returns e raised to v minus 1, i.e. (e ^ v) - 1.
  *
  * Supported by API versions 9 and newer.
  */
-extern float __attribute__((const, overloadable))expm1(float x);
+extern float __attribute__((const, overloadable))expm1(float v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns e raised to x minus 1, i.e. (e ^ x) - 1.
+ * Returns e raised to v minus 1, i.e. (e ^ v) - 1.
  *
  * Supported by API versions 9 and newer.
  */
-extern float2 __attribute__((const, overloadable))expm1(float2 x);
+extern float2 __attribute__((const, overloadable))expm1(float2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns e raised to x minus 1, i.e. (e ^ x) - 1.
+ * Returns e raised to v minus 1, i.e. (e ^ v) - 1.
  *
  * Supported by API versions 9 and newer.
  */
-extern float3 __attribute__((const, overloadable))expm1(float3 x);
+extern float3 __attribute__((const, overloadable))expm1(float3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns e raised to x minus 1, i.e. (e ^ x) - 1.
+ * Returns e raised to v minus 1, i.e. (e ^ v) - 1.
  *
  * Supported by API versions 9 and newer.
  */
-extern float4 __attribute__((const, overloadable))expm1(float4 x);
+extern float4 __attribute__((const, overloadable))expm1(float4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns the absolute value of the float x.
+ * Returns the absolute value of the float v.
  *
  * For integers, use abs().
  *
  * Supported by API versions 9 and newer.
  */
-extern float __attribute__((const, overloadable))fabs(float x);
+extern float __attribute__((const, overloadable))fabs(float v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns the absolute value of the float x.
+ * Returns the absolute value of the float v.
  *
  * For integers, use abs().
  *
  * Supported by API versions 9 and newer.
  */
-extern float2 __attribute__((const, overloadable))fabs(float2 x);
+extern float2 __attribute__((const, overloadable))fabs(float2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns the absolute value of the float x.
+ * Returns the absolute value of the float v.
  *
  * For integers, use abs().
  *
  * Supported by API versions 9 and newer.
  */
-extern float3 __attribute__((const, overloadable))fabs(float3 x);
+extern float3 __attribute__((const, overloadable))fabs(float3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns the absolute value of the float x.
+ * Returns the absolute value of the float v.
  *
  * For integers, use abs().
  *
  * Supported by API versions 9 and newer.
  */
-extern float4 __attribute__((const, overloadable))fabs(float4 x);
+extern float4 __attribute__((const, overloadable))fabs(float4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 17))
@@ -6475,7 +6475,7 @@ extern float4 __attribute__((const, overloadable))fabs(float4 x);
  *
  * Supported by API versions 17 and newer.
  */
-extern float __attribute__((const, overloadable))fast_distance(float lhs, float rhs);
+extern float __attribute__((const, overloadable))fast_distance(float left_vector, float right_vector);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 17))
@@ -6486,7 +6486,7 @@ extern float __attribute__((const, overloadable))fast_distance(float lhs, float 
  *
  * Supported by API versions 17 and newer.
  */
-extern float __attribute__((const, overloadable))fast_distance(float2 lhs, float2 rhs);
+extern float __attribute__((const, overloadable))fast_distance(float2 left_vector, float2 right_vector);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 17))
@@ -6497,7 +6497,7 @@ extern float __attribute__((const, overloadable))fast_distance(float2 lhs, float
  *
  * Supported by API versions 17 and newer.
  */
-extern float __attribute__((const, overloadable))fast_distance(float3 lhs, float3 rhs);
+extern float __attribute__((const, overloadable))fast_distance(float3 left_vector, float3 right_vector);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 17))
@@ -6508,7 +6508,7 @@ extern float __attribute__((const, overloadable))fast_distance(float3 lhs, float
  *
  * Supported by API versions 17 and newer.
  */
-extern float __attribute__((const, overloadable))fast_distance(float4 lhs, float4 rhs);
+extern float __attribute__((const, overloadable))fast_distance(float4 left_vector, float4 right_vector);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 17))
@@ -6657,7 +6657,7 @@ extern float4 __attribute__((const, overloadable))fdim(float4 a, float4 b);
  *
  * Supported by API versions 9 and newer.
  */
-extern float __attribute__((const, overloadable))floor(float);
+extern float __attribute__((const, overloadable))floor(float v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -6666,7 +6666,7 @@ extern float __attribute__((const, overloadable))floor(float);
  *
  * Supported by API versions 9 and newer.
  */
-extern float2 __attribute__((const, overloadable))floor(float2);
+extern float2 __attribute__((const, overloadable))floor(float2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -6675,7 +6675,7 @@ extern float2 __attribute__((const, overloadable))floor(float2);
  *
  * Supported by API versions 9 and newer.
  */
-extern float3 __attribute__((const, overloadable))floor(float3);
+extern float3 __attribute__((const, overloadable))floor(float3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -6684,210 +6684,210 @@ extern float3 __attribute__((const, overloadable))floor(float3);
  *
  * Supported by API versions 9 and newer.
  */
-extern float4 __attribute__((const, overloadable))floor(float4);
+extern float4 __attribute__((const, overloadable))floor(float4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Multiply and add.  Returns (a * b) + c.
+ * Multiply and add.  Returns (multiplicand1 * multiplicand2) + offset.
  *
  * This function is identical to mad().
  *
  * Supported by API versions 9 and newer.
  */
-extern float __attribute__((const, overloadable))fma(float a, float b, float c);
+extern float __attribute__((const, overloadable))fma(float multiplicand1, float multiplicand2, float offset);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Multiply and add.  Returns (a * b) + c.
+ * Multiply and add.  Returns (multiplicand1 * multiplicand2) + offset.
  *
  * This function is identical to mad().
  *
  * Supported by API versions 9 and newer.
  */
-extern float2 __attribute__((const, overloadable))fma(float2 a, float2 b, float2 c);
+extern float2 __attribute__((const, overloadable))fma(float2 multiplicand1, float2 multiplicand2, float2 offset);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Multiply and add.  Returns (a * b) + c.
+ * Multiply and add.  Returns (multiplicand1 * multiplicand2) + offset.
  *
  * This function is identical to mad().
  *
  * Supported by API versions 9 and newer.
  */
-extern float3 __attribute__((const, overloadable))fma(float3 a, float3 b, float3 c);
+extern float3 __attribute__((const, overloadable))fma(float3 multiplicand1, float3 multiplicand2, float3 offset);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Multiply and add.  Returns (a * b) + c.
+ * Multiply and add.  Returns (multiplicand1 * multiplicand2) + offset.
  *
  * This function is identical to mad().
  *
  * Supported by API versions 9 and newer.
  */
-extern float4 __attribute__((const, overloadable))fma(float4 a, float4 b, float4 c);
+extern float4 __attribute__((const, overloadable))fma(float4 multiplicand1, float4 multiplicand2, float4 offset);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns the maximum of x and y, i.e. (x < y ? y : x).
+ * Returns the maximum of a and b, i.e. (a < b ? b : a).
  *
  * The max() function returns identical results but can be applied to more data types.
  *
  * Supported by API versions 9 and newer.
  */
-extern float __attribute__((const, overloadable))fmax(float x, float y);
+extern float __attribute__((const, overloadable))fmax(float a, float b);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns the maximum of x and y, i.e. (x < y ? y : x).
+ * Returns the maximum of a and b, i.e. (a < b ? b : a).
  *
  * The max() function returns identical results but can be applied to more data types.
  *
  * Supported by API versions 9 and newer.
  */
-extern float2 __attribute__((const, overloadable))fmax(float2 x, float2 y);
+extern float2 __attribute__((const, overloadable))fmax(float2 a, float2 b);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns the maximum of x and y, i.e. (x < y ? y : x).
+ * Returns the maximum of a and b, i.e. (a < b ? b : a).
  *
  * The max() function returns identical results but can be applied to more data types.
  *
  * Supported by API versions 9 and newer.
  */
-extern float3 __attribute__((const, overloadable))fmax(float3 x, float3 y);
+extern float3 __attribute__((const, overloadable))fmax(float3 a, float3 b);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns the maximum of x and y, i.e. (x < y ? y : x).
+ * Returns the maximum of a and b, i.e. (a < b ? b : a).
  *
  * The max() function returns identical results but can be applied to more data types.
  *
  * Supported by API versions 9 and newer.
  */
-extern float4 __attribute__((const, overloadable))fmax(float4 x, float4 y);
+extern float4 __attribute__((const, overloadable))fmax(float4 a, float4 b);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns the maximum of x and y, i.e. (x < y ? y : x).
+ * Returns the maximum of a and b, i.e. (a < b ? b : a).
  *
- * Unlike the other variants of fmax() and max(), this function compare each element of x to the scalar y.
+ * Unlike the other variants of fmax() and max(), this function compare each element of a to the scalar b.
  *
  * Supported by API versions 9 and newer.
  */
-extern float2 __attribute__((const, overloadable))fmax(float2 x, float y);
+extern float2 __attribute__((const, overloadable))fmax(float2 a, float b);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns the maximum of x and y, i.e. (x < y ? y : x).
+ * Returns the maximum of a and b, i.e. (a < b ? b : a).
  *
- * Unlike the other variants of fmax() and max(), this function compare each element of x to the scalar y.
+ * Unlike the other variants of fmax() and max(), this function compare each element of a to the scalar b.
  *
  * Supported by API versions 9 and newer.
  */
-extern float3 __attribute__((const, overloadable))fmax(float3 x, float y);
+extern float3 __attribute__((const, overloadable))fmax(float3 a, float b);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns the maximum of x and y, i.e. (x < y ? y : x).
+ * Returns the maximum of a and b, i.e. (a < b ? b : a).
  *
- * Unlike the other variants of fmax() and max(), this function compare each element of x to the scalar y.
+ * Unlike the other variants of fmax() and max(), this function compare each element of a to the scalar b.
  *
  * Supported by API versions 9 and newer.
  */
-extern float4 __attribute__((const, overloadable))fmax(float4 x, float y);
+extern float4 __attribute__((const, overloadable))fmax(float4 a, float b);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns the minimum of x and y, i.e. (x > y ? y : x).
+ * Returns the minimum of a and b, i.e. (a > b ? b : a).
  *
  * The min() function returns identical results but can be applied to more data types.
  *
  * Supported by API versions 9 and newer.
  */
-extern float __attribute__((const, overloadable))fmin(float x, float y);
+extern float __attribute__((const, overloadable))fmin(float a, float b);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns the minimum of x and y, i.e. (x > y ? y : x).
+ * Returns the minimum of a and b, i.e. (a > b ? b : a).
  *
  * The min() function returns identical results but can be applied to more data types.
  *
  * Supported by API versions 9 and newer.
  */
-extern float2 __attribute__((const, overloadable))fmin(float2 x, float2 y);
+extern float2 __attribute__((const, overloadable))fmin(float2 a, float2 b);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns the minimum of x and y, i.e. (x > y ? y : x).
+ * Returns the minimum of a and b, i.e. (a > b ? b : a).
  *
  * The min() function returns identical results but can be applied to more data types.
  *
  * Supported by API versions 9 and newer.
  */
-extern float3 __attribute__((const, overloadable))fmin(float3 x, float3 y);
+extern float3 __attribute__((const, overloadable))fmin(float3 a, float3 b);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns the minimum of x and y, i.e. (x > y ? y : x).
+ * Returns the minimum of a and b, i.e. (a > b ? b : a).
  *
  * The min() function returns identical results but can be applied to more data types.
  *
  * Supported by API versions 9 and newer.
  */
-extern float4 __attribute__((const, overloadable))fmin(float4 x, float4 y);
+extern float4 __attribute__((const, overloadable))fmin(float4 a, float4 b);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns the minimum of x and y, i.e. (x > y ? y : x)
+ * Returns the minimum of a and b, i.e. (a > b ? b : a)
  *
- * Unlike the other variants of fmin() and min(), this function compare each element of x to the scalar y.
+ * Unlike the other variants of fmin() and min(), this function compare each element of a to the scalar b.
  *
  * Supported by API versions 9 and newer.
  */
-extern float2 __attribute__((const, overloadable))fmin(float2 x, float y);
+extern float2 __attribute__((const, overloadable))fmin(float2 a, float b);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns the minimum of x and y, i.e. (x > y ? y : x)
+ * Returns the minimum of a and b, i.e. (a > b ? b : a)
  *
- * Unlike the other variants of fmin() and min(), this function compare each element of x to the scalar y.
+ * Unlike the other variants of fmin() and min(), this function compare each element of a to the scalar b.
  *
  * Supported by API versions 9 and newer.
  */
-extern float3 __attribute__((const, overloadable))fmin(float3 x, float y);
+extern float3 __attribute__((const, overloadable))fmin(float3 a, float b);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns the minimum of x and y, i.e. (x > y ? y : x)
+ * Returns the minimum of a and b, i.e. (a > b ? b : a)
  *
- * Unlike the other variants of fmin() and min(), this function compare each element of x to the scalar y.
+ * Unlike the other variants of fmin() and min(), this function compare each element of a to the scalar b.
  *
  * Supported by API versions 9 and newer.
  */
-extern float4 __attribute__((const, overloadable))fmin(float4 x, float y);
+extern float4 __attribute__((const, overloadable))fmin(float4 a, float b);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns the remainder of x / y, where the quotient is rounded towards zero.
+ * Returns the remainder of (numerator / denominator), where the quotient is rounded towards zero.
  *
  * The function remainder() is similar but rounds toward the closest interger.
  * For example, fmod(-3.8f, 2.f) returns -1.8f (-3.8f - -1.f * 2.f)
@@ -6895,12 +6895,12 @@ extern float4 __attribute__((const, overloadable))fmin(float4 x, float y);
  *
  * Supported by API versions 9 and newer.
  */
-extern float __attribute__((const, overloadable))fmod(float x, float y);
+extern float __attribute__((const, overloadable))fmod(float numerator, float denominator);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns the remainder of x / y, where the quotient is rounded towards zero.
+ * Returns the remainder of (numerator / denominator), where the quotient is rounded towards zero.
  *
  * The function remainder() is similar but rounds toward the closest interger.
  * For example, fmod(-3.8f, 2.f) returns -1.8f (-3.8f - -1.f * 2.f)
@@ -6908,12 +6908,12 @@ extern float __attribute__((const, overloadable))fmod(float x, float y);
  *
  * Supported by API versions 9 and newer.
  */
-extern float2 __attribute__((const, overloadable))fmod(float2 x, float2 y);
+extern float2 __attribute__((const, overloadable))fmod(float2 numerator, float2 denominator);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns the remainder of x / y, where the quotient is rounded towards zero.
+ * Returns the remainder of (numerator / denominator), where the quotient is rounded towards zero.
  *
  * The function remainder() is similar but rounds toward the closest interger.
  * For example, fmod(-3.8f, 2.f) returns -1.8f (-3.8f - -1.f * 2.f)
@@ -6921,12 +6921,12 @@ extern float2 __attribute__((const, overloadable))fmod(float2 x, float2 y);
  *
  * Supported by API versions 9 and newer.
  */
-extern float3 __attribute__((const, overloadable))fmod(float3 x, float3 y);
+extern float3 __attribute__((const, overloadable))fmod(float3 numerator, float3 denominator);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns the remainder of x / y, where the quotient is rounded towards zero.
+ * Returns the remainder of (numerator / denominator), where the quotient is rounded towards zero.
  *
  * The function remainder() is similar but rounds toward the closest interger.
  * For example, fmod(-3.8f, 2.f) returns -1.8f (-3.8f - -1.f * 2.f)
@@ -6934,7 +6934,7 @@ extern float3 __attribute__((const, overloadable))fmod(float3 x, float3 y);
  *
  * Supported by API versions 9 and newer.
  */
-extern float4 __attribute__((const, overloadable))fmod(float4 x, float4 y);
+extern float4 __attribute__((const, overloadable))fmod(float4 numerator, float4 denominator);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -7065,11 +7065,11 @@ static float4 __attribute__((const, overloadable))fract(float4 v) {
  * See ldexp() for the reverse operation.
  *
  * @param v Supports float, float2, float3, float4.
- * @param expo  If expo is not null, each element of expo will be set to the exponent of the corresponding element of v.
+ * @param exponent  If exponent is not null, each element of exponent will be set to the exponent of the corresponding element of v.
  *
  * Supported by API versions 9 and newer.
  */
-extern float __attribute__((overloadable))frexp(float v, int* expo);
+extern float __attribute__((overloadable))frexp(float v, int* exponent);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -7080,11 +7080,11 @@ extern float __attribute__((overloadable))frexp(float v, int* expo);
  * See ldexp() for the reverse operation.
  *
  * @param v Supports float, float2, float3, float4.
- * @param expo  If expo is not null, each element of expo will be set to the exponent of the corresponding element of v.
+ * @param exponent  If exponent is not null, each element of exponent will be set to the exponent of the corresponding element of v.
  *
  * Supported by API versions 9 and newer.
  */
-extern float2 __attribute__((overloadable))frexp(float2 v, int2* expo);
+extern float2 __attribute__((overloadable))frexp(float2 v, int2* exponent);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -7095,11 +7095,11 @@ extern float2 __attribute__((overloadable))frexp(float2 v, int2* expo);
  * See ldexp() for the reverse operation.
  *
  * @param v Supports float, float2, float3, float4.
- * @param expo  If expo is not null, each element of expo will be set to the exponent of the corresponding element of v.
+ * @param exponent  If exponent is not null, each element of exponent will be set to the exponent of the corresponding element of v.
  *
  * Supported by API versions 9 and newer.
  */
-extern float3 __attribute__((overloadable))frexp(float3 v, int3* expo);
+extern float3 __attribute__((overloadable))frexp(float3 v, int3* exponent);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -7110,11 +7110,11 @@ extern float3 __attribute__((overloadable))frexp(float3 v, int3* expo);
  * See ldexp() for the reverse operation.
  *
  * @param v Supports float, float2, float3, float4.
- * @param expo  If expo is not null, each element of expo will be set to the exponent of the corresponding element of v.
+ * @param exponent  If exponent is not null, each element of exponent will be set to the exponent of the corresponding element of v.
  *
  * Supported by API versions 9 and newer.
  */
-extern float4 __attribute__((overloadable))frexp(float4 v, int4* expo);
+extern float4 __attribute__((overloadable))frexp(float4 v, int4* exponent);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 17))
@@ -7251,52 +7251,38 @@ extern float4 __attribute__((const, overloadable))half_sqrt(float4 v);
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns the hypotenuse, i.e. sqrt(x * x + y * y).
+ * Returns the hypotenuse, i.e. sqrt(a * a + b * b).
  *
  * Supported by API versions 9 and newer.
  */
-extern float __attribute__((const, overloadable))hypot(float x, float y);
+extern float __attribute__((const, overloadable))hypot(float a, float b);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns the hypotenuse, i.e. sqrt(x * x + y * y).
+ * Returns the hypotenuse, i.e. sqrt(a * a + b * b).
  *
  * Supported by API versions 9 and newer.
  */
-extern float2 __attribute__((const, overloadable))hypot(float2 x, float2 y);
+extern float2 __attribute__((const, overloadable))hypot(float2 a, float2 b);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns the hypotenuse, i.e. sqrt(x * x + y * y).
+ * Returns the hypotenuse, i.e. sqrt(a * a + b * b).
  *
  * Supported by API versions 9 and newer.
  */
-extern float3 __attribute__((const, overloadable))hypot(float3 x, float3 y);
+extern float3 __attribute__((const, overloadable))hypot(float3 a, float3 b);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns the hypotenuse, i.e. sqrt(x * x + y * y).
+ * Returns the hypotenuse, i.e. sqrt(a * a + b * b).
  *
  * Supported by API versions 9 and newer.
  */
-extern float4 __attribute__((const, overloadable))hypot(float4 x, float4 y);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/**
- * Returns the base two exponent of a value, where the mantissa is between 1.f (inclusive) and 2.f (exclusive).
- *
- * For example, ilogb(8.5f) returns 3.  Because of the difference in mantissa, this number is one less than
- * is returned by frexp().
- *
- * logb() is similar but returns a float.
- *
- * Supported by API versions 9 and newer.
- */
-extern int __attribute__((const, overloadable))ilogb(float);
+extern float4 __attribute__((const, overloadable))hypot(float4 a, float4 b);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -7310,7 +7296,7 @@ extern int __attribute__((const, overloadable))ilogb(float);
  *
  * Supported by API versions 9 and newer.
  */
-extern int2 __attribute__((const, overloadable))ilogb(float2);
+extern int __attribute__((const, overloadable))ilogb(float v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -7324,7 +7310,7 @@ extern int2 __attribute__((const, overloadable))ilogb(float2);
  *
  * Supported by API versions 9 and newer.
  */
-extern int3 __attribute__((const, overloadable))ilogb(float3);
+extern int2 __attribute__((const, overloadable))ilogb(float2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -7338,7 +7324,21 @@ extern int3 __attribute__((const, overloadable))ilogb(float3);
  *
  * Supported by API versions 9 and newer.
  */
-extern int4 __attribute__((const, overloadable))ilogb(float4);
+extern int3 __attribute__((const, overloadable))ilogb(float3 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 9))
+/**
+ * Returns the base two exponent of a value, where the mantissa is between 1.f (inclusive) and 2.f (exclusive).
+ *
+ * For example, ilogb(8.5f) returns 3.  Because of the difference in mantissa, this number is one less than
+ * is returned by frexp().
+ *
+ * logb() is similar but returns a float.
+ *
+ * Supported by API versions 9 and newer.
+ */
+extern int4 __attribute__((const, overloadable))ilogb(float4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -7474,98 +7474,98 @@ extern float __attribute__((const, overloadable))length(float4 v);
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns the natural logarithm of the absolute value of the gamma function, i.e. log(fabs(gamma(value))).
+ * Returns the natural logarithm of the absolute value of the gamma function, i.e. log(fabs(gamma(v))).
  *
  * Supported by API versions 9 and newer.
  */
-extern float __attribute__((const, overloadable))lgamma(float);
+extern float __attribute__((const, overloadable))lgamma(float v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns the natural logarithm of the absolute value of the gamma function, i.e. log(fabs(gamma(value))).
+ * Returns the natural logarithm of the absolute value of the gamma function, i.e. log(fabs(gamma(v))).
  *
  * Supported by API versions 9 and newer.
  */
-extern float2 __attribute__((const, overloadable))lgamma(float2);
+extern float2 __attribute__((const, overloadable))lgamma(float2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns the natural logarithm of the absolute value of the gamma function, i.e. log(fabs(gamma(value))).
+ * Returns the natural logarithm of the absolute value of the gamma function, i.e. log(fabs(gamma(v))).
  *
  * Supported by API versions 9 and newer.
  */
-extern float3 __attribute__((const, overloadable))lgamma(float3);
+extern float3 __attribute__((const, overloadable))lgamma(float3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns the natural logarithm of the absolute value of the gamma function, i.e. log(fabs(gamma(value))).
+ * Returns the natural logarithm of the absolute value of the gamma function, i.e. log(fabs(gamma(v))).
  *
  * Supported by API versions 9 and newer.
  */
-extern float4 __attribute__((const, overloadable))lgamma(float4);
+extern float4 __attribute__((const, overloadable))lgamma(float4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns the natural logarithm of the absolute value of the gamma function, i.e. log(fabs(gamma(x))).
+ * Returns the natural logarithm of the absolute value of the gamma function, i.e. log(fabs(gamma(v))).
  *
  * Can also return the sign of the gamma function.
  *
- * @param x Input value.
- * @param sign  If sign is not null, each element of sign will be set to -1.f if the gamma of the corresponding element of x is negative, otherwise to 1.f.
+ * @param v Input value.
+ * @param sign_of_gamma  If sign is not null, each element of sign will be set to -1.f if the gamma of the corresponding element of v is negative, otherwise to 1.f.
  *
  *
  * Supported by API versions 9 and newer.
  */
-extern float __attribute__((overloadable))lgamma(float x, int* sign);
+extern float __attribute__((overloadable))lgamma(float v, int* sign_of_gamma);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns the natural logarithm of the absolute value of the gamma function, i.e. log(fabs(gamma(x))).
+ * Returns the natural logarithm of the absolute value of the gamma function, i.e. log(fabs(gamma(v))).
  *
  * Can also return the sign of the gamma function.
  *
- * @param x Input value.
- * @param sign  If sign is not null, each element of sign will be set to -1.f if the gamma of the corresponding element of x is negative, otherwise to 1.f.
+ * @param v Input value.
+ * @param sign_of_gamma  If sign is not null, each element of sign will be set to -1.f if the gamma of the corresponding element of v is negative, otherwise to 1.f.
  *
  *
  * Supported by API versions 9 and newer.
  */
-extern float2 __attribute__((overloadable))lgamma(float2 x, int2* sign);
+extern float2 __attribute__((overloadable))lgamma(float2 v, int2* sign_of_gamma);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns the natural logarithm of the absolute value of the gamma function, i.e. log(fabs(gamma(x))).
+ * Returns the natural logarithm of the absolute value of the gamma function, i.e. log(fabs(gamma(v))).
  *
  * Can also return the sign of the gamma function.
  *
- * @param x Input value.
- * @param sign  If sign is not null, each element of sign will be set to -1.f if the gamma of the corresponding element of x is negative, otherwise to 1.f.
+ * @param v Input value.
+ * @param sign_of_gamma  If sign is not null, each element of sign will be set to -1.f if the gamma of the corresponding element of v is negative, otherwise to 1.f.
  *
  *
  * Supported by API versions 9 and newer.
  */
-extern float3 __attribute__((overloadable))lgamma(float3 x, int3* sign);
+extern float3 __attribute__((overloadable))lgamma(float3 v, int3* sign_of_gamma);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns the natural logarithm of the absolute value of the gamma function, i.e. log(fabs(gamma(x))).
+ * Returns the natural logarithm of the absolute value of the gamma function, i.e. log(fabs(gamma(v))).
  *
  * Can also return the sign of the gamma function.
  *
- * @param x Input value.
- * @param sign  If sign is not null, each element of sign will be set to -1.f if the gamma of the corresponding element of x is negative, otherwise to 1.f.
+ * @param v Input value.
+ * @param sign_of_gamma  If sign is not null, each element of sign will be set to -1.f if the gamma of the corresponding element of v is negative, otherwise to 1.f.
  *
  *
  * Supported by API versions 9 and newer.
  */
-extern float4 __attribute__((overloadable))lgamma(float4 x, int4* sign);
+extern float4 __attribute__((overloadable))lgamma(float4 v, int4* sign_of_gamma);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -7574,7 +7574,7 @@ extern float4 __attribute__((overloadable))lgamma(float4 x, int4* sign);
  *
  * Supported by API versions 9 and newer.
  */
-extern float __attribute__((const, overloadable))log(float);
+extern float __attribute__((const, overloadable))log(float v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -7583,7 +7583,7 @@ extern float __attribute__((const, overloadable))log(float);
  *
  * Supported by API versions 9 and newer.
  */
-extern float2 __attribute__((const, overloadable))log(float2);
+extern float2 __attribute__((const, overloadable))log(float2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -7592,7 +7592,7 @@ extern float2 __attribute__((const, overloadable))log(float2);
  *
  * Supported by API versions 9 and newer.
  */
-extern float3 __attribute__((const, overloadable))log(float3);
+extern float3 __attribute__((const, overloadable))log(float3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -7601,7 +7601,7 @@ extern float3 __attribute__((const, overloadable))log(float3);
  *
  * Supported by API versions 9 and newer.
  */
-extern float4 __attribute__((const, overloadable))log(float4);
+extern float4 __attribute__((const, overloadable))log(float4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -7610,7 +7610,7 @@ extern float4 __attribute__((const, overloadable))log(float4);
  *
  * Supported by API versions 9 and newer.
  */
-extern float __attribute__((const, overloadable))log10(float);
+extern float __attribute__((const, overloadable))log10(float v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -7619,7 +7619,7 @@ extern float __attribute__((const, overloadable))log10(float);
  *
  * Supported by API versions 9 and newer.
  */
-extern float2 __attribute__((const, overloadable))log10(float2);
+extern float2 __attribute__((const, overloadable))log10(float2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -7628,7 +7628,7 @@ extern float2 __attribute__((const, overloadable))log10(float2);
  *
  * Supported by API versions 9 and newer.
  */
-extern float3 __attribute__((const, overloadable))log10(float3);
+extern float3 __attribute__((const, overloadable))log10(float3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -7637,7 +7637,7 @@ extern float3 __attribute__((const, overloadable))log10(float3);
  *
  * Supported by API versions 9 and newer.
  */
-extern float4 __attribute__((const, overloadable))log10(float4);
+extern float4 __attribute__((const, overloadable))log10(float4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -7682,7 +7682,7 @@ extern float4 __attribute__((const, overloadable))log1p(float4 v);
  *
  * Supported by API versions 9 and newer.
  */
-extern float __attribute__((const, overloadable))log2(float);
+extern float __attribute__((const, overloadable))log2(float v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -7691,7 +7691,7 @@ extern float __attribute__((const, overloadable))log2(float);
  *
  * Supported by API versions 9 and newer.
  */
-extern float2 __attribute__((const, overloadable))log2(float2);
+extern float2 __attribute__((const, overloadable))log2(float2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -7700,7 +7700,7 @@ extern float2 __attribute__((const, overloadable))log2(float2);
  *
  * Supported by API versions 9 and newer.
  */
-extern float3 __attribute__((const, overloadable))log2(float3);
+extern float3 __attribute__((const, overloadable))log2(float3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -7709,7 +7709,7 @@ extern float3 __attribute__((const, overloadable))log2(float3);
  *
  * Supported by API versions 9 and newer.
  */
-extern float4 __attribute__((const, overloadable))log2(float4);
+extern float4 __attribute__((const, overloadable))log2(float4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -7723,7 +7723,7 @@ extern float4 __attribute__((const, overloadable))log2(float4);
  *
  * Supported by API versions 9 and newer.
  */
-extern float __attribute__((const, overloadable))logb(float);
+extern float __attribute__((const, overloadable))logb(float v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -7737,7 +7737,7 @@ extern float __attribute__((const, overloadable))logb(float);
  *
  * Supported by API versions 9 and newer.
  */
-extern float2 __attribute__((const, overloadable))logb(float2);
+extern float2 __attribute__((const, overloadable))logb(float2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -7751,7 +7751,7 @@ extern float2 __attribute__((const, overloadable))logb(float2);
  *
  * Supported by API versions 9 and newer.
  */
-extern float3 __attribute__((const, overloadable))logb(float3);
+extern float3 __attribute__((const, overloadable))logb(float3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -7765,1440 +7765,1448 @@ extern float3 __attribute__((const, overloadable))logb(float3);
  *
  * Supported by API versions 9 and newer.
  */
-extern float4 __attribute__((const, overloadable))logb(float4);
+extern float4 __attribute__((const, overloadable))logb(float4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Multiply and add.  Returns (a * b) + c.
+ * Multiply and add.  Returns (multiplicand1 * multiplicand2) + offset.
  *
  * This function is identical to fma().
  *
  * Supported by API versions 9 and newer.
  */
-extern float __attribute__((const, overloadable))mad(float a, float b, float c);
+extern float __attribute__((const, overloadable))mad(float multiplicand1, float multiplicand2, float offset);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Multiply and add.  Returns (a * b) + c.
+ * Multiply and add.  Returns (multiplicand1 * multiplicand2) + offset.
  *
  * This function is identical to fma().
  *
  * Supported by API versions 9 and newer.
  */
-extern float2 __attribute__((const, overloadable))mad(float2 a, float2 b, float2 c);
+extern float2 __attribute__((const, overloadable))mad(float2 multiplicand1, float2 multiplicand2, float2 offset);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Multiply and add.  Returns (a * b) + c.
+ * Multiply and add.  Returns (multiplicand1 * multiplicand2) + offset.
  *
  * This function is identical to fma().
  *
  * Supported by API versions 9 and newer.
  */
-extern float3 __attribute__((const, overloadable))mad(float3 a, float3 b, float3 c);
+extern float3 __attribute__((const, overloadable))mad(float3 multiplicand1, float3 multiplicand2, float3 offset);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Multiply and add.  Returns (a * b) + c.
+ * Multiply and add.  Returns (multiplicand1 * multiplicand2) + offset.
  *
  * This function is identical to fma().
  *
  * Supported by API versions 9 and newer.
  */
-extern float4 __attribute__((const, overloadable))mad(float4 a, float4 b, float4 c);
+extern float4 __attribute__((const, overloadable))mad(float4 multiplicand1, float4 multiplicand2, float4 offset);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns the maximum value from two arguments
+ * Returns the maximum value of two arguments.
  *
  * Supported by API versions 9 and newer.
  */
-extern float __attribute__((const, overloadable))max(float, float);
+extern float __attribute__((const, overloadable))max(float a, float b);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns the maximum value from two arguments
+ * Returns the maximum value of two arguments.
  *
  * Supported by API versions 9 and newer.
  */
-extern float2 __attribute__((const, overloadable))max(float2, float2);
+extern float2 __attribute__((const, overloadable))max(float2 a, float2 b);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns the maximum value from two arguments
+ * Returns the maximum value of two arguments.
  *
  * Supported by API versions 9 and newer.
  */
-extern float3 __attribute__((const, overloadable))max(float3, float3);
+extern float3 __attribute__((const, overloadable))max(float3 a, float3 b);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns the maximum value from two arguments
+ * Returns the maximum value of two arguments.
  *
  * Supported by API versions 9 and newer.
  */
-extern float4 __attribute__((const, overloadable))max(float4, float4);
+extern float4 __attribute__((const, overloadable))max(float4 a, float4 b);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9) && (RS_VERSION <= 19))
 /**
- * Returns the maximum value from two arguments
+ * Returns the maximum value of two arguments.
  *
  * Suppored by API versions 9 - 19
  */
-static char __attribute__((const, overloadable))max(char v1, char v2) {
- return (v1 > v2 ? v1 : v2);
+static char __attribute__((const, overloadable))max(char a, char b) {
+ return (a > b ? a : b);
 }
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9) && (RS_VERSION <= 19))
 /**
- * Returns the maximum value from two arguments
+ * Returns the maximum value of two arguments.
  *
  * Suppored by API versions 9 - 19
  */
-static uchar __attribute__((const, overloadable))max(uchar v1, uchar v2) {
- return (v1 > v2 ? v1 : v2);
+static uchar __attribute__((const, overloadable))max(uchar a, uchar b) {
+ return (a > b ? a : b);
 }
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9) && (RS_VERSION <= 19))
 /**
- * Returns the maximum value from two arguments
+ * Returns the maximum value of two arguments.
  *
  * Suppored by API versions 9 - 19
  */
-static short __attribute__((const, overloadable))max(short v1, short v2) {
- return (v1 > v2 ? v1 : v2);
+static short __attribute__((const, overloadable))max(short a, short b) {
+ return (a > b ? a : b);
 }
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9) && (RS_VERSION <= 19))
 /**
- * Returns the maximum value from two arguments
+ * Returns the maximum value of two arguments.
  *
  * Suppored by API versions 9 - 19
  */
-static ushort __attribute__((const, overloadable))max(ushort v1, ushort v2) {
- return (v1 > v2 ? v1 : v2);
+static ushort __attribute__((const, overloadable))max(ushort a, ushort b) {
+ return (a > b ? a : b);
 }
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9) && (RS_VERSION <= 19))
 /**
- * Returns the maximum value from two arguments
+ * Returns the maximum value of two arguments.
  *
  * Suppored by API versions 9 - 19
  */
-static int __attribute__((const, overloadable))max(int v1, int v2) {
- return (v1 > v2 ? v1 : v2);
+static int __attribute__((const, overloadable))max(int a, int b) {
+ return (a > b ? a : b);
 }
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9) && (RS_VERSION <= 19))
 /**
- * Returns the maximum value from two arguments
+ * Returns the maximum value of two arguments.
  *
  * Suppored by API versions 9 - 19
  */
-static uint __attribute__((const, overloadable))max(uint v1, uint v2) {
- return (v1 > v2 ? v1 : v2);
+static uint __attribute__((const, overloadable))max(uint a, uint b) {
+ return (a > b ? a : b);
 }
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9) && (RS_VERSION <= 19))
 /**
- * Returns the maximum value from two arguments
+ * Returns the maximum value of two arguments.
  *
  * Suppored by API versions 9 - 19
  */
-static char2 __attribute__((const, overloadable))max(char2 v1, char2 v2) {
+static char2 __attribute__((const, overloadable))max(char2 a, char2 b) {
  char2 tmp;
- tmp.x = (v1.x > v2.x ? v1.x : v2.x);
- tmp.y = (v1.y > v2.y ? v1.y : v2.y);
+ tmp.x = (a.x > b.x ? a.x : b.x);
+ tmp.y = (a.y > b.y ? a.y : b.y);
  return tmp;
 }
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9) && (RS_VERSION <= 19))
 /**
- * Returns the maximum value from two arguments
+ * Returns the maximum value of two arguments.
  *
  * Suppored by API versions 9 - 19
  */
-static uchar2 __attribute__((const, overloadable))max(uchar2 v1, uchar2 v2) {
+static uchar2 __attribute__((const, overloadable))max(uchar2 a, uchar2 b) {
  uchar2 tmp;
- tmp.x = (v1.x > v2.x ? v1.x : v2.x);
- tmp.y = (v1.y > v2.y ? v1.y : v2.y);
+ tmp.x = (a.x > b.x ? a.x : b.x);
+ tmp.y = (a.y > b.y ? a.y : b.y);
  return tmp;
 }
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9) && (RS_VERSION <= 19))
 /**
- * Returns the maximum value from two arguments
+ * Returns the maximum value of two arguments.
  *
  * Suppored by API versions 9 - 19
  */
-static short2 __attribute__((const, overloadable))max(short2 v1, short2 v2) {
+static short2 __attribute__((const, overloadable))max(short2 a, short2 b) {
  short2 tmp;
- tmp.x = (v1.x > v2.x ? v1.x : v2.x);
- tmp.y = (v1.y > v2.y ? v1.y : v2.y);
+ tmp.x = (a.x > b.x ? a.x : b.x);
+ tmp.y = (a.y > b.y ? a.y : b.y);
  return tmp;
 }
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9) && (RS_VERSION <= 19))
 /**
- * Returns the maximum value from two arguments
+ * Returns the maximum value of two arguments.
  *
  * Suppored by API versions 9 - 19
  */
-static ushort2 __attribute__((const, overloadable))max(ushort2 v1, ushort2 v2) {
+static ushort2 __attribute__((const, overloadable))max(ushort2 a, ushort2 b) {
  ushort2 tmp;
- tmp.x = (v1.x > v2.x ? v1.x : v2.x);
- tmp.y = (v1.y > v2.y ? v1.y : v2.y);
+ tmp.x = (a.x > b.x ? a.x : b.x);
+ tmp.y = (a.y > b.y ? a.y : b.y);
  return tmp;
 }
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9) && (RS_VERSION <= 19))
 /**
- * Returns the maximum value from two arguments
+ * Returns the maximum value of two arguments.
  *
  * Suppored by API versions 9 - 19
  */
-static int2 __attribute__((const, overloadable))max(int2 v1, int2 v2) {
+static int2 __attribute__((const, overloadable))max(int2 a, int2 b) {
  int2 tmp;
- tmp.x = (v1.x > v2.x ? v1.x : v2.x);
- tmp.y = (v1.y > v2.y ? v1.y : v2.y);
+ tmp.x = (a.x > b.x ? a.x : b.x);
+ tmp.y = (a.y > b.y ? a.y : b.y);
  return tmp;
 }
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9) && (RS_VERSION <= 19))
 /**
- * Returns the maximum value from two arguments
+ * Returns the maximum value of two arguments.
  *
  * Suppored by API versions 9 - 19
  */
-static uint2 __attribute__((const, overloadable))max(uint2 v1, uint2 v2) {
+static uint2 __attribute__((const, overloadable))max(uint2 a, uint2 b) {
  uint2 tmp;
- tmp.x = (v1.x > v2.x ? v1.x : v2.x);
- tmp.y = (v1.y > v2.y ? v1.y : v2.y);
+ tmp.x = (a.x > b.x ? a.x : b.x);
+ tmp.y = (a.y > b.y ? a.y : b.y);
  return tmp;
 }
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9) && (RS_VERSION <= 19))
 /**
- * Returns the maximum value from two arguments
+ * Returns the maximum value of two arguments.
  *
  * Suppored by API versions 9 - 19
  */
-static char3 __attribute__((const, overloadable))max(char3 v1, char3 v2) {
+static char3 __attribute__((const, overloadable))max(char3 a, char3 b) {
  char3 tmp;
- tmp.x = (v1.x > v2.x ? v1.x : v2.x);
- tmp.y = (v1.y > v2.y ? v1.y : v2.y);
- tmp.z = (v1.z > v2.z ? v1.z : v2.z);
+ tmp.x = (a.x > b.x ? a.x : b.x);
+ tmp.y = (a.y > b.y ? a.y : b.y);
+ tmp.z = (a.z > b.z ? a.z : b.z);
  return tmp;
 }
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9) && (RS_VERSION <= 19))
 /**
- * Returns the maximum value from two arguments
+ * Returns the maximum value of two arguments.
  *
  * Suppored by API versions 9 - 19
  */
-static uchar3 __attribute__((const, overloadable))max(uchar3 v1, uchar3 v2) {
+static uchar3 __attribute__((const, overloadable))max(uchar3 a, uchar3 b) {
  uchar3 tmp;
- tmp.x = (v1.x > v2.x ? v1.x : v2.x);
- tmp.y = (v1.y > v2.y ? v1.y : v2.y);
- tmp.z = (v1.z > v2.z ? v1.z : v2.z);
+ tmp.x = (a.x > b.x ? a.x : b.x);
+ tmp.y = (a.y > b.y ? a.y : b.y);
+ tmp.z = (a.z > b.z ? a.z : b.z);
  return tmp;
 }
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9) && (RS_VERSION <= 19))
 /**
- * Returns the maximum value from two arguments
+ * Returns the maximum value of two arguments.
  *
  * Suppored by API versions 9 - 19
  */
-static short3 __attribute__((const, overloadable))max(short3 v1, short3 v2) {
+static short3 __attribute__((const, overloadable))max(short3 a, short3 b) {
  short3 tmp;
- tmp.x = (v1.x > v2.x ? v1.x : v2.x);
- tmp.y = (v1.y > v2.y ? v1.y : v2.y);
- tmp.z = (v1.z > v2.z ? v1.z : v2.z);
+ tmp.x = (a.x > b.x ? a.x : b.x);
+ tmp.y = (a.y > b.y ? a.y : b.y);
+ tmp.z = (a.z > b.z ? a.z : b.z);
  return tmp;
 }
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9) && (RS_VERSION <= 19))
 /**
- * Returns the maximum value from two arguments
+ * Returns the maximum value of two arguments.
  *
  * Suppored by API versions 9 - 19
  */
-static ushort3 __attribute__((const, overloadable))max(ushort3 v1, ushort3 v2) {
+static ushort3 __attribute__((const, overloadable))max(ushort3 a, ushort3 b) {
  ushort3 tmp;
- tmp.x = (v1.x > v2.x ? v1.x : v2.x);
- tmp.y = (v1.y > v2.y ? v1.y : v2.y);
- tmp.z = (v1.z > v2.z ? v1.z : v2.z);
+ tmp.x = (a.x > b.x ? a.x : b.x);
+ tmp.y = (a.y > b.y ? a.y : b.y);
+ tmp.z = (a.z > b.z ? a.z : b.z);
  return tmp;
 }
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9) && (RS_VERSION <= 19))
 /**
- * Returns the maximum value from two arguments
+ * Returns the maximum value of two arguments.
  *
  * Suppored by API versions 9 - 19
  */
-static int3 __attribute__((const, overloadable))max(int3 v1, int3 v2) {
+static int3 __attribute__((const, overloadable))max(int3 a, int3 b) {
  int3 tmp;
- tmp.x = (v1.x > v2.x ? v1.x : v2.x);
- tmp.y = (v1.y > v2.y ? v1.y : v2.y);
- tmp.z = (v1.z > v2.z ? v1.z : v2.z);
+ tmp.x = (a.x > b.x ? a.x : b.x);
+ tmp.y = (a.y > b.y ? a.y : b.y);
+ tmp.z = (a.z > b.z ? a.z : b.z);
  return tmp;
 }
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9) && (RS_VERSION <= 19))
 /**
- * Returns the maximum value from two arguments
+ * Returns the maximum value of two arguments.
  *
  * Suppored by API versions 9 - 19
  */
-static uint3 __attribute__((const, overloadable))max(uint3 v1, uint3 v2) {
+static uint3 __attribute__((const, overloadable))max(uint3 a, uint3 b) {
  uint3 tmp;
- tmp.x = (v1.x > v2.x ? v1.x : v2.x);
- tmp.y = (v1.y > v2.y ? v1.y : v2.y);
- tmp.z = (v1.z > v2.z ? v1.z : v2.z);
+ tmp.x = (a.x > b.x ? a.x : b.x);
+ tmp.y = (a.y > b.y ? a.y : b.y);
+ tmp.z = (a.z > b.z ? a.z : b.z);
  return tmp;
 }
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9) && (RS_VERSION <= 19))
 /**
- * Returns the maximum value from two arguments
+ * Returns the maximum value of two arguments.
  *
  * Suppored by API versions 9 - 19
  */
-static char4 __attribute__((const, overloadable))max(char4 v1, char4 v2) {
+static char4 __attribute__((const, overloadable))max(char4 a, char4 b) {
  char4 tmp;
- tmp.x = (v1.x > v2.x ? v1.x : v2.x);
- tmp.y = (v1.y > v2.y ? v1.y : v2.y);
- tmp.z = (v1.z > v2.z ? v1.z : v2.z);
- tmp.w = (v1.w > v2.w ? v1.w : v2.w);
+ tmp.x = (a.x > b.x ? a.x : b.x);
+ tmp.y = (a.y > b.y ? a.y : b.y);
+ tmp.z = (a.z > b.z ? a.z : b.z);
+ tmp.w = (a.w > b.w ? a.w : b.w);
  return tmp;
 }
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9) && (RS_VERSION <= 19))
 /**
- * Returns the maximum value from two arguments
+ * Returns the maximum value of two arguments.
  *
  * Suppored by API versions 9 - 19
  */
-static uchar4 __attribute__((const, overloadable))max(uchar4 v1, uchar4 v2) {
+static uchar4 __attribute__((const, overloadable))max(uchar4 a, uchar4 b) {
  uchar4 tmp;
- tmp.x = (v1.x > v2.x ? v1.x : v2.x);
- tmp.y = (v1.y > v2.y ? v1.y : v2.y);
- tmp.z = (v1.z > v2.z ? v1.z : v2.z);
- tmp.w = (v1.w > v2.w ? v1.w : v2.w);
+ tmp.x = (a.x > b.x ? a.x : b.x);
+ tmp.y = (a.y > b.y ? a.y : b.y);
+ tmp.z = (a.z > b.z ? a.z : b.z);
+ tmp.w = (a.w > b.w ? a.w : b.w);
  return tmp;
 }
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9) && (RS_VERSION <= 19))
 /**
- * Returns the maximum value from two arguments
+ * Returns the maximum value of two arguments.
  *
  * Suppored by API versions 9 - 19
  */
-static short4 __attribute__((const, overloadable))max(short4 v1, short4 v2) {
+static short4 __attribute__((const, overloadable))max(short4 a, short4 b) {
  short4 tmp;
- tmp.x = (v1.x > v2.x ? v1.x : v2.x);
- tmp.y = (v1.y > v2.y ? v1.y : v2.y);
- tmp.z = (v1.z > v2.z ? v1.z : v2.z);
- tmp.w = (v1.w > v2.w ? v1.w : v2.w);
+ tmp.x = (a.x > b.x ? a.x : b.x);
+ tmp.y = (a.y > b.y ? a.y : b.y);
+ tmp.z = (a.z > b.z ? a.z : b.z);
+ tmp.w = (a.w > b.w ? a.w : b.w);
  return tmp;
 }
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9) && (RS_VERSION <= 19))
 /**
- * Returns the maximum value from two arguments
+ * Returns the maximum value of two arguments.
  *
  * Suppored by API versions 9 - 19
  */
-static ushort4 __attribute__((const, overloadable))max(ushort4 v1, ushort4 v2) {
+static ushort4 __attribute__((const, overloadable))max(ushort4 a, ushort4 b) {
  ushort4 tmp;
- tmp.x = (v1.x > v2.x ? v1.x : v2.x);
- tmp.y = (v1.y > v2.y ? v1.y : v2.y);
- tmp.z = (v1.z > v2.z ? v1.z : v2.z);
- tmp.w = (v1.w > v2.w ? v1.w : v2.w);
+ tmp.x = (a.x > b.x ? a.x : b.x);
+ tmp.y = (a.y > b.y ? a.y : b.y);
+ tmp.z = (a.z > b.z ? a.z : b.z);
+ tmp.w = (a.w > b.w ? a.w : b.w);
  return tmp;
 }
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9) && (RS_VERSION <= 19))
 /**
- * Returns the maximum value from two arguments
+ * Returns the maximum value of two arguments.
  *
  * Suppored by API versions 9 - 19
  */
-static int4 __attribute__((const, overloadable))max(int4 v1, int4 v2) {
+static int4 __attribute__((const, overloadable))max(int4 a, int4 b) {
  int4 tmp;
- tmp.x = (v1.x > v2.x ? v1.x : v2.x);
- tmp.y = (v1.y > v2.y ? v1.y : v2.y);
- tmp.z = (v1.z > v2.z ? v1.z : v2.z);
- tmp.w = (v1.w > v2.w ? v1.w : v2.w);
+ tmp.x = (a.x > b.x ? a.x : b.x);
+ tmp.y = (a.y > b.y ? a.y : b.y);
+ tmp.z = (a.z > b.z ? a.z : b.z);
+ tmp.w = (a.w > b.w ? a.w : b.w);
  return tmp;
 }
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9) && (RS_VERSION <= 19))
 /**
- * Returns the maximum value from two arguments
+ * Returns the maximum value of two arguments.
  *
  * Suppored by API versions 9 - 19
  */
-static uint4 __attribute__((const, overloadable))max(uint4 v1, uint4 v2) {
+static uint4 __attribute__((const, overloadable))max(uint4 a, uint4 b) {
  uint4 tmp;
- tmp.x = (v1.x > v2.x ? v1.x : v2.x);
- tmp.y = (v1.y > v2.y ? v1.y : v2.y);
- tmp.z = (v1.z > v2.z ? v1.z : v2.z);
- tmp.w = (v1.w > v2.w ? v1.w : v2.w);
+ tmp.x = (a.x > b.x ? a.x : b.x);
+ tmp.y = (a.y > b.y ? a.y : b.y);
+ tmp.z = (a.z > b.z ? a.z : b.z);
+ tmp.w = (a.w > b.w ? a.w : b.w);
  return tmp;
 }
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /**
- * Returns the maximum value from two arguments
+ * Returns the maximum value of two arguments.
  *
  * Supported by API versions 21 and newer.
  */
-extern char __attribute__((const, overloadable))max(char v1, char v2);
+extern char __attribute__((const, overloadable))max(char a, char b);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /**
- * Returns the maximum value from two arguments
+ * Returns the maximum value of two arguments.
  *
  * Supported by API versions 21 and newer.
  */
-extern char2 __attribute__((const, overloadable))max(char2 v1, char2 v2);
+extern char2 __attribute__((const, overloadable))max(char2 a, char2 b);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /**
- * Returns the maximum value from two arguments
+ * Returns the maximum value of two arguments.
  *
  * Supported by API versions 21 and newer.
  */
-extern char3 __attribute__((const, overloadable))max(char3 v1, char3 v2);
+extern char3 __attribute__((const, overloadable))max(char3 a, char3 b);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /**
- * Returns the maximum value from two arguments
+ * Returns the maximum value of two arguments.
  *
  * Supported by API versions 21 and newer.
  */
-extern char4 __attribute__((const, overloadable))max(char4 v1, char4 v2);
+extern char4 __attribute__((const, overloadable))max(char4 a, char4 b);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /**
- * Returns the maximum value from two arguments
+ * Returns the maximum value of two arguments.
  *
  * Supported by API versions 21 and newer.
  */
-extern uchar __attribute__((const, overloadable))max(uchar v1, uchar v2);
+extern uchar __attribute__((const, overloadable))max(uchar a, uchar b);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /**
- * Returns the maximum value from two arguments
+ * Returns the maximum value of two arguments.
  *
  * Supported by API versions 21 and newer.
  */
-extern uchar2 __attribute__((const, overloadable))max(uchar2 v1, uchar2 v2);
+extern uchar2 __attribute__((const, overloadable))max(uchar2 a, uchar2 b);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /**
- * Returns the maximum value from two arguments
+ * Returns the maximum value of two arguments.
  *
  * Supported by API versions 21 and newer.
  */
-extern uchar3 __attribute__((const, overloadable))max(uchar3 v1, uchar3 v2);
+extern uchar3 __attribute__((const, overloadable))max(uchar3 a, uchar3 b);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /**
- * Returns the maximum value from two arguments
+ * Returns the maximum value of two arguments.
  *
  * Supported by API versions 21 and newer.
  */
-extern uchar4 __attribute__((const, overloadable))max(uchar4 v1, uchar4 v2);
+extern uchar4 __attribute__((const, overloadable))max(uchar4 a, uchar4 b);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /**
- * Returns the maximum value from two arguments
+ * Returns the maximum value of two arguments.
  *
  * Supported by API versions 21 and newer.
  */
-extern short __attribute__((const, overloadable))max(short v1, short v2);
+extern short __attribute__((const, overloadable))max(short a, short b);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /**
- * Returns the maximum value from two arguments
+ * Returns the maximum value of two arguments.
  *
  * Supported by API versions 21 and newer.
  */
-extern short2 __attribute__((const, overloadable))max(short2 v1, short2 v2);
+extern short2 __attribute__((const, overloadable))max(short2 a, short2 b);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /**
- * Returns the maximum value from two arguments
+ * Returns the maximum value of two arguments.
  *
  * Supported by API versions 21 and newer.
  */
-extern short3 __attribute__((const, overloadable))max(short3 v1, short3 v2);
+extern short3 __attribute__((const, overloadable))max(short3 a, short3 b);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /**
- * Returns the maximum value from two arguments
+ * Returns the maximum value of two arguments.
  *
  * Supported by API versions 21 and newer.
  */
-extern short4 __attribute__((const, overloadable))max(short4 v1, short4 v2);
+extern short4 __attribute__((const, overloadable))max(short4 a, short4 b);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /**
- * Returns the maximum value from two arguments
+ * Returns the maximum value of two arguments.
  *
  * Supported by API versions 21 and newer.
  */
-extern ushort __attribute__((const, overloadable))max(ushort v1, ushort v2);
+extern ushort __attribute__((const, overloadable))max(ushort a, ushort b);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /**
- * Returns the maximum value from two arguments
+ * Returns the maximum value of two arguments.
  *
  * Supported by API versions 21 and newer.
  */
-extern ushort2 __attribute__((const, overloadable))max(ushort2 v1, ushort2 v2);
+extern ushort2 __attribute__((const, overloadable))max(ushort2 a, ushort2 b);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /**
- * Returns the maximum value from two arguments
+ * Returns the maximum value of two arguments.
  *
  * Supported by API versions 21 and newer.
  */
-extern ushort3 __attribute__((const, overloadable))max(ushort3 v1, ushort3 v2);
+extern ushort3 __attribute__((const, overloadable))max(ushort3 a, ushort3 b);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /**
- * Returns the maximum value from two arguments
+ * Returns the maximum value of two arguments.
  *
  * Supported by API versions 21 and newer.
  */
-extern ushort4 __attribute__((const, overloadable))max(ushort4 v1, ushort4 v2);
+extern ushort4 __attribute__((const, overloadable))max(ushort4 a, ushort4 b);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /**
- * Returns the maximum value from two arguments
+ * Returns the maximum value of two arguments.
  *
  * Supported by API versions 21 and newer.
  */
-extern int __attribute__((const, overloadable))max(int v1, int v2);
+extern int __attribute__((const, overloadable))max(int a, int b);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /**
- * Returns the maximum value from two arguments
+ * Returns the maximum value of two arguments.
  *
  * Supported by API versions 21 and newer.
  */
-extern int2 __attribute__((const, overloadable))max(int2 v1, int2 v2);
+extern int2 __attribute__((const, overloadable))max(int2 a, int2 b);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /**
- * Returns the maximum value from two arguments
+ * Returns the maximum value of two arguments.
  *
  * Supported by API versions 21 and newer.
  */
-extern int3 __attribute__((const, overloadable))max(int3 v1, int3 v2);
+extern int3 __attribute__((const, overloadable))max(int3 a, int3 b);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /**
- * Returns the maximum value from two arguments
+ * Returns the maximum value of two arguments.
  *
  * Supported by API versions 21 and newer.
  */
-extern int4 __attribute__((const, overloadable))max(int4 v1, int4 v2);
+extern int4 __attribute__((const, overloadable))max(int4 a, int4 b);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /**
- * Returns the maximum value from two arguments
+ * Returns the maximum value of two arguments.
  *
  * Supported by API versions 21 and newer.
  */
-extern uint __attribute__((const, overloadable))max(uint v1, uint v2);
+extern uint __attribute__((const, overloadable))max(uint a, uint b);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /**
- * Returns the maximum value from two arguments
+ * Returns the maximum value of two arguments.
  *
  * Supported by API versions 21 and newer.
  */
-extern uint2 __attribute__((const, overloadable))max(uint2 v1, uint2 v2);
+extern uint2 __attribute__((const, overloadable))max(uint2 a, uint2 b);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /**
- * Returns the maximum value from two arguments
+ * Returns the maximum value of two arguments.
  *
  * Supported by API versions 21 and newer.
  */
-extern uint3 __attribute__((const, overloadable))max(uint3 v1, uint3 v2);
+extern uint3 __attribute__((const, overloadable))max(uint3 a, uint3 b);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /**
- * Returns the maximum value from two arguments
+ * Returns the maximum value of two arguments.
  *
  * Supported by API versions 21 and newer.
  */
-extern uint4 __attribute__((const, overloadable))max(uint4 v1, uint4 v2);
+extern uint4 __attribute__((const, overloadable))max(uint4 a, uint4 b);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /**
- * Returns the maximum value from two arguments
+ * Returns the maximum value of two arguments.
  *
  * Supported by API versions 21 and newer.
  */
-extern long __attribute__((const, overloadable))max(long v1, long v2);
+extern long __attribute__((const, overloadable))max(long a, long b);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /**
- * Returns the maximum value from two arguments
+ * Returns the maximum value of two arguments.
  *
  * Supported by API versions 21 and newer.
  */
-extern long2 __attribute__((const, overloadable))max(long2 v1, long2 v2);
+extern long2 __attribute__((const, overloadable))max(long2 a, long2 b);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /**
- * Returns the maximum value from two arguments
+ * Returns the maximum value of two arguments.
  *
  * Supported by API versions 21 and newer.
  */
-extern long3 __attribute__((const, overloadable))max(long3 v1, long3 v2);
+extern long3 __attribute__((const, overloadable))max(long3 a, long3 b);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /**
- * Returns the maximum value from two arguments
+ * Returns the maximum value of two arguments.
  *
  * Supported by API versions 21 and newer.
  */
-extern long4 __attribute__((const, overloadable))max(long4 v1, long4 v2);
+extern long4 __attribute__((const, overloadable))max(long4 a, long4 b);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /**
- * Returns the maximum value from two arguments
+ * Returns the maximum value of two arguments.
  *
  * Supported by API versions 21 and newer.
  */
-extern ulong __attribute__((const, overloadable))max(ulong v1, ulong v2);
+extern ulong __attribute__((const, overloadable))max(ulong a, ulong b);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /**
- * Returns the maximum value from two arguments
+ * Returns the maximum value of two arguments.
  *
  * Supported by API versions 21 and newer.
  */
-extern ulong2 __attribute__((const, overloadable))max(ulong2 v1, ulong2 v2);
+extern ulong2 __attribute__((const, overloadable))max(ulong2 a, ulong2 b);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /**
- * Returns the maximum value from two arguments
+ * Returns the maximum value of two arguments.
  *
  * Supported by API versions 21 and newer.
  */
-extern ulong3 __attribute__((const, overloadable))max(ulong3 v1, ulong3 v2);
+extern ulong3 __attribute__((const, overloadable))max(ulong3 a, ulong3 b);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /**
- * Returns the maximum value from two arguments
+ * Returns the maximum value of two arguments.
  *
  * Supported by API versions 21 and newer.
  */
-extern ulong4 __attribute__((const, overloadable))max(ulong4 v1, ulong4 v2);
+extern ulong4 __attribute__((const, overloadable))max(ulong4 a, ulong4 b);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns the minimum value from two arguments
+ * Returns the minimum value of two arguments.
  *
  * Supported by API versions 9 and newer.
  */
-extern float __attribute__((const, overloadable))min(float, float);
+extern float __attribute__((const, overloadable))min(float a, float b);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns the minimum value from two arguments
+ * Returns the minimum value of two arguments.
  *
  * Supported by API versions 9 and newer.
  */
-extern float2 __attribute__((const, overloadable))min(float2, float2);
+extern float2 __attribute__((const, overloadable))min(float2 a, float2 b);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns the minimum value from two arguments
+ * Returns the minimum value of two arguments.
  *
  * Supported by API versions 9 and newer.
  */
-extern float3 __attribute__((const, overloadable))min(float3, float3);
+extern float3 __attribute__((const, overloadable))min(float3 a, float3 b);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns the minimum value from two arguments
+ * Returns the minimum value of two arguments.
  *
  * Supported by API versions 9 and newer.
  */
-extern float4 __attribute__((const, overloadable))min(float4, float4);
+extern float4 __attribute__((const, overloadable))min(float4 a, float4 b);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9) && (RS_VERSION <= 19))
 /**
- * Returns the minimum value from two arguments
+ * Returns the minimum value of two arguments.
  *
  * Suppored by API versions 9 - 19
  */
-static char __attribute__((const, overloadable))min(char v1, char v2) {
- return (v1 < v2 ? v1 : v2);
+static char __attribute__((const, overloadable))min(char a, char b) {
+ return (a < b ? a : b);
 }
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9) && (RS_VERSION <= 19))
 /**
- * Returns the minimum value from two arguments
+ * Returns the minimum value of two arguments.
  *
  * Suppored by API versions 9 - 19
  */
-static uchar __attribute__((const, overloadable))min(uchar v1, uchar v2) {
- return (v1 < v2 ? v1 : v2);
+static uchar __attribute__((const, overloadable))min(uchar a, uchar b) {
+ return (a < b ? a : b);
 }
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9) && (RS_VERSION <= 19))
 /**
- * Returns the minimum value from two arguments
+ * Returns the minimum value of two arguments.
  *
  * Suppored by API versions 9 - 19
  */
-static short __attribute__((const, overloadable))min(short v1, short v2) {
- return (v1 < v2 ? v1 : v2);
+static short __attribute__((const, overloadable))min(short a, short b) {
+ return (a < b ? a : b);
 }
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9) && (RS_VERSION <= 19))
 /**
- * Returns the minimum value from two arguments
+ * Returns the minimum value of two arguments.
  *
  * Suppored by API versions 9 - 19
  */
-static ushort __attribute__((const, overloadable))min(ushort v1, ushort v2) {
- return (v1 < v2 ? v1 : v2);
+static ushort __attribute__((const, overloadable))min(ushort a, ushort b) {
+ return (a < b ? a : b);
 }
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9) && (RS_VERSION <= 19))
 /**
- * Returns the minimum value from two arguments
+ * Returns the minimum value of two arguments.
  *
  * Suppored by API versions 9 - 19
  */
-static int __attribute__((const, overloadable))min(int v1, int v2) {
- return (v1 < v2 ? v1 : v2);
+static int __attribute__((const, overloadable))min(int a, int b) {
+ return (a < b ? a : b);
 }
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9) && (RS_VERSION <= 19))
 /**
- * Returns the minimum value from two arguments
+ * Returns the minimum value of two arguments.
  *
  * Suppored by API versions 9 - 19
  */
-static uint __attribute__((const, overloadable))min(uint v1, uint v2) {
- return (v1 < v2 ? v1 : v2);
+static uint __attribute__((const, overloadable))min(uint a, uint b) {
+ return (a < b ? a : b);
 }
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9) && (RS_VERSION <= 19))
 /**
- * Returns the minimum value from two arguments
+ * Returns the minimum value of two arguments.
  *
  * Suppored by API versions 9 - 19
  */
-static char2 __attribute__((const, overloadable))min(char2 v1, char2 v2) {
+static char2 __attribute__((const, overloadable))min(char2 a, char2 b) {
  char2 tmp;
- tmp.x = (v1.x < v2.x ? v1.x : v2.x);
- tmp.y = (v1.y < v2.y ? v1.y : v2.y);
+ tmp.x = (a.x < b.x ? a.x : b.x);
+ tmp.y = (a.y < b.y ? a.y : b.y);
  return tmp;
 }
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9) && (RS_VERSION <= 19))
 /**
- * Returns the minimum value from two arguments
+ * Returns the minimum value of two arguments.
  *
  * Suppored by API versions 9 - 19
  */
-static uchar2 __attribute__((const, overloadable))min(uchar2 v1, uchar2 v2) {
+static uchar2 __attribute__((const, overloadable))min(uchar2 a, uchar2 b) {
  uchar2 tmp;
- tmp.x = (v1.x < v2.x ? v1.x : v2.x);
- tmp.y = (v1.y < v2.y ? v1.y : v2.y);
+ tmp.x = (a.x < b.x ? a.x : b.x);
+ tmp.y = (a.y < b.y ? a.y : b.y);
  return tmp;
 }
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9) && (RS_VERSION <= 19))
 /**
- * Returns the minimum value from two arguments
+ * Returns the minimum value of two arguments.
  *
  * Suppored by API versions 9 - 19
  */
-static short2 __attribute__((const, overloadable))min(short2 v1, short2 v2) {
+static short2 __attribute__((const, overloadable))min(short2 a, short2 b) {
  short2 tmp;
- tmp.x = (v1.x < v2.x ? v1.x : v2.x);
- tmp.y = (v1.y < v2.y ? v1.y : v2.y);
+ tmp.x = (a.x < b.x ? a.x : b.x);
+ tmp.y = (a.y < b.y ? a.y : b.y);
  return tmp;
 }
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9) && (RS_VERSION <= 19))
 /**
- * Returns the minimum value from two arguments
+ * Returns the minimum value of two arguments.
  *
  * Suppored by API versions 9 - 19
  */
-static ushort2 __attribute__((const, overloadable))min(ushort2 v1, ushort2 v2) {
+static ushort2 __attribute__((const, overloadable))min(ushort2 a, ushort2 b) {
  ushort2 tmp;
- tmp.x = (v1.x < v2.x ? v1.x : v2.x);
- tmp.y = (v1.y < v2.y ? v1.y : v2.y);
+ tmp.x = (a.x < b.x ? a.x : b.x);
+ tmp.y = (a.y < b.y ? a.y : b.y);
  return tmp;
 }
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9) && (RS_VERSION <= 19))
 /**
- * Returns the minimum value from two arguments
+ * Returns the minimum value of two arguments.
  *
  * Suppored by API versions 9 - 19
  */
-static int2 __attribute__((const, overloadable))min(int2 v1, int2 v2) {
+static int2 __attribute__((const, overloadable))min(int2 a, int2 b) {
  int2 tmp;
- tmp.x = (v1.x < v2.x ? v1.x : v2.x);
- tmp.y = (v1.y < v2.y ? v1.y : v2.y);
+ tmp.x = (a.x < b.x ? a.x : b.x);
+ tmp.y = (a.y < b.y ? a.y : b.y);
  return tmp;
 }
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9) && (RS_VERSION <= 19))
 /**
- * Returns the minimum value from two arguments
+ * Returns the minimum value of two arguments.
  *
  * Suppored by API versions 9 - 19
  */
-static uint2 __attribute__((const, overloadable))min(uint2 v1, uint2 v2) {
+static uint2 __attribute__((const, overloadable))min(uint2 a, uint2 b) {
  uint2 tmp;
- tmp.x = (v1.x < v2.x ? v1.x : v2.x);
- tmp.y = (v1.y < v2.y ? v1.y : v2.y);
+ tmp.x = (a.x < b.x ? a.x : b.x);
+ tmp.y = (a.y < b.y ? a.y : b.y);
  return tmp;
 }
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9) && (RS_VERSION <= 19))
 /**
- * Returns the minimum value from two arguments
+ * Returns the minimum value of two arguments.
  *
  * Suppored by API versions 9 - 19
  */
-static char3 __attribute__((const, overloadable))min(char3 v1, char3 v2) {
+static char3 __attribute__((const, overloadable))min(char3 a, char3 b) {
  char3 tmp;
- tmp.x = (v1.x < v2.x ? v1.x : v2.x);
- tmp.y = (v1.y < v2.y ? v1.y : v2.y);
- tmp.z = (v1.z < v2.z ? v1.z : v2.z);
+ tmp.x = (a.x < b.x ? a.x : b.x);
+ tmp.y = (a.y < b.y ? a.y : b.y);
+ tmp.z = (a.z < b.z ? a.z : b.z);
  return tmp;
 }
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9) && (RS_VERSION <= 19))
 /**
- * Returns the minimum value from two arguments
+ * Returns the minimum value of two arguments.
  *
  * Suppored by API versions 9 - 19
  */
-static uchar3 __attribute__((const, overloadable))min(uchar3 v1, uchar3 v2) {
+static uchar3 __attribute__((const, overloadable))min(uchar3 a, uchar3 b) {
  uchar3 tmp;
- tmp.x = (v1.x < v2.x ? v1.x : v2.x);
- tmp.y = (v1.y < v2.y ? v1.y : v2.y);
- tmp.z = (v1.z < v2.z ? v1.z : v2.z);
+ tmp.x = (a.x < b.x ? a.x : b.x);
+ tmp.y = (a.y < b.y ? a.y : b.y);
+ tmp.z = (a.z < b.z ? a.z : b.z);
  return tmp;
 }
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9) && (RS_VERSION <= 19))
 /**
- * Returns the minimum value from two arguments
+ * Returns the minimum value of two arguments.
  *
  * Suppored by API versions 9 - 19
  */
-static short3 __attribute__((const, overloadable))min(short3 v1, short3 v2) {
+static short3 __attribute__((const, overloadable))min(short3 a, short3 b) {
  short3 tmp;
- tmp.x = (v1.x < v2.x ? v1.x : v2.x);
- tmp.y = (v1.y < v2.y ? v1.y : v2.y);
- tmp.z = (v1.z < v2.z ? v1.z : v2.z);
+ tmp.x = (a.x < b.x ? a.x : b.x);
+ tmp.y = (a.y < b.y ? a.y : b.y);
+ tmp.z = (a.z < b.z ? a.z : b.z);
  return tmp;
 }
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9) && (RS_VERSION <= 19))
 /**
- * Returns the minimum value from two arguments
+ * Returns the minimum value of two arguments.
  *
  * Suppored by API versions 9 - 19
  */
-static ushort3 __attribute__((const, overloadable))min(ushort3 v1, ushort3 v2) {
+static ushort3 __attribute__((const, overloadable))min(ushort3 a, ushort3 b) {
  ushort3 tmp;
- tmp.x = (v1.x < v2.x ? v1.x : v2.x);
- tmp.y = (v1.y < v2.y ? v1.y : v2.y);
- tmp.z = (v1.z < v2.z ? v1.z : v2.z);
+ tmp.x = (a.x < b.x ? a.x : b.x);
+ tmp.y = (a.y < b.y ? a.y : b.y);
+ tmp.z = (a.z < b.z ? a.z : b.z);
  return tmp;
 }
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9) && (RS_VERSION <= 19))
 /**
- * Returns the minimum value from two arguments
+ * Returns the minimum value of two arguments.
  *
  * Suppored by API versions 9 - 19
  */
-static int3 __attribute__((const, overloadable))min(int3 v1, int3 v2) {
+static int3 __attribute__((const, overloadable))min(int3 a, int3 b) {
  int3 tmp;
- tmp.x = (v1.x < v2.x ? v1.x : v2.x);
- tmp.y = (v1.y < v2.y ? v1.y : v2.y);
- tmp.z = (v1.z < v2.z ? v1.z : v2.z);
+ tmp.x = (a.x < b.x ? a.x : b.x);
+ tmp.y = (a.y < b.y ? a.y : b.y);
+ tmp.z = (a.z < b.z ? a.z : b.z);
  return tmp;
 }
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9) && (RS_VERSION <= 19))
 /**
- * Returns the minimum value from two arguments
+ * Returns the minimum value of two arguments.
  *
  * Suppored by API versions 9 - 19
  */
-static uint3 __attribute__((const, overloadable))min(uint3 v1, uint3 v2) {
+static uint3 __attribute__((const, overloadable))min(uint3 a, uint3 b) {
  uint3 tmp;
- tmp.x = (v1.x < v2.x ? v1.x : v2.x);
- tmp.y = (v1.y < v2.y ? v1.y : v2.y);
- tmp.z = (v1.z < v2.z ? v1.z : v2.z);
+ tmp.x = (a.x < b.x ? a.x : b.x);
+ tmp.y = (a.y < b.y ? a.y : b.y);
+ tmp.z = (a.z < b.z ? a.z : b.z);
  return tmp;
 }
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9) && (RS_VERSION <= 19))
 /**
- * Returns the minimum value from two arguments
+ * Returns the minimum value of two arguments.
  *
  * Suppored by API versions 9 - 19
  */
-static char4 __attribute__((const, overloadable))min(char4 v1, char4 v2) {
+static char4 __attribute__((const, overloadable))min(char4 a, char4 b) {
  char4 tmp;
- tmp.x = (v1.x < v2.x ? v1.x : v2.x);
- tmp.y = (v1.y < v2.y ? v1.y : v2.y);
- tmp.z = (v1.z < v2.z ? v1.z : v2.z);
- tmp.w = (v1.w < v2.w ? v1.w : v2.w);
+ tmp.x = (a.x < b.x ? a.x : b.x);
+ tmp.y = (a.y < b.y ? a.y : b.y);
+ tmp.z = (a.z < b.z ? a.z : b.z);
+ tmp.w = (a.w < b.w ? a.w : b.w);
  return tmp;
 }
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9) && (RS_VERSION <= 19))
 /**
- * Returns the minimum value from two arguments
+ * Returns the minimum value of two arguments.
  *
  * Suppored by API versions 9 - 19
  */
-static uchar4 __attribute__((const, overloadable))min(uchar4 v1, uchar4 v2) {
+static uchar4 __attribute__((const, overloadable))min(uchar4 a, uchar4 b) {
  uchar4 tmp;
- tmp.x = (v1.x < v2.x ? v1.x : v2.x);
- tmp.y = (v1.y < v2.y ? v1.y : v2.y);
- tmp.z = (v1.z < v2.z ? v1.z : v2.z);
- tmp.w = (v1.w < v2.w ? v1.w : v2.w);
+ tmp.x = (a.x < b.x ? a.x : b.x);
+ tmp.y = (a.y < b.y ? a.y : b.y);
+ tmp.z = (a.z < b.z ? a.z : b.z);
+ tmp.w = (a.w < b.w ? a.w : b.w);
  return tmp;
 }
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9) && (RS_VERSION <= 19))
 /**
- * Returns the minimum value from two arguments
+ * Returns the minimum value of two arguments.
  *
  * Suppored by API versions 9 - 19
  */
-static short4 __attribute__((const, overloadable))min(short4 v1, short4 v2) {
+static short4 __attribute__((const, overloadable))min(short4 a, short4 b) {
  short4 tmp;
- tmp.x = (v1.x < v2.x ? v1.x : v2.x);
- tmp.y = (v1.y < v2.y ? v1.y : v2.y);
- tmp.z = (v1.z < v2.z ? v1.z : v2.z);
- tmp.w = (v1.w < v2.w ? v1.w : v2.w);
+ tmp.x = (a.x < b.x ? a.x : b.x);
+ tmp.y = (a.y < b.y ? a.y : b.y);
+ tmp.z = (a.z < b.z ? a.z : b.z);
+ tmp.w = (a.w < b.w ? a.w : b.w);
  return tmp;
 }
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9) && (RS_VERSION <= 19))
 /**
- * Returns the minimum value from two arguments
+ * Returns the minimum value of two arguments.
  *
  * Suppored by API versions 9 - 19
  */
-static ushort4 __attribute__((const, overloadable))min(ushort4 v1, ushort4 v2) {
+static ushort4 __attribute__((const, overloadable))min(ushort4 a, ushort4 b) {
  ushort4 tmp;
- tmp.x = (v1.x < v2.x ? v1.x : v2.x);
- tmp.y = (v1.y < v2.y ? v1.y : v2.y);
- tmp.z = (v1.z < v2.z ? v1.z : v2.z);
- tmp.w = (v1.w < v2.w ? v1.w : v2.w);
+ tmp.x = (a.x < b.x ? a.x : b.x);
+ tmp.y = (a.y < b.y ? a.y : b.y);
+ tmp.z = (a.z < b.z ? a.z : b.z);
+ tmp.w = (a.w < b.w ? a.w : b.w);
  return tmp;
 }
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9) && (RS_VERSION <= 19))
 /**
- * Returns the minimum value from two arguments
+ * Returns the minimum value of two arguments.
  *
  * Suppored by API versions 9 - 19
  */
-static int4 __attribute__((const, overloadable))min(int4 v1, int4 v2) {
+static int4 __attribute__((const, overloadable))min(int4 a, int4 b) {
  int4 tmp;
- tmp.x = (v1.x < v2.x ? v1.x : v2.x);
- tmp.y = (v1.y < v2.y ? v1.y : v2.y);
- tmp.z = (v1.z < v2.z ? v1.z : v2.z);
- tmp.w = (v1.w < v2.w ? v1.w : v2.w);
+ tmp.x = (a.x < b.x ? a.x : b.x);
+ tmp.y = (a.y < b.y ? a.y : b.y);
+ tmp.z = (a.z < b.z ? a.z : b.z);
+ tmp.w = (a.w < b.w ? a.w : b.w);
  return tmp;
 }
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9) && (RS_VERSION <= 19))
 /**
- * Returns the minimum value from two arguments
+ * Returns the minimum value of two arguments.
  *
  * Suppored by API versions 9 - 19
  */
-static uint4 __attribute__((const, overloadable))min(uint4 v1, uint4 v2) {
+static uint4 __attribute__((const, overloadable))min(uint4 a, uint4 b) {
  uint4 tmp;
- tmp.x = (v1.x < v2.x ? v1.x : v2.x);
- tmp.y = (v1.y < v2.y ? v1.y : v2.y);
- tmp.z = (v1.z < v2.z ? v1.z : v2.z);
- tmp.w = (v1.w < v2.w ? v1.w : v2.w);
+ tmp.x = (a.x < b.x ? a.x : b.x);
+ tmp.y = (a.y < b.y ? a.y : b.y);
+ tmp.z = (a.z < b.z ? a.z : b.z);
+ tmp.w = (a.w < b.w ? a.w : b.w);
  return tmp;
 }
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /**
- * Returns the minimum value from two arguments
+ * Returns the minimum value of two arguments.
  *
  * Supported by API versions 21 and newer.
  */
-extern char __attribute__((const, overloadable))min(char v1, char v2);
+extern char __attribute__((const, overloadable))min(char a, char b);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /**
- * Returns the minimum value from two arguments
+ * Returns the minimum value of two arguments.
  *
  * Supported by API versions 21 and newer.
  */
-extern char2 __attribute__((const, overloadable))min(char2 v1, char2 v2);
+extern char2 __attribute__((const, overloadable))min(char2 a, char2 b);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /**
- * Returns the minimum value from two arguments
+ * Returns the minimum value of two arguments.
  *
  * Supported by API versions 21 and newer.
  */
-extern char3 __attribute__((const, overloadable))min(char3 v1, char3 v2);
+extern char3 __attribute__((const, overloadable))min(char3 a, char3 b);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /**
- * Returns the minimum value from two arguments
+ * Returns the minimum value of two arguments.
  *
  * Supported by API versions 21 and newer.
  */
-extern char4 __attribute__((const, overloadable))min(char4 v1, char4 v2);
+extern char4 __attribute__((const, overloadable))min(char4 a, char4 b);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /**
- * Returns the minimum value from two arguments
+ * Returns the minimum value of two arguments.
  *
  * Supported by API versions 21 and newer.
  */
-extern uchar __attribute__((const, overloadable))min(uchar v1, uchar v2);
+extern uchar __attribute__((const, overloadable))min(uchar a, uchar b);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /**
- * Returns the minimum value from two arguments
+ * Returns the minimum value of two arguments.
  *
  * Supported by API versions 21 and newer.
  */
-extern uchar2 __attribute__((const, overloadable))min(uchar2 v1, uchar2 v2);
+extern uchar2 __attribute__((const, overloadable))min(uchar2 a, uchar2 b);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /**
- * Returns the minimum value from two arguments
+ * Returns the minimum value of two arguments.
  *
  * Supported by API versions 21 and newer.
  */
-extern uchar3 __attribute__((const, overloadable))min(uchar3 v1, uchar3 v2);
+extern uchar3 __attribute__((const, overloadable))min(uchar3 a, uchar3 b);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /**
- * Returns the minimum value from two arguments
+ * Returns the minimum value of two arguments.
  *
  * Supported by API versions 21 and newer.
  */
-extern uchar4 __attribute__((const, overloadable))min(uchar4 v1, uchar4 v2);
+extern uchar4 __attribute__((const, overloadable))min(uchar4 a, uchar4 b);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /**
- * Returns the minimum value from two arguments
+ * Returns the minimum value of two arguments.
  *
  * Supported by API versions 21 and newer.
  */
-extern short __attribute__((const, overloadable))min(short v1, short v2);
+extern short __attribute__((const, overloadable))min(short a, short b);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /**
- * Returns the minimum value from two arguments
+ * Returns the minimum value of two arguments.
  *
  * Supported by API versions 21 and newer.
  */
-extern short2 __attribute__((const, overloadable))min(short2 v1, short2 v2);
+extern short2 __attribute__((const, overloadable))min(short2 a, short2 b);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /**
- * Returns the minimum value from two arguments
+ * Returns the minimum value of two arguments.
  *
  * Supported by API versions 21 and newer.
  */
-extern short3 __attribute__((const, overloadable))min(short3 v1, short3 v2);
+extern short3 __attribute__((const, overloadable))min(short3 a, short3 b);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /**
- * Returns the minimum value from two arguments
+ * Returns the minimum value of two arguments.
  *
  * Supported by API versions 21 and newer.
  */
-extern short4 __attribute__((const, overloadable))min(short4 v1, short4 v2);
+extern short4 __attribute__((const, overloadable))min(short4 a, short4 b);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /**
- * Returns the minimum value from two arguments
+ * Returns the minimum value of two arguments.
  *
  * Supported by API versions 21 and newer.
  */
-extern ushort __attribute__((const, overloadable))min(ushort v1, ushort v2);
+extern ushort __attribute__((const, overloadable))min(ushort a, ushort b);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /**
- * Returns the minimum value from two arguments
+ * Returns the minimum value of two arguments.
  *
  * Supported by API versions 21 and newer.
  */
-extern ushort2 __attribute__((const, overloadable))min(ushort2 v1, ushort2 v2);
+extern ushort2 __attribute__((const, overloadable))min(ushort2 a, ushort2 b);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /**
- * Returns the minimum value from two arguments
+ * Returns the minimum value of two arguments.
  *
  * Supported by API versions 21 and newer.
  */
-extern ushort3 __attribute__((const, overloadable))min(ushort3 v1, ushort3 v2);
+extern ushort3 __attribute__((const, overloadable))min(ushort3 a, ushort3 b);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /**
- * Returns the minimum value from two arguments
+ * Returns the minimum value of two arguments.
  *
  * Supported by API versions 21 and newer.
  */
-extern ushort4 __attribute__((const, overloadable))min(ushort4 v1, ushort4 v2);
+extern ushort4 __attribute__((const, overloadable))min(ushort4 a, ushort4 b);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /**
- * Returns the minimum value from two arguments
+ * Returns the minimum value of two arguments.
  *
  * Supported by API versions 21 and newer.
  */
-extern int __attribute__((const, overloadable))min(int v1, int v2);
+extern int __attribute__((const, overloadable))min(int a, int b);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /**
- * Returns the minimum value from two arguments
+ * Returns the minimum value of two arguments.
  *
  * Supported by API versions 21 and newer.
  */
-extern int2 __attribute__((const, overloadable))min(int2 v1, int2 v2);
+extern int2 __attribute__((const, overloadable))min(int2 a, int2 b);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /**
- * Returns the minimum value from two arguments
+ * Returns the minimum value of two arguments.
  *
  * Supported by API versions 21 and newer.
  */
-extern int3 __attribute__((const, overloadable))min(int3 v1, int3 v2);
+extern int3 __attribute__((const, overloadable))min(int3 a, int3 b);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /**
- * Returns the minimum value from two arguments
+ * Returns the minimum value of two arguments.
  *
  * Supported by API versions 21 and newer.
  */
-extern int4 __attribute__((const, overloadable))min(int4 v1, int4 v2);
+extern int4 __attribute__((const, overloadable))min(int4 a, int4 b);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /**
- * Returns the minimum value from two arguments
+ * Returns the minimum value of two arguments.
  *
  * Supported by API versions 21 and newer.
  */
-extern uint __attribute__((const, overloadable))min(uint v1, uint v2);
+extern uint __attribute__((const, overloadable))min(uint a, uint b);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /**
- * Returns the minimum value from two arguments
+ * Returns the minimum value of two arguments.
  *
  * Supported by API versions 21 and newer.
  */
-extern uint2 __attribute__((const, overloadable))min(uint2 v1, uint2 v2);
+extern uint2 __attribute__((const, overloadable))min(uint2 a, uint2 b);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /**
- * Returns the minimum value from two arguments
+ * Returns the minimum value of two arguments.
  *
  * Supported by API versions 21 and newer.
  */
-extern uint3 __attribute__((const, overloadable))min(uint3 v1, uint3 v2);
+extern uint3 __attribute__((const, overloadable))min(uint3 a, uint3 b);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /**
- * Returns the minimum value from two arguments
+ * Returns the minimum value of two arguments.
  *
  * Supported by API versions 21 and newer.
  */
-extern uint4 __attribute__((const, overloadable))min(uint4 v1, uint4 v2);
+extern uint4 __attribute__((const, overloadable))min(uint4 a, uint4 b);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /**
- * Returns the minimum value from two arguments
+ * Returns the minimum value of two arguments.
  *
  * Supported by API versions 21 and newer.
  */
-extern long __attribute__((const, overloadable))min(long v1, long v2);
+extern long __attribute__((const, overloadable))min(long a, long b);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /**
- * Returns the minimum value from two arguments
+ * Returns the minimum value of two arguments.
  *
  * Supported by API versions 21 and newer.
  */
-extern long2 __attribute__((const, overloadable))min(long2 v1, long2 v2);
+extern long2 __attribute__((const, overloadable))min(long2 a, long2 b);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /**
- * Returns the minimum value from two arguments
+ * Returns the minimum value of two arguments.
  *
  * Supported by API versions 21 and newer.
  */
-extern long3 __attribute__((const, overloadable))min(long3 v1, long3 v2);
+extern long3 __attribute__((const, overloadable))min(long3 a, long3 b);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /**
- * Returns the minimum value from two arguments
+ * Returns the minimum value of two arguments.
  *
  * Supported by API versions 21 and newer.
  */
-extern long4 __attribute__((const, overloadable))min(long4 v1, long4 v2);
+extern long4 __attribute__((const, overloadable))min(long4 a, long4 b);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /**
- * Returns the minimum value from two arguments
+ * Returns the minimum value of two arguments.
  *
  * Supported by API versions 21 and newer.
  */
-extern ulong __attribute__((const, overloadable))min(ulong v1, ulong v2);
+extern ulong __attribute__((const, overloadable))min(ulong a, ulong b);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /**
- * Returns the minimum value from two arguments
+ * Returns the minimum value of two arguments.
  *
  * Supported by API versions 21 and newer.
  */
-extern ulong2 __attribute__((const, overloadable))min(ulong2 v1, ulong2 v2);
+extern ulong2 __attribute__((const, overloadable))min(ulong2 a, ulong2 b);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /**
- * Returns the minimum value from two arguments
+ * Returns the minimum value of two arguments.
  *
  * Supported by API versions 21 and newer.
  */
-extern ulong3 __attribute__((const, overloadable))min(ulong3 v1, ulong3 v2);
+extern ulong3 __attribute__((const, overloadable))min(ulong3 a, ulong3 b);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /**
- * Returns the minimum value from two arguments
+ * Returns the minimum value of two arguments.
  *
  * Supported by API versions 21 and newer.
  */
-extern ulong4 __attribute__((const, overloadable))min(ulong4 v1, ulong4 v2);
+extern ulong4 __attribute__((const, overloadable))min(ulong4 a, ulong4 b);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns start + ((stop - start) * amount).
- *
- * Supported by API versions 9 and newer.
- */
-extern float __attribute__((const, overloadable))mix(float start, float stop, float amount);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/**
- * Returns start + ((stop - start) * amount).
- *
- * Supported by API versions 9 and newer.
- */
-extern float2 __attribute__((const, overloadable))mix(float2 start, float2 stop, float2 amount);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/**
- * Returns start + ((stop - start) * amount).
- *
- * Supported by API versions 9 and newer.
- */
-extern float3 __attribute__((const, overloadable))mix(float3 start, float3 stop, float3 amount);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/**
- * Returns start + ((stop - start) * amount).
- *
- * Supported by API versions 9 and newer.
- */
-extern float4 __attribute__((const, overloadable))mix(float4 start, float4 stop, float4 amount);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/**
- * Returns start + ((stop - start) * amount).
+ * Returns start + ((stop - start) * fraction).
  *
  * This can be useful for mixing two values.  For example, to create a new color that is 40% color1 and 60% color2, use mix(color1, color2, 0.6f).
  *
  * Supported by API versions 9 and newer.
  */
-extern float2 __attribute__((const, overloadable))mix(float2 start, float2 stop, float amount);
+extern float __attribute__((const, overloadable))mix(float start, float stop, float fraction);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns start + ((stop - start) * amount).
+ * Returns start + ((stop - start) * fraction).
  *
  * This can be useful for mixing two values.  For example, to create a new color that is 40% color1 and 60% color2, use mix(color1, color2, 0.6f).
  *
  * Supported by API versions 9 and newer.
  */
-extern float3 __attribute__((const, overloadable))mix(float3 start, float3 stop, float amount);
+extern float2 __attribute__((const, overloadable))mix(float2 start, float2 stop, float2 fraction);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns start + ((stop - start) * amount).
+ * Returns start + ((stop - start) * fraction).
  *
  * This can be useful for mixing two values.  For example, to create a new color that is 40% color1 and 60% color2, use mix(color1, color2, 0.6f).
  *
  * Supported by API versions 9 and newer.
  */
-extern float4 __attribute__((const, overloadable))mix(float4 start, float4 stop, float amount);
+extern float3 __attribute__((const, overloadable))mix(float3 start, float3 stop, float3 fraction);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 9))
+/**
+ * Returns start + ((stop - start) * fraction).
+ *
+ * This can be useful for mixing two values.  For example, to create a new color that is 40% color1 and 60% color2, use mix(color1, color2, 0.6f).
+ *
+ * Supported by API versions 9 and newer.
+ */
+extern float4 __attribute__((const, overloadable))mix(float4 start, float4 stop, float4 fraction);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 9))
+/**
+ * Returns start + ((stop - start) * fraction).
+ *
+ * This can be useful for mixing two values.  For example, to create a new color that is 40% color1 and 60% color2, use mix(color1, color2, 0.6f).
+ *
+ * Supported by API versions 9 and newer.
+ */
+extern float2 __attribute__((const, overloadable))mix(float2 start, float2 stop, float fraction);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 9))
+/**
+ * Returns start + ((stop - start) * fraction).
+ *
+ * This can be useful for mixing two values.  For example, to create a new color that is 40% color1 and 60% color2, use mix(color1, color2, 0.6f).
+ *
+ * Supported by API versions 9 and newer.
+ */
+extern float3 __attribute__((const, overloadable))mix(float3 start, float3 stop, float fraction);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 9))
+/**
+ * Returns start + ((stop - start) * fraction).
+ *
+ * This can be useful for mixing two values.  For example, to create a new color that is 40% color1 and 60% color2, use mix(color1, color2, 0.6f).
+ *
+ * Supported by API versions 9 and newer.
+ */
+extern float4 __attribute__((const, overloadable))mix(float4 start, float4 stop, float fraction);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -9207,13 +9215,13 @@ extern float4 __attribute__((const, overloadable))mix(float4 start, float4 stop,
  *
  * Both components will have the same sign as x.  For example, for an input of -3.72f, iret will be set to -3.f and .72f will be returned.
  *
- * @param x Source value
- * @param iret iret[0] will be set to the integral portion of the number.
+ * @param v Source value
+ * @param integral_part integral_part[0] will be set to the integral portion of the number.
  * @return The floating point portion of the value.
  *
  * Supported by API versions 9 and newer.
  */
-extern float __attribute__((overloadable))modf(float x, float* iret);
+extern float __attribute__((overloadable))modf(float v, float* integral_part);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -9222,13 +9230,13 @@ extern float __attribute__((overloadable))modf(float x, float* iret);
  *
  * Both components will have the same sign as x.  For example, for an input of -3.72f, iret will be set to -3.f and .72f will be returned.
  *
- * @param x Source value
- * @param iret iret[0] will be set to the integral portion of the number.
+ * @param v Source value
+ * @param integral_part integral_part[0] will be set to the integral portion of the number.
  * @return The floating point portion of the value.
  *
  * Supported by API versions 9 and newer.
  */
-extern float2 __attribute__((overloadable))modf(float2 x, float2* iret);
+extern float2 __attribute__((overloadable))modf(float2 v, float2* integral_part);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -9237,13 +9245,13 @@ extern float2 __attribute__((overloadable))modf(float2 x, float2* iret);
  *
  * Both components will have the same sign as x.  For example, for an input of -3.72f, iret will be set to -3.f and .72f will be returned.
  *
- * @param x Source value
- * @param iret iret[0] will be set to the integral portion of the number.
+ * @param v Source value
+ * @param integral_part integral_part[0] will be set to the integral portion of the number.
  * @return The floating point portion of the value.
  *
  * Supported by API versions 9 and newer.
  */
-extern float3 __attribute__((overloadable))modf(float3 x, float3* iret);
+extern float3 __attribute__((overloadable))modf(float3 v, float3* integral_part);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -9252,24 +9260,24 @@ extern float3 __attribute__((overloadable))modf(float3 x, float3* iret);
  *
  * Both components will have the same sign as x.  For example, for an input of -3.72f, iret will be set to -3.f and .72f will be returned.
  *
- * @param x Source value
- * @param iret iret[0] will be set to the integral portion of the number.
+ * @param v Source value
+ * @param integral_part integral_part[0] will be set to the integral portion of the number.
  * @return The floating point portion of the value.
  *
  * Supported by API versions 9 and newer.
  */
-extern float4 __attribute__((overloadable))modf(float4 x, float4* iret);
+extern float4 __attribute__((overloadable))modf(float4 v, float4* integral_part);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
  * Returns a NaN value (Not a Number).
  *
- * The argument is embedded into the return value and can be used to distinguish various NaNs.
+ * @param v Not used.
  *
  * Supported by API versions 9 and newer.
  */
-extern float __attribute__((const, overloadable))nan(uint);
+extern float __attribute__((const, overloadable))nan(uint v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
@@ -9314,7 +9322,7 @@ extern float4 __attribute__((const, overloadable))native_acos(float4 v);
  *
  * Supported by API versions 21 and newer.
  */
-extern float __attribute__((const, overloadable))native_acosh(float);
+extern float __attribute__((const, overloadable))native_acosh(float v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
@@ -9323,7 +9331,7 @@ extern float __attribute__((const, overloadable))native_acosh(float);
  *
  * Supported by API versions 21 and newer.
  */
-extern float2 __attribute__((const, overloadable))native_acosh(float2);
+extern float2 __attribute__((const, overloadable))native_acosh(float2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
@@ -9332,7 +9340,7 @@ extern float2 __attribute__((const, overloadable))native_acosh(float2);
  *
  * Supported by API versions 21 and newer.
  */
-extern float3 __attribute__((const, overloadable))native_acosh(float3);
+extern float3 __attribute__((const, overloadable))native_acosh(float3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
@@ -9341,7 +9349,7 @@ extern float3 __attribute__((const, overloadable))native_acosh(float3);
  *
  * Supported by API versions 21 and newer.
  */
-extern float4 __attribute__((const, overloadable))native_acosh(float4);
+extern float4 __attribute__((const, overloadable))native_acosh(float4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
@@ -9430,7 +9438,7 @@ extern float4 __attribute__((const, overloadable))native_asin(float4 v);
  *
  * Supported by API versions 21 and newer.
  */
-extern float __attribute__((const, overloadable))native_asinh(float);
+extern float __attribute__((const, overloadable))native_asinh(float v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
@@ -9439,7 +9447,7 @@ extern float __attribute__((const, overloadable))native_asinh(float);
  *
  * Supported by API versions 21 and newer.
  */
-extern float2 __attribute__((const, overloadable))native_asinh(float2);
+extern float2 __attribute__((const, overloadable))native_asinh(float2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
@@ -9448,7 +9456,7 @@ extern float2 __attribute__((const, overloadable))native_asinh(float2);
  *
  * Supported by API versions 21 and newer.
  */
-extern float3 __attribute__((const, overloadable))native_asinh(float3);
+extern float3 __attribute__((const, overloadable))native_asinh(float3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
@@ -9457,7 +9465,7 @@ extern float3 __attribute__((const, overloadable))native_asinh(float3);
  *
  * Supported by API versions 21 and newer.
  */
-extern float4 __attribute__((const, overloadable))native_asinh(float4);
+extern float4 __attribute__((const, overloadable))native_asinh(float4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
@@ -9542,107 +9550,98 @@ extern float4 __attribute__((const, overloadable))native_atan(float4 v);
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /**
- * Returns the approximate inverse tangent of y / x, in radians.
+ * Returns the approximate inverse tangent of numerator / denominator, in radians.
  *
- * x can be 0.
+ * denominator can be 0.
  *
  * Supported by API versions 21 and newer.
  */
-extern float __attribute__((const, overloadable))native_atan2(float y, float x);
+extern float __attribute__((const, overloadable))native_atan2(float numerator, float denominator);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /**
- * Returns the approximate inverse tangent of y / x, in radians.
+ * Returns the approximate inverse tangent of numerator / denominator, in radians.
  *
- * x can be 0.
+ * denominator can be 0.
  *
  * Supported by API versions 21 and newer.
  */
-extern float2 __attribute__((const, overloadable))native_atan2(float2 y, float2 x);
+extern float2 __attribute__((const, overloadable))native_atan2(float2 numerator, float2 denominator);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /**
- * Returns the approximate inverse tangent of y / x, in radians.
+ * Returns the approximate inverse tangent of numerator / denominator, in radians.
  *
- * x can be 0.
+ * denominator can be 0.
  *
  * Supported by API versions 21 and newer.
  */
-extern float3 __attribute__((const, overloadable))native_atan2(float3 y, float3 x);
+extern float3 __attribute__((const, overloadable))native_atan2(float3 numerator, float3 denominator);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /**
- * Returns the approximate inverse tangent of y / x, in radians.
+ * Returns the approximate inverse tangent of numerator / denominator, in radians.
  *
- * x can be 0.
+ * denominator can be 0.
  *
  * Supported by API versions 21 and newer.
  */
-extern float4 __attribute__((const, overloadable))native_atan2(float4 y, float4 x);
+extern float4 __attribute__((const, overloadable))native_atan2(float4 numerator, float4 denominator);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /**
- * Returns the approximate inverse tangent of y / x, in radians, divided by pi.
+ * Returns the approximate inverse tangent of numerator / denominator, in radians, divided by pi.
  *
- * To get an inverse tangent measured in degrees, use atan2pi(x, y) * 180.f.
+ * To get an inverse tangent measured in degrees, use atan2pi(n, d) * 180.f.
  *
- * x can be 0.
+ * denominator can be 0.
  *
  * Supported by API versions 21 and newer.
  */
-extern float __attribute__((const, overloadable))native_atan2pi(float y, float x);
+extern float __attribute__((const, overloadable))native_atan2pi(float numerator, float denominator);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /**
- * Returns the approximate inverse tangent of y / x, in radians, divided by pi.
+ * Returns the approximate inverse tangent of numerator / denominator, in radians, divided by pi.
  *
- * To get an inverse tangent measured in degrees, use atan2pi(x, y) * 180.f.
+ * To get an inverse tangent measured in degrees, use atan2pi(n, d) * 180.f.
  *
- * x can be 0.
+ * denominator can be 0.
  *
  * Supported by API versions 21 and newer.
  */
-extern float2 __attribute__((const, overloadable))native_atan2pi(float2 y, float2 x);
+extern float2 __attribute__((const, overloadable))native_atan2pi(float2 numerator, float2 denominator);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /**
- * Returns the approximate inverse tangent of y / x, in radians, divided by pi.
+ * Returns the approximate inverse tangent of numerator / denominator, in radians, divided by pi.
  *
- * To get an inverse tangent measured in degrees, use atan2pi(x, y) * 180.f.
+ * To get an inverse tangent measured in degrees, use atan2pi(n, d) * 180.f.
  *
- * x can be 0.
+ * denominator can be 0.
  *
  * Supported by API versions 21 and newer.
  */
-extern float3 __attribute__((const, overloadable))native_atan2pi(float3 y, float3 x);
+extern float3 __attribute__((const, overloadable))native_atan2pi(float3 numerator, float3 denominator);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /**
- * Returns the approximate inverse tangent of y / x, in radians, divided by pi.
+ * Returns the approximate inverse tangent of numerator / denominator, in radians, divided by pi.
  *
- * To get an inverse tangent measured in degrees, use atan2pi(x, y) * 180.f.
+ * To get an inverse tangent measured in degrees, use atan2pi(n, d) * 180.f.
  *
- * x can be 0.
- *
- * Supported by API versions 21 and newer.
- */
-extern float4 __attribute__((const, overloadable))native_atan2pi(float4 y, float4 x);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 21))
-/**
- * Returns the approximate inverse hyperbolic tangent, in radians.
+ * denominator can be 0.
  *
  * Supported by API versions 21 and newer.
  */
-extern float __attribute__((const, overloadable))native_atanh(float in);
+extern float4 __attribute__((const, overloadable))native_atan2pi(float4 numerator, float4 denominator);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
@@ -9651,7 +9650,7 @@ extern float __attribute__((const, overloadable))native_atanh(float in);
  *
  * Supported by API versions 21 and newer.
  */
-extern float2 __attribute__((const, overloadable))native_atanh(float2 in);
+extern float __attribute__((const, overloadable))native_atanh(float v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
@@ -9660,7 +9659,7 @@ extern float2 __attribute__((const, overloadable))native_atanh(float2 in);
  *
  * Supported by API versions 21 and newer.
  */
-extern float3 __attribute__((const, overloadable))native_atanh(float3 in);
+extern float2 __attribute__((const, overloadable))native_atanh(float2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
@@ -9669,7 +9668,16 @@ extern float3 __attribute__((const, overloadable))native_atanh(float3 in);
  *
  * Supported by API versions 21 and newer.
  */
-extern float4 __attribute__((const, overloadable))native_atanh(float4 in);
+extern float3 __attribute__((const, overloadable))native_atanh(float3 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/**
+ * Returns the approximate inverse hyperbolic tangent, in radians.
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float4 __attribute__((const, overloadable))native_atanh(float4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
@@ -9722,7 +9730,7 @@ extern float4 __attribute__((const, overloadable))native_atanpi(float4 v);
  *
  * Supported by API versions 21 and newer.
  */
-extern float __attribute__((const, overloadable))native_cbrt(float);
+extern float __attribute__((const, overloadable))native_cbrt(float v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
@@ -9731,7 +9739,7 @@ extern float __attribute__((const, overloadable))native_cbrt(float);
  *
  * Supported by API versions 21 and newer.
  */
-extern float2 __attribute__((const, overloadable))native_cbrt(float2);
+extern float2 __attribute__((const, overloadable))native_cbrt(float2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
@@ -9740,7 +9748,7 @@ extern float2 __attribute__((const, overloadable))native_cbrt(float2);
  *
  * Supported by API versions 21 and newer.
  */
-extern float3 __attribute__((const, overloadable))native_cbrt(float3);
+extern float3 __attribute__((const, overloadable))native_cbrt(float3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
@@ -9749,7 +9757,7 @@ extern float3 __attribute__((const, overloadable))native_cbrt(float3);
  *
  * Supported by API versions 21 and newer.
  */
-extern float4 __attribute__((const, overloadable))native_cbrt(float4);
+extern float4 __attribute__((const, overloadable))native_cbrt(float4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
@@ -9758,7 +9766,7 @@ extern float4 __attribute__((const, overloadable))native_cbrt(float4);
  *
  * Supported by API versions 21 and newer.
  */
-extern float __attribute__((const, overloadable))native_cos(float);
+extern float __attribute__((const, overloadable))native_cos(float v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
@@ -9767,7 +9775,7 @@ extern float __attribute__((const, overloadable))native_cos(float);
  *
  * Supported by API versions 21 and newer.
  */
-extern float2 __attribute__((const, overloadable))native_cos(float2);
+extern float2 __attribute__((const, overloadable))native_cos(float2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
@@ -9776,7 +9784,7 @@ extern float2 __attribute__((const, overloadable))native_cos(float2);
  *
  * Supported by API versions 21 and newer.
  */
-extern float3 __attribute__((const, overloadable))native_cos(float3);
+extern float3 __attribute__((const, overloadable))native_cos(float3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
@@ -9785,7 +9793,7 @@ extern float3 __attribute__((const, overloadable))native_cos(float3);
  *
  * Supported by API versions 21 and newer.
  */
-extern float4 __attribute__((const, overloadable))native_cos(float4);
+extern float4 __attribute__((const, overloadable))native_cos(float4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
@@ -9794,7 +9802,7 @@ extern float4 __attribute__((const, overloadable))native_cos(float4);
  *
  * Supported by API versions 21 and newer.
  */
-extern float __attribute__((const, overloadable))native_cosh(float);
+extern float __attribute__((const, overloadable))native_cosh(float v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
@@ -9803,7 +9811,7 @@ extern float __attribute__((const, overloadable))native_cosh(float);
  *
  * Supported by API versions 21 and newer.
  */
-extern float2 __attribute__((const, overloadable))native_cosh(float2);
+extern float2 __attribute__((const, overloadable))native_cosh(float2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
@@ -9812,7 +9820,7 @@ extern float2 __attribute__((const, overloadable))native_cosh(float2);
  *
  * Supported by API versions 21 and newer.
  */
-extern float3 __attribute__((const, overloadable))native_cosh(float3);
+extern float3 __attribute__((const, overloadable))native_cosh(float3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
@@ -9821,60 +9829,51 @@ extern float3 __attribute__((const, overloadable))native_cosh(float3);
  *
  * Supported by API versions 21 and newer.
  */
-extern float4 __attribute__((const, overloadable))native_cosh(float4);
+extern float4 __attribute__((const, overloadable))native_cosh(float4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /**
- * Returns the approximate cosine of (x * pi), where (x * pi) is measured in radians.
+ * Returns the approximate cosine of (v * pi), where (v * pi) is measured in radians.
  *
- * To get the cosine of a value measured in degrees, call cospi(a / 180.f).
+ * To get the cosine of a value measured in degrees, call cospi(v / 180.f).
  *
  * Supported by API versions 21 and newer.
  */
-extern float __attribute__((const, overloadable))native_cospi(float x);
+extern float __attribute__((const, overloadable))native_cospi(float v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /**
- * Returns the approximate cosine of (x * pi), where (x * pi) is measured in radians.
+ * Returns the approximate cosine of (v * pi), where (v * pi) is measured in radians.
  *
- * To get the cosine of a value measured in degrees, call cospi(a / 180.f).
+ * To get the cosine of a value measured in degrees, call cospi(v / 180.f).
  *
  * Supported by API versions 21 and newer.
  */
-extern float2 __attribute__((const, overloadable))native_cospi(float2 x);
+extern float2 __attribute__((const, overloadable))native_cospi(float2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /**
- * Returns the approximate cosine of (x * pi), where (x * pi) is measured in radians.
+ * Returns the approximate cosine of (v * pi), where (v * pi) is measured in radians.
  *
- * To get the cosine of a value measured in degrees, call cospi(a / 180.f).
+ * To get the cosine of a value measured in degrees, call cospi(v / 180.f).
  *
  * Supported by API versions 21 and newer.
  */
-extern float3 __attribute__((const, overloadable))native_cospi(float3 x);
+extern float3 __attribute__((const, overloadable))native_cospi(float3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /**
- * Returns the approximate cosine of (x * pi), where (x * pi) is measured in radians.
+ * Returns the approximate cosine of (v * pi), where (v * pi) is measured in radians.
  *
- * To get the cosine of a value measured in degrees, call cospi(a / 180.f).
- *
- * Supported by API versions 21 and newer.
- */
-extern float4 __attribute__((const, overloadable))native_cospi(float4 x);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 21))
-/**
- * Computes the approximate distance between two points.
+ * To get the cosine of a value measured in degrees, call cospi(v / 180.f).
  *
  * Supported by API versions 21 and newer.
  */
-extern float __attribute__((const, overloadable))native_distance(float lhs, float rhs);
+extern float4 __attribute__((const, overloadable))native_cospi(float4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
@@ -9883,7 +9882,7 @@ extern float __attribute__((const, overloadable))native_distance(float lhs, floa
  *
  * Supported by API versions 21 and newer.
  */
-extern float __attribute__((const, overloadable))native_distance(float2 lhs, float2 rhs);
+extern float __attribute__((const, overloadable))native_distance(float left_vector, float right_vector);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
@@ -9892,7 +9891,7 @@ extern float __attribute__((const, overloadable))native_distance(float2 lhs, flo
  *
  * Supported by API versions 21 and newer.
  */
-extern float __attribute__((const, overloadable))native_distance(float3 lhs, float3 rhs);
+extern float __attribute__((const, overloadable))native_distance(float2 left_vector, float2 right_vector);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
@@ -9901,7 +9900,16 @@ extern float __attribute__((const, overloadable))native_distance(float3 lhs, flo
  *
  * Supported by API versions 21 and newer.
  */
-extern float __attribute__((const, overloadable))native_distance(float4 lhs, float4 rhs);
+extern float __attribute__((const, overloadable))native_distance(float3 left_vector, float3 right_vector);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/**
+ * Computes the approximate distance between two points.
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float __attribute__((const, overloadable))native_distance(float4 left_vector, float4 right_vector);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
@@ -9910,7 +9918,7 @@ extern float __attribute__((const, overloadable))native_distance(float4 lhs, flo
  *
  * Supported by API versions 21 and newer.
  */
-extern float __attribute__((const, overloadable))native_divide(float lhs, float rhs);
+extern float __attribute__((const, overloadable))native_divide(float left_vector, float right_vector);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
@@ -9919,7 +9927,7 @@ extern float __attribute__((const, overloadable))native_divide(float lhs, float 
  *
  * Supported by API versions 21 and newer.
  */
-extern float2 __attribute__((const, overloadable))native_divide(float2 lhs, float2 rhs);
+extern float2 __attribute__((const, overloadable))native_divide(float2 left_vector, float2 right_vector);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
@@ -9928,7 +9936,7 @@ extern float2 __attribute__((const, overloadable))native_divide(float2 lhs, floa
  *
  * Supported by API versions 21 and newer.
  */
-extern float3 __attribute__((const, overloadable))native_divide(float3 lhs, float3 rhs);
+extern float3 __attribute__((const, overloadable))native_divide(float3 left_vector, float3 right_vector);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
@@ -9937,7 +9945,7 @@ extern float3 __attribute__((const, overloadable))native_divide(float3 lhs, floa
  *
  * Supported by API versions 21 and newer.
  */
-extern float4 __attribute__((const, overloadable))native_divide(float4 lhs, float4 rhs);
+extern float4 __attribute__((const, overloadable))native_divide(float4 left_vector, float4 right_vector);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 18))
@@ -10074,74 +10082,74 @@ extern float4 __attribute__((const, overloadable))native_exp2(float4 v);
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /**
- * Returns the approximate (e ^ value) - 1.
+ * Returns the approximate (e ^ v) - 1.
  *
  * Supported by API versions 21 and newer.
  */
-extern float __attribute__((const, overloadable))native_expm1(float);
+extern float __attribute__((const, overloadable))native_expm1(float v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /**
- * Returns the approximate (e ^ value) - 1.
+ * Returns the approximate (e ^ v) - 1.
  *
  * Supported by API versions 21 and newer.
  */
-extern float2 __attribute__((const, overloadable))native_expm1(float2);
+extern float2 __attribute__((const, overloadable))native_expm1(float2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /**
- * Returns the approximate (e ^ value) - 1.
+ * Returns the approximate (e ^ v) - 1.
  *
  * Supported by API versions 21 and newer.
  */
-extern float3 __attribute__((const, overloadable))native_expm1(float3);
+extern float3 __attribute__((const, overloadable))native_expm1(float3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /**
- * Returns the approximate (e ^ value) - 1.
+ * Returns the approximate (e ^ v) - 1.
  *
  * Supported by API versions 21 and newer.
  */
-extern float4 __attribute__((const, overloadable))native_expm1(float4);
+extern float4 __attribute__((const, overloadable))native_expm1(float4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /**
- * Returns the approximate native_sqrt(x*x + y*y)
+ * Returns the approximate native_sqrt(a * a + b * b)
  *
  * Supported by API versions 21 and newer.
  */
-extern float __attribute__((const, overloadable))native_hypot(float x, float y);
+extern float __attribute__((const, overloadable))native_hypot(float a, float b);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /**
- * Returns the approximate native_sqrt(x*x + y*y)
+ * Returns the approximate native_sqrt(a * a + b * b)
  *
  * Supported by API versions 21 and newer.
  */
-extern float2 __attribute__((const, overloadable))native_hypot(float2 x, float2 y);
+extern float2 __attribute__((const, overloadable))native_hypot(float2 a, float2 b);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /**
- * Returns the approximate native_sqrt(x*x + y*y)
+ * Returns the approximate native_sqrt(a * a + b * b)
  *
  * Supported by API versions 21 and newer.
  */
-extern float3 __attribute__((const, overloadable))native_hypot(float3 x, float3 y);
+extern float3 __attribute__((const, overloadable))native_hypot(float3 a, float3 b);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /**
- * Returns the approximate native_sqrt(x*x + y*y)
+ * Returns the approximate native_sqrt(a * a + b * b)
  *
  * Supported by API versions 21 and newer.
  */
-extern float4 __attribute__((const, overloadable))native_hypot(float4 x, float4 y);
+extern float4 __attribute__((const, overloadable))native_hypot(float4 a, float4 b);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
@@ -10274,7 +10282,7 @@ extern float4 __attribute__((const, overloadable))native_log10(float4 v);
  *
  * Supported by API versions 21 and newer.
  */
-extern float __attribute__((const, overloadable))native_log1p(float);
+extern float __attribute__((const, overloadable))native_log1p(float v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
@@ -10283,7 +10291,7 @@ extern float __attribute__((const, overloadable))native_log1p(float);
  *
  * Supported by API versions 21 and newer.
  */
-extern float2 __attribute__((const, overloadable))native_log1p(float2);
+extern float2 __attribute__((const, overloadable))native_log1p(float2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
@@ -10292,7 +10300,7 @@ extern float2 __attribute__((const, overloadable))native_log1p(float2);
  *
  * Supported by API versions 21 and newer.
  */
-extern float3 __attribute__((const, overloadable))native_log1p(float3);
+extern float3 __attribute__((const, overloadable))native_log1p(float3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
@@ -10301,7 +10309,7 @@ extern float3 __attribute__((const, overloadable))native_log1p(float3);
  *
  * Supported by API versions 21 and newer.
  */
-extern float4 __attribute__((const, overloadable))native_log1p(float4);
+extern float4 __attribute__((const, overloadable))native_log1p(float4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 18))
@@ -10386,58 +10394,50 @@ extern float4 __attribute__((const, overloadable))native_normalize(float4 v);
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 18))
 /**
- * Fast approximate v ^ y.
+ * Fast approximate (base ^ exponent).
  *
- * v must be between 0.f and 256.f.
- * y must be between -15.f and 15.f.
- *
- * It is not accurate for values of v very close to zero.
+ * @param base Must be between 0.f and 256.f.  The function is not accurate for values very close to zero.
+ * @param exponent Must be between -15.f and 15.f.
  *
  * Supported by API versions 18 and newer.
  */
-extern float __attribute__((const, overloadable))native_powr(float v, float y);
+extern float __attribute__((const, overloadable))native_powr(float base, float exponent);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 18))
 /**
- * Fast approximate v ^ y.
+ * Fast approximate (base ^ exponent).
  *
- * v must be between 0.f and 256.f.
- * y must be between -15.f and 15.f.
- *
- * It is not accurate for values of v very close to zero.
+ * @param base Must be between 0.f and 256.f.  The function is not accurate for values very close to zero.
+ * @param exponent Must be between -15.f and 15.f.
  *
  * Supported by API versions 18 and newer.
  */
-extern float2 __attribute__((const, overloadable))native_powr(float2 v, float2 y);
+extern float2 __attribute__((const, overloadable))native_powr(float2 base, float2 exponent);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 18))
 /**
- * Fast approximate v ^ y.
+ * Fast approximate (base ^ exponent).
  *
- * v must be between 0.f and 256.f.
- * y must be between -15.f and 15.f.
- *
- * It is not accurate for values of v very close to zero.
+ * @param base Must be between 0.f and 256.f.  The function is not accurate for values very close to zero.
+ * @param exponent Must be between -15.f and 15.f.
  *
  * Supported by API versions 18 and newer.
  */
-extern float3 __attribute__((const, overloadable))native_powr(float3 v, float3 y);
+extern float3 __attribute__((const, overloadable))native_powr(float3 base, float3 exponent);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 18))
 /**
- * Fast approximate v ^ y.
+ * Fast approximate (base ^ exponent).
  *
- * v must be between 0.f and 256.f.
- * y must be between -15.f and 15.f.
- *
- * It is not accurate for values of v very close to zero.
+ * @param base Must be between 0.f and 256.f.  The function is not accurate for values very close to zero.
+ * @param exponent Must be between -15.f and 15.f.
  *
  * Supported by API versions 18 and newer.
  */
-extern float4 __attribute__((const, overloadable))native_powr(float4 v, float4 y);
+extern float4 __attribute__((const, overloadable))native_powr(float4 base, float4 exponent);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
@@ -10514,47 +10514,38 @@ extern float4 __attribute__((const, overloadable))native_rootn(float4 v, int4 n)
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /**
- * Returns approximate (1 / sqrt(value)).
+ * Returns approximate (1 / sqrt(v)).
  *
  * Supported by API versions 21 and newer.
  */
-extern float __attribute__((const, overloadable))native_rsqrt(float);
+extern float __attribute__((const, overloadable))native_rsqrt(float v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /**
- * Returns approximate (1 / sqrt(value)).
+ * Returns approximate (1 / sqrt(v)).
  *
  * Supported by API versions 21 and newer.
  */
-extern float2 __attribute__((const, overloadable))native_rsqrt(float2);
+extern float2 __attribute__((const, overloadable))native_rsqrt(float2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /**
- * Returns approximate (1 / sqrt(value)).
+ * Returns approximate (1 / sqrt(v)).
  *
  * Supported by API versions 21 and newer.
  */
-extern float3 __attribute__((const, overloadable))native_rsqrt(float3);
+extern float3 __attribute__((const, overloadable))native_rsqrt(float3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /**
- * Returns approximate (1 / sqrt(value)).
+ * Returns approximate (1 / sqrt(v)).
  *
  * Supported by API versions 21 and newer.
  */
-extern float4 __attribute__((const, overloadable))native_rsqrt(float4);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 21))
-/**
- * Returns the approximate sine of an angle measured in radians.
- *
- * Supported by API versions 21 and newer.
- */
-extern float __attribute__((const, overloadable))native_sin(float);
+extern float4 __attribute__((const, overloadable))native_rsqrt(float4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
@@ -10563,7 +10554,7 @@ extern float __attribute__((const, overloadable))native_sin(float);
  *
  * Supported by API versions 21 and newer.
  */
-extern float2 __attribute__((const, overloadable))native_sin(float2);
+extern float __attribute__((const, overloadable))native_sin(float v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
@@ -10572,7 +10563,7 @@ extern float2 __attribute__((const, overloadable))native_sin(float2);
  *
  * Supported by API versions 21 and newer.
  */
-extern float3 __attribute__((const, overloadable))native_sin(float3);
+extern float2 __attribute__((const, overloadable))native_sin(float2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
@@ -10581,7 +10572,16 @@ extern float3 __attribute__((const, overloadable))native_sin(float3);
  *
  * Supported by API versions 21 and newer.
  */
-extern float4 __attribute__((const, overloadable))native_sin(float4);
+extern float3 __attribute__((const, overloadable))native_sin(float3 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/**
+ * Returns the approximate sine of an angle measured in radians.
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float4 __attribute__((const, overloadable))native_sin(float4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
@@ -10590,11 +10590,11 @@ extern float4 __attribute__((const, overloadable))native_sin(float4);
  *
  * @return sine
  * @param v The incoming value in radians
- * @param *cosptr cosptr[0] will be set to the cosine value.
+ * @param *cos cos[0] will be set to the cosine value.
  *
  * Supported by API versions 21 and newer.
  */
-extern float __attribute__((overloadable))native_sincos(float v, float* cosptr);
+extern float __attribute__((overloadable))native_sincos(float v, float* cos);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
@@ -10603,11 +10603,11 @@ extern float __attribute__((overloadable))native_sincos(float v, float* cosptr);
  *
  * @return sine
  * @param v The incoming value in radians
- * @param *cosptr cosptr[0] will be set to the cosine value.
+ * @param *cos cos[0] will be set to the cosine value.
  *
  * Supported by API versions 21 and newer.
  */
-extern float2 __attribute__((overloadable))native_sincos(float2 v, float2* cosptr);
+extern float2 __attribute__((overloadable))native_sincos(float2 v, float2* cos);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
@@ -10616,11 +10616,11 @@ extern float2 __attribute__((overloadable))native_sincos(float2 v, float2* cospt
  *
  * @return sine
  * @param v The incoming value in radians
- * @param *cosptr cosptr[0] will be set to the cosine value.
+ * @param *cos cos[0] will be set to the cosine value.
  *
  * Supported by API versions 21 and newer.
  */
-extern float3 __attribute__((overloadable))native_sincos(float3 v, float3* cosptr);
+extern float3 __attribute__((overloadable))native_sincos(float3 v, float3* cos);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
@@ -10629,11 +10629,11 @@ extern float3 __attribute__((overloadable))native_sincos(float3 v, float3* cospt
  *
  * @return sine
  * @param v The incoming value in radians
- * @param *cosptr cosptr[0] will be set to the cosine value.
+ * @param *cos cos[0] will be set to the cosine value.
  *
  * Supported by API versions 21 and newer.
  */
-extern float4 __attribute__((overloadable))native_sincos(float4 v, float4* cosptr);
+extern float4 __attribute__((overloadable))native_sincos(float4 v, float4* cos);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
@@ -10642,7 +10642,7 @@ extern float4 __attribute__((overloadable))native_sincos(float4 v, float4* cospt
  *
  * Supported by API versions 21 and newer.
  */
-extern float __attribute__((const, overloadable))native_sinh(float);
+extern float __attribute__((const, overloadable))native_sinh(float v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
@@ -10651,7 +10651,7 @@ extern float __attribute__((const, overloadable))native_sinh(float);
  *
  * Supported by API versions 21 and newer.
  */
-extern float2 __attribute__((const, overloadable))native_sinh(float2);
+extern float2 __attribute__((const, overloadable))native_sinh(float2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
@@ -10660,7 +10660,7 @@ extern float2 __attribute__((const, overloadable))native_sinh(float2);
  *
  * Supported by API versions 21 and newer.
  */
-extern float3 __attribute__((const, overloadable))native_sinh(float3);
+extern float3 __attribute__((const, overloadable))native_sinh(float3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
@@ -10669,60 +10669,51 @@ extern float3 __attribute__((const, overloadable))native_sinh(float3);
  *
  * Supported by API versions 21 and newer.
  */
-extern float4 __attribute__((const, overloadable))native_sinh(float4);
+extern float4 __attribute__((const, overloadable))native_sinh(float4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /**
- * Returns the approximate sine of (x * pi), where (x * pi) is measured in radians.
+ * Returns the approximate sine of (v * pi), where (v * pi) is measured in radians.
  *
- * To get the sine of a value measured in degrees, call sinpi(a / 180.f).
+ * To get the sine of a value measured in degrees, call sinpi(v / 180.f).
  *
  * Supported by API versions 21 and newer.
  */
-extern float __attribute__((const, overloadable))native_sinpi(float x);
+extern float __attribute__((const, overloadable))native_sinpi(float v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /**
- * Returns the approximate sine of (x * pi), where (x * pi) is measured in radians.
+ * Returns the approximate sine of (v * pi), where (v * pi) is measured in radians.
  *
- * To get the sine of a value measured in degrees, call sinpi(a / 180.f).
+ * To get the sine of a value measured in degrees, call sinpi(v / 180.f).
  *
  * Supported by API versions 21 and newer.
  */
-extern float2 __attribute__((const, overloadable))native_sinpi(float2 x);
+extern float2 __attribute__((const, overloadable))native_sinpi(float2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /**
- * Returns the approximate sine of (x * pi), where (x * pi) is measured in radians.
+ * Returns the approximate sine of (v * pi), where (v * pi) is measured in radians.
  *
- * To get the sine of a value measured in degrees, call sinpi(a / 180.f).
+ * To get the sine of a value measured in degrees, call sinpi(v / 180.f).
  *
  * Supported by API versions 21 and newer.
  */
-extern float3 __attribute__((const, overloadable))native_sinpi(float3 x);
+extern float3 __attribute__((const, overloadable))native_sinpi(float3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /**
- * Returns the approximate sine of (x * pi), where (x * pi) is measured in radians.
+ * Returns the approximate sine of (v * pi), where (v * pi) is measured in radians.
  *
- * To get the sine of a value measured in degrees, call sinpi(a / 180.f).
- *
- * Supported by API versions 21 and newer.
- */
-extern float4 __attribute__((const, overloadable))native_sinpi(float4 x);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 21))
-/**
- * Returns the approximate sqrt(v).
+ * To get the sine of a value measured in degrees, call sinpi(v / 180.f).
  *
  * Supported by API versions 21 and newer.
  */
-extern float __attribute__((const, overloadable))native_sqrt(float);
+extern float4 __attribute__((const, overloadable))native_sinpi(float4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
@@ -10731,7 +10722,7 @@ extern float __attribute__((const, overloadable))native_sqrt(float);
  *
  * Supported by API versions 21 and newer.
  */
-extern float2 __attribute__((const, overloadable))native_sqrt(float2);
+extern float __attribute__((const, overloadable))native_sqrt(float v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
@@ -10740,7 +10731,7 @@ extern float2 __attribute__((const, overloadable))native_sqrt(float2);
  *
  * Supported by API versions 21 and newer.
  */
-extern float3 __attribute__((const, overloadable))native_sqrt(float3);
+extern float2 __attribute__((const, overloadable))native_sqrt(float2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
@@ -10749,7 +10740,16 @@ extern float3 __attribute__((const, overloadable))native_sqrt(float3);
  *
  * Supported by API versions 21 and newer.
  */
-extern float4 __attribute__((const, overloadable))native_sqrt(float4);
+extern float3 __attribute__((const, overloadable))native_sqrt(float3 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 21))
+/**
+ * Returns the approximate sqrt(v).
+ *
+ * Supported by API versions 21 and newer.
+ */
+extern float4 __attribute__((const, overloadable))native_sqrt(float4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
@@ -10758,7 +10758,7 @@ extern float4 __attribute__((const, overloadable))native_sqrt(float4);
  *
  * Supported by API versions 21 and newer.
  */
-extern float __attribute__((const, overloadable))native_tan(float);
+extern float __attribute__((const, overloadable))native_tan(float v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
@@ -10767,7 +10767,7 @@ extern float __attribute__((const, overloadable))native_tan(float);
  *
  * Supported by API versions 21 and newer.
  */
-extern float2 __attribute__((const, overloadable))native_tan(float2);
+extern float2 __attribute__((const, overloadable))native_tan(float2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
@@ -10776,7 +10776,7 @@ extern float2 __attribute__((const, overloadable))native_tan(float2);
  *
  * Supported by API versions 21 and newer.
  */
-extern float3 __attribute__((const, overloadable))native_tan(float3);
+extern float3 __attribute__((const, overloadable))native_tan(float3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
@@ -10785,7 +10785,7 @@ extern float3 __attribute__((const, overloadable))native_tan(float3);
  *
  * Supported by API versions 21 and newer.
  */
-extern float4 __attribute__((const, overloadable))native_tan(float4);
+extern float4 __attribute__((const, overloadable))native_tan(float4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
@@ -10794,7 +10794,7 @@ extern float4 __attribute__((const, overloadable))native_tan(float4);
  *
  * Supported by API versions 21 and newer.
  */
-extern float __attribute__((const, overloadable))native_tanh(float);
+extern float __attribute__((const, overloadable))native_tanh(float v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
@@ -10803,7 +10803,7 @@ extern float __attribute__((const, overloadable))native_tanh(float);
  *
  * Supported by API versions 21 and newer.
  */
-extern float2 __attribute__((const, overloadable))native_tanh(float2);
+extern float2 __attribute__((const, overloadable))native_tanh(float2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
@@ -10812,7 +10812,7 @@ extern float2 __attribute__((const, overloadable))native_tanh(float2);
  *
  * Supported by API versions 21 and newer.
  */
-extern float3 __attribute__((const, overloadable))native_tanh(float3);
+extern float3 __attribute__((const, overloadable))native_tanh(float3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
@@ -10821,87 +10821,87 @@ extern float3 __attribute__((const, overloadable))native_tanh(float3);
  *
  * Supported by API versions 21 and newer.
  */
-extern float4 __attribute__((const, overloadable))native_tanh(float4);
+extern float4 __attribute__((const, overloadable))native_tanh(float4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /**
- * Returns the approximate tangent of (x * pi), where (x * pi) is measured in radians.
+ * Returns the approximate tangent of (v * pi), where (v * pi) is measured in radians.
  *
- * To get the tangent of a value measured in degrees, call tanpi(a / 180.f).
+ * To get the tangent of a value measured in degrees, call tanpi(v / 180.f).
  *
  * Supported by API versions 21 and newer.
  */
-extern float __attribute__((const, overloadable))native_tanpi(float x);
+extern float __attribute__((const, overloadable))native_tanpi(float v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /**
- * Returns the approximate tangent of (x * pi), where (x * pi) is measured in radians.
+ * Returns the approximate tangent of (v * pi), where (v * pi) is measured in radians.
  *
- * To get the tangent of a value measured in degrees, call tanpi(a / 180.f).
+ * To get the tangent of a value measured in degrees, call tanpi(v / 180.f).
  *
  * Supported by API versions 21 and newer.
  */
-extern float2 __attribute__((const, overloadable))native_tanpi(float2 x);
+extern float2 __attribute__((const, overloadable))native_tanpi(float2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /**
- * Returns the approximate tangent of (x * pi), where (x * pi) is measured in radians.
+ * Returns the approximate tangent of (v * pi), where (v * pi) is measured in radians.
  *
- * To get the tangent of a value measured in degrees, call tanpi(a / 180.f).
+ * To get the tangent of a value measured in degrees, call tanpi(v / 180.f).
  *
  * Supported by API versions 21 and newer.
  */
-extern float3 __attribute__((const, overloadable))native_tanpi(float3 x);
+extern float3 __attribute__((const, overloadable))native_tanpi(float3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 /**
- * Returns the approximate tangent of (x * pi), where (x * pi) is measured in radians.
+ * Returns the approximate tangent of (v * pi), where (v * pi) is measured in radians.
  *
- * To get the tangent of a value measured in degrees, call tanpi(a / 180.f).
+ * To get the tangent of a value measured in degrees, call tanpi(v / 180.f).
  *
  * Supported by API versions 21 and newer.
  */
-extern float4 __attribute__((const, overloadable))native_tanpi(float4 x);
+extern float4 __attribute__((const, overloadable))native_tanpi(float4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns the next floating point number from x towards y.
+ * Returns the next floating point number from v towards target.
  *
  * Supported by API versions 9 and newer.
  */
-extern float __attribute__((const, overloadable))nextafter(float x, float y);
+extern float __attribute__((const, overloadable))nextafter(float v, float target);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns the next floating point number from x towards y.
+ * Returns the next floating point number from v towards target.
  *
  * Supported by API versions 9 and newer.
  */
-extern float2 __attribute__((const, overloadable))nextafter(float2 x, float2 y);
+extern float2 __attribute__((const, overloadable))nextafter(float2 v, float2 target);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns the next floating point number from x towards y.
+ * Returns the next floating point number from v towards target.
  *
  * Supported by API versions 9 and newer.
  */
-extern float3 __attribute__((const, overloadable))nextafter(float3 x, float3 y);
+extern float3 __attribute__((const, overloadable))nextafter(float3 v, float3 target);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns the next floating point number from x towards y.
+ * Returns the next floating point number from v towards target.
  *
  * Supported by API versions 9 and newer.
  */
-extern float4 __attribute__((const, overloadable))nextafter(float4 x, float4 y);
+extern float4 __attribute__((const, overloadable))nextafter(float4 v, float4 target);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -10950,134 +10950,134 @@ extern float4 __attribute__((const, overloadable))normalize(float4 v);
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns x raised to the power y, i.e. x ^ y.
+ * Returns base raised to the power exponent, i.e. base ^ exponent.
  *
  * pown() and powr() are similar.  pown() takes an integer exponent. powr() assumes the base to be non-negative.
  *
  * Supported by API versions 9 and newer.
  */
-extern float __attribute__((const, overloadable))pow(float x, float y);
+extern float __attribute__((const, overloadable))pow(float base, float exponent);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns x raised to the power y, i.e. x ^ y.
+ * Returns base raised to the power exponent, i.e. base ^ exponent.
  *
  * pown() and powr() are similar.  pown() takes an integer exponent. powr() assumes the base to be non-negative.
  *
  * Supported by API versions 9 and newer.
  */
-extern float2 __attribute__((const, overloadable))pow(float2 x, float2 y);
+extern float2 __attribute__((const, overloadable))pow(float2 base, float2 exponent);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns x raised to the power y, i.e. x ^ y.
+ * Returns base raised to the power exponent, i.e. base ^ exponent.
  *
  * pown() and powr() are similar.  pown() takes an integer exponent. powr() assumes the base to be non-negative.
  *
  * Supported by API versions 9 and newer.
  */
-extern float3 __attribute__((const, overloadable))pow(float3 x, float3 y);
+extern float3 __attribute__((const, overloadable))pow(float3 base, float3 exponent);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns x raised to the power y, i.e. x ^ y.
+ * Returns base raised to the power exponent, i.e. base ^ exponent.
  *
  * pown() and powr() are similar.  pown() takes an integer exponent. powr() assumes the base to be non-negative.
  *
  * Supported by API versions 9 and newer.
  */
-extern float4 __attribute__((const, overloadable))pow(float4 x, float4 y);
+extern float4 __attribute__((const, overloadable))pow(float4 base, float4 exponent);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns x raised to the power y, i.e. x ^ y.
+ * Returns base raised to the power exponent, i.e. base ^ exponent.
  *
  * pow() and powr() are similar.  The both take a float exponent. powr() also assumes the base to be non-negative.
  *
  * Supported by API versions 9 and newer.
  */
-extern float __attribute__((const, overloadable))pown(float x, int y);
+extern float __attribute__((const, overloadable))pown(float base, int exponent);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns x raised to the power y, i.e. x ^ y.
+ * Returns base raised to the power exponent, i.e. base ^ exponent.
  *
  * pow() and powr() are similar.  The both take a float exponent. powr() also assumes the base to be non-negative.
  *
  * Supported by API versions 9 and newer.
  */
-extern float2 __attribute__((const, overloadable))pown(float2 x, int2 y);
+extern float2 __attribute__((const, overloadable))pown(float2 base, int2 exponent);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns x raised to the power y, i.e. x ^ y.
+ * Returns base raised to the power exponent, i.e. base ^ exponent.
  *
  * pow() and powr() are similar.  The both take a float exponent. powr() also assumes the base to be non-negative.
  *
  * Supported by API versions 9 and newer.
  */
-extern float3 __attribute__((const, overloadable))pown(float3 x, int3 y);
+extern float3 __attribute__((const, overloadable))pown(float3 base, int3 exponent);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns x raised to the power y, i.e. x ^ y.
+ * Returns base raised to the power exponent, i.e. base ^ exponent.
  *
  * pow() and powr() are similar.  The both take a float exponent. powr() also assumes the base to be non-negative.
  *
  * Supported by API versions 9 and newer.
  */
-extern float4 __attribute__((const, overloadable))pown(float4 x, int4 y);
+extern float4 __attribute__((const, overloadable))pown(float4 base, int4 exponent);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns x raised to the power y, i.e. x ^ y.  x must be >= 0.
+ * Returns base raised to the power exponent, i.e. base ^ exponent.  base must be >= 0.
  *
  * pow() and pown() are similar.  They both make no assumptions about the base.  pow() takes a float exponent while pown() take an integer.
  *
  * Supported by API versions 9 and newer.
  */
-extern float __attribute__((const, overloadable))powr(float x, float y);
+extern float __attribute__((const, overloadable))powr(float base, float exponent);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns x raised to the power y, i.e. x ^ y.  x must be >= 0.
+ * Returns base raised to the power exponent, i.e. base ^ exponent.  base must be >= 0.
  *
  * pow() and pown() are similar.  They both make no assumptions about the base.  pow() takes a float exponent while pown() take an integer.
  *
  * Supported by API versions 9 and newer.
  */
-extern float2 __attribute__((const, overloadable))powr(float2 x, float2 y);
+extern float2 __attribute__((const, overloadable))powr(float2 base, float2 exponent);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns x raised to the power y, i.e. x ^ y.  x must be >= 0.
+ * Returns base raised to the power exponent, i.e. base ^ exponent.  base must be >= 0.
  *
  * pow() and pown() are similar.  They both make no assumptions about the base.  pow() takes a float exponent while pown() take an integer.
  *
  * Supported by API versions 9 and newer.
  */
-extern float3 __attribute__((const, overloadable))powr(float3 x, float3 y);
+extern float3 __attribute__((const, overloadable))powr(float3 base, float3 exponent);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns x raised to the power y, i.e. x ^ y.  x must be >= 0.
+ * Returns base raised to the power exponent, i.e. base ^ exponent.  base must be >= 0.
  *
  * pow() and pown() are similar.  They both make no assumptions about the base.  pow() takes a float exponent while pown() take an integer.
  *
  * Supported by API versions 9 and newer.
  */
-extern float4 __attribute__((const, overloadable))powr(float4 x, float4 y);
+extern float4 __attribute__((const, overloadable))powr(float4 base, float4 exponent);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -11086,7 +11086,7 @@ extern float4 __attribute__((const, overloadable))powr(float4 x, float4 y);
  *
  * Supported by API versions 9 and newer.
  */
-extern float __attribute__((const, overloadable))radians(float value);
+extern float __attribute__((const, overloadable))radians(float v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -11095,7 +11095,7 @@ extern float __attribute__((const, overloadable))radians(float value);
  *
  * Supported by API versions 9 and newer.
  */
-extern float2 __attribute__((const, overloadable))radians(float2 value);
+extern float2 __attribute__((const, overloadable))radians(float2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -11104,7 +11104,7 @@ extern float2 __attribute__((const, overloadable))radians(float2 value);
  *
  * Supported by API versions 9 and newer.
  */
-extern float3 __attribute__((const, overloadable))radians(float3 value);
+extern float3 __attribute__((const, overloadable))radians(float3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -11113,12 +11113,12 @@ extern float3 __attribute__((const, overloadable))radians(float3 value);
  *
  * Supported by API versions 9 and newer.
  */
-extern float4 __attribute__((const, overloadable))radians(float4 value);
+extern float4 __attribute__((const, overloadable))radians(float4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns the remainder of x / y, where the quotient is rounded towards the nearest integer.
+ * Returns the remainder of (numerator / denominator), where the quotient is rounded towards the nearest integer.
  *
  * The function fmod() is similar but rounds toward the closest interger.
  * For example, fmod(-3.8f, 2.f) returns -1.8f (-3.8f - -1.f * 2.f)
@@ -11126,12 +11126,12 @@ extern float4 __attribute__((const, overloadable))radians(float4 value);
  *
  * Supported by API versions 9 and newer.
  */
-extern float __attribute__((const, overloadable))remainder(float x, float y);
+extern float __attribute__((const, overloadable))remainder(float numerator, float denominator);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns the remainder of x / y, where the quotient is rounded towards the nearest integer.
+ * Returns the remainder of (numerator / denominator), where the quotient is rounded towards the nearest integer.
  *
  * The function fmod() is similar but rounds toward the closest interger.
  * For example, fmod(-3.8f, 2.f) returns -1.8f (-3.8f - -1.f * 2.f)
@@ -11139,12 +11139,12 @@ extern float __attribute__((const, overloadable))remainder(float x, float y);
  *
  * Supported by API versions 9 and newer.
  */
-extern float2 __attribute__((const, overloadable))remainder(float2 x, float2 y);
+extern float2 __attribute__((const, overloadable))remainder(float2 numerator, float2 denominator);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns the remainder of x / y, where the quotient is rounded towards the nearest integer.
+ * Returns the remainder of (numerator / denominator), where the quotient is rounded towards the nearest integer.
  *
  * The function fmod() is similar but rounds toward the closest interger.
  * For example, fmod(-3.8f, 2.f) returns -1.8f (-3.8f - -1.f * 2.f)
@@ -11152,12 +11152,12 @@ extern float2 __attribute__((const, overloadable))remainder(float2 x, float2 y);
  *
  * Supported by API versions 9 and newer.
  */
-extern float3 __attribute__((const, overloadable))remainder(float3 x, float3 y);
+extern float3 __attribute__((const, overloadable))remainder(float3 numerator, float3 denominator);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns the remainder of x / y, where the quotient is rounded towards the nearest integer.
+ * Returns the remainder of (numerator / denominator), where the quotient is rounded towards the nearest integer.
  *
  * The function fmod() is similar but rounds toward the closest interger.
  * For example, fmod(-3.8f, 2.f) returns -1.8f (-3.8f - -1.f * 2.f)
@@ -11165,12 +11165,12 @@ extern float3 __attribute__((const, overloadable))remainder(float3 x, float3 y);
  *
  * Supported by API versions 9 and newer.
  */
-extern float4 __attribute__((const, overloadable))remainder(float4 x, float4 y);
+extern float4 __attribute__((const, overloadable))remainder(float4 numerator, float4 denominator);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns the quotient and the remainder of b / c.
+ * Returns the quotient and the remainder of (numerator / denominator).
  *
  * Only the sign and lowest three bits of the quotient are guaranteed to be accurate.
  *
@@ -11178,19 +11178,19 @@ extern float4 __attribute__((const, overloadable))remainder(float4 x, float4 y);
  *
  * Example: remquo(-23.5f, 8.f, &quot) sets the lowest three bits of quot to 3 and the sign negative.  It returns 0.5f.
  *
- * @param b The numerator.
- * @param c The denominator.
- * @param *d d[0] will be set to the integer quotient.
+ * @param numerator The numerator.
+ * @param denominator The denominator.
+ * @param *quotient quotient[0] will be set to the integer quotient.
  * @return The remainder, precise only for the low three bits.
  *
  * Supported by API versions 9 and newer.
  */
-extern float __attribute__((overloadable))remquo(float b, float c, int* d);
+extern float __attribute__((overloadable))remquo(float numerator, float denominator, int* quotient);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns the quotient and the remainder of b / c.
+ * Returns the quotient and the remainder of (numerator / denominator).
  *
  * Only the sign and lowest three bits of the quotient are guaranteed to be accurate.
  *
@@ -11198,19 +11198,19 @@ extern float __attribute__((overloadable))remquo(float b, float c, int* d);
  *
  * Example: remquo(-23.5f, 8.f, &quot) sets the lowest three bits of quot to 3 and the sign negative.  It returns 0.5f.
  *
- * @param b The numerator.
- * @param c The denominator.
- * @param *d d[0] will be set to the integer quotient.
+ * @param numerator The numerator.
+ * @param denominator The denominator.
+ * @param *quotient quotient[0] will be set to the integer quotient.
  * @return The remainder, precise only for the low three bits.
  *
  * Supported by API versions 9 and newer.
  */
-extern float2 __attribute__((overloadable))remquo(float2 b, float2 c, int2* d);
+extern float2 __attribute__((overloadable))remquo(float2 numerator, float2 denominator, int2* quotient);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns the quotient and the remainder of b / c.
+ * Returns the quotient and the remainder of (numerator / denominator).
  *
  * Only the sign and lowest three bits of the quotient are guaranteed to be accurate.
  *
@@ -11218,19 +11218,19 @@ extern float2 __attribute__((overloadable))remquo(float2 b, float2 c, int2* d);
  *
  * Example: remquo(-23.5f, 8.f, &quot) sets the lowest three bits of quot to 3 and the sign negative.  It returns 0.5f.
  *
- * @param b The numerator.
- * @param c The denominator.
- * @param *d d[0] will be set to the integer quotient.
+ * @param numerator The numerator.
+ * @param denominator The denominator.
+ * @param *quotient quotient[0] will be set to the integer quotient.
  * @return The remainder, precise only for the low three bits.
  *
  * Supported by API versions 9 and newer.
  */
-extern float3 __attribute__((overloadable))remquo(float3 b, float3 c, int3* d);
+extern float3 __attribute__((overloadable))remquo(float3 numerator, float3 denominator, int3* quotient);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns the quotient and the remainder of b / c.
+ * Returns the quotient and the remainder of (numerator / denominator).
  *
  * Only the sign and lowest three bits of the quotient are guaranteed to be accurate.
  *
@@ -11238,14 +11238,14 @@ extern float3 __attribute__((overloadable))remquo(float3 b, float3 c, int3* d);
  *
  * Example: remquo(-23.5f, 8.f, &quot) sets the lowest three bits of quot to 3 and the sign negative.  It returns 0.5f.
  *
- * @param b The numerator.
- * @param c The denominator.
- * @param *d d[0] will be set to the integer quotient.
+ * @param numerator The numerator.
+ * @param denominator The denominator.
+ * @param *quotient quotient[0] will be set to the integer quotient.
  * @return The remainder, precise only for the low three bits.
  *
  * Supported by API versions 9 and newer.
  */
-extern float4 __attribute__((overloadable))remquo(float4 b, float4 c, int4* d);
+extern float4 __attribute__((overloadable))remquo(float4 numerator, float4 denominator, int4* quotient);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -11258,7 +11258,7 @@ extern float4 __attribute__((overloadable))remquo(float4 b, float4 c, int4* d);
  *
  * Supported by API versions 9 and newer.
  */
-extern float __attribute__((const, overloadable))rint(float);
+extern float __attribute__((const, overloadable))rint(float v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -11271,7 +11271,7 @@ extern float __attribute__((const, overloadable))rint(float);
  *
  * Supported by API versions 9 and newer.
  */
-extern float2 __attribute__((const, overloadable))rint(float2);
+extern float2 __attribute__((const, overloadable))rint(float2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -11284,7 +11284,7 @@ extern float2 __attribute__((const, overloadable))rint(float2);
  *
  * Supported by API versions 9 and newer.
  */
-extern float3 __attribute__((const, overloadable))rint(float3);
+extern float3 __attribute__((const, overloadable))rint(float3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -11297,7 +11297,7 @@ extern float3 __attribute__((const, overloadable))rint(float3);
  *
  * Supported by API versions 9 and newer.
  */
-extern float4 __attribute__((const, overloadable))rint(float4);
+extern float4 __attribute__((const, overloadable))rint(float4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -11346,7 +11346,7 @@ extern float4 __attribute__((const, overloadable))rootn(float4 v, int4 n);
  *
  * Supported by API versions 9 and newer.
  */
-extern float __attribute__((const, overloadable))round(float);
+extern float __attribute__((const, overloadable))round(float v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -11359,7 +11359,7 @@ extern float __attribute__((const, overloadable))round(float);
  *
  * Supported by API versions 9 and newer.
  */
-extern float2 __attribute__((const, overloadable))round(float2);
+extern float2 __attribute__((const, overloadable))round(float2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -11372,7 +11372,7 @@ extern float2 __attribute__((const, overloadable))round(float2);
  *
  * Supported by API versions 9 and newer.
  */
-extern float3 __attribute__((const, overloadable))round(float3);
+extern float3 __attribute__((const, overloadable))round(float3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -11385,43 +11385,43 @@ extern float3 __attribute__((const, overloadable))round(float3);
  *
  * Supported by API versions 9 and newer.
  */
-extern float4 __attribute__((const, overloadable))round(float4);
+extern float4 __attribute__((const, overloadable))round(float4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns (1 / sqrt(value)).
+ * Returns (1 / sqrt(v)).
  *
  * Supported by API versions 9 and newer.
  */
-extern float __attribute__((const, overloadable))rsqrt(float);
+extern float __attribute__((const, overloadable))rsqrt(float v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns (1 / sqrt(value)).
+ * Returns (1 / sqrt(v)).
  *
  * Supported by API versions 9 and newer.
  */
-extern float2 __attribute__((const, overloadable))rsqrt(float2);
+extern float2 __attribute__((const, overloadable))rsqrt(float2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns (1 / sqrt(value)).
+ * Returns (1 / sqrt(v)).
  *
  * Supported by API versions 9 and newer.
  */
-extern float3 __attribute__((const, overloadable))rsqrt(float3);
+extern float3 __attribute__((const, overloadable))rsqrt(float3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns (1 / sqrt(value)).
+ * Returns (1 / sqrt(v)).
  *
  * Supported by API versions 9 and newer.
  */
-extern float4 __attribute__((const, overloadable))rsqrt(float4);
+extern float4 __attribute__((const, overloadable))rsqrt(float4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -11482,7 +11482,7 @@ extern float4 __attribute__((const, overloadable))sign(float4 v);
  *
  * Supported by API versions 9 and newer.
  */
-extern float __attribute__((const, overloadable))sin(float);
+extern float __attribute__((const, overloadable))sin(float v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -11491,7 +11491,7 @@ extern float __attribute__((const, overloadable))sin(float);
  *
  * Supported by API versions 9 and newer.
  */
-extern float2 __attribute__((const, overloadable))sin(float2);
+extern float2 __attribute__((const, overloadable))sin(float2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -11500,7 +11500,7 @@ extern float2 __attribute__((const, overloadable))sin(float2);
  *
  * Supported by API versions 9 and newer.
  */
-extern float3 __attribute__((const, overloadable))sin(float3);
+extern float3 __attribute__((const, overloadable))sin(float3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -11509,7 +11509,7 @@ extern float3 __attribute__((const, overloadable))sin(float3);
  *
  * Supported by API versions 9 and newer.
  */
-extern float4 __attribute__((const, overloadable))sin(float4);
+extern float4 __attribute__((const, overloadable))sin(float4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -11518,11 +11518,11 @@ extern float4 __attribute__((const, overloadable))sin(float4);
  *
  * @return sine of v
  * @param v The incoming value in radians
- * @param *cosptr cosptr[0] will be set to the cosine value.
+ * @param *cos cosptr[0] will be set to the cosine value.
  *
  * Supported by API versions 9 and newer.
  */
-extern float __attribute__((overloadable))sincos(float v, float* cosptr);
+extern float __attribute__((overloadable))sincos(float v, float* cos);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -11531,11 +11531,11 @@ extern float __attribute__((overloadable))sincos(float v, float* cosptr);
  *
  * @return sine of v
  * @param v The incoming value in radians
- * @param *cosptr cosptr[0] will be set to the cosine value.
+ * @param *cos cosptr[0] will be set to the cosine value.
  *
  * Supported by API versions 9 and newer.
  */
-extern float2 __attribute__((overloadable))sincos(float2 v, float2* cosptr);
+extern float2 __attribute__((overloadable))sincos(float2 v, float2* cos);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -11544,11 +11544,11 @@ extern float2 __attribute__((overloadable))sincos(float2 v, float2* cosptr);
  *
  * @return sine of v
  * @param v The incoming value in radians
- * @param *cosptr cosptr[0] will be set to the cosine value.
+ * @param *cos cosptr[0] will be set to the cosine value.
  *
  * Supported by API versions 9 and newer.
  */
-extern float3 __attribute__((overloadable))sincos(float3 v, float3* cosptr);
+extern float3 __attribute__((overloadable))sincos(float3 v, float3* cos);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -11557,100 +11557,91 @@ extern float3 __attribute__((overloadable))sincos(float3 v, float3* cosptr);
  *
  * @return sine of v
  * @param v The incoming value in radians
- * @param *cosptr cosptr[0] will be set to the cosine value.
+ * @param *cos cosptr[0] will be set to the cosine value.
  *
  * Supported by API versions 9 and newer.
  */
-extern float4 __attribute__((overloadable))sincos(float4 v, float4* cosptr);
+extern float4 __attribute__((overloadable))sincos(float4 v, float4* cos);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns the hyperbolic sine of x, where x is measured in radians.
+ * Returns the hyperbolic sine of v, where v is measured in radians.
  *
  * Supported by API versions 9 and newer.
  */
-extern float __attribute__((const, overloadable))sinh(float);
+extern float __attribute__((const, overloadable))sinh(float v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns the hyperbolic sine of x, where x is measured in radians.
+ * Returns the hyperbolic sine of v, where v is measured in radians.
  *
  * Supported by API versions 9 and newer.
  */
-extern float2 __attribute__((const, overloadable))sinh(float2);
+extern float2 __attribute__((const, overloadable))sinh(float2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns the hyperbolic sine of x, where x is measured in radians.
+ * Returns the hyperbolic sine of v, where v is measured in radians.
  *
  * Supported by API versions 9 and newer.
  */
-extern float3 __attribute__((const, overloadable))sinh(float3);
+extern float3 __attribute__((const, overloadable))sinh(float3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns the hyperbolic sine of x, where x is measured in radians.
+ * Returns the hyperbolic sine of v, where v is measured in radians.
  *
  * Supported by API versions 9 and newer.
  */
-extern float4 __attribute__((const, overloadable))sinh(float4);
+extern float4 __attribute__((const, overloadable))sinh(float4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns the sine of (x * pi), where (x * pi) is measured in radians.
+ * Returns the sine of (v * pi), where (v * pi) is measured in radians.
  *
- * To get the sine of a value measured in degrees, call sinpi(a / 180.f).
+ * To get the sine of a value measured in degrees, call sinpi(v / 180.f).
  *
  * Supported by API versions 9 and newer.
  */
-extern float __attribute__((const, overloadable))sinpi(float x);
+extern float __attribute__((const, overloadable))sinpi(float v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns the sine of (x * pi), where (x * pi) is measured in radians.
+ * Returns the sine of (v * pi), where (v * pi) is measured in radians.
  *
- * To get the sine of a value measured in degrees, call sinpi(a / 180.f).
+ * To get the sine of a value measured in degrees, call sinpi(v / 180.f).
  *
  * Supported by API versions 9 and newer.
  */
-extern float2 __attribute__((const, overloadable))sinpi(float2 x);
+extern float2 __attribute__((const, overloadable))sinpi(float2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns the sine of (x * pi), where (x * pi) is measured in radians.
+ * Returns the sine of (v * pi), where (v * pi) is measured in radians.
  *
- * To get the sine of a value measured in degrees, call sinpi(a / 180.f).
+ * To get the sine of a value measured in degrees, call sinpi(v / 180.f).
  *
  * Supported by API versions 9 and newer.
  */
-extern float3 __attribute__((const, overloadable))sinpi(float3 x);
+extern float3 __attribute__((const, overloadable))sinpi(float3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns the sine of (x * pi), where (x * pi) is measured in radians.
+ * Returns the sine of (v * pi), where (v * pi) is measured in radians.
  *
- * To get the sine of a value measured in degrees, call sinpi(a / 180.f).
- *
- * Supported by API versions 9 and newer.
- */
-extern float4 __attribute__((const, overloadable))sinpi(float4 x);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/**
- * Returns the square root of a value.
+ * To get the sine of a value measured in degrees, call sinpi(v / 180.f).
  *
  * Supported by API versions 9 and newer.
  */
-extern float __attribute__((const, overloadable))sqrt(float);
+extern float4 __attribute__((const, overloadable))sinpi(float4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -11659,7 +11650,7 @@ extern float __attribute__((const, overloadable))sqrt(float);
  *
  * Supported by API versions 9 and newer.
  */
-extern float2 __attribute__((const, overloadable))sqrt(float2);
+extern float __attribute__((const, overloadable))sqrt(float v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -11668,7 +11659,7 @@ extern float2 __attribute__((const, overloadable))sqrt(float2);
  *
  * Supported by API versions 9 and newer.
  */
-extern float3 __attribute__((const, overloadable))sqrt(float3);
+extern float2 __attribute__((const, overloadable))sqrt(float2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -11677,7 +11668,16 @@ extern float3 __attribute__((const, overloadable))sqrt(float3);
  *
  * Supported by API versions 9 and newer.
  */
-extern float4 __attribute__((const, overloadable))sqrt(float4);
+extern float3 __attribute__((const, overloadable))sqrt(float3 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 9))
+/**
+ * Returns the square root of a value.
+ *
+ * Supported by API versions 9 and newer.
+ */
+extern float4 __attribute__((const, overloadable))sqrt(float4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -11796,7 +11796,7 @@ extern float4 __attribute__((const, overloadable))step(float edge, float4 v);
  *
  * Supported by API versions 9 and newer.
  */
-extern float __attribute__((const, overloadable))tan(float x);
+extern float __attribute__((const, overloadable))tan(float v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -11805,7 +11805,7 @@ extern float __attribute__((const, overloadable))tan(float x);
  *
  * Supported by API versions 9 and newer.
  */
-extern float2 __attribute__((const, overloadable))tan(float2 x);
+extern float2 __attribute__((const, overloadable))tan(float2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -11814,7 +11814,7 @@ extern float2 __attribute__((const, overloadable))tan(float2 x);
  *
  * Supported by API versions 9 and newer.
  */
-extern float3 __attribute__((const, overloadable))tan(float3 x);
+extern float3 __attribute__((const, overloadable))tan(float3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -11823,7 +11823,7 @@ extern float3 __attribute__((const, overloadable))tan(float3 x);
  *
  * Supported by API versions 9 and newer.
  */
-extern float4 __attribute__((const, overloadable))tan(float4 x);
+extern float4 __attribute__((const, overloadable))tan(float4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -11832,7 +11832,7 @@ extern float4 __attribute__((const, overloadable))tan(float4 x);
  *
  * Supported by API versions 9 and newer.
  */
-extern float __attribute__((const, overloadable))tanh(float);
+extern float __attribute__((const, overloadable))tanh(float v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -11841,7 +11841,7 @@ extern float __attribute__((const, overloadable))tanh(float);
  *
  * Supported by API versions 9 and newer.
  */
-extern float2 __attribute__((const, overloadable))tanh(float2);
+extern float2 __attribute__((const, overloadable))tanh(float2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -11850,7 +11850,7 @@ extern float2 __attribute__((const, overloadable))tanh(float2);
  *
  * Supported by API versions 9 and newer.
  */
-extern float3 __attribute__((const, overloadable))tanh(float3);
+extern float3 __attribute__((const, overloadable))tanh(float3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -11859,60 +11859,51 @@ extern float3 __attribute__((const, overloadable))tanh(float3);
  *
  * Supported by API versions 9 and newer.
  */
-extern float4 __attribute__((const, overloadable))tanh(float4);
+extern float4 __attribute__((const, overloadable))tanh(float4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns the tangent of (x * pi), where (x * pi) is measured in radians.
+ * Returns the tangent of (v * pi), where (v * pi) is measured in radians.
  *
- * To get the tangent of a value measured in degrees, call tanpi(a / 180.f).
+ * To get the tangent of a value measured in degrees, call tanpi(v / 180.f).
  *
  * Supported by API versions 9 and newer.
  */
-extern float __attribute__((const, overloadable))tanpi(float x);
+extern float __attribute__((const, overloadable))tanpi(float v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns the tangent of (x * pi), where (x * pi) is measured in radians.
+ * Returns the tangent of (v * pi), where (v * pi) is measured in radians.
  *
- * To get the tangent of a value measured in degrees, call tanpi(a / 180.f).
+ * To get the tangent of a value measured in degrees, call tanpi(v / 180.f).
  *
  * Supported by API versions 9 and newer.
  */
-extern float2 __attribute__((const, overloadable))tanpi(float2 x);
+extern float2 __attribute__((const, overloadable))tanpi(float2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns the tangent of (x * pi), where (x * pi) is measured in radians.
+ * Returns the tangent of (v * pi), where (v * pi) is measured in radians.
  *
- * To get the tangent of a value measured in degrees, call tanpi(a / 180.f).
+ * To get the tangent of a value measured in degrees, call tanpi(v / 180.f).
  *
  * Supported by API versions 9 and newer.
  */
-extern float3 __attribute__((const, overloadable))tanpi(float3 x);
+extern float3 __attribute__((const, overloadable))tanpi(float3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
 /**
- * Returns the tangent of (x * pi), where (x * pi) is measured in radians.
+ * Returns the tangent of (v * pi), where (v * pi) is measured in radians.
  *
- * To get the tangent of a value measured in degrees, call tanpi(a / 180.f).
- *
- * Supported by API versions 9 and newer.
- */
-extern float4 __attribute__((const, overloadable))tanpi(float4 x);
-#endif
-
-#if (defined(RS_VERSION) && (RS_VERSION >= 9))
-/**
- * Returns the gamma function of a value.
+ * To get the tangent of a value measured in degrees, call tanpi(v / 180.f).
  *
  * Supported by API versions 9 and newer.
  */
-extern float __attribute__((const, overloadable))tgamma(float);
+extern float4 __attribute__((const, overloadable))tanpi(float4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -11921,7 +11912,7 @@ extern float __attribute__((const, overloadable))tgamma(float);
  *
  * Supported by API versions 9 and newer.
  */
-extern float2 __attribute__((const, overloadable))tgamma(float2);
+extern float __attribute__((const, overloadable))tgamma(float v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -11930,7 +11921,7 @@ extern float2 __attribute__((const, overloadable))tgamma(float2);
  *
  * Supported by API versions 9 and newer.
  */
-extern float3 __attribute__((const, overloadable))tgamma(float3);
+extern float2 __attribute__((const, overloadable))tgamma(float2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -11939,7 +11930,16 @@ extern float3 __attribute__((const, overloadable))tgamma(float3);
  *
  * Supported by API versions 9 and newer.
  */
-extern float4 __attribute__((const, overloadable))tgamma(float4);
+extern float3 __attribute__((const, overloadable))tgamma(float3 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 9))
+/**
+ * Returns the gamma function of a value.
+ *
+ * Supported by API versions 9 and newer.
+ */
+extern float4 __attribute__((const, overloadable))tgamma(float4 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -11952,7 +11952,7 @@ extern float4 __attribute__((const, overloadable))tgamma(float4);
  *
  * Supported by API versions 9 and newer.
  */
-extern float __attribute__((const, overloadable))trunc(float);
+extern float __attribute__((const, overloadable))trunc(float v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -11965,7 +11965,7 @@ extern float __attribute__((const, overloadable))trunc(float);
  *
  * Supported by API versions 9 and newer.
  */
-extern float2 __attribute__((const, overloadable))trunc(float2);
+extern float2 __attribute__((const, overloadable))trunc(float2 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -11978,7 +11978,7 @@ extern float2 __attribute__((const, overloadable))trunc(float2);
  *
  * Supported by API versions 9 and newer.
  */
-extern float3 __attribute__((const, overloadable))trunc(float3);
+extern float3 __attribute__((const, overloadable))trunc(float3 v);
 #endif
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 9))
@@ -11991,7 +11991,7 @@ extern float3 __attribute__((const, overloadable))trunc(float3);
  *
  * Supported by API versions 9 and newer.
  */
-extern float4 __attribute__((const, overloadable))trunc(float4);
+extern float4 __attribute__((const, overloadable))trunc(float4 v);
 #endif
 
 #endif // __rs_core_math_rsh__
