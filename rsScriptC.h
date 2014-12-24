@@ -61,13 +61,13 @@ public:
 //protected:
     void setupScript(Context *);
     void setupGLState(Context *);
+
+#if !defined(RS_COMPATIBILITY_LIB)
+    static bool createCacheDir(const char *cacheDir);
+#endif
 private:
 #if !defined(RS_COMPATIBILITY_LIB) && !defined(ANDROID_RS_SERIALIZE)
     bcinfo::BitcodeTranslator *BT;
-#endif
-
-#if !defined(RS_COMPATIBILITY_LIB)
-    bool createCacheDir(const char *cacheDir);
 #endif
 };
 
