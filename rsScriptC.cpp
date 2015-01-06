@@ -242,6 +242,44 @@ void ScriptC::Invoke(Context *rsc, uint32_t slot, const void *data, size_t len) 
     rsc->mHal.funcs.script.invokeFunction(rsc, this, slot, data, len);
 }
 
+static const bool kDebugBitcode = false;
+
+#ifndef RS_COMPATIBILITY_LIB
+#ifndef ANDROID_RS_SERIALIZE
+
+static bool dumpBitcodeFile(const char *cacheDir, const char *resName,
+                            const char *suffix, const uint8_t *bitcode,
+                            size_t bitcodeLen) {
+    std::string f(cacheDir);
+    f.append("/");
+    f.append(resName);
+    f.append("#");
+    f.append(suffix);
+    f.append(".bc");
+
+    if (!ScriptC::createCacheDir(cacheDir)) {
+        return false;
+    }
+
+    FILE *fp = fopen(f.c_str(), "w");
+    if (!fp) {
+        ALOGE("Could not open %s", f.c_str());
+        return false;
+    }
+
+    size_t nWritten = fwrite(bitcode, 1, bitcodeLen, fp);
+    fclose(fp);
+    if (nWritten != bitcodeLen) {
+        ALOGE("Could not write %s", f.c_str());
+        return false;
+    }
+    return true;
+}
+
+#endif  // !ANDROID_RS_SERIALIZE
+#endif  // !RS_COMPATIBILITY_LIB
+
+
 bool ScriptC::runCompiler(Context *rsc,
                           const char *resName,
                           const char *cacheDir,
@@ -281,6 +319,12 @@ bool ScriptC::runCompiler(Context *rsc,
     }
     bitcode = (const uint8_t *) BT->getTranslatedBitcode();
     bitcodeLen = BT->getTranslatedBitcodeSize();
+
+    if (kDebugBitcode) {
+        if (!dumpBitcodeFile(cacheDir, resName, "after", bitcode, bitcodeLen)) {
+            return false;
+        }
+    }
 
 #endif
     if (!cacheDir) {
