@@ -1029,14 +1029,34 @@ void RsdCpuScriptImpl::invokeFreeChildren() {
 void RsdCpuScriptImpl::invokeFunction(uint32_t slot, const void *params,
                                       size_t paramLength) {
     //ALOGE("invoke %p %p %i %p %i", dc, script, slot, params, paramLength);
+    void * ap = nullptr;
+
+#if defined(__x86_64__)
+    // The invoked function could have input parameter of vector type for example float4 which
+    // requires void* params to be 16 bytes aligned when using SSE instructions for x86_64 platform.
+    // So try to align void* params before passing them into RS exported function.
+
+    if ((uint8_t)(uint64_t)params & 0x0F) {
+        if ((ap = (void*)memalign(16, paramLength)) != nullptr) {
+            memcpy(ap, params, paramLength);
+        } else {
+            ALOGE("x86_64: invokeFunction memalign error, still use params which is not 16 bytes aligned.");
+        }
+    }
+#endif
 
     RsdCpuScriptImpl * oldTLS = mCtx->setTLS(this);
     reinterpret_cast<void (*)(const void *, uint32_t)>(
 #ifndef RS_COMPATIBILITY_LIB
-        mExecutable->getExportFuncAddrs()[slot])(params, paramLength);
+        mExecutable->getExportFuncAddrs()[slot])(ap ? (const void *)ap : params, paramLength);
 #else
-        mInvokeFunctions[slot])(params, paramLength);
+        mInvokeFunctions[slot])(ap ? (const void *)ap : params, paramLength);
 #endif
+
+#if defined(__x86_64__)
+    if (ap) free(ap);
+#endif
+
     mCtx->setTLS(oldTLS);
 }
 
