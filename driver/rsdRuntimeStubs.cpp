@@ -1114,7 +1114,7 @@ static RsdCpuReference::CpuSymbol gSyms[] = {
     { "_Z20rsSetElementAt_char313rs_allocationPKDv3_cjjj", (void *)&SC_SetElementAt3_char3, true },
     { "_Z20rsSetElementAt_char413rs_allocationPKDv4_cjjj", (void *)&SC_SetElementAt3_char4, true },
 
-    { "_Z21rsSetElementAt_ushort13rs_allocationPKht", (void *)&SC_SetElementAt1_ushort, true },
+    { "_Z21rsSetElementAt_ushort13rs_allocationPKtj", (void *)&SC_SetElementAt1_ushort, true },
     { "_Z22rsSetElementAt_ushort213rs_allocationPKDv2_tj", (void *)&SC_SetElementAt1_ushort2, true },
     { "_Z22rsSetElementAt_ushort313rs_allocationPKDv3_tj", (void *)&SC_SetElementAt1_ushort3, true },
     { "_Z22rsSetElementAt_ushort413rs_allocationPKDv4_tj", (void *)&SC_SetElementAt1_ushort4, true },
@@ -1220,7 +1220,7 @@ static RsdCpuReference::CpuSymbol gSyms[] = {
     { "_Z20rsSetElementAt_long313rs_allocationPKDv3_xjjj", (void *)&SC_SetElementAt3_long3, true },
     { "_Z20rsSetElementAt_long413rs_allocationPKDv4_xjjj", (void *)&SC_SetElementAt3_long4, true },
 
-    { "_Z20rsSetElementAt_float13rs_allocationPKft", (void *)&SC_SetElementAt1_float, true },
+    { "_Z20rsSetElementAt_float13rs_allocationPKfj", (void *)&SC_SetElementAt1_float, true },
     { "_Z21rsSetElementAt_float213rs_allocationPKDv2_fj", (void *)&SC_SetElementAt1_float2, true },
     { "_Z21rsSetElementAt_float313rs_allocationPKDv3_fj", (void *)&SC_SetElementAt1_float3, true },
     { "_Z21rsSetElementAt_float413rs_allocationPKDv4_fj", (void *)&SC_SetElementAt1_float4, true },
@@ -1233,7 +1233,7 @@ static RsdCpuReference::CpuSymbol gSyms[] = {
     { "_Z21rsSetElementAt_float313rs_allocationPKDv3_fjjj", (void *)&SC_SetElementAt3_float3, true },
     { "_Z21rsSetElementAt_float413rs_allocationPKDv4_fjjj", (void *)&SC_SetElementAt3_float4, true },
 
-    { "_Z21rsSetElementAt_double13rs_allocationPKdt", (void *)&SC_SetElementAt1_double, true },
+    { "_Z21rsSetElementAt_double13rs_allocationPKdj", (void *)&SC_SetElementAt1_double, true },
     { "_Z22rsSetElementAt_double213rs_allocationPKDv2_dj", (void *)&SC_SetElementAt1_double2, true },
     { "_Z22rsSetElementAt_double313rs_allocationPKDv3_dj", (void *)&SC_SetElementAt1_double3, true },
     { "_Z22rsSetElementAt_double413rs_allocationPKDv4_dj", (void *)&SC_SetElementAt1_double4, true },
