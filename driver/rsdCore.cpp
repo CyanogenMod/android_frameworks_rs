@@ -31,6 +31,8 @@
     #include "rsdProgramFragment.h"
     #include "rsdMesh.h"
     #include "rsdFrameBuffer.h"
+#else
+    #include <dlfcn.h>
 #endif
 #include "rsdSampler.h"
 #include "rsdScriptGroup.h"
@@ -55,7 +57,6 @@ static void SetPriority(const Context *rsc, int32_t priority);
 #else
     #define NATIVE_FUNC(a) nullptr
 #endif
-
 
 static RsdHalFunctions FunctionTable = {
     NATIVE_FUNC(rsdGLInit),
@@ -193,11 +194,51 @@ static RsdCpuReference::CpuScript * LookupScript(Context *, const Script *s) {
     return (RsdCpuReference::CpuScript *)s->mHal.drv;
 }
 
+#ifdef RS_COMPATIBILITY_LIB
+typedef void (*sAllocationDestroyFnPtr) (const Context *rsc, Allocation *alloc);
+typedef void (*sAllocationIoSendFnPtr) (const Context *rsc, Allocation *alloc);
+typedef void (*sAllocationSetSurfaceFnPtr) (const Context *rsc, Allocation *alloc, ANativeWindow *nw);
+static sAllocationDestroyFnPtr sAllocationDestroy;
+static sAllocationIoSendFnPtr sAllocationIoSend;
+static sAllocationSetSurfaceFnPtr sAllocationSetSurface;
+
+static bool loadIOSuppLibSyms() {
+    void* handleIO = nullptr;
+    handleIO = dlopen("libRSSupportIO.so", RTLD_LAZY | RTLD_LOCAL);
+    if (handleIO == nullptr) {
+        ALOGE("Couldn't load libRSSupportIO.so");
+        return false;
+    }
+    sAllocationDestroy = (sAllocationDestroyFnPtr)dlsym(handleIO, "rscAllocationDestroy");
+    if (sAllocationDestroy==nullptr) {
+        ALOGE("Failed to initialize sAllocationDestroy");
+        return false;
+    }
+    sAllocationIoSend = (sAllocationIoSendFnPtr)dlsym(handleIO, "rscAllocationIoSend");
+    if (sAllocationIoSend==nullptr) {
+        ALOGE("Failed to initialize sAllocationIoSend");
+        return false;
+    }
+    sAllocationSetSurface = (sAllocationSetSurfaceFnPtr)dlsym(handleIO, "rscAllocationSetSurface");
+    if (sAllocationSetSurface==nullptr) {
+        ALOGE("Failed to initialize sAllocationIoSend");
+        return false;
+    }
+    return true;
+}
+#endif
+
 extern "C" bool rsdHalInit(RsContext c, uint32_t version_major,
                            uint32_t version_minor) {
     Context *rsc = (Context*) c;
+#ifdef RS_COMPATIBILITY_LIB
+    if (loadIOSuppLibSyms()) {
+        FunctionTable.allocation.destroy = sAllocationDestroy;
+        FunctionTable.allocation.ioSend = sAllocationIoSend;
+        FunctionTable.allocation.setSurface = sAllocationSetSurface;
+    }
+#endif
     rsc->mHal.funcs = FunctionTable;
-
     RsdHal *dc = (RsdHal *)calloc(1, sizeof(RsdHal));
     if (!dc) {
         ALOGE("Calloc for driver hal failed.");
