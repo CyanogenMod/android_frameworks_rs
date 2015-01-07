@@ -182,7 +182,7 @@ public:
                                      uint32_t flags);
     virtual CpuScript * createIntrinsic(const Script *s,
                                         RsScriptIntrinsicID iid, Element *e);
-    virtual CpuScriptGroup * createScriptGroup(const ScriptGroup *sg);
+    virtual void* createScriptGroup(const ScriptGroupBase *sg);
 
     const RsdCpuReference::CpuSymbol *symLookup(const char *);
 

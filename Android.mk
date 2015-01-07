@@ -141,6 +141,7 @@ LOCAL_SRC_FILES:= \
 	rsAnimation.cpp \
 	rsComponent.cpp \
 	rsContext.cpp \
+	rsClosure.cpp \
 	rsCppUtils.cpp \
 	rsDevice.cpp \
 	rsElement.cpp \
@@ -167,6 +168,7 @@ LOCAL_SRC_FILES:= \
 	rsScriptC_Lib.cpp \
 	rsScriptC_LibGL.cpp \
 	rsScriptGroup.cpp \
+	rsScriptGroup2.cpp \
 	rsScriptIntrinsic.cpp \
 	rsSignal.cpp \
 	rsStream.cpp \
@@ -245,6 +247,7 @@ LOCAL_SRC_FILES:= \
 	rsAnimation.cpp \
 	rsComponent.cpp \
 	rsContext.cpp \
+	rsClosure.cpp \
 	rsDevice.cpp \
 	rsElement.cpp \
 	rsFBOCache.cpp \
@@ -269,6 +272,7 @@ LOCAL_SRC_FILES:= \
 	rsScriptC_Lib.cpp \
 	rsScriptC_LibGL.cpp \
 	rsScriptGroup.cpp \
+	rsScriptGroup2.cpp \
 	rsScriptIntrinsic.cpp \
 	rsSignal.cpp \
 	rsStream.cpp \

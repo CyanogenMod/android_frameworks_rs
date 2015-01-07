@@ -29,7 +29,9 @@ typedef void (*DeviceDestroyFnPtr) (RsDevice dev);
 typedef void (*DeviceSetConfigFnPtr) (RsDevice dev, RsDeviceParam p, int32_t value);
 typedef RsContext (*ContextCreateFnPtr)(RsDevice vdev, uint32_t version, uint32_t sdkVersion, RsContextType ct, uint32_t flags);
 typedef void (*GetNameFnPtr)(RsContext, void * obj, const char **name);
-
+typedef RsClosure (*ClosureCreateFnPtr)(RsContext, RsScriptKernelID, RsAllocation, RsScriptFieldID*, size_t, uintptr_t*, size_t, size_t*, size_t, RsClosure*, size_t, RsScriptFieldID*, size_t);
+typedef void (*ClosureSetArgFnPtr)(RsContext, RsClosure, uint32_t, uintptr_t, size_t);
+typedef void (*ClosureSetGlobalFnPtr)(RsContext, RsClosure, RsScriptFieldID, uintptr_t, size_t);
 typedef void (*ContextDestroyFnPtr) (RsContext);
 typedef RsMessageToClientType (*ContextGetMessageFnPtr) (RsContext, void*, size_t, size_t*, size_t, uint32_t*, size_t);
 typedef RsMessageToClientType (*ContextPeekMessageFnPtr) (RsContext, size_t*, size_t, uint32_t*, size_t);
@@ -81,6 +83,7 @@ typedef RsScript (*ScriptIntrinsicCreateFnPtr) (RsContext, uint32_t id, RsElemen
 typedef RsScriptKernelID (*ScriptKernelIDCreateFnPtr) (RsContext, RsScript, int, int);
 typedef RsScriptFieldID (*ScriptFieldIDCreateFnPtr) (RsContext, RsScript, int);
 typedef RsScriptGroup (*ScriptGroupCreateFnPtr) (RsContext, RsScriptKernelID*, size_t, RsScriptKernelID*, size_t, RsScriptKernelID*, size_t, RsScriptFieldID*, size_t, const RsType*, size_t);
+typedef RsScriptGroup2 (*ScriptGroup2CreateFnPtr)(RsContext, RsClosure*, size_t);
 typedef void (*ScriptGroupSetOutputFnPtr) (RsContext, RsScriptGroup, RsScriptKernelID, RsAllocation);
 typedef void (*ScriptGroupSetInputFnPtr) (RsContext, RsScriptGroup, RsScriptKernelID, RsAllocation);
 typedef void (*ScriptGroupExecuteFnPtr) (RsContext, RsScriptGroup);
@@ -114,6 +117,9 @@ struct dispatchTable {
     AllocationCubeCreateFromBitmapFnPtr AllocationCubeCreateFromBitmap;
     AllocationGetSurfaceFnPtr AllocationGetSurface;
     AllocationSetSurfaceFnPtr AllocationSetSurface;
+    ClosureCreateFnPtr ClosureCreate;
+    ClosureSetArgFnPtr ClosureSetArg;
+    ClosureSetGlobalFnPtr ClosureSetGlobal;
     ContextFinishFnPtr ContextFinish;
     ContextDumpFnPtr ContextDump;
     ContextSetPriorityFnPtr ContextSetPriority;
@@ -153,6 +159,7 @@ struct dispatchTable {
     ScriptKernelIDCreateFnPtr ScriptKernelIDCreate;
     ScriptFieldIDCreateFnPtr ScriptFieldIDCreate;
     ScriptGroupCreateFnPtr ScriptGroupCreate;
+    ScriptGroup2CreateFnPtr ScriptGroup2Create;
     ScriptGroupSetOutputFnPtr ScriptGroupSetOutput;
     ScriptGroupSetInputFnPtr ScriptGroupSetInput;
     ScriptGroupExecuteFnPtr ScriptGroupExecute;

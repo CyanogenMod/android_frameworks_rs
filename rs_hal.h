@@ -35,6 +35,7 @@ class ScriptFieldID;
 class ScriptMethodID;
 class ScriptC;
 class ScriptGroup;
+class ScriptGroupBase;
 class Path;
 class Program;
 class ProgramStore;
@@ -300,13 +301,13 @@ typedef struct {
     } framebuffer;
 
     struct {
-        bool (*init)(const Context *rsc, ScriptGroup *sg);
+        bool (*init)(const Context *rsc, ScriptGroupBase *sg);
         void (*setInput)(const Context *rsc, const ScriptGroup *sg,
                          const ScriptKernelID *kid, Allocation *);
         void (*setOutput)(const Context *rsc, const ScriptGroup *sg,
                           const ScriptKernelID *kid, Allocation *);
-        void (*execute)(const Context *rsc, const ScriptGroup *sg);
-        void (*destroy)(const Context *rsc, const ScriptGroup *sg);
+        void (*execute)(const Context *rsc, const ScriptGroupBase *sg);
+        void (*destroy)(const Context *rsc, const ScriptGroupBase *sg);
         void (*updateCachedObject)(const Context *rsc, const ScriptGroup *sg, rs_script_group *obj);
     } scriptgroup;
 
