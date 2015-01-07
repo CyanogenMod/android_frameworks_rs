@@ -18,11 +18,6 @@ endif
 LOCAL_MODULE := libRSCpuRef
 LOCAL_MODULE_TARGET_ARCH := arm mips mips64 x86 x86_64 arm64
 
-ifeq ($(HOST_OS), darwin)
-LOCAL_CFLAGS += -no-integrated-as
-LOCAL_ASFLAGS += -no-integrated-as
-endif
-
 LOCAL_SRC_FILES:= \
 	rsCpuCore.cpp \
 	rsCpuScript.cpp \
