@@ -35,6 +35,7 @@
 class RsdFrameBufferObj;
 struct ANativeWindow;
 struct ANativeWindowBuffer;
+struct ANativeWindow_Buffer;
 
 struct DrvAllocation {
     // Is this a legal structure to be used as a texture source.
@@ -54,12 +55,14 @@ struct DrvAllocation {
     GLenum glType;
     GLenum glFormat;
 
-    ANativeWindow *wndSurface;
+    ANativeWindowBuffer *wndBuffer;
     android::GLConsumer *surfaceTexture;
 #else
     int glTarget;
     int glType;
     int glFormat;
+
+    ANativeWindow_Buffer *wndBuffer;
 #endif
 
     bool useUserProvidedPtr;
@@ -67,7 +70,7 @@ struct DrvAllocation {
 
     RsdFrameBufferObj * readBackFBO;
     ANativeWindow *wnd;
-    ANativeWindowBuffer *wndBuffer;
+    ANativeWindow *wndSurface;
 };
 
 #ifndef RS_COMPATIBILITY_LIB
