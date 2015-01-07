@@ -17,6 +17,7 @@
 #include "rsCpuCore.h"
 #include "rsCpuScript.h"
 #include "rsCpuScriptGroup.h"
+#include "rsCpuScriptGroup2.h"
 
 #include <malloc.h>
 #include "rsContext.h"
@@ -660,11 +661,19 @@ RsdCpuReference::CpuScript * RsdCpuReferenceImpl::createIntrinsic(const Script *
     return i;
 }
 
-RsdCpuReference::CpuScriptGroup * RsdCpuReferenceImpl::createScriptGroup(const ScriptGroup *sg) {
-    CpuScriptGroupImpl *sgi = new CpuScriptGroupImpl(this, sg);
-    if (!sgi->init()) {
+void* RsdCpuReferenceImpl::createScriptGroup(const ScriptGroupBase *sg) {
+  switch (sg->getApiVersion()) {
+    case ScriptGroupBase::SG_V1: {
+      CpuScriptGroupImpl *sgi = new CpuScriptGroupImpl(this, sg);
+      if (!sgi->init()) {
         delete sgi;
         return nullptr;
+      }
+      return sgi;
     }
-    return sgi;
+    case ScriptGroupBase::SG_V2: {
+      return new CpuScriptGroup2Impl(this, sg);
+    }
+  }
+  return nullptr;
 }
