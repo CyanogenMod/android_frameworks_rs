@@ -294,6 +294,10 @@ ObjectBase *FileA3D::initializeFromEntry(size_t index) {
             break;
         case RS_A3D_CLASS_ID_SCRIPT_GROUP:
             break;
+        case RS_A3D_CLASS_ID_CLOSURE:
+            break;
+        case RS_A3D_CLASS_ID_SCRIPT_GROUP2:
+            break;
     }
     if (entry->mRsObj) {
         entry->mRsObj->incUserRef();

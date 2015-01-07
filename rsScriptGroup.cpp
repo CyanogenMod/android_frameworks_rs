@@ -14,15 +14,18 @@
  * limitations under the License.
  */
 
-#include <algorithm>
+#include "rsScriptGroup.h"
 
 #include "rsContext.h"
+#include "rsScriptGroup2.h"
+
+#include <algorithm>
 #include <time.h>
 
 using namespace android;
 using namespace android::renderscript;
 
-ScriptGroup::ScriptGroup(Context *rsc) : ObjectBase(rsc) {
+ScriptGroup::ScriptGroup(Context *rsc) : ScriptGroupBase(rsc) {
 }
 
 ScriptGroup::~ScriptGroup() {
@@ -270,12 +273,10 @@ bool ScriptGroup::validateInputAndOutput(Context *rsc) {
 }
 
 void ScriptGroup::execute(Context *rsc) {
-
     if (!validateInputAndOutput(rsc)) {
         return;
     }
 
-    //ALOGE("ScriptGroup::execute");
     if (rsc->mHal.funcs.scriptgroup.execute) {
         rsc->mHal.funcs.scriptgroup.execute(rsc, this);
         return;
@@ -324,13 +325,6 @@ void ScriptGroup::execute(Context *rsc) {
 
 }
 
-void ScriptGroup::serialize(Context *rsc, OStream *stream) const {
-}
-
-RsA3DClassID ScriptGroup::getClassId() const {
-    return RS_A3D_CLASS_ID_SCRIPT_GROUP;
-}
-
 ScriptGroup::Link::Link() {
 }
 
@@ -371,7 +365,7 @@ void rsi_ScriptGroupSetOutput(Context *rsc, RsScriptGroup sg, RsScriptKernelID k
 }
 
 void rsi_ScriptGroupExecute(Context *rsc, RsScriptGroup sg) {
-    ScriptGroup *s = (ScriptGroup *)sg;
+    ScriptGroupBase *s = (ScriptGroupBase *)sg;
     s->execute(rsc);
 }
 

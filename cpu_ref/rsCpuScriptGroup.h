@@ -30,7 +30,7 @@ public:
     virtual void execute();
     virtual ~CpuScriptGroupImpl();
 
-    CpuScriptGroupImpl(RsdCpuReferenceImpl *ctx, const ScriptGroup *sg);
+    CpuScriptGroupImpl(RsdCpuReferenceImpl *ctx, const ScriptGroupBase *sg);
     bool init();
 
     static void scriptGroupRoot(const RsExpandKernelParams *p,
