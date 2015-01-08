@@ -45,7 +45,7 @@ namespace renderscript {
 
 class ScriptC;
 class Script;
-class ScriptGroup;
+class ScriptGroupBase;
 class ScriptKernelID;
 
 
@@ -97,12 +97,24 @@ public:
     };
     typedef CpuScript * (* script_lookup_t)(Context *, const Script *s);
 
-    class CpuScriptGroup {
+    class CpuScriptGroupBase {
+     public:
+      virtual void execute() = 0;
+      virtual ~CpuScriptGroupBase() {}
+    };
+
+    class CpuScriptGroup : public CpuScriptGroupBase {
     public:
         virtual void setInput(const ScriptKernelID *kid, Allocation *) = 0;
         virtual void setOutput(const ScriptKernelID *kid, Allocation *) = 0;
         virtual void execute() = 0;
         virtual ~CpuScriptGroup() {};
+    };
+
+    class CpuScriptGroup2 : public CpuScriptGroupBase {
+     public:
+      virtual void execute() = 0;
+      virtual ~CpuScriptGroup2() {}
     };
 
     static Context * getTlsContext();
@@ -124,7 +136,7 @@ public:
                                      uint8_t const *bitcode, size_t bitcodeSize,
                                      uint32_t flags) = 0;
     virtual CpuScript * createIntrinsic(const Script *s, RsScriptIntrinsicID iid, Element *e) = 0;
-    virtual CpuScriptGroup * createScriptGroup(const ScriptGroup *sg) = 0;
+    virtual void* createScriptGroup(const ScriptGroupBase *sg) = 0;
     virtual bool getInForEach() = 0;
 
 #ifndef RS_COMPATIBILITY_LIB

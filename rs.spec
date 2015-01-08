@@ -252,6 +252,31 @@ AllocationCopy3DRange {
     param uint32_t srcMip
     }
 
+ClosureCreate {
+    direct
+    param RsScriptKernelID kernelID
+    param RsAllocation returnValue
+    param RsScriptFieldID * fieldIDs
+    param uintptr_t * values
+    param size_t * sizes
+    param RsClosure * depClosures
+    param RsScriptFieldID * depFieldIDs
+    ret RsClosure
+    }
+
+ClosureSetArg {
+  param RsClosure closureID
+  param uint32_t index
+  param uintptr_t value
+  param size_t valueSize
+}
+
+ClosureSetGlobal {
+  param RsClosure closureID
+  param RsScriptFieldID fieldID
+  param uintptr_t value
+  param size_t valueSize
+}
 
 SamplerCreate {
     direct
@@ -408,6 +433,12 @@ ScriptGroupSetInput {
 
 ScriptGroupExecute {
     param RsScriptGroup group
+}
+
+ScriptGroup2Create{
+    direct
+    param RsClosure * closures
+    ret RsScriptGroup2
 }
 
 AllocationIoSend {

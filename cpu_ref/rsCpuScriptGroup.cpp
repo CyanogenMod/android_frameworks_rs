@@ -18,15 +18,13 @@
 #include "rsCpuScript.h"
 #include "rsScriptGroup.h"
 #include "rsCpuScriptGroup.h"
-//#include "rsdBcc.h"
-//#include "rsdAllocation.h"
 
 using namespace android;
 using namespace android::renderscript;
 
-CpuScriptGroupImpl::CpuScriptGroupImpl(RsdCpuReferenceImpl *ctx, const ScriptGroup *sg) {
+CpuScriptGroupImpl::CpuScriptGroupImpl(RsdCpuReferenceImpl *ctx, const ScriptGroupBase *sg) {
     mCtx = ctx;
-    mSG = sg;
+    mSG = (ScriptGroup*)sg;
 }
 
 CpuScriptGroupImpl::~CpuScriptGroupImpl() {
