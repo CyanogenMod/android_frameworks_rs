@@ -28,6 +28,7 @@ LOCAL_SRC_FILES:= \
 	rsCpuScriptGroup2.cpp \
 	rsCpuIntrinsic.cpp \
 	rsCpuIntrinsic3DLUT.cpp \
+	rsCpuIntrinsicBLAS.cpp \
 	rsCpuIntrinsicBlend.cpp \
 	rsCpuIntrinsicBlur.cpp \
 	rsCpuIntrinsicColorMatrix.cpp \
@@ -82,12 +83,12 @@ endif
 
 LOCAL_SHARED_LIBRARIES += libRS libcutils libutils liblog libsync libc++ libdl
 
-# these are not supported in 64-bit yet
-LOCAL_SHARED_LIBRARIES += libbcc libbcinfo
+LOCAL_SHARED_LIBRARIES += libbcc libbcinfo libblas
 
 
 LOCAL_C_INCLUDES += frameworks/compile/libbcc/include
 LOCAL_C_INCLUDES += frameworks/rs
+LOCAL_C_INCLUDES += external/cblas/include
 
 ifneq ($(HOST_OS),windows)
 include external/libcxx/libcxx.mk
