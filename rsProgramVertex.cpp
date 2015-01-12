@@ -183,7 +183,7 @@ void ProgramVertexState::init(Context *rsc) {
     const Element *ebe2[] = {f4Elem.get(), f4Elem.get(), f3Elem.get(), f2Elem.get()};
     ObjectBaseRef<const Element> attrElem = Element::create(rsc, 4, ebe2, ebn2);
 
-    ObjectBaseRef<Type> inputType = Type::getTypeRef(rsc, constInput.get(), 1, 0, 0, false, false, 0);
+    ObjectBaseRef<Type> inputType = Type::getTypeRef(rsc, constInput.get(), 1);
 
     const char *shaderString =
             RS_SHADER_INTERNAL
