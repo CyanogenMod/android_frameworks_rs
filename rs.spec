@@ -43,6 +43,12 @@ TypeCreate {
     ret RsType
 }
 
+TypeCreate2 {
+    direct
+    param const RsTypeCreateParams *dat
+    ret RsType
+}
+
 AllocationCreateTyped {
     direct
     param RsType vtype
