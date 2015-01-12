@@ -120,6 +120,7 @@ public:
     virtual void Invoke(Context *rsc, uint32_t slot, const void *data, size_t len) = 0;
     virtual void setupScript(Context *rsc) = 0;
     virtual uint32_t run(Context *) = 0;
+    virtual bool isIntrinsic() const { return false; }
 
     bool hasObjectSlots() const {
         return mHasObjectSlots;
