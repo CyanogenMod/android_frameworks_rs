@@ -380,7 +380,7 @@ RsType rsi_TypeCreate(Context *rsc, RsElement _e, uint32_t dimX,
     return Type::getType(rsc, e, &p, sizeof(p));
 }
 
-RsType rsi_TypeCreate2(Context *rsc, const RsTypeCreateParams *p, uint32_t len) {
+RsType rsi_TypeCreate2(Context *rsc, const RsTypeCreateParams *p, size_t len) {
     Element *e = static_cast<Element *>(p->e);
     return Type::getType(rsc, e, p, len);
 }
