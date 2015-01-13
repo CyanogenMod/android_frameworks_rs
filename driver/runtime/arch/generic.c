@@ -642,21 +642,6 @@ extern uchar4 __attribute__((overloadable)) rsYuvToRGBA_uchar4(uchar y, uchar u,
     return convert_uchar4(p);
 }
 
-static float4 yuv_U_values = {0.f, -0.392f * 0.003921569f, +2.02 * 0.003921569f, 0.f};
-static float4 yuv_V_values = {1.603f * 0.003921569f, -0.815f * 0.003921569f, 0.f, 0.f};
-
-extern float4 __attribute__((overloadable)) rsYuvToRGBA_float4(uchar y, uchar u, uchar v) {
-    float4 color = (float)y * 0.003921569f;
-    float4 fU = ((float)u) - 128.f;
-    float4 fV = ((float)v) - 128.f;
-
-    color += fU * yuv_U_values;
-    color += fV * yuv_V_values;
-    color = clamp(color, 0.f, 1.f);
-    return color;
-}
-
-
 /*
  * half_RECIP
  */
