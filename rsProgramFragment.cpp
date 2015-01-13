@@ -109,7 +109,7 @@ void ProgramFragmentState::init(Context *rsc) {
     const Element *eins[] = {colorElem.get()};
     ObjectBaseRef<const Element> constInput = Element::create(rsc, 1, eins, enames);
 
-    ObjectBaseRef<Type> inputType = Type::getTypeRef(rsc, constInput.get(), 1, 0, 0, false, false, 0);
+    ObjectBaseRef<Type> inputType = Type::getTypeRef(rsc, constInput.get(), 1);
 
     uintptr_t tmp[2];
     tmp[0] = RS_PROGRAM_PARAM_CONSTANT;
