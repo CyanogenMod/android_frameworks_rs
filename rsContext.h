@@ -248,6 +248,16 @@ public:
     void setContextType(RsContextType ct) { mContextType = ct; }
 
     Device *mDev;
+
+#ifdef RS_COMPATIBILITY_LIB
+    void setNativeLibDir(const char * libDir, uint32_t length) {
+        memcpy(nativeLibDir, libDir, length);
+    }
+    const char * getNativeLibDir() {
+        return nativeLibDir;
+    }
+#endif
+
 protected:
 
     uint32_t mTargetSdkVersion;
@@ -310,6 +320,9 @@ private:
     uint32_t mAverageFPSFrameCount;
     uint64_t mAverageFPSStartTime;
     uint32_t mAverageFPS;
+#ifdef RS_COMPATIBILITY_LIB
+    char nativeLibDir[PATH_MAX+1];
+#endif
 };
 
 void LF_ObjDestroy_handcode(const Context *rsc, RsAsyncVoidPtr objPtr);

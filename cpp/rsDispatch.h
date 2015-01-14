@@ -20,6 +20,7 @@
 #include "rsInternalDefines.h"
 #include "jni.h"
 
+typedef void (*SetNativeLibDirFnPtr)(RsContext con, const char *nativeLibDir, size_t length);
 typedef const void* (*AllocationGetTypeFnPtr)(RsContext con, RsAllocation va);
 typedef void (*TypeGetNativeDataFnPtr)(RsContext, RsType, uintptr_t *typeData, uint32_t typeDataSize);
 typedef void (*ElementGetNativeDataFnPtr)(RsContext, RsElement, uintptr_t *elemData, uint32_t elemDataSize);
@@ -92,6 +93,8 @@ typedef void (*AllocationIoReceiveFnPtr) (RsContext, RsAllocation);
 typedef void * (*AllocationGetPointerFnPtr) (RsContext, RsAllocation, uint32_t lod, RsAllocationCubemapFace face, uint32_t z, uint32_t array, size_t *stride);
 
 struct dispatchTable {
+    SetNativeLibDirFnPtr SetNativeLibDir;
+
     // inserted by hand from rs.h
     AllocationGetTypeFnPtr AllocationGetType;
     TypeGetNativeDataFnPtr TypeGetNativeData;
