@@ -59,7 +59,8 @@ IMPORT_F32_FN_F32_F32(fmod)
 extern float SC_frexpf(float v, int* ptr);
 float __attribute__((overloadable)) frexp(float v, int* ptr) {return SC_frexpf(v, ptr);}
 IMPORT_F32_FN_F32_F32(hypot)
-IMPORT_F32_FN_F32(ilogb)
+extern int SC_ilogbf(float v);
+int __attribute__((overloadable)) ilogb(float v) {return SC_ilogbf(v); }
 extern float SC_ldexpf(float v, int i);
 float __attribute__((overloadable)) ldexp(float v, int i) {return SC_ldexpf(v, i);}
 IMPORT_F32_FN_F32(lgamma)

@@ -138,7 +138,7 @@ EXPORT_F32_FN_F32_F32(fminf)
 EXPORT_F32_FN_F32_F32(fmodf)
 float SC_frexpf(float v, int* ptr) {return frexpf(v, ptr);}
 EXPORT_F32_FN_F32_F32(hypotf)
-EXPORT_F32_FN_F32(ilogbf)
+int SC_ilogbf(float v) {return ilogbf(v); }
 float SC_ldexpf(float v, int i) {return ldexpf(v, i);}
 EXPORT_F32_FN_F32(lgammaf)
 float SC_lgammaf_r(float v, int* ptr) {return lgammaf_r(v, ptr);}
