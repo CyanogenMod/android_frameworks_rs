@@ -16,7 +16,6 @@
 
 // exports unavailable mathlib functions to compat lib
 
-#ifdef RS_COMPATIBILITY_LIB
 
 typedef unsigned int uint32_t;
 typedef int int32_t;
@@ -92,6 +91,7 @@ float __attribute__((overloadable)) rsRand(float min, float max) {
   return SC_randf2(min, max);
 }
 
+#ifdef RS_COMPATIBILITY_LIB
 
 // !!! DANGER !!!
 // These functions are potentially missing on older Android versions.

@@ -112,7 +112,6 @@ static float SC_frac(float v) {
     return fmin(v - i, 0x1.fffffep-1f);
 }
 
-#ifdef RS_COMPATIBILITY_LIB
 EXPORT_F32_FN_F32(acosf)
 EXPORT_F32_FN_F32(acoshf)
 EXPORT_F32_FN_F32(asinf)
@@ -213,7 +212,6 @@ void __attribute__((overloadable)) rsMatrixTranspose(rs_matrix3x3 *m) {
 void __attribute__((overloadable)) rsMatrixTranspose(rs_matrix2x2 *m) {
     SC_MatrixTranspose_2x2((Matrix2x2 *) m);
 }
-#endif
 
 //////////////////////////////////////////////////////////////////////////////
 // Class implementation
