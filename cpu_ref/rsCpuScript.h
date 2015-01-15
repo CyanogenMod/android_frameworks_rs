@@ -50,10 +50,11 @@ public:
         const RsExpandKernelParams *,
         uint32_t x1, uint32_t x2,
         uint32_t outstep);
-#ifdef RS_COMPATIBILITY_LIB
+
     typedef void (* InvokeFunc_t)(void);
     typedef void (* ForEachFunc_t)(void);
     typedef int (* RootFunc_t)(void);
+#ifdef RS_COMPATIBILITY_LIB
     typedef void (*WorkerCallback_t)(void *usr, uint32_t idx);
 #endif
 
@@ -107,23 +108,34 @@ public:
     static void * lookupRuntimeStub(void* pContext, char const* name);
 
     virtual Allocation * getAllocationForPointer(const void *ptr) const;
+    bool storeRSInfoFromSO();
 
 #ifndef RS_COMPATIBILITY_LIB
+    bool storeRSInfoFromObj(bcinfo::MetadataExtractor &bitcodeMetadata);
     virtual  void * getRSExecutable() { return mExecutable; }
 #endif
 
 protected:
     RsdCpuReferenceImpl *mCtx;
     const Script *mScript;
+    void *mScriptSO;
 
 #ifndef RS_COMPATIBILITY_LIB
     // Returns the path to the core library we'll use.
     const char* findCoreLib(const bcinfo::MetadataExtractor& bitCodeMetaData, const char* bitcode,
                             size_t bitcodeSize);
-    int (*mRoot)();
-    int (*mRootExpand)();
-    void (*mInit)();
-    void (*mFreeChildren)();
+    RootFunc_t mRoot;
+    RootFunc_t mRootExpand;
+    InvokeFunc_t mInit;
+    InvokeFunc_t mFreeChildren;
+
+    InvokeFunc_t *mInvokeFunctions;
+    ForEachFunc_t *mForEachFunctions;
+    void **mFieldAddress;
+    bool *mFieldIsObject;
+    uint32_t *mForEachSignatures;
+    size_t mExportedVariableCount;
+    size_t mExportedFunctionCount;
 
     std::vector<std::pair<const char *, uint32_t> > mExportedForEachFuncList;
 
@@ -133,7 +145,6 @@ protected:
     bcc::SymbolResolverProxy mResolver;
     bcc::RSExecutable *mExecutable;
 #else
-    void *mScriptSO;
     RootFunc_t mRoot;
     RootFunc_t mRootExpand;
     InvokeFunc_t mInit;
