@@ -245,26 +245,8 @@ static void *loadSharedLibrary(const char *cacheDir, const char *resName) {
 
 #ifndef RS_COMPATIBILITY_LIB
 
-static bool is_skip_linkloader() {
-    char buf[PROPERTY_VALUE_MAX];
-    static bool initialized = false;
-    static bool prop = false;
-
-    if (initialized) {
-        return prop;
-    }
-
-    property_get("rs.skip.linkloader", buf, "");
-    prop = (buf[0] != '\0');
-    initialized = true;
-
-    if (prop) {
-        ALOGV("Skipping linkloader");
-    }
-    else {
-        ALOGV("Default path: using linkloader");
-    }
-    return prop;
+static inline bool is_skip_linkloader() {
+  return true;
 }
 
 static bool is_force_recompile() {
