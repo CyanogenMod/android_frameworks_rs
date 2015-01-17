@@ -932,7 +932,7 @@ arg: #2#1 v
 comment:
  Returns the base two exponent of a value, where the mantissa is between 1.f (inclusive) and 2.f (exclusive).
 
- For example, ilogb(8.5f) returns 3.f.  Because of the difference in mantissa, this number is one less than
+ For example, logb(8.5f) returns 3.f.  Because of the difference in mantissa, this number is one less than
  is returned by frexp().
 
  ilogb() is similar but returns an integer.
