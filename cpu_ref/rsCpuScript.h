@@ -21,11 +21,12 @@
 #include <rsRuntime.h>
 
 #ifndef RS_COMPATIBILITY_LIB
-#include <vector>
 #include <utility>
 #endif
 
 #include "rsCpuCore.h"
+
+#include <vector>
 
 namespace bcc {
     class BCCContext;
@@ -39,7 +40,55 @@ namespace bcinfo {
 namespace android {
 namespace renderscript {
 
+class ScriptExecutable {
+ public:
+  ScriptExecutable(Context* RSContext,
+                   std::vector<void*>& fieldAddress,
+                   std::vector<bool>& fieldIsObject,
+                   std::vector<InvokeFunc_t>& invokeFunctions,
+                   std::vector<ForEachFunc_t>& forEachFunctions,
+                   std::vector<uint32_t>& forEachSignatures) : mRS(RSContext) {
+      mFieldAddress.swap(fieldAddress);
+      mFieldIsObject.swap(fieldIsObject);
+      mInvokeFunctions.swap(invokeFunctions);
+      mForEachFunctions.swap(forEachFunctions);
+      mForEachSignatures.swap(forEachSignatures);
+  }
 
+  ~ScriptExecutable() {
+      for (size_t i = 0; i < mFieldAddress.size(); ++i) {
+          if (mFieldIsObject[i]) {
+              if (mFieldAddress[i] != nullptr) {
+                  rs_object_base *obj_addr =
+                      reinterpret_cast<rs_object_base *>(mFieldAddress[i]);
+                  rsrClearObject(mRS, obj_addr);
+              }
+          }
+      }
+  }
+
+  static ScriptExecutable*
+  createFromSharedObject(Context* RSContext, void* sharedObj);
+
+  size_t getExportedVariableCount() const { return mFieldAddress.size(); }
+  size_t getExportedFunctionCount() const { return mInvokeFunctions.size(); }
+  size_t getExportedForEachCount() const { return mForEachFunctions.size(); }
+
+  void* getFieldAddress(int slot) const { return mFieldAddress[slot]; }
+  bool getFieldIsObject(int slot) const { return mFieldIsObject[slot]; }
+  InvokeFunc_t getInvokeFunction(int slot) const { return mInvokeFunctions[slot]; }
+  ForEachFunc_t getForEachFunction(int slot) const { return mForEachFunctions[slot]; }
+  uint32_t getForEachSignature(int slot) const { return mForEachSignatures[slot]; }
+
+ private:
+  std::vector<void*> mFieldAddress;
+  std::vector<bool> mFieldIsObject;
+  std::vector<InvokeFunc_t> mInvokeFunctions;
+  std::vector<ForEachFunc_t> mForEachFunctions;
+  std::vector<uint32_t> mForEachSignatures;
+
+  Context* mRS;
+};
 
 class RsdCpuScriptImpl : public RsdCpuReferenceImpl::CpuScript {
 public:
@@ -124,15 +173,7 @@ protected:
     RootFunc_t mRootExpand;
     InvokeFunc_t mInit;
     InvokeFunc_t mFreeChildren;
-    InvokeFunc_t *mInvokeFunctions;
-    ForEachFunc_t *mForEachFunctions;
-
-    void **mFieldAddress;
-    bool *mFieldIsObject;
-    uint32_t *mForEachSignatures;
-
-    size_t mExportedVariableCount;
-    size_t mExportedFunctionCount;
+    ScriptExecutable* mScriptExec;
 
     Allocation **mBoundAllocs;
     void * mIntrinsicData;
@@ -147,6 +188,7 @@ Allocation * rsdScriptGetAllocationForPointer(
 
 
 }
+
 }
 
 #endif
