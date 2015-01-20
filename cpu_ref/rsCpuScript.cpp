@@ -1013,9 +1013,9 @@ void RsdCpuScriptImpl::forEachMtlsSetup(const Allocation ** ains,
         const Allocation *ain0   = ains[0];
         const Type       *inType = ain0->getType();
 
-        mtls->fep.dimX = inType->getDimX();
-        mtls->fep.dimY = inType->getDimY();
-        mtls->fep.dimZ = inType->getDimZ();
+        mtls->fep.dim.x = inType->getDimX();
+        mtls->fep.dim.y = inType->getDimY();
+        mtls->fep.dim.z = inType->getDimZ();
 
         for (int Index = inLen; --Index >= 1;) {
             if (!ain0->hasSameDims(ains[Index])) {
@@ -1029,9 +1029,9 @@ void RsdCpuScriptImpl::forEachMtlsSetup(const Allocation ** ains,
     } else if (aout != nullptr) {
         const Type *outType = aout->getType();
 
-        mtls->fep.dimX = outType->getDimX();
-        mtls->fep.dimY = outType->getDimY();
-        mtls->fep.dimZ = outType->getDimZ();
+        mtls->fep.dim.x = outType->getDimX();
+        mtls->fep.dim.y = outType->getDimY();
+        mtls->fep.dim.z = outType->getDimZ();
 
     } else {
         mCtx->getContext()->setError(RS_ERROR_BAD_SCRIPT,
@@ -1049,35 +1049,35 @@ void RsdCpuScriptImpl::forEachMtlsSetup(const Allocation ** ains,
     }
 
     if (!sc || (sc->xEnd == 0)) {
-        mtls->xEnd = mtls->fep.dimX;
+        mtls->xEnd = mtls->fep.dim.x;
     } else {
-        rsAssert(sc->xStart < mtls->fep.dimX);
-        rsAssert(sc->xEnd <= mtls->fep.dimX);
+        rsAssert(sc->xStart < mtls->fep.dim.x);
+        rsAssert(sc->xEnd <= mtls->fep.dim.x);
         rsAssert(sc->xStart < sc->xEnd);
-        mtls->xStart = rsMin(mtls->fep.dimX, sc->xStart);
-        mtls->xEnd = rsMin(mtls->fep.dimX, sc->xEnd);
+        mtls->xStart = rsMin(mtls->fep.dim.x, sc->xStart);
+        mtls->xEnd = rsMin(mtls->fep.dim.x, sc->xEnd);
         if (mtls->xStart >= mtls->xEnd) return;
     }
 
     if (!sc || (sc->yEnd == 0)) {
-        mtls->yEnd = mtls->fep.dimY;
+        mtls->yEnd = mtls->fep.dim.y;
     } else {
-        rsAssert(sc->yStart < mtls->fep.dimY);
-        rsAssert(sc->yEnd <= mtls->fep.dimY);
+        rsAssert(sc->yStart < mtls->fep.dim.y);
+        rsAssert(sc->yEnd <= mtls->fep.dim.y);
         rsAssert(sc->yStart < sc->yEnd);
-        mtls->yStart = rsMin(mtls->fep.dimY, sc->yStart);
-        mtls->yEnd = rsMin(mtls->fep.dimY, sc->yEnd);
+        mtls->yStart = rsMin(mtls->fep.dim.y, sc->yStart);
+        mtls->yEnd = rsMin(mtls->fep.dim.y, sc->yEnd);
         if (mtls->yStart >= mtls->yEnd) return;
     }
 
     if (!sc || (sc->zEnd == 0)) {
-        mtls->zEnd = mtls->fep.dimZ;
+        mtls->zEnd = mtls->fep.dim.z;
     } else {
-        rsAssert(sc->zStart < mtls->fep.dimZ);
-        rsAssert(sc->zEnd <= mtls->fep.dimZ);
+        rsAssert(sc->zStart < mtls->fep.dim.z);
+        rsAssert(sc->zEnd <= mtls->fep.dim.z);
         rsAssert(sc->zStart < sc->zEnd);
-        mtls->zStart = rsMin(mtls->fep.dimZ, sc->zStart);
-        mtls->zEnd = rsMin(mtls->fep.dimZ, sc->zEnd);
+        mtls->zStart = rsMin(mtls->fep.dim.z, sc->zStart);
+        mtls->zEnd = rsMin(mtls->fep.dim.z, sc->zEnd);
         if (mtls->zStart >= mtls->zEnd) return;
     }
 
@@ -1089,52 +1089,28 @@ void RsdCpuScriptImpl::forEachMtlsSetup(const Allocation ** ains,
     rsAssert(inLen == 0 || (ains[0]->getType()->getDimZ() == 0));
 
     mtls->rsc        = mCtx;
-    mtls->ains       = ains;
-    mtls->aout       = aout;
+    if (ains) {
+        memcpy(mtls->ains, ains, inLen * sizeof(ains[0]));
+    }
+    mtls->aout[0]    = aout;
     mtls->fep.usr    = usr;
     mtls->fep.usrLen = usrLen;
     mtls->mSliceSize = 1;
     mtls->mSliceNum  = 0;
 
-    mtls->fep.inPtrs    = nullptr;
-    mtls->fep.inStrides = nullptr;
     mtls->isThreadable  = mIsThreadable;
 
     if (inLen > 0) {
-
-        if (inLen <= RS_KERNEL_INPUT_THRESHOLD) {
-            mtls->fep.inPtrs    = (const uint8_t**)mtls->inPtrsBuff;
-            mtls->fep.inStrides = mtls->inStridesBuff;
-        } else {
-            mtls->fep.heapAllocatedArrays = true;
-
-            mtls->fep.inPtrs    = new const uint8_t*[inLen];
-            mtls->fep.inStrides = new StridePair[inLen];
-        }
-
         mtls->fep.inLen = inLen;
-
         for (int index = inLen; --index >= 0;) {
-            const Allocation *ain = ains[index];
-
-            mtls->fep.inPtrs[index] =
-              (const uint8_t*)ain->mHal.drvState.lod[0].mallocPtr;
-
-            mtls->fep.inStrides[index].eStride =
-              ain->getType()->getElementSizeBytes();
-            mtls->fep.inStrides[index].yStride =
-              ain->mHal.drvState.lod[0].stride;
+            mtls->fep.inPtr[index] = (const uint8_t*)ains[index]->mHal.drvState.lod[0].mallocPtr;
+            mtls->fep.inStride[index] = ains[index]->getType()->getElementSizeBytes();
         }
     }
 
-    mtls->fep.outPtr            = nullptr;
-    mtls->fep.outStride.eStride = 0;
-    mtls->fep.outStride.yStride = 0;
     if (aout != nullptr) {
-        mtls->fep.outPtr = (uint8_t *)aout->mHal.drvState.lod[0].mallocPtr;
-
-        mtls->fep.outStride.eStride = aout->getType()->getElementSizeBytes();
-        mtls->fep.outStride.yStride = aout->mHal.drvState.lod[0].stride;
+        mtls->fep.outPtr[0] = (uint8_t *)aout->mHal.drvState.lod[0].mallocPtr;
+        mtls->fep.outStride[0] = aout->getType()->getElementSizeBytes();
     }
 }
 
