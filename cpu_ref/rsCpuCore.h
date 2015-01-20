@@ -25,7 +25,7 @@
 
 #include <string>
 
-#define RS_KERNEL_INPUT_THRESHOLD 32
+#define RS_KERNEL_INPUT_LIMIT 8
 
 namespace bcc {
     class BCCContext;
@@ -41,39 +41,42 @@ struct StridePair {
   uint32_t yStride;
 };
 
+struct RsLaunchDimensions {
+    uint32_t x;
+    uint32_t y;
+    uint32_t z;
+    uint32_t lod;
+    uint32_t faces;
+    uint32_t array[4 /*make a define*/];
+};
+
 struct RsExpandKernelDriverInfo {
-    const uint8_t **inPtrs;
+    // Warning: This structure is shared with the compiler
+    // Any change to the fields here requires a matching compiler change
+
+    const uint8_t *inPtr[RS_KERNEL_INPUT_LIMIT];
+    uint32_t inStride[RS_KERNEL_INPUT_LIMIT];
     uint32_t inLen;
 
-    uint8_t *outPtr;
+    uint8_t *outPtr[RS_KERNEL_INPUT_LIMIT];
+    uint32_t outStride[RS_KERNEL_INPUT_LIMIT];
+    uint32_t outLen;
 
-    StridePair *inStrides;
-    StridePair  outStride;
+    // Dimension of the launch
+    RsLaunchDimensions dim;
 
-    uint32_t dimX;
-    uint32_t dimY;
-    uint32_t dimZ;
-
-    uint32_t slot;
+    // The walking itterator of the launch
+    RsLaunchDimensions current;
 
     const void *usr;
     uint32_t usrLen;
 
-    bool heapAllocatedArrays;
 
-    RsExpandKernelDriverInfo() : heapAllocatedArrays(false) {}
 
-    ~RsExpandKernelDriverInfo() {
-        if (heapAllocatedArrays) {
-            if (inPtrs != nullptr) {
-                delete[] inPtrs;
-            }
+    // Items below this line are not used by the compiler and can be change in the driver
+    uint32_t lid;
+    uint32_t slot;
 
-            if (inStrides != nullptr) {
-                delete[] inStrides;
-            }
-        }
-    }
 };
 
 struct RsExpandKernelParams {
@@ -99,16 +102,6 @@ struct RsExpandKernelParams {
      *        modify blur to not need it.
      */
     uint32_t slot;
-
-    /// Copy fields needed by a kernel from a driver struct.
-    void takeFields(const RsExpandKernelDriverInfo &dstruct) {
-        this->usr  = dstruct.usr;
-        this->slot = dstruct.slot;
-
-        this->dimX = dstruct.dimX;
-        this->dimY = dstruct.dimY;
-        this->dimZ = dstruct.dimZ;
-    }
 };
 
 extern bool gArchUseSIMD;
@@ -134,13 +127,17 @@ struct MTLaunchStruct {
 
     ForEachFunc_t kernel;
     uint32_t sig;
-    const Allocation ** ains;
-    Allocation * aout;
+    const Allocation * ains[RS_KERNEL_INPUT_LIMIT];
+    Allocation * aout[RS_KERNEL_INPUT_LIMIT];
 
     uint32_t mSliceSize;
     volatile int mSliceNum;
     bool isThreadable;
 
+    // origin of the launch
+    RsLaunchDimensions origin;
+
+    // TODO: convert to RsLaunchDimensions
     uint32_t xStart;
     uint32_t xEnd;
     uint32_t yStart;
@@ -149,9 +146,6 @@ struct MTLaunchStruct {
     uint32_t zEnd;
     uint32_t arrayStart;
     uint32_t arrayEnd;
-
-    const uint8_t *inPtrsBuff[RS_KERNEL_INPUT_THRESHOLD];
-    StridePair     inStridesBuff[RS_KERNEL_INPUT_THRESHOLD];
 };
 
 class RsdCpuReferenceImpl : public RsdCpuReference {

@@ -169,6 +169,21 @@ public:
     void * getPointer(const Context *rsc, uint32_t lod, RsAllocationCubemapFace face,
                       uint32_t z, uint32_t array, size_t *stride);
 
+    void * getPointerUnchecked(uint32_t x, uint32_t y,
+                               uint32_t z = 0, uint32_t lod = 0,
+                               RsAllocationCubemapFace face = RS_ALLOCATION_CUBEMAP_FACE_POSITIVE_X,
+                               uint32_t a1 = 0, uint32_t a2 = 0, uint32_t a3 = 0, uint32_t a4 = 0) const {
+
+        uint8_t * p = (uint8_t *) mHal.drvState.lod[lod].mallocPtr;
+        p += x * getType()->getElementSizeBytes();
+        p += y * mHal.drvState.lod[lod].stride;
+        p += z * mHal.drvState.lod[lod].stride * mHal.drvState.lod[lod].dimY;
+
+        // Todo: arrays
+
+        return p;
+    }
+
     bool hasSameDims(const Allocation *Other) const;
 
 protected:
