@@ -88,10 +88,6 @@ public:
 
         virtual Allocation * getAllocationForPointer(const void *ptr) const = 0;
         virtual ~CpuScript() {}
-
-#ifndef RS_COMPATIBILITY_LIB
-        virtual  void * getRSExecutable()  = 0;
-#endif
     };
     typedef CpuScript * (* script_lookup_t)(Context *, const Script *s);
 
