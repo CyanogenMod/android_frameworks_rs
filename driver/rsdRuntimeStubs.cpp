@@ -1612,15 +1612,19 @@ void __attribute__((overloadable)) rsForEach(::rs_script script,
 int rsTime(int *timer) {
     return SC_Time(timer);
 }
+
+rs_tm* rsLocaltime(rs_tm* local, const int *timer) {
+    return (rs_tm*)(SC_LocalTime((tm*)local, (time_t *)timer));
+}
 #else
 time_t rsTime(time_t * timer) {
     return SC_Time(timer);
 }
-#endif // RS_COMPATIBILITY_LIB
 
 rs_tm* rsLocaltime(rs_tm* local, const time_t *timer) {
     return (rs_tm*)(SC_LocalTime((tm*)local, (time_t *)timer));
 }
+#endif // RS_COMPATIBILITY_LIB
 
 int64_t rsUptimeMillis() {
     Context *rsc = RsdCpuReference::getTlsContext();
