@@ -36,6 +36,14 @@ ScriptGroup::~ScriptGroup() {
     for (auto link : mLinks) {
         delete link;
     }
+
+    for (auto input : mInputs) {
+        input->mAlloc.clear();
+    }
+
+    for (auto output : mOutputs) {
+        output->mAlloc.clear();
+    }
 }
 
 ScriptGroup::IO::IO(const ScriptKernelID *kid) {
