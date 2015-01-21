@@ -223,6 +223,7 @@ static void *loadSharedLibrary(const char *cacheDir, const char *resName) {
         ALOGE("Unable to open shared library (%s): %s",
               scriptSOName.c_str(), dlerror());
 
+#ifdef RS_COMPATIBILITY_LIB
         // One final attempt to find the library in "/system/lib".
         // We do this to allow bundled applications to use the compatibility
         // library fallback path. Those applications don't have a private
@@ -237,6 +238,7 @@ static void *loadSharedLibrary(const char *cacheDir, const char *resName) {
             ALOGE("Unable to open system shared library (%s): %s",
                   scriptSONameSystem.c_str(), dlerror());
         }
+#endif
     }
 
     return loaded;
