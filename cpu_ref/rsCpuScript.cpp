@@ -111,74 +111,6 @@ static int copyFile(const char *dstFile, const char *srcFile) {
     return 0;
 }
 
-#define RS_CACHE_DIR "com.android.renderscript.cache"
-
-// Attempt to load the shared library from origName, but then fall back to
-// creating a copy of the shared library if necessary (to ensure instancing).
-// This function returns the dlopen()-ed handle if successful.
-static void *loadSOHelper(const char *origName, const char *cacheDir,
-                          const char *resName) {
-    // Keep track of which .so libraries have been loaded. Once a library is
-    // in the set (per-process granularity), we must instead make a copy of
-    // the original shared object (randomly named .so file) and load that one
-    // instead. If we don't do this, we end up aliasing global data between
-    // the various Script instances (which are supposed to be completely
-    // independent).
-    static std::set<std::string> LoadedLibraries;
-
-    void *loaded = nullptr;
-
-    // Skip everything if we don't even have the original library available.
-    if (access(origName, F_OK) != 0) {
-        return nullptr;
-    }
-
-    // Common path is that we have not loaded this Script/library before.
-    if (LoadedLibraries.find(origName) == LoadedLibraries.end()) {
-        loaded = dlopen(origName, RTLD_NOW | RTLD_LOCAL);
-        if (loaded) {
-            LoadedLibraries.insert(origName);
-        }
-        return loaded;
-    }
-
-    std::string newName(cacheDir);
-
-    // Append RS_CACHE_DIR only if it is not found in cacheDir
-    // In driver mode, RS_CACHE_DIR is already appended to cacheDir.
-    if (newName.find(RS_CACHE_DIR) == std::string::npos) {
-        newName.append("/" RS_CACHE_DIR "/");
-    }
-
-    if (!ensureCacheDirExists(newName.c_str())) {
-        ALOGE("Could not verify or create cache dir: %s", cacheDir);
-        return nullptr;
-    }
-
-    // Construct an appropriately randomized filename for the copy.
-    newName.append("librs.");
-    newName.append(resName);
-    newName.append("#");
-    newName.append(getRandomString(6));  // 62^6 potential filename variants.
-    newName.append(".so");
-
-    int r = copyFile(newName.c_str(), origName);
-    if (r != 0) {
-        ALOGE("Could not create copy %s -> %s", origName, newName.c_str());
-        return nullptr;
-    }
-    loaded = dlopen(newName.c_str(), RTLD_NOW | RTLD_LOCAL);
-    r = unlink(newName.c_str());
-    if (r != 0) {
-        ALOGE("Could not unlink copy %s", newName.c_str());
-    }
-    if (loaded) {
-        LoadedLibraries.insert(newName.c_str());
-    }
-
-    return loaded;
-}
-
 static std::string findSharedObjectName(const char *cacheDir,
                                         const char *resName) {
 
@@ -203,45 +135,6 @@ static std::string findSharedObjectName(const char *cacheDir,
     scriptSOName.append(".so");
 
     return scriptSOName;
-}
-
-// Load the shared library referred to by cacheDir and resName. If we have
-// already loaded this library, we instead create a new copy (in the
-// cache dir) and then load that. We then immediately destroy the copy.
-// This is required behavior to implement script instancing for the support
-// library, since shared objects are loaded and de-duped by name only.
-static void *loadSharedLibrary(const char *cacheDir, const char *resName) {
-    void *loaded = nullptr;
-
-    std::string scriptSOName = findSharedObjectName(cacheDir, resName);
-
-    // We should check if we can load the library from the standard app
-    // location for shared libraries first.
-    loaded = loadSOHelper(scriptSOName.c_str(), cacheDir, resName);
-
-    if (loaded == nullptr) {
-        ALOGE("Unable to open shared library (%s): %s",
-              scriptSOName.c_str(), dlerror());
-
-#ifdef RS_COMPATIBILITY_LIB
-        // One final attempt to find the library in "/system/lib".
-        // We do this to allow bundled applications to use the compatibility
-        // library fallback path. Those applications don't have a private
-        // library path, so they need to install to the system directly.
-        // Note that this is really just a testing path.
-        std::string scriptSONameSystem("/system/lib/librs.");
-        scriptSONameSystem.append(resName);
-        scriptSONameSystem.append(".so");
-        loaded = loadSOHelper(scriptSONameSystem.c_str(), cacheDir,
-                              resName);
-        if (loaded == nullptr) {
-            ALOGE("Unable to open system shared library (%s): %s",
-                  scriptSONameSystem.c_str(), dlerror());
-        }
-#endif
-    }
-
-    return loaded;
 }
 
 #ifndef RS_COMPATIBILITY_LIB
@@ -366,9 +259,18 @@ static bool compileBitcode(const std::string &bcFileName,
     }
 }
 
-const static char *LD_EXE_PATH = "/system/bin/ld.mc";
+#endif  // !defined(RS_COMPATIBILITY_LIB)
+}  // namespace
 
-static bool createSharedLib(const char *cacheDir, const char *resName) {
+namespace android {
+namespace renderscript {
+
+const char* SharedLibraryUtils::LD_EXE_PATH = "/system/bin/ld.mc";
+const char* SharedLibraryUtils::RS_CACHE_DIR = "com.android.renderscript.cache";
+
+#ifndef RS_COMPATIBILITY_LIB
+
+bool SharedLibraryUtils::createSharedLibrary(const char *cacheDir, const char *resName) {
     std::string sharedLibName = findSharedObjectName(cacheDir, resName);
     std::string objFileName = cacheDir;
     objFileName.append("/");
@@ -424,11 +326,107 @@ static bool createSharedLib(const char *cacheDir, const char *resName) {
     }
     }
 }
-#endif  // !defined(RS_COMPATIBILITY_LIB)
-}  // namespace
 
-namespace android {
-namespace renderscript {
+#endif  // RS_COMPATIBILITY_LIB
+
+void* SharedLibraryUtils::loadSharedLibrary(const char *cacheDir, const char *resName) {
+    void *loaded = nullptr;
+
+    std::string scriptSOName = findSharedObjectName(cacheDir, resName);
+
+    // We should check if we can load the library from the standard app
+    // location for shared libraries first.
+    loaded = loadSOHelper(scriptSOName.c_str(), cacheDir, resName);
+
+    if (loaded == nullptr) {
+        ALOGE("Unable to open shared library (%s): %s",
+              scriptSOName.c_str(), dlerror());
+
+#ifdef RS_COMPATIBILITY_LIB
+        // One final attempt to find the library in "/system/lib".
+        // We do this to allow bundled applications to use the compatibility
+        // library fallback path. Those applications don't have a private
+        // library path, so they need to install to the system directly.
+        // Note that this is really just a testing path.
+        std::string scriptSONameSystem("/system/lib/librs.");
+        scriptSONameSystem.append(resName);
+        scriptSONameSystem.append(".so");
+        loaded = loadSOHelper(scriptSONameSystem.c_str(), cacheDir,
+                              resName);
+        if (loaded == nullptr) {
+            ALOGE("Unable to open system shared library (%s): %s",
+                  scriptSONameSystem.c_str(), dlerror());
+        }
+#endif
+    }
+
+    return loaded;
+}
+
+void* SharedLibraryUtils::loadSOHelper(const char *origName, const char *cacheDir,
+                                       const char *resName) {
+    // Keep track of which .so libraries have been loaded. Once a library is
+    // in the set (per-process granularity), we must instead make a copy of
+    // the original shared object (randomly named .so file) and load that one
+    // instead. If we don't do this, we end up aliasing global data between
+    // the various Script instances (which are supposed to be completely
+    // independent).
+    static std::set<std::string> LoadedLibraries;
+
+    void *loaded = nullptr;
+
+    // Skip everything if we don't even have the original library available.
+    if (access(origName, F_OK) != 0) {
+        return nullptr;
+    }
+
+    // Common path is that we have not loaded this Script/library before.
+    if (LoadedLibraries.find(origName) == LoadedLibraries.end()) {
+        loaded = dlopen(origName, RTLD_NOW | RTLD_LOCAL);
+        if (loaded) {
+            LoadedLibraries.insert(origName);
+        }
+        return loaded;
+    }
+
+    std::string newName(cacheDir);
+
+    // Append RS_CACHE_DIR only if it is not found in cacheDir
+    // In driver mode, RS_CACHE_DIR is already appended to cacheDir.
+    if (newName.find(RS_CACHE_DIR) == std::string::npos) {
+        newName.append("/");
+        newName.append(RS_CACHE_DIR);
+        newName.append("/");
+    }
+
+    if (!ensureCacheDirExists(newName.c_str())) {
+        ALOGE("Could not verify or create cache dir: %s", cacheDir);
+        return nullptr;
+    }
+
+    // Construct an appropriately randomized filename for the copy.
+    newName.append("librs.");
+    newName.append(resName);
+    newName.append("#");
+    newName.append(getRandomString(6));  // 62^6 potential filename variants.
+    newName.append(".so");
+
+    int r = copyFile(newName.c_str(), origName);
+    if (r != 0) {
+        ALOGE("Could not create copy %s -> %s", origName, newName.c_str());
+        return nullptr;
+    }
+    loaded = dlopen(newName.c_str(), RTLD_NOW | RTLD_LOCAL);
+    r = unlink(newName.c_str());
+    if (r != 0) {
+        ALOGE("Could not unlink copy %s", newName.c_str());
+    }
+    if (loaded) {
+        LoadedLibraries.insert(newName.c_str());
+    }
+
+    return loaded;
+}
 
 #define MAXLINE 500
 #define MAKE_STR_HELPER(S) #S
@@ -706,7 +704,7 @@ bool RsdCpuScriptImpl::init(char const *resName, char const *cacheDir,
                 bcc::getCommandLine(compileArguments.size() - 1, compileArguments.data());
 
     if (!is_force_recompile()) {
-        mScriptSO = loadSharedLibrary(cacheDir, resName);
+        mScriptSO = SharedLibraryUtils::loadSharedLibrary(cacheDir, resName);
     }
 
     // If we can't, it's either not there or out of date.  We compile the bit code and try loading
@@ -720,13 +718,13 @@ bool RsdCpuScriptImpl::init(char const *resName, char const *cacheDir,
             return false;
         }
 
-        if (!createSharedLib(cacheDir, resName)) {
+        if (!SharedLibraryUtils::createSharedLibrary(cacheDir, resName)) {
             ALOGE("Linker: Failed to link object file '%s'", resName);
             mCtx->unlockMutex();
             return false;
         }
 
-        mScriptSO = loadSharedLibrary(cacheDir, resName);
+        mScriptSO = SharedLibraryUtils::loadSharedLibrary(cacheDir, resName);
         if (mScriptSO == nullptr) {
             ALOGE("Unable to load '%s'", resName);
             mCtx->unlockMutex();
@@ -744,7 +742,7 @@ bool RsdCpuScriptImpl::init(char const *resName, char const *cacheDir,
     }
 #else  // RS_COMPATIBILITY_LIB is defined
 
-    mScriptSO = loadSharedLibrary(cacheDir, resName);
+    mScriptSO = SharedLibraryUtils::loadSharedLibrary(cacheDir, resName);
 
     if (!mScriptSO) {
         goto error;
