@@ -956,6 +956,59 @@ ELEMENT_AT(double4, RS_TYPE_FLOAT_64, 4)
 
 #undef ELEMENT_AT
 
+#ifndef __LP64__
+/*
+ * We miss some symbols for rs{Get,Set}Element_long,ulong variants because 64
+ * bit integer values are 'long' in RS-land but might be 'long long' in the
+ * driver.  Define native_long* and native_ulong* types to be vectors of
+ * 'long' as seen by the driver and define overloaded versions of
+ * rsSetElementAt_* and rsGetElementAt_*.  This should get us the correct
+ * mangled names in the driver.
+ */
+
+typedef long native_long2 __attribute__((ext_vector_type(2)));
+typedef long native_long3 __attribute__((ext_vector_type(3)));
+typedef long native_long4 __attribute__((ext_vector_type(4)));
+typedef unsigned long native_ulong2 __attribute__((ext_vector_type(2)));
+typedef unsigned long native_ulong3 __attribute__((ext_vector_type(3)));
+typedef unsigned long native_ulong4 __attribute__((ext_vector_type(4)));
+
+#define ELEMENT_AT_OVERLOADS(T, U) \
+    void rsSetElementAt_##T(::rs_allocation a, const U *val, uint32_t x) { \
+        SC_SetElementAt1_##T(castToARSAlloc(a), (T *) val, x); \
+    } \
+    void rsSetElementAt_##T(::rs_allocation a, const U *val, uint32_t x, uint32_t y) { \
+        SC_SetElementAt2_##T(castToARSAlloc(a), (T *) val, x, y); \
+    } \
+    void rsSetElementAt_##T(::rs_allocation a, const U *val, uint32_t x, uint32_t y, uint32_t z) { \
+        SC_SetElementAt3_##T(castToARSAlloc(a), (T *) val, x, y, z); \
+    } \
+    void rsGetElementAt_##T(::rs_allocation a, U *val, uint32_t x) { \
+        SC_GetElementAt1_##T(castToARSAlloc(a), (T *) val, x); \
+    } \
+    void rsGetElementAt_##T(::rs_allocation a, U *val, uint32_t x, uint32_t y) { \
+        SC_GetElementAt2_##T(castToARSAlloc(a), (T *) val, x, y); \
+    } \
+    void rsGetElementAt_##T(::rs_allocation a, U *val, uint32_t x, uint32_t y, uint32_t z) { \
+        SC_GetElementAt3_##T(castToARSAlloc(a), (T *) val, x, y, z); \
+    } \
+
+ELEMENT_AT_OVERLOADS(long2, native_long2)
+ELEMENT_AT_OVERLOADS(long3, native_long3)
+ELEMENT_AT_OVERLOADS(long4, native_long4)
+ELEMENT_AT_OVERLOADS(ulong, unsigned long)
+ELEMENT_AT_OVERLOADS(ulong2, native_ulong2)
+ELEMENT_AT_OVERLOADS(ulong3, native_ulong3)
+ELEMENT_AT_OVERLOADS(ulong4, native_ulong4)
+
+// We also need variants of rs{Get,Set}ElementAt_long that take 'long long *' as
+// we might have this overloaded variant in old APKs.
+ELEMENT_AT_OVERLOADS(long, long long)
+
+#undef ELEMENT_AT_OVERLOADS
+#endif
+
+
 //////////////////////////////////////////////////////////////////////////////
 // Stub implementation
 //////////////////////////////////////////////////////////////////////////////
@@ -1451,6 +1504,10 @@ static RsdCpuReference::CpuSymbol gSyms[] = {
 #ifndef RS_COMPATIBILITY_LIB
 
 typedef struct { unsigned int val; } rs_allocation_usage_type;
+
+void rsAllocationMarkDirty(::rs_allocation a) {
+    return SC_AllocationSyncAll(castToARSAlloc(a));
+}
 
 void rsgAllocationSyncAll(::rs_allocation a) {
     return SC_AllocationSyncAll(castToARSAlloc(a));
