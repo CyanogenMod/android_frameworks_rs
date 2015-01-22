@@ -86,6 +86,16 @@ OPAQUETYPE(rs_allocation)
 OPAQUETYPE(rs_sampler)
 OPAQUETYPE(rs_script)
 OPAQUETYPE(rs_script_call)
+
+OPAQUETYPE(rs_program_fragment);
+OPAQUETYPE(rs_program_store);
+OPAQUETYPE(rs_program_vertex);
+OPAQUETYPE(rs_program_raster);
+
+OPAQUETYPE(rs_mesh);
+OPAQUETYPE(rs_font);
+OPAQUETYPE(rs_path);
+
 #undef OPAQUETYPE
 
 typedef enum {
@@ -828,27 +838,27 @@ android::renderscript::rs_allocation castToARSAlloc(::rs_allocation a) {
     return cast;
 }
 
-const void *rsGetElementAt1D(::rs_allocation a, uint32_t x) {
+const void *rsGetElementAt(::rs_allocation a, uint32_t x) {
     return SC_GetElementAt1D(castToARSAlloc(a), x);
 }
 
-const void *rsGetElementAt2D(::rs_allocation a, uint32_t x, uint32_t y) {
+const void *rsGetElementAt(::rs_allocation a, uint32_t x, uint32_t y) {
     return SC_GetElementAt2D(castToARSAlloc(a), x, y);
 }
 
-const void *rsGetElementAt3D(::rs_allocation a, uint32_t x, uint32_t y, uint32_t z) {
+const void *rsGetElementAt(::rs_allocation a, uint32_t x, uint32_t y, uint32_t z) {
     return SC_GetElementAt3D(castToARSAlloc(a), x, y, z);
 }
 
-void rsSetElementAt1D(::rs_allocation a, const void *ptr, uint32_t x) {
+void rsSetElementAt(::rs_allocation a, const void *ptr, uint32_t x) {
     SC_SetElementAt1D(castToARSAlloc(a), ptr, x);
 }
 
-void rsSetElementAt2D(::rs_allocation a, const void *ptr, uint32_t x, uint32_t y) {
+void rsSetElementAt(::rs_allocation a, const void *ptr, uint32_t x, uint32_t y) {
     SC_SetElementAt2D(castToARSAlloc(a), ptr, x, y);
 }
 
-void rsSetElementAt1D(::rs_allocation a, const void *ptr, uint32_t x, uint32_t y, uint32_t z) {
+void rsSetElementAt(::rs_allocation a, const void *ptr, uint32_t x, uint32_t y, uint32_t z) {
     SC_SetElementAt3D(castToARSAlloc(a), ptr, x, y, z);
 }
 
@@ -887,11 +897,20 @@ void rsSetElementAt1D(::rs_allocation a, const void *ptr, uint32_t x, uint32_t y
     void rsSetElementAt_##T(::rs_allocation a, const T *val, uint32_t x) { \
         SC_SetElementAt1_##T(castToARSAlloc(a), val, x); \
     } \
-    void rsSetElementAt2_##T(::rs_allocation a, const T *val, uint32_t x, uint32_t y) { \
+    void rsSetElementAt_##T(::rs_allocation a, const T *val, uint32_t x, uint32_t y) { \
         SC_SetElementAt2_##T(castToARSAlloc(a), val, x, y); \
     } \
     void rsSetElementAt_##T(::rs_allocation a, const T *val, uint32_t x, uint32_t y, uint32_t z) { \
         SC_SetElementAt3_##T(castToARSAlloc(a), val, x, y, z); \
+    } \
+    void rsGetElementAt_##T(::rs_allocation a, T *val, uint32_t x) { \
+        SC_GetElementAt1_##T(castToARSAlloc(a), val, x); \
+    } \
+    void rsGetElementAt_##T(::rs_allocation a, T *val, uint32_t x, uint32_t y) { \
+        SC_GetElementAt2_##T(castToARSAlloc(a), val, x, y); \
+    } \
+    void rsGetElementAt_##T(::rs_allocation a, T *val, uint32_t x, uint32_t y, uint32_t z) { \
+        SC_GetElementAt3_##T(castToARSAlloc(a), val, x, y, z); \
     } \
 
 ELEMENT_AT(char, RS_TYPE_SIGNED_8, 1)
@@ -1429,6 +1448,221 @@ static RsdCpuReference::CpuSymbol gSyms[] = {
     { nullptr, nullptr, false }
 };
 
+#ifndef RS_COMPATIBILITY_LIB
+
+typedef struct { unsigned int val; } rs_allocation_usage_type;
+
+void rsgAllocationSyncAll(::rs_allocation a) {
+    return SC_AllocationSyncAll(castToARSAlloc(a));
+}
+
+void rsgAllocationSyncAll(::rs_allocation a,
+                          unsigned int usage) {
+    return SC_AllocationSyncAll2(castToARSAlloc(a),
+                                 (RsAllocationUsageType) usage);
+}
+void rsgAllocationSyncAll(::rs_allocation a,
+                          rs_allocation_usage_type source) {
+    return SC_AllocationSyncAll2(castToARSAlloc(a),
+                                 (RsAllocationUsageType) source.val);
+}
+
+void rsgBindProgramFragment(::rs_program_fragment pf) {
+    return SC_BindProgramFragment((ProgramFragment *) pf.p);
+}
+
+void rsgBindProgramStore(::rs_program_store ps) {
+    return SC_BindProgramStore((ProgramStore *) ps.p);
+}
+
+void rsgBindProgramVertex(::rs_program_vertex pv) {
+    return SC_BindProgramVertex((ProgramVertex *) pv.p);
+}
+
+void rsgBindProgramRaster(::rs_program_raster pr) {
+    return SC_BindProgramRaster((ProgramRaster *) pr.p);
+}
+
+void rsgBindSampler(::rs_program_fragment pf,
+                    uint32_t slot,
+                    ::rs_sampler s) {
+    return SC_BindSampler((ProgramFragment *) pf.p, slot, (Sampler *) s.p);
+}
+
+void rsgBindTexture(::rs_program_fragment pf,
+                    uint32_t slot,
+                    ::rs_allocation a) {
+    return SC_BindTexture((ProgramFragment *) pf.p,
+                          slot,
+                          (Allocation *) a.p);
+}
+
+void rsgBindConstant(::rs_program_fragment pf,
+                     uint32_t slot,
+                     ::rs_allocation a) {
+    return SC_BindFragmentConstant((ProgramFragment *) pf.p,
+                                   slot,
+                                   (Allocation *) a.p);
+}
+
+void rsgBindConstant(::rs_program_vertex pv,
+                     uint32_t slot,
+                     ::rs_allocation a) {
+    return SC_BindVertexConstant((ProgramVertex *) pv.p,
+                                 slot,
+                                 (Allocation *) a.p);
+}
+
+void rsgProgramVertexLoadProjectionMatrix(const rs_matrix4x4 *m) {
+    return SC_VpLoadProjectionMatrix((const rsc_Matrix *) m);
+}
+
+void rsgProgramVertexLoadModelMatrix(const rs_matrix4x4 *m) {
+    return SC_VpLoadModelMatrix((const rsc_Matrix *) m);
+}
+
+void rsgProgramVertexLoadTextureMatrix(const rs_matrix4x4 *m) {
+    return SC_VpLoadTextureMatrix((const rsc_Matrix *) m);
+}
+
+void rsgProgramVertexGetProjectionMatrix(rs_matrix4x4 *m) {
+    return SC_VpGetProjectionMatrix((rsc_Matrix *) m);
+}
+
+void rsgProgramFragmentConstantColor(::rs_program_fragment pf,
+                                     float r, float g,
+                                     float b, float a) {
+
+    return SC_PfConstantColor((ProgramFragment *) pf.p, r, g, b, a);
+}
+
+uint32_t rsgGetWidth(void) {
+    return SC_GetWidth();
+}
+
+uint32_t rsgGetHeight(void) {
+    return SC_GetHeight();
+}
+
+void rsgDrawRect(float x1, float y1, float x2, float y2, float z) {
+    return SC_DrawRect(x1, y1, x2, y2, z);
+}
+
+void rsgDrawQuad(float x1, float y1, float z1,
+                 float x2, float y2, float z2,
+                 float x3, float y3, float z3,
+                 float x4, float y4, float z4) {
+
+    SC_DrawQuad(x1, y1, z1,
+                x2, y2, z2,
+                x3, y3, z3,
+                x4, y4, z4);
+}
+
+void rsgDrawQuadTexCoords(float x1, float y1, float z1, float u1, float v1,
+                          float x2, float y2, float z2, float u2, float v2,
+                          float x3, float y3, float z3, float u3, float v3,
+                          float x4, float y4, float z4, float u4, float v4) {
+
+    return rsgDrawQuadTexCoords(x1, y1, z1, u1, v1,
+                                x2, y2, z2, u2, v2,
+                                x3, y3, z3, u3, v3,
+                                x4, y4, z4, u4, v4);
+}
+
+void rsgDrawSpriteScreenspace(float x, float y, float z, float w, float h) {
+    return SC_DrawSpriteScreenspace(x, y, z, w, h);
+}
+
+void rsgDrawMesh(::rs_mesh ism) {
+    return SC_DrawMesh((Mesh *) ism.p);
+}
+
+void rsgDrawMesh(::rs_mesh ism, uint primitiveIndex) {
+    return SC_DrawMeshPrimitive((Mesh *) ism.p, primitiveIndex);
+}
+
+void rsgDrawMesh(::rs_mesh ism, uint primitiveIndex, uint start, uint len) {
+    return SC_DrawMeshPrimitiveRange((Mesh *) ism.p, primitiveIndex, start, len);
+}
+
+void  rsgMeshComputeBoundingBox(::rs_mesh mesh,
+                                float *minX, float *minY, float *minZ,
+                                float *maxX, float *maxY, float *maxZ) {
+
+    return SC_MeshComputeBoundingBox((Mesh *) mesh.p,
+                                minX, minY, minZ,
+                                maxX, maxY, maxZ);
+}
+
+void rsgDrawPath(::rs_path p) {
+    return SC_DrawPath((Path *) p.p);
+}
+
+void rsgClearColor(float r, float g, float b, float a) {
+    return SC_ClearColor(r, g, b, a);
+}
+
+void rsgClearDepth(float value) {
+    return SC_ClearDepth(value);
+}
+
+void rsgDrawText(const char *text, int x, int y) {
+    return SC_DrawText(text, x, y);
+}
+
+void rsgDrawText(::rs_allocation a, int x, int y) {
+    return SC_DrawTextAlloc((Allocation *) a.p, x, y);
+}
+
+void rsgMeasureText(const char *text, int *left, int *right,
+                    int *top, int *bottom) {
+    return SC_MeasureText(text, left, right, top, bottom);
+}
+
+void rsgMeasureText(::rs_allocation a, int *left, int *right,
+                    int *top, int *bottom) {
+    return SC_MeasureTextAlloc((Allocation *) a.p, left, right, top, bottom);
+}
+
+void rsgBindFont(::rs_font font) {
+    return SC_BindFont((Font *) font.p);
+}
+
+void rsgFontColor(float r, float g, float b, float a) {
+    return SC_FontColor(r, g, b, a);
+}
+
+void rsgBindColorTarget(::rs_allocation a, uint slot) {
+    return SC_BindFrameBufferObjectColorTarget((Allocation *) a.p, slot);
+}
+
+void rsgBindDepthTarget(::rs_allocation a) {
+    return SC_BindFrameBufferObjectDepthTarget((Allocation *) a.p);
+}
+
+void rsgClearColorTarget(uint slot) {
+    return SC_ClearFrameBufferObjectColorTarget(slot);
+}
+
+void rsgClearDepthTarget(void) {
+    return SC_ClearFrameBufferObjectDepthTarget(nullptr, nullptr);
+}
+
+void rsgClearAllRenderTargets(void) {
+    return SC_ClearFrameBufferObjectTargets(nullptr, nullptr);
+}
+
+void color(float r, float g, float b, float a) {
+    return SC_Color(r, g, b, a);
+}
+
+void rsgFinish(void) {
+    return SC_Finish();
+}
+
+#endif
+
 //////////////////////////////////////////////////////////////////////////////
 // Compatibility Library entry points
 //////////////////////////////////////////////////////////////////////////////
@@ -1466,6 +1700,14 @@ IS_CLEAR_SET_OBJ(::rs_type, _Z10rsIsObject7rs_type, _Z11rsSetObjectP7rs_typeS_)
 IS_CLEAR_SET_OBJ(::rs_allocation, _Z10rsIsObject13rs_allocation, _Z11rsSetObjectP13rs_allocationS_)
 IS_CLEAR_SET_OBJ(::rs_sampler, _Z10rsIsObject10rs_sampler, _Z11rsSetObjectP10rs_samplerS_)
 IS_CLEAR_SET_OBJ(::rs_script, _Z10rsIsObject9rs_script, _Z11rsSetObjectP9rs_scriptS_)
+
+IS_CLEAR_SET_OBJ(::rs_path, _Z10rsIsObject7rs_path, _Z11rsSetObjectP7rs_pathS_)
+IS_CLEAR_SET_OBJ(::rs_mesh, _Z10rsIsObject7rs_mesh, _Z11rsSetObjectP7rs_meshS_)
+IS_CLEAR_SET_OBJ(::rs_program_fragment, _Z10rsIsObject19rs_program_fragment, _Z11rsSetObjectP19rs_program_fragmentS_)
+IS_CLEAR_SET_OBJ(::rs_program_vertex, _Z10rsIsObject17rs_program_vertex, _Z11rsSetObjectP17rs_program_vertexS_)
+IS_CLEAR_SET_OBJ(::rs_program_raster, _Z10rsIsObject17rs_program_raster, _Z11rsSetObjectP17rs_program_rasterS_)
+IS_CLEAR_SET_OBJ(::rs_program_store, _Z10rsIsObject16rs_program_store, _Z11rsSetObjectP16rs_program_storeS_)
+IS_CLEAR_SET_OBJ(::rs_font, _Z10rsIsObject7rs_font, _Z11rsSetObjectP7rs_fontS_)
 
 
 #undef IS_CLEAR_SET_OBJ
