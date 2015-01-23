@@ -131,22 +131,22 @@ static void SC_AllocationSyncAll(android::renderscript::rs_allocation a) {
 
 #ifndef RS_COMPATIBILITY_LIB
 
-static void SC_AllocationCopy1DRange(::rs_allocation dstAlloc,
+static void SC_AllocationCopy1DRange(android::renderscript::rs_allocation dstAlloc,
                                      uint32_t dstOff,
                                      uint32_t dstMip,
                                      uint32_t count,
-                                     ::rs_allocation srcAlloc,
+                                     android::renderscript::rs_allocation srcAlloc,
                                      uint32_t srcOff, uint32_t srcMip) {
     Context *rsc = RsdCpuReference::getTlsContext();
     rsrAllocationCopy1DRange(rsc, (Allocation*)dstAlloc.p, dstOff, dstMip, count,
                              (Allocation*)srcAlloc.p, srcOff, srcMip);
 }
 
-static void SC_AllocationCopy2DRange(::rs_allocation dstAlloc,
+static void SC_AllocationCopy2DRange(android::renderscript::rs_allocation dstAlloc,
                                      uint32_t dstXoff, uint32_t dstYoff,
                                      uint32_t dstMip, uint32_t dstFace,
                                      uint32_t width, uint32_t height,
-                                     ::rs_allocation srcAlloc,
+                                     android::renderscript::rs_allocation srcAlloc,
                                      uint32_t srcXoff, uint32_t srcYoff,
                                      uint32_t srcMip, uint32_t srcFace) {
     Context *rsc = RsdCpuReference::getTlsContext();
@@ -157,35 +157,35 @@ static void SC_AllocationCopy2DRange(::rs_allocation dstAlloc,
                              srcXoff, srcYoff, srcMip, srcFace);
 }
 
-static void SC_AllocationIoSend(::rs_allocation alloc) {
+static void SC_AllocationIoSend(android::renderscript::rs_allocation alloc) {
     Context *rsc = RsdCpuReference::getTlsContext();
     rsrAllocationIoSend(rsc, (Allocation*)alloc.p);
 }
 
 
-static void SC_AllocationIoReceive(::rs_allocation alloc) {
+static void SC_AllocationIoReceive(android::renderscript::rs_allocation alloc) {
     Context *rsc = RsdCpuReference::getTlsContext();
     rsrAllocationIoReceive(rsc, (Allocation*)alloc.p);
 }
 
 #else
 
-static void SC_AllocationCopy1DRange(::rs_allocation dstAlloc,
+static void SC_AllocationCopy1DRange(android::renderscript::rs_allocation dstAlloc,
                                      uint32_t dstOff,
                                      uint32_t dstMip,
                                      uint32_t count,
-                                     ::rs_allocation srcAlloc,
+                                     android::renderscript::rs_allocation srcAlloc,
                                      uint32_t srcOff, uint32_t srcMip) {
     Context *rsc = RsdCpuReference::getTlsContext();
     rsrAllocationCopy1DRange(rsc, (Allocation*)dstAlloc.p, dstOff, dstMip, count,
                              (Allocation*)srcAlloc.p, srcOff, srcMip);
 }
 
-static void SC_AllocationCopy2DRange(::rs_allocation dstAlloc,
+static void SC_AllocationCopy2DRange(android::renderscript::rs_allocation dstAlloc,
                                      uint32_t dstXoff, uint32_t dstYoff,
                                      uint32_t dstMip, uint32_t dstFace,
                                      uint32_t width, uint32_t height,
-                                     ::rs_allocation srcAlloc,
+                                     android::renderscript::rs_allocation srcAlloc,
                                      uint32_t srcXoff, uint32_t srcYoff,
                                      uint32_t srcMip, uint32_t srcFace) {
     Context *rsc = RsdCpuReference::getTlsContext();
@@ -196,13 +196,13 @@ static void SC_AllocationCopy2DRange(::rs_allocation dstAlloc,
                              srcXoff, srcYoff, srcMip, srcFace);
 }
 
-static void SC_AllocationIoSend(::rs_allocation alloc) {
+static void SC_AllocationIoSend(android::renderscript::rs_allocation alloc) {
     Context *rsc = RsdCpuReference::getTlsContext();
     rsrAllocationIoSend(rsc, (Allocation *) alloc.p);
 }
 
 
-static void SC_AllocationIoReceive(::rs_allocation alloc) {
+static void SC_AllocationIoReceive(android::renderscript::rs_allocation alloc) {
     Context *rsc = RsdCpuReference::getTlsContext();
     rsrAllocationIoReceive(rsc, (Allocation *) alloc.p);
 }
@@ -555,9 +555,14 @@ static const android::renderscript::rs_allocation SC_GetAllocation(const void *p
 
 
 #ifndef __LP64__
-static void SC_ForEach_SAA(::rs_script target,
-                           ::rs_allocation in,
-                           ::rs_allocation out);
+static void SC_ForEach_SAA(android::renderscript::rs_script target,
+                           android::renderscript::rs_allocation in,
+                           android::renderscript::rs_allocation out) {
+    Context *rsc = RsdCpuReference::getTlsContext();
+    rsrForEach(rsc, (Script*)target.p, (Allocation*)in.p, (Allocation*)out.p,
+               nullptr, 0, nullptr);
+
+}
 #else
 static void SC_ForEach_SAA(android::renderscript::rs_script *target,
                             android::renderscript::rs_allocation *in,
@@ -568,18 +573,18 @@ static void SC_ForEach_SAA(android::renderscript::rs_script *target,
 #endif
 
 #ifndef __LP64__
-static void SC_ForEach_SAAU(::rs_script target,
-                            ::rs_allocation in,
-                            ::rs_allocation out,
+static void SC_ForEach_SAAU(android::renderscript::rs_script target,
+                            android::renderscript::rs_allocation in,
+                            android::renderscript::rs_allocation out,
                             const void *usr) {
     Context *rsc = RsdCpuReference::getTlsContext();
     rsrForEach(rsc, (Script*)target.p, (Allocation*)in.p, (Allocation*)out.p,
                usr, 0, nullptr);
 }
 #else
-static void SC_ForEach_SAAU(::rs_script *target,
-                            ::rs_allocation *in,
-                            ::rs_allocation *out,
+static void SC_ForEach_SAAU(android::renderscript::rs_script *target,
+                            android::renderscript::rs_allocation *in,
+                            android::renderscript::rs_allocation *out,
                             const void *usr) {
     Context *rsc = RsdCpuReference::getTlsContext();
     rsrForEach(rsc, (Script*)target->p, (Allocation*)in->p, (Allocation*)out->p, usr, 0, NULL);
@@ -587,11 +592,15 @@ static void SC_ForEach_SAAU(::rs_script *target,
 #endif
 
 #ifndef __LP64__
-static void SC_ForEach_SAAUS(::rs_script target,
-                             ::rs_allocation in,
-                             ::rs_allocation out,
+static void SC_ForEach_SAAUS(android::renderscript::rs_script target,
+                             android::renderscript::rs_allocation in,
+                             android::renderscript::rs_allocation out,
                              const void *usr,
-                             const RsScriptCall *call);
+                             const RsScriptCall *call) {
+    Context *rsc = RsdCpuReference::getTlsContext();
+    rsrForEach(rsc, (Script*)target.p, (Allocation*)in.p, (Allocation*)out.p,
+               usr, 0, call);
+}
 #else
 static void SC_ForEach_SAAUS(android::renderscript::rs_script *target,
                              android::renderscript::rs_allocation *in,
@@ -605,18 +614,26 @@ static void SC_ForEach_SAAUS(android::renderscript::rs_script *target,
 
 // These functions are only supported in 32-bit.
 #ifndef __LP64__
-static void SC_ForEach_SAAUL(::rs_script target,
-                             ::rs_allocation in,
-                             ::rs_allocation out,
+static void SC_ForEach_SAAUL(android::renderscript::rs_script target,
+                             android::renderscript::rs_allocation in,
+                             android::renderscript::rs_allocation out,
                              const void *usr,
-                             uint32_t usrLen);
+                             uint32_t usrLen) {
+    Context *rsc = RsdCpuReference::getTlsContext();
+    rsrForEach(rsc, (Script*)target.p, (Allocation*)in.p, (Allocation*)out.p,
+               usr, usrLen, nullptr);
+}
 
-static void SC_ForEach_SAAULS(::rs_script target,
-                              ::rs_allocation in,
-                              ::rs_allocation out,
+static void SC_ForEach_SAAULS(android::renderscript::rs_script target,
+                              android::renderscript::rs_allocation in,
+                              android::renderscript::rs_allocation out,
                               const void *usr,
                               uint32_t usrLen,
-                              const RsScriptCall *call);
+                              const RsScriptCall *call) {
+    Context *rsc = RsdCpuReference::getTlsContext();
+    rsrForEach(rsc, (Script*)target.p, (Allocation*)in.p, (Allocation*)out.p,
+               usr, usrLen, call);
+}
 #endif
 
 
@@ -837,6 +854,19 @@ android::renderscript::rs_allocation castToARSAlloc(::rs_allocation a) {
     cast.p = (const Allocation *) a.p;
     return cast;
 }
+
+// castToARSScript is not needed in 64-bit rsForEach because the args are
+// treated as pointers due to calling convention issues.  Unlike
+// castToARSAlloc, it is not needed for rsg* either.  So, do not define this
+// function for 64-bit.
+#ifndef __LP64__
+static inline
+android::renderscript::rs_script castToARSScript(::rs_script s) {
+    android::renderscript::rs_script cast;
+    cast.p = (const Script *) s.p;
+    return cast;
+}
+#endif
 
 const void *rsGetElementAt(::rs_allocation a, uint32_t x) {
     return SC_GetElementAt1D(castToARSAlloc(a), x);
@@ -1769,45 +1799,6 @@ IS_CLEAR_SET_OBJ(::rs_font, _Z10rsIsObject7rs_font, _Z11rsSetObjectP7rs_fontS_)
 
 #undef IS_CLEAR_SET_OBJ
 
-static void SC_ForEach_SAA(::rs_script target,
-                           ::rs_allocation in,
-                           ::rs_allocation out) {
-    Context *rsc = RsdCpuReference::getTlsContext();
-    rsrForEach(rsc, (Script*)target.p, (Allocation*)in.p, (Allocation*)out.p,
-               nullptr, 0, nullptr);
-}
-
-static void SC_ForEach_SAAUS(::rs_script target,
-                             ::rs_allocation in,
-                             ::rs_allocation out,
-                             const void *usr,
-                             const RsScriptCall *call) {
-    Context *rsc = RsdCpuReference::getTlsContext();
-    rsrForEach(rsc, (Script*)target.p, (Allocation*)in.p, (Allocation*)out.p,
-               usr, 0, call);
-}
-
-static void SC_ForEach_SAAUL(::rs_script target,
-                             ::rs_allocation in,
-                             ::rs_allocation out,
-                             const void *usr,
-                             uint32_t usrLen) {
-    Context *rsc = RsdCpuReference::getTlsContext();
-    rsrForEach(rsc, (Script*)target.p, (Allocation*)in.p, (Allocation*)out.p,
-               usr, usrLen, nullptr);
-}
-
-static void SC_ForEach_SAAULS(::rs_script target,
-                              ::rs_allocation in,
-                              ::rs_allocation out,
-                              const void *usr,
-                              uint32_t usrLen,
-                              const RsScriptCall *call) {
-    Context *rsc = RsdCpuReference::getTlsContext();
-    rsrForEach(rsc, (Script*)target.p, (Allocation*)in.p, (Allocation*)out.p,
-               usr, usrLen, call);
-}
-
 #ifdef RS_COMPATIBILITY_LIB
 static const Allocation * SC_GetAllocation(const void *ptr) {
     Context *rsc = RsdCpuReference::getTlsContext();
@@ -1833,11 +1824,11 @@ const android::renderscript::rs_allocation rsGetAllocation(const void *ptr) {
 
 
 void __attribute__((overloadable)) rsAllocationIoSend(::rs_allocation a) {
-    SC_AllocationIoSend(a);
+    SC_AllocationIoSend(castToARSAlloc(a));
 }
 
 void __attribute__((overloadable)) rsAllocationIoReceive(::rs_allocation a) {
-    SC_AllocationIoReceive(a);
+    SC_AllocationIoReceive(castToARSAlloc(a));
 }
 
 
@@ -1846,8 +1837,8 @@ void __attribute__((overloadable)) rsAllocationCopy1DRange(
         uint32_t dstOff, uint32_t dstMip, uint32_t count,
         ::rs_allocation srcAlloc,
         uint32_t srcOff, uint32_t srcMip) {
-    SC_AllocationCopy1DRange(dstAlloc, dstOff, dstMip, count,
-                             srcAlloc, srcOff, srcMip);
+    SC_AllocationCopy1DRange(castToARSAlloc(dstAlloc), dstOff, dstMip, count,
+                             castToARSAlloc(srcAlloc), srcOff, srcMip);
 }
 
 void __attribute__((overloadable)) rsAllocationCopy2DRange(
@@ -1858,9 +1849,9 @@ void __attribute__((overloadable)) rsAllocationCopy2DRange(
         ::rs_allocation srcAlloc,
         uint32_t srcXoff, uint32_t srcYoff,
         uint32_t srcMip, rs_allocation_cubemap_face srcFace) {
-    SC_AllocationCopy2DRange(dstAlloc, dstXoff, dstYoff,
+    SC_AllocationCopy2DRange(castToARSAlloc(dstAlloc), dstXoff, dstYoff,
                              dstMip, dstFace, width, height,
-                             srcAlloc, srcXoff, srcYoff,
+                             castToARSAlloc(srcAlloc), srcXoff, srcYoff,
                              srcMip, srcFace);
 }
 
@@ -1869,7 +1860,17 @@ void __attribute__((overloadable)) rsForEach(::rs_script script,
                                              ::rs_allocation out,
                                              const void *usr,
                                              const rs_script_call *call) {
-    return SC_ForEach_SAAUS(script, in, out, usr, (RsScriptCall*)call);
+#ifdef __LP64__
+    return SC_ForEach_SAAUS((android::renderscript::rs_script *) &script,
+                            (android::renderscript::rs_allocation *) &in,
+                            (android::renderscript::rs_allocation *) &out,
+                            usr, (RsScriptCall*)call);
+#else
+    return SC_ForEach_SAAUS(castToARSScript(script),
+                            castToARSAlloc(in),
+                            castToARSAlloc(out),
+                            usr, (RsScriptCall*)call);
+#endif
 }
 
 void __attribute__((overloadable)) rsForEach(::rs_script script,
@@ -1877,24 +1878,42 @@ void __attribute__((overloadable)) rsForEach(::rs_script script,
                                              ::rs_allocation out,
                                              const void *usr) {
 #ifdef __LP64__
-    return SC_ForEach_SAAU(&script, &in, &out, usr);
+    return SC_ForEach_SAAU((android::renderscript::rs_script *) &script,
+                           (android::renderscript::rs_allocation *) &in,
+                           (android::renderscript::rs_allocation *) &out,
+                           usr);
 #else
-    return SC_ForEach_SAAU(script, in, out, usr);
+    return SC_ForEach_SAAU(castToARSScript(script),
+                           castToARSAlloc(in),
+                           castToARSAlloc(out),
+                           usr);
 #endif
 }
 
 void __attribute__((overloadable)) rsForEach(::rs_script script,
                                              ::rs_allocation in,
                                              ::rs_allocation out) {
-    return SC_ForEach_SAA(script, in, out);
+#ifdef __LP64__
+    return SC_ForEach_SAA((android::renderscript::rs_script *) &script,
+                          (android::renderscript::rs_allocation *) &in,
+                          (android::renderscript::rs_allocation *) &out);
+#else
+    return SC_ForEach_SAA(castToARSScript(script),
+                          castToARSAlloc(in),
+                          castToARSAlloc(out));
+#endif
 }
 
+#ifndef __LP64__
 void __attribute__((overloadable)) rsForEach(::rs_script script,
                                              ::rs_allocation in,
                                              ::rs_allocation out,
                                              const void *usr,
                                              uint32_t usrLen) {
-    return SC_ForEach_SAAUL(script, in, out, usr, usrLen);
+    return SC_ForEach_SAAUL(castToARSScript(script),
+                            castToARSAlloc(in),
+                            castToARSAlloc(out),
+                            usr, usrLen);
 }
 
 void __attribute__((overloadable)) rsForEach(::rs_script script,
@@ -1903,8 +1922,12 @@ void __attribute__((overloadable)) rsForEach(::rs_script script,
                                              const void *usr,
                                              uint32_t usrLen,
                                              const rs_script_call *call) {
-    return SC_ForEach_SAAULS(script, in, out, usr, usrLen, (RsScriptCall*)call);
+    return SC_ForEach_SAAULS(castToARSScript(script),
+                             castToARSAlloc(in),
+                             castToARSAlloc(out),
+                             usr, usrLen, (RsScriptCall*)call);
 }
+#endif
 
 // #if defined(RS_COMPATIBILITY_LIB) || !defined(__LP64__)
 #ifndef __LP64__
