@@ -198,6 +198,13 @@ typedef struct {
 } RsFileIndexEntry;
 
 
+enum RsThreadPriorities {
+    RS_THREAD_PRIORITY_LOW = 15,
+    RS_THREAD_PRIORITY_NORMAL_GRAPHICS = -8,
+    RS_THREAD_PRIORITY_NORMAL = -1,
+    RS_THREAD_PRIORITY_LOW_LATENCY = -4
+};
+
 
 // Structure for rs.spec functions
 
