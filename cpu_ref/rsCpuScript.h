@@ -40,6 +40,30 @@ namespace bcinfo {
 namespace android {
 namespace renderscript {
 
+class SharedLibraryUtils {
+ public:
+#ifndef RS_COMPATIBILITY_LIB
+  static bool createSharedLibrary(const char* cacheDir, const char* resName);
+#endif
+
+  // Load the shared library referred to by cacheDir and resName. If we have
+  // already loaded this library, we instead create a new copy (in the
+  // cache dir) and then load that. We then immediately destroy the copy.
+  // This is required behavior to implement script instancing for the support
+  // library, since shared objects are loaded and de-duped by name only.
+  static void* loadSharedLibrary(const char* cacheDir, const char* resName);
+
+ private:
+  // Attempt to load the shared library from origName, but then fall back to
+  // creating a copy of the shared library if necessary (to ensure instancing).
+  // This function returns the dlopen()-ed handle if successful.
+  static void *loadSOHelper(const char *origName, const char *cacheDir,
+                            const char *resName);
+
+  static const char* LD_EXE_PATH;
+  static const char* RS_CACHE_DIR;
+};
+
 class ScriptExecutable {
  public:
   ScriptExecutable(Context* RSContext,
