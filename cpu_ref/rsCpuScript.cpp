@@ -435,6 +435,7 @@ void* SharedLibraryUtils::loadSOHelper(const char *origName, const char *cacheDi
 #define EXPORT_FUNC_STR "exportFuncCount: "
 #define EXPORT_FOREACH_STR "exportForEachCount: "
 #define OBJECT_SLOT_STR "objectSlotCount: "
+#define PRAGMA_STR "pragmaCount: "
 
 // Copy up to a newline or size chars from str -> s, updating str
 // Returns s when successful and nullptr when '\0' is finally reached.
@@ -525,6 +526,7 @@ ScriptExecutable* ScriptExecutable::createFromSharedObject(
     size_t funcCount = 0;
     size_t forEachCount = 0;
     size_t objectSlotCount = 0;
+    size_t pragmaCount = 0;
 
     const char *rsInfo = (const char *) dlsym(sharedObj, ".rs.info");
 
@@ -646,9 +648,63 @@ ScriptExecutable* ScriptExecutable::createFromSharedObject(
         }
     }
 
+#ifdef RS_COMPATIBILITY_LIB
+    // Do not attempt to read pragmas in compat lib path
+    std::vector<const char *> pragmaKeys(pragmaCount);
+    std::vector<const char *> pragmaValues(pragmaCount);
+
+#else
+    if (strgets(line, MAXLINE, &rsInfo) == nullptr) {
+        return nullptr;
+    }
+
+    if (sscanf(line, PRAGMA_STR "%zu", &pragmaCount) != 1) {
+        ALOGE("Invalid pragma count!: %s", line);
+        return nullptr;
+    }
+
+    std::vector<const char *> pragmaKeys(pragmaCount);
+    std::vector<const char *> pragmaValues(pragmaCount);
+
+    for (size_t i = 0; i < pragmaCount; ++i) {
+        if (strgets(line, MAXLINE, &rsInfo) == nullptr) {
+            ALOGE("Unable to read pragma at index %zu!", i);
+            return nullptr;
+        }
+
+        char key[MAXLINE];
+        char value[MAXLINE] = ""; // initialize in case value is empty
+
+        // pragmas can just have a key and no value.  Only check to make sure
+        // that the key is not empty
+        if (sscanf(line, "%" MAKE_STR(MAXLINE) "s - %" MAKE_STR(MAXLINE) "s",
+                   key, value) == 0 ||
+            strlen(key) == 0)
+        {
+            ALOGE("Invalid pragma value!: %s", line);
+
+            // free previously allocated keys and values
+            for (size_t idx = 0; idx < i; ++idx) {
+                delete [] pragmaKeys[idx];
+                delete [] pragmaValues[idx];
+            }
+            return nullptr;
+        }
+
+        char *pKey = new char[strlen(key)+1];
+        strcpy(pKey, key);
+        pragmaKeys[i] = pKey;
+
+        char *pValue = new char[strlen(value)+1];
+        strcpy(pValue, value);
+        pragmaValues[i] = pValue;
+        //ALOGE("Pragma %zu: Key: '%s' Value: '%s'", i, pKey, pValue);
+    }
+#endif
+
     return new ScriptExecutable(
         RSContext, fieldAddress, fieldIsObject, invokeFunctions,
-        forEachFunctions, forEachSignatures);
+        forEachFunctions, forEachSignatures, pragmaKeys, pragmaValues);
 }
 
 bool RsdCpuScriptImpl::init(char const *resName, char const *cacheDir,
@@ -807,9 +863,11 @@ void RsdCpuScriptImpl::populateScript(Script *script) {
     // Copy info over to runtime
     script->mHal.info.exportedFunctionCount = mScriptExec->getExportedFunctionCount();
     script->mHal.info.exportedVariableCount = mScriptExec->getExportedVariableCount();
-    script->mHal.info.exportedPragmaCount = 0;
-    script->mHal.info.exportedPragmaKeyList = 0;
-    script->mHal.info.exportedPragmaValueList = 0;
+    script->mHal.info.exportedPragmaCount = mScriptExec->getPragmaCount();;
+    script->mHal.info.exportedPragmaKeyList =
+        const_cast<const char**>(&mScriptExec->getPragmaKeys().front());
+    script->mHal.info.exportedPragmaValueList =
+        const_cast<const char**>(&mScriptExec->getPragmaValues().front());
 
     // Bug, need to stash in metadata
     if (mRootExpand) {
