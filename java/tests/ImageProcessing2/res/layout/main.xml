@@ -30,6 +30,10 @@
                 android:orientation="vertical"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent">
+            <view class="com.android.rs.image2.ImageProcessingActivity2$SizedTV"
+                android:id="@+id/display2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
             <ImageView
                 android:id="@+id/display"
                 android:layout_width="wrap_content"

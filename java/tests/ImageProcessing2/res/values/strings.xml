@@ -49,6 +49,7 @@
         <item>Display output while testing</item>
         <item>Run each test longer, 10 seconds</item>
         <item>Pause 10 seconds between tests</item>
+        <item>Enable USAGE_IO_OUTPUT support</item>
     </string-array>
 
 </resources>
