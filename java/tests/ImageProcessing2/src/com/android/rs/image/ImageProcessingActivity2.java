@@ -33,13 +33,17 @@ import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.view.View;
+import android.view.TextureView;
+import android.view.Surface;
+import android.graphics.SurfaceTexture;
 import android.graphics.Point;
 
 import android.util.Log;
 
 
 public class ImageProcessingActivity2 extends Activity
-                                       implements SeekBar.OnSeekBarChangeListener {
+                                       implements SeekBar.OnSeekBarChangeListener,
+                                                  TextureView.SurfaceTextureListener {
     private final String TAG = "Img";
 
     private Spinner mSpinner;
@@ -58,6 +62,7 @@ public class ImageProcessingActivity2 extends Activity
     private TextView mText4;
     private TextView mText5;
     private ImageView mDisplayView;
+    private SizedTV mDisplayViewIO;
 
     private int mTestList[];
     private float mTestResults[];
@@ -66,6 +71,7 @@ public class ImageProcessingActivity2 extends Activity
     private boolean mTogglePause;
     private boolean mToggleAnimate;
     private boolean mToggleDisplay;
+    private boolean mToggleIO;
     private int mBitmapWidth;
     private int mBitmapHeight;
     private boolean mDemoMode;
@@ -81,6 +87,33 @@ public class ImageProcessingActivity2 extends Activity
 
     private boolean mTestNameChanged = true;
     private String mTestName;
+
+    static public class SizedTV extends TextureView {
+        int mWidth;
+        int mHeight;
+
+        public SizedTV(android.content.Context c) {
+            super(c);
+            mWidth = 800;
+            mHeight = 450;
+        }
+
+        public SizedTV(android.content.Context c, android.util.AttributeSet attrs) {
+            super(c, attrs);
+            mWidth = 800;
+            mHeight = 450;
+        }
+
+        public SizedTV(android.content.Context c, android.util.AttributeSet attrs, int f) {
+            super(c, attrs, f);
+            mWidth = 800;
+            mHeight = 450;
+        }
+
+        protected void onMeasure(int w, int h) {
+            setMeasuredDimension(mWidth, mHeight);
+        }
+    }
 
 
     /////////////////////////////////////////////////////////////////////////
@@ -128,6 +161,10 @@ public class ImageProcessingActivity2 extends Activity
 
         private boolean mBenchmarkMode;
 
+        Allocation mOutDisplayAllocationIO;
+        Allocation mOutPixelsAllocationIO;
+        private TextureView mDisplayViewIO;
+        private Surface mOutSurface;
         // We don't want to call the "changed" methods excessively as this
         // can cause extra work for drivers.  Before running a test update
         // any bars which have changed.
@@ -200,6 +237,43 @@ public class ImageProcessingActivity2 extends Activity
             start();
         }
 
+        Processor(RenderScript rs, TextureView v, boolean benchmarkMode) {
+            mRS = rs;
+            mRS.setMessageHandler(new MessageProcessor());
+            mScriptUtils = new ScriptC_util(mRS);
+            mDisplayViewIO = v;
+
+            switch(mBitmapWidth) {
+            case 1920:
+                mInPixelsAllocation = Allocation.createFromBitmapResource(
+                        mRS, getResources(), R.drawable.img1920x1080a);
+                mInPixelsAllocation2 = Allocation.createFromBitmapResource(
+                        mRS, getResources(), R.drawable.img1920x1080b);
+                break;
+            case 1280:
+                mInPixelsAllocation = Allocation.createFromBitmapResource(
+                        mRS, getResources(), R.drawable.img1280x720a);
+                mInPixelsAllocation2 = Allocation.createFromBitmapResource(
+                        mRS, getResources(), R.drawable.img1280x720b);
+                break;
+            case 800:
+                mInPixelsAllocation = Allocation.createFromBitmapResource(
+                        mRS, getResources(), R.drawable.img800x450a);
+                mInPixelsAllocation2 = Allocation.createFromBitmapResource(
+                        mRS, getResources(), R.drawable.img800x450b);
+                break;
+            }
+
+            mOutDisplayAllocationIO = Allocation.createTyped(mRS, mInPixelsAllocation.getType(),
+                                                               Allocation.MipmapControl.MIPMAP_NONE,
+                                                               Allocation.USAGE_SCRIPT |
+                                                               Allocation.USAGE_IO_OUTPUT);
+            mOutPixelsAllocationIO = mOutDisplayAllocationIO;
+
+            mBenchmarkMode = benchmarkMode;
+            start();
+        }
+
         class Result {
             float totalTime;
             int iterations;
@@ -233,22 +307,29 @@ public class ImageProcessingActivity2 extends Activity
                 }
 
                 // Run the kernel
-                if (mActiveBitmap == 0) {
-                    mTest.mOutPixelsAllocation = mOutDisplayAllocation1;
+                if (!mToggleIO) {
+                    if (mActiveBitmap == 0) {
+                        mTest.mOutPixelsAllocation = mOutDisplayAllocation1;
+                    } else {
+                        mTest.mOutPixelsAllocation = mOutDisplayAllocation2;
+                    }
                 } else {
-                    mTest.mOutPixelsAllocation = mOutDisplayAllocation2;
+                    mTest.mOutPixelsAllocation = mOutDisplayAllocationIO;
                 }
+
                 mTest.runTest();
                 r.iterations ++;
 
-                if (mToggleDisplay) {
-                    if (mActiveBitmap == 0) {
-                        mOutDisplayAllocation1.copyTo(mBitmapOut1);
-                    } else {
-                        mOutDisplayAllocation2.copyTo(mBitmapOut2);
+                if (!mToggleIO) {
+                    if (mToggleDisplay) {
+                        if (mActiveBitmap == 0) {
+                            mOutDisplayAllocation1.copyTo(mBitmapOut1);
+                        } else {
+                            mOutDisplayAllocation2.copyTo(mBitmapOut2);
+                        }
                     }
-                }
 
+                }
                 // Send our RS message handler a message so we know when this work has completed
                 mScriptUtils.invoke_utilSendMessage(mActiveBitmap);
                 mActiveBitmap ^= 1;
@@ -257,14 +338,15 @@ public class ImageProcessingActivity2 extends Activity
                 r.totalTime = (t2 - t) / 1000.f;
             } while (r.totalTime < minTime);
 
-            // Wait for any stray operations to complete and update the final time
             mRS.finish();
             long t2 = java.lang.System.currentTimeMillis();
             r.totalTime = (t2 - t) / 1000.f;
 
             // Even if we are not displaying as we go, show the final output
-            mOutDisplayAllocation1.copyTo(mBitmapOut1);
-            mOutDisplayAllocation2.copyTo(mBitmapOut2);
+            if (!mToggleIO) {
+                mOutDisplayAllocation1.copyTo(mBitmapOut1);
+                mOutDisplayAllocation2.copyTo(mBitmapOut2);
+            }
             return r;
         }
 
@@ -302,17 +384,30 @@ public class ImageProcessingActivity2 extends Activity
                     getActionBar().setTitle("IP-Compat test: " + mTestName);
                 }
 
-                if (mDisplayedBitmap == 0) {
-                    mDisplayView.setImageBitmap(mBitmapOut1);
+                if (!mToggleIO) {
+                    if (mDisplayedBitmap == 0) {
+                        mDisplayView.setImageBitmap(mBitmapOut1);
+                    } else {
+                        mDisplayView.setImageBitmap(mBitmapOut2);
+                    }
+                    mDisplayedBitmap ^= 1;
+                    mDisplayView.invalidate();
                 } else {
-                    mDisplayView.setImageBitmap(mBitmapOut2);
+                    synchronized(this) {
+                        if (mRS == null || mOutPixelsAllocationIO == null) {
+                            return;
+                        }
+                        if (mOutDisplayAllocationIO != mOutPixelsAllocationIO) {
+                            mOutDisplayAllocationIO.copyFrom(mOutPixelsAllocationIO);
+                        }
+                        mOutDisplayAllocationIO.ioSend();
+                    }
                 }
-                mDisplayedBitmap ^= 1;
-                mDisplayView.invalidate();
             }
         };
 
         public void run() {
+            Surface lastSurface = null;
             while (mRun) {
                 // Our loop for launching tests or benchmarks
                 synchronized(this) {
@@ -323,9 +418,18 @@ public class ImageProcessingActivity2 extends Activity
                         } catch(InterruptedException e) {
                         }
                     }
-
+                    if (mToggleIO) {
+                        if ((mOutSurface == null) || (mOutPixelsAllocationIO == null)) {
+                            continue;
+                        }
+                        if (lastSurface != mOutSurface) {
+                            mOutDisplayAllocationIO.setSurface(mOutSurface);
+                            lastSurface = mOutSurface;
+                        }
+                    }
                     // We may have been asked to exit while waiting
                     if (!mRun) return;
+
                 }
 
                 if (mBenchmarkMode) {
@@ -383,9 +487,12 @@ public class ImageProcessingActivity2 extends Activity
                         } else {
                             mTest.mOutPixelsAllocation = mOutDisplayAllocation2;
                         }
+                        if (mToggleIO) {
+                            mTest.mOutPixelsAllocation = mOutDisplayAllocationIO;
+                        }
                         runTest();
 
-                        if (mToggleDisplay) {
+                        if (mToggleDisplay && !mToggleIO) {
                             if (mActiveBitmap == 0) {
                                 mOutDisplayAllocation1.copyTo(mBitmapOut1);
                             } else {
@@ -413,6 +520,14 @@ public class ImageProcessingActivity2 extends Activity
             }
         }
 
+        public void setSurface(Surface s) {
+            synchronized(this) {
+                mOutSurface = s;
+                notifyAll();
+            }
+            //update();
+        }
+
         public void exit() {
             mRun = false;
 
@@ -432,14 +547,24 @@ public class ImageProcessingActivity2 extends Activity
                 mTest.destroy();
                 mTest = null;
             }
-            mOutDisplayAllocation1.destroy();
-            mOutDisplayAllocation2.destroy();
+
+            if(!mToggleIO) {
+                mOutDisplayAllocation1.destroy();
+                mOutDisplayAllocation2.destroy();
+            } else {
+                if (mOutPixelsAllocationIO != mOutDisplayAllocationIO) {
+                    mOutPixelsAllocationIO.destroy();
+                }
+                mOutDisplayAllocationIO.destroy();
+            }
             mRS.destroy();
 
             mInPixelsAllocation = null;
             mInPixelsAllocation2 = null;
             mOutDisplayAllocation1 = null;
             mOutDisplayAllocation2 = null;
+            mOutDisplayAllocationIO = null;
+            mOutPixelsAllocationIO = null;
             mRS = null;
         }
     }
@@ -541,6 +666,7 @@ public class ImageProcessingActivity2 extends Activity
         setContentView(R.layout.main);
 
         mDisplayView = (ImageView) findViewById(R.id.display);
+        mDisplayViewIO = (SizedTV) findViewById(R.id.display2);
         //mDisplayView.setImageBitmap(mBitmapOut);
 
         mSpinner = (Spinner) findViewById(R.id.spinner1);
@@ -611,8 +737,15 @@ public class ImageProcessingActivity2 extends Activity
         }
 
         android.util.Log.v("rs", "TV sizes " + tw + ", " + th);
+        if (mToggleIO) {
+            mDisplayViewIO.mWidth = tw;
+            mDisplayViewIO.mHeight = th;
 
-        mProcessor = new Processor(RenderScript.create(this), !mDemoMode);
+            mProcessor = new Processor(RenderScript.create(this), mDisplayViewIO, !mDemoMode);
+            mDisplayViewIO.setSurfaceTextureListener(this);
+        } else {
+            mProcessor = new Processor(RenderScript.create(this), !mDemoMode);
+        }
         if (mDemoMode) {
             mProcessor.mTest = changeTest(mTestList[0], true);
         }
@@ -624,6 +757,7 @@ public class ImageProcessingActivity2 extends Activity
         super.onResume();
         Intent i = getIntent();
         mTestList = i.getIntArrayExtra("tests");
+        mToggleIO = i.getBooleanExtra("enable io", false);
         mToggleLong = i.getBooleanExtra("enable long", false);
         mTogglePause = i.getBooleanExtra("enable pause", false);
         mToggleAnimate = i.getBooleanExtra("enable animate", false);
@@ -631,7 +765,6 @@ public class ImageProcessingActivity2 extends Activity
         mBitmapWidth = i.getIntExtra("resolution X", 0);
         mBitmapHeight = i.getIntExtra("resolution Y", 0);
         mDemoMode = i.getBooleanExtra("demo", false);
-
         mTestResults = new float[mTestList.length];
 
         startProcessor();
@@ -639,6 +772,25 @@ public class ImageProcessingActivity2 extends Activity
 
     protected void onDestroy() {
         super.onDestroy();
+    }
+    @Override
+    public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
+        mProcessor.setSurface(new Surface(surface));
+    }
+
+    @Override
+    public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
+        mProcessor.setSurface(new Surface(surface));
+    }
+
+    @Override
+    public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
+        mProcessor.setSurface(null);
+        return true;
+    }
+
+    @Override
+    public void onSurfaceTextureUpdated(SurfaceTexture surface) {
     }
 
 }
