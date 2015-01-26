@@ -289,20 +289,11 @@ extern "C" bool rsdHalInit(RsContext c, uint32_t version_major, uint32_t version
 
 void * Context::threadProc(void *vrsc) {
     Context *rsc = static_cast<Context *>(vrsc);
+
 #ifndef ANDROID_RS_SERIALIZE
     rsc->mNativeThreadId = gettid();
-#ifndef RS_COMPATIBILITY_LIB
-    if (!rsc->isSynchronous()) {
-        setpriority(PRIO_PROCESS, rsc->mNativeThreadId, ANDROID_PRIORITY_DISPLAY);
-    }
-    rsc->mThreadPriority = ANDROID_PRIORITY_DISPLAY;
-#else
-    if (!rsc->isSynchronous()) {
-        setpriority(PRIO_PROCESS, rsc->mNativeThreadId, -4);
-    }
-    rsc->mThreadPriority = -4;
-#endif
 #endif //ANDROID_RS_SERIALIZE
+
     rsc->props.mLogTimes = getProp("debug.rs.profile") != 0;
     rsc->props.mLogScripts = getProp("debug.rs.script") != 0;
     rsc->props.mLogObjects = getProp("debug.rs.object") != 0;
@@ -362,8 +353,11 @@ void * Context::threadProc(void *vrsc) {
     }
 #endif
 
-
-    rsc->mHal.funcs.setPriority(rsc, rsc->mThreadPriority);
+    if (!rsc->isSynchronous()) {
+        // Due to legacy we default to normal_graphics
+        // setPriority will make the adjustments as needed.
+        rsc->setPriority(RS_THREAD_PRIORITY_NORMAL_GRAPHICS);
+    }
 
 #ifndef RS_COMPATIBILITY_LIB
     if (rsc->mIsGraphicsContext) {
@@ -502,6 +496,23 @@ void Context::printWatchdogInfo(void *ctx) {
 
 
 void Context::setPriority(int32_t p) {
+    switch (p) {
+    // The public API will always send NORMAL_GRAPHICS
+    // for normal, we adjust here
+    case RS_THREAD_PRIORITY_NORMAL_GRAPHICS:
+        if (mIsGraphicsContext) {
+            break;
+        } else {
+            if (mHal.flags & RS_CONTEXT_LOW_LATENCY) {
+                p = RS_THREAD_PRIORITY_LOW_LATENCY;
+            } else {
+                p = RS_THREAD_PRIORITY_NORMAL;
+            }
+        }
+    case RS_THREAD_PRIORITY_LOW:
+        break;
+    }
+
     // Note: If we put this in the proper "background" policy
     // the wallpapers can become completly unresponsive at times.
     // This is probably not what we want for something the user is actively
