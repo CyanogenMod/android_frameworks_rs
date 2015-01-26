@@ -71,12 +71,16 @@ class ScriptExecutable {
                    std::vector<bool>& fieldIsObject,
                    std::vector<InvokeFunc_t>& invokeFunctions,
                    std::vector<ForEachFunc_t>& forEachFunctions,
-                   std::vector<uint32_t>& forEachSignatures) : mRS(RSContext) {
+                   std::vector<uint32_t>& forEachSignatures,
+                   std::vector<const char *> &pragmaKeys,
+                   std::vector<const char *> &pragmaValues) : mRS(RSContext) {
       mFieldAddress.swap(fieldAddress);
       mFieldIsObject.swap(fieldIsObject);
       mInvokeFunctions.swap(invokeFunctions);
       mForEachFunctions.swap(forEachFunctions);
       mForEachSignatures.swap(forEachSignatures);
+      mPragmaKeys.swap(pragmaKeys);
+      mPragmaValues.swap(pragmaValues);
   }
 
   ~ScriptExecutable() {
@@ -89,6 +93,11 @@ class ScriptExecutable {
               }
           }
       }
+
+      for (size_t i = 0; i < mPragmaKeys.size(); ++i) {
+          delete [] mPragmaKeys[i];
+          delete [] mPragmaValues[i];
+      }
   }
 
   static ScriptExecutable*
@@ -97,6 +106,7 @@ class ScriptExecutable {
   size_t getExportedVariableCount() const { return mFieldAddress.size(); }
   size_t getExportedFunctionCount() const { return mInvokeFunctions.size(); }
   size_t getExportedForEachCount() const { return mForEachFunctions.size(); }
+  size_t getPragmaCount() const { return mPragmaKeys.size(); }
 
   void* getFieldAddress(int slot) const { return mFieldAddress[slot]; }
   bool getFieldIsObject(int slot) const { return mFieldIsObject[slot]; }
@@ -104,12 +114,17 @@ class ScriptExecutable {
   ForEachFunc_t getForEachFunction(int slot) const { return mForEachFunctions[slot]; }
   uint32_t getForEachSignature(int slot) const { return mForEachSignatures[slot]; }
 
+  std::vector<const char *> & getPragmaKeys() { return mPragmaKeys; }
+  std::vector<const char *> & getPragmaValues() { return mPragmaValues; }
+
  private:
   std::vector<void*> mFieldAddress;
   std::vector<bool> mFieldIsObject;
   std::vector<InvokeFunc_t> mInvokeFunctions;
   std::vector<ForEachFunc_t> mForEachFunctions;
   std::vector<uint32_t> mForEachSignatures;
+  std::vector<const char *> mPragmaKeys;
+  std::vector<const char *> mPragmaValues;
 
   Context* mRS;
 };
