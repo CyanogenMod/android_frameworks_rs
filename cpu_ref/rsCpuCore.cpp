@@ -164,7 +164,7 @@ void RsdCpuReferenceImpl::launchThreads(WorkerCallback_t cbk, void *data) {
 
     // fast path for very small launches
     MTLaunchStruct *mtls = (MTLaunchStruct *)data;
-    if (mtls && mtls->fep.dim.y <= 1 && mtls->xEnd <= mtls->xStart + mtls->mSliceSize) {
+    if (mtls && mtls->fep.dim.y <= 1 && mtls->end.x <= mtls->start.x + mtls->mSliceSize) {
         if (mWorkers.mLaunchCallback) {
             mWorkers.mLaunchCallback(mWorkers.mLaunchData, 0);
         }
@@ -370,7 +370,7 @@ static void kparamSetup(RsExpandKernelParams *kparams, const RsExpandKernelDrive
     kparams->z = fep->current.z;
 }
 
-static inline void fepPtrSetup(const MTLaunchStruct *mtls, RsExpandKernelDriverInfo *fep,
+static inline void FepPtrSetup(const MTLaunchStruct *mtls, RsExpandKernelDriverInfo *fep,
                                uint32_t x, uint32_t y,
                                uint32_t z = 0, uint32_t lod = 0,
                                RsAllocationCubemapFace face = RS_ALLOCATION_CUBEMAP_FACE_POSITIVE_X,
@@ -385,31 +385,89 @@ static inline void fepPtrSetup(const MTLaunchStruct *mtls, RsExpandKernelDriverI
     }
 }
 
+static uint32_t sliceInt(uint32_t *p, uint32_t val, uint32_t start, uint32_t end) {
+    if (start >= end) {
+        *p = start;
+        return val;
+    }
+
+    uint32_t div = end - start;
+
+    uint32_t n = val / div;
+    *p = (val - (n * div)) + start;
+    return n;
+}
+
+static bool SelectOuterSlice(MTLaunchStruct* mtls, uint32_t sliceNum) {
+
+    uint32_t r = sliceNum;
+    r = sliceInt(&mtls->fep.current.z, r, mtls->start.z, mtls->end.z);
+    r = sliceInt(&mtls->fep.current.lod, r, mtls->start.lod, mtls->end.lod);
+    r = sliceInt(&mtls->fep.current.face, r, mtls->start.face, mtls->end.face);
+    r = sliceInt(&mtls->fep.current.array[0], r, mtls->start.array[0], mtls->end.array[0]);
+    r = sliceInt(&mtls->fep.current.array[1], r, mtls->start.array[1], mtls->end.array[1]);
+    r = sliceInt(&mtls->fep.current.array[2], r, mtls->start.array[2], mtls->end.array[2]);
+    r = sliceInt(&mtls->fep.current.array[3], r, mtls->start.array[3], mtls->end.array[3]);
+    return r == 0;
+}
+
+
+static void walk_general(void *usr, uint32_t idx) {
+    MTLaunchStruct *mtls = (MTLaunchStruct *)usr;
+    RsExpandKernelDriverInfo fep = mtls->fep;
+    fep.lid = idx;
+    outer_foreach_t fn = (outer_foreach_t) mtls->kernel;
+
+
+    while(1) {
+        uint32_t slice = (uint32_t)__sync_fetch_and_add(&mtls->mSliceNum, 1);
+
+        if (!SelectOuterSlice(mtls, slice)) {
+            return;
+        }
+
+        for (mtls->fep.current.y = mtls->start.y;
+             mtls->fep.current.y < mtls->end.y;
+             mtls->fep.current.y++) {
+
+            FepPtrSetup(mtls, &mtls->fep, mtls->start.x,
+                        mtls->fep.current.y, mtls->fep.current.z, mtls->fep.current.lod,
+                        (RsAllocationCubemapFace)mtls->fep.current.face,
+                        mtls->fep.current.array[0], mtls->fep.current.array[1],
+                        mtls->fep.current.array[2], mtls->fep.current.array[3]);
+
+            RsExpandKernelParams kparams;
+            kparamSetup(&kparams, &mtls->fep);
+            fn(&kparams, mtls->start.x, mtls->end.x, mtls->fep.outStride[0]);
+        }
+    }
+
+}
 
 static void walk_2d(void *usr, uint32_t idx) {
     MTLaunchStruct *mtls = (MTLaunchStruct *)usr;
     RsExpandKernelDriverInfo fep = mtls->fep;
     fep.lid = idx;
+    outer_foreach_t fn = (outer_foreach_t) mtls->kernel;
 
     while (1) {
         uint32_t slice  = (uint32_t)__sync_fetch_and_add(&mtls->mSliceNum, 1);
-        uint32_t yStart = mtls->yStart + slice * mtls->mSliceSize;
+        uint32_t yStart = mtls->start.y + slice * mtls->mSliceSize;
         uint32_t yEnd   = yStart + mtls->mSliceSize;
 
-        yEnd = rsMin(yEnd, mtls->yEnd);
+        yEnd = rsMin(yEnd, mtls->end.y);
 
         if (yEnd <= yStart) {
             return;
         }
 
         for (fep.current.y = yStart; fep.current.y < yEnd; fep.current.y++) {
-            fepPtrSetup(mtls, &fep, mtls->xStart, fep.current.y);
+            FepPtrSetup(mtls, &fep, mtls->start.x, fep.current.y);
 
             RsExpandKernelParams kparams;
             kparamSetup(&kparams, &fep);
 
-            outer_foreach_t fn = (outer_foreach_t) mtls->kernel;
-            fn(&kparams, mtls->xStart, mtls->xEnd, fep.outStride[0]);
+            fn(&kparams, mtls->start.x, mtls->end.x, fep.outStride[0]);
         }
     }
 }
@@ -418,28 +476,27 @@ static void walk_1d(void *usr, uint32_t idx) {
     MTLaunchStruct *mtls = (MTLaunchStruct *)usr;
     RsExpandKernelDriverInfo fep = mtls->fep;
     fep.lid = idx;
+    outer_foreach_t fn = (outer_foreach_t) mtls->kernel;
 
     while (1) {
         uint32_t slice  = (uint32_t)__sync_fetch_and_add(&mtls->mSliceNum, 1);
-        uint32_t xStart = mtls->xStart + slice * mtls->mSliceSize;
+        uint32_t xStart = mtls->start.x + slice * mtls->mSliceSize;
         uint32_t xEnd   = xStart + mtls->mSliceSize;
 
-        xEnd = rsMin(xEnd, mtls->xEnd);
+        xEnd = rsMin(xEnd, mtls->end.x);
 
         if (xEnd <= xStart) {
             return;
         }
 
-        fepPtrSetup(mtls, &fep, xStart, 0);
+        FepPtrSetup(mtls, &fep, xStart, 0);
 
         RsExpandKernelParams kparams;
         kparamSetup(&kparams, &fep);
 
-        outer_foreach_t fn = (outer_foreach_t) mtls->kernel;
         fn(&kparams, xStart, xEnd, fep.outStride[0]);
     }
 }
-
 
 void RsdCpuReferenceImpl::launchThreads(const Allocation ** ains,
                                         uint32_t inLen,
@@ -449,11 +506,23 @@ void RsdCpuReferenceImpl::launchThreads(const Allocation ** ains,
 
     //android::StopWatch kernel_time("kernel time");
 
+    bool outerDims = (mtls->start.z != mtls->end.z) ||
+                     (mtls->start.face != mtls->end.face) ||
+                     (mtls->start.lod != mtls->end.lod) ||
+                     (mtls->start.array[0] != mtls->end.array[0]) ||
+                     (mtls->start.array[1] != mtls->end.array[1]) ||
+                     (mtls->start.array[2] != mtls->end.array[2]) ||
+                     (mtls->start.array[3] != mtls->end.array[3]);
+
     if ((mWorkers.mCount >= 1) && mtls->isThreadable && !mInForEach) {
         const size_t targetByteChunk = 16 * 1024;
         mInForEach = true;
 
-        if (mtls->fep.dim.y > 1) {
+        if (outerDims) {
+            // No fancy logic for chunk size
+            mtls->mSliceSize = 1;
+            launchThreads(walk_general, mtls);
+        } else if (mtls->fep.dim.y > 1) {
             uint32_t s1 = mtls->fep.dim.y / ((mWorkers.mCount + 1) * 4);
             uint32_t s2 = 0;
 
@@ -496,21 +565,23 @@ void RsdCpuReferenceImpl::launchThreads(const Allocation ** ains,
 
     } else {
         outer_foreach_t fn = (outer_foreach_t) mtls->kernel;
-        for (uint32_t arrayIndex = mtls->arrayStart;
-             arrayIndex < mtls->arrayEnd; arrayIndex++) {
+        uint32_t slice = 0;
 
-            for (mtls->fep.current.z = mtls->zStart; mtls->fep.current.z < mtls->zEnd;
-                 mtls->fep.current.z++) {
 
-                for (mtls->fep.current.y = mtls->yStart; mtls->fep.current.y < mtls->yEnd;
-                     mtls->fep.current.y++) {
+        while(SelectOuterSlice(mtls, slice++)) {
+            for (mtls->fep.current.y = mtls->start.y;
+                 mtls->fep.current.y < mtls->end.y;
+                 mtls->fep.current.y++) {
 
-                    fepPtrSetup(mtls, &mtls->fep, mtls->xStart, mtls->fep.current.y, mtls->fep.current.z);
+                FepPtrSetup(mtls, &mtls->fep, mtls->start.x,
+                            mtls->fep.current.y, mtls->fep.current.z, mtls->fep.current.lod,
+                            (RsAllocationCubemapFace) mtls->fep.current.face,
+                            mtls->fep.current.array[0], mtls->fep.current.array[1],
+                            mtls->fep.current.array[2], mtls->fep.current.array[3]);
 
-                    RsExpandKernelParams kparams;
-                    kparamSetup(&kparams, &mtls->fep);
-                    fn(&kparams, mtls->xStart, mtls->xEnd, mtls->fep.outStride[0]);
-                }
+                RsExpandKernelParams kparams;
+                kparamSetup(&kparams, &mtls->fep);
+                fn(&kparams, mtls->start.x, mtls->end.x, mtls->fep.outStride[0]);
             }
         }
     }

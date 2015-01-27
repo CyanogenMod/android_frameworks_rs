@@ -223,13 +223,15 @@ void CpuScriptGroupImpl::execute() {
                 ains  = const_cast<const Allocation**>(&ins[ct]);
             }
 
-            si->forEachMtlsSetup(ains, inLen, outs[ct], nullptr, 0, nullptr, &mtls);
+            bool launchOK = si->forEachMtlsSetup(ains, inLen, outs[ct], nullptr, 0, nullptr, &mtls);
 
             si->forEachKernelSetup(slot, &mtls);
             si->preLaunch(slot, ains, inLen, outs[ct], mtls.fep.usr,
                           mtls.fep.usrLen, nullptr);
 
-            mCtx->launchThreads(ains, inLen, outs[ct], nullptr, &mtls);
+            if (launchOK) {
+                mCtx->launchThreads(ains, inLen, outs[ct], nullptr, &mtls);
+            }
 
             si->postLaunch(slot, ains, inLen, outs[ct], nullptr, 0, nullptr);
         }
@@ -283,13 +285,14 @@ void CpuScriptGroupImpl::execute() {
         Script *s = kernels[0]->mScript;
         RsdCpuScriptImpl *si = (RsdCpuScriptImpl *)mCtx->lookupScript(s);
 
-        si->forEachMtlsSetup(ains, inLen, outs[0], nullptr, 0, nullptr, &mtls);
+        if (si->forEachMtlsSetup(ains, inLen, outs[0], nullptr, 0, nullptr, &mtls)) {
 
-        mtls.script = nullptr;
-        mtls.kernel = (void (*)())&scriptGroupRoot;
-        mtls.fep.usr = &sl;
+            mtls.script = nullptr;
+            mtls.kernel = (void (*)())&scriptGroupRoot;
+            mtls.fep.usr = &sl;
 
-        mCtx->launchThreads(ains, inLen, outs[0], nullptr, &mtls);
+            mCtx->launchThreads(ains, inLen, outs[0], nullptr, &mtls);
+        }
 
         for (size_t ct=0; ct < kernels.size(); ct++) {
             Script *s = kernels[ct]->mScript;
