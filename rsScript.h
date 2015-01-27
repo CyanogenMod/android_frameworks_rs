@@ -32,30 +32,44 @@ class ProgramRaster;
 class ProgramStore;
 #endif
 
-class ScriptKernelID : public ObjectBase {
+class IDBase : public ObjectBase {
 public:
-    ScriptKernelID(Context *rsc, Script *s, int slot, int sig);
-    virtual ~ScriptKernelID();
+    IDBase(Context *rsc, Script *s, int slot) :
+        ObjectBase(rsc), mScript(s), mSlot(slot) {}
+    virtual ~IDBase() {}
 
-    virtual void serialize(Context *rsc, OStream *stream) const;
+    virtual void serialize(Context *rsc, OStream *stream) const {}
     virtual RsA3DClassID getClassId() const;
 
     Script *mScript;
     int mSlot;
+};
+
+class ScriptKernelID : public IDBase {
+public:
+    ScriptKernelID(Context *rsc, Script *s, int slot, int sig);
+    virtual ~ScriptKernelID() {}
+
+    virtual RsA3DClassID getClassId() const;
+
     bool mHasKernelInput;
     bool mHasKernelOutput;
 };
 
-class ScriptFieldID : public ObjectBase {
+class ScriptInvokeID : public IDBase {
+public:
+    ScriptInvokeID(Context *rsc, Script *s, int slot);
+    virtual ~ScriptInvokeID() {}
+
+    virtual RsA3DClassID getClassId() const;
+};
+
+class ScriptFieldID : public IDBase {
 public:
     ScriptFieldID(Context *rsc, Script *s, int slot);
-    virtual ~ScriptFieldID();
+    virtual ~ScriptFieldID() {}
 
-    virtual void serialize(Context *rsc, OStream *stream) const;
     virtual RsA3DClassID getClassId() const;
-
-    Script *mScript;
-    int mSlot;
 };
 
 class Script : public ObjectBase {

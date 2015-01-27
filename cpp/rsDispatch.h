@@ -82,6 +82,7 @@ typedef void (*ScriptSetVarVEFnPtr) (RsContext, RsScript, uint32_t, const void*,
 typedef RsScript (*ScriptCCreateFnPtr) (RsContext, const char*, size_t, const char*, size_t, const char*, size_t);
 typedef RsScript (*ScriptIntrinsicCreateFnPtr) (RsContext, uint32_t id, RsElement);
 typedef RsScriptKernelID (*ScriptKernelIDCreateFnPtr) (RsContext, RsScript, int, int);
+typedef RsScriptInvokeID (*ScriptInvokeIDCreateFnPtr) (RsContext, RsScript, int);
 typedef RsScriptFieldID (*ScriptFieldIDCreateFnPtr) (RsContext, RsScript, int);
 typedef RsScriptGroup (*ScriptGroupCreateFnPtr) (RsContext, RsScriptKernelID*, size_t, RsScriptKernelID*, size_t, RsScriptKernelID*, size_t, RsScriptFieldID*, size_t, const RsType*, size_t);
 typedef RsScriptGroup2 (*ScriptGroup2CreateFnPtr)(RsContext, RsClosure*, size_t);
@@ -160,6 +161,7 @@ struct dispatchTable {
     ScriptCCreateFnPtr ScriptCCreate;
     ScriptIntrinsicCreateFnPtr ScriptIntrinsicCreate;
     ScriptKernelIDCreateFnPtr ScriptKernelIDCreate;
+    ScriptInvokeIDCreateFnPtr ScriptInvokeIDCreate;
     ScriptFieldIDCreateFnPtr ScriptFieldIDCreate;
     ScriptGroupCreateFnPtr ScriptGroupCreate;
     ScriptGroup2CreateFnPtr ScriptGroup2Create;

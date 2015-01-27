@@ -288,6 +288,8 @@ ObjectBase *FileA3D::initializeFromEntry(size_t index) {
             break;
         case RS_A3D_CLASS_ID_SCRIPT_KERNEL_ID:
             break;
+        case RS_A3D_CLASS_ID_SCRIPT_INVOKE_ID:
+            break;
         case RS_A3D_CLASS_ID_SCRIPT_FIELD_ID:
             break;
         case RS_A3D_CLASS_ID_SCRIPT_METHOD_ID:
