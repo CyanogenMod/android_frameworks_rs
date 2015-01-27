@@ -182,7 +182,7 @@ public:
 
     const Script * getScript() {return mScript;}
 
-    void forEachMtlsSetup(const Allocation ** ains, uint32_t inLen,
+    bool forEachMtlsSetup(const Allocation ** ains, uint32_t inLen,
                           Allocation * aout, const void * usr, uint32_t usrLen,
                           const RsScriptCall *sc, MTLaunchStruct *mtls);
 

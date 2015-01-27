@@ -46,7 +46,7 @@ struct RsLaunchDimensions {
     uint32_t y;
     uint32_t z;
     uint32_t lod;
-    uint32_t faces;
+    uint32_t face;
     uint32_t array[4 /*make a define*/];
 };
 
@@ -134,18 +134,8 @@ struct MTLaunchStruct {
     volatile int mSliceNum;
     bool isThreadable;
 
-    // origin of the launch
-    RsLaunchDimensions origin;
-
-    // TODO: convert to RsLaunchDimensions
-    uint32_t xStart;
-    uint32_t xEnd;
-    uint32_t yStart;
-    uint32_t yEnd;
-    uint32_t zStart;
-    uint32_t zEnd;
-    uint32_t arrayStart;
-    uint32_t arrayEnd;
+    RsLaunchDimensions start;
+    RsLaunchDimensions end;
 };
 
 class RsdCpuReferenceImpl : public RsdCpuReference {

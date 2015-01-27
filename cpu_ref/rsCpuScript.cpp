@@ -880,7 +880,7 @@ void RsdCpuScriptImpl::populateScript(Script *script) {
 
 typedef void (*rs_t)(const void *, void *, const void *, uint32_t, uint32_t, uint32_t, uint32_t);
 
-void RsdCpuScriptImpl::forEachMtlsSetup(const Allocation ** ains,
+bool RsdCpuScriptImpl::forEachMtlsSetup(const Allocation ** ains,
                                         uint32_t inLen,
                                         Allocation * aout,
                                         const void * usr, uint32_t usrLen,
@@ -898,7 +898,7 @@ void RsdCpuScriptImpl::forEachMtlsSetup(const Allocation ** ains,
 
             mCtx->getContext()->setError(RS_ERROR_BAD_SCRIPT,
                                          "rsForEach called with null in allocations");
-            return;
+            return false;
         }
     }
 
@@ -907,7 +907,7 @@ void RsdCpuScriptImpl::forEachMtlsSetup(const Allocation ** ains,
 
         mCtx->getContext()->setError(RS_ERROR_BAD_SCRIPT,
                                      "rsForEach called with null out allocations");
-        return;
+        return false;
     }
 
     if (inLen > 0) {
@@ -923,7 +923,7 @@ void RsdCpuScriptImpl::forEachMtlsSetup(const Allocation ** ains,
                 mCtx->getContext()->setError(RS_ERROR_BAD_SCRIPT,
                   "Failed to launch kernel; dimensions of input and output allocations do not match.");
 
-                return;
+                return false;
             }
         }
 
@@ -937,7 +937,7 @@ void RsdCpuScriptImpl::forEachMtlsSetup(const Allocation ** ains,
     } else {
         mCtx->getContext()->setError(RS_ERROR_BAD_SCRIPT,
                                      "rsForEach called with null allocations");
-        return;
+        return false;
     }
 
     if (inLen > 0 && aout != nullptr) {
@@ -945,49 +945,70 @@ void RsdCpuScriptImpl::forEachMtlsSetup(const Allocation ** ains,
             mCtx->getContext()->setError(RS_ERROR_BAD_SCRIPT,
               "Failed to launch kernel; dimensions of input and output allocations do not match.");
 
-            return;
+            return false;
         }
     }
 
     if (!sc || (sc->xEnd == 0)) {
-        mtls->xEnd = mtls->fep.dim.x;
+        mtls->end.x = mtls->fep.dim.x;
     } else {
-        rsAssert(sc->xStart < mtls->fep.dim.x);
-        rsAssert(sc->xEnd <= mtls->fep.dim.x);
-        rsAssert(sc->xStart < sc->xEnd);
-        mtls->xStart = rsMin(mtls->fep.dim.x, sc->xStart);
-        mtls->xEnd = rsMin(mtls->fep.dim.x, sc->xEnd);
-        if (mtls->xStart >= mtls->xEnd) return;
+        mtls->start.x = rsMin(mtls->fep.dim.x, sc->xStart);
+        mtls->end.x = rsMin(mtls->fep.dim.x, sc->xEnd);
+        if (mtls->start.x >= mtls->end.x) return false;
     }
 
     if (!sc || (sc->yEnd == 0)) {
-        mtls->yEnd = mtls->fep.dim.y;
+        mtls->end.y = mtls->fep.dim.y;
     } else {
-        rsAssert(sc->yStart < mtls->fep.dim.y);
-        rsAssert(sc->yEnd <= mtls->fep.dim.y);
-        rsAssert(sc->yStart < sc->yEnd);
-        mtls->yStart = rsMin(mtls->fep.dim.y, sc->yStart);
-        mtls->yEnd = rsMin(mtls->fep.dim.y, sc->yEnd);
-        if (mtls->yStart >= mtls->yEnd) return;
+        mtls->start.y = rsMin(mtls->fep.dim.y, sc->yStart);
+        mtls->end.y = rsMin(mtls->fep.dim.y, sc->yEnd);
+        if (mtls->start.y >= mtls->end.y) return false;
     }
 
     if (!sc || (sc->zEnd == 0)) {
-        mtls->zEnd = mtls->fep.dim.z;
+        mtls->end.z = mtls->fep.dim.z;
     } else {
-        rsAssert(sc->zStart < mtls->fep.dim.z);
-        rsAssert(sc->zEnd <= mtls->fep.dim.z);
-        rsAssert(sc->zStart < sc->zEnd);
-        mtls->zStart = rsMin(mtls->fep.dim.z, sc->zStart);
-        mtls->zEnd = rsMin(mtls->fep.dim.z, sc->zEnd);
-        if (mtls->zStart >= mtls->zEnd) return;
+        mtls->start.z = rsMin(mtls->fep.dim.z, sc->zStart);
+        mtls->end.z = rsMin(mtls->fep.dim.z, sc->zEnd);
+        if (mtls->start.z >= mtls->end.z) return false;
     }
 
-    mtls->xEnd     = rsMax((uint32_t)1, mtls->xEnd);
-    mtls->yEnd     = rsMax((uint32_t)1, mtls->yEnd);
-    mtls->zEnd     = rsMax((uint32_t)1, mtls->zEnd);
-    mtls->arrayEnd = rsMax((uint32_t)1, mtls->arrayEnd);
+    if (!sc || (sc->arrayEnd == 0)) {
+        mtls->end.array[0] = mtls->fep.dim.array[0];
+    } else {
+        mtls->start.array[0] = rsMin(mtls->fep.dim.array[0], sc->arrayStart);
+        mtls->end.array[0] = rsMin(mtls->fep.dim.array[0], sc->arrayEnd);
+        if (mtls->start.array[0] >= mtls->end.array[0]) return false;
+    }
 
-    rsAssert(inLen == 0 || (ains[0]->getType()->getDimZ() == 0));
+    if (!sc || (sc->array2End == 0)) {
+        mtls->end.array[1] = mtls->fep.dim.array[1];
+    } else {
+        mtls->start.array[1] = rsMin(mtls->fep.dim.array[1], sc->array2Start);
+        mtls->end.array[1] = rsMin(mtls->fep.dim.array[1], sc->array2End);
+        if (mtls->start.array[1] >= mtls->end.array[1]) return false;
+    }
+
+    if (!sc || (sc->array3End == 0)) {
+        mtls->end.array[2] = mtls->fep.dim.array[2];
+    } else {
+        mtls->start.array[2] = rsMin(mtls->fep.dim.array[2], sc->array3Start);
+        mtls->end.array[2] = rsMin(mtls->fep.dim.array[2], sc->array3End);
+        if (mtls->start.array[2] >= mtls->end.array[2]) return false;
+    }
+
+    if (!sc || (sc->array4End == 0)) {
+        mtls->end.array[3] = mtls->fep.dim.array[3];
+    } else {
+        mtls->start.array[3] = rsMin(mtls->fep.dim.array[3], sc->array4Start);
+        mtls->end.array[3] = rsMin(mtls->fep.dim.array[3], sc->array4End);
+        if (mtls->start.array[3] >= mtls->end.array[3]) return false;
+    }
+
+
+    // The X & Y walkers always want 0-1 min even if dim is not present
+    mtls->end.x    = rsMax((uint32_t)1, mtls->end.x);
+    mtls->end.y    = rsMax((uint32_t)1, mtls->end.y);
 
     mtls->rsc        = mCtx;
     if (ains) {
@@ -1013,6 +1034,9 @@ void RsdCpuScriptImpl::forEachMtlsSetup(const Allocation ** ains,
         mtls->fep.outPtr[0] = (uint8_t *)aout->mHal.drvState.lod[0].mallocPtr;
         mtls->fep.outStride[0] = aout->getType()->getElementSizeBytes();
     }
+
+    // All validation passed, ok to launch threads
+    return true;
 }
 
 
@@ -1026,12 +1050,13 @@ void RsdCpuScriptImpl::invokeForEach(uint32_t slot,
 
     MTLaunchStruct mtls;
 
-    forEachMtlsSetup(ains, inLen, aout, usr, usrLen, sc, &mtls);
-    forEachKernelSetup(slot, &mtls);
+    if (forEachMtlsSetup(ains, inLen, aout, usr, usrLen, sc, &mtls)) {
+        forEachKernelSetup(slot, &mtls);
 
-    RsdCpuScriptImpl * oldTLS = mCtx->setTLS(this);
-    mCtx->launchThreads(ains, inLen, aout, sc, &mtls);
-    mCtx->setTLS(oldTLS);
+        RsdCpuScriptImpl * oldTLS = mCtx->setTLS(this);
+        mCtx->launchThreads(ains, inLen, aout, sc, &mtls);
+        mCtx->setTLS(oldTLS);
+    }
 }
 
 void RsdCpuScriptImpl::forEachKernelSetup(uint32_t slot, MTLaunchStruct *mtls) {
