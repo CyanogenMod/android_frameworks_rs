@@ -238,6 +238,12 @@ typedef struct {
     uint32_t zEnd;
     uint32_t arrayStart;
     uint32_t arrayEnd;
+    uint32_t array2Start;
+    uint32_t array2End;
+    uint32_t array3Start;
+    uint32_t array3End;
+    uint32_t array4Start;
+    uint32_t array4End;
 
 } RsScriptCall;
 
