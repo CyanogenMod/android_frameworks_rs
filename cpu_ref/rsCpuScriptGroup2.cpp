@@ -167,16 +167,17 @@ void CpuScriptGroup2Impl::runBatch(const list<CPUClosure*>& batch) {
   const Closure* closure = cpuClosure->mClosure;
   MTLaunchStruct mtls;
 
-  cpuClosure->mSi->forEachMtlsSetup((const Allocation**)&closure->mArgs[0],
-                                    closure->mArgs.size(),
-                                    closure->mReturnValue,
-                                    nullptr, 0, nullptr, &mtls);
+  if (cpuClosure->mSi->forEachMtlsSetup((const Allocation**)&closure->mArgs[0],
+                                        closure->mArgs.size(),
+                                        closure->mReturnValue,
+                                        nullptr, 0, nullptr, &mtls)) {
 
-  mtls.script = nullptr;
-  mtls.kernel = (void (*)())&groupRoot;
-  mtls.fep.usr = &batch;
+      mtls.script = nullptr;
+      mtls.kernel = (void (*)())&groupRoot;
+      mtls.fep.usr = &batch;
 
-  mCpuRefImpl->launchThreads(nullptr, 0, nullptr, nullptr, &mtls);
+      mCpuRefImpl->launchThreads(nullptr, 0, nullptr, nullptr, &mtls);
+  }
 
   for (CPUClosure* cpuClosure : batch) {
     const Closure* closure = cpuClosure->mClosure;
