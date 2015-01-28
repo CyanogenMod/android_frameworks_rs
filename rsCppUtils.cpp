@@ -17,6 +17,8 @@
 #include "rsUtils.h"
 #include "rsCppUtils.h"
 
+#include <string.h>
+
 namespace android {
 namespace renderscript {
 
