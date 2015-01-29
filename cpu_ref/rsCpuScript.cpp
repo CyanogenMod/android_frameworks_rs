@@ -436,6 +436,7 @@ void* SharedLibraryUtils::loadSOHelper(const char *origName, const char *cacheDi
 #define EXPORT_FOREACH_STR "exportForEachCount: "
 #define OBJECT_SLOT_STR "objectSlotCount: "
 #define PRAGMA_STR "pragmaCount: "
+#define THREADABLE_STR "isThreadable: "
 
 // Copy up to a newline or size chars from str -> s, updating str
 // Returns s when successful and nullptr when '\0' is finally reached.
@@ -515,6 +516,9 @@ bool RsdCpuScriptImpl::storeRSInfoFromSO() {
         memset(mBoundAllocs, 0, varCount * sizeof(*mBoundAllocs));
     }
 
+    mIsThreadable = mScriptExec->getThreadable();
+    //ALOGE("Script isThreadable? %d", mIsThreadable);
+
     return true;
 }
 
@@ -527,6 +531,7 @@ ScriptExecutable* ScriptExecutable::createFromSharedObject(
     size_t forEachCount = 0;
     size_t objectSlotCount = 0;
     size_t pragmaCount = 0;
+    bool isThreadable = true;
 
     const char *rsInfo = (const char *) dlsym(sharedObj, ".rs.info");
 
@@ -649,9 +654,12 @@ ScriptExecutable* ScriptExecutable::createFromSharedObject(
     }
 
 #ifdef RS_COMPATIBILITY_LIB
-    // Do not attempt to read pragmas in compat lib path
+    // Do not attempt to read pragmas or isThreadable flag in compat lib path.
+    // Neither is applicable for compat lib
     std::vector<const char *> pragmaKeys(pragmaCount);
     std::vector<const char *> pragmaValues(pragmaCount);
+
+    isThreadable = true;
 
 #else
     if (strgets(line, MAXLINE, &rsInfo) == nullptr) {
@@ -700,11 +708,31 @@ ScriptExecutable* ScriptExecutable::createFromSharedObject(
         pragmaValues[i] = pValue;
         //ALOGE("Pragma %zu: Key: '%s' Value: '%s'", i, pKey, pValue);
     }
+
+    if (strgets(line, MAXLINE, &rsInfo) == nullptr) {
+        return nullptr;
+    }
+
+    char tmpFlag[4];
+    if (sscanf(line, THREADABLE_STR "%4s", tmpFlag) != 1) {
+        ALOGE("Invalid threadable flag!: %s", line);
+        return nullptr;
+    }
+    if (strcmp(tmpFlag, "yes") == 0)
+        isThreadable = true;
+    else if (strcmp(tmpFlag, "no") == 0)
+        isThreadable = false;
+    else {
+        ALOGE("Invalid threadable flag!: %s", tmpFlag);
+        return nullptr;
+    }
+
 #endif
 
     return new ScriptExecutable(
         RSContext, fieldAddress, fieldIsObject, invokeFunctions,
-        forEachFunctions, forEachSignatures, pragmaKeys, pragmaValues);
+        forEachFunctions, forEachSignatures, pragmaKeys, pragmaValues,
+        isThreadable);
 }
 
 bool RsdCpuScriptImpl::init(char const *resName, char const *cacheDir,
