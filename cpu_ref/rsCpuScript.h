@@ -73,7 +73,9 @@ class ScriptExecutable {
                    std::vector<ForEachFunc_t>& forEachFunctions,
                    std::vector<uint32_t>& forEachSignatures,
                    std::vector<const char *> &pragmaKeys,
-                   std::vector<const char *> &pragmaValues) : mRS(RSContext) {
+                   std::vector<const char *> &pragmaValues,
+                   bool isThreadable)
+                   : mIsThreadable(isThreadable), mRS(RSContext) {
       mFieldAddress.swap(fieldAddress);
       mFieldIsObject.swap(fieldIsObject);
       mInvokeFunctions.swap(invokeFunctions);
@@ -114,8 +116,10 @@ class ScriptExecutable {
   ForEachFunc_t getForEachFunction(int slot) const { return mForEachFunctions[slot]; }
   uint32_t getForEachSignature(int slot) const { return mForEachSignatures[slot]; }
 
-  std::vector<const char *> & getPragmaKeys() { return mPragmaKeys; }
-  std::vector<const char *> & getPragmaValues() { return mPragmaValues; }
+  const std::vector<const char *> & getPragmaKeys() const { return mPragmaKeys; }
+  const std::vector<const char *> & getPragmaValues() const { return mPragmaValues; }
+
+  bool getThreadable() const { return mIsThreadable; }
 
  private:
   std::vector<void*> mFieldAddress;
@@ -125,6 +129,8 @@ class ScriptExecutable {
   std::vector<uint32_t> mForEachSignatures;
   std::vector<const char *> mPragmaKeys;
   std::vector<const char *> mPragmaValues;
+
+  bool mIsThreadable;
 
   Context* mRS;
 };
