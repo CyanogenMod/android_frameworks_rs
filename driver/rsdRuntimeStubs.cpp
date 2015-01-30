@@ -157,6 +157,24 @@ static inline RS_TY_ALLOC rsTyCast(::rs_allocation *a) {
 
 #endif
 
+// Some RS functions are not threadsafe but can be called from an invoke
+// function.  Instead of summarily marking scripts that call these functions as
+// not-threadable we detect calls to them in the driver and sends a fatal error
+// message.
+static bool failIfInKernel(Context *rsc, const char *funcName) {
+    RsdHal *dc = (RsdHal *)rsc->mHal.drv;
+    RsdCpuReference *impl = (RsdCpuReference *) dc->mCpuRef;
+
+    if (impl->getInForEach()) {
+        char buf[256];
+        sprintf(buf, "Error: Call to unsupported function %s "
+                         "in kernel", funcName);
+        rsc->setError(RS_ERROR_FATAL_DRIVER, buf);
+        return true;
+    }
+    return false;
+}
+
 //////////////////////////////////////////////////////////////////////////////
 // Allocation
 //////////////////////////////////////////////////////////////////////////////
@@ -181,6 +199,9 @@ static void SC_AllocationCopy1DRange(RS_TY_ALLOC dstAlloc,
                                      RS_TY_ALLOC srcAlloc,
                                      uint32_t srcOff, uint32_t srcMip) {
     Context *rsc = RsdCpuReference::getTlsContext();
+    if (failIfInKernel(rsc, "rsAllocationCopy1DRange"))
+        return;
+
     rsrAllocationCopy1DRange(rsc, rsGetObjPtr(dstAlloc), dstOff, dstMip, count,
                              rsGetObjPtr(srcAlloc), srcOff, srcMip);
 }
@@ -193,6 +214,9 @@ static void SC_AllocationCopy2DRange(RS_TY_ALLOC dstAlloc,
                                      uint32_t srcXoff, uint32_t srcYoff,
                                      uint32_t srcMip, uint32_t srcFace) {
     Context *rsc = RsdCpuReference::getTlsContext();
+    if (failIfInKernel(rsc, "rsAllocationCopy2DRange"))
+        return;
+
     rsrAllocationCopy2DRange(rsc, rsGetObjPtr(dstAlloc),
                              dstXoff, dstYoff, dstMip, dstFace,
                              width, height, rsGetObjPtr(srcAlloc),
@@ -201,12 +225,18 @@ static void SC_AllocationCopy2DRange(RS_TY_ALLOC dstAlloc,
 
 static void SC_AllocationIoSend(RS_TY_ALLOC alloc) {
     Context *rsc = RsdCpuReference::getTlsContext();
+    if (failIfInKernel(rsc, "rsAllocationIoSend"))
+        return;
+
     rsrAllocationIoSend(rsc, rsGetObjPtr(alloc));
 }
 
 
 static void SC_AllocationIoReceive(RS_TY_ALLOC alloc) {
     Context *rsc = RsdCpuReference::getTlsContext();
+    if (failIfInKernel(rsc, "rsAllocationIoReceive"))
+        return;
+
     rsrAllocationIoReceive(rsc, rsGetObjPtr(alloc));
 }
 
@@ -219,6 +249,9 @@ static void SC_AllocationCopy1DRange(RS_TY_ALLOC dstAlloc,
                                      RS_TY_ALLOC srcAlloc,
                                      uint32_t srcOff, uint32_t srcMip) {
     Context *rsc = RsdCpuReference::getTlsContext();
+    if (failIfInKernel(rsc, "rsAllocationCopy1DRange"))
+        return;
+
     rsrAllocationCopy1DRange(rsc, rsGetObjPtr(dstAlloc), dstOff, dstMip, count,
                              rsGetObjPtr(srcAlloc), srcOff, srcMip);
 }
@@ -231,6 +264,9 @@ static void SC_AllocationCopy2DRange(RS_TY_ALLOC dstAlloc,
                                      uint32_t srcXoff, uint32_t srcYoff,
                                      uint32_t srcMip, uint32_t srcFace) {
     Context *rsc = RsdCpuReference::getTlsContext();
+    if (failIfInKernel(rsc, "rsAllocationCopy2DRange"))
+        return;
+
     rsrAllocationCopy2DRange(rsc, rsGetObjPtr(dstAlloc),
                              dstXoff, dstYoff, dstMip, dstFace,
                              width, height,
@@ -240,12 +276,18 @@ static void SC_AllocationCopy2DRange(RS_TY_ALLOC dstAlloc,
 
 static void SC_AllocationIoSend(RS_TY_ALLOC alloc) {
     Context *rsc = RsdCpuReference::getTlsContext();
+    if (failIfInKernel(rsc, "rsAllocationIoSend"))
+        return;
+
     rsrAllocationIoSend(rsc, rsGetObjPtr(alloc));
 }
 
 
 static void SC_AllocationIoReceive(RS_TY_ALLOC alloc) {
     Context *rsc = RsdCpuReference::getTlsContext();
+    if (failIfInKernel(rsc, "rsAllocationIoReceive"))
+        return;
+
     rsrAllocationIoReceive(rsc, rsGetObjPtr(alloc));
 }
 
