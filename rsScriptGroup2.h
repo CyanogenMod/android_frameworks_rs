@@ -3,8 +3,7 @@
 
 #include "rsScriptGroupBase.h"
 
-#include <list>
-#include <string>
+#include "rsList.h"
 
 namespace android {
 namespace renderscript {
@@ -23,15 +22,15 @@ class ScriptGroup2 : public ScriptGroupBase {
     */
     ScriptGroup2(Context* rsc, const char* cacheDir, Closure** closures,
                  size_t numClosures) :
-        ScriptGroupBase(rsc), mCacheDir(cacheDir),
-        mClosures(closures, closures + numClosures) {}
+        ScriptGroupBase(rsc), mClosures(closures, closures + numClosures),
+        mCacheDir(cacheDir) {}
     virtual ~ScriptGroup2() {}
 
     virtual SG_API_Version getApiVersion() const { return SG_V2; }
     virtual void execute(Context* rsc);
 
-    const std::string mCacheDir;
-    std::list<Closure*> mClosures;
+    List<Closure*> mClosures;
+    const char* mCacheDir;
 };
 
 }  // namespace renderscript

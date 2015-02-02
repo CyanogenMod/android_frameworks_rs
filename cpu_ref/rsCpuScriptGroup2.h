@@ -1,11 +1,8 @@
 #ifndef CPU_REF_CPUSCRIPTGROUP2IMPL_H_
 #define CPU_REF_CPUSCRIPTGROUP2IMPL_H_
 
-#include <list>
-
 #include "rsd_cpu.h"
-
-using std::list;
+#include "rsList.h"
 
 namespace android {
 namespace renderscript {
@@ -61,7 +58,7 @@ public:
     CpuScriptGroup2Impl* mGroup;
     ScriptExecutable* mExecutable;
     void* mScriptObj;
-    list<CPUClosure*> mClosures;
+    List<CPUClosure*> mClosures;
 };
 
 class CpuScriptGroup2Impl : public RsdCpuReference::CpuScriptGroup2 {
@@ -77,7 +74,7 @@ public:
 private:
     RsdCpuReferenceImpl* mCpuRefImpl;
     const ScriptGroup2* mGroup;
-    list<Batch*> mBatches;
+    List<Batch*> mBatches;
 };
 
 }  // namespace renderscript
