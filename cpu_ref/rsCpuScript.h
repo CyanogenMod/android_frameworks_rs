@@ -67,26 +67,25 @@ class SharedLibraryUtils {
 class ScriptExecutable {
  public:
   ScriptExecutable(Context* RSContext,
-                   std::vector<void*>& fieldAddress,
-                   std::vector<bool>& fieldIsObject,
-                   std::vector<InvokeFunc_t>& invokeFunctions,
-                   std::vector<ForEachFunc_t>& forEachFunctions,
-                   std::vector<uint32_t>& forEachSignatures,
-                   std::vector<const char *> &pragmaKeys,
-                   std::vector<const char *> &pragmaValues,
-                   bool isThreadable)
-                   : mIsThreadable(isThreadable), mRS(RSContext) {
-      mFieldAddress.swap(fieldAddress);
-      mFieldIsObject.swap(fieldIsObject);
-      mInvokeFunctions.swap(invokeFunctions);
-      mForEachFunctions.swap(forEachFunctions);
-      mForEachSignatures.swap(forEachSignatures);
-      mPragmaKeys.swap(pragmaKeys);
-      mPragmaValues.swap(pragmaValues);
+                   void** fieldAddress, bool* fieldIsObject, size_t varCount,
+                   InvokeFunc_t* invokeFunctions, size_t funcCount,
+                   ForEachFunc_t* forEachFunctions, uint32_t* forEachSignatures,
+                   size_t forEachCount,
+                   const char ** pragmaKeys, const char ** pragmaValues,
+                   size_t pragmaCount,
+                   bool isThreadable) :
+      mFieldAddress(fieldAddress), mFieldIsObject(fieldIsObject),
+      mExportedVarCount(varCount),
+      mInvokeFunctions(invokeFunctions), mFuncCount(funcCount),
+      mForEachFunctions(forEachFunctions), mForEachSignatures(forEachSignatures),
+      mForEachCount(forEachCount),
+      mPragmaKeys(pragmaKeys), mPragmaValues(pragmaValues),
+      mPragmaCount(pragmaCount),
+      mIsThreadable(isThreadable), mRS(RSContext) {
   }
 
   ~ScriptExecutable() {
-      for (size_t i = 0; i < mFieldAddress.size(); ++i) {
+      for (size_t i = 0; i < mExportedVarCount; ++i) {
           if (mFieldIsObject[i]) {
               if (mFieldAddress[i] != nullptr) {
                   rs_object_base *obj_addr =
@@ -96,19 +95,27 @@ class ScriptExecutable {
           }
       }
 
-      for (size_t i = 0; i < mPragmaKeys.size(); ++i) {
+      for (size_t i = 0; i < mPragmaCount; ++i) {
           delete [] mPragmaKeys[i];
           delete [] mPragmaValues[i];
       }
+
+      delete[] mPragmaValues;
+      delete[] mPragmaKeys;
+      delete[] mForEachSignatures;
+      delete[] mForEachFunctions;
+      delete[] mInvokeFunctions;
+      delete[] mFieldIsObject;
+      delete[] mFieldAddress;
   }
 
   static ScriptExecutable*
   createFromSharedObject(Context* RSContext, void* sharedObj);
 
-  size_t getExportedVariableCount() const { return mFieldAddress.size(); }
-  size_t getExportedFunctionCount() const { return mInvokeFunctions.size(); }
-  size_t getExportedForEachCount() const { return mForEachFunctions.size(); }
-  size_t getPragmaCount() const { return mPragmaKeys.size(); }
+  size_t getExportedVariableCount() const { return mExportedVarCount; }
+  size_t getExportedFunctionCount() const { return mFuncCount; }
+  size_t getExportedForEachCount() const { return mForEachCount; }
+  size_t getPragmaCount() const { return mPragmaCount; }
 
   void* getFieldAddress(int slot) const { return mFieldAddress[slot]; }
   bool getFieldIsObject(int slot) const { return mFieldIsObject[slot]; }
@@ -116,19 +123,26 @@ class ScriptExecutable {
   ForEachFunc_t getForEachFunction(int slot) const { return mForEachFunctions[slot]; }
   uint32_t getForEachSignature(int slot) const { return mForEachSignatures[slot]; }
 
-  const std::vector<const char *> & getPragmaKeys() const { return mPragmaKeys; }
-  const std::vector<const char *> & getPragmaValues() const { return mPragmaValues; }
+  const char ** getPragmaKeys() const { return mPragmaKeys; }
+  const char ** getPragmaValues() const { return mPragmaValues; }
 
   bool getThreadable() const { return mIsThreadable; }
 
  private:
-  std::vector<void*> mFieldAddress;
-  std::vector<bool> mFieldIsObject;
-  std::vector<InvokeFunc_t> mInvokeFunctions;
-  std::vector<ForEachFunc_t> mForEachFunctions;
-  std::vector<uint32_t> mForEachSignatures;
-  std::vector<const char *> mPragmaKeys;
-  std::vector<const char *> mPragmaValues;
+  void** mFieldAddress;
+  bool* mFieldIsObject;
+  size_t mExportedVarCount;
+
+  InvokeFunc_t* mInvokeFunctions;
+  size_t mFuncCount;
+
+  ForEachFunc_t* mForEachFunctions;
+  uint32_t* mForEachSignatures;
+  size_t mForEachCount;
+
+  const char ** mPragmaKeys;
+  const char ** mPragmaValues;
+  size_t mPragmaCount;
 
   bool mIsThreadable;
 
