@@ -52,6 +52,7 @@ public:
     virtual void Invoke(Context *rsc, uint32_t slot, const void *data, size_t len);
     virtual void setupScript(Context *rsc);
     virtual uint32_t run(Context *);
+    virtual bool isInstrinsic() const { return true; }
 protected:
     uint32_t mIntrinsicID;
 

@@ -4,6 +4,7 @@
 #include "rsScriptGroupBase.h"
 
 #include <list>
+#include <string>
 
 namespace android {
 namespace renderscript {
@@ -20,13 +21,16 @@ class ScriptGroup2 : public ScriptGroupBase {
     For better compiler optimizations (of a script group), we need to include
     input and output information in the C++ runtime.
    */
-  ScriptGroup2(Context* rsc, Closure** closures, size_t numClosures) :
-      ScriptGroupBase(rsc), mClosures(closures, closures + numClosures) {}
+  ScriptGroup2(Context* rsc, const char* cacheDir, Closure** closures,
+               size_t numClosures) :
+      ScriptGroupBase(rsc), mCacheDir(cacheDir),
+      mClosures(closures, closures + numClosures) {}
   virtual ~ScriptGroup2() {}
 
   virtual SG_API_Version getApiVersion() const { return SG_V2; }
   virtual void execute(Context* rsc);
 
+  const std::string mCacheDir;
   std::list<Closure*> mClosures;
 };
 
