@@ -46,8 +46,7 @@ public class Filters extends TestBase {
     abstract class FilterBase implements FilterInterface {
         public ScriptGroup2.Closure asyncLaunch(ScriptGroup2.Builder builder,
                                                 Object in, Type outputType) {
-            return builder.addKernel(getKernelID(), outputType, new Object[] { in },
-                                     new HashMap<Script.FieldID, Object>());
+            return builder.addKernel(getKernelID(), outputType, in);
         }
     }
 
@@ -117,25 +116,19 @@ public class Filters extends TestBase {
     }
 
     public void init() {
-        // s.set_sampler(Sampler.CLAMP_LINEAR(mRS));
     }
 
     public ScriptGroup2.Closure prepInit(ScriptGroup2.Builder b) {
         return b.addInvoke(s.getInvokeID_init_filter(),
-                           new Object[] { new Integer(dimX), new Integer(dimY),
-                                          new Float(0.5f), new Float(0.5f), new Float(0.5f),
-                                          Sampler.CLAMP_LINEAR(mRS)},
-                           new HashMap<Script.FieldID, Object>());
+                           dimX, dimY, 0.5f, 0.5f, 0.5f, Sampler.CLAMP_LINEAR(mRS));
     }
 
     public Script.KernelID getKernelID() { return s.getKernelID_fisheye(); }
 
     public ScriptGroup2.Closure asyncLaunch(ScriptGroup2.Builder builder,
                                             Object in, Type outputType) {
-        HashMap<Script.FieldID, Object> globals = new HashMap<Script.FieldID, Object>();
-        globals.put(s.getFieldID_in_alloc(), in);
-        //globals.put(s.getFieldID_sampler(), Sampler.CLAMP_LINEAR(mRS));
-        return builder.addKernel(getKernelID(), outputType, new Object[0], globals);
+        return builder.addKernel(getKernelID(), outputType,
+                                 new ScriptGroup2.Binding(s.getFieldID_in_alloc(), in));
     }
 
     public void forEach(Allocation in, Allocation out) {
@@ -210,10 +203,8 @@ public class Filters extends TestBase {
 
     public ScriptGroup2.Closure prepInit(ScriptGroup2.Builder b) {
         return b.addInvoke(s.getInvokeID_initialize(),
-                           new Object[] { new Float(mInBlack), new Float(mOutBlack),
-                                          new Float(mInWMinInB), new Float(mOutWMinOutB),
-                                          new Float(mOverInWMinInB), mSatMatrix },
-                           new HashMap<Script.FieldID, Object>());
+                           mInBlack, mOutBlack, mInWMinInB, mOutWMinOutB,
+                           mOverInWMinInB, mSatMatrix);
     }
 
     public Script.KernelID getKernelID() { return s.getKernelID_levels_v4(); }
@@ -229,9 +220,7 @@ public class Filters extends TestBase {
     public void init() { s.invoke_prepareShadows(50.f); }
 
     public ScriptGroup2.Closure prepInit(ScriptGroup2.Builder b) {
-      cInit = b.addInvoke(s.getInvokeID_prepareShadows(),
-          new Object[] { new Float(50.f) },
-          new HashMap<Script.FieldID, Object>());
+      cInit = b.addInvoke(s.getInvokeID_prepareShadows(), 50.f);
       return cInit;
     }
 
@@ -275,13 +264,11 @@ public class Filters extends TestBase {
 
     public ScriptGroup2.Closure prepInit(ScriptGroup2.Builder b) {
       cInit = b.addInvoke(s.getInvokeID_init_vignette(),
-          new Object[] {
-            new Integer(mInPixelsAllocation.getType().getX()),
-            new Integer(mInPixelsAllocation.getType().getY()),
-            new Float(center_x),
-            new Float(center_y),
-            new Float(scale), new Float(shade), new Float(slope) },
-          new HashMap<Script.FieldID, Object>());
+            mInPixelsAllocation.getType().getX(),
+            mInPixelsAllocation.getType().getY(),
+            center_x,
+            center_y,
+            scale, shade, slope);
       return cInit;
     }
 
@@ -296,7 +283,10 @@ public class Filters extends TestBase {
     ColorMatrixFilter.class,
     ContrastFilter.class,
     ExposureFilter.class,
+    /* The fisheye filter uses rsSample, which does not work for float4 element
+       type.
     FisheyeFilter.class,
+    */
     GreyFilter.class,
     LevelsFilter.class,
     ShadowsFilter.class,
@@ -403,8 +393,6 @@ public class Filters extends TestBase {
             connect, new Object[]{ in }, emptyMap);
 
         for (int i = 0; i < mIndices.length; i++) {
-//          c = b2.addKernel(mFilters[i].getKernelID(), connect,
-//              new Object[]{ c.getReturn() }, emptyMap);
             c = mFilters[i].asyncLaunch(b2, c.getReturn(), connect);
         }
 
