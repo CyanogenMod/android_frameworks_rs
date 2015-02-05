@@ -42,6 +42,7 @@ typedef void * RsFont;
 typedef void * RsSampler;
 typedef void * RsScript;
 typedef void * RsScriptKernelID;
+typedef void * RsScriptInvokeID;
 typedef void * RsScriptFieldID;
 typedef void * RsScriptMethodID;
 typedef void * RsScriptGroup;
