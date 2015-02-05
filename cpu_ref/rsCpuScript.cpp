@@ -113,10 +113,9 @@ static int copyFile(const char *dstFile, const char *srcFile) {
 
 static std::string findSharedObjectName(const char *cacheDir,
                                         const char *resName) {
-
 #ifndef RS_SERVER
     std::string scriptSOName(cacheDir);
-#ifdef RS_COMPATIBILITY_LIB
+#if defined(RS_COMPATIBILITY_LIB) && !defined(__LP64__)
     size_t cutPos = scriptSOName.rfind("cache");
     if (cutPos != std::string::npos) {
         scriptSOName.erase(cutPos);
@@ -126,11 +125,11 @@ static std::string findSharedObjectName(const char *cacheDir,
     scriptSOName.append("/lib/librs.");
 #else
     scriptSOName.append("/librs.");
-#endif
+#endif // RS_COMPATIBILITY_LIB
 
 #else
     std::string scriptSOName("lib");
-#endif
+#endif // RS_SERVER
     scriptSOName.append(resName);
     scriptSOName.append(".so");
 
@@ -328,10 +327,15 @@ bool SharedLibraryUtils::createSharedLibrary(const char *cacheDir, const char *r
 
 #endif  // RS_COMPATIBILITY_LIB
 
-void* SharedLibraryUtils::loadSharedLibrary(const char *cacheDir, const char *resName) {
+
+void* SharedLibraryUtils::loadSharedLibrary(const char *cacheDir, const char *resName, const char *nativeLibDir) {
     void *loaded = nullptr;
 
+#if defined(RS_COMPATIBILITY_LIB) && defined(__LP64__)
+    std::string scriptSOName = findSharedObjectName(nativeLibDir, resName);
+#else
     std::string scriptSOName = findSharedObjectName(cacheDir, resName);
+#endif
 
     // We should check if we can load the library from the standard app
     // location for shared libraries first.
@@ -875,8 +879,8 @@ bool RsdCpuScriptImpl::init(char const *resName, char const *cacheDir,
       goto error;
     }
 #else  // RS_COMPATIBILITY_LIB is defined
-
-    mScriptSO = SharedLibraryUtils::loadSharedLibrary(cacheDir, resName);
+    const char *nativeLibDir = mCtx->getContext()->getNativeLibDir();
+    mScriptSO = SharedLibraryUtils::loadSharedLibrary(cacheDir, resName, nativeLibDir);
 
     if (!mScriptSO) {
         goto error;
