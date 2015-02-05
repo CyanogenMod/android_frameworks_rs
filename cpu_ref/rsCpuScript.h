@@ -51,7 +51,11 @@ class SharedLibraryUtils {
   // cache dir) and then load that. We then immediately destroy the copy.
   // This is required behavior to implement script instancing for the support
   // library, since shared objects are loaded and de-duped by name only.
-  static void* loadSharedLibrary(const char* cacheDir, const char* resName);
+
+  // For 64bit RS Support Lib, the shared lib path cannot be constructed from
+  // cacheDir, so nativeLibDir is needed to load shared libs.
+  static void* loadSharedLibrary(const char *cacheDir, const char *resName,
+                                 const char *nativeLibDir = nullptr);
 
  private:
   // Attempt to load the shared library from origName, but then fall back to
