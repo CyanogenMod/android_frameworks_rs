@@ -183,7 +183,7 @@ void * Allocation::getPointer(size_t *stride) {
     }
 
     p = RS::dispatch->AllocationGetPointer(mRS->getContext(), getIDSafe(), 0,
-                                           RS_ALLOCATION_CUBEMAP_FACE_POSITIVE_X, 0, 0, stride);
+                                           RS_ALLOCATION_CUBEMAP_FACE_POSITIVE_X, 0, 0, stride, sizeof(size_t));
     if (mRS->getError() != RS_SUCCESS) {
         mRS->throwError(RS_ERROR_RUNTIME_ERROR, "Allocation lock failed");
         p = nullptr;
