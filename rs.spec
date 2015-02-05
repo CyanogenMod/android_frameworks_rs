@@ -270,6 +270,16 @@ ClosureCreate {
     ret RsClosure
     }
 
+InvokeClosureCreate {
+    direct
+    param RsScriptInvokeID invokeID
+    param const void * params
+    param const RsScriptFieldID * fieldIDs
+    param const uintptr_t * values
+    param const size_t * sizes
+    ret RsClosure
+}
+
 ClosureSetArg {
   param RsClosure closureID
   param uint32_t index
@@ -304,6 +314,12 @@ ScriptBindAllocation {
 ScriptSetTimeZone {
     param RsScript s
     param const char * timeZone
+    }
+
+ScriptInvokeIDCreate {
+    param RsScript s
+    param uint32_t slot
+    ret RsScriptInvokeID;
     }
 
 ScriptInvoke {

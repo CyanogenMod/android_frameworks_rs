@@ -20,59 +20,64 @@ struct RsExpandKernelParams;
 
 typedef void (*ExpandFuncTy)(const RsExpandKernelParams*, uint32_t, uint32_t,
                              uint32_t);
+typedef void (*InvokeFuncTy)(const void*, uint32_t);
 
 class CPUClosure {
- public:
-  CPUClosure(const Closure* closure, RsdCpuScriptImpl* si, ExpandFuncTy func,
-             const void* usrPtr, const size_t usrSize) :
-      mClosure(closure), mSi(si), mFunc(func), mUsrPtr(usrPtr),
-      mUsrSize(usrSize) {}
+public:
+    CPUClosure(const Closure* closure, RsdCpuScriptImpl* si, ExpandFuncTy func,
+               const void* usrPtr, const size_t usrSize) :
+        mClosure(closure), mSi(si), mFunc(func),
+        mUsrPtr(usrPtr), mUsrSize(usrSize) {}
 
-  // It's important to do forwarding here than inheritance for unbound value
-  // binding to work.
-  const Closure* mClosure;
-  RsdCpuScriptImpl* mSi;
-  const ExpandFuncTy mFunc;
-  const void* mUsrPtr;
-  const size_t mUsrSize;
+    CPUClosure(const Closure* closure, RsdCpuScriptImpl* si) :
+        mClosure(closure), mSi(si), mFunc(nullptr),
+        mUsrPtr(nullptr), mUsrSize(0) {}
+
+    // It's important to do forwarding here than inheritance for unbound value
+    // binding to work.
+    const Closure* mClosure;
+    RsdCpuScriptImpl* mSi;
+    const ExpandFuncTy mFunc;
+    const void* mUsrPtr;
+    const size_t mUsrSize;
 };
 
 class CpuScriptGroup2Impl;
 
 class Batch {
- public:
-  Batch(CpuScriptGroup2Impl* group) : mGroup(group), mExecutable(nullptr) {}
+public:
+    Batch(CpuScriptGroup2Impl* group) : mGroup(group), mExecutable(nullptr) {}
 
-  ~Batch();
+    ~Batch();
 
-  // Returns true if closure depends on any closure in this batch for a global
-  // variable
-  bool conflict(CPUClosure* closure) const;
+    // Returns true if closure depends on any closure in this batch for a global
+    // variable
+    bool conflict(CPUClosure* closure) const;
 
-  void tryToCreateFusedKernel(const char* cacheDir);
-  void setGlobalsForBatch();
-  void run();
+    void tryToCreateFusedKernel(const char* cacheDir);
+    void setGlobalsForBatch();
+    void run();
 
-  CpuScriptGroup2Impl* mGroup;
-  ScriptExecutable* mExecutable;
-  void* mScriptObj;
-  list<CPUClosure*> mClosures;
+    CpuScriptGroup2Impl* mGroup;
+    ScriptExecutable* mExecutable;
+    void* mScriptObj;
+    list<CPUClosure*> mClosures;
 };
 
 class CpuScriptGroup2Impl : public RsdCpuReference::CpuScriptGroup2 {
- public:
-  CpuScriptGroup2Impl(RsdCpuReferenceImpl *cpuRefImpl, const ScriptGroupBase* group);
-  virtual ~CpuScriptGroup2Impl();
+public:
+    CpuScriptGroup2Impl(RsdCpuReferenceImpl *cpuRefImpl, const ScriptGroupBase* group);
+    virtual ~CpuScriptGroup2Impl();
 
-  bool init();
-  virtual void execute();
+    bool init();
+    virtual void execute();
 
-  RsdCpuReferenceImpl* getCpuRefImpl() const { return mCpuRefImpl; }
+    RsdCpuReferenceImpl* getCpuRefImpl() const { return mCpuRefImpl; }
 
- private:
-  RsdCpuReferenceImpl* mCpuRefImpl;
-  const ScriptGroup2* mGroup;
-  list<Batch*> mBatches;
+private:
+    RsdCpuReferenceImpl* mCpuRefImpl;
+    const ScriptGroup2* mGroup;
+    list<Batch*> mBatches;
 };
 
 }  // namespace renderscript
