@@ -472,58 +472,99 @@ bool rsdAllocationInit(const Context *rsc, Allocation *alloc, bool forceZero) {
     return true;
 }
 
+void rsdAllocationAdapterOffset(const Context *rsc, const Allocation *alloc) {
+    //ALOGE("rsdAllocationAdapterOffset");
+
+    // Get a base pointer to the new LOD
+    const Allocation *base = alloc->mHal.state.baseAlloc;
+    const Type *type = alloc->mHal.state.type;
+    if (base == nullptr) {
+        return;
+    }
+
+    uint8_t * ptrA = (uint8_t *)base->getPointerUnchecked(alloc->mHal.state.originX, alloc->mHal.state.originY);
+    uint8_t * ptrB = (uint8_t *)base->getPointerUnchecked(0, 0);
+
+    //ALOGE("rsdAllocationAdapterOffset  %p  %p", ptrA, ptrB);
+    //ALOGE("rsdAllocationAdapterOffset  lodCount %i", alloc->mHal.drvState.lodCount);
+
+    const int lodBias = alloc->mHal.state.originLOD;
+    uint32_t lodCount = rsMax(alloc->mHal.drvState.lodCount, (uint32_t)1);
+    for (uint32_t lod=0; lod < lodCount; lod++) {
+        alloc->mHal.drvState.lod[lod] = base->mHal.drvState.lod[lod + lodBias];
+        alloc->mHal.drvState.lod[lod].mallocPtr =
+                ((uint8_t *)alloc->mHal.drvState.lod[lod].mallocPtr + (ptrA - ptrB));
+        //ALOGE("rsdAllocationAdapterOffset  lod  %p  %i %i", alloc->mHal.drvState.lod[lod].mallocPtr, alloc->mHal.drvState.lod[lod].dimX, alloc->mHal.drvState.lod[lod].dimY);
+    }
+}
+
+bool rsdAllocationAdapterInit(const Context *rsc, Allocation *alloc) {
+    DrvAllocation *drv = (DrvAllocation *)calloc(1, sizeof(DrvAllocation));
+    if (!drv) {
+        return false;
+    }
+    alloc->mHal.drv = drv;
+
+    // We need to build an allocation that looks like a subset of the parent allocation
+    rsdAllocationAdapterOffset(rsc, alloc);
+
+    return true;
+}
+
 void rsdAllocationDestroy(const Context *rsc, Allocation *alloc) {
     DrvAllocation *drv = (DrvAllocation *)alloc->mHal.drv;
 
+    if (alloc->mHal.state.baseAlloc == nullptr) {
 #ifndef RS_COMPATIBILITY_LIB
-    if (drv->bufferID) {
-        // Causes a SW crash....
-        //ALOGV(" mBufferID %i", mBufferID);
-        //glDeleteBuffers(1, &mBufferID);
-        //mBufferID = 0;
-    }
-    if (drv->textureID) {
-        RSD_CALL_GL(glDeleteTextures, 1, &drv->textureID);
-        drv->textureID = 0;
-    }
-    if (drv->renderTargetID) {
-        RSD_CALL_GL(glDeleteRenderbuffers, 1, &drv->renderTargetID);
-        drv->renderTargetID = 0;
-    }
+        if (drv->bufferID) {
+            // Causes a SW crash....
+            //ALOGV(" mBufferID %i", mBufferID);
+            //glDeleteBuffers(1, &mBufferID);
+            //mBufferID = 0;
+        }
+        if (drv->textureID) {
+            RSD_CALL_GL(glDeleteTextures, 1, &drv->textureID);
+            drv->textureID = 0;
+        }
+        if (drv->renderTargetID) {
+            RSD_CALL_GL(glDeleteRenderbuffers, 1, &drv->renderTargetID);
+            drv->renderTargetID = 0;
+        }
 #endif
 
-    if (alloc->mHal.drvState.lod[0].mallocPtr) {
-        // don't free user-allocated ptrs or IO_OUTPUT buffers
-        if (!(drv->useUserProvidedPtr) &&
-            !(alloc->mHal.state.usageFlags & RS_ALLOCATION_USAGE_IO_INPUT) &&
-            !(alloc->mHal.state.usageFlags & RS_ALLOCATION_USAGE_IO_OUTPUT)) {
-                free(alloc->mHal.drvState.lod[0].mallocPtr);
+        if (alloc->mHal.drvState.lod[0].mallocPtr) {
+            // don't free user-allocated ptrs or IO_OUTPUT buffers
+            if (!(drv->useUserProvidedPtr) &&
+                !(alloc->mHal.state.usageFlags & RS_ALLOCATION_USAGE_IO_INPUT) &&
+                !(alloc->mHal.state.usageFlags & RS_ALLOCATION_USAGE_IO_OUTPUT)) {
+                    free(alloc->mHal.drvState.lod[0].mallocPtr);
+            }
+            alloc->mHal.drvState.lod[0].mallocPtr = nullptr;
         }
-        alloc->mHal.drvState.lod[0].mallocPtr = nullptr;
-    }
 
 #ifndef RS_COMPATIBILITY_LIB
-    if (drv->readBackFBO != nullptr) {
-        delete drv->readBackFBO;
-        drv->readBackFBO = nullptr;
-    }
-
-    if ((alloc->mHal.state.usageFlags & RS_ALLOCATION_USAGE_IO_OUTPUT) &&
-        (alloc->mHal.state.usageFlags & RS_ALLOCATION_USAGE_SCRIPT)) {
-
-        DrvAllocation *drv = (DrvAllocation *)alloc->mHal.drv;
-        ANativeWindow *nw = drv->wndSurface;
-        if (nw) {
-            GraphicBufferMapper &mapper = GraphicBufferMapper::get();
-            mapper.unlock(drv->wndBuffer->handle);
-            int32_t r = nw->queueBuffer(nw, drv->wndBuffer, -1);
-
-            drv->wndSurface = nullptr;
-            native_window_api_disconnect(nw, NATIVE_WINDOW_API_CPU);
-            nw->decStrong(nullptr);
+        if (drv->readBackFBO != nullptr) {
+            delete drv->readBackFBO;
+            drv->readBackFBO = nullptr;
         }
-    }
+
+        if ((alloc->mHal.state.usageFlags & RS_ALLOCATION_USAGE_IO_OUTPUT) &&
+            (alloc->mHal.state.usageFlags & RS_ALLOCATION_USAGE_SCRIPT)) {
+
+            DrvAllocation *drv = (DrvAllocation *)alloc->mHal.drv;
+            ANativeWindow *nw = drv->wndSurface;
+            if (nw) {
+                GraphicBufferMapper &mapper = GraphicBufferMapper::get();
+                mapper.unlock(drv->wndBuffer->handle);
+                int32_t r = nw->queueBuffer(nw, drv->wndBuffer, -1);
+
+                drv->wndSurface = nullptr;
+                native_window_api_disconnect(nw, NATIVE_WINDOW_API_CPU);
+                nw->decStrong(nullptr);
+            }
+        }
 #endif
+    }
 
     free(drv);
     alloc->mHal.drv = nullptr;

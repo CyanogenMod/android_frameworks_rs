@@ -45,6 +45,15 @@ typedef struct Allocation {
             int32_t surfaceTextureID;
             void * nativeBuffer;
             int64_t timestamp;
+
+            // Allocation adapter state
+            const void *baseAlloc;
+            uint32_t originX;
+            uint32_t originY;
+            uint32_t originZ;
+            uint32_t originLOD;
+            uint32_t originFace;
+            uint32_t originArray[4/*Type::mMaxArrays*/];
         } state;
 
         struct DrvState {
@@ -63,6 +72,9 @@ typedef struct Allocation {
                 uint32_t shift;
                 uint32_t step;
             } yuv;
+
+            int grallocFlags;
+            uint32_t dimArray[4/*Type::mMaxArrays*/];
         } drvState;
     } mHal;
 } Allocation_t;

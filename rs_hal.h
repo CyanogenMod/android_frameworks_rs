@@ -164,6 +164,7 @@ typedef struct {
 
     struct {
         bool (*init)(const Context *rsc, Allocation *alloc, bool forceZero);
+        bool (*initAdapter)(const Context *rsc, Allocation *alloc);
         void (*destroy)(const Context *rsc, Allocation *alloc);
         uint32_t (*grallocBits)(const Context *rsc, Allocation *alloc);
 
@@ -243,6 +244,8 @@ typedef struct {
         void (*generateMipmaps)(const Context *rsc, const Allocation *alloc);
 
         void (*updateCachedObject)(const Context *rsc, const Allocation *alloc, rs_allocation *obj);
+
+        void (*adapterOffset)(const Context *rsc, const Allocation *alloc);
     } allocation;
 
     struct {
