@@ -41,6 +41,53 @@ Allocation::Allocation(Context *rsc, const Type *type, uint32_t usages,
     updateCache();
 }
 
+Allocation::Allocation(Context *rsc, const Allocation *alloc, const Type *type)
+    : ObjectBase(rsc) {
+
+    memset(&mHal, 0, sizeof(mHal));
+
+
+    mHal.state.baseAlloc = alloc;
+    mHal.state.type = type;
+    mHal.state.usageFlags = alloc->mHal.state.usageFlags;
+    mHal.state.mipmapControl = RS_ALLOCATION_MIPMAP_NONE;
+
+    setType(type);
+    updateCache();
+
+
+
+
+    struct Hal {
+        void * drv;
+
+        struct DrvState {
+            struct LodState {
+                void * mallocPtr;
+                size_t stride;
+                uint32_t dimX;
+                uint32_t dimY;
+                uint32_t dimZ;
+            } lod[android::renderscript::Allocation::MAX_LOD];
+            size_t faceOffset;
+            uint32_t lodCount;
+            uint32_t faceCount;
+
+            struct YuvState {
+                uint32_t shift;
+                uint32_t step;
+            } yuv;
+
+            int grallocFlags;
+            uint32_t dimArray[Type::mMaxArrays];
+        };
+        mutable DrvState drvState;
+
+    };
+    Hal mHal;
+
+}
+
 void Allocation::operator delete(void* ptr) {
     if (ptr) {
         Allocation *a = (Allocation*) ptr;
@@ -68,6 +115,27 @@ Allocation * Allocation::createAllocation(Context *rsc, const Type *type, uint32
 
     return a;
 }
+
+Allocation * Allocation::createAdapter(Context *rsc, const Allocation *alloc, const Type *type) {
+    // Allocation objects must use allocator specified by the driver
+    void* allocMem = rsc->mHal.funcs.allocRuntimeMem(sizeof(Allocation), 0);
+
+    if (!allocMem) {
+        rsc->setError(RS_ERROR_FATAL_DRIVER, "Couldn't allocate memory for Allocation");
+        return nullptr;
+    }
+
+    Allocation *a = new (allocMem) Allocation(rsc, alloc, type);
+
+    if (!rsc->mHal.funcs.allocation.initAdapter(rsc, a)) {
+        rsc->setError(RS_ERROR_FATAL_DRIVER, "Allocation::Allocation, alloc failure");
+        delete a;
+        return nullptr;
+    }
+
+    return a;
+}
+
 
 void Allocation::updateCache() {
     const Type *type = mHal.state.type;
@@ -785,6 +853,22 @@ void rsi_Allocation2DRead(Context *rsc, RsAllocation va, uint32_t xoff, uint32_t
     Allocation *a = static_cast<Allocation *>(va);
     a->read(rsc, xoff, yoff, lod, face, w, h, data, sizeBytes, stride);
 }
+
+RsAllocation rsi_AllocationAdapterCreate(Context *rsc, RsType vwindow, RsAllocation vbase) {
+
+
+    Allocation * alloc = Allocation::createAdapter(rsc,
+            static_cast<Allocation *>(vbase), static_cast<Type *>(vwindow));
+    if (!alloc) {
+        return nullptr;
+    }
+    alloc->incUserRef();
+    return alloc;
+}
+
+void rsi_AllocationAdapterOffset(Context *rsc, RsAllocation va, const uint32_t *offsets, size_t len) {
+}
+
 
 }
 }

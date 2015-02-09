@@ -88,6 +88,18 @@ AllocationSetSurface {
     sync
     }
 
+AllocationAdapterCreate {
+    direct
+    param RsType vtype
+    param RsAllocation baseAlloc
+    ret RsAllocation
+}
+
+AllocationAdapterOffset {
+    param RsAllocation alloc
+    param const uint32_t *offsets
+}
+
 ContextFinish {
     sync
     }

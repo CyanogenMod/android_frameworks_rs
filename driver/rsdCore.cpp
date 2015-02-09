@@ -88,6 +88,7 @@ static RsdHalFunctions FunctionTable = {
 
     {
         rsdAllocationInit,
+        rsdAllocationAdapterInit,
         rsdAllocationDestroy,
         rsdAllocationGrallocBits,
         rsdAllocationResize,
@@ -110,7 +111,8 @@ static RsdHalFunctions FunctionTable = {
         rsdAllocationElementData1D,
         rsdAllocationElementData2D,
         rsdAllocationGenerateMipmaps,
-        rsdAllocationUpdateCachedObject
+        rsdAllocationUpdateCachedObject,
+        rsdAllocationAdapterOffset
     },
 
 
