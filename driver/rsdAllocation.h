@@ -84,6 +84,8 @@ uint32_t rsdAllocationGrallocBits(const android::renderscript::Context *rsc,
 bool rsdAllocationInit(const android::renderscript::Context *rsc,
                        android::renderscript::Allocation *alloc,
                        bool forceZero);
+bool rsdAllocationAdapterInit(const android::renderscript::Context *rsc,
+                              android::renderscript::Allocation *alloc);
 void rsdAllocationDestroy(const android::renderscript::Context *rsc,
                           android::renderscript::Allocation *alloc);
 
@@ -174,6 +176,9 @@ void rsdAllocationGenerateMipmaps(const android::renderscript::Context *rsc,
 void rsdAllocationUpdateCachedObject(const android::renderscript::Context *rsc,
                                      const android::renderscript::Allocation *alloc,
                                      android::renderscript::rs_allocation *obj);
+
+void rsdAllocationAdapterOffset(const android::renderscript::Context *rsc,
+                                const android::renderscript::Allocation *alloc);
 
 
 #endif

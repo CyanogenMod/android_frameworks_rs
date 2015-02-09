@@ -69,6 +69,15 @@ public:
             int32_t surfaceTextureID;
             ANativeWindowBuffer *nativeBuffer;
             int64_t timestamp;
+
+            // Allocation adapter state
+            const Allocation *baseAlloc;
+            uint32_t originX;
+            uint32_t originY;
+            uint32_t originZ;
+            uint32_t originLOD;
+            uint32_t originFace;
+            uint32_t originArray[Type::mMaxArrays];
         };
         State state;
 
@@ -90,6 +99,7 @@ public:
             } yuv;
 
             int grallocFlags;
+            uint32_t dimArray[Type::mMaxArrays];
         };
         mutable DrvState drvState;
 
@@ -101,6 +111,9 @@ public:
     static Allocation * createAllocation(Context *rsc, const Type *, uint32_t usages,
                                          RsAllocationMipmapControl mc = RS_ALLOCATION_MIPMAP_NONE,
                                          void *ptr = 0);
+    static Allocation * createAdapter(Context *rsc, const Allocation *alloc, const Type *type);
+
+
     virtual ~Allocation();
     void updateCache();
 
@@ -211,6 +224,7 @@ protected:
 private:
     void freeChildrenUnlocked();
     Allocation(Context *rsc, const Type *, uint32_t usages, RsAllocationMipmapControl mc, void *ptr);
+    Allocation(Context *rsc, const Allocation *, const Type *);
 
     uint32_t getPackedSize() const;
     static void writePackedData(Context *rsc, const Type *type, uint8_t *dst,
