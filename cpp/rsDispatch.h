@@ -173,7 +173,7 @@ struct dispatchTable {
     AllocationGetPointerFnPtr AllocationGetPointer;
 };
 
-bool loadSymbols(void* handle, dispatchTable& dispatchTab);
+bool loadSymbols(void* handle, dispatchTable& dispatchTab, int device_api = 0);
 
 //USAGE_IO for RS Support lib
 typedef void (*sAllocationSetSurfaceFnPtr) (JNIEnv *, jobject, RsContext, RsAllocation, RsNativeWindow, dispatchTable);
