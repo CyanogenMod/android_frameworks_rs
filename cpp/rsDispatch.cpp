@@ -323,7 +323,7 @@ bool loadSymbols(void* handle, dispatchTable& dispatchTab) {
     dispatchTab.ScriptInvokeIDCreate = (ScriptInvokeIDCreateFnPtr)dlsym(handle, "rsScriptInvokeIDCreate");
     if (dispatchTab.ScriptInvokeIDCreate == NULL) {
         LOG_API("Couldn't initialize dispatchTab.ScriptInvokeIDCreate");
-        return false;
+        // return false;
     }
     dispatchTab.ScriptFieldIDCreate = (ScriptFieldIDCreateFnPtr)dlsym(handle, "rsScriptFieldIDCreate");
     if (dispatchTab.ScriptFieldIDCreate == NULL) {
