@@ -308,7 +308,7 @@ void ScriptGroup::execute(Context *rsc) {
             }
 
             for (auto nodeOutput : node->mOutputs) {
-                if (nodeOutput->mDstKernel.get() == kernel) {
+                if (nodeOutput->mSource.get() == kernel) {
                     aout = nodeOutput->mAlloc.get();
                 }
             }
