@@ -21,7 +21,7 @@
 
 #define LOG_API(...)
 
-bool loadSymbols(void* handle, dispatchTable& dispatchTab) {
+bool loadSymbols(void* handle, dispatchTable& dispatchTab, int device_api) {
     //fucntion to set the native lib path for 64bit compat lib.
 #ifdef __LP64__
     dispatchTab.SetNativeLibDir = (SetNativeLibDirFnPtr)dlsym(handle, "rsaContextSetNativeLibDir");
@@ -320,11 +320,6 @@ bool loadSymbols(void* handle, dispatchTable& dispatchTab) {
         LOG_API("Couldn't initialize dispatchTab.ScriptKernelIDCreate");
         return false;
     }
-    dispatchTab.ScriptInvokeIDCreate = (ScriptInvokeIDCreateFnPtr)dlsym(handle, "rsScriptInvokeIDCreate");
-    if (dispatchTab.ScriptInvokeIDCreate == NULL) {
-        LOG_API("Couldn't initialize dispatchTab.ScriptInvokeIDCreate");
-        // return false;
-    }
     dispatchTab.ScriptFieldIDCreate = (ScriptFieldIDCreateFnPtr)dlsym(handle, "rsScriptFieldIDCreate");
     if (dispatchTab.ScriptFieldIDCreate == NULL) {
         LOG_API("Couldn't initialize dispatchTab.ScriptFieldIDCreate");
@@ -366,7 +361,38 @@ bool loadSymbols(void* handle, dispatchTable& dispatchTab) {
         return false;
     }
 
+    // API_23 functions
+    if (device_api >= 23) {
+        //ScriptGroup V2 functions
+        dispatchTab.ScriptInvokeIDCreate = (ScriptInvokeIDCreateFnPtr)dlsym(handle, "rsScriptInvokeIDCreate");
+        if (dispatchTab.ScriptInvokeIDCreate == NULL) {
+            LOG_API("Couldn't initialize dispatchTab.ScriptInvokeIDCreate");
+            return false;
+        }
+        dispatchTab.ClosureCreate = (ClosureCreateFnPtr)dlsym(handle, "rsClosureCreate");
+        if (dispatchTab.ClosureCreate == NULL) {
+            LOG_API("Couldn't initialize dispatchTab.ClosureCreate");
+            return false;
+        }
+        dispatchTab.ClosureSetArg = (ClosureSetArgFnPtr)dlsym(handle, "rsClosureSetArg");
+        if (dispatchTab.ClosureSetArg == NULL) {
+            LOG_API("Couldn't initialize dispatchTab.ClosureSetArg");
+            return false;
+        }
+        dispatchTab.ClosureSetGlobal = (ClosureSetGlobalFnPtr)dlsym(handle, "rsClosureSetGlobal");
+        if (dispatchTab.ClosureSetGlobal == NULL) {
+            LOG_API("Couldn't initialize dispatchTab.ClosureSetGlobal");
+            return false;
+        }
+        dispatchTab.ScriptGroup2Create = (ScriptGroup2CreateFnPtr)dlsym(handle, "rsScriptGroup2Create");
+        if (dispatchTab.ScriptGroup2Create == NULL) {
+            LOG_API("Couldn't initialize dispatchTab.ScriptGroup2Create");
+            return false;
+        }
+    }
+
     return true;
+
 }
 
 
