@@ -31,7 +31,7 @@ const size_t DefaultKernelArgCount = 2;
 
 void groupRoot(const RsExpandKernelParams *kparams, uint32_t xstart,
                uint32_t xend, uint32_t outstep) {
-    const list<CPUClosure*>& closures = *(list<CPUClosure*>*)kparams->usr;
+    const List<CPUClosure*>& closures = *(List<CPUClosure*>*)kparams->usr;
     RsExpandKernelParams *mutable_kparams = (RsExpandKernelParams *)kparams;
     const void **oldIns  = kparams->ins;
     uint32_t *oldStrides = kparams->inEStrides;
@@ -45,7 +45,8 @@ void groupRoot(const RsExpandKernelParams *kparams, uint32_t xstart,
         auto in_iter = ins.begin();
         auto stride_iter = strides.begin();
 
-        for (const auto& arg : closure->mArgs) {
+        for (size_t i = 0; i < closure->mNumArg; i++) {
+            const void* arg = closure->mArgs[i];
             const Allocation* a = (const Allocation*)arg;
             const uint32_t eStride = a->mHal.state.elementSizeBytes;
             const uint8_t* ptr = (uint8_t*)(a->mHal.drvState.lod[0].mallocPtr) +
@@ -91,42 +92,39 @@ Batch::~Batch() {
     }
 }
 
-bool Batch::conflict(CPUClosure* closure) const {
+bool Batch::conflict(CPUClosure* cpuClosure) const {
     if (mClosures.empty()) {
         return false;
     }
 
-    if (closure->mClosure->mKernelID.get() == nullptr ||
+    const Closure* closure = cpuClosure->mClosure;
+
+    if (closure->mKernelID.get() == nullptr ||
         mClosures.front()->mClosure->mKernelID.get() == nullptr) {
         // An invoke should be in a batch by itself, so it conflicts with any other
         // closure.
         return true;
     }
 
-    for (const auto &p : closure->mClosure->mGlobalDeps) {
-        const Closure* dep = p.first;
-        for (CPUClosure* c : mClosures) {
-            if (c->mClosure == dep) {
-                ALOGV("ScriptGroup2: closure %p conflicting with closure %p via its global",
-                      closure, dep);
-                return true;
-            }
+    const auto& globalDeps = closure->mGlobalDeps;
+    const auto& argDeps = closure->mArgDeps;
+
+    for (CPUClosure* c : mClosures) {
+        const Closure* batched = c->mClosure;
+        if (globalDeps.find(batched) != globalDeps.end()) {
+            return true;
         }
-    }
-    for (const auto &p : closure->mClosure->mArgDeps) {
-        const Closure* dep = p.first;
-        for (CPUClosure* c : mClosures) {
-            if (c->mClosure == dep) {
-                for (const auto &p1 : *p.second) {
-                    if (p1.second->get() != nullptr) {
-                        ALOGV("ScriptGroup2: closure %p conflicting with closure %p via its arg",
-                              closure, dep);
-                        return true;
-                    }
+        const auto& it = argDeps.find(batched);
+        if (it != argDeps.end()) {
+            const auto& args = (*it).second;
+            for (const auto &p1 : *args) {
+                if (p1.second->get() != nullptr) {
+                    return true;
                 }
             }
         }
     }
+
     return false;
 }
 
@@ -166,7 +164,7 @@ CpuScriptGroup2Impl::CpuScriptGroup2Impl(RsdCpuReferenceImpl *cpuRefImpl,
 
 #ifndef RS_COMPATIBILITY_LIB
     for (Batch* batch : mBatches) {
-        batch->tryToCreateFusedKernel(mGroup->mCacheDir.c_str());
+        batch->tryToCreateFusedKernel(mGroup->mCacheDir);
     }
 #endif
 }
@@ -356,6 +354,9 @@ void Batch::setGlobalsForBatch() {
                 // which a kernel later reads.
                 continue;
             }
+            rsAssert(p.first != nullptr);
+            ALOGV("Evaluating closure %p, setting field %p (Script %p, slot: %d)",
+                  closure, p.first, p.first->mScript, p.first->mSlot);
             // We use -1 size to indicate an ObjectBase rather than a primitive type
             if (size < 0) {
                 s->setVarObj(p.first->mSlot, (ObjectBase*)value);
@@ -373,8 +374,8 @@ void Batch::run() {
         const CPUClosure* lastCpuClosure = mClosures.back();
 
         firstCpuClosure->mSi->forEachMtlsSetup(
-                (const Allocation**)&firstCpuClosure->mClosure->mArgs[0],
-                firstCpuClosure->mClosure->mArgs.size(),
+                (const Allocation**)firstCpuClosure->mClosure->mArgs,
+                firstCpuClosure->mClosure->mNumArg,
                 lastCpuClosure->mClosure->mReturnValue,
                 nullptr, 0, nullptr, &mtls);
 
@@ -383,8 +384,8 @@ void Batch::run() {
         mtls.kernel = mExecutable->getForEachFunction(0);
 
         mGroup->getCpuRefImpl()->launchThreads(
-                (const Allocation**)&firstCpuClosure->mClosure->mArgs[0],
-                firstCpuClosure->mClosure->mArgs.size(),
+                (const Allocation**)firstCpuClosure->mClosure->mArgs,
+                firstCpuClosure->mClosure->mNumArg,
                 lastCpuClosure->mClosure->mReturnValue,
                 nullptr, &mtls);
 
@@ -406,8 +407,8 @@ void Batch::run() {
         const Closure* closure = cpuClosure->mClosure;
         const ScriptKernelID* kernelID = closure->mKernelID.get();
         cpuClosure->mSi->preLaunch(kernelID->mSlot,
-                                   (const Allocation**)&closure->mArgs[0],
-                                   closure->mArgs.size(), closure->mReturnValue,
+                                   (const Allocation**)closure->mArgs,
+                                   closure->mNumArg, closure->mReturnValue,
                                    cpuClosure->mUsrPtr, cpuClosure->mUsrSize,
                                    nullptr);
     }
@@ -416,8 +417,8 @@ void Batch::run() {
     const Closure* closure = cpuClosure->mClosure;
     MTLaunchStruct mtls;
 
-    if (cpuClosure->mSi->forEachMtlsSetup((const Allocation**)&closure->mArgs[0],
-                                          closure->mArgs.size(),
+    if (cpuClosure->mSi->forEachMtlsSetup((const Allocation**)closure->mArgs,
+                                          closure->mNumArg,
                                           closure->mReturnValue,
                                           nullptr, 0, nullptr, &mtls)) {
 
@@ -432,8 +433,8 @@ void Batch::run() {
         const Closure* closure = cpuClosure->mClosure;
         const ScriptKernelID* kernelID = closure->mKernelID.get();
         cpuClosure->mSi->postLaunch(kernelID->mSlot,
-                                    (const Allocation**)&closure->mArgs[0],
-                                    closure->mArgs.size(), closure->mReturnValue,
+                                    (const Allocation**)closure->mArgs,
+                                    closure->mNumArg, closure->mReturnValue,
                                     nullptr, 0, nullptr);
     }
 }

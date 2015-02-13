@@ -1,20 +1,12 @@
 #ifndef ANDROID_RENDERSCRIPT_CLOSURE_H_
 #define ANDROID_RENDERSCRIPT_CLOSURE_H_
 
-#include <map>
-#include <set>
-#include <vector>
-
 #include "rsDefines.h"
+#include "rsMap.h"
 #include "rsObjectBase.h"
 
 namespace android {
 namespace renderscript {
-
-using std::map;
-using std::pair;
-using std::set;
-using std::vector;
 
 class Allocation;
 class Context;
@@ -50,8 +42,6 @@ class Closure : public ObjectBase {
 
     virtual RsA3DClassID getClassId() const { return RS_A3D_CLASS_ID_CLOSURE; }
 
-    void eval();
-
     void setArg(const uint32_t index, const void* value, const size_t size);
     void setGlobal(const ScriptFieldID* fieldID, const void* value,
                    const size_t size);
@@ -68,24 +58,24 @@ class Closure : public ObjectBase {
     // Values referrenced in arguments and globals cannot be futures. They must be
     // either a known value or unbound value.
     // For now, all arguments should be Allocations.
-    vector<const void*> mArgs;
+    const void** mArgs;
+    size_t mNumArg;
 
-    // A global could be allocation or any other data type, including primitive
-    // data types.
-    map<const ScriptFieldID*, pair<const void*, int>> mGlobals;
+    // A global could be allocation or any primitive data type.
+    Map<const ScriptFieldID*, Pair<const void*, size_t>> mGlobals;
 
     Allocation* mReturnValue;
 
     // All the other closures that this closure depends on
-    set<const Closure*> mDependences;
+    // set<const Closure*> mDependences;
 
     // All the other closures which this closure depends on for one of its
     // arguments, and the fields which it depends on.
-    map<const Closure*, map<int, const ObjectBaseRef<ScriptFieldID>*>*> mArgDeps;
+    Map<const Closure*, Map<int, const ObjectBaseRef<ScriptFieldID>*>*> mArgDeps;
 
     // All the other closures that this closure depends on for one of its fields,
     // and the fields that it depends on.
-    map<const Closure*, map<const ObjectBaseRef<ScriptFieldID>*,
+    Map<const Closure*, Map<const ObjectBaseRef<ScriptFieldID>*,
             const ObjectBaseRef<ScriptFieldID>*>*> mGlobalDeps;
 
     const void* mParams;
