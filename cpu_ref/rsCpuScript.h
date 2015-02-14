@@ -135,6 +135,8 @@ public:
 
 private:
     String8 mBitcodeFilePath;
+    const char * mBuildChecksum;
+    bool mChecksumNeeded;
 };
 
 Allocation * rsdScriptGetAllocationForPointer(
