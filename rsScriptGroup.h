@@ -41,7 +41,7 @@ public:
     virtual SG_API_Version getApiVersion() const { return SG_V1; }
     virtual void execute(Context *rsc);
 
-    std::vector<ObjectBaseRef<ScriptKernelID> > mKernels;
+    Vector<ObjectBaseRef<ScriptKernelID> > mKernels;
 
     class Link {
     public:
@@ -58,9 +58,9 @@ public:
     public:
         Node(Script *);
 
-        std::vector<const ScriptKernelID *> mKernels;
-        std::vector<Link *> mOutputs;
-        std::vector<Link *> mInputs;
+        Vector<const ScriptKernelID *> mKernels;
+        Vector<Link *> mOutputs;
+        Vector<Link *> mInputs;
         bool mSeen;
         int mOrder;
         Script *mScript;
@@ -74,10 +74,10 @@ public:
         ObjectBaseRef<Allocation> mAlloc;
     };
 
-    std::vector<Link *> mLinks;
-    std::vector<Node *> mNodes;
-    std::vector<IO *> mInputs;
-    std::vector<IO *> mOutputs;
+    Vector<Link *> mLinks;
+    Vector<Node *> mNodes;
+    Vector<IO *> mInputs;
+    Vector<IO *> mOutputs;
 
     static ScriptGroup * create(Context *rsc,
                            ScriptKernelID ** kernels, size_t kernelsSize,
@@ -110,3 +110,4 @@ private:
 }
 }
 #endif
+
