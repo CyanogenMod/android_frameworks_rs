@@ -254,7 +254,209 @@ enum RsContextFlags {
     RS_CONTEXT_LOW_POWER        = 0x0004
 };
 
+enum RsBlasTranspose {
+    RsBlasNoTrans=111,
+    RsBlasTrans=112,
+    RsBlasConjTrans=113
+};
 
+enum RsBlasUplo {
+    RsBlasUpper=121,
+    RsBlasLower=122
+};
+
+enum RsBlasDiag {
+    RsBlasNonUnit=131,
+    RsBlasUnit=132
+};
+
+enum RsBlasSide {
+    RsBlasLeft=141,
+    RsBlasRight=142
+};
+
+enum RsBlasFunction {
+    RsBlas_nop = 0,
+    RsBlas_sdsdot,
+    RsBlas_dsdot,
+    RsBlas_sdot,
+    RsBlas_ddot,
+    RsBlas_cdotu_sub,
+    RsBlas_cdotc_sub,
+    RsBlas_zdotu_sub,
+    RsBlas_zdotc_sub,
+    RsBlas_snrm2,
+    RsBlas_sasum,
+    RsBlas_dnrm2,
+    RsBlas_dasum,
+    RsBlas_scnrm2,
+    RsBlas_scasum,
+    RsBlas_dznrm2,
+    RsBlas_dzasum,
+    RsBlas_isamax,
+    RsBlas_idamax,
+    RsBlas_icamax,
+    RsBlas_izamax,
+    RsBlas_sswap,
+    RsBlas_scopy,
+    RsBlas_saxpy,
+    RsBlas_dswap,
+    RsBlas_dcopy,
+    RsBlas_daxpy,
+    RsBlas_cswap,
+    RsBlas_ccopy,
+    RsBlas_caxpy,
+    RsBlas_zswap,
+    RsBlas_zcopy,
+    RsBlas_zaxpy,
+    RsBlas_srotg,
+    RsBlas_srotmg,
+    RsBlas_srot,
+    RsBlas_srotm,
+    RsBlas_drotg,
+    RsBlas_drotmg,
+    RsBlas_drot,
+    RsBlas_drotm,
+    RsBlas_sscal,
+    RsBlas_dscal,
+    RsBlas_cscal,
+    RsBlas_zscal,
+    RsBlas_csscal,
+    RsBlas_zdscal,
+    RsBlas_sgemv,
+    RsBlas_sgbmv,
+    RsBlas_strmv,
+    RsBlas_stbmv,
+    RsBlas_stpmv,
+    RsBlas_strsv,
+    RsBlas_stbsv,
+    RsBlas_stpsv,
+    RsBlas_dgemv,
+    RsBlas_dgbmv,
+    RsBlas_dtrmv,
+    RsBlas_dtbmv,
+    RsBlas_dtpmv,
+    RsBlas_dtrsv,
+    RsBlas_dtbsv,
+    RsBlas_dtpsv,
+    RsBlas_cgemv,
+    RsBlas_cgbmv,
+    RsBlas_ctrmv,
+    RsBlas_ctbmv,
+    RsBlas_ctpmv,
+    RsBlas_ctrsv,
+    RsBlas_ctbsv,
+    RsBlas_ctpsv,
+    RsBlas_zgemv,
+    RsBlas_zgbmv,
+    RsBlas_ztrmv,
+    RsBlas_ztbmv,
+    RsBlas_ztpmv,
+    RsBlas_ztrsv,
+    RsBlas_ztbsv,
+    RsBlas_ztpsv,
+    RsBlas_ssymv,
+    RsBlas_ssbmv,
+    RsBlas_sspmv,
+    RsBlas_sger,
+    RsBlas_ssyr,
+    RsBlas_sspr,
+    RsBlas_ssyr2,
+    RsBlas_sspr2,
+    RsBlas_dsymv,
+    RsBlas_dsbmv,
+    RsBlas_dspmv,
+    RsBlas_dger,
+    RsBlas_dsyr,
+    RsBlas_dspr,
+    RsBlas_dsyr2,
+    RsBlas_dspr2,
+    RsBlas_chemv,
+    RsBlas_chbmv,
+    RsBlas_chpmv,
+    RsBlas_cgeru,
+    RsBlas_cgerc,
+    RsBlas_cher,
+    RsBlas_chpr,
+    RsBlas_cher2,
+    RsBlas_chpr2,
+    RsBlas_zhemv,
+    RsBlas_zhbmv,
+    RsBlas_zhpmv,
+    RsBlas_zgeru,
+    RsBlas_zgerc,
+    RsBlas_zher,
+    RsBlas_zhpr,
+    RsBlas_zher2,
+    RsBlas_zhpr2,
+    RsBlas_sgemm,
+    RsBlas_ssymm,
+    RsBlas_ssyrk,
+    RsBlas_ssyr2k,
+    RsBlas_strmm,
+    RsBlas_strsm,
+    RsBlas_dgemm,
+    RsBlas_dsymm,
+    RsBlas_dsyrk,
+    RsBlas_dsyr2k,
+    RsBlas_dtrmm,
+    RsBlas_dtrsm,
+    RsBlas_cgemm,
+    RsBlas_csymm,
+    RsBlas_csyrk,
+    RsBlas_csyr2k,
+    RsBlas_ctrmm,
+    RsBlas_ctrsm,
+    RsBlas_zgemm,
+    RsBlas_zsymm,
+    RsBlas_zsyrk,
+    RsBlas_zsyr2k,
+    RsBlas_ztrmm,
+    RsBlas_ztrsm,
+    RsBlas_chemm,
+    RsBlas_cherk,
+    RsBlas_cher2k,
+    RsBlas_zhemm,
+    RsBlas_zherk,
+    RsBlas_zher2k
+};
+
+// custom complex types because of NDK support
+typedef struct {
+    float r;
+    float i;
+} RsFloatComplex;
+
+typedef struct {
+    double r;
+    double i;
+} RsDoubleComplex;
+
+typedef union { 
+    float f;
+    RsFloatComplex c;
+    double d;
+    RsDoubleComplex z;
+} RsBlasScalar;
+
+typedef struct {
+    RsBlasFunction func;
+    RsBlasTranspose transA;
+    RsBlasTranspose transB;
+    RsBlasUplo uplo;
+    RsBlasDiag diag;
+    RsBlasSide side;
+    int M;
+    int N;
+    int K;
+    RsBlasScalar alpha;
+    RsBlasScalar beta;
+    int incX;
+    int incY;
+    int KL;
+    int KU;
+} RsBlasCall;
+          
 #ifdef __cplusplus
 };
 #endif
