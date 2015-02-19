@@ -42,14 +42,10 @@ void Element::operator delete(void* ptr) {
 }
 
 void Element::preDestroy() const {
-    auto &elements = mRSC->mStateElement.mElements;
-
-    for (auto elIter = elements.begin(), endIter = elements.end();
-         elIter != endIter; elIter++) {
-
-        if (this == *elIter) {
-            elements.erase(elIter);
-            return;
+    for (uint32_t ct = 0; ct < mRSC->mStateElement.mElements.size(); ct++) {
+        if (mRSC->mStateElement.mElements[ct] == this) {
+            mRSC->mStateElement.mElements.removeAt(ct);
+            break;
         }
     }
 }
@@ -268,7 +264,7 @@ ObjectBaseRef<const Element> Element::createRef(Context *rsc, RsDataType dt, RsD
 
 
     ObjectBase::asyncLock();
-    rsc->mStateElement.mElements.push_back(e);
+    rsc->mStateElement.mElements.push(e);
     ObjectBase::asyncUnlock();
 
     return returnRef;
@@ -343,7 +339,7 @@ ObjectBaseRef<const Element> Element::createRef(Context *rsc, size_t count, cons
     e->compute();
 
     ObjectBase::asyncLock();
-    rsc->mStateElement.mElements.push_back(e);
+    rsc->mStateElement.mElements.push(e);
     ObjectBase::asyncUnlock();
 
     return returnRef;

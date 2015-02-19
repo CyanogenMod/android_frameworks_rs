@@ -17,12 +17,12 @@
 #ifndef ANDROID_RS_GRALLOC_CONSUMER_H
 #define ANDROID_RS_GRALLOC_CONSUMER_H
 
-#include <vector>
-
 #include <gui/ConsumerBase.h>
 
 #include <ui/GraphicBuffer.h>
 
+#include <utils/String8.h>
+#include <utils/Vector.h>
 #include <utils/threads.h>
 
 
@@ -75,3 +75,4 @@ class GrallocConsumer : public ConsumerBase
 } // namespace android
 
 #endif // ANDROID_RS_GRALLOC_CONSUMER_H
+

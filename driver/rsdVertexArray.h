@@ -17,8 +17,6 @@
 #ifndef ANDROID_RSD_VERTEX_ARRAY_H
 #define ANDROID_RSD_VERTEX_ARRAY_H
 
-#include <string>
-
 #include "rsUtils.h"
 
 namespace android {
@@ -41,7 +39,7 @@ public:
         uint32_t size;
         uint32_t stride;
         bool normalized;
-        std::string name;
+        android::String8 name;
 
         Attrib();
         void clear();
@@ -76,3 +74,6 @@ public:
 
 
 #endif //ANDROID_RSD_VERTEX_ARRAY_H
+
+
+

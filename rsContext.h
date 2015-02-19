@@ -307,7 +307,7 @@ private:
     bool mHasSurface;
     bool mIsContextLite;
 
-    std::vector<ObjectBase *> mNames;
+    Vector<ObjectBase *> mNames;
 
     uint64_t mTimers[_RS_TIMER_TOTAL];
     Timers mTimerActive;

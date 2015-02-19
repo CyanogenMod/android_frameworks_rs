@@ -49,14 +49,10 @@ Sampler::~Sampler() {
 }
 
 void Sampler::preDestroy() const {
-    auto &samplers = mRSC->mStateSampler.mAllSamplers;
-
-    for (auto sampleIter = samplers.begin(), endIter = samplers.end();
-         sampleIter != endIter; sampleIter++) {
-
-        if (this == *sampleIter) {
-            samplers.erase(sampleIter);
-            return;
+    for (uint32_t ct = 0; ct < mRSC->mStateSampler.mAllSamplers.size(); ct++) {
+        if (mRSC->mStateSampler.mAllSamplers[ct] == this) {
+            mRSC->mStateSampler.mAllSamplers.removeAt(ct);
+            break;
         }
     }
 }
@@ -117,7 +113,7 @@ ObjectBaseRef<Sampler> Sampler::getSampler(Context *rsc,
 #endif
 
     ObjectBase::asyncLock();
-    rsc->mStateSampler.mAllSamplers.push_back(s);
+    rsc->mStateSampler.mAllSamplers.push(s);
     ObjectBase::asyncUnlock();
 
     return returnRef;

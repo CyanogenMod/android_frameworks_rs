@@ -75,10 +75,14 @@ public:
     ObjectBaseRef<ProgramRaster> mLast;
 
     // Cache of all existing raster programs.
-    std::vector<ProgramRaster *> mRasterPrograms;
+    Vector<ProgramRaster *> mRasterPrograms;
 };
 
 
 }
 }
 #endif
+
+
+
+

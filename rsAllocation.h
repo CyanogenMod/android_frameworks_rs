@@ -200,7 +200,7 @@ public:
     bool hasSameDims(const Allocation *Other) const;
 
 protected:
-    std::vector<const Program *> mToDirtyList;
+    Vector<const Program *> mToDirtyList;
     ObjectBaseRef<const Type> mType;
     void setType(const Type *t) {
         mType.set(t);
