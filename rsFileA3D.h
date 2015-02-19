@@ -88,13 +88,15 @@ protected:
     Asset *mAsset;
 
     OStream *mWriteStream;
-    std::vector<A3DIndexEntry*> mWriteIndex;
+    Vector<A3DIndexEntry*> mWriteIndex;
 
     IStream *mReadStream;
-    std::vector<A3DIndexEntry*> mIndex;
+    Vector<A3DIndexEntry*> mIndex;
 };
 
 
 }
 }
 #endif //ANDROID_RS_FILE_A3D_H
+
+

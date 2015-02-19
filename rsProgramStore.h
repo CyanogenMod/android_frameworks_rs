@@ -92,9 +92,12 @@ public:
     ObjectBaseRef<ProgramStore> mLast;
 
     // Cache of all existing store programs.
-    std::vector<ProgramStore *> mStorePrograms;
+    Vector<ProgramStore *> mStorePrograms;
 };
 
 }
 }
 #endif
+
+
+

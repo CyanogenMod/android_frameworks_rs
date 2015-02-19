@@ -124,11 +124,11 @@ void CpuScriptGroupImpl::scriptGroupRoot(const RsExpandKernelParams *kparams,
 
 
 void CpuScriptGroupImpl::execute() {
-    std::vector<Allocation *> ins;
-    std::vector<char> inExts;
-    std::vector<Allocation *> outs;
-    std::vector<char> outExts;
-    std::vector<const ScriptKernelID *> kernels;
+    Vector<Allocation *> ins;
+    Vector<bool> inExts;
+    Vector<Allocation *> outs;
+    Vector<bool> outExts;
+    Vector<const ScriptKernelID *> kernels;
     bool fieldDep = false;
 
     for (size_t ct=0; ct < mSG->mNodes.size(); ct++) {
@@ -194,11 +194,11 @@ void CpuScriptGroupImpl::execute() {
             rsAssert((k->mHasKernelOutput == (aout != nullptr)) &&
                      (k->mHasKernelInput == (ain != nullptr)));
 
-            ins.push_back(ain);
-            inExts.push_back(inExt);
-            outs.push_back(aout);
-            outExts.push_back(outExt);
-            kernels.push_back(k);
+            ins.add(ain);
+            inExts.add(inExt);
+            outs.add(aout);
+            outExts.add(outExt);
+            kernels.add(k);
         }
 
     }
@@ -237,16 +237,10 @@ void CpuScriptGroupImpl::execute() {
         }
     } else {
         ScriptList sl;
-
-        /*
-         * TODO: This is a hacky way of doing this and should be replaced by a
-         *       call to std::vector's data() member once we have a C++11
-         *       version of the STL.
-         */
-        sl.ins     = &ins.front();
-        sl.outs    = &outs.front();
-        sl.kernels = &kernels.front();
-        sl.count   = kernels.size();
+        sl.ins = ins.array();
+        sl.outs = outs.array();
+        sl.kernels = kernels.array();
+        sl.count = kernels.size();
 
         uint32_t inLen;
         const Allocation **ains;
@@ -260,27 +254,25 @@ void CpuScriptGroupImpl::execute() {
             ains  = const_cast<const Allocation**>(&ins[0]);
         }
 
-        std::vector<const void *> usrPtrs;
-        std::vector<const void *> fnPtrs;
-        std::vector<uint32_t> sigs;
+        Vector<const void *> usrPtrs;
+        Vector<const void *> fnPtrs;
+        Vector<uint32_t> sigs;
         for (size_t ct=0; ct < kernels.size(); ct++) {
             Script *s = kernels[ct]->mScript;
             RsdCpuScriptImpl *si = (RsdCpuScriptImpl *)mCtx->lookupScript(s);
 
             si->forEachKernelSetup(kernels[ct]->mSlot, &mtls);
-            fnPtrs.push_back((void *)mtls.kernel);
-            usrPtrs.push_back(mtls.fep.usr);
-            sigs.push_back(mtls.fep.usrLen);
+            fnPtrs.add((void *)mtls.kernel);
+            usrPtrs.add(mtls.fep.usr);
+            sigs.add(mtls.fep.usrLen);
             si->preLaunch(kernels[ct]->mSlot, ains, inLen, outs[ct],
                           mtls.fep.usr, mtls.fep.usrLen, nullptr);
         }
-
-        sl.sigs    = &sigs.front();
-        sl.usrPtrs = &usrPtrs.front();
-        sl.fnPtrs  = &fnPtrs.front();
-
-        sl.inExts  = (bool*)&inExts.front();
-        sl.outExts = (bool*)&outExts.front();
+        sl.sigs = sigs.array();
+        sl.usrPtrs = usrPtrs.array();
+        sl.fnPtrs = fnPtrs.array();
+        sl.inExts = inExts.array();
+        sl.outExts = outExts.array();
 
         Script *s = kernels[0]->mScript;
         RsdCpuScriptImpl *si = (RsdCpuScriptImpl *)mCtx->lookupScript(s);

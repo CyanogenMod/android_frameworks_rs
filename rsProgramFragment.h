@@ -55,7 +55,7 @@ public:
     void deinit(Context *rsc);
 
     ObjectBaseRef<ProgramFragment> mDefault;
-    std::vector<ProgramFragment *> mPrograms;
+    Vector<ProgramFragment *> mPrograms;
 
     ObjectBaseRef<ProgramFragment> mLast;
 };
@@ -63,3 +63,7 @@ public:
 }
 }
 #endif
+
+
+
+
