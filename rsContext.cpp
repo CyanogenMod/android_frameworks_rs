@@ -762,15 +762,13 @@ void Context::finish() {
 void Context::assignName(ObjectBase *obj, const char *name, uint32_t len) {
     rsAssert(!obj->getName());
     obj->setName(name, len);
-    mNames.push_back(obj);
+    mNames.add(obj);
 }
 
 void Context::removeName(ObjectBase *obj) {
-    for (auto nameIter = mNames.begin(), endIter = mNames.end();
-         nameIter != endIter; nameIter++) {
-
-        if (obj == *nameIter) {
-            mNames.erase(nameIter);
+    for (size_t ct=0; ct < mNames.size(); ct++) {
+        if (obj == mNames[ct]) {
+            mNames.removeAt(ct);
             return;
         }
     }
@@ -1012,3 +1010,4 @@ void rsaGetName(RsContext con, void * obj, const char **name) {
     ObjectBase *ob = static_cast<ObjectBase *>(obj);
     (*name) = ob->getName();
 }
+

@@ -31,14 +31,10 @@ ProgramRaster::ProgramRaster(Context *rsc, bool pointSprite, RsCullMode cull)
 }
 
 void ProgramRaster::preDestroy() const {
-    auto &rasters = mRSC->mStateRaster.mRasterPrograms;
-
-    for (auto prIter = rasters.begin(), endIter = rasters.end();
-         prIter != endIter; prIter++) {
-
-        if (this == *prIter) {
-            rasters.erase(prIter);
-            return;
+    for (uint32_t ct = 0; ct < mRSC->mStateRaster.mRasterPrograms.size(); ct++) {
+        if (mRSC->mStateRaster.mRasterPrograms[ct] == this) {
+            mRSC->mStateRaster.mRasterPrograms.removeAt(ct);
+            break;
         }
     }
 }
@@ -98,7 +94,7 @@ ObjectBaseRef<ProgramRaster> ProgramRaster::getProgramRaster(Context *rsc,
     returnRef.set(pr);
 
     ObjectBase::asyncLock();
-    rsc->mStateRaster.mRasterPrograms.push_back(pr);
+    rsc->mStateRaster.mRasterPrograms.push(pr);
     ObjectBase::asyncUnlock();
 
     return returnRef;
@@ -115,3 +111,4 @@ RsProgramRaster rsi_ProgramRasterCreate(Context * rsc, bool pointSprite, RsCullM
 
 }
 }
+

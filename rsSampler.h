@@ -96,9 +96,12 @@ public:
         }
     }
     // Cache of all existing raster programs.
-    std::vector<Sampler *> mAllSamplers;
+    Vector<Sampler *> mAllSamplers;
 };
 
 }
 }
 #endif //ANDROID_RS_SAMPLER_H
+
+
+
