@@ -42,14 +42,10 @@ ProgramStore::ProgramStore(Context *rsc,
 }
 
 void ProgramStore::preDestroy() const {
-    auto &stores = mRSC->mStateFragmentStore.mStorePrograms;
-
-    for (auto psIter = stores.begin(), endIter = stores.end();
-         psIter != endIter; psIter++) {
-
-        if (this == *psIter) {
-            stores.erase(psIter);
-            return;
+    for (uint32_t ct = 0; ct < mRSC->mStateFragmentStore.mStorePrograms.size(); ct++) {
+        if (mRSC->mStateFragmentStore.mStorePrograms[ct] == this) {
+            mRSC->mStateFragmentStore.mStorePrograms.removeAt(ct);
+            break;
         }
     }
 }
@@ -122,7 +118,7 @@ ObjectBaseRef<ProgramStore> ProgramStore::getProgramStore(Context *rsc,
     pfs->init();
 
     ObjectBase::asyncLock();
-    rsc->mStateFragmentStore.mStorePrograms.push_back(pfs);
+    rsc->mStateFragmentStore.mStorePrograms.push(pfs);
     ObjectBase::asyncUnlock();
 
     return returnRef;

@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-#include <string>
-
 #include "rsContext.h"
 #include "rsScriptC.h"
 
@@ -30,6 +28,8 @@
 #endif
 
 #include <sys/stat.h>
+
+#include <string>
 
 #ifdef USE_MINGW
 /* Define the default path separator for the platform. */
@@ -195,14 +195,15 @@ void ScriptC::runForEach(Context *rsc,
     // Trace this function call.
     // To avoid overhead we only build the string if tracing is actually
     // enabled.
-    std::string *traceString = nullptr;
-    const char  *stringData  = "";
+    String8 *AString = NULL;
+    const char *String = "";
     if (ATRACE_ENABLED()) {
-        traceString = new std::string("runForEach_");
-        traceString->append(mHal.info.exportedForeachFuncList[slot].first);
-        stringData = traceString->c_str();
+        AString = new String8("runForEach_");
+        AString->append(mHal.info.exportedForeachFuncList[slot].first);
+        String = AString->string();
     }
-    ATRACE_NAME(stringData);
+    ATRACE_NAME(String);
+    (void)String;
 
     Context::PushState ps(rsc);
 
@@ -222,8 +223,8 @@ void ScriptC::runForEach(Context *rsc,
                       "Driver support for multi-input not present");
     }
 
-    if (traceString) {
-        delete traceString;
+    if (AString) {
+        delete AString;
     }
 }
 

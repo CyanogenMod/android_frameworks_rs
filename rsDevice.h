@@ -17,8 +17,6 @@
 #ifndef ANDROID_RS_DEVICE_H
 #define ANDROID_RS_DEVICE_H
 
-#include <vector>
-
 #include "rsUtils.h"
 
 // ---------------------------------------------------------------------------
@@ -38,7 +36,7 @@ public:
     bool mForceSW;
 
 protected:
-    std::vector<Context *> mContexts;
+    Vector<Context *> mContexts;
 };
 
 }

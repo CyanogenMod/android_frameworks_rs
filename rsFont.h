@@ -17,10 +17,9 @@
 #ifndef ANDROID_RS_FONT_H
 #define ANDROID_RS_FONT_H
 
-#include <map>
-#include <vector>
-
 #include "rsStream.h"
+#include <utils/Vector.h>
+#include <utils/KeyedVector.h>
 
 struct FT_LibraryRec_;
 struct FT_FaceRec_;
@@ -125,7 +124,7 @@ protected:
     bool mInitialized;
     bool mHasKerning;
 
-    std::map<uint32_t, CachedGlyphInfo* > mCachedGlyphs;
+    DefaultKeyedVector<uint32_t, CachedGlyphInfo* > mCachedGlyphs;
     CachedGlyphInfo* getCachedUTFChar(int32_t utfChar);
 
     CachedGlyphInfo *cacheGlyph(uint32_t glyph);
@@ -179,7 +178,7 @@ protected:
         bool fitBitmap(FT_Bitmap_ *bitmap, uint32_t *retOriginX, uint32_t *retOriginY);
     };
 
-    std::vector<CacheTextureLine*> mCacheLines;
+    Vector<CacheTextureLine*> mCacheLines;
     uint32_t getRemainingCacheCapacity();
 
     void precacheLatin(Font *font);
@@ -204,7 +203,7 @@ protected:
     FT_LibraryRec_ *mLibrary;
     FT_LibraryRec_ *getLib();
 #endif //ANDROID_RS_SERIALIZE
-    std::vector<Font*> mActiveFonts;
+    Vector<Font*> mActiveFonts;
 
     // Render state for the font
     ObjectBaseRef<Allocation> mFontShaderFConstant;

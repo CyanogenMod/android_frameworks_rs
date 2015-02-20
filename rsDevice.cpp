@@ -28,16 +28,14 @@ Device::~Device() {
 }
 
 void Device::addContext(Context *rsc) {
-    mContexts.push_back(rsc);
+    mContexts.push(rsc);
 }
 
 void Device::removeContext(Context *rsc) {
-    for (auto ctxIter = mContexts.begin(), endIter = mContexts.end();
-         ctxIter != endIter; ctxIter++) {
-
-        if (rsc == *ctxIter) {
-            mContexts.erase(ctxIter);
-            return;
+    for (size_t idx=0; idx < mContexts.size(); idx++) {
+        if (mContexts[idx] == rsc) {
+            mContexts.removeAt(idx);
+            break;
         }
     }
 }
@@ -60,3 +58,4 @@ extern "C" void rsDeviceSetConfig(RsDevice dev, RsDeviceParam p, int32_t value) 
     }
     rsAssert(0);
 }
+

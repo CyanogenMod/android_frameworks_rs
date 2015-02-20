@@ -19,6 +19,8 @@
 
 #if !defined(RS_SERVER) && !defined(RS_COMPATIBILITY_LIB)
 #include <utils/Log.h>
+#include <utils/String8.h>
+#include <utils/Vector.h>
 #include <cutils/atomic.h>
 #endif
 
@@ -51,6 +53,96 @@
     __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, __VA_ARGS__);
 #define ALOGV(...) \
     __android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, __VA_ARGS__);
+
+namespace android {
+
+    // server has no Vector or String8 classes; implement on top of STL
+    class String8: public std::string {
+    public:
+    String8(const char *ptr) : std::string(ptr) {
+
+        }
+    String8(const char *ptr, size_t len) : std::string(ptr, len) {
+
+        }
+    String8() : std::string() {
+
+        }
+
+        const char* string() const {
+            return this->c_str();
+        }
+
+        void setTo(const char* str, ssize_t len) {
+            this->assign(str, len);
+        }
+        void setTo(const char* str) {
+            this->assign(str);
+        }
+        String8 getPathDir(void) const {
+            const char* cp;
+            const char*const str = this->c_str();
+
+            cp = strrchr(str, OS_PATH_SEPARATOR);
+            if (cp == NULL)
+                return String8("");
+            else
+                return String8(str, cp - str);
+        }
+    };
+
+    template <class T> class Vector: public std::vector<T> {
+    public:
+        void push(T obj) {
+            this->push_back(obj);
+        }
+        void removeAt(uint32_t index) {
+            this->erase(this->begin() + index);
+        }
+        ssize_t add(const T& obj) {
+            this->push_back(obj);
+            return this->size() - 1;
+        }
+        void setCapacity(ssize_t capacity) {
+            this->resize(capacity);
+        }
+
+        T* editArray() {
+            return (T*)(this->begin());
+        }
+
+        const T* array() {
+            return (const T*)(this->begin());
+        }
+
+    };
+
+    template<> class Vector<bool>: public std::vector<char> {
+    public:
+        void push(bool obj) {
+            this->push_back(obj);
+        }
+        void removeAt(uint32_t index) {
+            this->erase(this->begin() + index);
+        }
+        ssize_t add(const bool& obj) {
+            this->push_back(obj);
+            return this->size() - 1;
+        }
+        void setCapacity(ssize_t capacity) {
+            this->resize(capacity);
+        }
+
+        bool* editArray() {
+            return (bool*)(this->begin());
+        }
+
+        const bool* array() {
+            return (const bool*)(this->begin());
+        }
+    };
+
+}
 
 typedef int64_t nsecs_t;  // nano-seconds
 
@@ -194,3 +286,5 @@ static inline uint32_t rsBoxFilter8888(uint32_t i1, uint32_t i2, uint32_t i3, ui
 }
 
 #endif //ANDROID_RS_OBJECT_BASE_H
+
+
