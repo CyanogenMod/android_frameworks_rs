@@ -256,17 +256,27 @@ void Allocation::read(Context *rsc, uint32_t xoff, uint32_t yoff, uint32_t zoff,
 
 }
 
-void Allocation::elementData(Context *rsc, uint32_t x, const void *data,
-                                uint32_t cIdx, size_t sizeBytes) {
+void Allocation::elementData(Context *rsc, uint32_t x, uint32_t y, uint32_t z,
+                             const void *data, uint32_t cIdx, size_t sizeBytes) {
     size_t eSize = mHal.state.elementSizeBytes;
-
-    if (cIdx >= mHal.state.type->getElement()->getFieldCount()) {
-        rsc->setError(RS_ERROR_BAD_VALUE, "subElementData component out of range.");
-        return;
-    }
 
     if (x >= mHal.drvState.lod[0].dimX) {
         rsc->setError(RS_ERROR_BAD_VALUE, "subElementData X offset out of range.");
+        return;
+    }
+
+    if (y > 0 && y >= mHal.drvState.lod[0].dimY) {
+        rsc->setError(RS_ERROR_BAD_VALUE, "subElementData Y offset out of range.");
+        return;
+    }
+
+    if (z > 0 && z >= mHal.drvState.lod[0].dimZ) {
+        rsc->setError(RS_ERROR_BAD_VALUE, "subElementData Z offset out of range.");
+        return;
+    }
+
+    if (cIdx >= mHal.state.type->getElement()->getFieldCount()) {
+        rsc->setError(RS_ERROR_BAD_VALUE, "subElementData component out of range.");
         return;
     }
 
@@ -277,12 +287,12 @@ void Allocation::elementData(Context *rsc, uint32_t x, const void *data,
         return;
     }
 
-    rsc->mHal.funcs.allocation.elementData1D(rsc, this, x, data, cIdx, sizeBytes);
+    rsc->mHal.funcs.allocation.elementData(rsc, this, x, y, z, data, cIdx, sizeBytes);
     sendDirty(rsc);
 }
 
-void Allocation::elementData(Context *rsc, uint32_t x, uint32_t y,
-                                const void *data, uint32_t cIdx, size_t sizeBytes) {
+void Allocation::elementRead(Context *rsc, uint32_t x, uint32_t y, uint32_t z,
+                             void *data, uint32_t cIdx, size_t sizeBytes) {
     size_t eSize = mHal.state.elementSizeBytes;
 
     if (x >= mHal.drvState.lod[0].dimX) {
@@ -290,8 +300,13 @@ void Allocation::elementData(Context *rsc, uint32_t x, uint32_t y,
         return;
     }
 
-    if (y >= mHal.drvState.lod[0].dimY) {
-        rsc->setError(RS_ERROR_BAD_VALUE, "subElementData X offset out of range.");
+    if (y > 0 && y >= mHal.drvState.lod[0].dimY) {
+        rsc->setError(RS_ERROR_BAD_VALUE, "subElementData Y offset out of range.");
+        return;
+    }
+
+    if (z > 0 && z >= mHal.drvState.lod[0].dimZ) {
+        rsc->setError(RS_ERROR_BAD_VALUE, "subElementData Z offset out of range.");
         return;
     }
 
@@ -307,8 +322,7 @@ void Allocation::elementData(Context *rsc, uint32_t x, uint32_t y,
         return;
     }
 
-    rsc->mHal.funcs.allocation.elementData2D(rsc, this, x, y, data, cIdx, sizeBytes);
-    sendDirty(rsc);
+    rsc->mHal.funcs.allocation.elementRead(rsc, this, x, y, z, data, cIdx, sizeBytes);
 }
 
 void Allocation::addProgramToDirty(const Program *p) {
@@ -653,16 +667,16 @@ void rsi_Allocation1DData(Context *rsc, RsAllocation va, uint32_t xoff, uint32_t
     a->data(rsc, xoff, lod, count, data, sizeBytes);
 }
 
-void rsi_Allocation2DElementData(Context *rsc, RsAllocation va, uint32_t x, uint32_t y, uint32_t lod, RsAllocationCubemapFace face,
-                                 const void *data, size_t sizeBytes, size_t eoff) {
+void rsi_Allocation1DElementData(Context *rsc, RsAllocation va, uint32_t x,
+                                 uint32_t lod, const void *data, size_t sizeBytes, size_t eoff) {
     Allocation *a = static_cast<Allocation *>(va);
-    a->elementData(rsc, x, y, data, eoff, sizeBytes);
+    a->elementData(rsc, x, 0, 0, data, eoff, sizeBytes);
 }
 
-void rsi_Allocation1DElementData(Context *rsc, RsAllocation va, uint32_t x, uint32_t lod,
-                                 const void *data, size_t sizeBytes, size_t eoff) {
+void rsi_AllocationElementData(Context *rsc, RsAllocation va, uint32_t x, uint32_t y, uint32_t z,
+                               uint32_t lod, const void *data, size_t sizeBytes, size_t eoff) {
     Allocation *a = static_cast<Allocation *>(va);
-    a->elementData(rsc, x, data, eoff, sizeBytes);
+    a->elementData(rsc, x, y, z, data, eoff, sizeBytes);
 }
 
 void rsi_Allocation2DData(Context *rsc, RsAllocation va, uint32_t xoff, uint32_t yoff, uint32_t lod, RsAllocationCubemapFace face,
@@ -681,7 +695,10 @@ void rsi_Allocation3DData(Context *rsc, RsAllocation va, uint32_t xoff, uint32_t
 void rsi_AllocationRead(Context *rsc, RsAllocation va, void *data, size_t sizeBytes) {
     Allocation *a = static_cast<Allocation *>(va);
     const Type * t = a->getType();
-    if(t->getDimY()) {
+    if(t->getDimZ()) {
+        a->read(rsc, 0, 0, 0, 0, t->getDimX(), t->getDimY(), t->getDimZ(),
+                data, sizeBytes, 0);
+    } else if(t->getDimY()) {
         a->read(rsc, 0, 0, 0, RS_ALLOCATION_CUBEMAP_FACE_POSITIVE_X,
                 t->getDimX(), t->getDimY(), data, sizeBytes, 0);
     } else {
@@ -840,11 +857,25 @@ void rsi_Allocation1DRead(Context *rsc, RsAllocation va, uint32_t xoff, uint32_t
     rsc->mHal.funcs.allocation.read1D(rsc, a, xoff, lod, count, data, sizeBytes);
 }
 
+void rsi_AllocationElementRead(Context *rsc, RsAllocation va, uint32_t x, uint32_t y, uint32_t z,
+                                 uint32_t lod, void *data, size_t sizeBytes, size_t eoff) {
+    Allocation *a = static_cast<Allocation *>(va);
+    a->elementRead(rsc, x, y, z, data, eoff, sizeBytes);
+}
+
 void rsi_Allocation2DRead(Context *rsc, RsAllocation va, uint32_t xoff, uint32_t yoff,
                           uint32_t lod, RsAllocationCubemapFace face, uint32_t w,
                           uint32_t h, void *data, size_t sizeBytes, size_t stride) {
     Allocation *a = static_cast<Allocation *>(va);
     a->read(rsc, xoff, yoff, lod, face, w, h, data, sizeBytes, stride);
+}
+
+void rsi_Allocation3DRead(Context *rsc, RsAllocation va,
+                          uint32_t xoff, uint32_t yoff, uint32_t zoff,
+                          uint32_t lod, uint32_t w, uint32_t h, uint32_t d,
+                          void *data, size_t sizeBytes, size_t stride) {
+    Allocation *a = static_cast<Allocation *>(va);
+    a->read(rsc, xoff, yoff, zoff, lod, w, h, d, data, sizeBytes, stride);
 }
 
 RsAllocation rsi_AllocationAdapterCreate(Context *rsc, RsType vwindow, RsAllocation vbase) {

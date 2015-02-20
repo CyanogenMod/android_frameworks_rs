@@ -138,10 +138,11 @@ public:
     void read(Context *rsc, uint32_t xoff, uint32_t yoff, uint32_t zoff, uint32_t lod,
               uint32_t w, uint32_t h, uint32_t d, void *data, size_t sizeBytes, size_t stride);
 
-    void elementData(Context *rsc, uint32_t x,
+    void elementData(Context *rsc, uint32_t x, uint32_t y, uint32_t z,
                      const void *data, uint32_t elementOff, size_t sizeBytes);
-    void elementData(Context *rsc, uint32_t x, uint32_t y,
-                     const void *data, uint32_t elementOff, size_t sizeBytes);
+
+    void elementRead(Context *rsc, uint32_t x, uint32_t y, uint32_t z,
+                     void *data, uint32_t elementOff, size_t sizeBytes);
 
     void addProgramToDirty(const Program *);
     void removeProgramToDirty(const Program *);
