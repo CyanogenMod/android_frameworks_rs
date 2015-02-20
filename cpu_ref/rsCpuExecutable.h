@@ -57,22 +57,22 @@ private:
 class ScriptExecutable {
 public:
     ScriptExecutable(Context* RSContext,
-                     void** fieldAddress, bool* fieldIsObject, size_t varCount,
+                     void** fieldAddress, bool* fieldIsObject,
+                     const char* const * fieldName, size_t varCount,
                      InvokeFunc_t* invokeFunctions, size_t funcCount,
                      ForEachFunc_t* forEachFunctions, uint32_t* forEachSignatures,
                      size_t forEachCount,
-                     const char ** pragmaKeys, const char ** pragmaValues,
+                     const char** pragmaKeys, const char** pragmaValues,
                      size_t pragmaCount,
                      bool isThreadable, const char *buildChecksum) :
         mFieldAddress(fieldAddress), mFieldIsObject(fieldIsObject),
-            mExportedVarCount(varCount),
-            mInvokeFunctions(invokeFunctions), mFuncCount(funcCount),
-            mForEachFunctions(forEachFunctions), mForEachSignatures(forEachSignatures),
-            mForEachCount(forEachCount),
-            mPragmaKeys(pragmaKeys), mPragmaValues(pragmaValues),
-            mPragmaCount(pragmaCount),
-            mIsThreadable(isThreadable), mBuildChecksum(buildChecksum),
-            mRS(RSContext) {
+        mFieldName(fieldName), mExportedVarCount(varCount),
+        mInvokeFunctions(invokeFunctions), mFuncCount(funcCount),
+        mForEachFunctions(forEachFunctions), mForEachSignatures(forEachSignatures),
+        mForEachCount(forEachCount),
+        mPragmaKeys(pragmaKeys), mPragmaValues(pragmaValues),
+        mPragmaCount(pragmaCount), mIsThreadable(isThreadable),
+        mBuildChecksum(buildChecksum), mRS(RSContext) {
     }
 
     ~ScriptExecutable() {
@@ -91,12 +91,18 @@ public:
             delete [] mPragmaKeys[i];
             delete [] mPragmaValues[i];
         }
-
         delete[] mPragmaValues;
         delete[] mPragmaKeys;
+
         delete[] mForEachSignatures;
         delete[] mForEachFunctions;
+
         delete[] mInvokeFunctions;
+
+        for (size_t i = 0; i < mExportedVarCount; i++) {
+            delete[] mFieldName[i];
+        }
+        delete[] mFieldName;
         delete[] mFieldIsObject;
         delete[] mFieldAddress;
     }
@@ -110,8 +116,12 @@ public:
     size_t getPragmaCount() const { return mPragmaCount; }
 
     void* getFieldAddress(int slot) const { return mFieldAddress[slot]; }
+    void* getFieldAddress(const char* name) const;
     bool getFieldIsObject(int slot) const { return mFieldIsObject[slot]; }
+    const char* getFieldName(int slot) const { return mFieldName[slot]; }
+
     InvokeFunc_t getInvokeFunction(int slot) const { return mInvokeFunctions[slot]; }
+
     ForEachFunc_t getForEachFunction(int slot) const { return mForEachFunctions[slot]; }
     uint32_t getForEachSignature(int slot) const { return mForEachSignatures[slot]; }
 
@@ -129,6 +139,7 @@ public:
 private:
     void** mFieldAddress;
     bool* mFieldIsObject;
+    const char* const * mFieldName;
     size_t mExportedVarCount;
 
     InvokeFunc_t* mInvokeFunctions;

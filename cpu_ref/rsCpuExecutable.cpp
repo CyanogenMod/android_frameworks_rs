@@ -329,6 +329,7 @@ ScriptExecutable* ScriptExecutable::createFromSharedObject(
 
     void** fieldAddress = nullptr;
     bool* fieldIsObject = nullptr;
+    char** fieldName = nullptr;
     InvokeFunc_t* invokeFunctions = nullptr;
     ForEachFunc_t* forEachFunctions = nullptr;
     uint32_t* forEachSignatures = nullptr;
@@ -356,6 +357,11 @@ ScriptExecutable* ScriptExecutable::createFromSharedObject(
         goto error;
     }
 
+    fieldName = new char*[varCount];
+    if (fieldName == nullptr) {
+        goto error;
+    }
+
     for (size_t i = 0; i < varCount; ++i) {
         if (strgets(line, MAXLINE, &rsInfo) == nullptr) {
             goto error;
@@ -372,6 +378,8 @@ ScriptExecutable* ScriptExecutable::createFromSharedObject(
         }
         fieldAddress[i] = addr;
         fieldIsObject[i] = false;
+        fieldName[i] = new char[strlen(line)+1];
+        strcpy(fieldName[i], line);
     }
 
     if (strgets(line, MAXLINE, &rsInfo) == nullptr) {
@@ -440,7 +448,8 @@ ScriptExecutable* ScriptExecutable::createFromSharedObject(
         forEachSignatures[i] = tmpSig;
         forEachFunctions[i] =
             (ForEachFunc_t) dlsym(sharedObj, tmpName);
-        if (i != 0 && forEachFunctions[i] == nullptr) {
+        if (i != 0 && forEachFunctions[i] == nullptr &&
+            strcmp(tmpName, "root.expand")) {
             // Ignore missing root.expand functions.
             // root() is always specified at location 0.
             ALOGE("Failed to find forEach function address for %s: %s",
@@ -503,7 +512,6 @@ ScriptExecutable* ScriptExecutable::createFromSharedObject(
             ALOGE("Unable to read pragma at index %zu!", i);
             goto error;
         }
-
         char key[MAXLINE];
         char value[MAXLINE] = ""; // initialize in case value is empty
 
@@ -561,15 +569,15 @@ ScriptExecutable* ScriptExecutable::createFromSharedObject(
         char *checksumStart = &line[strlen(CHECKSUM_STR)];
         checksum = new char[strlen(checksumStart) + 1];
         strcpy(checksum, checksumStart);
-    }
-    else {
+    } else {
+        ALOGE("Missing checksum in shared obj file");
         goto error;
     }
 
 #endif  // RS_COMPATIBILITY_LIB
 
     return new ScriptExecutable(
-        RSContext, fieldAddress, fieldIsObject, varCount,
+        RSContext, fieldAddress, fieldIsObject, fieldName, varCount,
         invokeFunctions, funcCount,
         forEachFunctions, forEachSignatures, forEachCount,
         pragmaKeys, pragmaValues, pragmaCount,
@@ -591,10 +599,26 @@ error:
 
     delete[] forEachSignatures;
     delete[] forEachFunctions;
+
     delete[] invokeFunctions;
+
+    for (size_t i = 0; i < varCount; i++) {
+        delete[] fieldName[i];
+    }
+    delete[] fieldName;
     delete[] fieldIsObject;
     delete[] fieldAddress;
 
+    return nullptr;
+}
+
+void* ScriptExecutable::getFieldAddress(const char* name) const {
+    // TODO: improve this by using a hash map.
+    for (size_t i = 0; i < mExportedVarCount; i++) {
+        if (strcmp(name, mFieldName[i]) == 0) {
+            return mFieldAddress[i];
+        }
+    }
     return nullptr;
 }
 

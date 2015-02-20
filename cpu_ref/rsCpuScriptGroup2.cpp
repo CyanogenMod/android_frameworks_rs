@@ -5,6 +5,8 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+#include <set>
+#include <sstream>
 #include <string>
 #include <vector>
 
@@ -75,25 +77,25 @@ void groupRoot(const RsExpandKernelParams *kparams, uint32_t xstart,
 
         mutable_kparams->out = (void*)ptr;
 
-        mutable_kparams->usr = cpuClosure->mUsrPtr;
-
         cpuClosure->mFunc(kparams, xstart, xend, ostep);
     }
 
     mutable_kparams->ins        = oldIns;
     mutable_kparams->inEStrides = oldStrides;
-    mutable_kparams->usr        = &closures;
 }
 
 }  // namespace
+
+Batch::Batch(CpuScriptGroup2Impl* group, const char* name) :
+    mGroup(group), mFunc(nullptr) {
+    mName = strndup(name, strlen(name));
+}
 
 Batch::~Batch() {
     for (CPUClosure* c : mClosures) {
         delete c;
     }
-    if (mScriptObj) {
-        dlclose(mScriptObj);
-    }
+    free(mName);
 }
 
 bool Batch::conflict(CPUClosure* cpuClosure) const {
@@ -103,8 +105,7 @@ bool Batch::conflict(CPUClosure* cpuClosure) const {
 
     const Closure* closure = cpuClosure->mClosure;
 
-    if (closure->mKernelID.get() == nullptr ||
-        mClosures.front()->mClosure->mKernelID.get() == nullptr) {
+    if (!closure->mIsKernel || !mClosures.front()->mClosure->mIsKernel) {
         // An invoke should be in a batch by itself, so it conflicts with any other
         // closure.
         return true;
@@ -134,30 +135,30 @@ bool Batch::conflict(CPUClosure* cpuClosure) const {
 
 CpuScriptGroup2Impl::CpuScriptGroup2Impl(RsdCpuReferenceImpl *cpuRefImpl,
                                          const ScriptGroupBase *sg) :
-    mCpuRefImpl(cpuRefImpl), mGroup((const ScriptGroup2*)(sg)) {
+    mCpuRefImpl(cpuRefImpl), mGroup((const ScriptGroup2*)(sg)),
+    mExecutable(nullptr), mScriptObj(nullptr) {
     rsAssert(!mGroup->mClosures.empty());
 
-    Batch* batch = new Batch(this);
+    Batch* batch = new Batch(this, "Batch0");
+    int i = 0;
     for (Closure* closure: mGroup->mClosures) {
-        const ScriptKernelID* kernelID = closure->mKernelID.get();
-        RsdCpuScriptImpl* si;
         CPUClosure* cc;
-        if (kernelID != nullptr) {
-            si = (RsdCpuScriptImpl *)mCpuRefImpl->lookupScript(kernelID->mScript);
+        const IDBase* funcID = closure->mFunctionID.get();
+        RsdCpuScriptImpl* si =
+                (RsdCpuScriptImpl *)mCpuRefImpl->lookupScript(funcID->mScript);
+        if (closure->mIsKernel) {
             MTLaunchStruct mtls;
-            si->forEachKernelSetup(kernelID->mSlot, &mtls);
-            // TODO: Is mtls.fep.usrLen ever used?
-            cc = new CPUClosure(closure, si, (ExpandFuncTy)mtls.kernel,
-                                mtls.fep.usr, mtls.fep.usrLen);
+            si->forEachKernelSetup(funcID->mSlot, &mtls);
+            cc = new CPUClosure(closure, si, (ExpandFuncTy)mtls.kernel);
         } else {
-            si = (RsdCpuScriptImpl *)mCpuRefImpl->lookupScript(
-                    closure->mInvokeID->mScript);
             cc = new CPUClosure(closure, si);
         }
 
         if (batch->conflict(cc)) {
             mBatches.push_back(batch);
-            batch = new Batch(this);
+            std::stringstream ss;
+            ss << "Batch" << ++i;
+            batch = new Batch(this, ss.str().c_str());
         }
 
         batch->mClosures.push_back(cc);
@@ -167,16 +168,33 @@ CpuScriptGroup2Impl::CpuScriptGroup2Impl(RsdCpuReferenceImpl *cpuRefImpl,
     mBatches.push_back(batch);
 
 #ifndef RS_COMPATIBILITY_LIB
-    for (Batch* batch : mBatches) {
-        batch->tryToCreateFusedKernel(mGroup->mCacheDir);
+    compile(mGroup->mCacheDir);
+    if (mScriptObj != nullptr && mExecutable != nullptr) {
+        for (Batch* batch : mBatches) {
+            batch->resolveFuncPtr(mScriptObj);
+        }
     }
-#endif
+#endif  // RS_COMPATIBILITY_LIB
+}
+
+void Batch::resolveFuncPtr(void* sharedObj) {
+    std::string funcName(mName);
+    if (mClosures.front()->mClosure->mIsKernel) {
+        funcName.append(".expand");
+    }
+    mFunc = dlsym(sharedObj, funcName.c_str());
+    rsAssert (mFunc != nullptr);
 }
 
 CpuScriptGroup2Impl::~CpuScriptGroup2Impl() {
     for (Batch* batch : mBatches) {
         delete batch;
     }
+    // TODO: move this dlclose into ~ScriptExecutable().
+    if (mScriptObj != nullptr) {
+        dlclose(mScriptObj);
+    }
+    delete mExecutable;
 }
 
 namespace {
@@ -189,7 +207,8 @@ string getFileName(string path) {
 }
 
 void setupCompileArguments(
-        const vector<string>& inputs, const vector<int>& kernels,
+        const vector<string>& inputs, const vector<string>& kernelBatches,
+        const vector<string>& invokeBatches,
         const string& output_dir, const string& output_filename,
         const string& rsLib, vector<const char*>* args) {
     args->push_back(RsdCpuScriptImpl::BCC_EXE_PATH);
@@ -202,10 +221,13 @@ void setupCompileArguments(
     for (const string& input : inputs) {
         args->push_back(input.c_str());
     }
-    for (int kernel : kernels) {
-        args->push_back("-k");
-        string strKernel = std::to_string(kernel);
-        args->push_back(strKernel.c_str());
+    for (const string& batch : kernelBatches) {
+        args->push_back("-merge");
+        args->push_back(batch.c_str());
+    }
+    for (const string& batch : invokeBatches) {
+        args->push_back("-invoke");
+        args->push_back(batch.c_str());
     }
     args->push_back("-output_path");
     args->push_back(output_dir.c_str());
@@ -247,13 +269,32 @@ bool fuseAndCompile(const char** arguments,
 
     return true;
 }
-#endif
+
+void generateSourceSlot(const Closure& closure,
+                        const std::vector<std::string>& inputs,
+                        std::stringstream& ss) {
+    const IDBase* funcID = (const IDBase*)closure.mFunctionID.get();
+    const Script* script = funcID->mScript;
+
+    rsAssert (!script->isIntrinsic());
+
+    const RsdCpuScriptImpl *cpuScript =
+            (const RsdCpuScriptImpl*)script->mHal.drv;
+    const string& bitcodeFilename = cpuScript->getBitcodeFilePath();
+
+    const int index = find(inputs.begin(), inputs.end(), bitcodeFilename) -
+            inputs.begin();
+
+    ss << index << "," << funcID->mSlot << ".";
+}
+
+#endif  // RS_COMPATIBILTY_LIB
 
 }  // anonymous namespace
 
-void Batch::tryToCreateFusedKernel(const char *cacheDir) {
+void CpuScriptGroup2Impl::compile(const char* cacheDir) {
 #ifndef RS_COMPATIBILITY_LIB
-    if (mClosures.size() < 2) {
+    if (mGroup->mClosures.size() < 2) {
         return;
     }
 
@@ -261,25 +302,43 @@ void Batch::tryToCreateFusedKernel(const char *cacheDir) {
     // Fuse the input kernels and generate native code in an object file
     //===--------------------------------------------------------------------===//
 
-    std::vector<string> inputFiles;
-    std::vector<int> slots;
+    std::set<string> inputSet;
+    for (Closure* closure : mGroup->mClosures) {
+        const Script* script = closure->mFunctionID.get()->mScript;
 
-    for (CPUClosure* cpuClosure : mClosures) {
-        const Closure* closure = cpuClosure->mClosure;
-        const ScriptKernelID* kernelID = closure->mKernelID.get();
-        const Script* script = kernelID->mScript;
-
+        // If any script is an intrinsic, give up trying fusing the kernels.
         if (script->isIntrinsic()) {
             return;
         }
 
         const RsdCpuScriptImpl *cpuScript =
                 (const RsdCpuScriptImpl*)script->mHal.drv;
-
         const string& bitcodeFilename = cpuScript->getBitcodeFilePath();
+        inputSet.insert(bitcodeFilename);
+    }
 
-        inputFiles.push_back(bitcodeFilename);
-        slots.push_back(kernelID->mSlot);
+    std::vector<string> inputs(inputSet.begin(), inputSet.end());
+
+    std::vector<string> kernelBatches;
+    std::vector<string> invokeBatches;
+
+    int i = 0;
+    for (const auto& batch : mBatches) {
+        rsAssert(batch->size() > 0);
+
+        std::stringstream ss;
+        ss << batch->mName << ":";
+
+        if (!batch->mClosures.front()->mClosure->mIsKernel) {
+            rsAssert(batch->size() == 1);
+            generateSourceSlot(*batch->mClosures.front()->mClosure, inputs, ss);
+            invokeBatches.push_back(ss.str());
+        } else {
+            for (const auto& cpuClosure : batch->mClosures) {
+                generateSourceSlot(*cpuClosure->mClosure, inputs, ss);
+            }
+            kernelBatches.push_back(ss.str());
+        }
     }
 
     rsAssert(cacheDir != nullptr);
@@ -295,8 +354,8 @@ void Batch::tryToCreateFusedKernel(const char *cacheDir) {
     string outputFileName = getFileName(objFilePath.substr(0, objFilePath.size() - 2));
     string rsLibPath(SYSLIBPATH"/libclcore.bc");
     vector<const char*> arguments;
-    setupCompileArguments(inputFiles, slots, cacheDir, outputFileName, rsLibPath,
-                          &arguments);
+    setupCompileArguments(inputs, kernelBatches, invokeBatches, cacheDir,
+                          outputFileName, rsLibPath, &arguments);
     std::unique_ptr<const char> joined(
         rsuJoinStrings(arguments.size() - 1, arguments.data()));
     string commandLine (joined.get());
@@ -317,15 +376,15 @@ void Batch::tryToCreateFusedKernel(const char *cacheDir) {
         return;
     }
 
-    void* mSharedObj = SharedLibraryUtils::loadSharedLibrary(cacheDir, resName);
-    if (mSharedObj == nullptr) {
+    mScriptObj = SharedLibraryUtils::loadSharedLibrary(cacheDir, resName);
+    if (mScriptObj == nullptr) {
         ALOGE("Unable to load '%s'", resName);
         return;
     }
 
     mExecutable = ScriptExecutable::createFromSharedObject(
-                                                           nullptr,  // RS context. Unused.
-                                                           mSharedObj);
+        nullptr,  // RS context. Unused.
+        mScriptObj);
 
 #endif  // RS_COMPATIBILITY_LIB
 }
@@ -340,13 +399,8 @@ void CpuScriptGroup2Impl::execute() {
 void Batch::setGlobalsForBatch() {
     for (CPUClosure* cpuClosure : mClosures) {
         const Closure* closure = cpuClosure->mClosure;
-        const ScriptKernelID* kernelID = closure->mKernelID.get();
-        Script* s;
-        if (kernelID != nullptr) {
-            s = kernelID->mScript;
-        } else {
-            s = cpuClosure->mClosure->mInvokeID->mScript;
-        }
+        const IDBase* funcID = closure->mFunctionID.get();
+        Script* s = funcID->mScript;;
         for (const auto& p : closure->mGlobals) {
             const void* value = p.second.first;
             int size = p.second.second;
@@ -360,18 +414,54 @@ void Batch::setGlobalsForBatch() {
             rsAssert(p.first != nullptr);
             ALOGV("Evaluating closure %p, setting field %p (Script %p, slot: %d)",
                   closure, p.first, p.first->mScript, p.first->mSlot);
-            // We use -1 size to indicate an ObjectBase rather than a primitive type
-            if (size < 0) {
-                s->setVarObj(p.first->mSlot, (ObjectBase*)value);
+            Script* script = p.first->mScript;
+            const RsdCpuScriptImpl *cpuScript =
+                    (const RsdCpuScriptImpl*)script->mHal.drv;
+            int slot = p.first->mSlot;
+            ScriptExecutable* exec = mGroup->getExecutable();
+            if (exec != nullptr) {
+                const char* varName = cpuScript->getFieldName(slot);
+                void* addr = exec->getFieldAddress(varName);
+                if (size < 0) {
+                    rsrSetObject(mGroup->getCpuRefImpl()->getContext(),
+                                 (rs_object_base*)addr, (ObjectBase*)value);
+                } else {
+                    memcpy(addr, (const void*)&value, size);
+                }
             } else {
-                s->setVar(p.first->mSlot, (const void*)&value, size);
+                // We use -1 size to indicate an ObjectBase rather than a primitive type
+                if (size < 0) {
+                    s->setVarObj(slot, (ObjectBase*)value);
+                } else {
+                    s->setVar(slot, (const void*)&value, size);
+                }
             }
         }
     }
 }
 
 void Batch::run() {
-    if (mExecutable != nullptr) {
+    if (!mClosures.front()->mClosure->mIsKernel) {
+        rsAssert(mClosures.size() == 1);
+
+        // This batch contains a single closure for an invoke function
+        CPUClosure* cc = mClosures.front();
+        const Closure* c = cc->mClosure;
+
+        if (mFunc != nullptr) {
+            // TODO: Need align pointers for x86_64.
+            // See RsdCpuScriptImpl::invokeFunction in rsCpuScript.cpp
+            ((InvokeFuncTy)mFunc)(c->mParams, c->mParamLength);
+        } else {
+            const ScriptInvokeID* invokeID = (const ScriptInvokeID*)c->mFunctionID.get();
+            rsAssert(invokeID != nullptr);
+            cc->mSi->invokeFunction(invokeID->mSlot, c->mParams, c->mParamLength);
+        }
+
+        return;
+    }
+
+    if (mFunc != nullptr) {
         MTLaunchStruct mtls;
         const CPUClosure* firstCpuClosure = mClosures.front();
         const CPUClosure* lastCpuClosure = mClosures.back();
@@ -384,7 +474,7 @@ void Batch::run() {
 
         mtls.script = nullptr;
         mtls.fep.usr = nullptr;
-        mtls.kernel = mExecutable->getForEachFunction(0);
+        mtls.kernel = (ForEachFunc_t)mFunc;
 
         mGroup->getCpuRefImpl()->launchThreads(
                 (const Allocation**)firstCpuClosure->mClosure->mArgs,
@@ -395,25 +485,14 @@ void Batch::run() {
         return;
     }
 
-    if (mClosures.size() == 1 &&
-        mClosures.front()->mClosure->mKernelID.get() == nullptr) {
-        // This closure is for an invoke function
-        CPUClosure* cc = mClosures.front();
-        const Closure* c = cc->mClosure;
-        const ScriptInvokeID* invokeID = c->mInvokeID;
-        rsAssert(invokeID != nullptr);
-        cc->mSi->invokeFunction(invokeID->mSlot, c->mParams, c->mParamLength);
-        return;
-    }
-
     for (CPUClosure* cpuClosure : mClosures) {
         const Closure* closure = cpuClosure->mClosure;
-        const ScriptKernelID* kernelID = closure->mKernelID.get();
+        const ScriptKernelID* kernelID =
+                (const ScriptKernelID*)closure->mFunctionID.get();
         cpuClosure->mSi->preLaunch(kernelID->mSlot,
                                    (const Allocation**)closure->mArgs,
                                    closure->mNumArg, closure->mReturnValue,
-                                   cpuClosure->mUsrPtr, cpuClosure->mUsrSize,
-                                   nullptr);
+                                   nullptr, 0, nullptr);
     }
 
     const CPUClosure* cpuClosure = mClosures.front();
@@ -434,7 +513,8 @@ void Batch::run() {
 
     for (CPUClosure* cpuClosure : mClosures) {
         const Closure* closure = cpuClosure->mClosure;
-        const ScriptKernelID* kernelID = closure->mKernelID.get();
+        const ScriptKernelID* kernelID =
+                (const ScriptKernelID*)closure->mFunctionID.get();
         cpuClosure->mSi->postLaunch(kernelID->mSlot,
                                     (const Allocation**)closure->mArgs,
                                     closure->mNumArg, closure->mReturnValue,
