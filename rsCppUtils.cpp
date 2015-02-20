@@ -17,6 +17,8 @@
 #include "rsUtils.h"
 #include "rsCppUtils.h"
 
+#include <string>
+
 #include <string.h>
 
 namespace android {
@@ -33,6 +35,16 @@ const char * rsuCopyString(const char *name, size_t len) {
     return n;
 }
 
+const char* rsuJoinStrings(int n, const char* const* strs) {
+    std::string tmp;
+    for (int i = 0; i < n; i++) {
+        if (i > 0) {
+            tmp.append(" ");
+        }
+        tmp.append(strs[i]);
+    }
+    return strndup(tmp.c_str(), tmp.size());
+}
 
 }
 }
