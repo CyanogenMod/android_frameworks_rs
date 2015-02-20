@@ -18,6 +18,7 @@
 #define ANDROID_RS_SCRIPT_H
 
 #include "rsAllocation.h"
+#include "rsMap.h"
 
 #include <utility>
 
@@ -87,7 +88,7 @@ public:
             size_t exportedPragmaCount;
             char const **exportedPragmaKeyList;
             char const **exportedPragmaValueList;
-            const std::pair<const char *, uint32_t> *exportedForeachFuncList;
+            const Pair<const char *, uint32_t> *exportedForeachFuncList;
 
             int (* root)();
         };
