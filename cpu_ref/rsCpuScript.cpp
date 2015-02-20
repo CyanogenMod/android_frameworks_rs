@@ -878,7 +878,7 @@ bool RsdCpuScriptImpl::init(char const *resName, char const *cacheDir,
         }
     }
 
-    mBitcodeFilePath = bcFileName;
+    mBitcodeFilePath.setTo(bcFileName.c_str());
 
     // Read RS symbol information from the .so.
     if ( !mScriptSO) {

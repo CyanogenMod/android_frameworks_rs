@@ -20,10 +20,10 @@
 #include "rsd_cpu.h"
 #include "rsSignal.h"
 #include "rsContext.h"
+#include "rsCppUtils.h"
 #include "rsElement.h"
 #include "rsScriptC.h"
 
-#include <string>
 
 #define RS_KERNEL_INPUT_LIMIT 8
 
@@ -198,10 +198,10 @@ public:
     }
 
     virtual void setBccPluginName(const char *name) {
-        mBccPluginName.assign(name);
+        mBccPluginName.setTo(name);
     }
     virtual const char *getBccPluginName() const {
-        return mBccPluginName.c_str();
+        return mBccPluginName.string();
     }
     virtual bool getInForEach() { return mInForEach; }
 
@@ -233,7 +233,7 @@ protected:
     bcc::RSLinkRuntimeCallback mLinkRuntimeCallback;
     RSSelectRTCallback mSelectRTCallback;
     RSSetupCompilerCallback mSetupCompilerCallback;
-    std::string mBccPluginName;
+    String8 mBccPluginName;
 };
 
 
