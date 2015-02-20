@@ -14,6 +14,7 @@
 #include "rsClosure.h"
 #include "rsContext.h"
 #include "rsCpuCore.h"
+#include "rsCpuExecutable.h"
 #include "rsCpuScript.h"
 #include "rsScript.h"
 #include "rsScriptGroup2.h"
@@ -210,16 +211,6 @@ void setupCompileArguments(
     args->push_back(nullptr);
 }
 
-string convertListToString(int n, const char* const* strs) {
-    string ret;
-    ret.append(strs[0]);
-    for (int i = 1; i < n; i++) {
-        ret.append(" ");
-        ret.append(strs[i]);
-    }
-    return ret;
-}
-
 bool fuseAndCompile(const char** arguments,
                     const string& commandLine) {
     const pid_t pid = fork();
@@ -296,8 +287,9 @@ void Batch::tryToCreateFusedKernel(const char *cacheDir) {
     vector<const char*> arguments;
     setupCompileArguments(inputFiles, slots, cacheDir, outputFileName, rsLibPath,
                           &arguments);
-    string commandLine =
-            convertListToString(arguments.size() - 1, arguments.data());
+    std::unique_ptr<const char> joined(
+        rsuJoinStrings(arguments.size() - 1, arguments.data()));
+    string commandLine (joined.get());
 
     if (!fuseAndCompile(arguments.data(), commandLine)) {
         return;

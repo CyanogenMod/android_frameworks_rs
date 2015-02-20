@@ -180,7 +180,6 @@ static inline nsecs_t nanoseconds_to_milliseconds(nsecs_t secs)
     return secs/1000000;
 }
 
-
 #endif // RS_SERVER || RS_COMPATIBILITY_LIB
 
 namespace android {
@@ -281,6 +280,8 @@ static inline uint32_t rsBoxFilter8888(uint32_t i1, uint32_t i2, uint32_t i3, ui
     uint32_t a = ((i1 >> 24) & 0xff) + ((i2 >> 24) & 0xff) + ((i3 >> 24) & 0xff) + ((i4 >> 24) & 0xff);
     return (r >> 2) | ((g >> 2) << 8) | ((b >> 2) << 16) | ((a >> 2) << 24);
 }
+
+const char* rsuJoinStrings(int n, const char* const* strs);
 
 }
 }

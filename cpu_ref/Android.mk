@@ -20,6 +20,7 @@ LOCAL_MODULE_TARGET_ARCH := arm mips mips64 x86 x86_64 arm64
 
 LOCAL_SRC_FILES:= \
 	rsCpuCore.cpp \
+	rsCpuExecutable.cpp \
 	rsCpuScript.cpp \
 	rsCpuRuntimeMath.cpp \
 	rsCpuRuntimeMathFuncs.cpp \
