@@ -26,8 +26,6 @@
 
 #include "rsCpuCore.h"
 
-#include <vector>
-
 namespace bcc {
     class BCCContext;
     class RSCompilerDriver;
@@ -244,10 +242,10 @@ protected:
 
  public:
   static const char* BCC_EXE_PATH;
-  const std::string& getBitcodeFilePath() const { return mBitcodeFilePath; }
+  const char* getBitcodeFilePath() const { return mBitcodeFilePath.string(); }
 
  private:
-  std::string mBitcodeFilePath;
+  String8 mBitcodeFilePath;
 };
 
 Allocation * rsdScriptGetAllocationForPointer(
