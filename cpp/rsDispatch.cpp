@@ -389,6 +389,21 @@ bool loadSymbols(void* handle, dispatchTable& dispatchTab, int device_api) {
             LOG_API("Couldn't initialize dispatchTab.ScriptGroup2Create");
             return false;
         }
+        dispatchTab.AllocationElementData = (AllocationElementDataFnPtr)dlsym(handle, "rsAllocationElementData");
+        if (dispatchTab.AllocationElementData == NULL) {
+            LOG_API("Couldn't initialize dispatchTab.AllocationElementData");
+            return false;
+        }
+        dispatchTab.AllocationElementRead = (AllocationElementReadFnPtr)dlsym(handle, "rsAllocationElementRead");
+        if (dispatchTab.AllocationElementRead == NULL) {
+            LOG_API("Couldn't initialize dispatchTab.AllocationElementRead");
+            return false;
+        }
+        dispatchTab.Allocation3DRead = (Allocation3DReadFnPtr)dlsym(handle, "rsAllocation3DRead");
+        if (dispatchTab.Allocation3DRead == NULL) {
+            LOG_API("Couldn't initialize dispatchTab.Allocation3DRead");
+            return false;
+        }
     }
 
     return true;
