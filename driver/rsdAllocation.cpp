@@ -1114,13 +1114,12 @@ void rsdAllocationData3D_alloc(const android::renderscript::Context *rsc,
                                      srcXoff, srcYoff, srcZoff, srcLod);
 }
 
-void rsdAllocationElementData1D(const Context *rsc, const Allocation *alloc,
-                                uint32_t x,
-                                const void *data, uint32_t cIdx, size_t sizeBytes) {
+void rsdAllocationElementData(const Context *rsc, const Allocation *alloc,
+                              uint32_t x, uint32_t y, uint32_t z,
+                              const void *data, uint32_t cIdx, size_t sizeBytes) {
     DrvAllocation *drv = (DrvAllocation *)alloc->mHal.drv;
 
-    size_t eSize = alloc->mHal.state.elementSizeBytes;
-    uint8_t * ptr = GetOffsetPtr(alloc, x, 0, 0, 0, RS_ALLOCATION_CUBEMAP_FACE_POSITIVE_X);
+    uint8_t * ptr = GetOffsetPtr(alloc, x, y, z, 0, RS_ALLOCATION_CUBEMAP_FACE_POSITIVE_X);
 
     const Element * e = alloc->mHal.state.type->getElement()->getField(cIdx);
     ptr += alloc->mHal.state.type->getElement()->getFieldOffsetBytes(cIdx);
@@ -1134,24 +1133,17 @@ void rsdAllocationElementData1D(const Context *rsc, const Allocation *alloc,
     drv->uploadDeferred = true;
 }
 
-void rsdAllocationElementData2D(const Context *rsc, const Allocation *alloc,
-                                uint32_t x, uint32_t y,
-                                const void *data, uint32_t cIdx, size_t sizeBytes) {
+void rsdAllocationElementRead(const Context *rsc, const Allocation *alloc,
+                              uint32_t x, uint32_t y, uint32_t z,
+                              void *data, uint32_t cIdx, size_t sizeBytes) {
     DrvAllocation *drv = (DrvAllocation *)alloc->mHal.drv;
 
-    size_t eSize = alloc->mHal.state.elementSizeBytes;
-    uint8_t * ptr = GetOffsetPtr(alloc, x, y, 0, 0, RS_ALLOCATION_CUBEMAP_FACE_POSITIVE_X);
+    uint8_t * ptr = GetOffsetPtr(alloc, x, y, z, 0, RS_ALLOCATION_CUBEMAP_FACE_POSITIVE_X);
 
     const Element * e = alloc->mHal.state.type->getElement()->getField(cIdx);
     ptr += alloc->mHal.state.type->getElement()->getFieldOffsetBytes(cIdx);
 
-    if (alloc->mHal.state.hasReferences) {
-        e->incRefs(data);
-        e->decRefs(ptr);
-    }
-
-    memcpy(ptr, data, sizeBytes);
-    drv->uploadDeferred = true;
+    memcpy(data, ptr, sizeBytes);
 }
 
 static void mip565(const Allocation *alloc, int lod, RsAllocationCubemapFace face) {

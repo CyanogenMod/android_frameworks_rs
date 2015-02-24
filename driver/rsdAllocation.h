@@ -161,14 +161,15 @@ void rsdAllocationData3D_alloc(const android::renderscript::Context *rsc,
                                uint32_t srcXoff, uint32_t srcYoff, uint32_t srcZoff,
                                uint32_t srcLod);
 
-void rsdAllocationElementData1D(const android::renderscript::Context *rsc,
-                                const android::renderscript::Allocation *alloc,
-                                uint32_t x,
-                                const void *data, uint32_t elementOff, size_t sizeBytes);
-void rsdAllocationElementData2D(const android::renderscript::Context *rsc,
-                                const android::renderscript::Allocation *alloc,
-                                uint32_t x, uint32_t y,
-                                const void *data, uint32_t elementOff, size_t sizeBytes);
+void rsdAllocationElementData(const android::renderscript::Context *rsc,
+                              const android::renderscript::Allocation *alloc,
+                              uint32_t x, uint32_t y, uint32_t z,
+                              const void *data, uint32_t elementOff, size_t sizeBytes);
+
+void rsdAllocationElementRead(const android::renderscript::Context *rsc,
+                              const android::renderscript::Allocation *alloc,
+                              uint32_t x, uint32_t y, uint32_t z,
+                              void *data, uint32_t elementOff, size_t sizeBytes);
 
 void rsdAllocationGenerateMipmaps(const android::renderscript::Context *rsc,
                                   const android::renderscript::Allocation *alloc);

@@ -236,10 +236,12 @@ typedef struct {
                             uint32_t srcXoff, uint32_t srcYoff, uint32_t srcZoff,
                             uint32_t srcLod);
 
-        void (*elementData1D)(const Context *rsc, const Allocation *alloc, uint32_t x,
-                              const void *data, uint32_t elementOff, size_t sizeBytes);
-        void (*elementData2D)(const Context *rsc, const Allocation *alloc, uint32_t x, uint32_t y,
-                              const void *data, uint32_t elementOff, size_t sizeBytes);
+        void (*elementData)(const Context *rsc, const Allocation *alloc,
+                            uint32_t x, uint32_t y, uint32_t z,
+                            const void *data, uint32_t elementOff, size_t sizeBytes);
+        void (*elementRead)(const Context *rsc, const Allocation *alloc,
+                            uint32_t x, uint32_t y, uint32_t z,
+                            void *data, uint32_t elementOff, size_t sizeBytes);
 
         void (*generateMipmaps)(const Context *rsc, const Allocation *alloc);
 
