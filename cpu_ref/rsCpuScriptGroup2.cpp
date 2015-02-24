@@ -1,6 +1,9 @@
 #include "rsCpuScriptGroup2.h"
 
 #include <dlfcn.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
 
 #include <string>
 #include <vector>
@@ -288,10 +291,17 @@ void Batch::tryToCreateFusedKernel(const char *cacheDir) {
         slots.push_back(kernelID->mSlot);
     }
 
-    string outputPath(tempnam(cacheDir, "fused"));
-    string outputFileName = getFileName(outputPath);
-    string objFilePath(outputPath);
-    objFilePath.append(".o");
+    rsAssert(cacheDir != nullptr);
+    string objFilePath(cacheDir);
+    objFilePath.append("/fusedXXXXXX.o");
+    // Find unique object file name, to make following file names unique.
+    int tempfd = mkstemps(&objFilePath[0], 2);
+    if (tempfd == -1) {
+      return;
+    }
+    TEMP_FAILURE_RETRY(close(tempfd));
+
+    string outputFileName = getFileName(objFilePath.substr(0, objFilePath.size() - 2));
     string rsLibPath(SYSLIBPATH"/libclcore.bc");
     vector<const char*> arguments;
     setupCompileArguments(inputFiles, slots, cacheDir, outputFileName, rsLibPath,
@@ -300,6 +310,7 @@ void Batch::tryToCreateFusedKernel(const char *cacheDir) {
             convertListToString(arguments.size() - 1, arguments.data());
 
     if (!fuseAndCompile(arguments.data(), commandLine)) {
+        unlink(objFilePath.c_str());
         return;
     }
 
