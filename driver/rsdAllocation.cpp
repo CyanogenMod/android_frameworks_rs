@@ -767,9 +767,13 @@ void rsdAllocationSetSurface(const Context *rsc, Allocation *alloc, ANativeWindo
 
         int format = 0;
         const Element *e = alloc->mHal.state.type->getElement();
-        rsAssert(e->getType() == RS_TYPE_UNSIGNED_8);
-        rsAssert(e->getVectorSize() == 4);
-        rsAssert(e->getKind() == RS_KIND_PIXEL_RGBA);
+        if ((e->getType() != RS_TYPE_UNSIGNED_8) ||
+            (e->getVectorSize() != 4)) {
+            // We do not check for RGBA, RGBx, to allow for interop with U8_4
+
+            rsc->setError(RS_ERROR_DRIVER, "Surface passed to setSurface is not U8_4, RGBA.");
+            goto error;
+        }
         format = PIXEL_FORMAT_RGBA_8888;
 
         r = native_window_set_buffers_format(nw, format);
