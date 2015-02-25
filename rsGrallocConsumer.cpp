@@ -146,7 +146,7 @@ status_t GrallocConsumer::lockNextBuffer() {
     //mAlloc->scalingMode = b.mScalingMode;
     //mAlloc->frameNumber = b.mFrameNumber;
 
-    if (mAlloc->mHal.state.yuv) {
+    if (mAlloc->mHal.state.yuv == HAL_PIXEL_FORMAT_YCbCr_420_888) {
         mAlloc->mHal.drvState.lod[1].mallocPtr = ycbcr.cb;
         mAlloc->mHal.drvState.lod[2].mallocPtr = ycbcr.cr;
 
