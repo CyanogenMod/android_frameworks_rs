@@ -930,7 +930,7 @@ void rsdAllocationData3D(const Context *rsc, const Allocation *alloc,
 
     if (alloc->mHal.drvState.lod[0].mallocPtr) {
         const uint8_t *src = static_cast<const uint8_t *>(data);
-        for (uint32_t z = zoff; z < d; z++) {
+        for (uint32_t z = zoff; z < (d + zoff); z++) {
             uint8_t *dst = GetOffsetPtr(alloc, xoff, yoff, z, lod,
                                         RS_ALLOCATION_CUBEMAP_FACE_POSITIVE_X);
             if (dst == src) {
@@ -1007,7 +1007,7 @@ void rsdAllocationRead3D(const Context *rsc, const Allocation *alloc,
 
     if (alloc->mHal.drvState.lod[0].mallocPtr) {
         uint8_t *dst = static_cast<uint8_t *>(data);
-        for (uint32_t z = zoff; z < d; z++) {
+        for (uint32_t z = zoff; z < (d + zoff); z++) {
             const uint8_t *src = GetOffsetPtr(alloc, xoff, yoff, z, lod,
                                               RS_ALLOCATION_CUBEMAP_FACE_POSITIVE_X);
             if (dst == src) {
