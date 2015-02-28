@@ -18,6 +18,8 @@ package com.example.android.rs.vr;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.renderscript.RenderScript;
@@ -103,6 +105,11 @@ public class VrActivity extends Activity {
             Log.v(LOGTAG,"done");
             mVrView.setVolume(mRs, v);
             progressDialog.dismiss();
+            if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            } else {
+                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+            }
         }
     }
 
