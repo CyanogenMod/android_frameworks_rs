@@ -19,7 +19,7 @@
 #pragma rs_fp_relaxed
 
 #define FLOAT_MAX  3.4028234E30f
-#define JITTER_LENGTH 3456
+#define JITTER_LENGTH 3457
 float jitter[JITTER_LENGTH];
 
 float3 s;
@@ -31,6 +31,7 @@ rs_matrix4x4 matrix4;
 rs_matrix3x3 matrix3;
 uchar4 base_color;
 static float3 mLight;
+static float rscale;
 
 // material color
 rs_allocation opacity;
@@ -38,7 +39,7 @@ rs_allocation color_map;
 
 static void fillJitter() {
     for (int i = 0; i < JITTER_LENGTH; i++) {
-        jitter[i] = rsRand(1.0f);
+        jitter[i] = (rsRand(rscale)+rsRand(rscale)+rsRand(rscale))/3;
     }
 }
 
@@ -53,28 +54,15 @@ void setup_vectors() {
     base_color.g = 0;
     base_color.b = 0;
     base_color.a = 255;
-    fillJitter();
-    float3 mLightRelitvePos = (float3) {0, 0.7071f, -0.7071f}; // light relitve to camera
+
+    float3 mLightRelitvePos = (float3) {0.f, 0.7071f, -0.7071f}; // light relitve to camera
     mLight = mLightRelitvePos.x + dx + mLightRelitvePos.y * dy + mLightRelitvePos.z * dz;
     mLight = normalize(mLight);
+    rscale = 1.5f/length(dz);
+    fillJitter();
 }
 
-// old simple version
-static float triLinear_old(short v_0_0_0, short v_0_0_1, short v_0_1_0, short v_0_1_1,
-        short v_1_0_0, short v_1_0_1, short v_1_1_0, short v_1_1_1,
-        float3 delta) {
-    float v_0_0 = v_0_0_0 + delta.x * (v_0_0_1 - v_0_0_0);
-    float v_0_1 = v_0_1_0 + delta.x * (v_0_1_1 - v_0_1_0);
-    float v_1_0 = v_1_0_0 + delta.x * (v_1_0_1 - v_1_0_0);
-    float v_1_1 = v_1_1_0 + delta.x * (v_1_1_1 - v_1_1_0);
-    float v_0 = v_0_0 + delta.y * (v_0_1 - v_0_0);
-    float v_1 = v_1_0 + delta.y * (v_1_1 - v_1_0);
-    float v = v_0 + delta.z * (v_1 - v_0);
-    return v;
-}
-
-//  This seemed to improve over above
-static float triLinear(float v_0_0_0, float v_0_0_1, float v_0_1_0, short v_0_1_1,
+static float triLinear(float v_0_0_0, float v_0_0_1, float v_0_1_0, float v_0_1_1,
         float v_1_0_0, float v_1_0_1, float v_1_1_0, float v_1_1_1,
         float3 delta) {
     float v_0_0 = mix(v_0_0_0, v_0_0_1, delta.x);
@@ -173,14 +161,14 @@ uchar4 __attribute__ ((kernel)) draw_z_buffer(float2 in, uint32_t x, uint32_t y)
                 float sdx = rsGetElementAt_float2(zbuff, max(0, (int) x - 1), y).x - in.x;
                 float sdy = rsGetElementAt_float2(zbuff, x, max(0, (int) y - 1)).x - in.x;
                 float dot_prod = sqrt(1 / (1 + (sdy * sdy + sdx * sdx) * zoomFactor));
-                float opf = op / 255.f;
+                float opf = op  * (1/255.f);
                 uchar4 color = rsGetElementAt_uchar4(color_map, intensity * 2);
                 uchar4 mat = rsGetElementAt_uchar4(color_map, intensity * 2 + 1);
                 float4 fcolor = convert_float4(color);;
 
-                float ambient = mat.x / 255.f;
-                float specular = mat.y / 255.f;
-                float diffuse = mat.z / 255.f;
+                float ambient = mat.x * (1/255.f);
+                float specular = mat.y * (1/255.f);
+                float diffuse = mat.z * (1/255.f);
                 float lop = (ambient + diffuse * dot_prod) * light * opf;
                 light -= opf;
                 total_color += fcolor * lop;
@@ -189,7 +177,7 @@ uchar4 __attribute__ ((kernel)) draw_z_buffer(float2 in, uint32_t x, uint32_t y)
             }
         }
     }
-    p += dz * rsRand(2.f);
+    p += dz * jitter[(x+(y<<11))%JITTER_LENGTH];
 
     if (light > 0) {
         for (int k = 0; k < izlen - 1; k++) {
@@ -281,9 +269,9 @@ uchar4 __attribute__ ((kernel)) draw_z_buffer(float2 in, uint32_t x, uint32_t y)
                     // Eye point in this space is in the direction (0,0,-1)
                     // Spec * Math.pow(R_z , P) lets use power == 2 (cheap)
 
-                    float ambient = mat.x / 255.f; // ambient
-                    float specular = mat.y / 255.f; // specular not used right now
-                    float diffuse = mat.z / 255.f; // diffuse
+                    float ambient = mat.x * (1/255.f); // ambient
+                    float specular = mat.y * (1/255.f); // specular not used right now
+                    float diffuse = mat.z  * (1/255.f);// diffuse
                     float lop = (ambient + diffuse * dot_prod + specular * pow(spec, 10)) * light * opf;
                     light -= opf;
                     total_color += fcolor * lop;
