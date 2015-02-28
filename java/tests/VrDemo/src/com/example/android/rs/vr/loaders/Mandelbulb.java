@@ -31,13 +31,13 @@ import com.example.android.rs.vr.engine.Volume;
 public class Mandelbulb {
     private static final String LOGTAG = "RawLoader";
     private static final String simpleLook = "simple";
-    private static final int[][] simpleOpacity = {{120, 0x0}, {126, 0xFF}};
+    private static final int[][] simpleOpacity = {{120, 0x0}, {140, 0xFF}};
     private static final int[][] simpleColor = {
-            {200, 0x44AA44, 30, 70, 0},
-            {230, 0xAA44AA, 30, 70, 0},
-            {255, 0xAAAAAA, 30, 70, 0}};
+            {200, 0x44AA44, 70, 30, 0},
+            {230, 0xAA44AA, 70, 30, 0},
+            {255, 0xAAAAAA, 70, 30, 0}};
 
-    private static final int SIZE = 512;
+    private static final int SIZE = 256;
     public static final String NAME = "A Mandelbulb";
 
     public static Volume buildRSVolume(RenderScript rs,
