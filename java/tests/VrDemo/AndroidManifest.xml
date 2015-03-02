@@ -22,7 +22,7 @@
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@android:style/Theme.DeviceDefault.NoActionBar.Fullscreen" >
         <activity
             android:name="com.example.android.rs.vr.VrActivity"
             android:label="@string/app_name" >

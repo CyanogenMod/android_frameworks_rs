@@ -36,7 +36,7 @@ public class VolumeLoader {
 
     public VolumeLoader(String dir) {
         map.put(Mandelbulb.NAME,null);
-
+        map.put(Droid.NAME,null);
         baseDir = new File(dir);
         if (!baseDir.exists()) {
             Log.e(LOGTAG, "Directory: \""+dir+"\" does not exist ");
@@ -58,6 +58,9 @@ public class VolumeLoader {
     public Volume getVolume(RenderScript rs, String name) {
         if (name.equals(Mandelbulb.NAME)) {
             return  Mandelbulb.buildRSVolume(rs,mListener);
+        }
+        if (name.equals(Droid.NAME)) {
+            return  Droid.buildRSVolume(rs,mListener);
         }
         Properties p = map.get(name);
         if (p == null) {
