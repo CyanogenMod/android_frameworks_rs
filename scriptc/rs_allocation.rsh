@@ -221,14 +221,14 @@ GET_ELEMENT_AT(double4)
  * Send the contents of the Allocation to the queue.
  * @param a allocation to work on
  */
-extern const void __attribute__((overloadable))
+extern void __attribute__((overloadable))
     rsAllocationIoSend(rs_allocation a);
 
 /**
  * Receive a new set of contents from the queue.
  * @param a allocation to work on
  */
-extern const void __attribute__((overloadable))
+extern void __attribute__((overloadable))
     rsAllocationIoReceive(rs_allocation a);
 
 
@@ -246,7 +246,7 @@ extern rs_element __attribute__((overloadable))
  * @param s sampler state
  * @param location to sample from
  */
-extern const float4 __attribute__((overloadable))
+extern float4 __attribute__((overloadable))
     rsSample(rs_allocation a, rs_sampler s, float location);
 /**
  * Fetch allocation in a way described by the sampler
@@ -257,7 +257,7 @@ extern const float4 __attribute__((overloadable))
  *            mip levels will be interpolated if
  *            RS_SAMPLER_LINEAR_MIP_LINEAR is used
  */
-extern const float4 __attribute__((overloadable))
+extern float4 __attribute__((overloadable))
     rsSample(rs_allocation a, rs_sampler s, float location, float lod);
 
 /**
@@ -266,7 +266,7 @@ extern const float4 __attribute__((overloadable))
  * @param s sampler state
  * @param location to sample from
  */
-extern const float4 __attribute__((overloadable))
+extern float4 __attribute__((overloadable))
     rsSample(rs_allocation a, rs_sampler s, float2 location);
 
 /**
@@ -278,7 +278,7 @@ extern const float4 __attribute__((overloadable))
  *            mip levels will be interpolated if
  *            RS_SAMPLER_LINEAR_MIP_LINEAR is used
  */
-extern const float4 __attribute__((overloadable))
+extern float4 __attribute__((overloadable))
     rsSample(rs_allocation a, rs_sampler s, float2 location, float lod);
 
 #endif // (defined(RS_VERSION) && (RS_VERSION >= 16))
@@ -353,7 +353,7 @@ SET_ELEMENT_AT(double4)
 /**
  * Extract a single element from an allocation.
  */
-extern const uchar __attribute__((overloadable))
+extern uchar __attribute__((overloadable))
     rsGetElementAtYuv_uchar_Y(rs_allocation a, uint32_t x, uint32_t y);
 
 /**
@@ -361,7 +361,7 @@ extern const uchar __attribute__((overloadable))
  *
  * Coordinates are in the dimensions of the Y plane
  */
-extern const uchar __attribute__((overloadable))
+extern uchar __attribute__((overloadable))
     rsGetElementAtYuv_uchar_U(rs_allocation a, uint32_t x, uint32_t y);
 
 /**
@@ -369,7 +369,7 @@ extern const uchar __attribute__((overloadable))
  *
  * Coordinates are in the dimensions of the Y plane
  */
-extern const uchar __attribute__((overloadable))
+extern uchar __attribute__((overloadable))
     rsGetElementAtYuv_uchar_V(rs_allocation a, uint32_t x, uint32_t y);
 
 #endif // (defined(RS_VERSION) && (RS_VERSION >= 18))
@@ -427,4 +427,3 @@ VOP(double4)
 
 
 #endif
-
