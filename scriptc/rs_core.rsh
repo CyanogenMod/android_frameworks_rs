@@ -46,8 +46,6 @@
 #ifndef __RS_CORE_RSH__
 #define __RS_CORE_RSH__
 
-#define _RS_RUNTIME extern
-
 #define RS_KERNEL __attribute__((kernel))
 
 #include "rs_types.rsh"
@@ -198,7 +196,5 @@ extern void __attribute__((overloadable))
 extern void __attribute__((overloadable))
     rsForEach(rs_script script, rs_allocation input, rs_allocation output);
 #endif
-
-#undef _RS_RUNTIME
 
 #endif
