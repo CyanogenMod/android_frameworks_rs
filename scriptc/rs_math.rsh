@@ -64,28 +64,28 @@ extern float __attribute__((const, overloadable))
  * @param low
  * @param high
  */
-_RS_RUNTIME uint __attribute__((const, overloadable, always_inline)) rsClamp(uint amount, uint low, uint high);
+extern uint __attribute__((const, overloadable, always_inline)) rsClamp(uint amount, uint low, uint high);
 
 /**
  * \overload
  */
-_RS_RUNTIME int __attribute__((const, overloadable, always_inline)) rsClamp(int amount, int low, int high);
+extern int __attribute__((const, overloadable, always_inline)) rsClamp(int amount, int low, int high);
 /**
  * \overload
  */
-_RS_RUNTIME ushort __attribute__((const, overloadable, always_inline)) rsClamp(ushort amount, ushort low, ushort high);
+extern ushort __attribute__((const, overloadable, always_inline)) rsClamp(ushort amount, ushort low, ushort high);
 /**
  * \overload
  */
-_RS_RUNTIME short __attribute__((const, overloadable, always_inline)) rsClamp(short amount, short low, short high);
+extern short __attribute__((const, overloadable, always_inline)) rsClamp(short amount, short low, short high);
 /**
  * \overload
  */
-_RS_RUNTIME uchar __attribute__((const, overloadable, always_inline)) rsClamp(uchar amount, uchar low, uchar high);
+extern uchar __attribute__((const, overloadable, always_inline)) rsClamp(uchar amount, uchar low, uchar high);
 /**
  * \overload
  */
-_RS_RUNTIME char __attribute__((const, overloadable, always_inline)) rsClamp(char amount, char low, char high);
+extern char __attribute__((const, overloadable, always_inline)) rsClamp(char amount, char low, char high);
 
 
 /**
@@ -202,7 +202,7 @@ rsIsSphereInFrustum(float4 *sphere,
  *
  * @return uchar4
  */
-_RS_RUNTIME uchar4 __attribute__((const, overloadable)) rsPackColorTo8888(float r, float g, float b);
+extern uchar4 __attribute__((const, overloadable)) rsPackColorTo8888(float r, float g, float b);
 
 /**
  * Pack floating point (0-1) RGBA values into a uchar4.
@@ -214,7 +214,7 @@ _RS_RUNTIME uchar4 __attribute__((const, overloadable)) rsPackColorTo8888(float 
  *
  * @return uchar4
  */
-_RS_RUNTIME uchar4 __attribute__((const, overloadable)) rsPackColorTo8888(float r, float g, float b, float a);
+extern uchar4 __attribute__((const, overloadable)) rsPackColorTo8888(float r, float g, float b, float a);
 
 /**
  * Pack floating point (0-1) RGB values into a uchar4.  The alpha component is
@@ -224,7 +224,7 @@ _RS_RUNTIME uchar4 __attribute__((const, overloadable)) rsPackColorTo8888(float 
  *
  * @return uchar4
  */
-_RS_RUNTIME uchar4 __attribute__((const, overloadable)) rsPackColorTo8888(float3 color);
+extern uchar4 __attribute__((const, overloadable)) rsPackColorTo8888(float3 color);
 
 /**
  * Pack floating point (0-1) RGBA values into a uchar4.
@@ -233,7 +233,7 @@ _RS_RUNTIME uchar4 __attribute__((const, overloadable)) rsPackColorTo8888(float3
  *
  * @return uchar4
  */
-_RS_RUNTIME uchar4 __attribute__((const, overloadable)) rsPackColorTo8888(float4 color);
+extern uchar4 __attribute__((const, overloadable)) rsPackColorTo8888(float4 color);
 
 /**
  * Unpack a uchar4 color to float4.  The resulting float range will be (0-1).
@@ -242,10 +242,10 @@ _RS_RUNTIME uchar4 __attribute__((const, overloadable)) rsPackColorTo8888(float4
  *
  * @return float4
  */
-_RS_RUNTIME float4 __attribute__((const)) rsUnpackColor8888(uchar4 c);
+extern float4 __attribute__((const)) rsUnpackColor8888(uchar4 c);
 
-_RS_RUNTIME uchar4 __attribute__((const, overloadable)) rsYuvToRGBA_uchar4(uchar y, uchar u, uchar v);
-_RS_RUNTIME float4 __attribute__((const, overloadable)) rsYuvToRGBA_float4(uchar y, uchar u, uchar v);
+extern uchar4 __attribute__((const, overloadable)) rsYuvToRGBA_uchar4(uchar y, uchar u, uchar v);
+extern float4 __attribute__((const, overloadable)) rsYuvToRGBA_float4(uchar y, uchar u, uchar v);
 
 
 #endif
