@@ -977,7 +977,7 @@ comment:
  Returns the maximum value of two arguments.
 inline:
  return (a > b ? a : b);
-version: 9 19
+version: 9 20
 end:
 
 start:
@@ -994,7 +994,7 @@ inline:
  tmp.x = (a.x > b.x ? a.x : b.x);
  tmp.y = (a.y > b.y ? a.y : b.y);
  return tmp;
-version: 9 19
+version: 9 20
 end:
 
 start:
@@ -1012,7 +1012,7 @@ inline:
  tmp.y = (a.y > b.y ? a.y : b.y);
  tmp.z = (a.z > b.z ? a.z : b.z);
  return tmp;
-version: 9 19
+version: 9 20
 end:
 
 start:
@@ -1031,7 +1031,7 @@ inline:
  tmp.z = (a.z > b.z ? a.z : b.z);
  tmp.w = (a.w > b.w ? a.w : b.w);
  return tmp;
-version: 9 19
+version: 9 20
 end:
 
 start:
@@ -1069,7 +1069,7 @@ comment:
  Returns the minimum value of two arguments.
 inline:
  return (a < b ? a : b);
-version: 9 19
+version: 9 20
 end:
 
 start:
@@ -1086,7 +1086,7 @@ inline:
  tmp.x = (a.x < b.x ? a.x : b.x);
  tmp.y = (a.y < b.y ? a.y : b.y);
  return tmp;
-version: 9 19
+version: 9 20
 end:
 
 start:
@@ -1104,7 +1104,7 @@ inline:
  tmp.y = (a.y < b.y ? a.y : b.y);
  tmp.z = (a.z < b.z ? a.z : b.z);
  return tmp;
-version: 9 19
+version: 9 20
 end:
 
 start:
@@ -1123,7 +1123,7 @@ inline:
  tmp.z = (a.z < b.z ? a.z : b.z);
  tmp.w = (a.w < b.w ? a.w : b.w);
  return tmp;
-version: 9 19
+version: 9 20
 end:
 
 start:
