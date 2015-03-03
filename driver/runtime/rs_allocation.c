@@ -300,12 +300,12 @@ SET_ELEMENT_AT_TYPE(ull4, ulong4)
 #undef ELEMENT_AT
 
 
-extern const uchar __attribute__((overloadable))
+extern uchar __attribute__((overloadable))
         rsGetElementAtYuv_uchar_Y(rs_allocation a, uint32_t x, uint32_t y) {
     return rsGetElementAt_uchar(a, x, y);
 }
 
-extern const uchar __attribute__((overloadable))
+extern uchar __attribute__((overloadable))
         rsGetElementAtYuv_uchar_U(rs_allocation a, uint32_t x, uint32_t y) {
 
     Allocation_t *alloc = (Allocation_t *)a.p;
@@ -319,7 +319,7 @@ extern const uchar __attribute__((overloadable))
     return pin[((x >> shift) * cstep) + ((y >> shift) * stride)];
 }
 
-extern const uchar __attribute__((overloadable))
+extern uchar __attribute__((overloadable))
         rsGetElementAtYuv_uchar_V(rs_allocation a, uint32_t x, uint32_t y) {
 
     Allocation_t *alloc = (Allocation_t *)a.p;

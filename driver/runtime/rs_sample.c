@@ -530,7 +530,7 @@ static float4 __attribute__((overloadable))
     return getNearestSample(alloc, location, dk, dt, lod);
 }
 
-extern const float4 __attribute__((overloadable))
+extern float4 __attribute__((overloadable))
         rsSample(rs_allocation a, rs_sampler s, float uv, float lod) {
 
     const Allocation_t *alloc = (const Allocation_t *)a.p;
@@ -576,13 +576,13 @@ extern const float4 __attribute__((overloadable))
     return sample_LOD_NearestPixel(alloc, dk, dt, wrapS, uv, 0);
 }
 
-extern const float4 __attribute__((overloadable))
+extern float4 __attribute__((overloadable))
         rsSample(rs_allocation a, rs_sampler s, float location) {
     return rsSample(a, s, location, 0);
 }
 
 
-extern const float4 __attribute__((overloadable))
+extern float4 __attribute__((overloadable))
         rsSample(rs_allocation a, rs_sampler s, float2 uv, float lod) {
 
     const Allocation_t *alloc = (const Allocation_t *)a.p;
@@ -629,7 +629,7 @@ extern const float4 __attribute__((overloadable))
     return sample_LOD_NearestPixel(alloc, dk, dt, wrapS, wrapT, uv, 0);
 }
 
-extern const float4 __attribute__((overloadable))
+extern float4 __attribute__((overloadable))
         rsSample(rs_allocation a, rs_sampler s, float2 uv) {
 
     const Allocation_t *alloc = (const Allocation_t *)a.p;
@@ -650,4 +650,3 @@ extern const float4 __attribute__((overloadable))
     }
     return sample_LOD_LinearPixel(alloc, dk, dt, wrapS, wrapT, uv, 0);
 }
-
