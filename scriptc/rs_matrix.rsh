@@ -61,17 +61,17 @@
  * \warning The order of the column and row parameters may be
  * unexpected.
  */
-_RS_RUNTIME void __attribute__((overloadable))
+extern void __attribute__((overloadable))
 rsMatrixSet(rs_matrix4x4 *m, uint32_t col, uint32_t row, float v);
 /**
  * \overload
  */
-_RS_RUNTIME void __attribute__((overloadable))
+extern void __attribute__((overloadable))
 rsMatrixSet(rs_matrix3x3 *m, uint32_t col, uint32_t row, float v);
 /**
  * \overload
  */
-_RS_RUNTIME void __attribute__((overloadable))
+extern void __attribute__((overloadable))
 rsMatrixSet(rs_matrix2x2 *m, uint32_t col, uint32_t row, float v);
 
 /**
@@ -86,17 +86,17 @@ rsMatrixSet(rs_matrix2x2 *m, uint32_t col, uint32_t row, float v);
  *
  * @return float
  */
-_RS_RUNTIME float __attribute__((overloadable))
+extern float __attribute__((overloadable))
 rsMatrixGet(const rs_matrix4x4 *m, uint32_t col, uint32_t row);
 /**
  * \overload
  */
-_RS_RUNTIME float __attribute__((overloadable))
+extern float __attribute__((overloadable))
 rsMatrixGet(const rs_matrix3x3 *m, uint32_t col, uint32_t row);
 /**
  * \overload
  */
-_RS_RUNTIME float __attribute__((overloadable))
+extern float __attribute__((overloadable))
 rsMatrixGet(const rs_matrix2x2 *m, uint32_t col, uint32_t row);
 
 /**
@@ -411,37 +411,37 @@ rsMatrixLoadPerspective(rs_matrix4x4* m, float fovy, float aspect, float near, f
  * This function is available in API version 10-13.  Starting with API 14,
  * the function takes a const matrix as the first argument.
  */
-_RS_RUNTIME float4 __attribute__((overloadable))
+extern float4 __attribute__((overloadable))
 rsMatrixMultiply(rs_matrix4x4 *m, float4 in);
 
 /**
  * \overload
  */
-_RS_RUNTIME float4 __attribute__((overloadable))
+extern float4 __attribute__((overloadable))
 rsMatrixMultiply(rs_matrix4x4 *m, float3 in);
 
 /**
  * \overload
  */
-_RS_RUNTIME float4 __attribute__((overloadable))
+extern float4 __attribute__((overloadable))
 rsMatrixMultiply(rs_matrix4x4 *m, float2 in);
 
 /**
  * \overload
  */
-_RS_RUNTIME float3 __attribute__((overloadable))
+extern float3 __attribute__((overloadable))
 rsMatrixMultiply(rs_matrix3x3 *m, float3 in);
 
 /**
  * \overload
  */
-_RS_RUNTIME float3 __attribute__((overloadable))
+extern float3 __attribute__((overloadable))
 rsMatrixMultiply(rs_matrix3x3 *m, float2 in);
 
 /**
  * \overload
  */
-_RS_RUNTIME float2 __attribute__((overloadable))
+extern float2 __attribute__((overloadable))
 rsMatrixMultiply(rs_matrix2x2 *m, float2 in);
 #else
 /**
@@ -457,37 +457,37 @@ rsMatrixMultiply(rs_matrix2x2 *m, float2 in);
  *
  * This function is available starting with API version 14.
  */
-_RS_RUNTIME float4 __attribute__((overloadable))
+extern float4 __attribute__((overloadable))
 rsMatrixMultiply(const rs_matrix4x4 *m, float4 in);
 
 /**
  * \overload
  */
-_RS_RUNTIME float4 __attribute__((overloadable))
+extern float4 __attribute__((overloadable))
 rsMatrixMultiply(const rs_matrix4x4 *m, float3 in);
 
 /**
  * \overload
  */
-_RS_RUNTIME float4 __attribute__((overloadable))
+extern float4 __attribute__((overloadable))
 rsMatrixMultiply(const rs_matrix4x4 *m, float2 in);
 
 /**
  * \overload
  */
-_RS_RUNTIME float3 __attribute__((overloadable))
+extern float3 __attribute__((overloadable))
 rsMatrixMultiply(const rs_matrix3x3 *m, float3 in);
 
 /**
  * \overload
  */
-_RS_RUNTIME float3 __attribute__((overloadable))
+extern float3 __attribute__((overloadable))
 rsMatrixMultiply(const rs_matrix3x3 *m, float2 in);
 
 /**
  * \overload
  */
-_RS_RUNTIME float2 __attribute__((overloadable))
+extern float2 __attribute__((overloadable))
 rsMatrixMultiply(const rs_matrix2x2 *m, float2 in);
 #endif
 
