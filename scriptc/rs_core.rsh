@@ -95,14 +95,14 @@ extern void __attribute__((overloadable))
  *
  * This is a hint and implementations may not obey the order.
  */
-enum rs_for_each_strategy {
+typedef enum rs_for_each_strategy {
     RS_FOR_EACH_STRATEGY_SERIAL = 0,
     RS_FOR_EACH_STRATEGY_DONT_CARE = 1,
     RS_FOR_EACH_STRATEGY_DST_LINEAR = 2,
     RS_FOR_EACH_STRATEGY_TILE_SMALL= 3,
     RS_FOR_EACH_STRATEGY_TILE_MEDIUM = 4,
     RS_FOR_EACH_STRATEGY_TILE_LARGE = 5
-};
+} rs_for_each_strategy_t;
 
 
 /**
@@ -110,7 +110,7 @@ enum rs_for_each_strategy {
  * restrict the call to a subset of cells in the allocation.
  */
 typedef struct rs_script_call {
-    enum rs_for_each_strategy strategy;
+    rs_for_each_strategy_t strategy;
     uint32_t xStart;
     uint32_t xEnd;
     uint32_t yStart;
