@@ -82,7 +82,7 @@ ifeq ($(ARCH_X86_HAVE_SSSE3),true)
     rsCpuIntrinsics_x86.cpp
 endif
 
-LOCAL_SHARED_LIBRARIES += libRS libcutils libutils liblog libsync libc++ libdl
+LOCAL_SHARED_LIBRARIES += libRS libcutils libutils liblog libsync libc++ libdl libz
 
 LOCAL_SHARED_LIBRARIES += libbcc libbcinfo libblas
 
@@ -90,6 +90,7 @@ LOCAL_SHARED_LIBRARIES += libbcc libbcinfo libblas
 LOCAL_C_INCLUDES += frameworks/compile/libbcc/include
 LOCAL_C_INCLUDES += frameworks/rs
 LOCAL_C_INCLUDES += external/cblas/include
+LOCAL_C_INCLUDES += external/zlib
 
 ifneq ($(HOST_OS),windows)
 include external/libcxx/libcxx.mk

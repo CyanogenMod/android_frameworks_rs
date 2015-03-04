@@ -289,6 +289,7 @@ void* SharedLibraryUtils::loadSOHelper(const char *origName, const char *cacheDi
 #define OBJECT_SLOT_STR "objectSlotCount: "
 #define PRAGMA_STR "pragmaCount: "
 #define THREADABLE_STR "isThreadable: "
+#define CHECKSUM_STR "buildChecksum: "
 
 // Copy up to a newline or size chars from str -> s, updating str
 // Returns s when successful and nullptr when '\0' is finally reached.
@@ -333,6 +334,7 @@ ScriptExecutable* ScriptExecutable::createFromSharedObject(
     uint32_t* forEachSignatures = nullptr;
     const char ** pragmaKeys = nullptr;
     const char ** pragmaValues = nullptr;
+    char *checksum = nullptr;
 
     const char *rsInfo = (const char *) dlsym(sharedObj, ".rs.info");
 
@@ -544,6 +546,26 @@ ScriptExecutable* ScriptExecutable::createFromSharedObject(
         goto error;
     }
 
+    if (strgets(line, MAXLINE, &rsInfo) != nullptr) {
+        if (strncmp(line, CHECKSUM_STR, strlen(CHECKSUM_STR)) != 0) {
+            ALOGE("Invalid checksum flag!: %s", line);
+            goto error;
+        }
+
+        // consume trailing newline character
+        char *c = strrchr(line, '\n');
+        if (c) {
+            *c = '\0';
+        }
+
+        char *checksumStart = &line[strlen(CHECKSUM_STR)];
+        checksum = new char[strlen(checksumStart) + 1];
+        strcpy(checksum, checksumStart);
+    }
+    else {
+        goto error;
+    }
+
 #endif  // RS_COMPATIBILITY_LIB
 
     return new ScriptExecutable(
@@ -551,11 +573,13 @@ ScriptExecutable* ScriptExecutable::createFromSharedObject(
         invokeFunctions, funcCount,
         forEachFunctions, forEachSignatures, forEachCount,
         pragmaKeys, pragmaValues, pragmaCount,
-        isThreadable);
+        isThreadable, checksum);
 
 error:
 
 #ifndef RS_COMPATIBILITY_LIB
+    delete[] checksum;
+
     for (size_t idx = 0; idx < pragmaCount; ++idx) {
         delete [] pragmaKeys[idx];
         delete [] pragmaValues[idx];
