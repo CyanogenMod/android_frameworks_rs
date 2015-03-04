@@ -29,6 +29,8 @@
     #include <bcinfo/MetadataExtractor.h>
     #include <cutils/properties.h>
 
+    #include <zlib.h>
+    #include <sys/file.h>
     #include <sys/types.h>
     #include <sys/wait.h>
     #include <unistd.h>
@@ -121,7 +123,7 @@ static bool compileBitcode(const std::string &bcFileName,
                            const char *bitcode,
                            size_t bitcodeSize,
                            const char **compileArguments,
-                           const std::string &compileCommandLine) {
+                           const char *compileCommandLine) {
     rsAssert(bitcode && bitcodeSize);
 
     FILE *bcfile = fopen(bcFileName.c_str(), "w");
@@ -145,7 +147,7 @@ static bool compileBitcode(const std::string &bcFileName,
         return false;
     }
     case 0: {  // Child process
-        ALOGV("Invoking BCC with: %s", compileCommandLine.c_str());
+        ALOGV("Invoking BCC with: %s", compileCommandLine);
         execv(android::renderscript::RsdCpuScriptImpl::BCC_EXE_PATH,
               (char* const*)compileArguments);
 
@@ -170,6 +172,64 @@ static bool compileBitcode(const std::string &bcFileName,
         return false;
     }
     }
+}
+
+bool isChecksumNeeded() {
+    char buf[PROPERTY_VALUE_MAX];
+    property_get("ro.debuggable", buf, "");
+    return (buf[0] == '1');
+}
+
+bool addFileToChecksum(const char *fileName, uint32_t &checksum) {
+    int FD = open(fileName, O_RDONLY);
+    if (FD == -1) {
+        ALOGE("Cannot open file \'%s\' to compute checksum", fileName);
+        return false;
+    }
+
+    char buf[256];
+    while (true) {
+        ssize_t nread = read(FD, buf, sizeof(buf));
+        if (nread < 0) { // bail out on failed read
+            ALOGE("Error while computing checksum for file \'%s\'", fileName);
+            return false;
+        }
+
+        checksum = adler32(checksum, (const unsigned char *) buf, nread);
+        if (static_cast<size_t>(nread) < sizeof(buf)) // EOF
+            break;
+    }
+
+    if (close(FD) != 0) {
+        ALOGE("Cannot close file \'%s\' after computing checksum", fileName);
+        return false;
+    }
+    return true;
+}
+
+char *constructBuildChecksum(uint8_t const *bitcode, size_t bitcodeSize,
+                             const char *commandLine,
+                             const std::vector<const char *> &bccFiles) {
+    uint32_t checksum = adler32(0L, Z_NULL, 0);
+
+    // include checksum of bitcode
+    checksum = adler32(checksum, bitcode, bitcodeSize);
+
+    // include checksum of command line arguments
+    checksum = adler32(checksum, (const unsigned char *) commandLine,
+                       strlen(commandLine));
+
+    // include checksum of bccFiles
+    for (auto bccFile : bccFiles) {
+        if (!addFileToChecksum(bccFile, checksum)) {
+            // return empty checksum instead of something partial/corrupt
+            return nullptr;
+        }
+    }
+
+    char *checksumStr = new char[9]();
+    sprintf(checksumStr, "%08x", checksum);
+    return checksumStr;
 }
 
 #endif  // !defined(RS_COMPATIBILITY_LIB)
@@ -198,9 +258,29 @@ RsdCpuScriptImpl::RsdCpuScriptImpl(RsdCpuReferenceImpl *ctx, const Script *s) {
     mBoundAllocs = nullptr;
     mIntrinsicData = nullptr;
     mIsThreadable = true;
+
+    mBuildChecksum = nullptr;
+    mChecksumNeeded = false;
 }
 
 bool RsdCpuScriptImpl::storeRSInfoFromSO() {
+    // The shared object may have an invalid build checksum.
+    // Validate and fail early.
+    mScriptExec = ScriptExecutable::createFromSharedObject(
+            mCtx->getContext(), mScriptSO);
+
+    if (mScriptExec == nullptr) {
+        return false;
+    }
+
+    if (mChecksumNeeded && !mScriptExec->isChecksumValid(mBuildChecksum)) {
+        ALOGE("Found invalid checksum.  Expected %s, got %s\n",
+                  mBuildChecksum, mScriptExec->getBuildChecksum());
+        delete mScriptExec;
+        mScriptExec = nullptr;
+        return false;
+    }
+
     mRoot = (RootFunc_t) dlsym(mScriptSO, "root");
     if (mRoot) {
         //ALOGE("Found root(): %p", mRoot);
@@ -216,13 +296,6 @@ bool RsdCpuScriptImpl::storeRSInfoFromSO() {
     mFreeChildren = (InvokeFunc_t) dlsym(mScriptSO, ".rs.dtor");
     if (mFreeChildren) {
         //ALOGE("Found .rs.dtor(): %p", mFreeChildren);
-    }
-
-    mScriptExec = ScriptExecutable::createFromSharedObject(
-            mCtx->getContext(), mScriptSO);
-
-    if (mScriptExec == nullptr) {
-        return false;
     }
 
     size_t varCount = mScriptExec->getExportedVariableCount();
@@ -286,20 +359,59 @@ bool RsdCpuScriptImpl::init(char const *resName, char const *cacheDir,
     std::vector<const char*> compileArguments;
     setCompileArguments(&compileArguments, bcFileName, cacheDir, resName, core_lib,
                         useRSDebugContext, bccPluginName);
-    // The last argument of compileArguments ia a nullptr, so remove 1 from the size.
-    std::unique_ptr<const char> joined(
+
+    // The last argument of compileArguments is a nullptr, so remove 1 from the
+    // size.
+    std::unique_ptr<const char> compileCommandLine(
         rsuJoinStrings(compileArguments.size() - 1, compileArguments.data()));
-    std::string compileCommandLine (joined.get());
+
+    mChecksumNeeded = isChecksumNeeded();
+    if (mChecksumNeeded) {
+        std::vector<const char *> bccFiles = { BCC_EXE_PATH,
+                                               core_lib,
+                                             };
+        mBuildChecksum = constructBuildChecksum(bitcode, bitcodeSize,
+                                                compileCommandLine.get(),
+                                                bccFiles);
+
+        if (mBuildChecksum == nullptr) {
+            // cannot compute checksum but verification is enabled
+            mCtx->unlockMutex();
+            return false;
+        }
+    }
+    else {
+        // add a dummy/constant as a checksum if verification is disabled
+        mBuildChecksum = new char[9]();
+        strcpy(const_cast<char *>(mBuildChecksum), "abadcafe");
+    }
+
+    // Append build checksum to commandline
+    // Handle the terminal nullptr in compileArguments
+    compileArguments.pop_back();
+    compileArguments.push_back("-build-checksum");
+    compileArguments.push_back(mBuildChecksum);
+    compileArguments.push_back(nullptr);
+
+    // recompute compileCommandLine with the extra arguments
+    compileCommandLine.reset(
+        rsuJoinStrings(compileArguments.size() - 1, compileArguments.data()));
 
     if (!is_force_recompile() && !useRSDebugContext) {
         mScriptSO = SharedLibraryUtils::loadSharedLibrary(cacheDir, resName);
+
+        // Read RS info from the shared object to detect checksum mismatch
+        if (mScriptSO != nullptr && !storeRSInfoFromSO()) {
+            dlclose(mScriptSO);
+            mScriptSO = nullptr;
+        }
     }
 
     // If we can't, it's either not there or out of date.  We compile the bit code and try loading
     // again.
     if (mScriptSO == nullptr) {
         if (!compileBitcode(bcFileName, (const char*)bitcode, bitcodeSize,
-                            compileArguments.data(), compileCommandLine))
+                            compileArguments.data(), compileCommandLine.get()))
         {
             ALOGE("bcc: FAILS to compile '%s'", resName);
             mCtx->unlockMutex();
@@ -318,18 +430,15 @@ bool RsdCpuScriptImpl::init(char const *resName, char const *cacheDir,
             mCtx->unlockMutex();
             return false;
         }
+
+        // Read RS symbol information from the .so.
+        if (!storeRSInfoFromSO()) {
+            goto error;
+        }
     }
 
     mBitcodeFilePath.setTo(bcFileName.c_str());
 
-    // Read RS symbol information from the .so.
-    if ( !mScriptSO) {
-        goto error;
-    }
-
-    if ( !storeRSInfoFromSO()) {
-      goto error;
-    }
 #else  // RS_COMPATIBILITY_LIB is defined
     const char *nativeLibDir = mCtx->getContext()->getNativeLibDir();
     mScriptSO = SharedLibraryUtils::loadSharedLibrary(cacheDir, resName, nativeLibDir);
@@ -760,6 +869,8 @@ RsdCpuScriptImpl::~RsdCpuScriptImpl() {
     if (mScriptSO) {
         dlclose(mScriptSO);
     }
+
+    delete[] mBuildChecksum;
 }
 
 Allocation * RsdCpuScriptImpl::getAllocationForPointer(const void *ptr) const {

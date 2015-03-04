@@ -63,7 +63,7 @@ public:
                      size_t forEachCount,
                      const char ** pragmaKeys, const char ** pragmaValues,
                      size_t pragmaCount,
-                     bool isThreadable) :
+                     bool isThreadable, const char *buildChecksum) :
         mFieldAddress(fieldAddress), mFieldIsObject(fieldIsObject),
             mExportedVarCount(varCount),
             mInvokeFunctions(invokeFunctions), mFuncCount(funcCount),
@@ -71,7 +71,8 @@ public:
             mForEachCount(forEachCount),
             mPragmaKeys(pragmaKeys), mPragmaValues(pragmaValues),
             mPragmaCount(pragmaCount),
-            mIsThreadable(isThreadable), mRS(RSContext) {
+            mIsThreadable(isThreadable), mBuildChecksum(buildChecksum),
+            mRS(RSContext) {
     }
 
     ~ScriptExecutable() {
@@ -85,6 +86,7 @@ public:
             }
         }
 
+        delete[] mBuildChecksum;
         for (size_t i = 0; i < mPragmaCount; ++i) {
             delete [] mPragmaKeys[i];
             delete [] mPragmaValues[i];
@@ -118,6 +120,12 @@ public:
 
     bool getThreadable() const { return mIsThreadable; }
 
+    const char *getBuildChecksum() const { return mBuildChecksum; }
+    bool isChecksumValid(const char *checksum) const {
+      return (mBuildChecksum != nullptr &&
+              strcmp(checksum, mBuildChecksum) == 0);
+    }
+
 private:
     void** mFieldAddress;
     bool* mFieldIsObject;
@@ -135,6 +143,7 @@ private:
     size_t mPragmaCount;
 
     bool mIsThreadable;
+    const char *mBuildChecksum;
 
     Context* mRS;
 };
