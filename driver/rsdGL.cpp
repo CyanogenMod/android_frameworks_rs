@@ -182,7 +182,7 @@ void getConfigData(const Context *rsc,
     EGLint *configAttribsPtr = configAttribs;
 
     configAttribsPtr[0] = EGL_SURFACE_TYPE;
-    configAttribsPtr[1] = EGL_WINDOW_BIT;
+    configAttribsPtr[1] = EGL_PBUFFER_BIT;
     configAttribsPtr += 2;
 
     configAttribsPtr[0] = EGL_RENDERABLE_TYPE;
