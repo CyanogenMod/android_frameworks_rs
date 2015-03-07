@@ -136,6 +136,23 @@ Allocation * Allocation::createAdapter(Context *rsc, const Allocation *alloc, co
     return a;
 }
 
+void Allocation::adapterOffset(Context *rsc, const uint32_t *offsets, size_t len) {
+    if (len >= sizeof(uint32_t) * 9) {
+        mHal.state.originX = offsets[0];
+        mHal.state.originY = offsets[1];
+        mHal.state.originZ = offsets[2];
+        mHal.state.originLOD = offsets[3];
+        mHal.state.originFace = offsets[4];
+        mHal.state.originArray[0] = offsets[5];
+        mHal.state.originArray[1] = offsets[6];
+        mHal.state.originArray[2] = offsets[7];
+        mHal.state.originArray[3] = offsets[8];
+    }
+
+    rsc->mHal.funcs.allocation.adapterOffset(rsc, this);
+}
+
+
 
 void Allocation::updateCache() {
     const Type *type = mHal.state.type;
@@ -867,6 +884,8 @@ RsAllocation rsi_AllocationAdapterCreate(Context *rsc, RsType vwindow, RsAllocat
 }
 
 void rsi_AllocationAdapterOffset(Context *rsc, RsAllocation va, const uint32_t *offsets, size_t len) {
+    Allocation *a = static_cast<Allocation *>(va);
+    a->adapterOffset(rsc, offsets, len);
 }
 
 
