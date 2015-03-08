@@ -287,7 +287,7 @@ uchar4 __attribute__ ((kernel)) draw_z_buffer(float2 in, uint32_t x, uint32_t y)
         }
     }
 
-    out = convert_uchar4(total_color);
+    out = convert_uchar4(clamp(total_color, 0.f, 255.f));
     out.a = 0xFF;
 
     return out;
