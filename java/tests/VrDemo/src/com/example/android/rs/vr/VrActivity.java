@@ -38,6 +38,8 @@ import rsexample.google.com.vrdemo.R;
 
 import com.example.android.rs.vr.engine.Volume;
 import com.example.android.rs.vr.engine.VrState;
+import com.example.android.rs.vr.loaders.Droid;
+import com.example.android.rs.vr.loaders.Mandelbulb;
 import com.example.android.rs.vr.loaders.VolumeLoader;
 
 /**
@@ -69,11 +71,11 @@ public class VrActivity extends Activity {
 
     class VrSetupTask extends AsyncTask<String, Integer, Volume> {
         ProgressDialog progressDialog;
-
+        String message;
         protected void onPreExecute() {
             super.onPreExecute();
             progressDialog = new ProgressDialog(VrActivity.this);
-            progressDialog.setMessage( "Loading Volume");
+            progressDialog.setMessage(message= "Loading Volume");
             progressDialog.setIndeterminate(true);
             progressDialog.setCancelable(false);
             progressDialog.setProgress(0);
@@ -90,12 +92,17 @@ public class VrActivity extends Activity {
 
         @Override
         protected Volume doInBackground(String... names) {
+            if (names[0].equals(Droid.NAME) || names[0].equals(Mandelbulb.NAME)) {
+                message = "Computing "+names[0]+": ";
+            } else {
+                message =" Loading " + names[0]+": ";
+            }
             return  mLoader.getVolume(mRs, names[0]);
         }
 
         @Override
         protected void onProgressUpdate(Integer... progress) {
-            progressDialog.setMessage("load "+progress[0]+"/"+progress[1]);
+            progressDialog.setMessage(message+progress[0]+"/"+progress[1]);
             progressDialog.setMax(progress[1]);
             progressDialog.setProgress(progress[0]);
             Log.v(LOGTAG,"Loading "+ progress[0]+"/"+progress[1]);
