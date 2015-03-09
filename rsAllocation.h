@@ -180,6 +180,8 @@ public:
     void ioSend(const Context *rsc);
     void ioReceive(const Context *rsc);
 
+    void adapterOffset(Context *rsc, const uint32_t *offsets, size_t len);
+
     void * getPointer(const Context *rsc, uint32_t lod, RsAllocationCubemapFace face,
                       uint32_t z, uint32_t array, size_t *stride);
 
