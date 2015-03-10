@@ -355,12 +355,14 @@ bool loadSymbols(void* handle, dispatchTable& dispatchTab, int device_api) {
         LOG_API("Couldn't initialize dispatchTab.AllocationIoReceive");
         return false;
     }
-    dispatchTab.AllocationGetPointer = (AllocationGetPointerFnPtr)dlsym(handle, "rsAllocationGetPointer");
-    if (dispatchTab.AllocationGetPointer == NULL) {
-        LOG_API("Couldn't initialize dispatchTab.AllocationGetPointer");
-        return false;
+    // API_21 functions
+    if (device_api >= 21) {
+        dispatchTab.AllocationGetPointer = (AllocationGetPointerFnPtr)dlsym(handle, "rsAllocationGetPointer");
+        if (dispatchTab.AllocationGetPointer == NULL) {
+            LOG_API("Couldn't initialize dispatchTab.AllocationGetPointer");
+            return false;
+        }
     }
-
     // API_23 functions
     if (device_api >= 23) {
         //ScriptGroup V2 functions
