@@ -21,44 +21,40 @@ typedef void (*InvokeFuncTy)(const void*, uint32_t);
 
 class CPUClosure {
 public:
-    CPUClosure(const Closure* closure, RsdCpuScriptImpl* si, ExpandFuncTy func,
-               const void* usrPtr, const size_t usrSize) :
-        mClosure(closure), mSi(si), mFunc(func),
-        mUsrPtr(usrPtr), mUsrSize(usrSize) {}
+    CPUClosure(const Closure* closure, RsdCpuScriptImpl* si, ExpandFuncTy func) :
+        mClosure(closure), mSi(si), mFunc(func) {}
 
     CPUClosure(const Closure* closure, RsdCpuScriptImpl* si) :
-        mClosure(closure), mSi(si), mFunc(nullptr),
-        mUsrPtr(nullptr), mUsrSize(0) {}
+        mClosure(closure), mSi(si), mFunc(nullptr) {}
 
     // It's important to do forwarding here than inheritance for unbound value
     // binding to work.
     const Closure* mClosure;
     RsdCpuScriptImpl* mSi;
     const ExpandFuncTy mFunc;
-    const void* mUsrPtr;
-    const size_t mUsrSize;
 };
 
 class CpuScriptGroup2Impl;
 
 class Batch {
 public:
-    Batch(CpuScriptGroup2Impl* group) : mGroup(group), mExecutable(nullptr) {}
-
+    Batch(CpuScriptGroup2Impl* group, const char* name);
     ~Batch();
 
     // Returns true if closure depends on any closure in this batch for a global
     // variable
     bool conflict(CPUClosure* closure) const;
 
-    void tryToCreateFusedKernel(const char* cacheDir);
+    void resolveFuncPtr(void* sharedObj);
     void setGlobalsForBatch();
     void run();
 
+    size_t size() const { return mClosures.size(); }
+
     CpuScriptGroup2Impl* mGroup;
-    ScriptExecutable* mExecutable;
-    void* mScriptObj;
     List<CPUClosure*> mClosures;
+    char* mName;
+    void* mFunc;
 };
 
 class CpuScriptGroup2Impl : public RsdCpuReference::CpuScriptGroup2 {
@@ -70,11 +66,16 @@ public:
     virtual void execute();
 
     RsdCpuReferenceImpl* getCpuRefImpl() const { return mCpuRefImpl; }
+    ScriptExecutable* getExecutable() const { return mExecutable; }
+
+    void compile(const char* cacheDir);
 
 private:
     RsdCpuReferenceImpl* mCpuRefImpl;
     const ScriptGroup2* mGroup;
     List<Batch*> mBatches;
+    ScriptExecutable* mExecutable;
+    void* mScriptObj;
 };
 
 }  // namespace renderscript

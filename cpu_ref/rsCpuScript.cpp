@@ -855,6 +855,10 @@ void RsdCpuScriptImpl::setGlobalObj(uint32_t slot, ObjectBase *data) {
     rsrSetObject(mCtx->getContext(), (rs_object_base *)destPtr, data);
 }
 
+const char* RsdCpuScriptImpl::getFieldName(uint32_t slot) const {
+    return mScriptExec->getFieldName(slot);
+}
+
 RsdCpuScriptImpl::~RsdCpuScriptImpl() {
 #ifndef RS_COMPATIBILITY_LIB
     if (mCompilerDriver) {

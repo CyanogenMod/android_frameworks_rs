@@ -66,8 +66,8 @@ Closure::Closure(Context* context,
                  const size_t* sizes,
                  const Closure** depClosures,
                  const ScriptFieldID** depFieldIDs) :
-    ObjectBase(context), mContext(context), mKernelID((ScriptKernelID*)kernelID),
-    mInvokeID(nullptr), mReturnValue(returnValue), mParams(nullptr),
+    ObjectBase(context), mContext(context), mFunctionID((IDBase*)kernelID),
+    mIsKernel(true), mReturnValue(returnValue), mParams(nullptr),
     mParamLength(0) {
     size_t i;
 
@@ -91,8 +91,6 @@ Closure::Closure(Context* context,
         rsAssert(p.second.second == sizes[j]);
         j++;
     }
-
-    // mDependences.insert(depClosures, depClosures + numValues);
 
     for (i = 0; i < mNumArg; i++) {
         const Closure* dep = depClosures[i];
@@ -128,7 +126,7 @@ Closure::Closure(Context* context, const ScriptInvokeID* invokeID,
                  const void* params, const size_t paramLength,
                  const size_t numValues, const ScriptFieldID** fieldIDs,
                  const void** values, const size_t* sizes) :
-    ObjectBase(context), mContext(context), mKernelID(nullptr), mInvokeID(invokeID),
+    ObjectBase(context), mContext(context), mFunctionID((IDBase*)invokeID), mIsKernel(false),
     mReturnValue(nullptr), mParams(params), mParamLength(paramLength) {
     for (size_t i = 0; i < numValues; i++) {
         mGlobals[fieldIDs[i]] = make_pair(values[i], sizes[i]);
