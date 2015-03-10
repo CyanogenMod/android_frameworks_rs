@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 The Android Open Source Project
+ * Copyright (C) 2014 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,19 +14,15 @@
  * limitations under the License.
  */
 
-package com.android.rs.imagejb;
+#include "ip.rsh"
+#pragma rs_fp_relaxed
 
-public class Vibrance extends TestBase {
-    private ScriptC_vibrance mScript;
+int32_t gWidth;
+int32_t gHeight;
+rs_allocation gIn;
 
-    public void createTest(android.content.res.Resources res) {
-        mScript = new ScriptC_vibrance(mRS);
-    }
-
-    public void runTest() {
-        mScript.set_vibrance(50.f);
-        mScript.invoke_prepareVibrance();
-        mScript.forEach_vibranceKernel(mInPixelsAllocation, mOutPixelsAllocation);
-    }
-
+uchar4 RS_KERNEL mirror(uint32_t x, uint32_t y) {
+    uint32_t x0 = gWidth-x-1;
+    uchar4 p = rsGetElementAt_uchar4(gIn, x0, y);
+    return p;
 }

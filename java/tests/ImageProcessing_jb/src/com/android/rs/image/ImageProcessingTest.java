@@ -14,16 +14,17 @@
  * limitations under the License.
  */
 
-package com.android.rs.image;
+package com.android.rs.imagejb;
 
-import com.android.rs.image.ImageProcessingTestRunner;
 
 import android.os.Bundle;
-import com.android.rs.image.ImageProcessingActivity.TestName;
+import android.util.Log;
+
+import com.android.rs.imagejb.IPTestListJB.TestName;
+import com.android.rs.imagejb.ImageProcessingTestRunner;
 
 import android.test.ActivityInstrumentationTestCase2;
 import android.test.suitebuilder.annotation.LargeTest;
-import android.util.Log;
 
 /**
  * ImageProcessing benchmark test.
@@ -32,17 +33,31 @@ import android.util.Log;
  * adb shell am instrument -e iteration <n> -w com.android.rs.image/.ImageProcessingTestRunner
  *
  */
-public class ImageProcessingTest extends ActivityInstrumentationTestCase2<ImageProcessingActivity> {
+public class ImageProcessingTest extends ActivityInstrumentationTestCase2<ImageProcessingActivityJB> {
     private final String TAG = "ImageProcessingTest";
     private final String TEST_NAME = "Testname";
     private final String ITERATIONS = "Iterations";
     private final String BENCHMARK = "Benchmark";
     private static int INSTRUMENTATION_IN_PROGRESS = 2;
     private int mIteration;
-    private ImageProcessingActivity mActivity;
+    private ImageProcessingActivityJB mActivity;
 
     public ImageProcessingTest() {
-        super(ImageProcessingActivity.class);
+        super(ImageProcessingActivityJB.class);
+    }
+
+
+    protected void prepareTest(int test) {
+        /*
+        mActivity.mTestList = new int[1];
+        mActivity.mTestList[0] = test;
+
+        mActivity.mBitmapWidth = 1920;
+        mActivity.mBitmapHeight = 1080;
+
+        mActivity.mTestResults = new float[1];
+
+        mActivity.startProcessor();*/
     }
 
     @Override
@@ -67,8 +82,8 @@ public class ImageProcessingTest extends ActivityInstrumentationTestCase2<ImageP
             mTestName = testName;
         }
         public void run() {
-            mActivity.changeTest(mTestName);
-            mResult = mActivity.getBenchmark();
+            mActivity.changeTest(mTestName, false);
+            //mResult = mActivity.getBenchmark();
             Log.v(TAG, "Benchmark for test \"" + mTestName.toString() + "\" is: " + mResult);
             synchronized(this) {
                 this.notify();
@@ -149,8 +164,8 @@ public class ImageProcessingTest extends ActivityInstrumentationTestCase2<ImageP
     // Test case 5: Intrinsic Blur Radius 25
     @LargeTest
     public void testIntrinsicBlurRadius25() {
-        TestAction ta = new TestAction(TestName.INTRINSIC_BLUE_RADIUS_25);
-        runTest(ta, TestName.INTRINSIC_BLUE_RADIUS_25.name());
+        TestAction ta = new TestAction(TestName.INTRINSIC_BLUR_RADIUS_25);
+        runTest(ta, TestName.INTRINSIC_BLUR_RADIUS_25.name());
     }
 
     // Test case 6: Greyscale
@@ -376,14 +391,13 @@ public class ImageProcessingTest extends ActivityInstrumentationTestCase2<ImageP
         TestAction ta = new TestAction(TestName.COLOR_CUBE_3D_INTRINSIC);
         runTest(ta, TestName.COLOR_CUBE_3D_INTRINSIC.name());
     }
-
+/*
     // Test case 38: Usage io
     @LargeTest
     public void testUsageIO() {
         TestAction ta = new TestAction(TestName.USAGE_IO);
         runTest(ta, TestName.USAGE_IO.name());
     }
-
     // Test case 39: Artistic 1
     @LargeTest
     public void testArtistic1() {
@@ -404,10 +418,5 @@ public class ImageProcessingTest extends ActivityInstrumentationTestCase2<ImageP
         TestAction ta = new TestAction(TestName.MANDELBROT_DOUBLE);
         runTest(ta, TestName.MANDELBROT_DOUBLE.name());
     }
-    // Test case 42: Mirror
-    @LargeTest
-    public void testMirror() {
-        TestAction ta = new TestAction(TestName.MIRROR);
-        runTest(ta, TestName.MIRROR.name());
-    }
+*/
 }
