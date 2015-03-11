@@ -10,6 +10,7 @@ namespace renderscript {
 
 class Allocation;
 class Context;
+class IDBase;
 class ObjectBase;
 class ScriptFieldID;
 class ScriptInvokeID;
@@ -48,12 +49,11 @@ class Closure : public ObjectBase {
 
     Context* mContext;
 
-    // If mKernelID is not null, this is a closure for a kernel. Otherwise, it is
-    // a closure for an invoke function, whose id is the next field. At least one
-    // of these fields has to be non-null.
-    const ObjectBaseRef<ScriptKernelID> mKernelID;
-    // TODO(yangni): ObjectBaseRef<ScriptInvokeID>
-    const ScriptInvokeID* mInvokeID;
+    // KernelId or InvokeID
+    const ObjectBaseRef<IDBase> mFunctionID;
+    // Flag indicating if this closure is for a kernel (true) or invocable
+    // function (false)
+    const bool mIsKernel;
 
     // Values referrenced in arguments and globals cannot be futures. They must be
     // either a known value or unbound value.
@@ -65,9 +65,6 @@ class Closure : public ObjectBase {
     Map<const ScriptFieldID*, Pair<const void*, size_t>> mGlobals;
 
     Allocation* mReturnValue;
-
-    // All the other closures that this closure depends on
-    // set<const Closure*> mDependences;
 
     // All the other closures which this closure depends on for one of its
     // arguments, and the fields which it depends on.

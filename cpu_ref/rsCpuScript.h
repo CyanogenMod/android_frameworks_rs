@@ -87,6 +87,7 @@ public:
     virtual void setGlobalBind(uint32_t slot, Allocation *data);
     virtual void setGlobalObj(uint32_t slot, ObjectBase *data);
 
+    const char* getFieldName(uint32_t slot) const;
 
     virtual ~RsdCpuScriptImpl();
     RsdCpuScriptImpl(RsdCpuReferenceImpl *ctx, const Script *s);
