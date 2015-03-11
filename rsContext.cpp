@@ -244,49 +244,6 @@ void Context::displayDebugStats() {
 #endif
 }
 
-bool Context::loadRuntime(const char* filename, Context* rsc) {
-
-    // TODO: store the driverSO somewhere so we can dlclose later
-    void *driverSO = nullptr;
-
-    driverSO = dlopen(filename, RTLD_LAZY);
-    if (driverSO == nullptr) {
-        ALOGE("Failed loading RS driver: %s", dlerror());
-        return false;
-    }
-
-    // Need to call dlerror() to clear buffer before using it for dlsym().
-    (void) dlerror();
-    typedef bool (*HalSig)(Context*, uint32_t, uint32_t);
-    HalSig halInit = (HalSig) dlsym(driverSO, "rsdHalInit");
-
-    // If we can't find the C variant, we go looking for the C++ version.
-    if (halInit == nullptr) {
-        ALOGW("Falling back to find C++ rsdHalInit: %s", dlerror());
-        halInit = (HalSig) dlsym(driverSO,
-                "_Z10rsdHalInitPN7android12renderscript7ContextEjj");
-    }
-
-    if (halInit == nullptr) {
-        dlclose(driverSO);
-        ALOGE("Failed to find rsdHalInit: %s", dlerror());
-        return false;
-    }
-
-    if (!(*halInit)(rsc, 0, 0)) {
-        dlclose(driverSO);
-        ALOGE("Hal init failed");
-        return false;
-    }
-
-    //validate HAL struct
-
-
-    return true;
-}
-
-extern "C" bool rsdHalInit(RsContext c, uint32_t version_major, uint32_t version_minor);
-
 void * Context::threadProc(void *vrsc) {
     Context *rsc = static_cast<Context *>(vrsc);
 
@@ -306,52 +263,17 @@ void * Context::threadProc(void *vrsc) {
     if (getProp("debug.rs.debug") != 0) {
         ALOGD("Forcing debug context due to debug.rs.debug.");
         rsc->mContextType = RS_CONTEXT_TYPE_DEBUG;
+        rsc->mForceCpu = true;
     }
 
-    bool loadDefault = true;
-
-    // Provide a mechanism for dropping in a different RS driver.
-#ifndef RS_COMPATIBILITY_LIB
-#ifdef OVERRIDE_RS_DRIVER
-#define XSTR(S) #S
-#define STR(S) XSTR(S)
-#define OVERRIDE_RS_DRIVER_STRING STR(OVERRIDE_RS_DRIVER)
-
-    if (getProp("debug.rs.default-CPU-driver") != 0) {
-        ALOGD("Skipping override driver and loading default CPU driver");
-    } else if (rsc->mForceCpu || rsc->mIsGraphicsContext) {
-        ALOGV("Application requested CPU execution");
-    } else if (rsc->getContextType() == RS_CONTEXT_TYPE_DEBUG) {
-        ALOGV("Application requested debug context");
-    } else {
-#if defined(__LP64__) && defined(DISABLE_RS_64_BIT_DRIVER)
-        // skip load
-#else
-        if (loadRuntime(OVERRIDE_RS_DRIVER_STRING, rsc)) {
-            ALOGV("Successfully loaded runtime: %s", OVERRIDE_RS_DRIVER_STRING);
-            loadDefault = false;
-        } else {
-            ALOGE("Failed to load runtime %s, loading default", OVERRIDE_RS_DRIVER_STRING);
-        }
-#endif
+    bool forceCpu = getProp("debug.rs.default-CPU-driver") != 0;
+    if (forceCpu) {
+        ALOGD("Skipping hardware driver and loading default CPU driver");
+        rsc->mForceCpu = true;
     }
 
-#undef XSTR
-#undef STR
-#endif  // OVERRIDE_RS_DRIVER
-
-    if (loadDefault) {
-        if (!loadRuntime("libRSDriver.so", rsc)) {
-            ALOGE("Failed to load default runtime!");
-            rsc->setError(RS_ERROR_FATAL_DRIVER, "Failed loading RS driver");
-            return nullptr;
-        }
-    }
-#else // RS_COMPATIBILITY_LIB
-    if (rsdHalInit(rsc, 0, 0) != true) {
-        return nullptr;
-    }
-#endif
+    rsc->mForceCpu |= rsc->mIsGraphicsContext;
+    rsc->loadDriver(rsc->mForceCpu);
 
     if (!rsc->isSynchronous()) {
         // Due to legacy we default to normal_graphics
