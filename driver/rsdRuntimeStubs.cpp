@@ -93,7 +93,6 @@ OPAQUETYPE(rs_program_raster);
 
 OPAQUETYPE(rs_mesh);
 OPAQUETYPE(rs_font);
-OPAQUETYPE(rs_path);
 
 #undef OPAQUETYPE
 
@@ -1407,9 +1406,6 @@ static RsdCpuReference::CpuSymbol gSyms[] = {
     { "_Z13rsClearObjectP10rs_sampler", (void *)&SC_ClearObject, true },
     { "_Z13rsClearObjectP9rs_script", (void *)&SC_ClearObject, true },
 
-    { "_Z11rsSetObjectP7rs_pathS_", (void *)&SC_SetObject, true },
-    { "_Z13rsClearObjectP7rs_path", (void *)&SC_ClearObject, true },
-    { "_Z10rsIsObject7rs_path", (void *)&SC_IsObject, true },
 
     { "_Z11rsSetObjectP7rs_meshS_", (void *)&SC_SetObject, true },
     { "_Z13rsClearObjectP7rs_mesh", (void *)&SC_ClearObject, true },
@@ -1788,7 +1784,6 @@ IS_CLEAR_SET_OBJ(::rs_allocation, _Z10rsIsObject13rs_allocation, _Z11rsSetObject
 IS_CLEAR_SET_OBJ(::rs_sampler, _Z10rsIsObject10rs_sampler, _Z11rsSetObjectP10rs_samplerS_)
 IS_CLEAR_SET_OBJ(::rs_script, _Z10rsIsObject9rs_script, _Z11rsSetObjectP9rs_scriptS_)
 
-IS_CLEAR_SET_OBJ(::rs_path, _Z10rsIsObject7rs_path, _Z11rsSetObjectP7rs_pathS_)
 IS_CLEAR_SET_OBJ(::rs_mesh, _Z10rsIsObject7rs_mesh, _Z11rsSetObjectP7rs_meshS_)
 IS_CLEAR_SET_OBJ(::rs_program_fragment, _Z10rsIsObject19rs_program_fragment, _Z11rsSetObjectP19rs_program_fragmentS_)
 IS_CLEAR_SET_OBJ(::rs_program_vertex, _Z10rsIsObject17rs_program_vertex, _Z11rsSetObjectP17rs_program_vertexS_)
