@@ -149,11 +149,7 @@ void rsrVpGetProjectionMatrix(Context *rsc, rsc_Matrix *m) {
 
 
 void rsrDrawPath(Context *rsc, Path *sm) {
-    CHECK_OBJ(sm);
-    if (!rsc->setupCheck()) {
-        return;
-    }
-    sm->render(rsc);
+    // Never shipped in a working state
 }
 
 void rsrDrawMesh(Context *rsc, Mesh *sm) {

@@ -37,7 +37,6 @@
 
 #ifndef RS_COMPATIBILITY_LIB
 #include "rsFont.h"
-#include "rsPath.h"
 #include "rsProgramFragment.h"
 #include "rsProgramStore.h"
 #include "rsProgramRaster.h"
@@ -300,7 +299,8 @@ private:
 
     uint32_t runRootScript();
 
-    static bool loadRuntime(const char* filename, Context* rsc);
+    bool loadRuntime(const char* filename);
+    bool loadDriver(bool forceDefault);
     static void * threadProc(void *);
     static void * helperThreadProc(void *);
 
