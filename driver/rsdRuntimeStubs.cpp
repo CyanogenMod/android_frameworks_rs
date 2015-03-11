@@ -24,7 +24,6 @@
 #include "rsdCore.h"
 #include "rsdBcc.h"
 
-#include "rsdPath.h"
 #include "rsdAllocation.h"
 #include "rsdShaderCache.h"
 #include "rsdVertexArray.h"
@@ -463,11 +462,6 @@ static void SC_DrawSpriteScreenspace(float x, float y, float z, float w, float h
 
 static void SC_DrawRect(float x1, float y1, float x2, float y2, float z) {
     SC_DrawQuad(x1, y2, z, x2, y2, z, x2, y1, z, x1, y1, z);
-}
-
-static void SC_DrawPath(Path *p) {
-    Context *rsc = RsdCpuReference::getTlsContext();
-    rsdPathDraw(rsc, p);
 }
 
 static void SC_DrawMesh(Mesh *m) {
@@ -1492,8 +1486,6 @@ static RsdCpuReference::CpuSymbol gSyms[] = {
     { "_Z11rsgDrawMesh7rs_meshjjj", (void *)&SC_DrawMeshPrimitiveRange, false },
     { "_Z25rsgMeshComputeBoundingBox7rs_meshPfS0_S0_S0_S0_S0_", (void *)&SC_MeshComputeBoundingBox, false },
 
-    { "_Z11rsgDrawPath7rs_path", (void *)&SC_DrawPath, false },
-
     { "_Z13rsgClearColorffff", (void *)&SC_ClearColor, false },
     { "_Z13rsgClearDepthf", (void *)&SC_ClearDepth, false },
 
@@ -1692,10 +1684,6 @@ void  rsgMeshComputeBoundingBox(::rs_mesh mesh,
     return SC_MeshComputeBoundingBox((Mesh *) mesh.p,
                                 minX, minY, minZ,
                                 maxX, maxY, maxZ);
-}
-
-void rsgDrawPath(::rs_path p) {
-    return SC_DrawPath((Path *) p.p);
 }
 
 void rsgClearColor(float r, float g, float b, float a) {
