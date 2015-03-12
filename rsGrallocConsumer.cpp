@@ -24,6 +24,7 @@
 #include <cutils/compiler.h>
 #include <utils/Log.h>
 #include "rsGrallocConsumer.h"
+#include <gui/BufferItem.h>
 #include <ui/GraphicBuffer.h>
 
 
@@ -69,7 +70,7 @@ status_t GrallocConsumer::lockNextBuffer() {
         }
     }
 
-    BufferQueue::BufferItem b;
+    BufferItem b;
 
     err = acquireBufferLocked(&b, 0);
     if (err != OK) {
