@@ -654,4 +654,13 @@ typedef enum {
 
 #endif // (defined(RS_VERSION) && (RS_VERSION >= 16))
 
+#if (defined(RS_VERSION) && (RS_VERSION >= 23))
+
+/**
+ * \brief Opaque handle to RenderScript kernel invocation context.
+ */
+typedef const struct rs_kernel_context_t *rs_kernel_context;
+
+#endif // (defined(RS_VERSION) && (RS_VERSION >= 23))
+
 #endif // __RS_TYPES_RSH__
