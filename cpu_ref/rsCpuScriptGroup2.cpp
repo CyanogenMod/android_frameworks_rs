@@ -202,6 +202,32 @@ namespace {
 
 #ifndef RS_COMPATIBILITY_LIB
 
+string getCoreLibPath(Context* context, string* coreLibRelaxedPath) {
+    *coreLibRelaxedPath = "";
+
+    // If we're debugging, use the debug library.
+    if (context->getContextType() == RS_CONTEXT_TYPE_DEBUG) {
+        return SYSLIBPATH"/libclcore_debug.bc";
+    }
+
+    // Check for a platform specific library
+
+#if defined(ARCH_ARM_HAVE_NEON) && !defined(DISABLE_CLCORE_NEON)
+    // NEON-capable ARMv7a devices can use an accelerated math library
+    // for all reduced precision scripts.
+    // ARMv8 does not use NEON, as ASIMD can be used with all precision
+    // levels.
+    *coreLibRelaxedPath = SYSLIBPATH"/libclcore_neon.bc";
+#endif
+
+#if defined(__i386__) || defined(__x86_64__)
+    // x86 devices will use an optimized library.
+    return SYSLIBPATH"/libclcore_x86.bc";
+#else
+    return SYSLIBPATH"/libclcore.bc";
+#endif
+}
+
 string getFileName(string path) {
     unsigned found = path.find_last_of("/\\");
     return path.substr(found + 1);
@@ -211,14 +237,17 @@ void setupCompileArguments(
         const vector<string>& inputs, const vector<string>& kernelBatches,
         const vector<string>& invokeBatches,
         const string& output_dir, const string& output_filename,
-        const string& rsLib, vector<const char*>* args) {
+        const string& coreLibPath, const string& coreLibRelaxedPath,
+        vector<const char*>* args) {
     args->push_back(RsdCpuScriptImpl::BCC_EXE_PATH);
     args->push_back("-fPIC");
     args->push_back("-embedRSInfo");
     args->push_back("-mtriple");
     args->push_back(DEFAULT_TARGET_TRIPLE_STRING);
     args->push_back("-bclib");
-    args->push_back(rsLib.c_str());
+    args->push_back(coreLibPath.c_str());
+    args->push_back("-bclib_relaxed");
+    args->push_back(coreLibRelaxedPath.c_str());
     for (const string& input : inputs) {
         args->push_back(input.c_str());
     }
@@ -353,10 +382,12 @@ void CpuScriptGroup2Impl::compile(const char* cacheDir) {
     TEMP_FAILURE_RETRY(close(tempfd));
 
     string outputFileName = getFileName(objFilePath.substr(0, objFilePath.size() - 2));
-    string rsLibPath(SYSLIBPATH"/libclcore.bc");
+    string coreLibRelaxedPath;
+    const string& coreLibPath = getCoreLibPath(getCpuRefImpl()->getContext(),
+                                               &coreLibRelaxedPath);
     vector<const char*> arguments;
     setupCompileArguments(inputs, kernelBatches, invokeBatches, cacheDir,
-                          outputFileName, rsLibPath, &arguments);
+                          outputFileName, coreLibPath, coreLibRelaxedPath, &arguments);
     std::unique_ptr<const char> joined(
         rsuJoinStrings(arguments.size() - 1, arguments.data()));
     string commandLine (joined.get());
