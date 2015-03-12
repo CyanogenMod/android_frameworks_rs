@@ -16,7 +16,6 @@
 #endif
 
 #include "cpu_ref/rsCpuCore.h"
-#include "cpu_ref/rsCpuCoreRuntime.h"
 #include "rsClosure.h"
 #include "rsContext.h"
 #include "rsCpuCore.h"
@@ -36,21 +35,21 @@ namespace {
 
 const size_t DefaultKernelArgCount = 2;
 
-void groupRoot(const RsExpandKernelParams *kparams, uint32_t xstart,
+void groupRoot(const RsExpandKernelDriverInfo *kinfo, uint32_t xstart,
                uint32_t xend, uint32_t outstep) {
-    const List<CPUClosure*>& closures = *(List<CPUClosure*>*)kparams->usr;
-    RsExpandKernelParams *mutable_kparams = (RsExpandKernelParams *)kparams;
-    const void **oldIns  = kparams->ins;
-    uint32_t *oldStrides = kparams->inEStrides;
+    const List<CPUClosure*>& closures = *(List<CPUClosure*>*)kinfo->usr;
+    RsExpandKernelDriverInfo *mutable_kinfo = const_cast<RsExpandKernelDriverInfo *>(kinfo);
 
-    std::vector<const void*> ins(DefaultKernelArgCount);
-    std::vector<uint32_t> strides(DefaultKernelArgCount);
+    const size_t oldInLen = mutable_kinfo->inLen;
+
+    decltype(mutable_kinfo->inStride) oldInStride;
+    memcpy(&oldInStride, &mutable_kinfo->inStride, sizeof(oldInStride));
 
     for (CPUClosure* cpuClosure : closures) {
         const Closure* closure = cpuClosure->mClosure;
 
-        auto in_iter = ins.begin();
-        auto stride_iter = strides.begin();
+        // There had better be enough space in mutable_kinfo
+        rsAssert(closure->mNumArg <= RS_KERNEL_INPUT_LIMIT);
 
         for (size_t i = 0; i < closure->mNumArg; i++) {
             const void* arg = closure->mArgs[i];
@@ -58,31 +57,30 @@ void groupRoot(const RsExpandKernelParams *kparams, uint32_t xstart,
             const uint32_t eStride = a->mHal.state.elementSizeBytes;
             const uint8_t* ptr = (uint8_t*)(a->mHal.drvState.lod[0].mallocPtr) +
                     eStride * xstart;
-            if (kparams->dimY > 1) {
-                ptr += a->mHal.drvState.lod[0].stride * kparams->y;
+            if (kinfo->dim.y > 1) {
+                ptr += a->mHal.drvState.lod[0].stride * kinfo->current.y;
             }
-            *in_iter++ = ptr;
-            *stride_iter++ = eStride;
+            mutable_kinfo->inPtr[i] = ptr;
+            mutable_kinfo->inStride[i] = eStride;
         }
-
-        mutable_kparams->ins = &ins[0];
-        mutable_kparams->inEStrides = &strides[0];
+        mutable_kinfo->inLen = closure->mNumArg;
 
         const Allocation* out = closure->mReturnValue;
         const uint32_t ostep = out->mHal.state.elementSizeBytes;
         const uint8_t* ptr = (uint8_t *)(out->mHal.drvState.lod[0].mallocPtr) +
                 ostep * xstart;
-        if (kparams->dimY > 1) {
-            ptr += out->mHal.drvState.lod[0].stride * kparams->y;
+        if (kinfo->dim.y > 1) {
+            ptr += out->mHal.drvState.lod[0].stride * kinfo->current.y;
         }
 
-        mutable_kparams->out = (void*)ptr;
+        rsAssert(kinfo->outLen <= 1);
+        mutable_kinfo->outPtr[0] = const_cast<uint8_t*>(ptr);
 
-        cpuClosure->mFunc(kparams, xstart, xend, ostep);
+        cpuClosure->mFunc(kinfo, xstart, xend, ostep);
     }
 
-    mutable_kparams->ins        = oldIns;
-    mutable_kparams->inEStrides = oldStrides;
+    mutable_kinfo->inLen = oldInLen;
+    memcpy(&mutable_kinfo->inStride, &oldInStride, sizeof(oldInStride));
 }
 
 }  // namespace
