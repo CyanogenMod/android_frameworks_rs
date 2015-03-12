@@ -32,6 +32,9 @@ do { \
 \
 } while (0)
 
+#define _RS_ASSERT_EQU(e1, e2) \
+  (((e1) != (e2)) ? (failed = true, rsDebug(#e1 " != " #e2, (e1), (e2)), false) : true)
+
 static const int iposinf = 0x7f800000;
 static const int ineginf = 0xff800000;
 

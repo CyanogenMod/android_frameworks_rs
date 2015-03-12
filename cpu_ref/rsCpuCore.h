@@ -23,6 +23,7 @@
 #include "rsCppUtils.h"
 #include "rsElement.h"
 #include "rsScriptC.h"
+#include "rsCpuCoreRuntime.h"
 
 
 #define RS_KERNEL_INPUT_LIMIT 8
@@ -79,30 +80,7 @@ struct RsExpandKernelDriverInfo {
 
 };
 
-struct RsExpandKernelParams {
-
-    // Used by kernels
-    const void **ins;
-    uint32_t *inEStrides;
-    void *out;
-    uint32_t y;
-    uint32_t z;
-    uint32_t lid;
-
-    // Used by ScriptGroup and user kernels.
-    const void *usr;
-
-    // Used by intrinsics
-    uint32_t dimX;
-    uint32_t dimY;
-    uint32_t dimZ;
-
-    /*
-     * FIXME: This is only used by the blend intrinsic.  If possible, we should
-     *        modify blur to not need it.
-     */
-    uint32_t slot;
-};
+typedef ::RsExpandKernelParams RsExpandKernelParams;
 
 extern bool gArchUseSIMD;
 
