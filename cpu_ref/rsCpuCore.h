@@ -25,9 +25,6 @@
 #include "rsScriptC.h"
 #include "rsCpuCoreRuntime.h"
 
-
-#define RS_KERNEL_INPUT_LIMIT 8
-
 namespace bcc {
     class BCCContext;
     class RSCompilerDriver;
@@ -36,51 +33,6 @@ namespace bcc {
 
 namespace android {
 namespace renderscript {
-
-struct StridePair {
-  uint32_t eStride;
-  uint32_t yStride;
-};
-
-struct RsLaunchDimensions {
-    uint32_t x;
-    uint32_t y;
-    uint32_t z;
-    uint32_t lod;
-    uint32_t face;
-    uint32_t array[4 /*make a define*/];
-};
-
-struct RsExpandKernelDriverInfo {
-    // Warning: This structure is shared with the compiler
-    // Any change to the fields here requires a matching compiler change
-
-    const uint8_t *inPtr[RS_KERNEL_INPUT_LIMIT];
-    uint32_t inStride[RS_KERNEL_INPUT_LIMIT];
-    uint32_t inLen;
-
-    uint8_t *outPtr[RS_KERNEL_INPUT_LIMIT];
-    uint32_t outStride[RS_KERNEL_INPUT_LIMIT];
-    uint32_t outLen;
-
-    // Dimension of the launch
-    RsLaunchDimensions dim;
-
-    // The walking itterator of the launch
-    RsLaunchDimensions current;
-
-    const void *usr;
-    uint32_t usrLen;
-
-
-
-    // Items below this line are not used by the compiler and can be change in the driver
-    uint32_t lid;
-    uint32_t slot;
-
-};
-
-typedef ::RsExpandKernelParams RsExpandKernelParams;
 
 extern bool gArchUseSIMD;
 

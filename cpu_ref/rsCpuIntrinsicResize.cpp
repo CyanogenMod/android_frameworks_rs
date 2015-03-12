@@ -46,22 +46,22 @@ protected:
     ObjectBaseRef<const Allocation> mAlloc;
     ObjectBaseRef<const Element> mElement;
 
-    static void kernelU1(const RsExpandKernelParams *p,
+    static void kernelU1(const RsExpandKernelDriverInfo *info,
                          uint32_t xstart, uint32_t xend,
                          uint32_t outstep);
-    static void kernelU2(const RsExpandKernelParams *p,
+    static void kernelU2(const RsExpandKernelDriverInfo *info,
                          uint32_t xstart, uint32_t xend,
                          uint32_t outstep);
-    static void kernelU4(const RsExpandKernelParams *p,
+    static void kernelU4(const RsExpandKernelDriverInfo *info,
                          uint32_t xstart, uint32_t xend,
                          uint32_t outstep);
-    static void kernelF1(const RsExpandKernelParams *p,
+    static void kernelF1(const RsExpandKernelDriverInfo *info,
                          uint32_t xstart, uint32_t xend,
                          uint32_t outstep);
-    static void kernelF2(const RsExpandKernelParams *p,
+    static void kernelF2(const RsExpandKernelDriverInfo *info,
                          uint32_t xstart, uint32_t xend,
                          uint32_t outstep);
-    static void kernelF4(const RsExpandKernelParams *p,
+    static void kernelF4(const RsExpandKernelDriverInfo *info,
                          uint32_t xstart, uint32_t xend,
                          uint32_t outstep);
 };
@@ -255,10 +255,10 @@ static float OneBiCubic(const float *yp0, const float *yp1, const float *yp2, co
     return p;
 }
 
-void RsdCpuScriptIntrinsicResize::kernelU4(const RsExpandKernelParams *p,
+void RsdCpuScriptIntrinsicResize::kernelU4(const RsExpandKernelDriverInfo *info,
                                                 uint32_t xstart, uint32_t xend,
                                                 uint32_t outstep) {
-    RsdCpuScriptIntrinsicResize *cp = (RsdCpuScriptIntrinsicResize *)p->usr;
+    RsdCpuScriptIntrinsicResize *cp = (RsdCpuScriptIntrinsicResize *)info->usr;
 
     if (!cp->mAlloc.get()) {
         ALOGE("Resize executed without input, skipping");
@@ -269,7 +269,7 @@ void RsdCpuScriptIntrinsicResize::kernelU4(const RsExpandKernelParams *p,
     const int srcWidth = cp->mAlloc->mHal.drvState.lod[0].dimX;
     const size_t stride = cp->mAlloc->mHal.drvState.lod[0].stride;
 
-    float yf = (p->y + 0.5f) * cp->scaleY - 0.5f;
+    float yf = (info->current.y + 0.5f) * cp->scaleY - 0.5f;
     int starty = (int) floor(yf - 1);
     yf = yf - floor(yf);
     int maxy = srcHeight - 1;
@@ -283,7 +283,7 @@ void RsdCpuScriptIntrinsicResize::kernelU4(const RsExpandKernelParams *p,
     const uchar4 *yp2 = (const uchar4 *)(pin + stride * ys2);
     const uchar4 *yp3 = (const uchar4 *)(pin + stride * ys3);
 
-    uchar4 *out = ((uchar4 *)p->out) + xstart;
+    uchar4 *out = ((uchar4 *)info->outPtr[0]) + xstart;
     uint32_t x1 = xstart;
     uint32_t x2 = xend;
 
@@ -295,10 +295,10 @@ void RsdCpuScriptIntrinsicResize::kernelU4(const RsExpandKernelParams *p,
     }
 }
 
-void RsdCpuScriptIntrinsicResize::kernelU2(const RsExpandKernelParams *p,
+void RsdCpuScriptIntrinsicResize::kernelU2(const RsExpandKernelDriverInfo *info,
                                                 uint32_t xstart, uint32_t xend,
                                                 uint32_t outstep) {
-    RsdCpuScriptIntrinsicResize *cp = (RsdCpuScriptIntrinsicResize *)p->usr;
+    RsdCpuScriptIntrinsicResize *cp = (RsdCpuScriptIntrinsicResize *)info->usr;
 
     if (!cp->mAlloc.get()) {
         ALOGE("Resize executed without input, skipping");
@@ -309,7 +309,7 @@ void RsdCpuScriptIntrinsicResize::kernelU2(const RsExpandKernelParams *p,
     const int srcWidth = cp->mAlloc->mHal.drvState.lod[0].dimX;
     const size_t stride = cp->mAlloc->mHal.drvState.lod[0].stride;
 
-    float yf = (p->y + 0.5f) * cp->scaleY - 0.5f;
+    float yf = (info->current.y + 0.5f) * cp->scaleY - 0.5f;
     int starty = (int) floor(yf - 1);
     yf = yf - floor(yf);
     int maxy = srcHeight - 1;
@@ -323,7 +323,7 @@ void RsdCpuScriptIntrinsicResize::kernelU2(const RsExpandKernelParams *p,
     const uchar2 *yp2 = (const uchar2 *)(pin + stride * ys2);
     const uchar2 *yp3 = (const uchar2 *)(pin + stride * ys3);
 
-    uchar2 *out = ((uchar2 *)p->out) + xstart;
+    uchar2 *out = ((uchar2 *)info->outPtr[0]) + xstart;
     uint32_t x1 = xstart;
     uint32_t x2 = xend;
 
@@ -335,10 +335,10 @@ void RsdCpuScriptIntrinsicResize::kernelU2(const RsExpandKernelParams *p,
     }
 }
 
-void RsdCpuScriptIntrinsicResize::kernelU1(const RsExpandKernelParams *p,
+void RsdCpuScriptIntrinsicResize::kernelU1(const RsExpandKernelDriverInfo *info,
                                                 uint32_t xstart, uint32_t xend,
                                                 uint32_t outstep) {
-    RsdCpuScriptIntrinsicResize *cp = (RsdCpuScriptIntrinsicResize *)p->usr;
+    RsdCpuScriptIntrinsicResize *cp = (RsdCpuScriptIntrinsicResize *)info->usr;
 
     if (!cp->mAlloc.get()) {
         ALOGE("Resize executed without input, skipping");
@@ -349,7 +349,7 @@ void RsdCpuScriptIntrinsicResize::kernelU1(const RsExpandKernelParams *p,
     const int srcWidth = cp->mAlloc->mHal.drvState.lod[0].dimX;
     const size_t stride = cp->mAlloc->mHal.drvState.lod[0].stride;
 
-    float yf = (p->y + 0.5f) * cp->scaleY - 0.5f;
+    float yf = (info->current.y + 0.5f) * cp->scaleY - 0.5f;
     int starty = (int) floor(yf - 1);
     yf = yf - floor(yf);
     int maxy = srcHeight - 1;
@@ -363,7 +363,7 @@ void RsdCpuScriptIntrinsicResize::kernelU1(const RsExpandKernelParams *p,
     const uchar *yp2 = pin + stride * ys2;
     const uchar *yp3 = pin + stride * ys3;
 
-    uchar *out = ((uchar *)p->out) + xstart;
+    uchar *out = ((uchar *)info->outPtr[0]) + xstart;
     uint32_t x1 = xstart;
     uint32_t x2 = xend;
 
@@ -375,10 +375,10 @@ void RsdCpuScriptIntrinsicResize::kernelU1(const RsExpandKernelParams *p,
     }
 }
 
-void RsdCpuScriptIntrinsicResize::kernelF4(const RsExpandKernelParams *p,
+void RsdCpuScriptIntrinsicResize::kernelF4(const RsExpandKernelDriverInfo *info,
                                                 uint32_t xstart, uint32_t xend,
                                                 uint32_t outstep) {
-    RsdCpuScriptIntrinsicResize *cp = (RsdCpuScriptIntrinsicResize *)p->usr;
+    RsdCpuScriptIntrinsicResize *cp = (RsdCpuScriptIntrinsicResize *)info->usr;
 
     if (!cp->mAlloc.get()) {
         ALOGE("Resize executed without input, skipping");
@@ -389,7 +389,7 @@ void RsdCpuScriptIntrinsicResize::kernelF4(const RsExpandKernelParams *p,
     const int srcWidth = cp->mAlloc->mHal.drvState.lod[0].dimX;
     const size_t stride = cp->mAlloc->mHal.drvState.lod[0].stride;
 
-    float yf = (p->y + 0.5f) * cp->scaleY - 0.5f;
+    float yf = (info->current.y + 0.5f) * cp->scaleY - 0.5f;
     int starty = (int) floor(yf - 1);
     yf = yf - floor(yf);
     int maxy = srcHeight - 1;
@@ -403,7 +403,7 @@ void RsdCpuScriptIntrinsicResize::kernelF4(const RsExpandKernelParams *p,
     const float4 *yp2 = (const float4 *)(pin + stride * ys2);
     const float4 *yp3 = (const float4 *)(pin + stride * ys3);
 
-    float4 *out = ((float4 *)p->out) + xstart;
+    float4 *out = ((float4 *)info->outPtr[0]) + xstart;
     uint32_t x1 = xstart;
     uint32_t x2 = xend;
 
@@ -415,10 +415,10 @@ void RsdCpuScriptIntrinsicResize::kernelF4(const RsExpandKernelParams *p,
     }
 }
 
-void RsdCpuScriptIntrinsicResize::kernelF2(const RsExpandKernelParams *p,
+void RsdCpuScriptIntrinsicResize::kernelF2(const RsExpandKernelDriverInfo *info,
                                                 uint32_t xstart, uint32_t xend,
                                                 uint32_t outstep) {
-    RsdCpuScriptIntrinsicResize *cp = (RsdCpuScriptIntrinsicResize *)p->usr;
+    RsdCpuScriptIntrinsicResize *cp = (RsdCpuScriptIntrinsicResize *)info->usr;
 
     if (!cp->mAlloc.get()) {
         ALOGE("Resize executed without input, skipping");
@@ -429,7 +429,7 @@ void RsdCpuScriptIntrinsicResize::kernelF2(const RsExpandKernelParams *p,
     const int srcWidth = cp->mAlloc->mHal.drvState.lod[0].dimX;
     const size_t stride = cp->mAlloc->mHal.drvState.lod[0].stride;
 
-    float yf = (p->y + 0.5f) * cp->scaleY - 0.5f;
+    float yf = (info->current.y + 0.5f) * cp->scaleY - 0.5f;
     int starty = (int) floor(yf - 1);
     yf = yf - floor(yf);
     int maxy = srcHeight - 1;
@@ -443,7 +443,7 @@ void RsdCpuScriptIntrinsicResize::kernelF2(const RsExpandKernelParams *p,
     const float2 *yp2 = (const float2 *)(pin + stride * ys2);
     const float2 *yp3 = (const float2 *)(pin + stride * ys3);
 
-    float2 *out = ((float2 *)p->out) + xstart;
+    float2 *out = ((float2 *)info->outPtr[0]) + xstart;
     uint32_t x1 = xstart;
     uint32_t x2 = xend;
 
@@ -455,10 +455,10 @@ void RsdCpuScriptIntrinsicResize::kernelF2(const RsExpandKernelParams *p,
     }
 }
 
-void RsdCpuScriptIntrinsicResize::kernelF1(const RsExpandKernelParams *p,
+void RsdCpuScriptIntrinsicResize::kernelF1(const RsExpandKernelDriverInfo *info,
                                                 uint32_t xstart, uint32_t xend,
                                                 uint32_t outstep) {
-    RsdCpuScriptIntrinsicResize *cp = (RsdCpuScriptIntrinsicResize *)p->usr;
+    RsdCpuScriptIntrinsicResize *cp = (RsdCpuScriptIntrinsicResize *)info->usr;
 
     if (!cp->mAlloc.get()) {
         ALOGE("Resize executed without input, skipping");
@@ -469,7 +469,7 @@ void RsdCpuScriptIntrinsicResize::kernelF1(const RsExpandKernelParams *p,
     const int srcWidth = cp->mAlloc->mHal.drvState.lod[0].dimX;
     const size_t stride = cp->mAlloc->mHal.drvState.lod[0].stride;
 
-    float yf = (p->y + 0.5f) * cp->scaleY - 0.5f;
+    float yf = (info->current.y + 0.5f) * cp->scaleY - 0.5f;
     int starty = (int) floor(yf - 1);
     yf = yf - floor(yf);
     int maxy = srcHeight - 1;
@@ -483,7 +483,7 @@ void RsdCpuScriptIntrinsicResize::kernelF1(const RsExpandKernelParams *p,
     const float *yp2 = (const float *)(pin + stride * ys2);
     const float *yp3 = (const float *)(pin + stride * ys3);
 
-    float *out = ((float *)p->out) + xstart;
+    float *out = ((float *)info->outPtr[0]) + xstart;
     uint32_t x1 = xstart;
     uint32_t x2 = xend;
 
