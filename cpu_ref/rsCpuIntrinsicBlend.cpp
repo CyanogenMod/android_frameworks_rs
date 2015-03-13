@@ -33,7 +33,7 @@ public:
     RsdCpuScriptIntrinsicBlend(RsdCpuReferenceImpl *ctx, const Script *s, const Element *e);
 
 protected:
-    static void kernel(const RsExpandKernelParams *p, uint32_t xstart,
+    static void kernel(const RsExpandKernelDriverInfo *info, uint32_t xstart,
                        uint32_t xend, uint32_t outstep);
 };
 
@@ -109,24 +109,24 @@ extern void rsdIntrinsicBlendAdd_K(void *dst, const void *src, uint32_t count8);
 extern void rsdIntrinsicBlendSub_K(void *dst, const void *src, uint32_t count8);
 #endif
 
-void RsdCpuScriptIntrinsicBlend::kernel(const RsExpandKernelParams *p,
+void RsdCpuScriptIntrinsicBlend::kernel(const RsExpandKernelDriverInfo *info,
                                         uint32_t xstart, uint32_t xend,
                                         uint32_t outstep) {
-    RsdCpuScriptIntrinsicBlend *cp = (RsdCpuScriptIntrinsicBlend *)p->usr;
+    RsdCpuScriptIntrinsicBlend *cp = (RsdCpuScriptIntrinsicBlend *)info->usr;
 
     // instep/outstep can be ignored--sizeof(uchar4) known at compile time
-    uchar4 *out = (uchar4 *)p->out;
-    uchar4 *in = (uchar4 *)p->ins[0];
+    uchar4 *out = (uchar4 *)info->outPtr[0];
+    uchar4 *in = (uchar4 *)info->inPtr[0];
     uint32_t x1 = xstart;
     uint32_t x2 = xend;
 
 #if defined(ARCH_ARM_USE_INTRINSICS) && !defined(ARCH_ARM64_USE_INTRINSICS)
     if (gArchUseSIMD) {
-        if (rsdIntrinsicBlend_K(out, in, p->slot, x1, x2) >= 0)
+        if (rsdIntrinsicBlend_K(out, in, info->slot, x1, x2) >= 0)
             return;
     }
 #endif
-    switch (p->slot) {
+    switch (info->slot) {
     case BLEND_CLEAR:
         for (;x1 < x2; x1++, out++) {
             *out = 0;
@@ -483,7 +483,7 @@ void RsdCpuScriptIntrinsicBlend::kernel(const RsExpandKernelParams *p,
         break;
 
     default:
-        ALOGE("Called unimplemented value %d", p->slot);
+        ALOGE("Called unimplemented value %d", info->slot);
         rsAssert(false);
 
     }

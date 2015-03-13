@@ -4,7 +4,7 @@
 #include "rsd_cpu.h"
 #include "rsList.h"
 
-struct RsExpandKernelParams;
+struct RsExpandKernelDriverInfo;
 
 namespace android {
 namespace renderscript {
@@ -15,9 +15,7 @@ class RsdCpuReferenceImpl;
 class ScriptExecutable;
 class ScriptGroup2;
 
-typedef ::RsExpandKernelParams RsExpandKernelParams;
-
-typedef void (*ExpandFuncTy)(const RsExpandKernelParams*, uint32_t, uint32_t,
+typedef void (*ExpandFuncTy)(const RsExpandKernelDriverInfo*, uint32_t, uint32_t,
                              uint32_t);
 typedef void (*InvokeFuncTy)(const void*, uint32_t);
 
