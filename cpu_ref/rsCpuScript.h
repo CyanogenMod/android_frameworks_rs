@@ -43,7 +43,7 @@ class ScriptExecutable;
 class RsdCpuScriptImpl : public RsdCpuReferenceImpl::CpuScript {
 public:
     typedef void (*outer_foreach_t)(
-        const RsExpandKernelDriverInfo *,
+        const RsExpandKernelParams *,
         uint32_t x1, uint32_t x2,
         uint32_t outstep);
 

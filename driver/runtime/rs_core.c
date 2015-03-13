@@ -178,15 +178,15 @@ extern int __attribute__((overloadable)) rsRand(int min, int max) {
 }
 
 extern uint32_t __attribute__((overloadable)) rsGetDimX(rs_kernel_context ctxt) {
-    return ((struct RsExpandKernelDriverInfo *)ctxt)->dim.x;
+    return ((struct RsExpandKernelParams *)ctxt)->dimX;
 }
 
 extern uint32_t __attribute__((overloadable)) rsGetDimY(rs_kernel_context ctxt) {
-    return ((struct RsExpandKernelDriverInfo *)ctxt)->dim.y;
+    return ((struct RsExpandKernelParams *)ctxt)->dimY;
 }
 
 extern uint32_t __attribute__((overloadable)) rsGetDimZ(rs_kernel_context ctxt) {
-    return ((struct RsExpandKernelDriverInfo *)ctxt)->dim.z;
+    return ((struct RsExpandKernelParams *)ctxt)->dimZ;
 }
 
 #define PRIM_DEBUG(T)                               \

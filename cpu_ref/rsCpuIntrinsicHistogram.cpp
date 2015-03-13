@@ -49,29 +49,29 @@ protected:
     int *mSums;
     ObjectBaseRef<Allocation> mAllocOut;
 
-    static void kernelP1U4(const RsExpandKernelDriverInfo *info,
+    static void kernelP1U4(const RsExpandKernelParams *p,
                            uint32_t xstart, uint32_t xend,
                            uint32_t outstep);
-    static void kernelP1U3(const RsExpandKernelDriverInfo *info,
+    static void kernelP1U3(const RsExpandKernelParams *p,
                            uint32_t xstart, uint32_t xend,
                            uint32_t outstep);
-    static void kernelP1U2(const RsExpandKernelDriverInfo *info,
+    static void kernelP1U2(const RsExpandKernelParams *p,
                            uint32_t xstart, uint32_t xend,
                            uint32_t outstep);
-    static void kernelP1U1(const RsExpandKernelDriverInfo *info,
+    static void kernelP1U1(const RsExpandKernelParams *p,
                            uint32_t xstart, uint32_t xend,
                            uint32_t outstep);
 
-    static void kernelP1L4(const RsExpandKernelDriverInfo *info,
+    static void kernelP1L4(const RsExpandKernelParams *p,
                            uint32_t xstart, uint32_t xend,
                            uint32_t outstep);
-    static void kernelP1L3(const RsExpandKernelDriverInfo *info,
+    static void kernelP1L3(const RsExpandKernelParams *p,
                            uint32_t xstart, uint32_t xend,
                            uint32_t outstep);
-    static void kernelP1L2(const RsExpandKernelDriverInfo *info,
+    static void kernelP1L2(const RsExpandKernelParams *p,
                            uint32_t xstart, uint32_t xend,
                            uint32_t outstep);
-    static void kernelP1L1(const RsExpandKernelDriverInfo *info,
+    static void kernelP1L1(const RsExpandKernelParams *p,
                            uint32_t xstart, uint32_t xend,
                            uint32_t outstep);
 
@@ -166,61 +166,61 @@ RsdCpuScriptIntrinsicHistogram::postLaunch(uint32_t slot,
     }
 }
 
-void RsdCpuScriptIntrinsicHistogram::kernelP1U4(const RsExpandKernelDriverInfo *info,
+void RsdCpuScriptIntrinsicHistogram::kernelP1U4(const RsExpandKernelParams *p,
                                                 uint32_t xstart, uint32_t xend,
                                                 uint32_t outstep) {
 
-    RsdCpuScriptIntrinsicHistogram *cp = (RsdCpuScriptIntrinsicHistogram *)info->usr;
-    uchar *in = (uchar *)info->inPtr[0];
-    int * sums = &cp->mSums[256 * 4 * info->lid];
+    RsdCpuScriptIntrinsicHistogram *cp = (RsdCpuScriptIntrinsicHistogram *)p->usr;
+    uchar *in = (uchar *)p->ins[0];
+    int * sums = &cp->mSums[256 * 4 * p->lid];
 
     for (uint32_t x = xstart; x < xend; x++) {
         sums[(in[0] << 2)    ] ++;
         sums[(in[1] << 2) + 1] ++;
         sums[(in[2] << 2) + 2] ++;
         sums[(in[3] << 2) + 3] ++;
-        in += info->inStride[0];
+        in += p->inEStrides[0];
     }
 }
 
-void RsdCpuScriptIntrinsicHistogram::kernelP1U3(const RsExpandKernelDriverInfo *info,
+void RsdCpuScriptIntrinsicHistogram::kernelP1U3(const RsExpandKernelParams *p,
                                                 uint32_t xstart, uint32_t xend,
                                                 uint32_t outstep) {
 
-    RsdCpuScriptIntrinsicHistogram *cp = (RsdCpuScriptIntrinsicHistogram *)info->usr;
-    uchar *in = (uchar *)info->inPtr[0];
-    int * sums = &cp->mSums[256 * 4 * info->lid];
+    RsdCpuScriptIntrinsicHistogram *cp = (RsdCpuScriptIntrinsicHistogram *)p->usr;
+    uchar *in = (uchar *)p->ins[0];
+    int * sums = &cp->mSums[256 * 4 * p->lid];
 
     for (uint32_t x = xstart; x < xend; x++) {
         sums[(in[0] << 2)    ] ++;
         sums[(in[1] << 2) + 1] ++;
         sums[(in[2] << 2) + 2] ++;
-        in += info->inStride[0];
+        in += p->inEStrides[0];
     }
 }
 
-void RsdCpuScriptIntrinsicHistogram::kernelP1U2(const RsExpandKernelDriverInfo *info,
+void RsdCpuScriptIntrinsicHistogram::kernelP1U2(const RsExpandKernelParams *p,
                                                 uint32_t xstart, uint32_t xend,
                                                 uint32_t outstep) {
 
-    RsdCpuScriptIntrinsicHistogram *cp = (RsdCpuScriptIntrinsicHistogram *)info->usr;
-    uchar *in = (uchar *)info->inPtr[0];
-    int * sums = &cp->mSums[256 * 2 * info->lid];
+    RsdCpuScriptIntrinsicHistogram *cp = (RsdCpuScriptIntrinsicHistogram *)p->usr;
+    uchar *in = (uchar *)p->ins[0];
+    int * sums = &cp->mSums[256 * 2 * p->lid];
 
     for (uint32_t x = xstart; x < xend; x++) {
         sums[(in[0] << 1)    ] ++;
         sums[(in[1] << 1) + 1] ++;
-        in += info->inStride[0];
+        in += p->inEStrides[0];
     }
 }
 
-void RsdCpuScriptIntrinsicHistogram::kernelP1L4(const RsExpandKernelDriverInfo *info,
+void RsdCpuScriptIntrinsicHistogram::kernelP1L4(const RsExpandKernelParams *p,
                                                 uint32_t xstart, uint32_t xend,
                                                 uint32_t outstep) {
 
-    RsdCpuScriptIntrinsicHistogram *cp = (RsdCpuScriptIntrinsicHistogram *)info->usr;
-    uchar *in = (uchar *)info->inPtr[0];
-    int * sums = &cp->mSums[256 * info->lid];
+    RsdCpuScriptIntrinsicHistogram *cp = (RsdCpuScriptIntrinsicHistogram *)p->usr;
+    uchar *in = (uchar *)p->ins[0];
+    int * sums = &cp->mSums[256 * p->lid];
 
     for (uint32_t x = xstart; x < xend; x++) {
         int t = (cp->mDotI[0] * in[0]) +
@@ -228,69 +228,69 @@ void RsdCpuScriptIntrinsicHistogram::kernelP1L4(const RsExpandKernelDriverInfo *
                 (cp->mDotI[2] * in[2]) +
                 (cp->mDotI[3] * in[3]);
         sums[(t + 0x7f) >> 8] ++;
-        in += info->inStride[0];
+        in += p->inEStrides[0];
     }
 }
 
-void RsdCpuScriptIntrinsicHistogram::kernelP1L3(const RsExpandKernelDriverInfo *info,
+void RsdCpuScriptIntrinsicHistogram::kernelP1L3(const RsExpandKernelParams *p,
                                                 uint32_t xstart, uint32_t xend,
                                                 uint32_t outstep) {
 
-    RsdCpuScriptIntrinsicHistogram *cp = (RsdCpuScriptIntrinsicHistogram *)info->usr;
-    uchar *in = (uchar *)info->inPtr[0];
-    int * sums = &cp->mSums[256 * info->lid];
+    RsdCpuScriptIntrinsicHistogram *cp = (RsdCpuScriptIntrinsicHistogram *)p->usr;
+    uchar *in = (uchar *)p->ins[0];
+    int * sums = &cp->mSums[256 * p->lid];
 
     for (uint32_t x = xstart; x < xend; x++) {
         int t = (cp->mDotI[0] * in[0]) +
                 (cp->mDotI[1] * in[1]) +
                 (cp->mDotI[2] * in[2]);
         sums[(t + 0x7f) >> 8] ++;
-        in += info->inStride[0];
+        in += p->inEStrides[0];
     }
 }
 
-void RsdCpuScriptIntrinsicHistogram::kernelP1L2(const RsExpandKernelDriverInfo *info,
+void RsdCpuScriptIntrinsicHistogram::kernelP1L2(const RsExpandKernelParams *p,
                                                 uint32_t xstart, uint32_t xend,
                                                 uint32_t outstep) {
 
-    RsdCpuScriptIntrinsicHistogram *cp = (RsdCpuScriptIntrinsicHistogram *)info->usr;
-    uchar *in = (uchar *)info->inPtr[0];
-    int * sums = &cp->mSums[256 * info->lid];
+    RsdCpuScriptIntrinsicHistogram *cp = (RsdCpuScriptIntrinsicHistogram *)p->usr;
+    uchar *in = (uchar *)p->ins[0];
+    int * sums = &cp->mSums[256 * p->lid];
 
     for (uint32_t x = xstart; x < xend; x++) {
         int t = (cp->mDotI[0] * in[0]) +
                 (cp->mDotI[1] * in[1]);
         sums[(t + 0x7f) >> 8] ++;
-        in += info->inStride[0];
+        in += p->inEStrides[0];
     }
 }
 
-void RsdCpuScriptIntrinsicHistogram::kernelP1L1(const RsExpandKernelDriverInfo *info,
+void RsdCpuScriptIntrinsicHistogram::kernelP1L1(const RsExpandKernelParams *p,
                                                 uint32_t xstart, uint32_t xend,
                                                 uint32_t outstep) {
 
-    RsdCpuScriptIntrinsicHistogram *cp = (RsdCpuScriptIntrinsicHistogram *)info->usr;
-    uchar *in = (uchar *)info->inPtr[0];
-    int * sums = &cp->mSums[256 * info->lid];
+    RsdCpuScriptIntrinsicHistogram *cp = (RsdCpuScriptIntrinsicHistogram *)p->usr;
+    uchar *in = (uchar *)p->ins[0];
+    int * sums = &cp->mSums[256 * p->lid];
 
     for (uint32_t x = xstart; x < xend; x++) {
         int t = (cp->mDotI[0] * in[0]);
         sums[(t + 0x7f) >> 8] ++;
-        in += info->inStride[0];
+        in += p->inEStrides[0];
     }
 }
 
-void RsdCpuScriptIntrinsicHistogram::kernelP1U1(const RsExpandKernelDriverInfo *info,
+void RsdCpuScriptIntrinsicHistogram::kernelP1U1(const RsExpandKernelParams *p,
                                                 uint32_t xstart, uint32_t xend,
                                                 uint32_t outstep) {
 
-    RsdCpuScriptIntrinsicHistogram *cp = (RsdCpuScriptIntrinsicHistogram *)info->usr;
-    uchar *in = (uchar *)info->inPtr[0];
-    int * sums = &cp->mSums[256 * info->lid];
+    RsdCpuScriptIntrinsicHistogram *cp = (RsdCpuScriptIntrinsicHistogram *)p->usr;
+    uchar *in = (uchar *)p->ins[0];
+    int * sums = &cp->mSums[256 * p->lid];
 
     for (uint32_t x = xstart; x < xend; x++) {
         sums[in[0]] ++;
-        in += info->inStride[0];
+        in += p->inEStrides[0];
     }
 }
 
