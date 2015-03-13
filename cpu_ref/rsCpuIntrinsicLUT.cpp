@@ -38,7 +38,7 @@ public:
 protected:
     ObjectBaseRef<Allocation> lut;
 
-    static void kernel(const RsExpandKernelDriverInfo *info,
+    static void kernel(const RsExpandKernelParams *p,
                        uint32_t xstart, uint32_t xend,
                        uint32_t outstep);
 };
@@ -53,13 +53,13 @@ void RsdCpuScriptIntrinsicLUT::setGlobalObj(uint32_t slot, ObjectBase *data) {
 }
 
 
-void RsdCpuScriptIntrinsicLUT::kernel(const RsExpandKernelDriverInfo *info,
+void RsdCpuScriptIntrinsicLUT::kernel(const RsExpandKernelParams *p,
                                       uint32_t xstart, uint32_t xend,
                                       uint32_t outstep) {
-    RsdCpuScriptIntrinsicLUT *cp = (RsdCpuScriptIntrinsicLUT *)info->usr;
+    RsdCpuScriptIntrinsicLUT *cp = (RsdCpuScriptIntrinsicLUT *)p->usr;
 
-    uchar *out = (uchar *)info->outPtr[0];
-    const uchar *in = (uchar *)info->inPtr[0];
+    uchar *out = (uchar *)p->out;
+    const uchar *in = (uchar *)p->ins[0];
     uint32_t x1 = xstart;
     uint32_t x2 = xend;
 
