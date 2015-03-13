@@ -42,22 +42,22 @@ protected:
     ObjectBaseRef<const Allocation> mAlloc;
     ObjectBaseRef<const Element> mElement;
 
-    static void kernelU1(const RsExpandKernelDriverInfo *info,
+    static void kernelU1(const RsExpandKernelParams *p,
                          uint32_t xstart, uint32_t xend,
                          uint32_t outstep);
-    static void kernelU2(const RsExpandKernelDriverInfo *info,
+    static void kernelU2(const RsExpandKernelParams *p,
                          uint32_t xstart, uint32_t xend,
                          uint32_t outstep);
-    static void kernelU4(const RsExpandKernelDriverInfo *info,
+    static void kernelU4(const RsExpandKernelParams *p,
                          uint32_t xstart, uint32_t xend,
                          uint32_t outstep);
-    static void kernelF1(const RsExpandKernelDriverInfo *info,
+    static void kernelF1(const RsExpandKernelParams *p,
                          uint32_t xstart, uint32_t xend,
                          uint32_t outstep);
-    static void kernelF2(const RsExpandKernelDriverInfo *info,
+    static void kernelF2(const RsExpandKernelParams *p,
                          uint32_t xstart, uint32_t xend,
                          uint32_t outstep);
-    static void kernelF4(const RsExpandKernelDriverInfo *info,
+    static void kernelF4(const RsExpandKernelParams *p,
                          uint32_t xstart, uint32_t xend,
                          uint32_t outstep);
 };
@@ -88,12 +88,12 @@ extern "C" void rsdIntrinsicConvolve3x3_K(void *dst, const void *y0, const void 
                                           const void *y2, const short *coef, uint32_t count);
 
 
-static void ConvolveOneU4(const RsExpandKernelDriverInfo *info, uint32_t x, uchar4 *out,
+static void ConvolveOneU4(const RsExpandKernelParams *p, uint32_t x, uchar4 *out,
                           const uchar4 *py0, const uchar4 *py1, const uchar4 *py2,
                           const float* coeff) {
 
     uint32_t x1 = rsMax((int32_t)x-1, 0);
-    uint32_t x2 = rsMin((int32_t)x+1, (int32_t)info->dim.x-1);
+    uint32_t x2 = rsMin((int32_t)x+1, (int32_t)p->dimX-1);
 
     float4 px = convert_float4(py0[x1]) * coeff[0] +
                 convert_float4(py0[x]) * coeff[1] +
@@ -110,12 +110,12 @@ static void ConvolveOneU4(const RsExpandKernelDriverInfo *info, uint32_t x, ucha
     *out = o;
 }
 
-static void ConvolveOneU2(const RsExpandKernelDriverInfo *info, uint32_t x, uchar2 *out,
+static void ConvolveOneU2(const RsExpandKernelParams *p, uint32_t x, uchar2 *out,
                           const uchar2 *py0, const uchar2 *py1, const uchar2 *py2,
                           const float* coeff) {
 
     uint32_t x1 = rsMax((int32_t)x-1, 0);
-    uint32_t x2 = rsMin((int32_t)x+1, (int32_t)info->dim.x-1);
+    uint32_t x2 = rsMin((int32_t)x+1, (int32_t)p->dimX-1);
 
     float2 px = convert_float2(py0[x1]) * coeff[0] +
                 convert_float2(py0[x]) * coeff[1] +
@@ -131,12 +131,12 @@ static void ConvolveOneU2(const RsExpandKernelDriverInfo *info, uint32_t x, ucha
     *out = convert_uchar2(px);
 }
 
-static void ConvolveOneU1(const RsExpandKernelDriverInfo *info, uint32_t x, uchar *out,
+static void ConvolveOneU1(const RsExpandKernelParams *p, uint32_t x, uchar *out,
                           const uchar *py0, const uchar *py1, const uchar *py2,
                           const float* coeff) {
 
     uint32_t x1 = rsMax((int32_t)x-1, 0);
-    uint32_t x2 = rsMin((int32_t)x+1, (int32_t)info->dim.x-1);
+    uint32_t x2 = rsMin((int32_t)x+1, (int32_t)p->dimX-1);
 
     float px = ((float)py0[x1]) * coeff[0] +
                ((float)py0[x]) * coeff[1] +
@@ -150,43 +150,43 @@ static void ConvolveOneU1(const RsExpandKernelDriverInfo *info, uint32_t x, ucha
     *out = clamp(px + 0.5f, 0.f, 255.f);
 }
 
-static void ConvolveOneF4(const RsExpandKernelDriverInfo *info, uint32_t x, float4 *out,
+static void ConvolveOneF4(const RsExpandKernelParams *p, uint32_t x, float4 *out,
                           const float4 *py0, const float4 *py1, const float4 *py2,
                           const float* coeff) {
 
     uint32_t x1 = rsMax((int32_t)x-1, 0);
-    uint32_t x2 = rsMin((int32_t)x+1, (int32_t)info->dim.x-1);
+    uint32_t x2 = rsMin((int32_t)x+1, (int32_t)p->dimX-1);
     *out = (py0[x1] * coeff[0]) + (py0[x] * coeff[1]) + (py0[x2] * coeff[2]) +
            (py1[x1] * coeff[3]) + (py1[x] * coeff[4]) + (py1[x2] * coeff[5]) +
            (py2[x1] * coeff[6]) + (py2[x] * coeff[7]) + (py2[x2] * coeff[8]);
 }
 
-static void ConvolveOneF2(const RsExpandKernelDriverInfo *info, uint32_t x, float2 *out,
+static void ConvolveOneF2(const RsExpandKernelParams *p, uint32_t x, float2 *out,
                           const float2 *py0, const float2 *py1, const float2 *py2,
                           const float* coeff) {
 
     uint32_t x1 = rsMax((int32_t)x-1, 0);
-    uint32_t x2 = rsMin((int32_t)x+1, (int32_t)info->dim.x-1);
+    uint32_t x2 = rsMin((int32_t)x+1, (int32_t)p->dimX-1);
     *out = (py0[x1] * coeff[0]) + (py0[x] * coeff[1]) + (py0[x2] * coeff[2]) +
            (py1[x1] * coeff[3]) + (py1[x] * coeff[4]) + (py1[x2] * coeff[5]) +
            (py2[x1] * coeff[6]) + (py2[x] * coeff[7]) + (py2[x2] * coeff[8]);
 }
 
-static void ConvolveOneF1(const RsExpandKernelDriverInfo *info, uint32_t x, float *out,
+static void ConvolveOneF1(const RsExpandKernelParams *p, uint32_t x, float *out,
                           const float *py0, const float *py1, const float *py2,
                           const float* coeff) {
 
     uint32_t x1 = rsMax((int32_t)x-1, 0);
-    uint32_t x2 = rsMin((int32_t)x+1, (int32_t)info->dim.x-1);
+    uint32_t x2 = rsMin((int32_t)x+1, (int32_t)p->dimX-1);
     *out = (py0[x1] * coeff[0]) + (py0[x] * coeff[1]) + (py0[x2] * coeff[2]) +
            (py1[x1] * coeff[3]) + (py1[x] * coeff[4]) + (py1[x2] * coeff[5]) +
            (py2[x1] * coeff[6]) + (py2[x] * coeff[7]) + (py2[x2] * coeff[8]);
 }
 
-void RsdCpuScriptIntrinsicConvolve3x3::kernelU4(const RsExpandKernelDriverInfo *info,
+void RsdCpuScriptIntrinsicConvolve3x3::kernelU4(const RsExpandKernelParams *p,
                                                 uint32_t xstart, uint32_t xend,
                                                 uint32_t outstep) {
-    RsdCpuScriptIntrinsicConvolve3x3 *cp = (RsdCpuScriptIntrinsicConvolve3x3 *)info->usr;
+    RsdCpuScriptIntrinsicConvolve3x3 *cp = (RsdCpuScriptIntrinsicConvolve3x3 *)p->usr;
 
     if (!cp->mAlloc.get()) {
         ALOGE("Convolve3x3 executed without input, skipping");
@@ -195,17 +195,17 @@ void RsdCpuScriptIntrinsicConvolve3x3::kernelU4(const RsExpandKernelDriverInfo *
     const uchar *pin = (const uchar *)cp->mAlloc->mHal.drvState.lod[0].mallocPtr;
     const size_t stride = cp->mAlloc->mHal.drvState.lod[0].stride;
 
-    uint32_t y1 = rsMin((int32_t)info->current.y + 1, (int32_t)(info->dim.y-1));
-    uint32_t y2 = rsMax((int32_t)info->current.y - 1, 0);
+    uint32_t y1 = rsMin((int32_t)p->y + 1, (int32_t)(p->dimY-1));
+    uint32_t y2 = rsMax((int32_t)p->y - 1, 0);
     const uchar4 *py0 = (const uchar4 *)(pin + stride * y2);
-    const uchar4 *py1 = (const uchar4 *)(pin + stride * info->current.y);
+    const uchar4 *py1 = (const uchar4 *)(pin + stride * p->y);
     const uchar4 *py2 = (const uchar4 *)(pin + stride * y1);
 
-    uchar4 *out = (uchar4 *)info->outPtr[0];
+    uchar4 *out = (uchar4 *)p->out;
     uint32_t x1 = xstart;
     uint32_t x2 = xend;
     if(x1 == 0) {
-        ConvolveOneU4(info, 0, out, py0, py1, py2, cp->mFp);
+        ConvolveOneU4(p, 0, out, py0, py1, py2, cp->mFp);
         x1 ++;
         out++;
     }
@@ -223,17 +223,17 @@ void RsdCpuScriptIntrinsicConvolve3x3::kernelU4(const RsExpandKernelDriverInfo *
 #endif
 
         while(x1 != x2) {
-            ConvolveOneU4(info, x1, out, py0, py1, py2, cp->mFp);
+            ConvolveOneU4(p, x1, out, py0, py1, py2, cp->mFp);
             out++;
             x1++;
         }
     }
 }
 
-void RsdCpuScriptIntrinsicConvolve3x3::kernelU2(const RsExpandKernelDriverInfo *info,
+void RsdCpuScriptIntrinsicConvolve3x3::kernelU2(const RsExpandKernelParams *p,
                                                 uint32_t xstart, uint32_t xend,
                                                 uint32_t outstep) {
-    RsdCpuScriptIntrinsicConvolve3x3 *cp = (RsdCpuScriptIntrinsicConvolve3x3 *)info->usr;
+    RsdCpuScriptIntrinsicConvolve3x3 *cp = (RsdCpuScriptIntrinsicConvolve3x3 *)p->usr;
 
     if (!cp->mAlloc.get()) {
         ALOGE("Convolve3x3 executed without input, skipping");
@@ -242,17 +242,17 @@ void RsdCpuScriptIntrinsicConvolve3x3::kernelU2(const RsExpandKernelDriverInfo *
     const uchar *pin = (const uchar *)cp->mAlloc->mHal.drvState.lod[0].mallocPtr;
     const size_t stride = cp->mAlloc->mHal.drvState.lod[0].stride;
 
-    uint32_t y1 = rsMin((int32_t)info->current.y + 1, (int32_t)(info->dim.y-1));
-    uint32_t y2 = rsMax((int32_t)info->current.y - 1, 0);
+    uint32_t y1 = rsMin((int32_t)p->y + 1, (int32_t)(p->dimY-1));
+    uint32_t y2 = rsMax((int32_t)p->y - 1, 0);
     const uchar2 *py0 = (const uchar2 *)(pin + stride * y2);
-    const uchar2 *py1 = (const uchar2 *)(pin + stride * info->current.y);
+    const uchar2 *py1 = (const uchar2 *)(pin + stride * p->y);
     const uchar2 *py2 = (const uchar2 *)(pin + stride * y1);
 
-    uchar2 *out = (uchar2 *)info->outPtr[0];
+    uchar2 *out = (uchar2 *)p->out;
     uint32_t x1 = xstart;
     uint32_t x2 = xend;
     if(x1 == 0) {
-        ConvolveOneU2(info, 0, out, py0, py1, py2, cp->mFp);
+        ConvolveOneU2(p, 0, out, py0, py1, py2, cp->mFp);
         x1 ++;
         out++;
     }
@@ -268,17 +268,17 @@ void RsdCpuScriptIntrinsicConvolve3x3::kernelU2(const RsExpandKernelDriverInfo *
 #endif
 
         while(x1 != x2) {
-            ConvolveOneU2(info, x1, out, py0, py1, py2, cp->mFp);
+            ConvolveOneU2(p, x1, out, py0, py1, py2, cp->mFp);
             out++;
             x1++;
         }
     }
 }
 
-void RsdCpuScriptIntrinsicConvolve3x3::kernelU1(const RsExpandKernelDriverInfo *info,
+void RsdCpuScriptIntrinsicConvolve3x3::kernelU1(const RsExpandKernelParams *p,
                                                 uint32_t xstart, uint32_t xend,
                                                 uint32_t outstep) {
-    RsdCpuScriptIntrinsicConvolve3x3 *cp = (RsdCpuScriptIntrinsicConvolve3x3 *)info->usr;
+    RsdCpuScriptIntrinsicConvolve3x3 *cp = (RsdCpuScriptIntrinsicConvolve3x3 *)p->usr;
 
     if (!cp->mAlloc.get()) {
         ALOGE("Convolve3x3 executed without input, skipping");
@@ -287,17 +287,17 @@ void RsdCpuScriptIntrinsicConvolve3x3::kernelU1(const RsExpandKernelDriverInfo *
     const uchar *pin = (const uchar *)cp->mAlloc->mHal.drvState.lod[0].mallocPtr;
     const size_t stride = cp->mAlloc->mHal.drvState.lod[0].stride;
 
-    uint32_t y1 = rsMin((int32_t)info->current.y + 1, (int32_t)(info->dim.y-1));
-    uint32_t y2 = rsMax((int32_t)info->current.y - 1, 0);
+    uint32_t y1 = rsMin((int32_t)p->y + 1, (int32_t)(p->dimY-1));
+    uint32_t y2 = rsMax((int32_t)p->y - 1, 0);
     const uchar *py0 = (const uchar *)(pin + stride * y2);
-    const uchar *py1 = (const uchar *)(pin + stride * info->current.y);
+    const uchar *py1 = (const uchar *)(pin + stride * p->y);
     const uchar *py2 = (const uchar *)(pin + stride * y1);
 
-    uchar *out = (uchar *)info->outPtr[0];
+    uchar *out = (uchar *)p->out;
     uint32_t x1 = xstart;
     uint32_t x2 = xend;
     if(x1 == 0) {
-        ConvolveOneU1(info, 0, out, py0, py1, py2, cp->mFp);
+        ConvolveOneU1(p, 0, out, py0, py1, py2, cp->mFp);
         x1 ++;
         out++;
     }
@@ -313,17 +313,17 @@ void RsdCpuScriptIntrinsicConvolve3x3::kernelU1(const RsExpandKernelDriverInfo *
 #endif
 
         while(x1 != x2) {
-            ConvolveOneU1(info, x1, out, py0, py1, py2, cp->mFp);
+            ConvolveOneU1(p, x1, out, py0, py1, py2, cp->mFp);
             out++;
             x1++;
         }
     }
 }
 
-void RsdCpuScriptIntrinsicConvolve3x3::kernelF4(const RsExpandKernelDriverInfo *info,
+void RsdCpuScriptIntrinsicConvolve3x3::kernelF4(const RsExpandKernelParams *p,
                                                 uint32_t xstart, uint32_t xend,
                                                 uint32_t outstep) {
-    RsdCpuScriptIntrinsicConvolve3x3 *cp = (RsdCpuScriptIntrinsicConvolve3x3 *)info->usr;
+    RsdCpuScriptIntrinsicConvolve3x3 *cp = (RsdCpuScriptIntrinsicConvolve3x3 *)p->usr;
 
     if (!cp->mAlloc.get()) {
         ALOGE("Convolve3x3 executed without input, skipping");
@@ -332,17 +332,17 @@ void RsdCpuScriptIntrinsicConvolve3x3::kernelF4(const RsExpandKernelDriverInfo *
     const uchar *pin = (const uchar *)cp->mAlloc->mHal.drvState.lod[0].mallocPtr;
     const size_t stride = cp->mAlloc->mHal.drvState.lod[0].stride;
 
-    uint32_t y1 = rsMin((int32_t)info->current.y + 1, (int32_t)(info->dim.y-1));
-    uint32_t y2 = rsMax((int32_t)info->current.y - 1, 0);
+    uint32_t y1 = rsMin((int32_t)p->y + 1, (int32_t)(p->dimY-1));
+    uint32_t y2 = rsMax((int32_t)p->y - 1, 0);
     const float4 *py0 = (const float4 *)(pin + stride * y2);
-    const float4 *py1 = (const float4 *)(pin + stride * info->current.y);
+    const float4 *py1 = (const float4 *)(pin + stride * p->y);
     const float4 *py2 = (const float4 *)(pin + stride * y1);
 
-    float4 *out = (float4 *)info->outPtr[0];
+    float4 *out = (float4 *)p->out;
     uint32_t x1 = xstart;
     uint32_t x2 = xend;
     if(x1 == 0) {
-        ConvolveOneF4(info, 0, out, py0, py1, py2, cp->mFp);
+        ConvolveOneF4(p, 0, out, py0, py1, py2, cp->mFp);
         x1 ++;
         out++;
     }
@@ -358,17 +358,17 @@ void RsdCpuScriptIntrinsicConvolve3x3::kernelF4(const RsExpandKernelDriverInfo *
 #endif
 
         while(x1 != x2) {
-            ConvolveOneF4(info, x1, out, py0, py1, py2, cp->mFp);
+            ConvolveOneF4(p, x1, out, py0, py1, py2, cp->mFp);
             out++;
             x1++;
         }
     }
 }
 
-void RsdCpuScriptIntrinsicConvolve3x3::kernelF2(const RsExpandKernelDriverInfo *info,
+void RsdCpuScriptIntrinsicConvolve3x3::kernelF2(const RsExpandKernelParams *p,
                                                 uint32_t xstart, uint32_t xend,
                                                 uint32_t outstep) {
-    RsdCpuScriptIntrinsicConvolve3x3 *cp = (RsdCpuScriptIntrinsicConvolve3x3 *)info->usr;
+    RsdCpuScriptIntrinsicConvolve3x3 *cp = (RsdCpuScriptIntrinsicConvolve3x3 *)p->usr;
 
     if (!cp->mAlloc.get()) {
         ALOGE("Convolve3x3 executed without input, skipping");
@@ -377,17 +377,17 @@ void RsdCpuScriptIntrinsicConvolve3x3::kernelF2(const RsExpandKernelDriverInfo *
     const uchar *pin = (const uchar *)cp->mAlloc->mHal.drvState.lod[0].mallocPtr;
     const size_t stride = cp->mAlloc->mHal.drvState.lod[0].stride;
 
-    uint32_t y1 = rsMin((int32_t)info->current.y + 1, (int32_t)(info->dim.y-1));
-    uint32_t y2 = rsMax((int32_t)info->current.y - 1, 0);
+    uint32_t y1 = rsMin((int32_t)p->y + 1, (int32_t)(p->dimY-1));
+    uint32_t y2 = rsMax((int32_t)p->y - 1, 0);
     const float2 *py0 = (const float2 *)(pin + stride * y2);
-    const float2 *py1 = (const float2 *)(pin + stride * info->current.y);
+    const float2 *py1 = (const float2 *)(pin + stride * p->y);
     const float2 *py2 = (const float2 *)(pin + stride * y1);
 
-    float2 *out = (float2 *)info->outPtr[0];
+    float2 *out = (float2 *)p->out;
     uint32_t x1 = xstart;
     uint32_t x2 = xend;
     if(x1 == 0) {
-        ConvolveOneF2(info, 0, out, py0, py1, py2, cp->mFp);
+        ConvolveOneF2(p, 0, out, py0, py1, py2, cp->mFp);
         x1 ++;
         out++;
     }
@@ -403,16 +403,16 @@ void RsdCpuScriptIntrinsicConvolve3x3::kernelF2(const RsExpandKernelDriverInfo *
 #endif
 
         while(x1 != x2) {
-            ConvolveOneF2(info, x1, out, py0, py1, py2, cp->mFp);
+            ConvolveOneF2(p, x1, out, py0, py1, py2, cp->mFp);
             out++;
             x1++;
         }
     }
 }
-void RsdCpuScriptIntrinsicConvolve3x3::kernelF1(const RsExpandKernelDriverInfo *info,
+void RsdCpuScriptIntrinsicConvolve3x3::kernelF1(const RsExpandKernelParams *p,
                                                 uint32_t xstart, uint32_t xend,
                                                 uint32_t outstep) {
-    RsdCpuScriptIntrinsicConvolve3x3 *cp = (RsdCpuScriptIntrinsicConvolve3x3 *)info->usr;
+    RsdCpuScriptIntrinsicConvolve3x3 *cp = (RsdCpuScriptIntrinsicConvolve3x3 *)p->usr;
 
     if (!cp->mAlloc.get()) {
         ALOGE("Convolve3x3 executed without input, skipping");
@@ -421,17 +421,17 @@ void RsdCpuScriptIntrinsicConvolve3x3::kernelF1(const RsExpandKernelDriverInfo *
     const uchar *pin = (const uchar *)cp->mAlloc->mHal.drvState.lod[0].mallocPtr;
     const size_t stride = cp->mAlloc->mHal.drvState.lod[0].stride;
 
-    uint32_t y1 = rsMin((int32_t)info->current.y + 1, (int32_t)(info->dim.y-1));
-    uint32_t y2 = rsMax((int32_t)info->current.y - 1, 0);
+    uint32_t y1 = rsMin((int32_t)p->y + 1, (int32_t)(p->dimY-1));
+    uint32_t y2 = rsMax((int32_t)p->y - 1, 0);
     const float *py0 = (const float *)(pin + stride * y2);
-    const float *py1 = (const float *)(pin + stride * info->current.y);
+    const float *py1 = (const float *)(pin + stride * p->y);
     const float *py2 = (const float *)(pin + stride * y1);
 
-    float *out = (float *)info->outPtr[0];
+    float *out = (float *)p->out;
     uint32_t x1 = xstart;
     uint32_t x2 = xend;
     if(x1 == 0) {
-        ConvolveOneF1(info, 0, out, py0, py1, py2, cp->mFp);
+        ConvolveOneF1(p, 0, out, py0, py1, py2, cp->mFp);
         x1 ++;
         out++;
     }
@@ -447,7 +447,7 @@ void RsdCpuScriptIntrinsicConvolve3x3::kernelF1(const RsExpandKernelDriverInfo *
 #endif
 
         while(x1 != x2) {
-            ConvolveOneF1(info, x1, out, py0, py1, py2, cp->mFp);
+            ConvolveOneF1(p, x1, out, py0, py1, py2, cp->mFp);
             out++;
             x1++;
         }

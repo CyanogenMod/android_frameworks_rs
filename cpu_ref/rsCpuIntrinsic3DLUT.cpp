@@ -38,7 +38,7 @@ public:
 protected:
     ObjectBaseRef<Allocation> mLUT;
 
-    static void kernel(const RsExpandKernelDriverInfo *info,
+    static void kernel(const RsExpandKernelParams *p,
                        uint32_t xstart, uint32_t xend,
                        uint32_t outstep);
 };
@@ -58,13 +58,13 @@ extern "C" void rsdIntrinsic3DLUT_K(void *dst, void const *in, size_t count,
                                       int dimx, int dimy, int dimz);
 
 
-void RsdCpuScriptIntrinsic3DLUT::kernel(const RsExpandKernelDriverInfo *info,
+void RsdCpuScriptIntrinsic3DLUT::kernel(const RsExpandKernelParams *p,
                                         uint32_t xstart, uint32_t xend,
                                         uint32_t outstep) {
-    RsdCpuScriptIntrinsic3DLUT *cp = (RsdCpuScriptIntrinsic3DLUT *)info->usr;
+    RsdCpuScriptIntrinsic3DLUT *cp = (RsdCpuScriptIntrinsic3DLUT *)p->usr;
 
-    uchar4 *out = (uchar4 *)info->outPtr[0];
-    uchar4 *in = (uchar4 *)info->inPtr[0];
+    uchar4 *out = (uchar4 *)p->out;
+    uchar4 *in = (uchar4 *)p->ins[0];
     uint32_t x1 = xstart;
     uint32_t x2 = xend;
 
