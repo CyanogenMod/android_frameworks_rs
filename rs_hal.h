@@ -19,6 +19,30 @@
 
 #include <rsInternalDefines.h>
 
+/**
+ * The interface for loading RenderScript drivers
+ *
+ * The startup sequence is
+ *
+ * 1: dlopen driver
+ * 2: Query driver version with rsdHalQueryVersion()
+ * 3: Fill in HAL pointer table with calls to rsdHalQueryHAL()
+ * 4: Initialize the context with rsdHalInit()
+ *
+ * If any of these functions return false, the loading of the
+ * driver will abort and the reference driver will be used.
+ * rsdHalAbort() will be called to clean up any partially
+ * allocated state.
+ *
+ * If these are successful, the driver will be loaded and used
+ * normally.  Teardown will use the normal
+ * context->mHal.funcs.shutdown() path.  There will be no call
+ * to rsdHalAbort().
+ *
+ *
+ */
+
+
 struct ANativeWindow;
 
 namespace android {
@@ -94,7 +118,6 @@ typedef struct {
     void (*swap)(const Context *);
 
     void (*shutdownDriver)(Context *);
-    void (*getVersion)(unsigned int *major, unsigned int *minor);
     void (*setPriority)(const Context *, int32_t priority);
 
     void* (*allocRuntimeMem)(size_t size, uint32_t flags);
@@ -287,13 +310,6 @@ typedef struct {
     } mesh;
 
     struct {
-        bool (*initStatic)(const Context *rsc, const Path *m, const Allocation *vtx, const Allocation *loops);
-        bool (*initDynamic)(const Context *rsc, const Path *m);
-        void (*draw)(const Context *rsc, const Path *m);
-        void (*destroy)(const Context *rsc, const Path *m);
-    } path;
-
-    struct {
         bool (*init)(const Context *rsc, const Sampler *m);
         void (*destroy)(const Context *rsc, const Sampler *m);
         void (*updateCachedObject)(const Context *rsc, const Sampler *s, rs_sampler *obj);
@@ -332,6 +348,101 @@ typedef struct {
 } RsdHalFunctions;
 
 
+enum RsHalInitEnums {
+    RS_HAL_CORE_SHUTDOWN                                    = 1,
+    RS_HAL_CORE_SET_PRIORITY                                = 2,
+    RS_HAL_CORE_ALLOC_RUNTIME_MEM                           = 3,
+    RS_HAL_CORE_FREE_RUNTIME_MEM                            = 4,
+    RS_HAL_CORE_FINISH                                      = 5,
+
+    RS_HAL_SCRIPT_INIT                                      = 1000,
+    RS_HAL_SCRIPT_INIT_INTRINSIC                            = 1001,
+    RS_HAL_SCRIPT_INVOKE_FUNCTION                           = 1002,
+    RS_HAL_SCRIPT_INVOKE_ROOT                               = 1003,
+    RS_HAL_SCRIPT_INVOKE_FOR_EACH                           = 1004,
+    RS_HAL_SCRIPT_INVOKE_INIT                               = 1005,
+    RS_HAL_SCRIPT_INVOKE_FREE_CHILDREN                      = 1006,
+    RS_HAL_SCRIPT_SET_GLOBAL_VAR                            = 1007,
+    RS_HAL_SCRIPT_GET_GLOBAL_VAR                            = 1008,
+    RS_HAL_SCRIPT_SET_GLOBAL_VAR_WITH_ELEMENT_DIM           = 1009,
+    RS_HAL_SCRIPT_SET_GLOBAL_BIND                           = 1010,
+    RS_HAL_SCRIPT_SET_GLOBAL_OBJECT                         = 1011,
+    RS_HAL_SCRIPT_DESTROY                                   = 1012,
+    RS_HAL_SCRIPT_INVOKE_FOR_EACH_MULTI                     = 1013,
+    RS_HAL_SCRIPT_UPDATE_CACHED_OBJECT                      = 1014,
+
+    RS_HAL_ALLOCATION_INIT                                  = 2000,
+    RS_HAL_ALLOCATION_INIT_ADAPTER                          = 2001,
+    RS_HAL_ALLOCATION_DESTROY                               = 2002,
+    RS_HAL_ALLOCATION_GET_GRALLOC_BITS                      = 2003,
+    RS_HAL_ALLOCATION_RESIZE                                = 2004,
+    RS_HAL_ALLOCATION_SYNC_ALL                              = 2005,
+    RS_HAL_ALLOCATION_MARK_DIRTY                            = 2006,
+    RS_HAL_ALLOCATION_SET_SURFACE                           = 2007,
+    RS_HAL_ALLOCATION_IO_SEND                               = 2008,
+    RS_HAL_ALLOCATION_IO_RECEIVE                            = 2009,
+    RS_HAL_ALLOCATION_DATA_1D                               = 2010,
+    RS_HAL_ALLOCATION_DATA_2D                               = 2011,
+    RS_HAL_ALLOCATION_DATA_3D                               = 2012,
+    RS_HAL_ALLOCATION_READ_1D                               = 2013,
+    RS_HAL_ALLOCATION_READ_2D                               = 2014,
+    RS_HAL_ALLOCATION_READ_3D                               = 2015,
+    RS_HAL_ALLOCATION_LOCK_1D                               = 2016,
+    RS_HAL_ALLOCATION_UNLOCK_1D                             = 2017,
+    RS_HAL_ALLOCATION_COPY_1D                               = 2018,
+    RS_HAL_ALLOCATION_COPY_2D                               = 2019,
+    RS_HAL_ALLOCATION_COPY_3D                               = 2020,
+    RS_HAL_ALLOCATION_ELEMENT_DATA                          = 2021,
+    RS_HAL_ALLOCATION_ELEMENT_READ                          = 2022,
+    RS_HAL_ALLOCATION_GENERATE_MIPMAPS                      = 2023,
+    RS_HAL_ALLOCATION_UPDATE_CACHED_OBJECT                  = 2024,
+    RS_HAL_ALLOCATION_ADAPTER_OFFSET                        = 2025,
+
+    RS_HAL_SAMPLER_INIT                                     = 3000,
+    RS_HAL_SAMPLER_DESTROY                                  = 3001,
+    RS_HAL_SAMPLER_UPDATE_CACHED_OBJECT                     = 3002,
+
+    RS_HAL_TYPE_INIT                                        = 4000,
+    RS_HAL_TYPE_DESTROY                                     = 4001,
+    RS_HAL_TYPE_UPDATE_CACHED_OBJECT                        = 4002,
+
+    RS_HAL_ELEMENT_INIT                                     = 5000,
+    RS_HAL_ELEMENT_DESTROY                                  = 5001,
+    RS_HAL_ELEMENT_UPDATE_CACHED_OBJECT                     = 5002,
+
+    RS_HAL_SCRIPT_GROUP_INIT                                = 6000,
+    RS_HAL_SCRIPT_GROUP_DESTROY                             = 6001,
+    RS_HAL_SCRIPT_GROUP_UPDATE_CACHED_OBJECT                = 6002,
+    RS_HAL_SCRIPT_GROUP_SET_INPUT                           = 6003,
+    RS_HAL_SCRIPT_GROUP_SET_OUTPUT                          = 6004,
+    RS_HAL_SCRIPT_GROUP_EXECUTE                             = 6005,
+
+
+
+    RS_HAL_GRAPHICS_INIT                                    = 100001,
+    RS_HAL_GRAPHICS_SHUTDOWN                                = 100002,
+    RS_HAL_GRAPHICS_SWAP                                    = 100003,
+    RS_HAL_GRAPHICS_SET_SURFACE                             = 100004,
+    RS_HAL_GRAPHICS_RASTER_INIT                             = 101000,
+    RS_HAL_GRAPHICS_RASTER_SET_ACTIVE                       = 101001,
+    RS_HAL_GRAPHICS_RASTER_DESTROY                          = 101002,
+    RS_HAL_GRAPHICS_VERTEX_INIT                             = 102000,
+    RS_HAL_GRAPHICS_VERTEX_SET_ACTIVE                       = 102001,
+    RS_HAL_GRAPHICS_VERTEX_DESTROY                          = 102002,
+    RS_HAL_GRAPHICS_FRAGMENT_INIT                           = 103000,
+    RS_HAL_GRAPHICS_FRAGMENT_SET_ACTIVE                     = 103001,
+    RS_HAL_GRAPHICS_FRAGMENT_DESTROY                        = 103002,
+    RS_HAL_GRAPHICS_MESH_INIT                               = 104000,
+    RS_HAL_GRAPHICS_MESH_DRAW                               = 104001,
+    RS_HAL_GRAPHICS_MESH_DESTROY                            = 104002,
+    RS_HAL_GRAPHICS_FB_INIT                                 = 105000,
+    RS_HAL_GRAPHICS_FB_SET_ACTIVE                           = 105001,
+    RS_HAL_GRAPHICS_FB_DESTROY                              = 105002,
+    RS_HAL_GRAPHICS_STORE_INIT                              = 106000,
+    RS_HAL_GRAPHICS_STORE_SET_ACTIVE                        = 106001,
+    RS_HAL_GRAPHICS_STORE_DESTROY                           = 106002,
+};
+
 }
 }
 
@@ -339,7 +450,46 @@ typedef struct {
 extern "C" {
 #endif
 
+/**
+ * Get the major version number of the driver.  The major
+ * version should be the API version number
+ *
+ * The Minor version number is vendor specific
+ *
+ * return: False will abort loading the driver, true indicates
+ * success
+ */
+bool rsdHalQueryVersion(uint32_t *version_major, uint32_t *version_minor);
+
+
+/**
+ * Get an entry point in the driver HAL
+ *
+ * The driver should set the function pointer to its
+ * implementation of the function.  If it does not have an entry
+ * for an enum, its should set the function pointer to NULL
+ *
+ * return: False will abort loading the driver, true indicates
+ * success
+ */
+bool rsdHalQueryHal(android::renderscript::RsHalInitEnums entry, void **fnPtr);
+
+
+/**
+ * Called to initialize the context for use with a driver.
+ *
+ * return: False will abort loading the driver, true indicates
+ * success
+ */
 bool rsdHalInit(RsContext, uint32_t version_major, uint32_t version_minor);
+
+/**
+ * Called if one of the loading functions above returns false.
+ * This is to clean up any resources allocated during an error
+ * condition. If this path is called it means the normal
+ * context->mHal.funcs.shutdown() will not be called.
+ */
+void rsdHalAbort(RsContext);
 
 #ifdef __cplusplus
 }
