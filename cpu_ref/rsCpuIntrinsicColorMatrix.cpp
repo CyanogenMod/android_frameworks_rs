@@ -185,7 +185,7 @@ protected:
     FunctionTab_t mFnTab;
 #endif
 
-    static void kernel(const RsExpandKernelDriverInfo *info,
+    static void kernel(const RsExpandKernelParams *p,
                        uint32_t xstart, uint32_t xend,
                        uint32_t outstep);
     void updateCoeffCache(float fpMul, float addMul);
@@ -776,7 +776,7 @@ void RsdCpuScriptIntrinsicColorMatrix::setGlobalVar(uint32_t slot, const void *d
 }
 
 
-static void One(const RsExpandKernelDriverInfo *info, void *out,
+static void One(const RsExpandKernelParams *p, void *out,
                 const void *py, const float* coeff, const float *add,
                 uint32_t vsin, uint32_t vsout, bool fin, bool fout) {
 
@@ -877,15 +877,15 @@ static void One(const RsExpandKernelDriverInfo *info, void *out,
     //ALOGE("out %p %f %f %f %f", out, ((float *)out)[0], ((float *)out)[1], ((float *)out)[2], ((float *)out)[3]);
 }
 
-void RsdCpuScriptIntrinsicColorMatrix::kernel(const RsExpandKernelDriverInfo *info,
+void RsdCpuScriptIntrinsicColorMatrix::kernel(const RsExpandKernelParams *p,
                                               uint32_t xstart, uint32_t xend,
                                               uint32_t outstep) {
-    RsdCpuScriptIntrinsicColorMatrix *cp = (RsdCpuScriptIntrinsicColorMatrix *)info->usr;
+    RsdCpuScriptIntrinsicColorMatrix *cp = (RsdCpuScriptIntrinsicColorMatrix *)p->usr;
 
-    uint32_t instep = info->inStride[0];
+    uint32_t instep = p->inEStrides[0];
 
-    uchar *out = (uchar *)info->outPtr[0];
-    uchar *in = (uchar *)info->inPtr[0];
+    uchar *out = (uchar *)p->out;
+    uchar *in = (uchar *)p->ins[0];
     uint32_t x1 = xstart;
     uint32_t x2 = xend;
 
@@ -894,7 +894,7 @@ void RsdCpuScriptIntrinsicColorMatrix::kernel(const RsExpandKernelDriverInfo *in
     bool floatIn = !!cp->mLastKey.u.inType;
     bool floatOut = !!cp->mLastKey.u.outType;
 
-    //if (!info->current.y) ALOGE("steps %i %i   %i %i", instep, outstep, vsin, vsout);
+    //if (!p->y) ALOGE("steps %i %i   %i %i", instep, outstep, vsin, vsout);
 
     if(x2 > x1) {
         int32_t len = x2 - x1;
@@ -929,7 +929,7 @@ void RsdCpuScriptIntrinsicColorMatrix::kernel(const RsExpandKernelDriverInfo *in
         }
 
         while(x1 != x2) {
-            One(info, out, in, cp->tmpFp, cp->tmpFpa, vsin, vsout, floatIn, floatOut);
+            One(p, out, in, cp->tmpFp, cp->tmpFpa, vsin, vsout, floatIn, floatOut);
             out += outstep;
             in += instep;
             x1++;
