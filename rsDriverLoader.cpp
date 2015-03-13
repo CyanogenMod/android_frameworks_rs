@@ -246,6 +246,10 @@ bool Context::loadDriver(bool forceDefault) {
         }
     }
 #else // RS_COMPATIBILITY_LIB
+    if (!LoadHalTable(this, rsdHalQueryHal, false)) {
+        ALOGE("Error loading RS HAL table");
+        return false;
+    }
     if (rsdHalInit(this, 0, 0) != true) {
         return false;
     }
