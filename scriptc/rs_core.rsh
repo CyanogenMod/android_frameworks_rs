@@ -197,4 +197,28 @@ extern void __attribute__((overloadable))
     rsForEach(rs_script script, rs_allocation input, rs_allocation output);
 #endif
 
+#if (defined(RS_VERSION) && (RS_VERSION >= 23))
+
+/**
+ * Return X dimension of kernel launch described by the specified launch context.
+ */
+extern uint32_t __attribute__((overloadable))
+    rsGetDimX(rs_kernel_context ctxt);
+
+/**
+ * Return Y dimension of kernel launch described by the specified launch context.
+ * Returns 0 if Y dimension is not present.
+ */
+extern uint32_t __attribute__((overloadable))
+    rsGetDimY(rs_kernel_context ctxt);
+
+/**
+ * Return Z dimension of kernel launch described by the specified launch context.
+ * Returns 0 if Z dimension is not present.
+ */
+extern uint32_t __attribute__((overloadable))
+    rsGetDimZ(rs_kernel_context ctxt);
+
+#endif // (defined(RS_VERSION) && (RS_VERSION >= 23))
+
 #endif

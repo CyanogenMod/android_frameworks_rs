@@ -1,5 +1,8 @@
 #include "rs_core.rsh"
+#include "rs_types.rsh"
 #include "rs_structs.h"
+
+#include "rsCpuCoreRuntime.h"
 
 /* Function declarations from libRS */
 extern float4 __attribute__((overloadable)) convert_float4(uchar4 c);
@@ -174,6 +177,18 @@ extern int __attribute__((overloadable)) rsRand(int min, int max) {
     return (int)rsRand((float)min, (float)max);
 }
 
+extern uint32_t __attribute__((overloadable)) rsGetDimX(rs_kernel_context ctxt) {
+    return ((struct RsExpandKernelParams *)ctxt)->dimX;
+}
+
+extern uint32_t __attribute__((overloadable)) rsGetDimY(rs_kernel_context ctxt) {
+    return ((struct RsExpandKernelParams *)ctxt)->dimY;
+}
+
+extern uint32_t __attribute__((overloadable)) rsGetDimZ(rs_kernel_context ctxt) {
+    return ((struct RsExpandKernelParams *)ctxt)->dimZ;
+}
+
 #define PRIM_DEBUG(T)                               \
 extern void __attribute__((overloadable)) rsDebug(const char *, const T *);     \
 void __attribute__((overloadable)) rsDebug(const char *txt, T val) {            \
@@ -212,4 +227,3 @@ PRIM_DEBUG(double3)
 PRIM_DEBUG(double4)
 
 #undef PRIM_DEBUG
-
