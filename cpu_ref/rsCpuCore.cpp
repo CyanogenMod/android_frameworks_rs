@@ -49,7 +49,7 @@ using namespace android;
 using namespace android::renderscript;
 
 typedef void (*outer_foreach_t)(
-    const android::renderscript::RsExpandKernelParams *,
+    const RsExpandKernelDriverInfo *,
     uint32_t x1, uint32_t x2, uint32_t outstep);
 
 
@@ -348,28 +348,6 @@ typedef void (*walk_loop_t)(const MTLaunchStruct*,
                             RsExpandKernelDriverInfo,
                             outer_foreach_t);
 
-static void kparamSetup(RsExpandKernelParams *kparams, const RsExpandKernelDriverInfo *fep) {
-    //ALOGE("kp  usr %p", fep->usr);
-    //ALOGE("kp  slot %i", fep->slot);
-    //ALOGE("kp  dim %i %i %i", fep->dim.x, fep->dim.y, fep->dim.z);
-    //ALOGE("kp  lid %i", fep->lid);
-    //ALOGE("kp  in[0] stide %i  ptr %p", fep->inStride[0], fep->inPtr[0]);
-    //ALOGE("kp  out[0] ptr %p", fep->outPtr[0]);
-    //ALOGE("kp  loc %i %i %i", fep->current.x, fep->current.y, fep->current.z);
-
-    kparams->usr  = fep->usr;
-    kparams->slot = fep->slot;
-    kparams->dimX = fep->dim.x;
-    kparams->dimY = fep->dim.y;
-    kparams->dimZ = fep->dim.z;
-    kparams->lid = fep->lid;
-    kparams->inEStrides = (uint32_t *)&fep->inStride[0];
-    kparams->ins = (const void **)&fep->inPtr[0];
-    kparams->out = fep->outPtr[0];
-    kparams->y = fep->current.y;
-    kparams->z = fep->current.z;
-}
-
 static inline void FepPtrSetup(const MTLaunchStruct *mtls, RsExpandKernelDriverInfo *fep,
                                uint32_t x, uint32_t y,
                                uint32_t z = 0, uint32_t lod = 0,
@@ -436,9 +414,7 @@ static void walk_general(void *usr, uint32_t idx) {
                         mtls->fep.current.array[0], mtls->fep.current.array[1],
                         mtls->fep.current.array[2], mtls->fep.current.array[3]);
 
-            RsExpandKernelParams kparams;
-            kparamSetup(&kparams, &mtls->fep);
-            fn(&kparams, mtls->start.x, mtls->end.x, mtls->fep.outStride[0]);
+            fn(&mtls->fep, mtls->start.x, mtls->end.x, mtls->fep.outStride[0]);
         }
     }
 
@@ -464,10 +440,7 @@ static void walk_2d(void *usr, uint32_t idx) {
         for (fep.current.y = yStart; fep.current.y < yEnd; fep.current.y++) {
             FepPtrSetup(mtls, &fep, mtls->start.x, fep.current.y);
 
-            RsExpandKernelParams kparams;
-            kparamSetup(&kparams, &fep);
-
-            fn(&kparams, mtls->start.x, mtls->end.x, fep.outStride[0]);
+            fn(&fep, mtls->start.x, mtls->end.x, fep.outStride[0]);
         }
     }
 }
@@ -491,10 +464,7 @@ static void walk_1d(void *usr, uint32_t idx) {
 
         FepPtrSetup(mtls, &fep, xStart, 0);
 
-        RsExpandKernelParams kparams;
-        kparamSetup(&kparams, &fep);
-
-        fn(&kparams, xStart, xEnd, fep.outStride[0]);
+        fn(&fep, xStart, xEnd, fep.outStride[0]);
     }
 }
 
@@ -579,9 +549,7 @@ void RsdCpuReferenceImpl::launchThreads(const Allocation ** ains,
                             mtls->fep.current.array[0], mtls->fep.current.array[1],
                             mtls->fep.current.array[2], mtls->fep.current.array[3]);
 
-                RsExpandKernelParams kparams;
-                kparamSetup(&kparams, &mtls->fep);
-                fn(&kparams, mtls->start.x, mtls->end.x, mtls->fep.outStride[0]);
+                fn(&mtls->fep, mtls->start.x, mtls->end.x, mtls->fep.outStride[0]);
             }
         }
     }
