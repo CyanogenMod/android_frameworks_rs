@@ -42,83 +42,83 @@ void CpuScriptGroupImpl::setOutput(const ScriptKernelID *kid, Allocation *a) {
 }
 
 
-typedef void (*ScriptGroupRootFunc_t)(const RsExpandKernelParams *kparams,
+typedef void (*ScriptGroupRootFunc_t)(const RsExpandKernelDriverInfo *kinfo,
                                       uint32_t xstart, uint32_t xend,
                                       uint32_t outstep);
 
-void CpuScriptGroupImpl::scriptGroupRoot(const RsExpandKernelParams *kparams,
+void CpuScriptGroupImpl::scriptGroupRoot(const RsExpandKernelDriverInfo *kinfo,
                                          uint32_t xstart, uint32_t xend,
                                          uint32_t outstep) {
 
 
-    const ScriptList *sl           = (const ScriptList *)kparams->usr;
-    RsExpandKernelParams *mkparams = (RsExpandKernelParams *)kparams;
+    const ScriptList *sl             = (const ScriptList *)kinfo->usr;
+    RsExpandKernelDriverInfo *mkinfo = const_cast<RsExpandKernelDriverInfo *>(kinfo);
 
-    const void **oldIns  = mkparams->ins;
-    uint32_t *oldStrides = mkparams->inEStrides;
-
-    void *localIns[1];
-    uint32_t localStride[1];
-
-    mkparams->ins        = (const void**)localIns;
-    mkparams->inEStrides = localStride;
+    const uint32_t oldInStride = mkinfo->inStride[0];
 
     for (size_t ct = 0; ct < sl->count; ct++) {
         ScriptGroupRootFunc_t func;
         func          = (ScriptGroupRootFunc_t)sl->fnPtrs[ct];
-        mkparams->usr = sl->usrPtrs[ct];
+        mkinfo->usr   = sl->usrPtrs[ct];
 
         if (sl->ins[ct]) {
-            localIns[0] = sl->ins[ct]->mHal.drvState.lod[0].mallocPtr;
+            rsAssert(kinfo->inLen == 1);
 
-            localStride[0] = sl->ins[ct]->mHal.state.elementSizeBytes;
+            mkinfo->inPtr[0] = (const uint8_t *)sl->ins[ct]->mHal.drvState.lod[0].mallocPtr;
+
+            mkinfo->inStride[0] = sl->ins[ct]->mHal.state.elementSizeBytes;
 
             if (sl->inExts[ct]) {
-                localIns[0] = (void*)
-                  ((const uint8_t *)localIns[0] +
-                   sl->ins[ct]->mHal.drvState.lod[0].stride * kparams->y);
+                mkinfo->inPtr[0] =
+                  (mkinfo->inPtr[0] +
+                   sl->ins[ct]->mHal.drvState.lod[0].stride * kinfo->current.y);
 
-            } else if (sl->ins[ct]->mHal.drvState.lod[0].dimY > kparams->lid) {
-                localIns[0] = (void*)
-                  ((const uint8_t *)localIns[0] +
-                   sl->ins[ct]->mHal.drvState.lod[0].stride * kparams->lid);
+            } else if (sl->ins[ct]->mHal.drvState.lod[0].dimY > kinfo->lid) {
+                mkinfo->inPtr[0] =
+                  (mkinfo->inPtr[0] +
+                   sl->ins[ct]->mHal.drvState.lod[0].stride * kinfo->lid);
             }
 
         } else {
-            localIns[0]    = nullptr;
-            localStride[0] = 0;
+            rsAssert(kinfo->inLen == 0);
+
+            mkinfo->inPtr[0]     = nullptr;
+            mkinfo->inStride[0]  = 0;
         }
 
         uint32_t ostep;
         if (sl->outs[ct]) {
-            mkparams->out =
+            rsAssert(kinfo->outLen == 1);
+
+            mkinfo->outPtr[0] =
               (uint8_t *)sl->outs[ct]->mHal.drvState.lod[0].mallocPtr;
 
             ostep = sl->outs[ct]->mHal.state.elementSizeBytes;
 
             if (sl->outExts[ct]) {
-                mkparams->out =
-                  (uint8_t *)mkparams->out +
-                  sl->outs[ct]->mHal.drvState.lod[0].stride * kparams->y;
+                mkinfo->outPtr[0] =
+                  mkinfo->outPtr[0] +
+                  sl->outs[ct]->mHal.drvState.lod[0].stride * kinfo->current.y;
 
-            } else if (sl->outs[ct]->mHal.drvState.lod[0].dimY > kparams->lid) {
-                mkparams->out =
-                  (uint8_t *)mkparams->out +
-                  sl->outs[ct]->mHal.drvState.lod[0].stride * kparams->lid;
+            } else if (sl->outs[ct]->mHal.drvState.lod[0].dimY > kinfo->lid) {
+                mkinfo->outPtr[0] =
+                  mkinfo->outPtr[0] +
+                  sl->outs[ct]->mHal.drvState.lod[0].stride * kinfo->lid;
             }
         } else {
-            mkparams->out = nullptr;
-            ostep         = 0;
+            rsAssert(kinfo->outLen == 0);
+
+            mkinfo->outPtr[0] = nullptr;
+            ostep             = 0;
         }
 
         //ALOGE("kernel %i %p,%p  %p,%p", ct, mp->ptrIn, mp->in, mp->ptrOut, mp->out);
-        func(kparams, xstart, xend, ostep);
+        func(kinfo, xstart, xend, ostep);
     }
     //ALOGE("script group root");
 
-    mkparams->ins        = oldIns;
-    mkparams->inEStrides = oldStrides;
-    mkparams->usr        = sl;
+    mkinfo->inStride[0] = oldInStride;
+    mkinfo->usr         = sl;
 }
 
 
