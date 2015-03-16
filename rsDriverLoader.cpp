@@ -144,7 +144,7 @@ static bool LoadHalTable(Context *rsc, HalQueryHal fn, bool loadGraphics) {
         ret &= fn(RS_HAL_GRAPHICS_FRAGMENT_DESTROY, (void **)&rsc->mHal.funcs.fragment.destroy);
         ret &= fn(RS_HAL_GRAPHICS_MESH_INIT, (void **)&rsc->mHal.funcs.mesh.init);
         ret &= fn(RS_HAL_GRAPHICS_MESH_DRAW, (void **)&rsc->mHal.funcs.mesh.draw);
-        ret &= fn(RS_HAL_GRAPHICS_MESH_DESTROY, (void **)&rsc->mHal.funcs);
+        ret &= fn(RS_HAL_GRAPHICS_MESH_DESTROY, (void **)&rsc->mHal.funcs.mesh.destroy);
         ret &= fn(RS_HAL_GRAPHICS_FB_INIT, (void **)&rsc->mHal.funcs.framebuffer.init);
         ret &= fn(RS_HAL_GRAPHICS_FB_SET_ACTIVE, (void **)&rsc->mHal.funcs.framebuffer.setActive);
         ret &= fn(RS_HAL_GRAPHICS_FB_DESTROY, (void **)&rsc->mHal.funcs.framebuffer.destroy);
