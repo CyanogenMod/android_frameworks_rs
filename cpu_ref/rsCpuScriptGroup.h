@@ -33,7 +33,7 @@ public:
     CpuScriptGroupImpl(RsdCpuReferenceImpl *ctx, const ScriptGroupBase *sg);
     bool init();
 
-    static void scriptGroupRoot(const RsExpandKernelParams *p,
+    static void scriptGroupRoot(const RsExpandKernelDriverInfo *info,
                                 uint32_t xstart, uint32_t xend,
                                 uint32_t outstep);
 

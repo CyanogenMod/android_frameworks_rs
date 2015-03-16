@@ -20,28 +20,45 @@
 #ifndef RSD_CPU_CORE_RUNTIME_H
 #define RSD_CPU_CORE_RUNTIME_H
 
-struct RsExpandKernelParams {
+// Warning: This value is shared with the compiler
+// Any change to this value requires a matching compiler change
+#define RS_KERNEL_INPUT_LIMIT 8
 
-    // Used by kernels
-    const void **ins;
-    uint32_t *inEStrides;
-    void *out;
+struct RsLaunchDimensions {
+    // Warning: This structure is shared with the compiler
+    // Any change to the fields here requires a matching compiler change
+
+    uint32_t x;
     uint32_t y;
     uint32_t z;
-    uint32_t lid;
+    uint32_t lod;
+    uint32_t face;
+    uint32_t array[4 /*make a define*/];
+};
 
-    // Used by ScriptGroup and user kernels.
+struct RsExpandKernelDriverInfo {
+    // Warning: This structure is shared with the compiler
+    // Any change to the fields here requires a matching compiler change
+
+    const uint8_t *inPtr[RS_KERNEL_INPUT_LIMIT];
+    uint32_t inStride[RS_KERNEL_INPUT_LIMIT];
+    uint32_t inLen;
+
+    uint8_t *outPtr[RS_KERNEL_INPUT_LIMIT];
+    uint32_t outStride[RS_KERNEL_INPUT_LIMIT];
+    uint32_t outLen;
+
+    // Dimension of the launch
+    struct RsLaunchDimensions dim;
+
+    // The walking iterator of the launch
+    struct RsLaunchDimensions current;
+
     const void *usr;
+    uint32_t usrLen;
 
-    // Used by intrinsics
-    uint32_t dimX;
-    uint32_t dimY;
-    uint32_t dimZ;
-
-    /*
-     * FIXME: This is only used by the blend intrinsic.  If possible, we should
-     *        modify blur to not need it.
-     */
+    // Items below this line are not used by the compiler and can be change in the driver
+    uint32_t lid;
     uint32_t slot;
 };
 
