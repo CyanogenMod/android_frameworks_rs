@@ -97,7 +97,6 @@ RS_BASE_OBJ(ScriptGroup) rs_script_group;
 
 #ifndef __LP64__
 typedef struct { const int* p; } __attribute__((packed, aligned(4))) rs_mesh;
-typedef struct { const int* p; } __attribute__((packed, aligned(4))) rs_path;
 typedef struct { const int* p; } __attribute__((packed, aligned(4))) rs_program_fragment;
 typedef struct { const int* p; } __attribute__((packed, aligned(4))) rs_program_vertex;
 typedef struct { const int* p; } __attribute__((packed, aligned(4))) rs_program_raster;
