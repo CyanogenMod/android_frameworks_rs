@@ -34,6 +34,10 @@
  * rsdHalAbort() will be called to clean up any partially
  * allocated state.
  *
+ * A driver should return FALSE for any conditions that will
+ * prevent the driver from working normally.
+ *
+ *
  * If these are successful, the driver will be loaded and used
  * normally.  Teardown will use the normal
  * context->mHal.funcs.shutdown() path.  There will be no call
@@ -468,8 +472,15 @@ bool rsdHalQueryVersion(uint32_t *version_major, uint32_t *version_minor);
  * implementation of the function.  If it does not have an entry
  * for an enum, its should set the function pointer to NULL
  *
+ * Returning NULL is expected in cases during development as new
+ * entry points are added that a driver may not understand.  If
+ * the runtime receives a NULL it will decide if the function is
+ * required and will either continue loading or abort as needed.
+ *
+ *
  * return: False will abort loading the driver, true indicates
  * success
+ *
  */
 bool rsdHalQueryHal(android::renderscript::RsHalInitEnums entry, void **fnPtr);
 
