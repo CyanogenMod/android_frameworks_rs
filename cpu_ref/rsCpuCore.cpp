@@ -376,16 +376,16 @@ static uint32_t sliceInt(uint32_t *p, uint32_t val, uint32_t start, uint32_t end
     return n;
 }
 
-static bool SelectOuterSlice(MTLaunchStruct* mtls, uint32_t sliceNum) {
+static bool SelectOuterSlice(const MTLaunchStruct *mtls, RsExpandKernelDriverInfo* fep, uint32_t sliceNum) {
 
     uint32_t r = sliceNum;
-    r = sliceInt(&mtls->fep.current.z, r, mtls->start.z, mtls->end.z);
-    r = sliceInt(&mtls->fep.current.lod, r, mtls->start.lod, mtls->end.lod);
-    r = sliceInt(&mtls->fep.current.face, r, mtls->start.face, mtls->end.face);
-    r = sliceInt(&mtls->fep.current.array[0], r, mtls->start.array[0], mtls->end.array[0]);
-    r = sliceInt(&mtls->fep.current.array[1], r, mtls->start.array[1], mtls->end.array[1]);
-    r = sliceInt(&mtls->fep.current.array[2], r, mtls->start.array[2], mtls->end.array[2]);
-    r = sliceInt(&mtls->fep.current.array[3], r, mtls->start.array[3], mtls->end.array[3]);
+    r = sliceInt(&fep->current.z, r, mtls->start.z, mtls->end.z);
+    r = sliceInt(&fep->current.lod, r, mtls->start.lod, mtls->end.lod);
+    r = sliceInt(&fep->current.face, r, mtls->start.face, mtls->end.face);
+    r = sliceInt(&fep->current.array[0], r, mtls->start.array[0], mtls->end.array[0]);
+    r = sliceInt(&fep->current.array[1], r, mtls->start.array[1], mtls->end.array[1]);
+    r = sliceInt(&fep->current.array[2], r, mtls->start.array[2], mtls->end.array[2]);
+    r = sliceInt(&fep->current.array[3], r, mtls->start.array[3], mtls->end.array[3]);
     return r == 0;
 }
 
@@ -400,21 +400,20 @@ static void walk_general(void *usr, uint32_t idx) {
     while(1) {
         uint32_t slice = (uint32_t)__sync_fetch_and_add(&mtls->mSliceNum, 1);
 
-        if (!SelectOuterSlice(mtls, slice)) {
+        if (!SelectOuterSlice(mtls, &fep, slice)) {
             return;
         }
 
-        for (mtls->fep.current.y = mtls->start.y;
-             mtls->fep.current.y < mtls->end.y;
-             mtls->fep.current.y++) {
+        for (fep.current.y = mtls->start.y; fep.current.y < mtls->end.y;
+             fep.current.y++) {
 
-            FepPtrSetup(mtls, &mtls->fep, mtls->start.x,
-                        mtls->fep.current.y, mtls->fep.current.z, mtls->fep.current.lod,
-                        (RsAllocationCubemapFace)mtls->fep.current.face,
-                        mtls->fep.current.array[0], mtls->fep.current.array[1],
-                        mtls->fep.current.array[2], mtls->fep.current.array[3]);
+            FepPtrSetup(mtls, &fep, mtls->start.x,
+                        fep.current.y, fep.current.z, fep.current.lod,
+                        (RsAllocationCubemapFace)fep.current.face,
+                        fep.current.array[0], fep.current.array[1],
+                        fep.current.array[2], fep.current.array[3]);
 
-            fn(&mtls->fep, mtls->start.x, mtls->end.x, mtls->fep.outStride[0]);
+            fn(&fep, mtls->start.x, mtls->end.x, mtls->fep.outStride[0]);
         }
     }
 
@@ -538,7 +537,7 @@ void RsdCpuReferenceImpl::launchThreads(const Allocation ** ains,
         uint32_t slice = 0;
 
 
-        while(SelectOuterSlice(mtls, slice++)) {
+        while(SelectOuterSlice(mtls, &mtls->fep, slice++)) {
             for (mtls->fep.current.y = mtls->start.y;
                  mtls->fep.current.y < mtls->end.y;
                  mtls->fep.current.y++) {
