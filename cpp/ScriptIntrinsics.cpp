@@ -419,8 +419,8 @@ void ScriptIntrinsicConvolve5x5::setCoefficients(float* v) {
     Script::setVar(0, (void*)v, sizeof(float) * 25);
 }
 
-sp<ScriptIntrinsicHistogram> ScriptIntrinsicHistogram::create(sp<RS> rs) {
-    return new ScriptIntrinsicHistogram(rs, nullptr);
+sp<ScriptIntrinsicHistogram> ScriptIntrinsicHistogram::create(sp<RS> rs, sp<const Element> e) {
+    return new ScriptIntrinsicHistogram(rs, e);
 }
 
 ScriptIntrinsicHistogram::ScriptIntrinsicHistogram(sp<RS> rs, sp<const Element> e)
@@ -476,7 +476,7 @@ void ScriptIntrinsicHistogram::forEach(sp<Allocation> ain) {
         return;
     }
 
-    if (!(ain->getType()->getElement()->isCompatible(Element::U8(mRS))) ||
+    if (!(ain->getType()->getElement()->isCompatible(Element::U8(mRS))) &&
         !(ain->getType()->getElement()->isCompatible(Element::U8_4(mRS)))) {
         mRS->throwError(RS_ERROR_INVALID_ELEMENT,
                         "Input allocation to Histogram must be U8 or U8_4");
@@ -494,7 +494,7 @@ void ScriptIntrinsicHistogram::forEach_dot(sp<Allocation> ain) {
                         "when used with forEach_dot");
         return;
     }
-    if (!(ain->getType()->getElement()->isCompatible(Element::U8(mRS))) ||
+    if (!(ain->getType()->getElement()->isCompatible(Element::U8(mRS))) &&
         !(ain->getType()->getElement()->isCompatible(Element::U8_4(mRS)))) {
         mRS->throwError(RS_ERROR_INVALID_ELEMENT,
                         "Input allocation to Histogram must be U8 or U8_4");
