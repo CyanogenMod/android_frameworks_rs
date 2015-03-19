@@ -177,6 +177,30 @@ extern int __attribute__((overloadable)) rsRand(int min, int max) {
     return (int)rsRand((float)min, (float)max);
 }
 
+extern uint32_t __attribute__((overloadable)) rsGetArray0(rs_kernel_context ctxt) {
+    return ((struct RsExpandKernelDriverInfo *)ctxt)->current.array[0];
+}
+
+extern uint32_t __attribute__((overloadable)) rsGetArray1(rs_kernel_context ctxt) {
+    return ((struct RsExpandKernelDriverInfo *)ctxt)->current.array[1];
+}
+
+extern uint32_t __attribute__((overloadable)) rsGetArray2(rs_kernel_context ctxt) {
+    return ((struct RsExpandKernelDriverInfo *)ctxt)->current.array[2];
+}
+
+extern uint32_t __attribute__((overloadable)) rsGetArray3(rs_kernel_context ctxt) {
+    return ((struct RsExpandKernelDriverInfo *)ctxt)->current.array[3];
+}
+
+extern rs_allocation_cubemap_face __attribute__((overloadable)) rsGetFace(rs_kernel_context ctxt) {
+    return (rs_allocation_cubemap_face)(((struct RsExpandKernelDriverInfo *)ctxt)->current.face);
+}
+
+extern uint32_t __attribute__((overloadable)) rsGetLod(rs_kernel_context ctxt) {
+    return ((struct RsExpandKernelDriverInfo *)ctxt)->current.lod;
+}
+
 extern uint32_t __attribute__((overloadable)) rsGetDimX(rs_kernel_context ctxt) {
     return ((struct RsExpandKernelDriverInfo *)ctxt)->dim.x;
 }
@@ -187,6 +211,30 @@ extern uint32_t __attribute__((overloadable)) rsGetDimY(rs_kernel_context ctxt) 
 
 extern uint32_t __attribute__((overloadable)) rsGetDimZ(rs_kernel_context ctxt) {
     return ((struct RsExpandKernelDriverInfo *)ctxt)->dim.z;
+}
+
+extern uint32_t __attribute__((overloadable)) rsGetDimArray0(rs_kernel_context ctxt) {
+    return ((struct RsExpandKernelDriverInfo *)ctxt)->dim.array[0];
+}
+
+extern uint32_t __attribute__((overloadable)) rsGetDimArray1(rs_kernel_context ctxt) {
+    return ((struct RsExpandKernelDriverInfo *)ctxt)->dim.array[1];
+}
+
+extern uint32_t __attribute__((overloadable)) rsGetDimArray2(rs_kernel_context ctxt) {
+    return ((struct RsExpandKernelDriverInfo *)ctxt)->dim.array[2];
+}
+
+extern uint32_t __attribute__((overloadable)) rsGetDimArray3(rs_kernel_context ctxt) {
+    return ((struct RsExpandKernelDriverInfo *)ctxt)->dim.array[3];
+}
+
+extern bool __attribute__((overloadable)) rsGetDimHasFaces(rs_kernel_context ctxt) {
+    return ((struct RsExpandKernelDriverInfo *)ctxt)->dim.face != 0;
+}
+
+extern uint32_t __attribute__((overloadable)) rsGetDimLod(rs_kernel_context ctxt) {
+    return ((struct RsExpandKernelDriverInfo *)ctxt)->dim.lod;
 }
 
 #define PRIM_DEBUG(T)                               \
