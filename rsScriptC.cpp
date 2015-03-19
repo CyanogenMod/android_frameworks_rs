@@ -204,6 +204,7 @@ void ScriptC::runForEach(Context *rsc,
     }
     ATRACE_NAME(String);
     (void)String;
+    if (mRSC->hadFatalError()) return;
 
     Context::PushState ps(rsc);
 
@@ -235,6 +236,8 @@ void ScriptC::Invoke(Context *rsc, uint32_t slot, const void *data, size_t len) 
         rsc->setError(RS_ERROR_BAD_SCRIPT, "Calling invoke on bad script");
         return;
     }
+    if (mRSC->hadFatalError()) return;
+
     setupScript(rsc);
 
     if (rsc->props.mLogScripts) {
