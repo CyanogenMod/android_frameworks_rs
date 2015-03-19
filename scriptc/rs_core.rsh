@@ -200,6 +200,48 @@ extern void __attribute__((overloadable))
 #if (defined(RS_VERSION) && (RS_VERSION >= 23))
 
 /**
+ * Return Array0 coordinate of kernel launch described by the specified launch context.
+ * Returns 0 if Array0 dimension is not present.
+ */
+extern uint32_t __attribute__((overloadable))
+    rsGetArray0(rs_kernel_context ctxt);
+
+/**
+ * Return Array1 coordinate of kernel launch described by the specified launch context.
+ * Returns 0 if Array1 dimension is not present.
+ */
+extern uint32_t __attribute__((overloadable))
+    rsGetArray1(rs_kernel_context ctxt);
+
+/**
+ * Return Array2 coordinate of kernel launch described by the specified launch context.
+ * Returns 0 if Array2 dimension is not present.
+ */
+extern uint32_t __attribute__((overloadable))
+    rsGetArray2(rs_kernel_context ctxt);
+
+/**
+ * Return Array3 coordinate of kernel launch described by the specified launch context.
+ * Returns 0 if Array3 dimension is not present.
+ */
+extern uint32_t __attribute__((overloadable))
+    rsGetArray3(rs_kernel_context ctxt);
+
+/**
+ * Return Face coordinate of kernel launch described by the specified launch context.
+ * Returns RS_ALLOCATION_CUBEMAP_FACE_POSITIVE_X if Face dimension is not present.
+ */
+extern rs_allocation_cubemap_face __attribute__((overloadable))
+    rsGetFace(rs_kernel_context ctxt);
+
+/**
+ * Return Lod coordinate of kernel launch described by the specificed launch context.
+ * Returns 0 if Lod dimension is not present.
+ */
+extern uint32_t __attribute__((overloadable))
+    rsGetLod(rs_kernel_context ctxt);
+
+/**
  * Return X dimension of kernel launch described by the specified launch context.
  */
 extern uint32_t __attribute__((overloadable))
@@ -218,6 +260,47 @@ extern uint32_t __attribute__((overloadable))
  */
 extern uint32_t __attribute__((overloadable))
     rsGetDimZ(rs_kernel_context ctxt);
+
+/**
+ * Return Array0 dimension of kernel launch described by the specificed launch context.
+ * Returns 0 if Array0 dimension is not present.
+ */
+extern uint32_t __attribute__((overloadable))
+    rsGetDimArray0(rs_kernel_context ctxt);
+
+/**
+ * Return Array1 dimension of kernel launch described by the specificed launch context.
+ * Returns 0 if Array1 dimension is not present.
+ */
+extern uint32_t __attribute__((overloadable))
+    rsGetDimArray1(rs_kernel_context ctxt);
+
+/**
+ * Return Array2 dimension of kernel launch described by the specificed launch context.
+ * Returns 0 if Array2 dimension is not present.
+ */
+extern uint32_t __attribute__((overloadable))
+    rsGetDimArray2(rs_kernel_context ctxt);
+
+/**
+ * Return Array3 dimension of kernel launch described by the specificed launch context.
+ * Returns 0 if Array3 dimension is not present.
+ */
+extern uint32_t __attribute__((overloadable))
+    rsGetDimArray3(rs_kernel_context ctxt);
+
+/**
+ * Is the Faces dimension present in the kernel launch described by the specified launch context?
+ */
+extern bool __attribute__((overloadable))
+    rsGetDimHasFaces(rs_kernel_context ctxt);
+
+/**
+ * Return Lod dimension of kernel launch described by the specificed launch context.
+ * Returns 0 if Lod dimension is not present.
+ */
+extern uint32_t __attribute__((overloadable))
+    rsGetDimLod(rs_kernel_context ctxt);
 
 #endif // (defined(RS_VERSION) && (RS_VERSION >= 23))
 
