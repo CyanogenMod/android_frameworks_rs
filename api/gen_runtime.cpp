@@ -161,8 +161,8 @@ class Function {
 private:
     string mName;             // The lower case name, e.g. native_log
     string mCapitalizedName;  // The capitalized name, e.g. NativeLog
-    string mTestName;         // e.g. TestNativeLog
-    string mRelaxedTestName;  // e.g. TestNativeLogRelaxed
+    string mTestName;         // e.g. GeneratedTestNativeLog
+    string mRelaxedTestName;  // e.g. GeneratedTestNativeLogRelaxed
 
     vector<Specification*> mSpecifications;
     typedef vector<Specification*>::iterator SpecificationIterator;
@@ -788,7 +788,7 @@ bool SpecFile::writeAllFunctions(ofstream& headerFile, int versionOfTestFiles) {
 Function::Function(const string& name) {
     mName = name;
     mCapitalizedName = capitalize(mName);
-    mTestName = "Test" + mCapitalizedName;
+    mTestName = "GeneratedTest" + mCapitalizedName;
     mRelaxedTestName = mTestName + "Relaxed";
 }
 
