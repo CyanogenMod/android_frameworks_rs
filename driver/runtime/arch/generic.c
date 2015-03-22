@@ -15,7 +15,7 @@
  */
 
 
-#include "rs_types.rsh"
+#include "rs_core.rsh"
 
 extern short __attribute__((overloadable, always_inline)) rsClamp(short amount, short low, short high);
 extern uchar4 __attribute__((overloadable)) convert_uchar4(short4);
