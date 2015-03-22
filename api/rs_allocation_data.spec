@@ -17,6 +17,8 @@
 header:
 summary: Allocation routines
 description:
+ TODO Adjust documentation.
+
  Functions that can be used to query the characteristics of an allocation,
  to set and get elements of the allocation.
 end:
@@ -40,7 +42,6 @@ description:
 test: none
 end:
 
-
 function: rsAllocationCopy2DRange
 version: 14
 ret: void
@@ -62,83 +63,6 @@ description:
 
  The two allocations must be different.  Using this function to copy whithin
  the same allocation yields undefined results.
-test: none
-end:
-
-function: rsAllocationGetDimFaces
-ret: uint32_t, "Returns 1 if more than one face is present, 0 otherwise."
-arg: rs_allocation a
-summary: Presence of more than one face
-description:
- If the allocation is a cubemap, this function returns 1 if there's more than one
- face present.  In all other cases, it returns 0.
-test: none
-end:
-
-function: rsAllocationGetDimLOD
-ret: uint32_t, "Returns 1 if more than one LOD is present, 0 otherwise."
-arg: rs_allocation a
-summary: Presence of levels of details
-description:
- Query an allocation for the presence of more than one Level Of Details.  This is useful for mipmaps.
-test: none
-end:
-
-function: rsAllocationGetDimX
-ret: uint32_t, "The X dimension of the allocation."
-arg: rs_allocation a
-summary: Size of the X dimension
-description:
- Returns the size of the X dimension of the allocation.
-test: none
-end:
-
-function: rsAllocationGetDimY
-ret: uint32_t, "The Y dimension of the allocation."
-arg: rs_allocation a
-summary: Size of the Y dimension
-description:
- Returns the size of the Y dimension of the allocation.
- If the allocation has less than two dimensions, returns 0.
-test: none
-end:
-
-function: rsAllocationGetDimZ
-ret: uint32_t, "The Z dimension of the allocation."
-arg: rs_allocation a
-summary: Size of the Z dimension
-description:
- Returns the size of the Z dimension of the allocation.
- If the allocation has less than three dimensions, returns 0.
-test: none
-end:
-
-function: rsAllocationGetElement
-ret: rs_element, "element describing allocation layout"
-arg: rs_allocation a, "allocation to get data from"
-summary:
-description:
- Get the element object describing the allocation's layout
-test: none
-end:
-
-function: rsAllocationIoReceive
-version: 16
-ret: void
-arg: rs_allocation a, "allocation to work on"
-summary: Receive new content from the queue
-description:
- Receive a new set of contents from the queue.
-test: none
-end:
-
-function: rsAllocationIoSend
-version: 16
-ret: void
-arg: rs_allocation a, "allocation to work on"
-summary: Send new content to the queue
-description:
- Send the contents of the Allocation to the queue.
 test: none
 end:
 
@@ -214,20 +138,6 @@ arg: #2#1 val
 arg: uint32_t x
 arg: uint32_t y
 arg: uint32_t z
-test: none
-end:
-
-function: rsGetAllocation
-ret: rs_allocation
-arg: const void* p
-summary: Returns the Allocation for a given pointer
-description:
- Returns the Allocation for a given pointer.  The pointer should point within
- a valid allocation.  The results are undefined if the pointer is not from a
- valid allocation.
-
- This function is deprecated and will be removed from the SDK in a future
- release.
 test: none
 end:
 
