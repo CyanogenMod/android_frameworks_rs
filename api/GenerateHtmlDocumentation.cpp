@@ -422,9 +422,9 @@ static bool writeOverviewForFile(GeneratedFile* file, const SpecFile& specFile) 
     return success;
 }
 
-static bool generateOverview() {
+static bool generateOverview(const string& directory) {
     GeneratedFile file;
-    if (!file.start("index.html")) {
+    if (!file.start(directory, "index.html")) {
         return false;
     }
     bool success = true;
@@ -444,9 +444,9 @@ static bool generateOverview() {
     return success;
 }
 
-static bool generateAlphabeticalIndex() {
+static bool generateAlphabeticalIndex(const string& directory) {
     GeneratedFile file;
-    if (!file.start("alpha_index.html")) {
+    if (!file.start(directory, "alpha_index.html")) {
         return false;
     }
     writeHtmlHeader(&file);
@@ -598,10 +598,10 @@ static bool writeDetailedFunction(GeneratedFile* file, Function* function) {
     return true;
 }
 
-static bool writeDetailedDocumentationFile(const SpecFile& specFile) {
+static bool writeDetailedDocumentationFile(const string& directory, const SpecFile& specFile) {
     GeneratedFile file;
     const string htmlFileName = stringReplace(specFile.getSpecFileName(), ".spec", ".html");
-    if (!file.start(htmlFileName)) {
+    if (!file.start(directory, htmlFileName)) {
         return false;
     }
     bool success = true;
@@ -661,10 +661,10 @@ static bool writeDetailedDocumentationFile(const SpecFile& specFile) {
     return success;
 }
 
-bool generateHtmlDocumentation() {
-    bool success = generateOverview() && generateAlphabeticalIndex();
+bool generateHtmlDocumentation(const string& directory) {
+    bool success = generateOverview(directory) && generateAlphabeticalIndex(directory);
     for (auto specFile : systemSpecification.getSpecFiles()) {
-        if (!writeDetailedDocumentationFile(*specFile)) {
+        if (!writeDetailedDocumentationFile(directory, *specFile)) {
             success = false;
         }
     }

@@ -57,7 +57,7 @@ private:
 
 public:
     // Opens the stream.  Reports an error if it can't.
-    bool start(const std::string& name);
+    bool start(const std::string& directory, const std::string& name);
 
     // Write copyright notice & auto-generated warning in Java/C style comments.
     void writeNotices();

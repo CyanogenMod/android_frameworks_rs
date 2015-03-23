@@ -894,10 +894,10 @@ void PermutationWriter::writeRsAllocationDefinition(const ParameterDefinition& p
 }
 
 // Open the mJavaFile and writes the header.
-static bool startJavaFile(GeneratedFile* file, const Function& function, const string& testName,
-                          const string& relaxedTestName) {
+static bool startJavaFile(GeneratedFile* file, const Function& function, const string& directory,
+                          const string& testName, const string& relaxedTestName) {
     const string fileName = testName + ".java";
-    if (!file->start(fileName)) {
+    if (!file->start(directory, fileName)) {
         return false;
     }
     file->writeNotices();
@@ -942,9 +942,10 @@ static void finishJavaFile(GeneratedFile* file, const Function& function,
 }
 
 // Open the script file and write its header.
-static bool startRsFile(GeneratedFile* file, const Function& function, const string& testName) {
+static bool startRsFile(GeneratedFile* file, const Function& function, const string& directory,
+                        const string& testName) {
     string fileName = testName + ".rs";
-    if (!file->start(fileName)) {
+    if (!file->start(directory, fileName)) {
         return false;
     }
     file->writeNotices();
@@ -955,12 +956,12 @@ static bool startRsFile(GeneratedFile* file, const Function& function, const str
 }
 
 // Write the entire *Relaxed.rs test file, as it only depends on the name.
-static bool writeRelaxedRsFile(const Function& function, const string& testName,
-                               const string& relaxedTestName) {
+static bool writeRelaxedRsFile(const Function& function, const string& directory,
+                               const string& testName, const string& relaxedTestName) {
     string name = relaxedTestName + ".rs";
 
     GeneratedFile file;
-    if (!file.start(name)) {
+    if (!file.start(directory, name)) {
         return false;
     }
     file.writeNotices();
@@ -974,26 +975,27 @@ static bool writeRelaxedRsFile(const Function& function, const string& testName,
 /* Write the .java and the two .rs test files.  versionOfTestFiles is used to restrict which API
  * to test.
  */
-static bool writeTestFilesForFunction(const Function& function, int versionOfTestFiles) {
+static bool writeTestFilesForFunction(const Function& function, const string& directory,
+                                      int versionOfTestFiles) {
     // Avoid creating empty files if we're not testing this function.
     if (!needTestFiles(function, versionOfTestFiles)) {
         return true;
     }
 
-    const string testName = "GeneratedTest" + function.getCapitalizedName();
+    const string testName = "Test" + function.getCapitalizedName();
     const string relaxedTestName = testName + "Relaxed";
 
-    if (!writeRelaxedRsFile(function, testName, relaxedTestName)) {
+    if (!writeRelaxedRsFile(function, directory, testName, relaxedTestName)) {
         return false;
     }
 
     GeneratedFile rsFile;    // The Renderscript test file we're generating.
     GeneratedFile javaFile;  // The Jave test file we're generating.
-    if (!startRsFile(&rsFile, function, testName)) {
+    if (!startRsFile(&rsFile, function, directory, testName)) {
         return false;
     }
 
-    if (!startJavaFile(&javaFile, function, testName, relaxedTestName)) {
+    if (!startJavaFile(&javaFile, function, directory, testName, relaxedTestName)) {
         return false;
     }
 
@@ -1026,11 +1028,11 @@ static bool writeTestFilesForFunction(const Function& function, int versionOfTes
     return true;
 }
 
-bool GenerateTestFiles(int versionOfTestFiles) {
+bool GenerateTestFiles(const string& directory, int versionOfTestFiles) {
     bool success = true;
     for (auto specFile : systemSpecification.getSpecFiles()) {
         for (auto f : specFile->getFunctionsMap()) {
-            if (!writeTestFilesForFunction(*f.second, versionOfTestFiles)) {
+            if (!writeTestFilesForFunction(*f.second, directory, versionOfTestFiles)) {
                 success = false;
             }
         }

@@ -148,10 +148,11 @@ double maxDoubleForInteger(int numberOfIntegerBits, int mantissaSize) {
 }
 
 // Opens the stream.  Reports an error if it can't.
-bool GeneratedFile::start(const string& name) {
-    open(name.c_str(), ios::out | ios::trunc);
+bool GeneratedFile::start(const string& directory, const string& name) {
+    const string path = directory + "/" + name;
+    open(path.c_str(), ios::out | ios::trunc);
     if (!is_open()) {
-        cerr << "Error.  Can't open the output file: " << name << "\n";
+        cerr << "Error.  Can't open the output file: " << path << "\n";
         return false;
     }
     return true;
