@@ -165,7 +165,6 @@ struct {\
  */
 typedef char int8_t;
 
-
 /*
  * int16_t: 16 bit signed integer
  *
@@ -173,14 +172,12 @@ typedef char int8_t;
  */
 typedef short int16_t;
 
-
 /*
  * int32_t: 32 bit signed integer
  *
  * 32 bit integer type
  */
 typedef int int32_t;
-
 
 /*
  * int64_t: 64 bit signed integer
@@ -195,14 +192,12 @@ typedef long long int64_t;
 typedef long int64_t;
 #endif
 
-
 /*
  * uint8_t: 8 bit unsigned integer
  *
  * 8 bit unsigned integer type
  */
 typedef unsigned char uint8_t;
-
 
 /*
  * uint16_t: 16 bit unsigned integer
@@ -211,14 +206,12 @@ typedef unsigned char uint8_t;
  */
 typedef unsigned short uint16_t;
 
-
 /*
  * uint32_t: 32 bit unsigned integer
  *
  * 32 bit unsigned integer type
  */
 typedef unsigned int uint32_t;
-
 
 /*
  * uint64_t: 64 bit unsigned integer
@@ -233,14 +226,12 @@ typedef unsigned long long uint64_t;
 typedef unsigned long uint64_t;
 #endif
 
-
 /*
  * uchar: 8 bit unsigned integer
  *
  * 8 bit unsigned integer type
  */
 typedef uint8_t uchar;
-
 
 /*
  * ushort: 16 bit unsigned integer
@@ -249,7 +240,6 @@ typedef uint8_t uchar;
  */
 typedef uint16_t ushort;
 
-
 /*
  * uint: 32 bit unsigned integer
  *
@@ -257,14 +247,12 @@ typedef uint16_t ushort;
  */
 typedef uint32_t uint;
 
-
 /*
  * ulong: 64 bit unsigned integer
  *
  * Typedef for unsigned long (use for 64-bit unsigned integers)
  */
 typedef uint64_t ulong;
-
 
 /*
  * size_t: Unsigned size type
@@ -279,7 +267,6 @@ typedef uint64_t size_t;
 typedef uint32_t size_t;
 #endif
 
-
 /*
  * ssize_t: Signed size type
  *
@@ -293,7 +280,6 @@ typedef int64_t ssize_t;
 typedef int32_t ssize_t;
 #endif
 
-
 /*
  * rs_element: Handle to an element
  *
@@ -301,7 +287,6 @@ typedef int32_t ssize_t;
  * See: android.renderscript.Element
  */
 typedef _RS_HANDLE rs_element;
-
 
 /*
  * rs_type: Handle to a Type
@@ -311,7 +296,6 @@ typedef _RS_HANDLE rs_element;
  */
 typedef _RS_HANDLE rs_type;
 
-
 /*
  * rs_allocation: Handle to an allocation
  *
@@ -319,7 +303,6 @@ typedef _RS_HANDLE rs_type;
  * See: android.renderscript.Allocation
  */
 typedef _RS_HANDLE rs_allocation;
-
 
 /*
  * rs_sampler: Handle to a Sampler
@@ -329,7 +312,6 @@ typedef _RS_HANDLE rs_allocation;
  */
 typedef _RS_HANDLE rs_sampler;
 
-
 /*
  * rs_script: Handle to a Script
  *
@@ -337,7 +319,6 @@ typedef _RS_HANDLE rs_sampler;
  * See: android.renderscript.ScriptC
  */
 typedef _RS_HANDLE rs_script;
-
 
 /*
  * rs_mesh: Handle to a Mesh
@@ -349,7 +330,6 @@ typedef _RS_HANDLE rs_script;
 typedef _RS_HANDLE rs_mesh;
 #endif
 
-
 /*
  * rs_program_fragment: Handle to a ProgramFragment
  *
@@ -359,7 +339,6 @@ typedef _RS_HANDLE rs_mesh;
 #ifndef __LP64__
 typedef _RS_HANDLE rs_program_fragment;
 #endif
-
 
 /*
  * rs_program_vertex: Handle to a ProgramVertex
@@ -371,7 +350,6 @@ typedef _RS_HANDLE rs_program_fragment;
 typedef _RS_HANDLE rs_program_vertex;
 #endif
 
-
 /*
  * rs_program_raster: Handle to a ProgramRaster
  *
@@ -381,7 +359,6 @@ typedef _RS_HANDLE rs_program_vertex;
 #ifndef __LP64__
 typedef _RS_HANDLE rs_program_raster;
 #endif
-
 
 /*
  * rs_program_store: Handle to a ProgramStore
@@ -393,7 +370,6 @@ typedef _RS_HANDLE rs_program_raster;
 typedef _RS_HANDLE rs_program_store;
 #endif
 
-
 /*
  * rs_font: Handle to a Font
  *
@@ -404,7 +380,6 @@ typedef _RS_HANDLE rs_program_store;
 typedef _RS_HANDLE rs_font;
 #endif
 
-
 /*
  * float2: Two 32 bit floats
  *
@@ -412,7 +387,6 @@ typedef _RS_HANDLE rs_font;
  * Provides two float fields packed into a single 64 bit field with 64 bit alignment.
  */
 typedef float __attribute__((ext_vector_type(2))) float2;
-
 
 /*
  * float3: Three 32 bit floats
@@ -422,7 +396,6 @@ typedef float __attribute__((ext_vector_type(2))) float2;
  */
 typedef float __attribute__((ext_vector_type(3))) float3;
 
-
 /*
  * float4: Four 32 bit floats
  *
@@ -430,7 +403,6 @@ typedef float __attribute__((ext_vector_type(3))) float3;
  * Provides four float fields packed into a single 128 bit field with 128 bit alignment.
  */
 typedef float __attribute__((ext_vector_type(4))) float4;
-
 
 /*
  * double2: Two 64 bit floats
@@ -440,7 +412,6 @@ typedef float __attribute__((ext_vector_type(4))) float4;
  */
 typedef double __attribute__((ext_vector_type(2))) double2;
 
-
 /*
  * double3: Three 64 bit floats
  *
@@ -448,7 +419,6 @@ typedef double __attribute__((ext_vector_type(2))) double2;
  * into a single 256 bit field with 256 bit alignment.
  */
 typedef double __attribute__((ext_vector_type(3))) double3;
-
 
 /*
  * double4: Four 64 bit floats
@@ -458,7 +428,6 @@ typedef double __attribute__((ext_vector_type(3))) double3;
  */
 typedef double __attribute__((ext_vector_type(4))) double4;
 
-
 /*
  * uchar2: Two 8 bit unsigned integers
  *
@@ -466,7 +435,6 @@ typedef double __attribute__((ext_vector_type(4))) double4;
  * into a single 16 bit field with 16 bit alignment.
  */
 typedef uchar __attribute__((ext_vector_type(2))) uchar2;
-
 
 /*
  * uchar3: Three 8 bit unsigned integers
@@ -476,7 +444,6 @@ typedef uchar __attribute__((ext_vector_type(2))) uchar2;
  */
 typedef uchar __attribute__((ext_vector_type(3))) uchar3;
 
-
 /*
  * uchar4: Four 8 bit unsigned integers
  *
@@ -484,7 +451,6 @@ typedef uchar __attribute__((ext_vector_type(3))) uchar3;
  * into a single 32 bit field with 32 bit alignment.
  */
 typedef uchar __attribute__((ext_vector_type(4))) uchar4;
-
 
 /*
  * ushort2: Two 16 bit unsigned integers
@@ -494,7 +460,6 @@ typedef uchar __attribute__((ext_vector_type(4))) uchar4;
  */
 typedef ushort __attribute__((ext_vector_type(2))) ushort2;
 
-
 /*
  * ushort3: Three 16 bit unsigned integers
  *
@@ -502,7 +467,6 @@ typedef ushort __attribute__((ext_vector_type(2))) ushort2;
  * into a single 64 bit field with 64 bit alignment.
  */
 typedef ushort __attribute__((ext_vector_type(3))) ushort3;
-
 
 /*
  * ushort4: Four 16 bit unsigned integers
@@ -512,7 +476,6 @@ typedef ushort __attribute__((ext_vector_type(3))) ushort3;
  */
 typedef ushort __attribute__((ext_vector_type(4))) ushort4;
 
-
 /*
  * uint2: Two 32 bit unsigned integers
  *
@@ -520,7 +483,6 @@ typedef ushort __attribute__((ext_vector_type(4))) ushort4;
  * single 64 bit field with 64 bit alignment.
  */
 typedef uint __attribute__((ext_vector_type(2))) uint2;
-
 
 /*
  * uint3: Three 32 bit unsigned integers
@@ -530,7 +492,6 @@ typedef uint __attribute__((ext_vector_type(2))) uint2;
  */
 typedef uint __attribute__((ext_vector_type(3))) uint3;
 
-
 /*
  * uint4: Four 32 bit unsigned integers
  *
@@ -538,7 +499,6 @@ typedef uint __attribute__((ext_vector_type(3))) uint3;
  * a single 128 bit field with 128 bit alignment.
  */
 typedef uint __attribute__((ext_vector_type(4))) uint4;
-
 
 /*
  * ulong2: Two 64 bit unsigned integers
@@ -548,7 +508,6 @@ typedef uint __attribute__((ext_vector_type(4))) uint4;
  */
 typedef ulong __attribute__((ext_vector_type(2))) ulong2;
 
-
 /*
  * ulong3: Three 64 bit unsigned integers
  *
@@ -556,7 +515,6 @@ typedef ulong __attribute__((ext_vector_type(2))) ulong2;
  * into a single 256 bit field with 256 bit alignment.
  */
 typedef ulong __attribute__((ext_vector_type(3))) ulong3;
-
 
 /*
  * ulong4: Four 64 bit unsigned integers
@@ -566,7 +524,6 @@ typedef ulong __attribute__((ext_vector_type(3))) ulong3;
  */
 typedef ulong __attribute__((ext_vector_type(4))) ulong4;
 
-
 /*
  * char2: Two 8 bit signed integers
  *
@@ -574,7 +531,6 @@ typedef ulong __attribute__((ext_vector_type(4))) ulong4;
  * single 16 bit field with 16 bit alignment.
  */
 typedef char __attribute__((ext_vector_type(2))) char2;
-
 
 /*
  * char3: Three 8 bit signed integers
@@ -584,7 +540,6 @@ typedef char __attribute__((ext_vector_type(2))) char2;
  */
 typedef char __attribute__((ext_vector_type(3))) char3;
 
-
 /*
  * char4: Four 8 bit signed integers
  *
@@ -592,7 +547,6 @@ typedef char __attribute__((ext_vector_type(3))) char3;
  * a single 32 bit field with 32 bit alignment.
  */
 typedef char __attribute__((ext_vector_type(4))) char4;
-
 
 /*
  * short2: Two 16 bit signed integers
@@ -602,7 +556,6 @@ typedef char __attribute__((ext_vector_type(4))) char4;
  */
 typedef short __attribute__((ext_vector_type(2))) short2;
 
-
 /*
  * short3: Three 16 bit signed integers
  *
@@ -610,7 +563,6 @@ typedef short __attribute__((ext_vector_type(2))) short2;
  * into a single 64 bit field with 64 bit alignment.
  */
 typedef short __attribute__((ext_vector_type(3))) short3;
-
 
 /*
  * short4: Four 16 bit signed integers
@@ -620,7 +572,6 @@ typedef short __attribute__((ext_vector_type(3))) short3;
  */
 typedef short __attribute__((ext_vector_type(4))) short4;
 
-
 /*
  * int2: Two 32 bit signed integers
  *
@@ -628,7 +579,6 @@ typedef short __attribute__((ext_vector_type(4))) short4;
  * single 64 bit field with 64 bit alignment.
  */
 typedef int __attribute__((ext_vector_type(2))) int2;
-
 
 /*
  * int3: Three 32 bit signed integers
@@ -638,7 +588,6 @@ typedef int __attribute__((ext_vector_type(2))) int2;
  */
 typedef int __attribute__((ext_vector_type(3))) int3;
 
-
 /*
  * int4: Four 32 bit signed integers
  *
@@ -646,7 +595,6 @@ typedef int __attribute__((ext_vector_type(3))) int3;
  * single 128 bit field with 128 bit alignment.
  */
 typedef int __attribute__((ext_vector_type(4))) int4;
-
 
 /*
  * long2: Two 64 bit signed integers
@@ -656,7 +604,6 @@ typedef int __attribute__((ext_vector_type(4))) int4;
  */
 typedef long __attribute__((ext_vector_type(2))) long2;
 
-
 /*
  * long3: Three 64 bit signed integers
  *
@@ -665,7 +612,6 @@ typedef long __attribute__((ext_vector_type(2))) long2;
  */
 typedef long __attribute__((ext_vector_type(3))) long3;
 
-
 /*
  * long4: Four 64 bit signed integers
  *
@@ -673,7 +619,6 @@ typedef long __attribute__((ext_vector_type(3))) long3;
  * a single 256 bit field with 256 bit alignment.
  */
 typedef long __attribute__((ext_vector_type(4))) long4;
-
 
 /*
  * rs_matrix4x4: 4x4 matrix of 32 bit floats
@@ -685,7 +630,6 @@ typedef struct {
     float m[16];
 } rs_matrix4x4;
 
-
 /*
  * rs_matrix3x3: 3x3 matrix of 32 bit floats
  *
@@ -695,7 +639,6 @@ typedef struct {
 typedef struct {
     float m[9];
 } rs_matrix3x3;
-
 
 /*
  * rs_matrix2x2: 2x2 matrix of 32 bit floats
@@ -707,14 +650,12 @@ typedef struct {
     float m[4];
 } rs_matrix2x2;
 
-
 /*
  * rs_quaternion: Quarternion
  *
  * Quaternion type for use with the quaternion functions
  */
 typedef float4 rs_quaternion;
-
 
 /*
  * rs_allocation_cubemap_face: Enum for selecting cube map faces
@@ -731,7 +672,6 @@ typedef enum {
 } rs_allocation_cubemap_face;
 #endif
 
-
 /*
  * rs_allocation_usage_type: Bitfield to specify the usage types for an allocation
  *
@@ -747,7 +687,6 @@ typedef enum {
     RS_ALLOCATION_USAGE_GRAPHICS_RENDER_TARGET = 0x0010 // Deprecated.
 } rs_allocation_usage_type;
 #endif
-
 
 /*
  * rs_primitive: How to intepret mesh vertex data
@@ -767,7 +706,6 @@ typedef enum {
 } rs_primitive;
 #endif
 #endif
-
 
 /*
  * rs_data_type: Element data types
@@ -822,7 +760,6 @@ typedef enum {
 } rs_data_type;
 #endif
 
-
 /*
  * rs_data_kind: Element data kind
  *
@@ -845,7 +782,6 @@ typedef enum {
 } rs_data_kind;
 #endif
 
-
 /*
  * rs_depth_func: Depth function
  *
@@ -866,7 +802,6 @@ typedef enum {
 } rs_depth_func;
 #endif
 #endif
-
 
 /*
  * rs_blend_src_func: Blend source function
@@ -889,7 +824,6 @@ typedef enum {
 #endif
 #endif
 
-
 /*
  * rs_blend_dst_func: Blend destination function
  *
@@ -910,7 +844,6 @@ typedef enum {
 #endif
 #endif
 
-
 /*
  * rs_cull_mode: Culling mode
  *
@@ -925,7 +858,6 @@ typedef enum {
 } rs_cull_mode;
 #endif
 #endif
-
 
 /*
  * rs_sampler_value: Sampler wrap T value
@@ -943,6 +875,5 @@ typedef enum {
     RS_SAMPLER_INVALID              = 100
 } rs_sampler_value;
 #endif
-
 
 #endif // RENDERSCRIPT_RS_TYPES_RSH

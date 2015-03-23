@@ -1030,11 +1030,9 @@ static bool writeTestFilesForFunction(const Function& function, const string& di
 
 bool GenerateTestFiles(const string& directory, int versionOfTestFiles) {
     bool success = true;
-    for (auto specFile : systemSpecification.getSpecFiles()) {
-        for (auto f : specFile->getFunctionsMap()) {
-            if (!writeTestFilesForFunction(*f.second, directory, versionOfTestFiles)) {
-                success = false;
-            }
+    for (auto f : systemSpecification.getFunctions()) {
+        if (!writeTestFilesForFunction(*f.second, directory, versionOfTestFiles)) {
+            success = false;
         }
     }
     return success;

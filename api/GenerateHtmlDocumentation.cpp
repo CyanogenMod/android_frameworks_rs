@@ -415,10 +415,8 @@ static bool writeOverviewForFile(GeneratedFile* file, const SpecFile& specFile) 
 
     // Write the summary tables.
     // file << "<h2>Summary</h2>\n";
-    const auto& constants = specFile.getConstantsMap();
-    const auto& types = specFile.getTypesMap();
-    const auto& functions = specFile.getFunctionsMap();
-    writeSummaryTables(file, constants, types, functions, false);
+    writeSummaryTables(file, specFile.getDocumentedConstants(), specFile.getDocumentedTypes(),
+                       specFile.getDocumentedFunctions(), false);
     return success;
 }
 
@@ -620,9 +618,9 @@ static bool writeDetailedDocumentationFile(const string& directory, const SpecFi
 
     // Write the summary tables.
     file << "<h2>Summary</h2>\n";
-    const auto& constants = specFile.getConstantsMap();
-    const auto& types = specFile.getTypesMap();
-    const auto& functions = specFile.getFunctionsMap();
+    const auto& constants = specFile.getDocumentedConstants();
+    const auto& types = specFile.getDocumentedTypes();
+    const auto& functions = specFile.getDocumentedFunctions();
     writeSummaryTables(&file, constants, types, functions, false);
 
     // Write the full details of each constant, type, and function.
