@@ -11,7 +11,6 @@
 #include <unistd.h>
 #else
 #include "bcc/Config/Config.h"
-#include <bcc/Renderscript/RSInfo.h>
 #include <sys/wait.h>
 #endif
 
