@@ -304,12 +304,12 @@ static void writeFunction(GeneratedFile* file, const Function& function) {
     }
 }
 
-static bool writeHeaderFile(const SpecFile& specFile) {
+static bool writeHeaderFile(const string& directory, const SpecFile& specFile) {
     const string headerFileName = specFile.getHeaderFileName();
 
     // We generate one header file for each spec file.
     GeneratedFile file;
-    if (!file.start(headerFileName)) {
+    if (!file.start(directory, headerFileName)) {
         return false;
     }
 
@@ -349,10 +349,10 @@ static bool writeHeaderFile(const SpecFile& specFile) {
     return true;
 }
 
-bool GenerateHeaderFiles() {
+bool GenerateHeaderFiles(const string& directory) {
     bool success = true;
     for (auto specFile : systemSpecification.getSpecFiles()) {
-        if (!writeHeaderFile(*specFile)) {
+        if (!writeHeaderFile(directory, *specFile)) {
             success = false;
         }
     }

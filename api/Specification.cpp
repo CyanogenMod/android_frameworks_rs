@@ -776,8 +776,8 @@ bool SystemSpecification::readSpecFile(const string& fileName) {
 }
 
 bool SystemSpecification::generateFiles(int versionOfTestFiles) const {
-    bool success = GenerateHeaderFiles() && generateHtmlDocumentation() &&
-                   GenerateTestFiles(versionOfTestFiles);
+    bool success = GenerateHeaderFiles("scriptc") && generateHtmlDocumentation("html") &&
+                   GenerateTestFiles("test", versionOfTestFiles);
     if (success) {
         cout << "Successfully processed " << mTypes.size() << " types, " << mConstants.size()
              << " constants, and " << mFunctions.size() << " functions.\n";
