@@ -38,7 +38,6 @@ typedef int rs_time_t;
 typedef long rs_time_t;
 #endif
 
-
 /*
  * rs_tm: Date and time structure
  *
@@ -55,7 +54,6 @@ typedef struct {
     int tm_yday; // Days since January 1. This ranges from 0 to 365.
     int tm_isdst; // Flag to indicate whether daylight saving time is in effect. The value is positive if it is in effect, zero if it is not, and negative if the information is not available.
 } rs_tm;
-
 
 /*
  * Returns the time in seconds since this function was last called in this

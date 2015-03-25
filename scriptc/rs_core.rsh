@@ -69,7 +69,6 @@ typedef enum rs_for_each_strategy {
     RS_FOR_EACH_STRATEGY_TILE_LARGE = 5
 } rs_for_each_strategy_t;
 
-
 /*
  * rs_kernel_context: Opaque handle to RenderScript kernel invocation context
  *
@@ -78,7 +77,6 @@ typedef enum rs_for_each_strategy {
 #if (defined(RS_VERSION) && (RS_VERSION >= 23))
 typedef const struct rs_kernel_context_t * rs_kernel_context;
 #endif
-
 
 /*
  * rs_script_call_t: Provides extra information to a rsForEach call
@@ -97,7 +95,6 @@ typedef struct rs_script_call {
     uint32_t arrayStart;
     uint32_t arrayEnd;
 } rs_script_call_t;
-
 
 /*
  * Make a script to script call to launch work. One of the input or output is
