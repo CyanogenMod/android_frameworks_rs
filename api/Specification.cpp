@@ -214,12 +214,11 @@ void VersionInfo::scan(Scanner* scanner) {
     }
 }
 
-Definition::Definition(const std::string& name, SpecFile* specFile) : mName(name), mHidden(false) {
-    mSpecFileName = specFile->getSpecFileName();
-    mUrl = specFile->getDetailedDocumentationUrl() + "#android_rs:" + name;
+Definition::Definition(const std::string& name) : mName(name), mHidden(false) {
 }
 
-void Definition::scanDocumentationTags(Scanner* scanner, bool firstOccurence) {
+void Definition::scanDocumentationTags(Scanner* scanner, bool firstOccurence,
+                                       const SpecFile* specFile) {
     if (scanner->findOptionalTag("hidden:")) {
         scanner->checkNoValue();
         mHidden = true;
@@ -234,6 +233,7 @@ void Definition::scanDocumentationTags(Scanner* scanner, bool firstOccurence) {
                 mDescription.push_back(scanner->getValue());
             }
         }
+        mUrl = specFile->getDetailedDocumentationUrl() + "#android_rs:" + mName;
     } else if (scanner->findOptionalTag("summary:")) {
         scanner->error() << "Only the first specification should have a summary.\n";
     }
@@ -251,7 +251,7 @@ Type::~Type() {
     }
 }
 
-Function::Function(const string& name, SpecFile* specFile) : Definition(name, specFile) {
+Function::Function(const string& name) : Definition(name) {
     mCapitalizedName = capitalize(mName);
 }
 
@@ -303,16 +303,16 @@ void ConstantSpecification::scanConstantSpecification(Scanner* scanner, SpecFile
     string name = scanner->getValue();
 
     bool created = false;
-    Constant* constant = specFile->findOrCreateConstant(name, &created);
-
-    ConstantSpecification* spec = new ConstantSpecification();
+    Constant* constant = systemSpecification.findOrCreateConstant(name, &created);
+    ConstantSpecification* spec = new ConstantSpecification(constant);
     constant->addSpecification(spec);
+    specFile->addConstantSpecification(spec, created);
 
     spec->scanVersionInfo(scanner);
     if (scanner->findTag("value:")) {
         spec->mValue = scanner->getValue();
     }
-    constant->scanDocumentationTags(scanner, created);
+    constant->scanDocumentationTags(scanner, created, specFile);
 
     scanner->findTag("end:");
 }
@@ -321,10 +321,10 @@ void TypeSpecification::scanTypeSpecification(Scanner* scanner, SpecFile* specFi
     string name = scanner->getValue();
 
     bool created = false;
-    Type* type = specFile->findOrCreateType(name, &created);
-
-    TypeSpecification* spec = new TypeSpecification();
+    Type* type = systemSpecification.findOrCreateType(name, &created);
+    TypeSpecification* spec = new TypeSpecification(type);
     type->addSpecification(spec);
+    specFile->addTypeSpecification(spec, created);
 
     spec->scanVersionInfo(scanner);
     if (scanner->findOptionalTag("simple:")) {
@@ -356,7 +356,7 @@ void TypeSpecification::scanTypeSpecification(Scanner* scanner, SpecFile* specFi
             spec->mValueComments.push_back(comment);
         }
     }
-    type->scanDocumentationTags(scanner, created);
+    type->scanDocumentationTags(scanner, created, specFile);
 
     scanner->findTag("end:");
 }
@@ -497,10 +497,10 @@ void FunctionSpecification::scanFunctionSpecification(Scanner* scanner, SpecFile
     }
 
     bool created = false;
-    Function* function = specFile->findOrCreateFunction(name, &created);
-
-    FunctionSpecification* spec = new FunctionSpecification();
+    Function* function = systemSpecification.findOrCreateFunction(name, &created);
+    FunctionSpecification* spec = new FunctionSpecification(function);
     function->addSpecification(spec);
+    specFile->addFunctionSpecification(spec, created);
 
     spec->mUnexpandedName = scanner->getValue();
     spec->mTest = "scalar";  // default
@@ -542,7 +542,7 @@ void FunctionSpecification::scanFunctionSpecification(Scanner* scanner, SpecFile
         spec->mParameters.push_back(p);
     }
 
-    function->scanDocumentationTags(scanner, created);
+    function->scanDocumentationTags(scanner, created, specFile);
 
     if (scanner->findOptionalTag("inline:")) {
         scanner->checkNoValue();
@@ -633,15 +633,27 @@ SpecFile::SpecFile(const string& specFileName) : mSpecFileName(specFileName) {
     mDetailedDocumentationUrl += core + ".html";
 }
 
-SpecFile::~SpecFile() {
-    for (auto i : mConstantsList) {
-        delete i;
+void SpecFile::addConstantSpecification(ConstantSpecification* spec, bool hasDocumentation) {
+    mConstantSpecificationsList.push_back(spec);
+    if (hasDocumentation) {
+        Constant* constant = spec->getConstant();
+        mDocumentedConstants.insert(pair<string, Constant*>(constant->getName(), constant));
     }
-    for (auto i : mTypesList) {
-        delete i;
+}
+
+void SpecFile::addTypeSpecification(TypeSpecification* spec, bool hasDocumentation) {
+    mTypeSpecificationsList.push_back(spec);
+    if (hasDocumentation) {
+        Type* type = spec->getType();
+        mDocumentedTypes.insert(pair<string, Type*>(type->getName(), type));
     }
-    for (auto i : mFunctionsList) {
-        delete i;
+}
+
+void SpecFile::addFunctionSpecification(FunctionSpecification* spec, bool hasDocumentation) {
+    mFunctionSpecificationsList.push_back(spec);
+    if (hasDocumentation) {
+        Function* function = spec->getFunction();
+        mDocumentedFunctions.insert(pair<string, Function*>(function->getName(), function));
     }
 }
 
@@ -698,52 +710,45 @@ bool SpecFile::readSpecFile() {
     return scanner.getErrorCount() == 0;
 }
 
+SystemSpecification::~SystemSpecification() {
+    for (auto i : mConstants) {
+        delete i.second;
+    }
+    for (auto i : mTypes) {
+        delete i.second;
+    }
+    for (auto i : mFunctions) {
+        delete i.second;
+    }
+    for (auto i : mSpecFiles) {
+        delete i;
+    }
+}
+
 // Returns the named entry in the map.  Creates it if it's not there.
 template <class T>
-T* findOrCreate(const string& name, list<T*>* list, map<string, T*>* map, bool* created,
-                SpecFile* specFile) {
+T* findOrCreate(const string& name, map<string, T*>* map, bool* created) {
     auto iter = map->find(name);
     if (iter != map->end()) {
         *created = false;
         return iter->second;
     }
     *created = true;
-    T* f = new T(name, specFile);
+    T* f = new T(name);
     map->insert(pair<string, T*>(name, f));
-    list->push_back(f);
     return f;
 }
 
-Constant* SpecFile::findOrCreateConstant(const string& name, bool* created) {
-    return findOrCreate<Constant>(name, &mConstantsList, &mConstantsMap, created, this);
+Constant* SystemSpecification::findOrCreateConstant(const string& name, bool* created) {
+    return findOrCreate<Constant>(name, &mConstants, created);
 }
 
-Type* SpecFile::findOrCreateType(const string& name, bool* created) {
-    return findOrCreate<Type>(name, &mTypesList, &mTypesMap, created, this);
+Type* SystemSpecification::findOrCreateType(const string& name, bool* created) {
+    return findOrCreate<Type>(name, &mTypes, created);
 }
 
-Function* SpecFile::findOrCreateFunction(const string& name, bool* created) {
-    return findOrCreate<Function>(name, &mFunctionsList, &mFunctionsMap, created, this);
-}
-
-SystemSpecification::~SystemSpecification() {
-    for (auto i : mSpecFiles) {
-        delete i;
-    }
-}
-
-template <class T>
-static bool addDefinitionToMap(map<string, T*>* map, T* object) {
-    const string& name = object->getName();
-    auto i = map->find(name);
-    if (i != map->end()) {
-        T* existing = i->second;
-        cerr << object->getSpecFileName() << ": Error. " << name << " has already been defined in "
-             << existing->getSpecFileName() << "\n";
-        return false;
-    }
-    (*map)[name] = object;
-    return true;
+Function* SystemSpecification::findOrCreateFunction(const string& name, bool* created) {
+    return findOrCreate<Function>(name, &mFunctions, created);
 }
 
 bool SystemSpecification::readSpecFile(const string& fileName) {
@@ -753,26 +758,7 @@ bool SystemSpecification::readSpecFile(const string& fileName) {
         return false;
     }
     mSpecFiles.push_back(spec);
-
-    // Store links to the definitions in a global table.
-    bool success = true;
-    for (auto i : spec->getConstantsMap()) {
-        if (!addDefinitionToMap(&mConstants, i.second)) {
-            success = false;
-        }
-    }
-    for (auto i : spec->getTypesMap()) {
-        if (!addDefinitionToMap(&mTypes, i.second)) {
-            success = false;
-        }
-    }
-    for (auto i : spec->getFunctionsMap()) {
-        if (!addDefinitionToMap(&mFunctions, i.second)) {
-            success = false;
-        }
-    }
-
-    return success;
+    return true;
 }
 
 bool SystemSpecification::generateFiles(int versionOfTestFiles) const {

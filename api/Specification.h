@@ -137,25 +137,21 @@ struct VersionInfo {
 class Definition {
 protected:
     std::string mName;
-    std::string mSpecFileName;
-
     bool mHidden;                           // True if it should not be documented
     std::string mSummary;                   // A one-line description
     std::vector<std::string> mDescription;  // The comments to be included in the header
     std::string mUrl;                       // The URL of the detailed documentation
 
 public:
-    Definition(const std::string& name, SpecFile* specFile);
+    Definition(const std::string& name);
 
     std::string getName() const { return mName; }
-    std::string getSpecFileName() const { return mSpecFileName; }
-
     bool hidden() const { return mHidden; }
     std::string getSummary() const { return mSummary; }
     const std::vector<std::string>& getDescription() const { return mDescription; }
     std::string getUrl() const { return mUrl; }
 
-    void scanDocumentationTags(Scanner* scanner, bool firstOccurence);
+    void scanDocumentationTags(Scanner* scanner, bool firstOccurence, const SpecFile* specFile);
 };
 
 /* Represents a constant, like M_PI.  This is a grouping of the version specific specifications.
@@ -166,7 +162,7 @@ private:
     std::vector<ConstantSpecification*> mSpecifications;  // Owned
 
 public:
-    Constant(const std::string& name, SpecFile* specFile) : Definition(name, specFile) {}
+    Constant(const std::string& name) : Definition(name) {}
     ~Constant();
 
     const std::vector<ConstantSpecification*> getSpecifications() const { return mSpecifications; }
@@ -182,7 +178,7 @@ private:
     std::vector<TypeSpecification*> mSpecifications;  // Owned
 
 public:
-    Type(const std::string& name, SpecFile* specFile) : Definition(name, specFile) {}
+    Type(const std::string& name) : Definition(name) {}
     ~Type();
 
     const std::vector<TypeSpecification*> getSpecifications() const { return mSpecifications; }
@@ -205,7 +201,7 @@ private:
     std::vector<FunctionSpecification*> mSpecifications;  // Owned
 
 public:
-    Function(const std::string& name, SpecFile* specFile);
+    Function(const std::string& name);
     ~Function();
 
     std::string getCapitalizedName() const { return mCapitalizedName; }
@@ -239,8 +235,13 @@ public:
  */
 class ConstantSpecification : public Specification {
 private:
+    Constant* mConstant;  // Not owned
+
     std::string mValue;  // E.g. "3.1415"
 public:
+    ConstantSpecification(Constant* constant) : mConstant(constant) {}
+
+    Constant* getConstant() const { return mConstant; }
     std::string getValue() const { return mValue; }
 
     // Parse a constant specification and add it to specFile.
@@ -258,6 +259,8 @@ enum TypeKind {
  */
 class TypeSpecification : public Specification {
 private:
+    Type* mType;  // Not owned
+
     TypeKind mKind;  // The kind of type specification
 
     // If mKind is SIMPLE:
@@ -274,6 +277,9 @@ private:
     std::vector<std::string> mValues;         // One entry per enum value
     std::vector<std::string> mValueComments;  // One entry per enum value
 public:
+    TypeSpecification(Type* type) : mType(type) {}
+
+    Type* getType() const { return mType; }
     TypeKind getKind() const { return mKind; }
     std::string getSimpleType() const { return mSimpleType; }
     std::string getStructName() const { return mStructName; }
@@ -298,6 +304,8 @@ const int MAX_REPLACEABLES = 4;
  */
 class FunctionSpecification : public Specification {
 private:
+    Function* mFunction;  // Not owned
+
     /* How to test.  One of:
      * "scalar": Generate test code that checks entries of each vector indepently.  E.g. for
      *           sin(float3), the test code will call the CoreMathVerfier.computeSin 3 times.
@@ -349,9 +357,10 @@ private:
     void createPermutations(Function* function, Scanner* scanner);
 
 public:
-    FunctionSpecification() : mReturn(nullptr) {}
+    FunctionSpecification(Function* function) : mFunction(function), mReturn(nullptr) {}
     ~FunctionSpecification();
 
+    Function* getFunction() { return mFunction; }
     std::string getAttribute() const { return mAttribute; }
     std::string getTest() const { return mTest; }
     std::string getPrecisionLimit() const { return mPrecisionLimit; }
@@ -437,25 +446,27 @@ private:
     // Text to insert as-is in the generated header.
     std::vector<std::string> mVerbatimInclude;
 
-    /* The constants, types, and functions declared in this file,
-     * in the order they are found in the file.  This matters for
+    /* The constants, types, and functions specifications declared in this
+     *  file, in the order they are found in the file.  This matters for
      * header generation, as some types and inline functions depend
-     * on each other.
-     *
-     * Pointers are owned by this list.
+     * on each other.  Pointers not owned.
      */
-    std::list<Constant*> mConstantsList;
-    std::list<Type*> mTypesList;
-    std::list<Function*> mFunctionsList;
+    std::list<ConstantSpecification*> mConstantSpecificationsList;
+    std::list<TypeSpecification*> mTypeSpecificationsList;
+    std::list<FunctionSpecification*> mFunctionSpecificationsList;
 
-    // Quick way to find entries in the previous lists.  Pointers not owned.
-    std::map<std::string, Constant*> mConstantsMap;
-    std::map<std::string, Type*> mTypesMap;
-    std::map<std::string, Function*> mFunctionsMap;
+    /* The constants, types, and functions that are documented in this file.
+     * In very rare cases, specifications for an API are split across multiple
+     * files, e.g. currently for ClearObject().  The documentation for
+     * that function must be found in the first spec file encountered, so the
+     * order of the files on the command line matters.
+     */
+    std::map<std::string, Constant*> mDocumentedConstants;
+    std::map<std::string, Type*> mDocumentedTypes;
+    std::map<std::string, Function*> mDocumentedFunctions;
 
 public:
     explicit SpecFile(const std::string& specFileName);
-    ~SpecFile();
 
     std::string getSpecFileName() const { return mSpecFileName; }
     std::string getHeaderFileName() const { return mHeaderFileName; }
@@ -464,19 +475,31 @@ public:
     const std::vector<std::string>& getFullDescription() const { return mFullDescription; }
     const std::vector<std::string>& getVerbatimInclude() const { return mVerbatimInclude; }
 
-    const std::list<Constant*>& getConstantsList() const { return mConstantsList; }
-    const std::list<Type*>& getTypesList() const { return mTypesList; }
-    const std::list<Function*>& getFunctionsList() const { return mFunctionsList; }
-
-    const std::map<std::string, Constant*>& getConstantsMap() const { return mConstantsMap; }
-    const std::map<std::string, Type*>& getTypesMap() const { return mTypesMap; }
-    const std::map<std::string, Function*>& getFunctionsMap() const { return mFunctionsMap; }
+    const std::list<ConstantSpecification*>& getConstantSpecifications() const {
+        return mConstantSpecificationsList;
+    }
+    const std::list<TypeSpecification*>& getTypeSpecifications() const {
+        return mTypeSpecificationsList;
+    }
+    const std::list<FunctionSpecification*>& getFunctionSpecifications() const {
+        return mFunctionSpecificationsList;
+    }
+    const std::map<std::string, Constant*>& getDocumentedConstants() const {
+        return mDocumentedConstants;
+    }
+    const std::map<std::string, Type*>& getDocumentedTypes() const { return mDocumentedTypes; }
+    const std::map<std::string, Function*>& getDocumentedFunctions() const {
+        return mDocumentedFunctions;
+    }
 
     bool readSpecFile();
 
-    Constant* findOrCreateConstant(const std::string& name, bool* created);
-    Type* findOrCreateType(const std::string& name, bool* created);
-    Function* findOrCreateFunction(const std::string& name, bool* created);
+    /* These are called by the parser to keep track of the specifications defined in this file.
+     * hasDocumentation is true if this specification containes the documentation.
+     */
+    void addConstantSpecification(ConstantSpecification* spec, bool hasDocumentation);
+    void addTypeSpecification(TypeSpecification* spec, bool hasDocumentation);
+    void addFunctionSpecification(FunctionSpecification* spec, bool hasDocumentation);
 };
 
 // The collection of all the spec files.
@@ -485,7 +508,7 @@ private:
     std::vector<SpecFile*> mSpecFiles;
 
     /* Entries in the table of contents.  We accumulate them in a map to sort them.
-     * Pointers are not owned, they belong to the SpecFile object.
+     * Pointers are owned.
      */
     std::map<std::string, Constant*> mConstants;
     std::map<std::string, Type*> mTypes;
@@ -493,6 +516,14 @@ private:
 
 public:
     ~SystemSpecification();
+
+    /* These are called the parser to create unique instances per name.  Set *created to true
+     * if the named specification did not already exist.
+     */
+    Constant* findOrCreateConstant(const std::string& name, bool* created);
+    Type* findOrCreateType(const std::string& name, bool* created);
+    Function* findOrCreateFunction(const std::string& name, bool* created);
+
     // Parse the spec file and create the object hierarchy, adding a pointer to mSpecFiles.
     bool readSpecFile(const std::string& fileName);
     // Generate all the files.
