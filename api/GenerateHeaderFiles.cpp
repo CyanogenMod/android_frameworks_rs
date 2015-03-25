@@ -95,21 +95,20 @@ static void writeComment(GeneratedFile* file, const string& name, const string& 
     }
 }
 
-static void writeConstant(GeneratedFile* file, const Constant& constant) {
+static void writeConstantComment(GeneratedFile* file, const Constant& constant) {
     const string name = constant.getName();
     writeComment(file, name, constant.getSummary(), constant.getDescription(), true);
-
-    for (auto spec : constant.getSpecifications()) {
-        VersionInfo info = spec->getVersionInfo();
-        writeVersionGuardStart(file, info);
-        *file << "#define " << name << " " << spec->getValue() << "\n";
-        writeVersionGuardEnd(file, info);
-    }
-    *file << "\n";
 }
 
-static void writeTypeSpecification(GeneratedFile* file, const string& typeName,
-                                   const TypeSpecification& spec) {
+static void writeConstantSpecification(GeneratedFile* file, const ConstantSpecification& spec) {
+    VersionInfo info = spec.getVersionInfo();
+    writeVersionGuardStart(file, info);
+    *file << "#define " << spec.getConstant()->getName() << " " << spec.getValue() << "\n\n";
+    writeVersionGuardEnd(file, info);
+}
+
+static void writeTypeSpecification(GeneratedFile* file, const TypeSpecification& spec) {
+    const string& typeName = spec.getType()->getName();
     const VersionInfo info = spec.getVersionInfo();
     writeVersionGuardStart(file, info);
     switch (spec.getKind()) {
@@ -170,14 +169,9 @@ static void writeTypeSpecification(GeneratedFile* file, const string& typeName,
     *file << "\n";
 }
 
-static void writeType(GeneratedFile* file, const Type& type) {
+static void writeTypeComment(GeneratedFile* file, const Type& type) {
     const string name = type.getName();
     writeComment(file, name, type.getSummary(), type.getDescription(), true);
-
-    for (auto spec : type.getSpecifications()) {
-        writeTypeSpecification(file, name, *spec);
-    }
-    *file << "\n";
 }
 
 static void writeFunctionPermutation(GeneratedFile* file, const FunctionSpecification& spec,
@@ -272,7 +266,7 @@ static void writeFunctionPermutation(GeneratedFile* file, const FunctionSpecific
     *file << "\n";
 }
 
-static void writeFunction(GeneratedFile* file, const Function& function) {
+static void writeFunctionComment(GeneratedFile* file, const Function& function) {
     // Write the generic documentation.
     writeComment(file, function.getName(), function.getSummary(), function.getDescription(), false);
 
@@ -295,12 +289,12 @@ static void writeFunction(GeneratedFile* file, const Function& function) {
     }
 
     *file << " */\n";
+}
 
+static void writeFunctionSpecification(GeneratedFile* file, const FunctionSpecification& spec) {
     // Write all the variants.
-    for (auto spec : function.getSpecifications()) {
-        for (auto permutation : spec->getPermutations()) {
-            writeFunctionPermutation(file, *spec, *permutation);
-        }
+    for (auto permutation : spec.getPermutations()) {
+        writeFunctionPermutation(file, spec, *permutation);
     }
 }
 
@@ -334,14 +328,33 @@ static bool writeHeaderFile(const string& directory, const SpecFile& specFile) {
     /* Write the constants, types, and functions in the same order as
      * encountered in the spec file.
      */
-    for (auto iter : specFile.getConstantsList()) {
-        writeConstant(&file, *iter);
+    set<Constant*> documentedConstants;
+    for (auto spec : specFile.getConstantSpecifications()) {
+        Constant* constant = spec->getConstant();
+        if (documentedConstants.find(constant) == documentedConstants.end()) {
+            documentedConstants.insert(constant);
+            writeConstantComment(&file, *constant);
+        }
+        writeConstantSpecification(&file, *spec);
     }
-    for (auto iter : specFile.getTypesList()) {
-        writeType(&file, *iter);
+    set<Type*> documentedTypes;
+    for (auto spec : specFile.getTypeSpecifications()) {
+        Type* type = spec->getType();
+        if (documentedTypes.find(type) == documentedTypes.end()) {
+            documentedTypes.insert(type);
+            writeTypeComment(&file, *type);
+        }
+        writeTypeSpecification(&file, *spec);
     }
-    for (auto iter : specFile.getFunctionsList()) {
-        writeFunction(&file, *iter);
+
+    set<Function*> documentedFunctions;
+    for (auto spec : specFile.getFunctionSpecifications()) {
+        Function* function = spec->getFunction();
+        if (documentedFunctions.find(function) == documentedFunctions.end()) {
+            documentedFunctions.insert(function);
+            writeFunctionComment(&file, *function);
+        }
+        writeFunctionSpecification(&file, *spec);
     }
 
     file << "#endif // " << guard << "\n";
