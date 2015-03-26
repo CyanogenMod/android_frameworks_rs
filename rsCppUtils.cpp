@@ -21,6 +21,10 @@
 
 #include <string.h>
 
+#ifndef RS_COMPATIBILITY_LIB
+#include <sys/wait.h>
+#endif
+
 namespace android {
 namespace renderscript {
 
@@ -45,6 +49,46 @@ const char* rsuJoinStrings(int n, const char* const* strs) {
     }
     return strndup(tmp.c_str(), tmp.size());
 }
+
+#ifndef RS_COMPATIBILITY_LIB
+bool rsuExecuteCommand(const char *exe, int nArgs, const char * const *args) {
+    std::unique_ptr<const char> joined(rsuJoinStrings(nArgs, args));
+
+    pid_t pid = fork();
+
+    switch (pid) {
+    case -1: {  // Error occurred (we attempt no recovery)
+        ALOGE("Fork of \"%s\" failed with error %s", exe, strerror(errno));
+        return false;
+    }
+    case 0: {  // Child process
+        ALOGV("Invoking %s with args '%s'", exe, joined.get());
+        execv(exe, (char * const *)args);
+
+        ALOGE("execv() failed: %s", strerror(errno));
+        abort();
+        return false;
+    }
+    default: {  // Parent process (actual driver)
+        // Wait on child process to finish execution.
+        int status = 0;
+        pid_t w = TEMP_FAILURE_RETRY(waitpid(pid, &status, 0));
+        if (w == -1) {
+            ALOGE("Waitpid of \"%s\" failed with error %s", exe,
+                  strerror(errno));
+            return false;
+        }
+
+        if (WIFEXITED(status) && WEXITSTATUS(status) == 0) {
+            return true;
+        }
+
+        ALOGE("Child process \"%s\" terminated with status %d", exe, status);
+        return false;
+    }
+    }
+}
+#endif // RS_COMPATIBILITY_LIB
 
 }
 }

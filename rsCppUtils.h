@@ -283,6 +283,15 @@ static inline uint32_t rsBoxFilter8888(uint32_t i1, uint32_t i2, uint32_t i3, ui
 
 const char* rsuJoinStrings(int n, const char* const* strs);
 
+#ifndef RS_COMPATIBILITY_LIB
+// Utility to fork/exec a command.
+//     exe - Command to execute
+//     nArgs - Number of arguments (excluding the trailing nullptr in args)
+//     args - Arguments to the command
+bool rsuExecuteCommand(const char *exe, int nArgs, const char * const *args);
+#endif
+
+
 }
 }
 
