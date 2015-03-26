@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2015 The Android Open Source Project
+# Copyright (C) 2014 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -36,6 +36,83 @@ description:
 
  Elements can also have a kind, which is semantic information used mostly to
  interpret pixel data.
+end:
+
+function: rsAllocationGetDimFaces
+ret: uint32_t, "Returns 1 if more than one face is present, 0 otherwise."
+arg: rs_allocation a
+summary: Presence of more than one face
+description:
+ If the allocation is a cubemap, this function returns 1 if there's more than one
+ face present.  In all other cases, it returns 0.
+test: none
+end:
+
+function: rsAllocationGetDimLOD
+ret: uint32_t, "Returns 1 if more than one LOD is present, 0 otherwise."
+arg: rs_allocation a
+summary: Presence of levels of details
+description:
+ Query an allocation for the presence of more than one Level Of Details.  This is useful for mipmaps.
+test: none
+end:
+
+function: rsAllocationGetDimX
+ret: uint32_t, "The X dimension of the allocation."
+arg: rs_allocation a
+summary: Size of the X dimension
+description:
+ Returns the size of the X dimension of the allocation.
+test: none
+end:
+
+function: rsAllocationGetDimY
+ret: uint32_t, "The Y dimension of the allocation."
+arg: rs_allocation a
+summary: Size of the Y dimension
+description:
+ Returns the size of the Y dimension of the allocation.
+ If the allocation has less than two dimensions, returns 0.
+test: none
+end:
+
+function: rsAllocationGetDimZ
+ret: uint32_t, "The Z dimension of the allocation."
+arg: rs_allocation a
+summary: Size of the Z dimension
+description:
+ Returns the size of the Z dimension of the allocation.
+ If the allocation has less than three dimensions, returns 0.
+test: none
+end:
+
+function: rsAllocationGetElement
+ret: rs_element, "element describing allocation layout"
+arg: rs_allocation a, "allocation to get data from"
+summary:
+description:
+ Get the element object describing the allocation's layout
+test: none
+end:
+
+function: rsClearObject
+t: rs_element, rs_type, rs_allocation, rs_sampler, rs_script
+ret: void
+arg: #1* dst
+hidden:
+summary: For internal use.
+description:
+test: none
+end:
+
+function: rsIsObject
+t: rs_element, rs_type, rs_allocation, rs_sampler, rs_script
+ret: bool
+arg: #1 v
+hidden:
+summary: For internal use.
+description:
+test: none
 end:
 
 function: rsElementGetBytesSize
@@ -164,5 +241,80 @@ arg: rs_element e, "Element to get data from"
 summary:
 description:
  Returns the element's vector size
+test: none
+end:
+
+function: rsGetAllocation
+ret: rs_allocation
+arg: const void* p
+summary: Returns the Allocation for a given pointer
+description:
+ Returns the Allocation for a given pointer.  The pointer should point within
+ a valid allocation.  The results are undefined if the pointer is not from a
+ valid allocation.
+
+ This function is deprecated and will be removed from the SDK in a future
+ release.
+test: none
+end:
+
+function: rsSamplerGetAnisotropy
+version: 16
+ret: float, "anisotropy"
+arg: rs_sampler s, "sampler to query"
+summary:
+description:
+  Get sampler anisotropy
+test: none
+end:
+
+function: rsSamplerGetMagnification
+version: 16
+ret: rs_sampler_value, "magnification value"
+arg: rs_sampler s, "sampler to query"
+summary:
+description:
+ Get sampler magnification value
+test: none
+end:
+
+function: rsSamplerGetMinification
+version: 16
+ret: rs_sampler_value, "minification value"
+arg: rs_sampler s, "sampler to query"
+summary:
+description:
+ Get sampler minification value
+test: none
+end:
+
+function: rsSamplerGetWrapS
+version: 16
+ret: rs_sampler_value, "wrap S value"
+arg: rs_sampler s, "sampler to query"
+summary:
+description:
+ Get sampler wrap S value
+test: none
+end:
+
+function: rsSamplerGetWrapT
+version: 16
+ret: rs_sampler_value, "wrap T value"
+arg: rs_sampler s, "sampler to query"
+summary:
+description:
+ Get sampler wrap T value
+test: none
+end:
+
+function: rsSetObject
+t: rs_element, rs_type, rs_allocation, rs_sampler, rs_script
+ret: void
+arg: #1* dst
+arg: #1 src
+hidden:
+summary: For internal use.
+description:
 test: none
 end:
