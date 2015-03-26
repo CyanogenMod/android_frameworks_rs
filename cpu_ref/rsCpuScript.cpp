@@ -23,6 +23,8 @@
     #include <sys/stat.h>
     #include <unistd.h>
 #else
+    #include "rsCppUtils.h"
+
     #include <bcc/BCCContext.h>
     #include <bcc/Config/Config.h>
     #include <bcc/Renderscript/RSCompilerDriver.h>
@@ -32,7 +34,6 @@
     #include <zlib.h>
     #include <sys/file.h>
     #include <sys/types.h>
-    #include <sys/wait.h>
     #include <unistd.h>
 
     #include <string>
@@ -122,8 +123,7 @@ static void setCompileArguments(std::vector<const char*>* args,
 static bool compileBitcode(const std::string &bcFileName,
                            const char *bitcode,
                            size_t bitcodeSize,
-                           const char **compileArguments,
-                           const char *compileCommandLine) {
+                           std::vector<const char *> &compileArguments) {
     rsAssert(bitcode && bitcodeSize);
 
     FILE *bcfile = fopen(bcFileName.c_str(), "w");
@@ -139,39 +139,9 @@ static bool compileBitcode(const std::string &bcFileName,
         return false;
     }
 
-    pid_t pid = fork();
-
-    switch (pid) {
-    case -1: {  // Error occurred (we attempt no recovery)
-        ALOGE("Couldn't fork for bcc compiler execution");
-        return false;
-    }
-    case 0: {  // Child process
-        ALOGV("Invoking BCC with: %s", compileCommandLine);
-        execv(android::renderscript::RsdCpuScriptImpl::BCC_EXE_PATH,
-              (char* const*)compileArguments);
-
-        ALOGE("execv() failed: %s", strerror(errno));
-        abort();
-        return false;
-    }
-    default: {  // Parent process (actual driver)
-        // Wait on child process to finish compiling the source.
-        int status = 0;
-        pid_t w = waitpid(pid, &status, 0);
-        if (w == -1) {
-            ALOGE("Could not wait for bcc compiler");
-            return false;
-        }
-
-        if (WIFEXITED(status) && WEXITSTATUS(status) == 0) {
-            return true;
-        }
-
-        ALOGE("bcc compiler terminated unexpectedly");
-        return false;
-    }
-    }
+    return android::renderscript::rsuExecuteCommand(
+                   android::renderscript::RsdCpuScriptImpl::BCC_EXE_PATH,
+                   compileArguments.size()-1, compileArguments.data());
 }
 
 bool isChecksumNeeded() {
@@ -200,7 +170,7 @@ bool addFileToChecksum(const char *fileName, uint32_t &checksum) {
             break;
     }
 
-    if (close(FD) != 0) {
+    if (TEMP_FAILURE_RETRY(close(FD)) != 0) {
         ALOGE("Cannot close file \'%s\' after computing checksum", fileName);
         return false;
     }
@@ -360,16 +330,17 @@ bool RsdCpuScriptImpl::init(char const *resName, char const *cacheDir,
     setCompileArguments(&compileArguments, bcFileName, cacheDir, resName, core_lib,
                         useRSDebugContext, bccPluginName);
 
-    // The last argument of compileArguments is a nullptr, so remove 1 from the
-    // size.
-    std::unique_ptr<const char> compileCommandLine(
-        rsuJoinStrings(compileArguments.size() - 1, compileArguments.data()));
-
     mChecksumNeeded = isChecksumNeeded();
     if (mChecksumNeeded) {
         std::vector<const char *> bccFiles = { BCC_EXE_PATH,
                                                core_lib,
                                              };
+
+        // The last argument of compileArguments is a nullptr, so remove 1 from
+        // the size.
+        std::unique_ptr<const char> compileCommandLine(
+            rsuJoinStrings(compileArguments.size()-1, compileArguments.data()));
+
         mBuildChecksum = constructBuildChecksum(bitcode, bitcodeSize,
                                                 compileCommandLine.get(),
                                                 bccFiles);
@@ -393,10 +364,6 @@ bool RsdCpuScriptImpl::init(char const *resName, char const *cacheDir,
     compileArguments.push_back(mBuildChecksum);
     compileArguments.push_back(nullptr);
 
-    // recompute compileCommandLine with the extra arguments
-    compileCommandLine.reset(
-        rsuJoinStrings(compileArguments.size() - 1, compileArguments.data()));
-
     if (!is_force_recompile() && !useRSDebugContext) {
         mScriptSO = SharedLibraryUtils::loadSharedLibrary(cacheDir, resName);
 
@@ -411,7 +378,7 @@ bool RsdCpuScriptImpl::init(char const *resName, char const *cacheDir,
     // again.
     if (mScriptSO == nullptr) {
         if (!compileBitcode(bcFileName, (const char*)bitcode, bitcodeSize,
-                            compileArguments.data(), compileCommandLine.get()))
+                            compileArguments))
         {
             ALOGE("bcc: FAILS to compile '%s'", resName);
             mCtx->unlockMutex();

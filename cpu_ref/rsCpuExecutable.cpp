@@ -11,7 +11,6 @@
 #include <unistd.h>
 #else
 #include "bcc/Config/Config.h"
-#include <sys/wait.h>
 #endif
 
 #include <dlfcn.h>
@@ -132,42 +131,8 @@ bool SharedLibraryUtils::createSharedLibrary(const char *cacheDir, const char *r
         nullptr
     };
 
-    std::unique_ptr<const char> joined(
-        rsuJoinStrings(args.size()-1, args.data()));
-    std::string cmdLineStr (joined.get());
+    return rsuExecuteCommand(LD_EXE_PATH, args.size()-1, args.data());
 
-    pid_t pid = fork();
-
-    switch (pid) {
-    case -1: {  // Error occurred (we attempt no recovery)
-        ALOGE("Couldn't fork for linker (%s) execution", LD_EXE_PATH);
-        return false;
-    }
-    case 0: {  // Child process
-        ALOGV("Invoking ld.mc with args '%s'", cmdLineStr.c_str());
-        execv(LD_EXE_PATH, (char* const*) args.data());
-
-        ALOGE("execv() failed: %s", strerror(errno));
-        abort();
-        return false;
-    }
-    default: {  // Parent process (actual driver)
-        // Wait on child process to finish compiling the source.
-        int status = 0;
-        pid_t w = waitpid(pid, &status, 0);
-        if (w == -1) {
-            ALOGE("Could not wait for linker (%s)", LD_EXE_PATH);
-            return false;
-        }
-
-        if (WIFEXITED(status) && WEXITSTATUS(status) == 0) {
-            return true;
-        }
-
-        ALOGE("Linker (%s) terminated unexpectedly", LD_EXE_PATH);
-        return false;
-    }
-    }
 }
 
 #endif  // RS_COMPATIBILITY_LIB
