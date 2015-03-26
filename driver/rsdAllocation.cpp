@@ -482,9 +482,6 @@ void rsdAllocationAdapterOffset(const Context *rsc, const Allocation *alloc) {
         return;
     }
 
-    uint8_t * ptrA = (uint8_t *)base->getPointerUnchecked(alloc->mHal.state.originX, alloc->mHal.state.originY);
-    uint8_t * ptrB = (uint8_t *)base->getPointerUnchecked(0, 0);
-
     //ALOGE("rsdAllocationAdapterOffset  %p  %p", ptrA, ptrB);
     //ALOGE("rsdAllocationAdapterOffset  lodCount %i", alloc->mHal.drvState.lodCount);
 
@@ -492,9 +489,9 @@ void rsdAllocationAdapterOffset(const Context *rsc, const Allocation *alloc) {
     uint32_t lodCount = rsMax(alloc->mHal.drvState.lodCount, (uint32_t)1);
     for (uint32_t lod=0; lod < lodCount; lod++) {
         alloc->mHal.drvState.lod[lod] = base->mHal.drvState.lod[lod + lodBias];
-        alloc->mHal.drvState.lod[lod].mallocPtr =
-                ((uint8_t *)alloc->mHal.drvState.lod[lod].mallocPtr + (ptrA - ptrB));
-        //ALOGE("rsdAllocationAdapterOffset  lod  %p  %i %i", alloc->mHal.drvState.lod[lod].mallocPtr, alloc->mHal.drvState.lod[lod].dimX, alloc->mHal.drvState.lod[lod].dimY);
+        alloc->mHal.drvState.lod[lod].mallocPtr = GetOffsetPtr(alloc,
+                      alloc->mHal.state.originX, alloc->mHal.state.originY, alloc->mHal.state.originZ,
+                      lodBias, (RsAllocationCubemapFace)alloc->mHal.state.originFace);
     }
 }
 
