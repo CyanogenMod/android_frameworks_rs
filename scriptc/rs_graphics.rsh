@@ -19,6 +19,8 @@
 /*
  * rs_graphics.rsh: RenderScript graphics API
  *
+ * NOTE: RenderScript Graphics has been deprecated.  Do not use.
+ *
  * A set of graphics functions used by RenderScript.
  */
 #ifndef RENDERSCRIPT_RS_GRAPHICS_RSH
@@ -27,9 +29,267 @@
 #ifdef __LP64__
 // TODO We need to fix some of the builds before enabling this error:
 // #error "RenderScript graphics is deprecated and not supported in 64bit mode."
-#else
-#include "rs_mesh.rsh"
-#include "rs_program.rsh"
+#endif
+
+// TODO we seem to assume order for the other headers too.
+#include "rs_object_types.rsh"
+
+/*
+ * rs_blend_src_func: Blend source function
+ *
+ */
+#ifndef __LP64__
+#if (defined(RS_VERSION) && (RS_VERSION >= 16))
+typedef enum {
+    RS_BLEND_SRC_ZERO                   = 0,
+    RS_BLEND_SRC_ONE                    = 1,
+    RS_BLEND_SRC_DST_COLOR              = 2,
+    RS_BLEND_SRC_ONE_MINUS_DST_COLOR    = 3,
+    RS_BLEND_SRC_SRC_ALPHA              = 4,
+    RS_BLEND_SRC_ONE_MINUS_SRC_ALPHA    = 5,
+    RS_BLEND_SRC_DST_ALPHA              = 6,
+    RS_BLEND_SRC_ONE_MINUS_DST_ALPHA    = 7,
+    RS_BLEND_SRC_SRC_ALPHA_SATURATE     = 8,
+    RS_BLEND_SRC_INVALID                = 100
+} rs_blend_src_func;
+#endif
+#endif
+
+/*
+ * rs_blend_dst_func: Blend destination function
+ *
+ */
+#ifndef __LP64__
+#if (defined(RS_VERSION) && (RS_VERSION >= 16))
+typedef enum {
+    RS_BLEND_DST_ZERO                   = 0,
+    RS_BLEND_DST_ONE                    = 1,
+    RS_BLEND_DST_SRC_COLOR              = 2,
+    RS_BLEND_DST_ONE_MINUS_SRC_COLOR    = 3,
+    RS_BLEND_DST_SRC_ALPHA              = 4,
+    RS_BLEND_DST_ONE_MINUS_SRC_ALPHA    = 5,
+    RS_BLEND_DST_DST_ALPHA              = 6,
+    RS_BLEND_DST_ONE_MINUS_DST_ALPHA    = 7,
+    RS_BLEND_DST_INVALID                = 100
+} rs_blend_dst_func;
+#endif
+#endif
+
+/*
+ * rs_cull_mode: Culling mode
+ *
+ */
+#ifndef __LP64__
+#if (defined(RS_VERSION) && (RS_VERSION >= 16))
+typedef enum {
+    RS_CULL_BACK     = 0,
+    RS_CULL_FRONT    = 1,
+    RS_CULL_NONE     = 2,
+    RS_CULL_INVALID  = 100
+} rs_cull_mode;
+#endif
+#endif
+
+/*
+ * rs_depth_func: Depth function
+ *
+ * Specifies conditional drawing depending on the comparison of the incoming
+ * depth to that found in the depth buffer.
+ */
+#ifndef __LP64__
+#if (defined(RS_VERSION) && (RS_VERSION >= 16))
+typedef enum {
+    RS_DEPTH_FUNC_ALWAYS        = 0, // Always drawn
+    RS_DEPTH_FUNC_LESS          = 1, // Drawn if the incoming depth value is less than that in the depth buffer
+    RS_DEPTH_FUNC_LEQUAL        = 2, // Drawn if the incoming depth value is less or equal to that in the depth buffer
+    RS_DEPTH_FUNC_GREATER       = 3, // Drawn if the incoming depth value is greater than that in the depth buffer
+    RS_DEPTH_FUNC_GEQUAL        = 4, // Drawn if the incoming depth value is greater or equal to that in the depth buffer
+    RS_DEPTH_FUNC_EQUAL         = 5, // Drawn if the incoming depth value is equal to that in the depth buffer
+    RS_DEPTH_FUNC_NOTEQUAL      = 6, // Drawn if the incoming depth value is not equal to that in the depth buffer
+    RS_DEPTH_FUNC_INVALID       = 100 // Invalid depth function
+} rs_depth_func;
+#endif
+#endif
+
+/*
+ * rs_primitive: How to intepret mesh vertex data
+ *
+ * Describes the way mesh vertex data is interpreted when rendering
+ */
+#ifndef __LP64__
+#if (defined(RS_VERSION) && (RS_VERSION >= 16))
+typedef enum {
+    RS_PRIMITIVE_POINT = 0, // Vertex data will be rendered as a series of points
+    RS_PRIMITIVE_LINE = 1, // Vertex pairs will be rendered as lines
+    RS_PRIMITIVE_LINE_STRIP = 2, // Vertex data will be rendered as a connected line strip
+    RS_PRIMITIVE_TRIANGLE = 3, // Vertices will be rendered as individual triangles
+    RS_PRIMITIVE_TRIANGLE_STRIP = 4, // Vertices will be rendered as a connected triangle strip defined by the first three vertices with each additional triangle defined by a new vertex
+    RS_PRIMITIVE_TRIANGLE_FAN = 5, // Vertices will be rendered as a sequence of triangles that all share first vertex as the origin
+    RS_PRIMITIVE_INVALID = 100 // Invalid primitive
+} rs_primitive;
+#endif
+#endif
+
+/*
+ * rs_font: Handle to a Font
+ *
+ * Opaque handle to a RenderScript font object.
+ * See: android.renderscript.Font
+ */
+#ifndef __LP64__
+typedef _RS_HANDLE rs_font;
+#endif
+
+/*
+ * rs_mesh: Handle to a Mesh
+ *
+ * Opaque handle to a RenderScript mesh object.
+ * See: android.renderscript.Mesh
+ */
+#ifndef __LP64__
+typedef _RS_HANDLE rs_mesh;
+#endif
+
+/*
+ * rs_program_fragment: Handle to a ProgramFragment
+ *
+ * Opaque handle to a RenderScript ProgramFragment object.
+ * See: android.renderscript.ProgramFragment
+ */
+#ifndef __LP64__
+typedef _RS_HANDLE rs_program_fragment;
+#endif
+
+/*
+ * rs_program_vertex: Handle to a ProgramVertex
+ *
+ * Opaque handle to a RenderScript ProgramVertex object.
+ * See: android.renderscript.ProgramVertex
+ */
+#ifndef __LP64__
+typedef _RS_HANDLE rs_program_vertex;
+#endif
+
+/*
+ * rs_program_raster: Handle to a ProgramRaster
+ *
+ * Opaque handle to a RenderScript ProgramRaster object.
+ * See: android.renderscript.ProgramRaster
+ */
+#ifndef __LP64__
+typedef _RS_HANDLE rs_program_raster;
+#endif
+
+/*
+ * rs_program_store: Handle to a ProgramStore
+ *
+ * Opaque handle to a RenderScript ProgramStore object.
+ * See: android.renderscript.ProgramStore
+ */
+#ifndef __LP64__
+typedef _RS_HANDLE rs_program_store;
+#endif
+
+/*
+ * rsClearObject: For internal use.
+ *
+ */
+#ifndef __LP64__
+extern void __attribute__((overloadable))
+    rsClearObject(rs_mesh* dst);
+#endif
+
+#ifndef __LP64__
+extern void __attribute__((overloadable))
+    rsClearObject(rs_program_fragment* dst);
+#endif
+
+#ifndef __LP64__
+extern void __attribute__((overloadable))
+    rsClearObject(rs_program_vertex* dst);
+#endif
+
+#ifndef __LP64__
+extern void __attribute__((overloadable))
+    rsClearObject(rs_program_raster* dst);
+#endif
+
+#ifndef __LP64__
+extern void __attribute__((overloadable))
+    rsClearObject(rs_program_store* dst);
+#endif
+
+#ifndef __LP64__
+extern void __attribute__((overloadable))
+    rsClearObject(rs_font* dst);
+#endif
+
+/*
+ * rsIsObject: For internal use.
+ *
+ */
+#ifndef __LP64__
+extern bool __attribute__((overloadable))
+    rsIsObject(rs_mesh v);
+#endif
+
+#ifndef __LP64__
+extern bool __attribute__((overloadable))
+    rsIsObject(rs_program_fragment v);
+#endif
+
+#ifndef __LP64__
+extern bool __attribute__((overloadable))
+    rsIsObject(rs_program_vertex v);
+#endif
+
+#ifndef __LP64__
+extern bool __attribute__((overloadable))
+    rsIsObject(rs_program_raster v);
+#endif
+
+#ifndef __LP64__
+extern bool __attribute__((overloadable))
+    rsIsObject(rs_program_store v);
+#endif
+
+#ifndef __LP64__
+extern bool __attribute__((overloadable))
+    rsIsObject(rs_font v);
+#endif
+
+/*
+ * rsSetObject: For internal use.
+ *
+ */
+#ifndef __LP64__
+extern void __attribute__((overloadable))
+    rsSetObject(rs_mesh* dst, rs_mesh src);
+#endif
+
+#ifndef __LP64__
+extern void __attribute__((overloadable))
+    rsSetObject(rs_program_fragment* dst, rs_program_fragment src);
+#endif
+
+#ifndef __LP64__
+extern void __attribute__((overloadable))
+    rsSetObject(rs_program_vertex* dst, rs_program_vertex src);
+#endif
+
+#ifndef __LP64__
+extern void __attribute__((overloadable))
+    rsSetObject(rs_program_raster* dst, rs_program_raster src);
+#endif
+
+#ifndef __LP64__
+extern void __attribute__((overloadable))
+    rsSetObject(rs_program_store* dst, rs_program_store src);
+#endif
+
+#ifndef __LP64__
+extern void __attribute__((overloadable))
+    rsSetObject(rs_font* dst, rs_font src);
 #endif
 
 /*
@@ -364,6 +624,89 @@ static inline void __attribute__((always_inline, overloadable))
 #endif
 
 /*
+ * Returns an allocation containing index data or a null
+ * allocation if only the primitive is specified
+ *
+ * Parameters:
+ *   m mesh to get data from
+ *   index index of the index allocation
+ *
+ * Returns: allocation containing index data
+ */
+#ifndef __LP64__
+#if (defined(RS_VERSION) && (RS_VERSION >= 16))
+extern rs_allocation __attribute__((overloadable))
+    rsgMeshGetIndexAllocation(rs_mesh m, uint32_t index);
+#endif
+#endif
+
+/*
+ * Returns the primitive describing how a part of the mesh is
+ * rendered
+ *
+ * Parameters:
+ *   m mesh to get data from
+ *   index index of the primitive
+ *
+ * Returns: primitive describing how the mesh is rendered
+ */
+#ifndef __LP64__
+#if (defined(RS_VERSION) && (RS_VERSION >= 16))
+extern rs_primitive __attribute__((overloadable))
+    rsgMeshGetPrimitive(rs_mesh m, uint32_t index);
+#endif
+#endif
+
+/*
+ * Meshes could have multiple index sets, this function returns
+ * the number.
+ *
+ * Parameters:
+ *   m mesh to get data from
+ *
+ * Returns: number of primitive groups in the mesh. This would include simple primitives as well as allocations containing index data
+ */
+#ifndef __LP64__
+#if (defined(RS_VERSION) && (RS_VERSION >= 16))
+extern uint32_t __attribute__((overloadable))
+    rsgMeshGetPrimitiveCount(rs_mesh m);
+#endif
+#endif
+
+/*
+ * Returns an allocation that is part of the mesh and contains
+ * vertex data, e.g. positions, normals, texcoords
+ *
+ * Parameters:
+ *   m mesh to get data from
+ *   index index of the vertex allocation
+ *
+ * Returns: allocation containing vertex data
+ */
+#ifndef __LP64__
+#if (defined(RS_VERSION) && (RS_VERSION >= 16))
+extern rs_allocation __attribute__((overloadable))
+    rsgMeshGetVertexAllocation(rs_mesh m, uint32_t index);
+#endif
+#endif
+
+/*
+ * Returns the number of allocations in the mesh that contain
+ * vertex data
+ *
+ * Parameters:
+ *   m mesh to get data from
+ *
+ * Returns: number of allocations in the mesh that contain vertex data
+ */
+#ifndef __LP64__
+#if (defined(RS_VERSION) && (RS_VERSION >= 16))
+extern uint32_t __attribute__((overloadable))
+    rsgMeshGetVertexAllocationCount(rs_mesh m);
+#endif
+#endif
+
+/*
  * Set the constant color for a fixed function emulation program.
  */
 #ifndef __LP64__
@@ -421,6 +764,149 @@ extern void __attribute__((overloadable))
 #ifndef __LP64__
 extern void __attribute__((overloadable))
     rsgProgramVertexLoadTextureMatrix(const rs_matrix4x4* tex);
+#endif
+
+/*
+ * Get program raster cull mode
+ *
+ * Parameters:
+ *   pr program raster to query
+ */
+#ifndef __LP64__
+#if (defined(RS_VERSION) && (RS_VERSION >= 16))
+extern rs_cull_mode __attribute__((overloadable))
+    rsgProgramRasterGetCullMode(rs_program_raster pr);
+#endif
+#endif
+
+/*
+ * Get program raster point sprite state
+ *
+ * Parameters:
+ *   pr program raster to query
+ */
+#ifndef __LP64__
+#if (defined(RS_VERSION) && (RS_VERSION >= 16))
+extern bool __attribute__((overloadable))
+    rsgProgramRasterIsPointSpriteEnabled(rs_program_raster pr);
+#endif
+#endif
+
+/*
+ * Get program store blend destination function
+ *
+ * Parameters:
+ *   ps program store to query
+ */
+#ifndef __LP64__
+#if (defined(RS_VERSION) && (RS_VERSION >= 16))
+extern rs_blend_dst_func __attribute__((overloadable))
+    rsgProgramStoreGetBlendDstFunc(rs_program_store ps);
+#endif
+#endif
+
+/*
+ * Get program store blend source function
+ *
+ * Parameters:
+ *   ps program store to query
+ */
+#ifndef __LP64__
+#if (defined(RS_VERSION) && (RS_VERSION >= 16))
+extern rs_blend_src_func __attribute__((overloadable))
+    rsgProgramStoreGetBlendSrcFunc(rs_program_store ps);
+#endif
+#endif
+
+/*
+ * Get program store depth function
+ *
+ * Parameters:
+ *   ps program store to query
+ */
+#ifndef __LP64__
+#if (defined(RS_VERSION) && (RS_VERSION >= 16))
+extern rs_depth_func __attribute__((overloadable))
+    rsgProgramStoreGetDepthFunc(rs_program_store ps);
+#endif
+#endif
+
+/*
+ * Get program store alpha component color mask
+ *
+ * Parameters:
+ *   ps program store to query
+ */
+#ifndef __LP64__
+#if (defined(RS_VERSION) && (RS_VERSION >= 16))
+extern bool __attribute__((overloadable))
+    rsgProgramStoreIsColorMaskAlphaEnabled(rs_program_store ps);
+#endif
+#endif
+
+/*
+ * Get program store blur component color mask
+ *
+ * Parameters:
+ *   ps program store to query
+ */
+#ifndef __LP64__
+#if (defined(RS_VERSION) && (RS_VERSION >= 16))
+extern bool __attribute__((overloadable))
+    rsgProgramStoreIsColorMaskBlueEnabled(rs_program_store ps);
+#endif
+#endif
+
+/*
+ * Get program store green component color mask
+ *
+ * Parameters:
+ *   ps program store to query
+ */
+#ifndef __LP64__
+#if (defined(RS_VERSION) && (RS_VERSION >= 16))
+extern bool __attribute__((overloadable))
+    rsgProgramStoreIsColorMaskGreenEnabled(rs_program_store ps);
+#endif
+#endif
+
+/*
+ * Get program store red component color mask
+ *
+ * Parameters:
+ *   ps program store to query
+ */
+#ifndef __LP64__
+#if (defined(RS_VERSION) && (RS_VERSION >= 16))
+extern bool __attribute__((overloadable))
+    rsgProgramStoreIsColorMaskRedEnabled(rs_program_store ps);
+#endif
+#endif
+
+/*
+ * Get program store depth mask
+ *
+ * Parameters:
+ *   ps program store to query
+ */
+#ifndef __LP64__
+#if (defined(RS_VERSION) && (RS_VERSION >= 16))
+extern bool __attribute__((overloadable))
+    rsgProgramStoreIsDepthMaskEnabled(rs_program_store ps);
+#endif
+#endif
+
+/*
+ * Get program store dither state
+ *
+ * Parameters:
+ *   ps program store to query
+ */
+#ifndef __LP64__
+#if (defined(RS_VERSION) && (RS_VERSION >= 16))
+extern bool __attribute__((overloadable))
+    rsgProgramStoreIsDitherEnabled(rs_program_store ps);
+#endif
 #endif
 
 #endif // RENDERSCRIPT_RS_GRAPHICS_RSH
