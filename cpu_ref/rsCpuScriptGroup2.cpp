@@ -12,7 +12,6 @@
 
 #ifndef RS_COMPATIBILITY_LIB
 #include "bcc/Config/Config.h"
-#include <sys/wait.h>
 #endif
 
 #include "cpu_ref/rsCpuCore.h"
@@ -264,40 +263,6 @@ void setupCompileArguments(
     args->push_back(nullptr);
 }
 
-bool fuseAndCompile(const char** arguments,
-                    const string& commandLine) {
-    const pid_t pid = fork();
-
-    if (pid == -1) {
-        ALOGE("Couldn't fork for bcc execution");
-        return false;
-    }
-
-    if (pid == 0) {
-        // Child process
-        ALOGV("Invoking BCC with: %s", commandLine.c_str());
-        execv(RsdCpuScriptImpl::BCC_EXE_PATH, (char* const*)arguments);
-
-        ALOGE("execv() failed: %s", strerror(errno));
-        abort();
-        return false;
-    }
-
-    // Parent process
-    int status = 0;
-    const pid_t w = waitpid(pid, &status, 0);
-    if (w == -1) {
-        return false;
-    }
-
-    if (!WIFEXITED(status) || WEXITSTATUS(status) != 0 ) {
-        ALOGE("bcc terminated unexpectedly");
-        return false;
-    }
-
-    return true;
-}
-
 void generateSourceSlot(const Closure& closure,
                         const std::vector<std::string>& inputs,
                         std::stringstream& ss) {
@@ -384,13 +349,14 @@ void CpuScriptGroup2Impl::compile(const char* cacheDir) {
     const string& coreLibPath = getCoreLibPath(getCpuRefImpl()->getContext(),
                                                &coreLibRelaxedPath);
     vector<const char*> arguments;
-    setupCompileArguments(inputs, kernelBatches, invokeBatches, cacheDir,
+    string output_dir(cacheDir);
+    setupCompileArguments(inputs, kernelBatches, invokeBatches, output_dir,
                           outputFileName, coreLibPath, coreLibRelaxedPath, &arguments);
-    std::unique_ptr<const char> joined(
-        rsuJoinStrings(arguments.size() - 1, arguments.data()));
-    string commandLine (joined.get());
 
-    if (!fuseAndCompile(arguments.data(), commandLine)) {
+    bool compiled = rsuExecuteCommand(RsdCpuScriptImpl::BCC_EXE_PATH,
+                                     arguments.size()-1,
+                                     arguments.data());
+    if (!compiled) {
         unlink(objFilePath.c_str());
         return;
     }
