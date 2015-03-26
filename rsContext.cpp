@@ -459,6 +459,7 @@ Context::Context() {
     mForceCpu = false;
     mContextType = RS_CONTEXT_TYPE_NORMAL;
     mSynchronous = false;
+    mFatalErrorOccured = false;
 }
 
 Context * Context::createContext(Device *dev, const RsSurfaceConfig *sc,
@@ -725,6 +726,13 @@ void Context::deinitToClient() {
 
 void Context::setError(RsError e, const char *msg) const {
     mError = e;
+
+    if (mError >= RS_ERROR_FATAL_DEBUG) {
+        // If a FATAL error occurred, set the flag to indicate the process
+        // will be goign down
+        mFatalErrorOccured = true;
+    }
+
     sendMessageToClient(msg, RS_MESSAGE_TO_CLIENT_ERROR, e, strlen(msg) + 1, true);
 }
 

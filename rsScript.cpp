@@ -48,6 +48,8 @@ void Script::setSlot(uint32_t slot, Allocation *a) {
         return;
     }
 
+    if (mRSC->hadFatalError()) return;
+
     mSlots[slot].set(a);
     mHasObjectSlots = true;
     mRSC->mHal.funcs.script.setGlobalBind(mRSC, this, slot, a);
@@ -59,6 +61,8 @@ void Script::setVar(uint32_t slot, const void *val, size_t len) {
         ALOGE("Script::setVar unable to set allocation, invalid slot index");
         return;
     }
+    if (mRSC->hadFatalError()) return;
+
     mRSC->mHal.funcs.script.setGlobalVar(mRSC, this, slot, (void *)val, len);
 }
 
@@ -69,6 +73,8 @@ void Script::getVar(uint32_t slot, const void *val, size_t len) {
               "%u >= %zu", slot, mHal.info.exportedVariableCount);
         return;
     }
+    if (mRSC->hadFatalError()) return;
+
     mRSC->mHal.funcs.script.getGlobalVar(mRSC, this, slot, (void *)val, len);
 }
 
@@ -79,6 +85,8 @@ void Script::setVar(uint32_t slot, const void *val, size_t len, Element *e,
               "%u >= %zu", slot, mHal.info.exportedVariableCount);
         return;
     }
+    if (mRSC->hadFatalError()) return;
+
     mRSC->mHal.funcs.script.setGlobalVarWithElemDims(mRSC, this, slot,
             (void *)val, len, e, dims, dimLen);
 }
@@ -90,6 +98,8 @@ void Script::setVarObj(uint32_t slot, ObjectBase *val) {
               "%u >= %zu", slot, mHal.info.exportedVariableCount);
         return;
     }
+    if (mRSC->hadFatalError()) return;
+
     mHasObjectSlots = true;
     mRSC->mHal.funcs.script.setGlobalObj(mRSC, this, slot, val);
 }
