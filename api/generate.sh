@@ -22,9 +22,7 @@ mkdir -p test
 mkdir -p scriptc
 mkdir -p html
 
-# Because rsIs/Clear/SetObject is documented in rs_object_info but also found in rs_graphics, the latter must appear
-# after the former.
-./generator rs_core.spec rs_value_types.spec rs_object_types.spec rs_allocation_data.spec rs_atomic.spec rs_convert.spec rs_debug.spec rs_for_each.spec rs_io.spec rs_math.spec rs_matrix.spec rs_object_info.spec rs_quaternion.spec rs_time.spec rs_vector_math.spec rs_graphics.spec
+./generator rs_allocation.spec rs_atomic.spec rs_core_math.spec rs_core.spec rs_debug.spec rs_element.spec rs_graphics.spec rs_math.spec rs_matrix.spec rs_mesh.spec rs_object.spec rs_program.spec rs_quaternion.spec rs_sampler.spec rs_time.spec rs_types.spec
 
 rm -f ../../../cts/tests/tests/renderscript/src/android/renderscript/cts/generated/*
 mv test/* ../../../cts/tests/tests/renderscript/src/android/renderscript/cts/generated/
