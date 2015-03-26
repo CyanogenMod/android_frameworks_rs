@@ -66,7 +66,7 @@ public class RSTestCore {
         unitTests.add(new UT_kernel(this, mRes, mCtx));
         unitTests.add(new UT_kernel_struct(this, mRes, mCtx));
         unitTests.add(new UT_kernel2d(this, mRes, mCtx));
-//      unitTests.add(new UT_kernel3d(this, mRes, mCtx)); // does not pass reliably yet
+        unitTests.add(new UT_kernel3d(this, mRes, mCtx));
         unitTests.add(new UT_kernel2d_oldstyle(this, mRes, mCtx));
         unitTests.add(new UT_ctxt_default(this, mRes, mCtx));
         unitTests.add(new UT_bug_char(this, mRes, mCtx));
