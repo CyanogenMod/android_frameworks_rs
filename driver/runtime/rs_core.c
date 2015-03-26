@@ -1,4 +1,5 @@
 #include "rs_core.rsh"
+#include "rs_types.rsh"
 #include "rs_structs.h"
 
 #include "rsCpuCoreRuntime.h"

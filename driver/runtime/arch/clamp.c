@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include "rs_core.rsh"
+#include "rs_types.rsh"
 
 typedef unsigned long long ull;
 typedef unsigned long long ull2 __attribute__((ext_vector_type(2)));
@@ -106,3 +106,4 @@ V_CLAMP(ulong);
 V_CLAMP(ull);
 
 #undef _CLAMP
+

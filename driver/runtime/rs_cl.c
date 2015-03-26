@@ -1,4 +1,4 @@
-#include "rs_core.rsh"
+#include "rs_types.rsh"
 
 extern float2 __attribute__((overloadable)) convert_float2(int2 c);
 extern float3 __attribute__((overloadable)) convert_float3(int3 c);
