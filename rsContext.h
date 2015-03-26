@@ -246,6 +246,12 @@ public:
     RsContextType getContextType() const { return mContextType; }
     void setContextType(RsContextType ct) { mContextType = ct; }
 
+    // Check for Fatal errors
+    // Should be used to prevent work from being launched
+    // which could take the process down.  Maximizes the chance
+    // the process lives long enough to get the error to the developer
+    bool hadFatalError() {return mFatalErrorOccured;}
+
     Device *mDev;
 
 #ifdef RS_COMPATIBILITY_LIB
@@ -273,7 +279,9 @@ protected:
     bool mRunning;
     bool mExit;
     bool mPaused;
+    mutable bool mFatalErrorOccured;
     mutable RsError mError;
+
 
     pthread_t mThreadId;
     pid_t mNativeThreadId;
