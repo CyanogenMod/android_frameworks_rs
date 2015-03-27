@@ -92,9 +92,6 @@ LOCAL_C_INCLUDES += frameworks/rs
 LOCAL_C_INCLUDES += external/cblas/include
 LOCAL_C_INCLUDES += external/zlib
 
-ifneq ($(HOST_OS),windows)
-include external/libcxx/libcxx.mk
-endif
 include frameworks/compile/libbcc/libbcc-targets.mk
 
 LOCAL_CFLAGS += $(rs_base_CFLAGS)
