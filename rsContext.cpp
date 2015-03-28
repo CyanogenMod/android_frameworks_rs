@@ -911,12 +911,12 @@ extern "C" RsContext rsContextCreate(RsDevice vdev, uint32_t version, uint32_t s
     return rsc;
 }
 
-#ifdef RS_COMPATIBILITY_LIB
 extern "C" void rsaContextSetNativeLibDir(RsContext con, char *libDir, size_t length) {
+#ifdef RS_COMPATIBILITY_LIB
     Context *rsc = static_cast<Context *>(con);
     rsc->setNativeLibDir(libDir, length);
-}
 #endif
+}
 
 #ifndef RS_COMPATIBILITY_LIB
 RsContext rsContextCreateGL(RsDevice vdev, uint32_t version,
