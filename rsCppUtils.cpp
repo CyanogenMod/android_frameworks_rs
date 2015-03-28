@@ -63,6 +63,13 @@ bool rsuExecuteCommand(const char *exe, int nArgs, const char * const *args) {
     }
     case 0: {  // Child process
         ALOGV("Invoking %s with args '%s'", exe, joined.get());
+
+        // ProcessManager in libcore can reap unclaimed SIGCHLDs in its process
+        // group.  To ensure that the exit signal is not caught by
+        // ProcessManager and instead sent to libRS, set the child's PGID to its
+        // PID.
+        setpgid(0, 0);
+
         execv(exe, (char * const *)args);
 
         ALOGE("execv() failed: %s", strerror(errno));
