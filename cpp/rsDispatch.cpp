@@ -376,6 +376,11 @@ bool loadSymbols(void* handle, dispatchTable& dispatchTab, int device_api) {
             LOG_API("Couldn't initialize dispatchTab.ClosureCreate");
             return false;
         }
+        dispatchTab.InvokeClosureCreate = (InvokeClosureCreateFnPtr)dlsym(handle, "rsInvokeClosureCreate");
+        if (dispatchTab.InvokeClosureCreate == NULL) {
+            LOG_API("Couldn't initialize dispatchTab.InvokeClosureCreate");
+            return false;
+        }
         dispatchTab.ClosureSetArg = (ClosureSetArgFnPtr)dlsym(handle, "rsClosureSetArg");
         if (dispatchTab.ClosureSetArg == NULL) {
             LOG_API("Couldn't initialize dispatchTab.ClosureSetArg");

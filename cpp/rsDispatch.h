@@ -30,7 +30,9 @@ typedef void (*DeviceDestroyFnPtr) (RsDevice dev);
 typedef void (*DeviceSetConfigFnPtr) (RsDevice dev, RsDeviceParam p, int32_t value);
 typedef RsContext (*ContextCreateFnPtr)(RsDevice vdev, uint32_t version, uint32_t sdkVersion, RsContextType ct, uint32_t flags);
 typedef void (*GetNameFnPtr)(RsContext, void * obj, const char **name);
+//TODO: change the size_t *  to  int * after the pending CL.
 typedef RsClosure (*ClosureCreateFnPtr)(RsContext, RsScriptKernelID, RsAllocation, RsScriptFieldID*, size_t, uintptr_t*, size_t, size_t*, size_t, RsClosure*, size_t, RsScriptFieldID*, size_t);
+typedef RsClosure (*InvokeClosureCreateFnPtr)(RsContext, RsScriptInvokeID, const void*, const size_t, const RsScriptFieldID*, const size_t, const uintptr_t*, const size_t, const size_t*, const size_t);
 typedef void (*ClosureSetArgFnPtr)(RsContext, RsClosure, uint32_t, uintptr_t, size_t);
 typedef void (*ClosureSetGlobalFnPtr)(RsContext, RsClosure, RsScriptFieldID, uintptr_t, size_t);
 typedef void (*ContextDestroyFnPtr) (RsContext);
@@ -88,7 +90,7 @@ typedef RsScriptKernelID (*ScriptKernelIDCreateFnPtr) (RsContext, RsScript, int,
 typedef RsScriptInvokeID (*ScriptInvokeIDCreateFnPtr) (RsContext, RsScript, int);
 typedef RsScriptFieldID (*ScriptFieldIDCreateFnPtr) (RsContext, RsScript, int);
 typedef RsScriptGroup (*ScriptGroupCreateFnPtr) (RsContext, RsScriptKernelID*, size_t, RsScriptKernelID*, size_t, RsScriptKernelID*, size_t, RsScriptFieldID*, size_t, const RsType*, size_t);
-typedef RsScriptGroup2 (*ScriptGroup2CreateFnPtr)(RsContext, RsClosure*, size_t);
+typedef RsScriptGroup2 (*ScriptGroup2CreateFnPtr)(RsContext, const char*, size_t, RsClosure*, size_t);
 typedef void (*ScriptGroupSetOutputFnPtr) (RsContext, RsScriptGroup, RsScriptKernelID, RsAllocation);
 typedef void (*ScriptGroupSetInputFnPtr) (RsContext, RsScriptGroup, RsScriptKernelID, RsAllocation);
 typedef void (*ScriptGroupExecuteFnPtr) (RsContext, RsScriptGroup);
@@ -125,6 +127,7 @@ struct dispatchTable {
     AllocationGetSurfaceFnPtr AllocationGetSurface;
     AllocationSetSurfaceFnPtr AllocationSetSurface;
     ClosureCreateFnPtr ClosureCreate;
+    InvokeClosureCreateFnPtr InvokeClosureCreate;
     ClosureSetArgFnPtr ClosureSetArg;
     ClosureSetGlobalFnPtr ClosureSetGlobal;
     ContextFinishFnPtr ContextFinish;
