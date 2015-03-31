@@ -63,7 +63,7 @@ Allocation::Allocation(void *id, sp<RS> rs, sp<const Type> t, uint32_t usage) :
 
     mType = t;
     mUsage = usage;
-
+    mAutoPadding = false;
     if (t != nullptr) {
         updateCacheInfo(t);
     }
@@ -71,6 +71,13 @@ Allocation::Allocation(void *id, sp<RS> rs, sp<const Type> t, uint32_t usage) :
 }
 
 
+void Allocation::validateIsInt64() {
+    RsDataType dt = mType->getElement()->getDataType();
+    if ((dt == RS_TYPE_SIGNED_64) || (dt == RS_TYPE_UNSIGNED_64)) {
+        return;
+    }
+    ALOGE("64 bit integer source does not match allocation type %i", dt);
+}
 
 void Allocation::validateIsInt32() {
     RsDataType dt = mType->getElement()->getDataType();
@@ -102,6 +109,14 @@ void Allocation::validateIsFloat32() {
         return;
     }
     ALOGE("32 bit float source does not match allocation type %i", dt);
+}
+
+void Allocation::validateIsFloat64() {
+    RsDataType dt = mType->getElement()->getDataType();
+    if (dt == RS_TYPE_FLOAT_64) {
+        return;
+    }
+    ALOGE("64 bit float source does not match allocation type %i", dt);
 }
 
 void Allocation::validateIsObject() {
@@ -150,6 +165,7 @@ void Allocation::syncAll(RsAllocationUsageType srcLocation) {
 }
 
 void Allocation::ioSendOutput() {
+//TODO: Also make it able to use for compatlib.
 #ifndef RS_COMPATIBILITY_LIB
     if ((mUsage & RS_ALLOCATION_USAGE_IO_OUTPUT) == 0) {
         mRS->throwError(RS_ERROR_INVALID_PARAMETER, "Can only send buffer if IO_OUTPUT usage specified.");
@@ -162,7 +178,7 @@ void Allocation::ioSendOutput() {
 void Allocation::ioGetInput() {
 #ifndef RS_COMPATIBILITY_LIB
     if ((mUsage & RS_ALLOCATION_USAGE_IO_INPUT) == 0) {
-        mRS->throwError(RS_ERROR_INVALID_PARAMETER, "Can only send buffer if IO_OUTPUT usage specified.");
+        mRS->throwError(RS_ERROR_INVALID_PARAMETER, "Can only get buffer if IO_INPUT usage specified.");
         return;
     }
     tryDispatch(mRS, RS::dispatch->AllocationIoReceive(mRS->getContext(), getID()));
@@ -191,6 +207,33 @@ void * Allocation::getPointer(size_t *stride) {
     return p;
 }
 
+// ---------------------------------------------------------------------------
+//Functions needed for autopadding & unpadding
+static void copyWithPadding(void* ptr, const void* srcPtr, int mSize, int count) {
+    int sizeBytesPad = mSize * 4;
+    int sizeBytes = mSize * 3;
+    uint8_t *dst = static_cast<uint8_t *>(ptr);
+    const uint8_t *src = static_cast<const uint8_t *>(srcPtr);
+    for (int i = 0; i < count; i++) {
+        memcpy(dst, src, sizeBytes);
+        dst += sizeBytesPad;
+        src += sizeBytes;
+    }
+}
+
+static void copyWithUnPadding(void* ptr, const void* srcPtr, int mSize, int count) {
+    int sizeBytesPad = mSize * 4;
+    int sizeBytes = mSize * 3;
+    uint8_t *dst = static_cast<uint8_t *>(ptr);
+    const uint8_t *src = static_cast<const uint8_t *>(srcPtr);
+    for (int i = 0; i < count; i++) {
+        memcpy(dst, src, sizeBytes);
+        dst += sizeBytes;
+        src += sizeBytesPad;
+    }
+}
+// ---------------------------------------------------------------------------
+
 void Allocation::copy1DRangeFrom(uint32_t off, size_t count, const void *data) {
 
     if(count < 1) {
@@ -202,9 +245,17 @@ void Allocation::copy1DRangeFrom(uint32_t off, size_t count, const void *data) {
         mRS->throwError(RS_ERROR_INVALID_PARAMETER, "Invalid copy specified");
         return;
     }
-
-    tryDispatch(mRS, RS::dispatch->Allocation1DData(mRS->getContext(), getIDSafe(), off, mSelectedLOD,
-                                                    count, data, count * mType->getElement()->getSizeBytes()));
+    if (mAutoPadding && (mType->getElement()->getVectorSize() == 3)) {
+        size_t eSize = mType->getElement()->getSizeBytes();
+        void *ptr = malloc(eSize * count);
+        copyWithPadding(ptr, data, eSize / 4, count);
+        tryDispatch(mRS, RS::dispatch->Allocation1DData(mRS->getContext(), getIDSafe(), off, mSelectedLOD,
+                                                        count, ptr, count * mType->getElement()->getSizeBytes()));
+        free(ptr);
+    } else {
+        tryDispatch(mRS, RS::dispatch->Allocation1DData(mRS->getContext(), getIDSafe(), off, mSelectedLOD,
+                                                        count, data, count * mType->getElement()->getSizeBytes()));
+    }
 }
 
 void Allocation::copy1DRangeTo(uint32_t off, size_t count, void *data) {
@@ -217,9 +268,17 @@ void Allocation::copy1DRangeTo(uint32_t off, size_t count, void *data) {
         mRS->throwError(RS_ERROR_INVALID_PARAMETER, "Invalid copy specified");
         return;
     }
-
-    tryDispatch(mRS, RS::dispatch->Allocation1DRead(mRS->getContext(), getIDSafe(), off, mSelectedLOD,
-                                                    count, data, count * mType->getElement()->getSizeBytes()));
+    if (mAutoPadding && (mType->getElement()->getVectorSize() == 3)) {
+        size_t eSize = mType->getElement()->getSizeBytes();
+        void *ptr = malloc(eSize * count);
+        tryDispatch(mRS, RS::dispatch->Allocation1DRead(mRS->getContext(), getIDSafe(), off, mSelectedLOD,
+                                                        count, ptr, count * mType->getElement()->getSizeBytes()));
+        copyWithUnPadding(data, ptr, eSize / 4, count);
+        free(ptr);
+    } else {
+        tryDispatch(mRS, RS::dispatch->Allocation1DRead(mRS->getContext(), getIDSafe(), off, mSelectedLOD,
+                                                        count, data, count * mType->getElement()->getSizeBytes()));
+    }
 }
 
 void Allocation::copy1DRangeFrom(uint32_t off, size_t count, sp<const Allocation> data,
@@ -253,10 +312,21 @@ void Allocation::validate2DRange(uint32_t xoff, uint32_t yoff, uint32_t w, uint3
 void Allocation::copy2DRangeFrom(uint32_t xoff, uint32_t yoff, uint32_t w, uint32_t h,
                                  const void *data) {
     validate2DRange(xoff, yoff, w, h);
-    tryDispatch(mRS, RS::dispatch->Allocation2DData(mRS->getContext(), getIDSafe(), xoff,
-                                                    yoff, mSelectedLOD, mSelectedFace,
-                                                    w, h, data, w * h * mType->getElement()->getSizeBytes(),
-                                                    w * mType->getElement()->getSizeBytes()));
+    if (mAutoPadding && (mType->getElement()->getVectorSize() == 3)) {
+        size_t eSize = mType->getElement()->getSizeBytes();
+        void *ptr = malloc(eSize * w * h);
+        copyWithPadding(ptr, data, eSize / 4, w * h);
+        tryDispatch(mRS, RS::dispatch->Allocation2DData(mRS->getContext(), getIDSafe(), xoff,
+                                                        yoff, mSelectedLOD, mSelectedFace,
+                                                        w, h, ptr, w * h * mType->getElement()->getSizeBytes(),
+                                                        w * mType->getElement()->getSizeBytes()));
+        free(ptr);
+    } else {
+        tryDispatch(mRS, RS::dispatch->Allocation2DData(mRS->getContext(), getIDSafe(), xoff,
+                                                        yoff, mSelectedLOD, mSelectedFace,
+                                                        w, h, data, w * h * mType->getElement()->getSizeBytes(),
+                                                        w * mType->getElement()->getSizeBytes()));
+    }
 }
 
 void Allocation::copy2DRangeFrom(uint32_t xoff, uint32_t yoff, uint32_t w, uint32_t h,
@@ -271,10 +341,21 @@ void Allocation::copy2DRangeFrom(uint32_t xoff, uint32_t yoff, uint32_t w, uint3
 void Allocation::copy2DRangeTo(uint32_t xoff, uint32_t yoff, uint32_t w, uint32_t h,
                                void* data) {
     validate2DRange(xoff, yoff, w, h);
-    tryDispatch(mRS, RS::dispatch->Allocation2DRead(mRS->getContext(), getIDSafe(), xoff, yoff,
-                                                    mSelectedLOD, mSelectedFace, w, h, data,
-                                                    w * h * mType->getElement()->getSizeBytes(),
-                                                    w * mType->getElement()->getSizeBytes()));
+    if (mAutoPadding && (mType->getElement()->getVectorSize() == 3)) {
+        size_t eSize = mType->getElement()->getSizeBytes();
+        void *ptr = malloc(eSize * w * h);
+        tryDispatch(mRS, RS::dispatch->Allocation2DRead(mRS->getContext(), getIDSafe(), xoff, yoff,
+                                                        mSelectedLOD, mSelectedFace, w, h, ptr,
+                                                        w * h * mType->getElement()->getSizeBytes(),
+                                                        w * mType->getElement()->getSizeBytes()));
+        copyWithUnPadding(data, ptr, eSize / 4, w * h);
+        free(ptr);
+    } else {
+        tryDispatch(mRS, RS::dispatch->Allocation2DRead(mRS->getContext(), getIDSafe(), xoff, yoff,
+                                                        mSelectedLOD, mSelectedFace, w, h, data,
+                                                        w * h * mType->getElement()->getSizeBytes(),
+                                                        w * mType->getElement()->getSizeBytes()));
+    }
 }
 
 void Allocation::copy2DStridedFrom(uint32_t xoff, uint32_t yoff, uint32_t w, uint32_t h,
@@ -315,20 +396,50 @@ void Allocation::validate3DRange(uint32_t xoff, uint32_t yoff, uint32_t zoff, ui
 void Allocation::copy3DRangeFrom(uint32_t xoff, uint32_t yoff, uint32_t zoff, uint32_t w,
                                  uint32_t h, uint32_t d, const void* data) {
     validate3DRange(xoff, yoff, zoff, w, h, d);
-    tryDispatch(mRS, RS::dispatch->Allocation3DData(mRS->getContext(), getIDSafe(), xoff, yoff, zoff,
-                                                    mSelectedLOD, w, h, d, data,
-                                                    w * h * d * mType->getElement()->getSizeBytes(),
-                                                    w * mType->getElement()->getSizeBytes()));
+    if (mAutoPadding && (mType->getElement()->getVectorSize() == 3)) {
+        size_t eSize = mType->getElement()->getSizeBytes();
+        void *ptr = malloc(eSize * w * h * d);
+        copyWithPadding(ptr, data, eSize / 4, w * h * d);
+        tryDispatch(mRS, RS::dispatch->Allocation3DData(mRS->getContext(), getIDSafe(), xoff, yoff, zoff,
+                                                        mSelectedLOD, w, h, d, ptr,
+                                                        w * h * d * mType->getElement()->getSizeBytes(),
+                                                        w * mType->getElement()->getSizeBytes()));
+        free(ptr);
+    } else {
+        tryDispatch(mRS, RS::dispatch->Allocation3DData(mRS->getContext(), getIDSafe(), xoff, yoff, zoff,
+                                                        mSelectedLOD, w, h, d, data,
+                                                        w * h * d * mType->getElement()->getSizeBytes(),
+                                                        w * mType->getElement()->getSizeBytes()));
+    }
 }
 
 void Allocation::copy3DRangeFrom(uint32_t xoff, uint32_t yoff, uint32_t zoff, uint32_t w, uint32_t h, uint32_t d,
                                  sp<const Allocation> data, uint32_t dataXoff, uint32_t dataYoff, uint32_t dataZoff) {
-    validate3DRange(xoff, yoff, zoff, dataXoff, dataYoff, dataZoff);
+    validate3DRange(xoff, yoff, zoff, w, h, d);
     tryDispatch(mRS, RS::dispatch->AllocationCopy3DRange(mRS->getContext(), getIDSafe(), xoff, yoff, zoff,
                                                          mSelectedLOD, w, h, d, data->getIDSafe(),
                                                          dataXoff, dataYoff, dataZoff, data->mSelectedLOD));
 }
 
+void Allocation::copy3DRangeTo(uint32_t xoff, uint32_t yoff, uint32_t zoff, uint32_t w,
+                                 uint32_t h, uint32_t d, void* data) {
+    validate3DRange(xoff, yoff, zoff, w, h, d);
+    if (mAutoPadding && (mType->getElement()->getVectorSize() == 3)) {
+        size_t eSize = mType->getElement()->getSizeBytes();
+        void *ptr = malloc(eSize * w * h * d);
+        tryDispatch(mRS, RS::dispatch->Allocation3DRead(mRS->getContext(), getIDSafe(), xoff, yoff, zoff,
+                                                        mSelectedLOD, w, h, d, ptr,
+                                                        w * h * d * mType->getElement()->getSizeBytes(),
+                                                        w * mType->getElement()->getSizeBytes()));
+        copyWithUnPadding(data, ptr, eSize / 4, w * h * d);
+        free(ptr);
+    } else {
+        tryDispatch(mRS, RS::dispatch->Allocation3DRead(mRS->getContext(), getIDSafe(), xoff, yoff, zoff,
+                                                        mSelectedLOD, w, h, d, data,
+                                                        w * h * d * mType->getElement()->getSizeBytes(),
+                                                        w * mType->getElement()->getSizeBytes()));
+    }
+}
 
 sp<Allocation> Allocation::createTyped(sp<RS> rs, sp<const Type> type,
                                     RsAllocationMipmapControl mipmaps, uint32_t usage) {
