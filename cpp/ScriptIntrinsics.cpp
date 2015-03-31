@@ -24,7 +24,8 @@ using namespace RSC;
 
 ScriptIntrinsic::ScriptIntrinsic(sp<RS> rs, int id, sp<const Element> e)
     : Script(nullptr, rs) {
-    mID = createDispatch(rs, RS::dispatch->ScriptIntrinsicCreate(rs->getContext(), id, e->getID()));
+    mID = createDispatch(rs, RS::dispatch->ScriptIntrinsicCreate(rs->getContext(), id,
+                         e != nullptr ? e->getID() : 0));
     mElement = e;
 }
 
@@ -568,6 +569,43 @@ void ScriptIntrinsicLUT::setAlpha(unsigned char base, unsigned int length, unsig
 ScriptIntrinsicLUT::~ScriptIntrinsicLUT() {
 
 }
+
+sp<ScriptIntrinsicResize> ScriptIntrinsicResize::create(sp<RS> rs) {
+    return new ScriptIntrinsicResize(rs, nullptr);
+}
+
+ScriptIntrinsicResize::ScriptIntrinsicResize(sp<RS> rs, sp<const Element> e)
+    : ScriptIntrinsic(rs, RS_SCRIPT_INTRINSIC_ID_RESIZE, e) {
+
+}
+void ScriptIntrinsicResize::forEach_bicubic(sp<Allocation> aout) {
+    if (aout == mInput) {
+        mRS->throwError(RS_ERROR_INVALID_PARAMETER, "Resize Input and Ouput cannot be the same");
+    }
+
+    if (!(mInput->getType()->getElement()->isCompatible(aout->getType()->getElement()))) {
+        mRS->throwError(RS_ERROR_INVALID_ELEMENT, "Resize forEach element mismatch");
+        return;
+    }
+    Script::forEach(0, nullptr, aout, nullptr, 0);
+}
+void ScriptIntrinsicResize::setInput(sp<Allocation> ain) {
+    if (!(ain->getType()->getElement()->isCompatible(Element::U8(mRS))) &&
+        !(ain->getType()->getElement()->isCompatible(Element::U8_2(mRS))) &&
+        !(ain->getType()->getElement()->isCompatible(Element::U8_3(mRS))) &&
+        !(ain->getType()->getElement()->isCompatible(Element::U8_4(mRS))) &&
+        !(ain->getType()->getElement()->isCompatible(Element::F32(mRS))) &&
+        !(ain->getType()->getElement()->isCompatible(Element::F32_2(mRS))) &&
+        !(ain->getType()->getElement()->isCompatible(Element::F32_3(mRS))) &&
+        !(ain->getType()->getElement()->isCompatible(Element::F32_4(mRS)))) {
+        mRS->throwError(RS_ERROR_INVALID_ELEMENT, "Invalid element for Resize Input");
+        return;
+    }
+
+    mInput = ain;
+    Script::setVar(0, ain);
+}
+
 
 sp<ScriptIntrinsicYuvToRGB> ScriptIntrinsicYuvToRGB::create(sp<RS> rs, sp<const Element> e) {
     if (!(e->isCompatible(Element::U8_4(rs)))) {

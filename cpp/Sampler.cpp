@@ -25,9 +25,20 @@ Sampler::Sampler(sp<RS> rs, void* id):
 {
     RsSamplerValue mMin = RS_SAMPLER_INVALID;
     RsSamplerValue mMag = RS_SAMPLER_INVALID;
-    RsSamplerValue mWrapS = RS_SAMPLER_INVALID;;
-    RsSamplerValue mWrapT = RS_SAMPLER_INVALID;;
+    RsSamplerValue mWrapS = RS_SAMPLER_INVALID;
+    RsSamplerValue mWrapT = RS_SAMPLER_INVALID;
     float mAniso = 0.f;
+}
+
+Sampler::Sampler(sp<RS> rs, void* id, RsSamplerValue min, RsSamplerValue mag,
+                 RsSamplerValue wrapS, RsSamplerValue wrapT, float anisotropy):
+    BaseObj(id, rs)
+{
+    RsSamplerValue mMin = min;
+    RsSamplerValue mMag = mag;
+    RsSamplerValue mWrapS = wrapS;
+    RsSamplerValue mWrapT = wrapT;
+    float mAniso = anisotropy;
 }
 
 RsSamplerValue Sampler::getMinification() {
@@ -50,10 +61,12 @@ float Sampler::getAnisotropy() {
     return mAniso;
 }
 
-sp<Sampler> Sampler::create(sp<RS> rs, RsSamplerValue min, RsSamplerValue mag, RsSamplerValue wrapS, RsSamplerValue wrapT, float anisotropy) {
+sp<Sampler> Sampler::create(sp<RS> rs, RsSamplerValue min, RsSamplerValue mag,
+                            RsSamplerValue wrapS, RsSamplerValue wrapT, float anisotropy) {
     // we aren't supporting wrapR in C++ API atm, so always pass wrap for that
-    void* id = RS::dispatch->SamplerCreate(rs->getContext(), min, mag, wrapS, wrapT, RS_SAMPLER_WRAP, anisotropy);
-    return new Sampler(rs, id);
+    void* id = RS::dispatch->SamplerCreate(rs->getContext(), min, mag, wrapS, wrapT,
+                                           RS_SAMPLER_WRAP, anisotropy);
+    return new Sampler(rs, id, min, mag, wrapS, wrapT, anisotropy);
 }
 
 #define CREATE_SAMPLER(N, MIN, MAG, WRAPS, WRAPT) sp<const Sampler> Sampler::N(sp<RS> rs) { \

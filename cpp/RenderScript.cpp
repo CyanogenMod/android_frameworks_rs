@@ -80,14 +80,14 @@ bool RS::init(std::string name, uint32_t flags) {
 
 // this will only open API 19+ libRS
 // because that's when we changed libRS to extern "C" entry points
-static bool loadSO(const char* filename) {
+static bool loadSO(const char* filename, int targetApi) {
     void* handle = dlopen(filename, RTLD_LAZY | RTLD_LOCAL);
     if (handle == nullptr) {
         ALOGV("couldn't dlopen %s, %s", filename, dlerror());
         return false;
     }
 
-    if (loadSymbols(handle, *RS::dispatch) == false) {
+    if (loadSymbols(handle, *RS::dispatch, targetApi) == false) {
         ALOGV("%s init failed!", filename);
         return false;
     }
@@ -119,10 +119,10 @@ bool RS::initDispatch(int targetApi) {
     // attempt to load libRS, load libRSSupport on failure
     // if property is set, proceed directly to libRSSupport
     if (getProp("debug.rs.forcecompat") == 0) {
-        usingNative = loadSO("libRS.so");
+        usingNative = loadSO("libRS.so", targetApi);
     }
     if (usingNative == false) {
-        if (loadSO("libRSSupport.so") == false) {
+        if (loadSO("libRSSupport.so", targetApi) == false) {
             ALOGE("Failed to load libRS.so and libRSSupport.so");
             goto error;
         }

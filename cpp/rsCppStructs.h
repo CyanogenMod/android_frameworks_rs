@@ -305,6 +305,7 @@ protected:
     bool mConstrainedZ;
     bool mReadAllowed;
     bool mWriteAllowed;
+    bool mAutoPadding;
     uint32_t mSelectedY;
     uint32_t mSelectedZ;
     uint32_t mSelectedLOD;
@@ -320,10 +321,12 @@ protected:
 
     Allocation(void *id, sp<RS> rs, sp<const Type> t, uint32_t usage);
 
+    void validateIsInt64();
     void validateIsInt32();
     void validateIsInt16();
     void validateIsInt8();
     void validateIsFloat32();
+    void validateIsFloat64();
     void validateIsObject();
 
     virtual void updateFromNative();
@@ -340,6 +343,16 @@ public:
      */
     sp<const Type> getType() const {
         return mType;
+    }
+
+    /**
+     * Enable/Disable AutoPadding for Vec3 elements.
+     *
+     * @param useAutoPadding True: enable AutoPadding; flase: disable AutoPadding
+     *
+     */
+    void setAutoPadding(bool useAutoPadding) {
+        mAutoPadding = useAutoPadding;
     }
 
     /**
@@ -503,6 +516,20 @@ public:
                          uint32_t w, uint32_t h, uint32_t d,
                          sp<const Allocation> data,
                          uint32_t dataXoff, uint32_t dataYoff, uint32_t dataZoff);
+
+    /**
+     * Copy a 3D region in this Allocation into an array. The
+     * array is assumed to be tightly packed.
+     * @param[in] xoff X offset of region to update in this Allocation
+     * @param[in] yoff Y offset of region to update in this Allocation
+     * @param[in] zoff Z offset of region to update in this Allocation
+     * @param[in] w Width of region to update
+     * @param[in] h Height of region to update
+     * @param[in] d Depth of region to update
+     * @param[in] data Array from which to copy
+     */
+    void copy3DRangeTo(uint32_t xoff, uint32_t yoff, uint32_t zoff, uint32_t w,
+                         uint32_t h, uint32_t d, void* data);
 
     /**
      * Creates an Allocation for use by scripts with a given Type.
@@ -1836,6 +1863,38 @@ class ScriptIntrinsicLUT : public ScriptIntrinsic {
 };
 
 /**
+ * Intrinsic for performing a resize of a 2D allocation.
+ */
+class ScriptIntrinsicResize : public ScriptIntrinsic {
+ private:
+    sp<Allocation> mInput;
+    ScriptIntrinsicResize(sp<RS> rs, sp<const Element> e);
+ public:
+    /**
+     * Supported Element types are U8_4. Default lookup table is identity.
+     * @param[in] rs RenderScript context
+     * @param[in] e Element
+     * @return new ScriptIntrinsic
+     */
+    static sp<ScriptIntrinsicResize> create(sp<RS> rs);
+
+    /**
+     * Resize copy the input allocation to the output specified. The
+     * Allocation is rescaled if necessary using bi-cubic
+     * interpolation.
+     * @param[in] ain input Allocation
+     * @param[in] aout output Allocation
+     */
+    void forEach_bicubic(sp<Allocation> aout);
+
+    /**
+     * Set the input of the resize.
+     * @param[in] lut new lookup table
+     */
+    void setInput(sp<Allocation> ain);
+};
+
+/**
  * Intrinsic for converting an Android YUV buffer to RGB.
  *
  * The input allocation should be supplied in a supported YUV format
@@ -1887,6 +1946,8 @@ class ScriptIntrinsicYuvToRGB : public ScriptIntrinsic {
  class Sampler : public BaseObj {
  private:
     Sampler(sp<RS> rs, void* id);
+    Sampler(sp<RS> rs, void* id, RsSamplerValue min, RsSamplerValue mag,
+            RsSamplerValue wrapS, RsSamplerValue wrapT, float anisotropy);
     RsSamplerValue mMin;
     RsSamplerValue mMag;
     RsSamplerValue mWrapS;
