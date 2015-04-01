@@ -121,7 +121,7 @@ bool Batch::conflict(CPUClosure* cpuClosure) const {
         if (it != argDeps.end()) {
             const auto& args = (*it).second;
             for (const auto &p1 : *args) {
-                if (p1.second->get() != nullptr) {
+                if (p1.second.get() != nullptr) {
                     return true;
                 }
             }
@@ -188,11 +188,11 @@ CpuScriptGroup2Impl::~CpuScriptGroup2Impl() {
     for (Batch* batch : mBatches) {
         delete batch;
     }
+    delete mExecutable;
     // TODO: move this dlclose into ~ScriptExecutable().
     if (mScriptObj != nullptr) {
         dlclose(mScriptObj);
     }
-    delete mExecutable;
 }
 
 namespace {
@@ -379,7 +379,7 @@ void CpuScriptGroup2Impl::compile(const char* cacheDir) {
     }
 
     mExecutable = ScriptExecutable::createFromSharedObject(
-        nullptr,  // RS context. Unused.
+        getCpuRefImpl()->getContext(),
         mScriptObj);
 
 #endif  // RS_COMPATIBILITY_LIB
@@ -408,8 +408,6 @@ void Batch::setGlobalsForBatch() {
                 continue;
             }
             rsAssert(p.first != nullptr);
-            ALOGV("Evaluating closure %p, setting field %p (Script %p, slot: %d)",
-                  closure, p.first, p.first->mScript, p.first->mSlot);
             Script* script = p.first->mScript;
             const RsdCpuScriptImpl *cpuScript =
                     (const RsdCpuScriptImpl*)script->mHal.drv;
