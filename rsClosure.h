@@ -25,7 +25,7 @@ class Closure : public ObjectBase {
             const int numValues,
             const ScriptFieldID** fieldIDs,
             const void** values,  // Allocations or primitive (numeric) types
-            const size_t* sizes,  // size for data type. -1 indicates an allocation.
+            const int* sizes,  // size for data type. -1 indicates an allocation.
             const Closure** depClosures,
             const ScriptFieldID** depFieldIDs);
     Closure(Context* context,
@@ -35,7 +35,7 @@ class Closure : public ObjectBase {
             const size_t numValues,
             const ScriptFieldID** fieldIDs,
             const void** values,  // Allocations or primitive (numeric) types
-            const size_t* sizes);  // size for data type. -1 indicates an allocation.
+            const int* sizes);  // size for data type. -1 indicates an allocation.
 
     virtual ~Closure();
 
@@ -45,7 +45,7 @@ class Closure : public ObjectBase {
 
     void setArg(const uint32_t index, const void* value, const size_t size);
     void setGlobal(const ScriptFieldID* fieldID, const void* value,
-                   const size_t size);
+                   const int size);
 
     Context* mContext;
 
@@ -62,18 +62,18 @@ class Closure : public ObjectBase {
     size_t mNumArg;
 
     // A global could be allocation or any primitive data type.
-    Map<const ScriptFieldID*, Pair<const void*, size_t>> mGlobals;
+    Map<const ScriptFieldID*, Pair<const void*, int>> mGlobals;
 
     Allocation* mReturnValue;
 
     // All the other closures which this closure depends on for one of its
     // arguments, and the fields which it depends on.
-    Map<const Closure*, Map<int, const ObjectBaseRef<ScriptFieldID>*>*> mArgDeps;
+    Map<const Closure*, Map<int, ObjectBaseRef<ScriptFieldID>>*> mArgDeps;
 
     // All the other closures that this closure depends on for one of its fields,
     // and the fields that it depends on.
-    Map<const Closure*, Map<const ObjectBaseRef<ScriptFieldID>*,
-            const ObjectBaseRef<ScriptFieldID>*>*> mGlobalDeps;
+    Map<const Closure*, Map<const ScriptFieldID*,
+            ObjectBaseRef<ScriptFieldID>>*> mGlobalDeps;
 
     const void* mParams;
     const size_t mParamLength;

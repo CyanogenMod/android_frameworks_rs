@@ -308,7 +308,7 @@ ClosureCreate {
     param RsAllocation returnValue
     param RsScriptFieldID * fieldIDs
     param uintptr_t * values
-    param size_t * sizes
+    param int * sizes
     param RsClosure * depClosures
     param RsScriptFieldID * depFieldIDs
     ret RsClosure
@@ -320,7 +320,7 @@ InvokeClosureCreate {
     param const void * params
     param const RsScriptFieldID * fieldIDs
     param const uintptr_t * values
-    param const size_t * sizes
+    param const int * sizes
     ret RsClosure
 }
 

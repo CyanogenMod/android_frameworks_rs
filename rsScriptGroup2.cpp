@@ -5,6 +5,12 @@
 namespace android {
 namespace renderscript {
 
+ScriptGroup2::~ScriptGroup2() {
+    if (mRSC->mHal.funcs.scriptgroup.destroy) {
+        mRSC->mHal.funcs.scriptgroup.destroy(mRSC, this);
+    }
+}
+
 void ScriptGroup2::execute(Context* rsc) {
     if (rsc->mHal.funcs.scriptgroup.execute) {
         rsc->mHal.funcs.scriptgroup.execute(rsc, this);
@@ -20,6 +26,8 @@ RsScriptGroup2 rsi_ScriptGroup2Create(Context* rsc, const char* cacheDir,
     if (rsc->mHal.funcs.scriptgroup.init) {
         rsc->mHal.funcs.scriptgroup.init(rsc, group);
     }
+
+    group->incUserRef();
 
     return group;
 }
