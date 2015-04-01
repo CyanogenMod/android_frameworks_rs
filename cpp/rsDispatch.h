@@ -30,9 +30,8 @@ typedef void (*DeviceDestroyFnPtr) (RsDevice dev);
 typedef void (*DeviceSetConfigFnPtr) (RsDevice dev, RsDeviceParam p, int32_t value);
 typedef RsContext (*ContextCreateFnPtr)(RsDevice vdev, uint32_t version, uint32_t sdkVersion, RsContextType ct, uint32_t flags);
 typedef void (*GetNameFnPtr)(RsContext, void * obj, const char **name);
-//TODO: change the size_t *  to  int * after the pending CL.
-typedef RsClosure (*ClosureCreateFnPtr)(RsContext, RsScriptKernelID, RsAllocation, RsScriptFieldID*, size_t, uintptr_t*, size_t, size_t*, size_t, RsClosure*, size_t, RsScriptFieldID*, size_t);
-typedef RsClosure (*InvokeClosureCreateFnPtr)(RsContext, RsScriptInvokeID, const void*, const size_t, const RsScriptFieldID*, const size_t, const uintptr_t*, const size_t, const size_t*, const size_t);
+typedef RsClosure (*ClosureCreateFnPtr)(RsContext, RsScriptKernelID, RsAllocation, RsScriptFieldID*, size_t, uintptr_t*, size_t, int*, size_t, RsClosure*, size_t, RsScriptFieldID*, size_t);
+typedef RsClosure (*InvokeClosureCreateFnPtr)(RsContext, RsScriptInvokeID, const void*, const size_t, const RsScriptFieldID*, const size_t, const uintptr_t*, const size_t, const int*, const size_t);
 typedef void (*ClosureSetArgFnPtr)(RsContext, RsClosure, uint32_t, uintptr_t, size_t);
 typedef void (*ClosureSetGlobalFnPtr)(RsContext, RsClosure, RsScriptFieldID, uintptr_t, size_t);
 typedef void (*ContextDestroyFnPtr) (RsContext);
