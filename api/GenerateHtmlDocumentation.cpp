@@ -81,8 +81,8 @@ static void writeHtmlHeader(GeneratedFile* file) {
 }
 
 static void writeHtmlFooter(GeneratedFile* file) {
-    *file << "</div> <!-- end body-content -->\n"
-             "</body></html>\n";
+    //*file << "</div>n"
+    *file << "<!-- end body-content -->\n</body></html>\n";
 }
 
 // If prefix starts input, copy it to stream and remove it from input.
@@ -244,14 +244,13 @@ static bool generateHtmlParagraphs(GeneratedFile* file, const vector<string>& de
     return true;
 }
 
-static void writeSummaryTableStart(GeneratedFile* file, const char* label, bool labelIsHeading) {
+static void writeSummaryTableStart(GeneratedFile* file, const string& label, bool labelIsHeading) {
     if (labelIsHeading) {
-        *file << "<h2 style='margin-bottom: 0px;'>" << label << "</h2><hr>\n";
+        *file << "<h2 style='margin-bottom: 0px;'>" << label << "</h2><hr/>\n";
     }
-    //#TODO promethods was the id.  implication?
-    *file << "<table id='id" << label << "' class='jd-sumtable'><tbody>\n";
+    *file << "<table class='jd-sumtable'><tbody>\n";
     if (!labelIsHeading) {
-        *file << "  <tr><th colspan='12'>" << label << "</th></tr>\n";
+        *file << "  <tr><th colspan='2'>" << label << "</th></tr>\n";
     }
 }
 
@@ -259,86 +258,83 @@ static void writeSummaryTableEnd(GeneratedFile* file) {
     *file << "</tbody></table>\n";
 }
 
-static void writeSummaryTableEntry(GeneratedFile* file, Constant* constant) {
-    if (constant->hidden()) {
+enum DeprecatedSelector {
+    DEPRECATED_ONLY,
+    NON_DEPRECATED_ONLY,
+    ALL,
+};
+
+static void writeSummaryTableEntry(ostream* stream, Definition* definition,
+                                   DeprecatedSelector deprecatedSelector) {
+    if (definition->hidden()) {
         return;
     }
-    *file << "  <tr class='alt-color api apilevel-1'>\n";
-    *file << "    <td class='jd-linkcol'><nobr>\n";
-    *file << "      <a href='" << constant->getUrl() << "'>" << constant->getName()
-          << "</a></nobr>\n";
-    *file << "    </td>\n";
-    *file << "    <td class='jd-descrcol' width='100%'><nobr>\n";
-    *file << "        " << constant->getSummary() << "\n";
-    *file << "    </td>\n";
-    *file << "  </tr>\n";
-}
-
-static void writeSummaryTableEntry(GeneratedFile* file, Type* type) {
-    if (type->hidden()) {
+    const bool deprecated = definition->deprecated();
+    if ((deprecatedSelector == DEPRECATED_ONLY && !deprecated) ||
+        (deprecatedSelector == NON_DEPRECATED_ONLY && deprecated)) {
         return;
     }
-    *file << "  <tr class='alt-color api apilevel-1'>\n";
-    *file << "    <td class='jd-linkcol'><nobr>\n";
-    *file << "      <a href='" << type->getUrl() << "'>" << type->getName() << "</a></nobr>\n";
-    *file << "    </td>\n";
-    *file << "    <td class='jd-descrcol' width='100%'><nobr>\n";
-    *file << "        " << type->getSummary() << "\n";
-    *file << "    </td>\n";
-    *file << "  </tr>\n";
+
+    *stream << "  <tr class='alt-color api apilevel-1'>\n";
+    *stream << "    <td class='jd-linkcol'>\n";
+    *stream << "      <a href='" << definition->getUrl() << "'>" << definition->getName() << "</a>\n";
+    *stream << "    </td>\n";
+    *stream << "    <td class='jd-descrcol' width='100%'>\n";
+    *stream << "      ";
+    if (deprecated) {
+        *stream << "<b>Deprecated</b>.  ";
+    }
+    *stream << definition->getSummary() << "\n";
+    *stream << "    </td>\n";
+    *stream << "  </tr>\n";
 }
 
-static void writeSummaryTableEntry(GeneratedFile* file, Function* function) {
-    *file << "  <tr class='alt-color api apilevel-1'>\n";
-    *file << "    <td class='jd-linkcol'>\n";
-    *file << "      <a href='" << function->getUrl() << "'>" << function->getName() << "</a>\n";
-    *file << "    </td>\n";
-    *file << "    <td class='jd-linkcol' width='100%'>\n";  // TODO jd-typecol
-    //    *file << "      <nobr><span class='sympad'></span></nobr>\n";
-    *file << "      <div class='jd-descrdiv'>\n";
-    *file << "        " << function->getSummary() << "\n";
-    *file << "      </div>\n";
-    *file << "    </td>\n";
-    *file << "  </tr>\n";
+static void writeSummaryTable(GeneratedFile* file, const ostringstream* entries, const char* name,
+                              DeprecatedSelector deprecatedSelector, bool labelAsHeader) {
+    string s = entries->str();
+    if (!s.empty()) {
+        string prefix;
+        if (deprecatedSelector == DEPRECATED_ONLY) {
+            prefix = "Deprecated ";
+        }
+        writeSummaryTableStart(file, prefix + name, labelAsHeader);
+        *file << s;
+        writeSummaryTableEnd(file);
+    }
 }
 
 static void writeSummaryTables(GeneratedFile* file, const map<string, Constant*>& constants,
                                const map<string, Type*>& types,
-                               const map<string, Function*>& functions, bool labelAsHeader) {
-    if (constants.size() > 0) {
-        writeSummaryTableStart(file, "Constants", labelAsHeader);
-        for (auto e : constants) {
-            writeSummaryTableEntry(file, e.second);
-        }
-        writeSummaryTableEnd(file);
+                               const map<string, Function*>& functions,
+                               DeprecatedSelector deprecatedSelector, bool labelAsHeader) {
+    ostringstream constantStream;
+    for (auto e : constants) {
+        writeSummaryTableEntry(&constantStream, e.second, deprecatedSelector);
     }
+    writeSummaryTable(file, &constantStream, "Constants", deprecatedSelector, labelAsHeader);
 
-    if (types.size() > 0) {
-        writeSummaryTableStart(file, "Types", labelAsHeader);
-        for (auto e : types) {
-            writeSummaryTableEntry(file, e.second);
-        }
-        writeSummaryTableEnd(file);
+    ostringstream typeStream;
+    for (auto e : types) {
+        writeSummaryTableEntry(&typeStream, e.second, deprecatedSelector);
     }
+    writeSummaryTable(file, &typeStream, "Types", deprecatedSelector, labelAsHeader);
 
-    if (functions.size() > 0) {
-        writeSummaryTableStart(file, "Functions", labelAsHeader);
-        for (auto e : functions) {
-            writeSummaryTableEntry(file, e.second);
-        }
-        writeSummaryTableEnd(file);
+    ostringstream functionStream;
+    for (auto e : functions) {
+        writeSummaryTableEntry(&functionStream, e.second, deprecatedSelector);
     }
+    writeSummaryTable(file, &functionStream, "Functions", deprecatedSelector, labelAsHeader);
 }
 
 static void writeHtmlVersionTag(GeneratedFile* file, VersionInfo info) {
+    ostringstream stream;
     if (info.intSize == 32) {
-        *file << "For 32 bits: ";
+        stream << "When compiling for 32 bits. ";
     } else if (info.intSize == 64) {
-        *file << "For 64 bits: ";
+        stream << "When compiling for 64 bits. ";
     }
 
     if (info.minVersion > 1 || info.maxVersion) {
-        *file << "<div>";
         const char* mid =
                     "<a "
                     "href='http://developer.android.com/guide/topics/manifest/"
@@ -346,64 +342,81 @@ static void writeHtmlVersionTag(GeneratedFile* file, VersionInfo info) {
         if (info.minVersion <= 1) {
             // No minimum
             if (info.maxVersion > 0) {
-                *file << "Removed from " << mid << info.maxVersion + 1;
+                stream << "Removed from " << mid << info.maxVersion + 1;
             }
         } else {
             if (info.maxVersion == 0) {
                 // No maximum
-                *file << "Added in " << mid << info.minVersion;
+                stream << "Added in " << mid << info.minVersion;
             } else {
-                *file << mid << info.minVersion << " - " << info.maxVersion;
+                stream << mid << info.minVersion << " - " << info.maxVersion;
             }
         }
-        *file << "</a></div>\n";
+        stream << "</a>";
+    }
+    const string s = stream.str();
+    if (!s.empty()) {
+        // TODO simplify
+        //*file << "    <p>" << s << "</p>\n";
+        *file << "    " << s << "\n";
     }
 }
 
-static void writeDetailedType(GeneratedFile* file, const TypeSpecification* type) {
+
+static void writeDetailedTypeSpecification(GeneratedFile* file, const TypeSpecification* type) {
     switch (type->getKind()) {
         case SIMPLE:
-            *file << "Base type: " << type->getSimpleType() << "\n";
+            *file << "<p>A typedef of: " << type->getSimpleType()
+                  << "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+            writeHtmlVersionTag(file, type->getVersionInfo());
+            *file << "</p>\n";
             break;
         case ENUM: {
-            *file << "An enum<br>\n";
-            *file << "    <table class='jd-tagtable'><tbody>\n";
+            *file << "<p>An enum with the following values:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\n";
+            writeHtmlVersionTag(file, type->getVersionInfo());
+            *file << "</p>\n";
 
+            *file << "  <table class='jd-tagtable'><tbody>\n";
             const vector<string>& values = type->getValues();
             const vector<string>& valueComments = type->getValueComments();
             for (size_t i = 0; i < values.size(); i++) {
-                *file << "    <tr><th>" << values[i] << "</th>";
-                if (valueComments.size() > i && !valueComments[i].empty()) {
-                    *file << "<td>" << valueComments[i] << "</td>";
+                *file << "    <tr><th>" << values[i] << "</th><td>";
+                if (valueComments.size() > i) {
+                    *file << valueComments[i];
                 }
-                *file << "</tr>\n";
+                *file << "</td></tr>\n";
             }
-            *file << "    </tbody></table>\n";
+            *file << "  </tbody></table><br/>\n";
             break;
         }
         case STRUCT: {
             // TODO string mStructName;             // The name found after the struct keyword
-            *file << "A structure<br>\n";
-            *file << "    <table class='jd-tagtable'><tbody>\n";
+            *file << "<p>A structure with the following fields:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+            writeHtmlVersionTag(file, type->getVersionInfo());
+            *file << "</p>\n";
+
+            *file << "  <table class='jd-tagtable'><tbody>\n";
             const vector<string>& fields = type->getFields();
             const vector<string>& fieldComments = type->getFieldComments();
             for (size_t i = 0; i < fields.size(); i++) {
-                *file << "    <tr><th>" << fields[i] << "</th>";
+                *file << "    <tr><th>" << fields[i] << "</th><td>";
                 if (fieldComments.size() > i && !fieldComments[i].empty()) {
-                    *file << "<td>" << fieldComments[i] << "</td>";
+                    *file << fieldComments[i];
                 }
-                *file << "</tr>\n";
+                *file << "</td></tr>\n";
             }
-            *file << "    </tbody></table>\n";
+            *file << "  </tbody></table><br/>\n";
             break;
         }
     }
-    writeHtmlVersionTag(file, type->getVersionInfo());
 }
 
-static void writeDetailedConstant(GeneratedFile* file, ConstantSpecification* c) {
+static void writeDetailedConstantSpecification(GeneratedFile* file, ConstantSpecification* c) {
+    *file << "      <tr><td>";
     *file << "Value: " << c->getValue() << "\n";
     writeHtmlVersionTag(file, c->getVersionInfo());
+    *file << "      </td></tr>\n";
+    *file << "<br/>\n";
 }
 
 static bool writeOverviewForFile(GeneratedFile* file, const SpecFile& specFile) {
@@ -416,7 +429,8 @@ static bool writeOverviewForFile(GeneratedFile* file, const SpecFile& specFile) 
     // Write the summary tables.
     // file << "<h2>Summary</h2>\n";
     writeSummaryTables(file, specFile.getDocumentedConstants(), specFile.getDocumentedTypes(),
-                       specFile.getDocumentedFunctions(), false);
+                       specFile.getDocumentedFunctions(), NON_DEPRECATED_ONLY, false);
+
     return success;
 }
 
@@ -428,8 +442,7 @@ static bool generateOverview(const string& directory) {
     bool success = true;
     writeHtmlHeader(&file);
 
-    file << "<h1 itemprop='name'>Overview</h1>\n";
-    // TODO Have the overview text here!
+    file << "<h1>Overview</h1>\n";
 
     for (auto specFile : systemSpecification.getSpecFiles()) {
         if (!writeOverviewForFile(&file, *specFile)) {
@@ -450,11 +463,28 @@ static bool generateAlphabeticalIndex(const string& directory) {
     writeHtmlHeader(&file);
 
     writeSummaryTables(&file, systemSpecification.getConstants(), systemSpecification.getTypes(),
-                       systemSpecification.getFunctions(), true);
+                       systemSpecification.getFunctions(), NON_DEPRECATED_ONLY, true);
+
+    writeSummaryTables(&file, systemSpecification.getConstants(), systemSpecification.getTypes(),
+                       systemSpecification.getFunctions(), DEPRECATED_ONLY, true);
 
     writeHtmlFooter(&file);
     file.close();
     return true;
+}
+
+static void writeDeprecatedWarning(GeneratedFile* file, Definition* definition) {
+    if (definition->deprecated()) {
+        *file << "    <p><b>Deprecated.</b>  ";
+        string s = definition->getDeprecatedMessage();
+        convertDocumentationRefences(&s);
+        if (!s.empty()) {
+            *file << s;
+        } else {
+            *file << "Do not use.";
+        }
+        *file << "</p>\n";
+    }
 }
 
 static bool writeDetailedConstant(GeneratedFile* file, Constant* constant) {
@@ -465,7 +495,7 @@ static bool writeDetailedConstant(GeneratedFile* file, Constant* constant) {
 
     // TODO need names that distinguish fn.const. type
     // TODO had attr_android:...
-    *file << "<a name='android_rs:" << name << "'></a>\n";
+    *file << "<a id='android_rs:" << name << "'></a>\n";
     *file << "<div class='jd-details'>\n";
     *file << "  <h4 class='jd-details-title'>\n";
     *file << "    <span class='sympad'>" << name << "</span>\n";
@@ -474,17 +504,20 @@ static bool writeDetailedConstant(GeneratedFile* file, Constant* constant) {
 
     *file << "  <div class='jd-details-descr'>\n";
     *file << "    <table class='jd-tagtable'><tbody>\n";
-    for (auto f : constant->getSpecifications()) {
-        *file << "      <tr><td>";
-        writeDetailedConstant(file, f);
-        *file << "      </td></tr>\n";
-        *file << "<br/>\n";
+    auto specifications = constant->getSpecifications();
+    bool addSeparator = specifications.size() > 1;
+    for (auto spec : specifications) {
+        if (addSeparator) {
+            *file << "    <h5 class='jd-tagtitle'>Variant:</h5>\n";
+        }
+        writeDetailedConstantSpecification(file, spec);
     }
     *file << "    </tbody></table>\n";
     *file << "  </div>\n";
 
     *file << "    <div class='jd-tagdata jd-tagdescr'>\n";
 
+    writeDeprecatedWarning(file, constant);
     if (!generateHtmlParagraphs(file, constant->getDescription())) {
         return false;
     }
@@ -503,7 +536,7 @@ static bool writeDetailedType(GeneratedFile* file, Type* type) {
 
     // TODO need names that distinguish fn.const. type
     // TODO had attr_android:...
-    *file << "<a name='android_rs:" << name << "'></a>\n";
+    *file << "<a id='android_rs:" << name << "'></a>\n";
     *file << "<div class='jd-details'>\n";
     *file << "  <h4 class='jd-details-title'>\n";
     *file << "    <span class='sympad'>" << name << "</span>\n";
@@ -511,25 +544,16 @@ static bool writeDetailedType(GeneratedFile* file, Type* type) {
     *file << "  </h4>\n";
 
     *file << "  <div class='jd-details-descr'>\n";
-    *file << "    <h5 class='jd-tagtitle'>Variants</h5>\n";
-    *file << "    <table class='jd-tagtable'><tbody>\n";
-    for (auto f : type->getSpecifications()) {
-        *file << "      <tr><td>";
-        writeDetailedType(file, f);
-        *file << "      </td></tr>\n";
-        *file << "<br/>\n";
+    for (auto spec : type->getSpecifications()) {
+        writeDetailedTypeSpecification(file, spec);
     }
-    *file << "    </tbody></table>\n";
-    *file << "  </div>\n";
 
-    *file << "    <div class='jd-tagdata jd-tagdescr'>\n";
-
+    writeDeprecatedWarning(file, type);
     if (!generateHtmlParagraphs(file, type->getDescription())) {
         return false;
     }
 
-    *file << "    </div>\n";
-
+    *file << "  </div>\n";
     *file << "</div>\n";
     *file << "\n";
     return true;
@@ -540,7 +564,7 @@ static bool writeDetailedFunction(GeneratedFile* file, Function* function) {
 
     // TODO need names that distinguish fn.const. type
     // TODO had attr_android:...
-    *file << "<a name='android_rs:" << name << "'></a>\n";
+    *file << "<a id='android_rs:" << name << "'></a>\n";
     *file << "<div class='jd-details'>\n";
     *file << "  <h4 class='jd-details-title'>\n";
     *file << "    <span class='sympad'>" << name << "</span>\n";
@@ -548,17 +572,17 @@ static bool writeDetailedFunction(GeneratedFile* file, Function* function) {
     *file << "  </h4>\n";
 
     *file << "  <div class='jd-details-descr'>\n";
-    *file << "    <table class='jd-tagtable'><tbody>\n";
     map<string, DetailedFunctionEntry> entries;
     if (!getUnifiedFunctionPrototypes(function, &entries)) {
         return false;
     }
+    *file << "    <table class='jd-tagtable'><tbody>\n";
     for (auto i : entries) {
         *file << "      <tr>\n";
-        *file << "        <td>" << i.second.htmlDeclaration << "<td/>\n";
+        *file << "        <td>" << i.second.htmlDeclaration << "</td>\n";
         *file << "        <td>";
         writeHtmlVersionTag(file, i.second.info);
-        *file << "</td>\n";
+        *file << "        </td>\n";
         *file << "      </tr>\n";
     }
     *file << "    </tbody></table>\n";
@@ -586,6 +610,7 @@ static bool writeDetailedFunction(GeneratedFile* file, Function* function) {
     }
 
     *file << "  <div class='jd-tagdata jd-tagdescr'>\n";
+    writeDeprecatedWarning(file, function);
     if (!generateHtmlParagraphs(file, function->getDescription())) {
         return false;
     }
@@ -608,8 +633,7 @@ static bool writeDetailedDocumentationFile(const string& directory, const SpecFi
     file << "<br/>";
 
     // Write the file documentation.
-    file << "<h1 itemprop='name'>" << specFile.getBriefDescription()
-         << "</h1>\n";  // TODO not sure about itemprop
+    file << "<h1>" << specFile.getBriefDescription() << "</h1>\n";
 
     file << "<h2>Overview</h2>\n";
     if (!generateHtmlParagraphs(&file, specFile.getFullDescription())) {
@@ -621,7 +645,9 @@ static bool writeDetailedDocumentationFile(const string& directory, const SpecFi
     const auto& constants = specFile.getDocumentedConstants();
     const auto& types = specFile.getDocumentedTypes();
     const auto& functions = specFile.getDocumentedFunctions();
-    writeSummaryTables(&file, constants, types, functions, false);
+
+    writeSummaryTables(&file, constants, types, functions, NON_DEPRECATED_ONLY, false);
+    writeSummaryTables(&file, constants, types, functions, DEPRECATED_ONLY, false);
 
     // Write the full details of each constant, type, and function.
     if (!constants.empty()) {
