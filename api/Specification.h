@@ -137,6 +137,8 @@ struct VersionInfo {
 class Definition {
 protected:
     std::string mName;
+    bool mDeprecated;                       // True if this API should not be used
+    std::string mDeprecatedMessage;         // Optional specific warning if the API is deprecated
     bool mHidden;                           // True if it should not be documented
     std::string mSummary;                   // A one-line description
     std::vector<std::string> mDescription;  // The comments to be included in the header
@@ -146,6 +148,8 @@ public:
     Definition(const std::string& name);
 
     std::string getName() const { return mName; }
+    bool deprecated() const { return mDeprecated; }
+    std::string getDeprecatedMessage() const { return mDeprecatedMessage; }
     bool hidden() const { return mHidden; }
     std::string getSummary() const { return mSummary; }
     const std::vector<std::string>& getDescription() const { return mDescription; }
@@ -340,7 +344,6 @@ private:
      */
     std::string mUnexpandedName;
     ParameterEntry* mReturn;  // The return type. The name should be empty.  Owned.
-    int mReturnLineNumber;
     std::vector<ParameterEntry*> mParameters;  // The parameters.  Owned.
     std::vector<std::string> mInline;          // The inline code to be included in the header
 
@@ -391,8 +394,6 @@ public:
  */
 class FunctionPermutation {
 private:
-    Function* mFunction;  // NOT OWNED.
-
     // These are the expanded version of those found on FunctionSpecification
     std::string mName;
     std::string mNameTrunk;  // The name without any expansion, e.g. convert

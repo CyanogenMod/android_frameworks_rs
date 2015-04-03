@@ -20,7 +20,7 @@
 #include <fstream>
 #include <string>
 
-class ParameterEntry;
+struct ParameterEntry;
 
 class Scanner {
 private:
