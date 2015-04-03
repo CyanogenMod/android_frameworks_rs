@@ -112,6 +112,21 @@ extern void __attribute__((overloadable))
     rsDebug(const char* message, ulong4 a);
 #endif
 
+#if (defined(RS_VERSION) && (RS_VERSION >= 23))
+extern void __attribute__((overloadable))
+    rsDebug(const char* message, double2 a);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 23))
+extern void __attribute__((overloadable))
+    rsDebug(const char* message, double3 a);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 23))
+extern void __attribute__((overloadable))
+    rsDebug(const char* message, double4 a);
+#endif
+
 extern void __attribute__((overloadable))
     rsDebug(const char* message, float a);
 
