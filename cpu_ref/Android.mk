@@ -1,4 +1,3 @@
-
 LOCAL_PATH:=$(call my-dir)
 
 rs_base_CFLAGS := -Werror -Wall -Wno-unused-parameter -Wno-unused-variable \
@@ -19,26 +18,26 @@ LOCAL_MODULE := libRSCpuRef
 LOCAL_MODULE_TARGET_ARCH := arm mips mips64 x86 x86_64 arm64
 
 LOCAL_SRC_FILES:= \
-	rsCpuCore.cpp \
-	rsCpuExecutable.cpp \
-	rsCpuScript.cpp \
-	rsCpuRuntimeMath.cpp \
-	rsCpuRuntimeMathFuncs.cpp \
-	rsCpuRuntimeStubs.cpp \
-	rsCpuScriptGroup.cpp \
-	rsCpuScriptGroup2.cpp \
-	rsCpuIntrinsic.cpp \
-	rsCpuIntrinsic3DLUT.cpp \
-	rsCpuIntrinsicBLAS.cpp \
-	rsCpuIntrinsicBlend.cpp \
-	rsCpuIntrinsicBlur.cpp \
-	rsCpuIntrinsicColorMatrix.cpp \
-	rsCpuIntrinsicConvolve3x3.cpp \
-	rsCpuIntrinsicConvolve5x5.cpp \
-	rsCpuIntrinsicHistogram.cpp \
-	rsCpuIntrinsicResize.cpp \
-	rsCpuIntrinsicLUT.cpp \
-	rsCpuIntrinsicYuvToRGB.cpp
+        rsCpuCore.cpp \
+        rsCpuExecutable.cpp \
+        rsCpuScript.cpp \
+        rsCpuRuntimeMath.cpp \
+        rsCpuRuntimeMathFuncs.cpp \
+        rsCpuRuntimeStubs.cpp \
+        rsCpuScriptGroup.cpp \
+        rsCpuScriptGroup2.cpp \
+        rsCpuIntrinsic.cpp \
+        rsCpuIntrinsic3DLUT.cpp \
+        rsCpuIntrinsicBLAS.cpp \
+        rsCpuIntrinsicBlend.cpp \
+        rsCpuIntrinsicBlur.cpp \
+        rsCpuIntrinsicColorMatrix.cpp \
+        rsCpuIntrinsicConvolve3x3.cpp \
+        rsCpuIntrinsicConvolve5x5.cpp \
+        rsCpuIntrinsicHistogram.cpp \
+        rsCpuIntrinsicResize.cpp \
+        rsCpuIntrinsicLUT.cpp \
+        rsCpuIntrinsicYuvToRGB.cpp
 
 LOCAL_CFLAGS_arm64 += -DARCH_ARM_USE_INTRINSICS -DARCH_ARM64_USE_INTRINSICS -DARCH_ARM64_HAVE_NEON
 

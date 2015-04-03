@@ -42,6 +42,17 @@ public:
 
 protected:
 
+    uint8_t a_offset = 0;
+    uint8_t b_offset = 0;
+    uint8_t c_offset = 0;
+
+    static void kernelBGEMM(size_t m, size_t n, size_t k,
+                            const uint8_t* a, uint32_t a_offset, size_t lda,
+                            const uint8_t* b, uint32_t b_offset, size_t ldb,
+                            uint8_t* c, uint32_t c_offset, size_t ldc,
+                            uint32_t c_mult_int);
+
+
 
 };
 
@@ -624,12 +635,62 @@ void RsdCpuScriptIntrinsicBLAS::invokeForEach(uint32_t slot,
                      B, ldb, call->beta.d, C, ldc);
         break;
 
+
+    case (RsBlas_bgemm):
+        initABC(ain, sizeof(uint8_t), &A, &B, &C, &lda, &ldb, &ldc);
+        kernelBGEMM(call->M, call->N, call->K,
+                    (const uint8_t*)A, call->a_offset, lda,
+                    (const uint8_t*)B, call->b_offset, ldb,
+                    (uint8_t*)C, call->c_offset, ldc,
+                    call->c_mult_int);
+
+        break;
+
     default:
         ALOGE("unimplemented\n");
     }
 
 
 }
+
+void RsdCpuScriptIntrinsicBLAS::kernelBGEMM(size_t m, size_t n, size_t k,
+                                            const uint8_t* a, uint32_t a_offset, size_t lda,
+                                            const uint8_t* b, uint32_t b_offset, size_t ldb,
+                                            uint8_t* c, uint32_t c_offset, size_t ldc,
+                                            uint32_t c_mult_int) {
+
+    const int c_shift = 23;
+    size_t i = 0, j = 0, l = 0;
+    for (j = 0; j < n; j++) {
+        for (i = 0; i < m; i++) {
+            int32_t total = 0;
+            for (l = 0; l < k; l++) {
+                const int a_index = ((i * lda) + l);
+                const uint8_t a_as_byte = a[a_index];
+                const int32_t a_as_int = (((int32_t)(a_as_byte)) - a_offset);
+                const int b_index = ((j * ldb) + l);
+                const uint8_t b_as_byte = b[b_index];
+                const int32_t b_as_int = (((int32_t)(b_as_byte)) - b_offset);
+                const int32_t mult_as_int = (a_as_int * b_as_int);
+                total += mult_as_int;
+            }
+            const int c_index = ((ldc * i) + j);
+            int32_t output =
+                ((((total + c_offset) * c_mult_int) + (1 << (c_shift - 1)))
+                 >> c_shift);
+            if (output > 255) {
+                output = 255;
+            }
+            if (output < 0) {
+                output = 0;
+            }
+            c[c_index] = (uint8_t)(output);
+        }
+    }
+}
+
+
+
 
 
 RsdCpuScriptIntrinsicBLAS::RsdCpuScriptIntrinsicBLAS(RsdCpuReferenceImpl *ctx,
