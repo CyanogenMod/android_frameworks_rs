@@ -15,13 +15,13 @@
 #
 
 header:
-summary: Atomic routines
+summary: Atomic Update Functions
 description:
  To update values shared between multiple threads, use the functions below.
  They ensure that the values are atomically updated, i.e. that the memory
- reads, the updates, and the memory writes are all done in the right order.
+ reads, the updates, and the memory writes are done in the right order.
 
- These functions are slower than just doing the non-atomic variants, so use
+ These functions are slower than their non-atomic equivalents, so use
  them only when synchronization is needed.
 
  Note that in RenderScript, your code is likely to be running in separate
@@ -33,9 +33,9 @@ end:
 
 function: rsAtomicAdd
 version: 14
-ret: int32_t, "Old value"
-arg: volatile int32_t* addr, "Address of the value to modify"
-arg: int32_t value, "Amount to add"
+ret: int32_t, "Value of *addr prior to the operation."
+arg: volatile int32_t* addr, "Address of the value to modify."
+arg: int32_t value, "Amount to add."
 summary: Thread-safe addition
 description:
  Atomicly adds a value to the value at addr, i.e. <code>*addr += value</code>.
@@ -52,13 +52,13 @@ end:
 
 function: rsAtomicAnd
 version: 14
-ret: int32_t, "Old value"
-arg: volatile int32_t* addr, "Address of the value to modify"
-arg: int32_t value, "Value to and with"
+ret: int32_t, "Value of *addr prior to the operation."
+arg: volatile int32_t* addr, "Address of the value to modify."
+arg: int32_t value, "Value to and with."
 summary: Thread-safe bitwise and
 description:
  Atomicly performs a bitwise and of two values, storing the result back at addr,
- i.e. <code>*addr &= value</code>
+ i.e. <code>*addr &= value</code>.
 test: none
 end:
 
@@ -72,17 +72,17 @@ end:
 
 function: rsAtomicCas
 version: 14
-ret: int32_t, "Old value"
-arg: volatile int32_t* addr, "The address to compare and replace if the compare passes."
+ret: int32_t, "Value of *addr prior to the operation."
+arg: volatile int32_t* addr, "The address of the value to compare and replace if the test passes."
 arg: int32_t compareValue, "The value to test *addr against."
 arg: int32_t newValue, "The value to write if the test passes."
 summary: Thread-safe compare and set
 description:
  If the value at addr matches compareValue then the newValue is written at addr,
- i.e. <code>if (*addr == compareValue) { *addr = newValue; }</code>
+ i.e. <code>if (*addr == compareValue) { *addr = newValue; }</code>.
 
  You can check that the value was written by checking that the value returned
- by rsAtomicCas is compareValue.
+ by rsAtomicCas() is compareValue.
 test: none
 end:
 
@@ -97,11 +97,11 @@ end:
 
 function: rsAtomicDec
 version: 14
-ret: int32_t, "Old value"
-arg: volatile int32_t* addr, "Address of the value to decrement"
+ret: int32_t, "Value of *addr prior to the operation."
+arg: volatile int32_t* addr, "Address of the value to decrement."
 summary: Thread-safe decrement
 description:
- Atomicly subtracts one from the value at addr.  Equal to <code>@rsAtomicSub(addr, 1)</code>
+ Atomicly subtracts one from the value at addr.  This is equivalent to <code>@rsAtomicSub(addr, 1)</code>.
 test: none
 end:
 
@@ -114,11 +114,11 @@ end:
 
 function: rsAtomicInc
 version: 14
-ret: int32_t, "Old value"
-arg: volatile int32_t* addr, "Address of the value to increment"
+ret: int32_t, "Value of *addr prior to the operation."
+arg: volatile int32_t* addr, "Address of the value to increment."
 summary: Thread-safe increment
 description:
- Atomicly adds one to the value at addr.  Equal to <code>@rsAtomicAdd(addr, 1)</code>
+ Atomicly adds one to the value at addr.  This is equivalent to <code>@rsAtomicAdd(addr, 1)</code>.
 test: none
 end:
 
@@ -131,13 +131,13 @@ end:
 
 function: rsAtomicMax
 version: 14
-ret: uint32_t, "Old value"
-arg: volatile uint32_t* addr, "Address of the value to modify"
-arg: uint32_t value, "Comparison value"
+ret: uint32_t, "Value of *addr prior to the operation."
+arg: volatile uint32_t* addr, "Address of the value to modify."
+arg: uint32_t value, "Comparison value."
 summary: Thread-safe maximum
 description:
- Atomicly sets the value at addr to the maximum of addr and value, i.e.
- <code>*addr = max(*addr, value)</code>
+ Atomicly sets the value at addr to the maximum of *addr and value, i.e.
+ <code>*addr = max(*addr, value)</code>.
 test: none
 end:
 
@@ -151,13 +151,13 @@ end:
 
 function: rsAtomicMin
 version: 14
-ret: uint32_t, "Old value"
-arg: volatile uint32_t* addr, "Address of the value to modify"
-arg: uint32_t value, "Comparison value"
+ret: uint32_t, "Value of *addr prior to the operation."
+arg: volatile uint32_t* addr, "Address of the value to modify."
+arg: uint32_t value, "Comparison value."
 summary: Thread-safe minimum
 description:
- Atomicly sets the value at addr to the minimum of addr and value, i.e.
- <code>*addr = min(*addr, value)</code>
+ Atomicly sets the value at addr to the minimum of *addr and value, i.e.
+ <code>*addr = min(*addr, value)</code>.
 test: none
 end:
 
@@ -171,13 +171,13 @@ end:
 
 function: rsAtomicOr
 version: 14
-ret: int32_t, "Old value"
-arg: volatile int32_t* addr, "Address of the value to modify"
-arg: int32_t value, "Value to or with"
+ret: int32_t, "Value of *addr prior to the operation."
+arg: volatile int32_t* addr, "Address of the value to modify."
+arg: int32_t value, "Value to or with."
 summary: Thread-safe bitwise or
 description:
  Atomicly perform a bitwise or two values, storing the result at addr,
- i.e. <code>*addr |= value</code>
+ i.e. <code>*addr |= value</code>.
 test: none
 end:
 
@@ -191,12 +191,12 @@ end:
 
 function: rsAtomicSub
 version: 14
-ret: int32_t, "Old value"
-arg: volatile int32_t* addr, "Address of the value to modify"
-arg: int32_t value, "Amount to subtract"
+ret: int32_t, "Value of *addr prior to the operation."
+arg: volatile int32_t* addr, "Address of the value to modify."
+arg: int32_t value, "Amount to subtract."
 summary: Thread-safe subtraction
 description:
- Atomicly subtracts a value from the value at addr, i.e. <code>*addr -= value</code>
+ Atomicly subtracts a value from the value at addr, i.e. <code>*addr -= value</code>.
 test: none
 end:
 
@@ -210,13 +210,13 @@ end:
 
 function: rsAtomicXor
 version: 14
-ret: int32_t, "Old value"
-arg: volatile int32_t* addr, "Address of the value to modify"
-arg: int32_t value, "Value to xor with"
+ret: int32_t, "Value of *addr prior to the operation."
+arg: volatile int32_t* addr, "Address of the value to modify."
+arg: int32_t value, "Value to xor with."
 summary: Thread-safe bitwise exclusive or
 description:
  Atomicly performs a bitwise xor of two values, storing the result at addr,
- i.e. <code>*addr ^= value</code>
+ i.e. <code>*addr ^= value</code>.
 test: none
 end:
 
