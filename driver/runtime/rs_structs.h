@@ -1,6 +1,9 @@
 #ifndef _RS_STRUCTS_H_
 #define _RS_STRUCTS_H_
 
+#include "rs_core.rsh"
+#include "rs_graphics.rsh"
+
 /*****************************************************************************
  * CAUTION
  *
