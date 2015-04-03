@@ -214,7 +214,7 @@ void VersionInfo::scan(Scanner* scanner) {
     }
 }
 
-Definition::Definition(const std::string& name) : mName(name), mHidden(false) {
+Definition::Definition(const std::string& name) : mName(name), mDeprecated(false), mHidden(false) {
 }
 
 void Definition::scanDocumentationTags(Scanner* scanner, bool firstOccurence,
@@ -222,6 +222,10 @@ void Definition::scanDocumentationTags(Scanner* scanner, bool firstOccurence,
     if (scanner->findOptionalTag("hidden:")) {
         scanner->checkNoValue();
         mHidden = true;
+    }
+    if (scanner->findOptionalTag("deprecated:")) {
+        mDeprecated = true;
+        mDeprecatedMessage = scanner->getValue();
     }
     if (firstOccurence) {
         if (scanner->findTag("summary:")) {
@@ -561,7 +565,7 @@ void FunctionSpecification::scanFunctionSpecification(Scanner* scanner, SpecFile
 
 FunctionPermutation::FunctionPermutation(Function* func, FunctionSpecification* spec,
                                          int replacementIndexes[MAX_REPLACEABLES], Scanner* scanner)
-    : mFunction(func), mReturn(nullptr), mInputCount(0), mOutputCount(0) {
+    : mReturn(nullptr), mInputCount(0), mOutputCount(0) {
     // We expand the strings now to make capitalization easier.  The previous code preserved
     // the #n
     // markers just before emitting, which made capitalization difficult.

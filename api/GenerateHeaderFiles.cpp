@@ -72,13 +72,18 @@ static void writeVersionGuardEnd(GeneratedFile* file, VersionInfo info) {
 }
 
 static void writeComment(GeneratedFile* file, const string& name, const string& briefComment,
-                         const vector<string>& comment, bool closeBlock) {
+                         const vector<string>& comment, bool addDeprecatedWarning,
+                         bool closeBlock) {
     if (briefComment.empty() && comment.size() == 0) {
         return;
     }
     *file << "/*\n";
     if (!briefComment.empty()) {
         *file << " * " << name << ": " << briefComment << "\n";
+        *file << " *\n";
+    }
+    if (addDeprecatedWarning) {
+        *file << " * DEPRECATED.  Do not use.\n";
         *file << " *\n";
     }
     for (size_t ct = 0; ct < comment.size(); ct++) {
@@ -97,7 +102,8 @@ static void writeComment(GeneratedFile* file, const string& name, const string& 
 
 static void writeConstantComment(GeneratedFile* file, const Constant& constant) {
     const string name = constant.getName();
-    writeComment(file, name, constant.getSummary(), constant.getDescription(), true);
+    writeComment(file, name, constant.getSummary(), constant.getDescription(),
+                 constant.deprecated(), true);
 }
 
 static void writeConstantSpecification(GeneratedFile* file, const ConstantSpecification& spec) {
@@ -171,7 +177,7 @@ static void writeTypeSpecification(GeneratedFile* file, const TypeSpecification&
 
 static void writeTypeComment(GeneratedFile* file, const Type& type) {
     const string name = type.getName();
-    writeComment(file, name, type.getSummary(), type.getDescription(), true);
+    writeComment(file, name, type.getSummary(), type.getDescription(), type.deprecated(), true);
 }
 
 static void writeFunctionPermutation(GeneratedFile* file, const FunctionSpecification& spec,
@@ -268,7 +274,8 @@ static void writeFunctionPermutation(GeneratedFile* file, const FunctionSpecific
 
 static void writeFunctionComment(GeneratedFile* file, const Function& function) {
     // Write the generic documentation.
-    writeComment(file, function.getName(), function.getSummary(), function.getDescription(), false);
+    writeComment(file, function.getName(), function.getSummary(), function.getDescription(),
+                 function.deprecated(), false);
 
     // Comment the parameters.
     if (function.someParametersAreDocumented()) {
@@ -276,7 +283,7 @@ static void writeFunctionComment(GeneratedFile* file, const Function& function) 
         *file << " * Parameters:\n";
         for (auto p : function.getParameters()) {
             if (!p->documentation.empty()) {
-                *file << " *   " << p->name << " " << p->documentation << "\n";
+                *file << " *   " << p->name << ": " << p->documentation << "\n";
             }
         }
     }
@@ -310,7 +317,8 @@ static bool writeHeaderFile(const string& directory, const SpecFile& specFile) {
     // Write the comments that start the file.
     file.writeNotices();
     writeComment(&file, headerFileName, specFile.getBriefDescription(),
-                 specFile.getFullDescription(), true);
+                 specFile.getFullDescription(), false, true);
+    file << "\n";
 
     // Write the ifndef that prevents the file from being included twice.
     const string guard = makeGuardString(headerFileName);
