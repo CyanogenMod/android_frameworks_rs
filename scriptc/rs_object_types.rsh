@@ -143,11 +143,14 @@ typedef enum {
  */
 #if (defined(RS_VERSION) && (RS_VERSION >= 14))
 typedef enum {
-    RS_ALLOCATION_USAGE_SCRIPT = 0x0001,
+    RS_ALLOCATION_USAGE_SCRIPT = 0x0001, // Allocation is bound to and accessed by scripts.
     RS_ALLOCATION_USAGE_GRAPHICS_TEXTURE = 0x0002, // Deprecated.
     RS_ALLOCATION_USAGE_GRAPHICS_VERTEX = 0x0004, // Deprecated.
     RS_ALLOCATION_USAGE_GRAPHICS_CONSTANTS = 0x0008, // Deprecated.
-    RS_ALLOCATION_USAGE_GRAPHICS_RENDER_TARGET = 0x0010 // Deprecated.
+    RS_ALLOCATION_USAGE_GRAPHICS_RENDER_TARGET = 0x0010, // Deprecated.
+    RS_ALLOCATION_USAGE_IO_INPUT = 0x0020, // Allocation is used as a Surface consumer.
+    RS_ALLOCATION_USAGE_IO_OUTPUT = 0x0040, // Allocation is used as a Surface producer.
+    RS_ALLOCATION_USAGE_SHARED = 0x0080 // Allocation's backing store is shared with another object (usually a Bitmap).  Copying to or from the original source Bitmap will cause a synchronization rather than a full copy.
 } rs_allocation_usage_type;
 #endif
 

@@ -128,11 +128,14 @@ end:
 type: rs_allocation_usage_type
 version: 14
 enum:
-value: RS_ALLOCATION_USAGE_SCRIPT = 0x0001
+value: RS_ALLOCATION_USAGE_SCRIPT = 0x0001, "Allocation is bound to and accessed by scripts."
 value: RS_ALLOCATION_USAGE_GRAPHICS_TEXTURE = 0x0002, "Deprecated."
 value: RS_ALLOCATION_USAGE_GRAPHICS_VERTEX = 0x0004, "Deprecated."
 value: RS_ALLOCATION_USAGE_GRAPHICS_CONSTANTS = 0x0008, "Deprecated."
 value: RS_ALLOCATION_USAGE_GRAPHICS_RENDER_TARGET = 0x0010, "Deprecated."
+value: RS_ALLOCATION_USAGE_IO_INPUT = 0x0020, "Allocation is used as a Surface consumer."
+value: RS_ALLOCATION_USAGE_IO_OUTPUT = 0x0040, "Allocation is used as a Surface producer."
+value: RS_ALLOCATION_USAGE_SHARED = 0x0080, "Allocation's backing store is shared with another object (usually a Bitmap).  Copying to or from the original source Bitmap will cause a synchronization rather than a full copy."
 summary: Bitfield to specify the usage types for an allocation
 description:
  These values are ORed together to specify which usages or memory spaces are
