@@ -74,13 +74,15 @@ $(c_bc_files): $(intermediates)/%.bc: $(LOCAL_PATH)/%.c  $(CLANG)
 	@echo "bc: $(PRIVATE_MODULE) <= $<"
 	@mkdir -p $(dir $@)
 	$(hide) $(CLANG) $(addprefix -I, $(PRIVATE_INCLUDES)) $(PRIVATE_CFLAGS) $< -o $@
+	$(call transform-d-to-p-args,$(@:%.bc=%.d),$(@:%.bc=%.P))
 
 $(ll_bc_files): $(intermediates)/%.bc: $(LOCAL_PATH)/%.ll $(LLVM_AS)
 	@mkdir -p $(dir $@)
 	$(hide) $(LLVM_AS) $< -o $@
+	$(call transform-d-to-p-args,$(@:%.bc=%.d),$(@:%.bc=%.P))
 
--include $(c_bc_files:%.bc=%.d)
--include $(ll_bc_files:%.bc=%.d)
+-include $(c_bc_files:%.bc=%.P)
+-include $(ll_bc_files:%.bc=%.P)
 
 $(LOCAL_BUILT_MODULE): PRIVATE_BC_FILES := $(c_bc_files) $(ll_bc_files)
 $(LOCAL_BUILT_MODULE): $(c_bc_files) $(ll_bc_files)
