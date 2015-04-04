@@ -15,66 +15,99 @@
 #
 
 header:
-summary: TODO Add documentation
+summary: Kernel Invocation Functions and Types
 description:
- TODO Add documentation
+ The @rsForEach() function can be used to invoke the root kernel of a script.
+
+ The other functions are used to get the characteristics of the invocation of
+ an executing kernel, like dimensions and current indexes.  These functions take
+ a @rs_kernel_context as argument.
 end:
 
 type: rs_for_each_strategy_t
 enum: rs_for_each_strategy
-value: RS_FOR_EACH_STRATEGY_SERIAL = 0
-value: RS_FOR_EACH_STRATEGY_DONT_CARE = 1
-value: RS_FOR_EACH_STRATEGY_DST_LINEAR = 2
-value: RS_FOR_EACH_STRATEGY_TILE_SMALL = 3
-value: RS_FOR_EACH_STRATEGY_TILE_MEDIUM = 4
-value: RS_FOR_EACH_STRATEGY_TILE_LARGE = 5
-summary: Launch order hint for rsForEach calls
+value: RS_FOR_EACH_STRATEGY_SERIAL = 0, "Prefer contiguous memory regions."
+value: RS_FOR_EACH_STRATEGY_DONT_CARE = 1, "No prefrences."
+#TODO explain this better
+value: RS_FOR_EACH_STRATEGY_DST_LINEAR = 2, "Prefer DST."
+value: RS_FOR_EACH_STRATEGY_TILE_SMALL = 3, "Prefer processing small rectangular regions."
+value: RS_FOR_EACH_STRATEGY_TILE_MEDIUM = 4, "Prefer processing medium rectangular regions."
+value: RS_FOR_EACH_STRATEGY_TILE_LARGE = 5, "Prefer processing large rectangular regions."
+summary: Suggested cell processing order
 description:
- Launch order hint for rsForEach calls.  This provides a hint to the system to
- determine in which order the root function of the target is called with each
- cell of the allocation.
+ This type is used to suggest how the invoked kernel should iterate over the cells of the
+ allocations.  This is a hint only.  Implementations may not follow the suggestion.
 
- This is a hint and implementations may not obey the order.
+ This specification can help the caching behavior of the running kernel, e.g. the cache
+ locality when the processing is distributed over multiple cores.
 end:
 
 type: rs_kernel_context
 version: 23
 simple: const struct rs_kernel_context_t *
-summary: Opaque handle to RenderScript kernel invocation context
+summary: Handle to a kernel invocation context
 description:
- TODO
+ The kernel context contains common characteristics of the allocations being iterated
+ over, like dimensions, and rarely used indexes, like the Array0 index or the current
+ level of detail.
+
+ A kernel may be executed in parallel over multiple threads.  Each thread will have its
+ own context.
+
+ You can access the context by adding a rs_kernel_context argument to your
+ kernel function.  See @rsGetDimX() and @rsGetArray0() for examples.
 end:
 
 type: rs_script_call_t
 struct: rs_script_call
-field: rs_for_each_strategy_t strategy
-field: uint32_t xStart
-field: uint32_t xEnd
-field: uint32_t yStart
-field: uint32_t yEnd
-field: uint32_t zStart
-field: uint32_t zEnd
-field: uint32_t arrayStart
-field: uint32_t arrayEnd
-summary: Provides extra information to a rsForEach call
+field: rs_for_each_strategy_t strategy, "Currently ignored.  In the future, will be suggested cell iteration strategy."
+field: uint32_t xStart, "Starting index in the X dimension."
+field: uint32_t xEnd, "Ending index (exclusive) in the X dimension."
+field: uint32_t yStart, "Starting index in the Y dimension."
+field: uint32_t yEnd, "Ending index (exclusive) in the Y dimension."
+field: uint32_t zStart, "Starting index in the Z dimension."
+field: uint32_t zEnd, "Ending index (exclusive) in the Z dimension."
+field: uint32_t arrayStart, "Starting index in the Array0 dimension."
+field: uint32_t arrayEnd, "Ending index (exclusive) in the Array0 dimension."
+summary: Cell iteration information
 description:
- Structure to provide extra information to a rsForEach call.  Primarly used to
- restrict the call to a subset of cells in the allocation.
+ This structure is used to provide iteration information to a rsForEach call.
+ It is currently used to restrict processing to a subset of cells.  In future
+ versions, it will also be used to provide hint on how to best iterate over
+ the cells.
+
+ The Start fields are inclusive and the End fields are exclusive.  E.g. to iterate
+ over cells 4, 5, 6, and 7 in the X dimension, set xStart to 4 and xEnd to 8.
 end:
 
 function: rsForEach
 version: 9 13
 ret: void
-arg: rs_script script, "The target script to call"
-arg: rs_allocation input, "The allocation to source data from"
-arg: rs_allocation output, "the allocation to write date into"
-arg: const void* usrData, "The user defined params to pass to the root script.  May be NULL."
-arg: const rs_script_call_t* sc, "Extra control infomation used to select a sub-region of the allocation to be processed or suggest a walking strategy.  May be NULL."
-summary:
+arg: rs_script script, "Script to call."
+arg: rs_allocation input, "Allocation to source data from."
+arg: rs_allocation output, "Allocation to write date into."
+arg: const void* usrData, "User defined data to pass to the script.  May be NULL."
+arg: const rs_script_call_t* sc, "Extra control information used to select a sub-region of the allocation to be processed or suggest a walking strategy.  May be NULL."
+summary: Invoke the root kernel of a script
 description:
- Make a script to script call to launch work. One of the input or output is
- required to be a valid object. The input and output must be of the same
- dimensions.
+ Invoke the kernel named "root" of the specified script.  Like other kernels, this root()
+ function will be invoked repeatedly over the cells of the specificed allocation, filling
+ the output allocation with the results.
+
+ When rsForEach is called, the root script is launched immediately.  rsForEach returns
+ only when the script has completed and the output allocation is ready to use.
+
+ The rs_script argument is typically initialized using a global variable set from Java.
+
+ The kernel can be invoked with just an input allocation or just an output allocation.
+ This can be done by defining an rs_allocation variable and not initializing it.  E.g.<code><br/>
+ rs_script gCustomScript;<br/>
+ void specializedProcessing(rs_allocation in) {<br/>
+   rs_allocation ignoredOut;<br/>
+   rsForEach(gCustomScript, in, ignoredOut);<br/>
+ }<br/></code>
+
+ If both input and output allocations are specified, they must have the same dimensions.
 test: none
 end:
 
@@ -288,6 +321,8 @@ description:
  function.  E.g.<br/>
  <code>int4 RS_KERNEL myKernel(int4 value, rs_kernel_context context) {<br/>
  &nbsp;&nbsp;uint32_t size = rsGetDimX(context); //...<br/></code>
+
+ To get the dimension of specific allocation, use @rsAllocationGetDimX().
 test: none
 end:
 
@@ -301,6 +336,8 @@ description:
  See @rsGetDimX() for an explanation of the context.
 
  Returns 0 if the Y dimension is not present.
+
+ To get the dimension of specific allocation, use @rsAllocationGetDimY().
 test: none
 end:
 
@@ -314,6 +351,8 @@ description:
  See @rsGetDimX() for an explanation of the context.
 
  Returns 0 if the Z dimension is not present.
+
+ To get the dimension of specific allocation, use @rsAllocationGetDimZ().
 test: none
 end:
 
@@ -335,7 +374,7 @@ function: rsGetLod
 version: 23
 ret: uint32_t
 arg: rs_kernel_context ctxt
-summary: Index in the Levels of Detail dimension for the specified context.
+summary: Index in the Levels of Detail dimension for the specified context
 description:
  Returns the index in the Levels of Detail dimension of the cell being
  processed, as specified by the supplied context.  See @rsGetArray0() for

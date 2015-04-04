@@ -15,17 +15,17 @@
 #
 
 header:
-summary: Quaternion routines
+summary: Quaternion Functions
 description:
 end:
 
 function: rsQuaternionAdd
 ret: void
-arg: rs_quaternion* q, "destination quaternion to add to"
-arg: const rs_quaternion* rhs, "right hand side quaternion to add"
-summary:
+arg: rs_quaternion* q, "Destination quaternion to add to."
+arg: const rs_quaternion* rhs, "Quaternion to add."
+summary: Add two quaternions
 description:
- Add two quaternions
+ Adds two quaternions, i.e. <code>*q += *rhs;</code>
 inline:
  q->w *= rhs->w;
  q->x *= rhs->x;
@@ -36,10 +36,10 @@ end:
 
 function: rsQuaternionConjugate
 ret: void
-arg: rs_quaternion* q, "quaternion to conjugate"
-summary:
+arg: rs_quaternion* q, "Quaternion to modify."
+summary: Conjugate a quaternion
 description:
- Conjugates the quaternion
+ Conjugates the quaternion.
 inline:
  q->x = -q->x;
  q->y = -q->y;
@@ -48,12 +48,12 @@ test: none
 end:
 
 function: rsQuaternionDot
-ret: float, "dot product between q0 and q1"
-arg: const rs_quaternion* q0, "first quaternion"
-arg: const rs_quaternion* q1, "second quaternion"
-summary:
+ret: float
+arg: const rs_quaternion* q0, "First quaternion."
+arg: const rs_quaternion* q1, "Second quaternion."
+summary:  Dot product of two quaternions
 description:
- Dot product of two quaternions
+ Returns the dot product of two quaternions.
 inline:
  return q0->w*q1->w + q0->x*q1->x + q0->y*q1->y + q0->z*q1->z;
 test: none
@@ -61,11 +61,11 @@ end:
 
 function: rsQuaternionGetMatrixUnit
 ret: void
-arg: rs_matrix4x4* m, "resulting matrix"
-arg: const rs_quaternion* q, "normalized quaternion"
-summary:
+arg: rs_matrix4x4* m, "Resulting matrix."
+arg: const rs_quaternion* q, "Normalized quaternion."
+summary: Get a rotation matrix from a quaternion
 description:
- Computes rotation matrix from the normalized quaternion
+ Computes a rotation matrix from the normalized quaternion.
 inline:
  float xx = q->x * q->x;
  float xy = q->x * q->y;
@@ -93,14 +93,14 @@ end:
 
 function: rsQuaternionLoadRotateUnit
 ret: void
-arg: rs_quaternion* q, "quaternion to set"
-arg: float rot, "rot angle to rotate by"
-arg: float x, "component of a vector"
-arg: float y, "component of a vector"
-arg: float z, "component of a vector"
-summary:
+arg: rs_quaternion* q, "Destination quaternion."
+arg: float rot, "Angle to rotate by, in radians."
+arg: float x, "X component of the vector."
+arg: float y, "Y component of the vector."
+arg: float z, "Z component of the vector."
+summary:  Quaternion that represents a rotation about an arbitrary unit vector
 description:
- Loads a quaternion that represents a rotation about an arbitrary unit vector
+ Loads a quaternion that represents a rotation about an arbitrary unit vector.
 inline:
  rot *= (float)(M_PI / 180.0f) * 0.5f;
  float c = cos(rot);
@@ -115,14 +115,14 @@ end:
 
 function: rsQuaternionSet
 ret: void
-arg: rs_quaternion* q, "destination quaternion"
-arg: float w, "component"
-arg: float x, "component"
-arg: float y, "component"
-arg: float z, "component"
-summary:
+arg: rs_quaternion* q, "Destination quaternion."
+arg: float w, "W component."
+arg: float x, "X component."
+arg: float y, "Y component."
+arg: float z, "Z component."
+summary: Create a quarternion
 description:
- Set the quaternion from components or from another quaternion.
+ Creates a quaternion from its four components or from another quaternion.
 inline:
  q->w = w;
  q->x = x;
@@ -134,7 +134,7 @@ end:
 function: rsQuaternionSet
 ret: void
 arg: rs_quaternion* q
-arg: const rs_quaternion* rhs, "source quaternion"
+arg: const rs_quaternion* rhs, "Source quaternion."
 inline:
  q->w = rhs->w;
  q->x = rhs->x;
@@ -148,12 +148,12 @@ end:
 
 function: rsQuaternionLoadRotate
 ret: void
-arg: rs_quaternion* q, "quaternion to set"
-arg: float rot, "angle to rotate by"
-arg: float x, "component of a vector"
-arg: float y, "component of a vector"
-arg: float z, "component of a vector"
-summary:
+arg: rs_quaternion* q, "Destination quaternion."
+arg: float rot, "Angle to rotate by."
+arg: float x, "X component of a vector."
+arg: float y, "Y component of a vector."
+arg: float z, "Z component of a vector."
+summary: Create a rotation quaternion
 description:
  Loads a quaternion that represents a rotation about an arbitrary vector
  (doesn't have to be unit)
@@ -171,10 +171,10 @@ end:
 
 function: rsQuaternionNormalize
 ret: void
-arg: rs_quaternion* q, "quaternion to normalize"
-summary:
+arg: rs_quaternion* q, "Quaternion to normalize."
+summary:  Normalize a quaternion
 description:
- Normalizes the quaternion
+ Normalizes the quaternion.
 inline:
  const float len = rsQuaternionDot(q, q);
  if (len != 1) {
@@ -189,23 +189,24 @@ end:
 
 function: rsQuaternionMultiply
 ret: void
-arg: rs_quaternion* q, "destination quaternion"
-arg: float s, "scalar"
-summary:
+arg: rs_quaternion* q, "Destination quaternion."
+arg: float scalar, "Scalar to multiply the quarternion by."
+summary:  Multiply a quaternion by a scalar or another quaternion
 description:
- Multiply quaternion by a scalar or another quaternion
+ Multiplies a quaternion by a scalar or by another quaternion, e.g
+ <code>*q = *q * scalar;</code> or <code>*q = *q * *rhs;</code>.
 inline:
- q->w *= s;
- q->x *= s;
- q->y *= s;
- q->z *= s;
+ q->w *= scalar;
+ q->x *= scalar;
+ q->y *= scalar;
+ q->z *= scalar;
 test: none
 end:
 
 function: rsQuaternionMultiply
 ret: void
 arg: rs_quaternion* q
-arg: const rs_quaternion* rhs, "right hand side quaternion to multiply by"
+arg: const rs_quaternion* rhs, "Quarternion to multiply the destination quaternion by."
 inline:
  rs_quaternion qtmp;
  rsQuaternionSet(&qtmp, q);
@@ -220,13 +221,13 @@ end:
 
 function: rsQuaternionSlerp
 ret: void
-arg: rs_quaternion* q, "result quaternion from interpolation"
-arg: const rs_quaternion* q0, "first param"
-arg: const rs_quaternion* q1, "second param"
-arg: float t, "how much to interpolate by"
-summary:
+arg: rs_quaternion* q, "Result quaternion from the interpolation."
+arg: const rs_quaternion* q0, "First input quaternion."
+arg: const rs_quaternion* q1, "Second input quaternion."
+arg: float t, "How much to interpolate by."
+summary: Spherical linear interpolation between two quaternions
 description:
- Performs spherical linear interpolation between two quaternions
+ Performs spherical linear interpolation between two quaternions.
 inline:
  if (t <= 0.0f) {
      rsQuaternionSet(q, q0);
