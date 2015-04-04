@@ -15,11 +15,10 @@
 #
 
 header:
-summary: Utility debugging routines
+summary: Debugging Functions
 description:
- Routines intended to be used during application developement.  These should
- not be used in shipping applications.  All print a string and value pair to
- the standard log.
+ The functions below are intended to be used during application developement.
+ They should not be used in shipping applications.
 include:
  #define RS_DEBUG(a) rsDebug(#a, a)
  #define RS_DEBUG_MARKER rsDebug(__FILE__, __LINE__)
@@ -30,9 +29,12 @@ t: i32, u32, i64, u64, f64
 ret: void
 arg: const char* message
 arg: #1 a
-summary:
+summary: Log a message and values
 description:
- Debug function.  Prints a string and value to the log.
+ This function prints a message to the standard log, followed by the provided values.
+
+ This function is intended for debugging only and should not be used in shipping
+ applications.
 test: none
 end:
 

@@ -15,11 +15,9 @@
 #
 
 header:
-summary: RenderScript graphics API
+summary: Graphics Functions and Types
 description:
- NOTE: RenderScript Graphics has been deprecated.  Do not use.
-
- A set of graphics functions used by RenderScript.
+ The graphics subsystem of RenderScript has been deprecated.
 include:
  #ifdef __LP64__
  // TODO We need to fix some of the builds before enabling this error:
@@ -34,16 +32,17 @@ type: rs_blend_src_func
 version: 16
 size: 32
 enum:
-value: RS_BLEND_SRC_ZERO                   = 0
-value: RS_BLEND_SRC_ONE                    = 1
-value: RS_BLEND_SRC_DST_COLOR              = 2
-value: RS_BLEND_SRC_ONE_MINUS_DST_COLOR    = 3
-value: RS_BLEND_SRC_SRC_ALPHA              = 4
-value: RS_BLEND_SRC_ONE_MINUS_SRC_ALPHA    = 5
-value: RS_BLEND_SRC_DST_ALPHA              = 6
-value: RS_BLEND_SRC_ONE_MINUS_DST_ALPHA    = 7
-value: RS_BLEND_SRC_SRC_ALPHA_SATURATE     = 8
-value: RS_BLEND_SRC_INVALID                = 100
+value: RS_BLEND_SRC_ZERO = 0
+value: RS_BLEND_SRC_ONE = 1
+value: RS_BLEND_SRC_DST_COLOR = 2
+value: RS_BLEND_SRC_ONE_MINUS_DST_COLOR = 3
+value: RS_BLEND_SRC_SRC_ALPHA = 4
+value: RS_BLEND_SRC_ONE_MINUS_SRC_ALPHA = 5
+value: RS_BLEND_SRC_DST_ALPHA = 6
+value: RS_BLEND_SRC_ONE_MINUS_DST_ALPHA = 7
+value: RS_BLEND_SRC_SRC_ALPHA_SATURATE = 8
+value: RS_BLEND_SRC_INVALID = 100
+deprecated:
 summary: Blend source function
 description:
 end:
@@ -52,15 +51,16 @@ type: rs_blend_dst_func
 version: 16
 size: 32
 enum:
-value: RS_BLEND_DST_ZERO                   = 0
-value: RS_BLEND_DST_ONE                    = 1
-value: RS_BLEND_DST_SRC_COLOR              = 2
-value: RS_BLEND_DST_ONE_MINUS_SRC_COLOR    = 3
-value: RS_BLEND_DST_SRC_ALPHA              = 4
-value: RS_BLEND_DST_ONE_MINUS_SRC_ALPHA    = 5
-value: RS_BLEND_DST_DST_ALPHA              = 6
-value: RS_BLEND_DST_ONE_MINUS_DST_ALPHA    = 7
-value: RS_BLEND_DST_INVALID                = 100
+value: RS_BLEND_DST_ZERO = 0
+value: RS_BLEND_DST_ONE = 1
+value: RS_BLEND_DST_SRC_COLOR = 2
+value: RS_BLEND_DST_ONE_MINUS_SRC_COLOR = 3
+value: RS_BLEND_DST_SRC_ALPHA = 4
+value: RS_BLEND_DST_ONE_MINUS_SRC_ALPHA = 5
+value: RS_BLEND_DST_DST_ALPHA = 6
+value: RS_BLEND_DST_ONE_MINUS_DST_ALPHA = 7
+value: RS_BLEND_DST_INVALID = 100
+deprecated:
 summary: Blend destination function
 description:
 end:
@@ -69,10 +69,11 @@ type: rs_cull_mode
 version: 16
 size: 32
 enum:
-value: RS_CULL_BACK     = 0
-value: RS_CULL_FRONT    = 1
-value: RS_CULL_NONE     = 2
-value: RS_CULL_INVALID  = 100
+value: RS_CULL_BACK = 0
+value: RS_CULL_FRONT = 1
+value: RS_CULL_NONE = 2
+value: RS_CULL_INVALID = 100
+deprecated:
 summary: Culling mode
 description:
 end:
@@ -81,14 +82,15 @@ type: rs_depth_func
 version: 16
 size: 32
 enum:
-value: RS_DEPTH_FUNC_ALWAYS        = 0, "Always drawn"
-value: RS_DEPTH_FUNC_LESS          = 1, "Drawn if the incoming depth value is less than that in the depth buffer"
-value: RS_DEPTH_FUNC_LEQUAL        = 2, "Drawn if the incoming depth value is less or equal to that in the depth buffer"
-value: RS_DEPTH_FUNC_GREATER       = 3, "Drawn if the incoming depth value is greater than that in the depth buffer"
-value: RS_DEPTH_FUNC_GEQUAL        = 4, "Drawn if the incoming depth value is greater or equal to that in the depth buffer"
-value: RS_DEPTH_FUNC_EQUAL         = 5, "Drawn if the incoming depth value is equal to that in the depth buffer"
-value: RS_DEPTH_FUNC_NOTEQUAL      = 6, "Drawn if the incoming depth value is not equal to that in the depth buffer"
-value: RS_DEPTH_FUNC_INVALID       = 100, "Invalid depth function"
+value: RS_DEPTH_FUNC_ALWAYS = 0, "Always drawn"
+value: RS_DEPTH_FUNC_LESS = 1, "Drawn if the incoming depth value is less than that in the depth buffer"
+value: RS_DEPTH_FUNC_LEQUAL = 2, "Drawn if the incoming depth value is less or equal to that in the depth buffer"
+value: RS_DEPTH_FUNC_GREATER = 3, "Drawn if the incoming depth value is greater than that in the depth buffer"
+value: RS_DEPTH_FUNC_GEQUAL = 4, "Drawn if the incoming depth value is greater or equal to that in the depth buffer"
+value: RS_DEPTH_FUNC_EQUAL = 5, "Drawn if the incoming depth value is equal to that in the depth buffer"
+value: RS_DEPTH_FUNC_NOTEQUAL = 6, "Drawn if the incoming depth value is not equal to that in the depth buffer"
+value: RS_DEPTH_FUNC_INVALID = 100, "Invalid depth function"
+deprecated:
 summary: Depth function
 description:
  Specifies conditional drawing depending on the comparison of the incoming
@@ -106,6 +108,7 @@ value: RS_PRIMITIVE_TRIANGLE = 3, "Vertices will be rendered as individual trian
 value: RS_PRIMITIVE_TRIANGLE_STRIP = 4, "Vertices will be rendered as a connected triangle strip defined by the first three vertices with each additional triangle defined by a new vertex"
 value: RS_PRIMITIVE_TRIANGLE_FAN = 5, "Vertices will be rendered as a sequence of triangles that all share first vertex as the origin"
 value: RS_PRIMITIVE_INVALID = 100, "Invalid primitive"
+deprecated:
 summary: How to intepret mesh vertex data
 description:
  Describes the way mesh vertex data is interpreted when rendering
@@ -114,6 +117,7 @@ end:
 type: rs_font
 size: 32
 simple: _RS_HANDLE
+deprecated:
 summary: Handle to a Font
 description:
  Opaque handle to a RenderScript font object.
@@ -124,6 +128,7 @@ end:
 type: rs_mesh
 size: 32
 simple: _RS_HANDLE
+deprecated:
 summary: Handle to a Mesh
 description:
  Opaque handle to a RenderScript mesh object.
@@ -133,6 +138,7 @@ end:
 type: rs_program_fragment
 size: 32
 simple: _RS_HANDLE
+deprecated:
 summary: Handle to a ProgramFragment
 description:
  Opaque handle to a RenderScript ProgramFragment object.
@@ -142,6 +148,7 @@ end:
 type: rs_program_vertex
 size: 32
 simple: _RS_HANDLE
+deprecated:
 summary: Handle to a ProgramVertex
 description:
  Opaque handle to a RenderScript ProgramVertex object.
@@ -151,6 +158,7 @@ end:
 type: rs_program_raster
 size: 32
 simple: _RS_HANDLE
+deprecated:
 summary: Handle to a ProgramRaster
 description:
  Opaque handle to a RenderScript ProgramRaster object.
@@ -160,6 +168,7 @@ end:
 type: rs_program_store
 size: 32
 simple: _RS_HANDLE
+deprecated:
 summary: Handle to a ProgramStore
 description:
  Opaque handle to a RenderScript ProgramStore object.
@@ -195,7 +204,8 @@ function: rsgAllocationSyncAll
 size: 32
 ret: void
 arg: rs_allocation alloc
-summary:
+deprecated:
+summary: Sync the contents of an allocation
 description:
  Sync the contents of an allocation.
 
@@ -221,7 +231,8 @@ size: 32
 ret: void
 arg: rs_allocation colorTarget
 arg: uint slot
-summary:
+deprecated:
+summary: Set the color target
 description:
  Set the color target used for all subsequent rendering calls
 test: none
@@ -233,7 +244,8 @@ ret: void
 arg: rs_program_fragment ps, "program fragment object"
 arg: uint slot, "index of the constant buffer on the program"
 arg: rs_allocation c, "constants to bind"
-summary:
+deprecated:
+summary: Bind a constant allocation
 description:
  Bind a new Allocation object to a ProgramFragment or ProgramVertex.
  The Allocation must be a valid constant input for the Program.
@@ -254,7 +266,8 @@ version: 14
 size: 32
 ret: void
 arg: rs_allocation depthTarget
-summary:
+deprecated:
+summary: Set the depth target
 description:
  Set the depth target used for all subsequent rendering calls
 test: none
@@ -264,7 +277,8 @@ function: rsgBindFont
 size: 32
 ret: void
 arg: rs_font font, "object to bind"
-summary:
+deprecated:
+summary: Bind a font object
 description:
  Binds the font object to be used for all subsequent font rendering calls
 test: none
@@ -274,7 +288,8 @@ function: rsgBindProgramFragment
 size: 32
 ret: void
 arg: rs_program_fragment pf
-summary:
+deprecated:
+summary: Bind a ProgramFragment
 description:
  Bind a new ProgramFragment to the rendering context.
 test: none
@@ -284,7 +299,8 @@ function: rsgBindProgramRaster
 size: 32
 ret: void
 arg: rs_program_raster pr
-summary:
+deprecated:
+summary: Bind a ProgramRaster
 description:
  Bind a new ProgramRaster to the rendering context.
 test: none
@@ -294,7 +310,8 @@ function: rsgBindProgramStore
 size: 32
 ret: void
 arg: rs_program_store ps
-summary:
+deprecated:
+summary: Bind a ProgramStore
 description:
  Bind a new ProgramStore to the rendering context.
 test: none
@@ -304,7 +321,8 @@ function: rsgBindProgramVertex
 size: 32
 ret: void
 arg: rs_program_vertex pv
-summary:
+deprecated:
+summary: Bind a ProgramVertex
 description:
  Bind a new ProgramVertex to the rendering context.
 test: none
@@ -316,7 +334,8 @@ ret: void
 arg: rs_program_fragment fragment
 arg: uint slot
 arg: rs_sampler sampler
-summary:
+deprecated:
+summary: Bind a sampler
 description:
  Bind a new Sampler object to a ProgramFragment.  The sampler will
  operate on the texture bound at the matching slot.
@@ -329,7 +348,8 @@ ret: void
 arg: rs_program_fragment v
 arg: uint slot
 arg: rs_allocation alloc
-summary:
+deprecated:
+summary: Bind a texture allocation
 description:
  Bind a new Allocation object to a ProgramFragment.  The
  Allocation must be a valid texture for the Program.  The sampling
@@ -342,7 +362,8 @@ function: rsgClearAllRenderTargets
 version: 14
 size: 32
 ret: void
-summary:
+deprecated:
+summary: Clear all color and depth targets
 description:
  Clear all color and depth targets and resume rendering into
  the framebuffer
@@ -356,7 +377,8 @@ arg: float r
 arg: float g
 arg: float b
 arg: float a
-summary:
+deprecated:
+summary: Clear the specified color from the surface
 description:
  Clears the rendering surface to the specified color.
 test: none
@@ -367,7 +389,8 @@ version: 14
 size: 32
 ret: void
 arg: uint slot
-summary:
+deprecated:
+summary: Clear the color target
 description:
  Clear the previously set color target
 test: none
@@ -377,7 +400,8 @@ function: rsgClearDepth
 size: 32
 ret: void
 arg: float value
-summary:
+deprecated:
+summary: Clear the depth surface
 description:
  Clears the depth suface to the specified value.
 test: none
@@ -387,7 +411,8 @@ function: rsgClearDepthTarget
 version: 14
 size: 32
 ret: void
-summary:
+deprecated:
+summary: Clear the depth target
 description:
  Clear the previously set depth target
 test: none
@@ -397,7 +422,8 @@ function: rsgDrawMesh
 size: 32
 ret: void
 arg: rs_mesh ism, "mesh object to render"
-summary:
+deprecated:
+summary: Draw a mesh
 description:
  Draw a mesh using the current context state.
 
@@ -442,7 +468,8 @@ arg: float z3
 arg: float x4
 arg: float y4
 arg: float z4
-summary:
+deprecated:
+summary: Draw a quad
 description:
  Low performance utility function for drawing a simple quad.  Not intended for
  drawing large quantities of geometry.
@@ -472,7 +499,8 @@ arg: float y4
 arg: float z4
 arg: float u4
 arg: float v4
-summary:
+deprecated:
+summary: Draw a textured quad
 description:
  Low performance utility function for drawing a textured quad.  Not intended
  for drawing large quantities of geometry.
@@ -487,7 +515,8 @@ arg: float y1
 arg: float x2
 arg: float y2
 arg: float z
-summary:
+deprecated:
+summary: Draw a rectangle
 description:
  Low performance utility function for drawing a simple rectangle.  Not
  intended for drawing large quantities of geometry.
@@ -502,7 +531,8 @@ arg: float y
 arg: float z
 arg: float w
 arg: float h
-summary:
+deprecated:
+summary: Draw rectangles in screenspace
 description:
  Low performance function for drawing rectangles in screenspace.  This
  function uses the default passthough ProgramVertex.  Any bound ProgramVertex
@@ -517,7 +547,8 @@ ret: void
 arg: const char* text
 arg: int x
 arg: int y
-summary:
+deprecated:
+summary: Draw a text string
 description:
  Draws text given a string and location
 test: none
@@ -536,7 +567,8 @@ function: rsgFinish
 version: 14
 size: 32
 ret: uint
-summary:
+deprecated:
+summary: End rendering commands
 description:
  Force RenderScript to finish all rendering commands
 test: none
@@ -549,7 +581,8 @@ arg: float r, "red component"
 arg: float g, "green component"
 arg: float b, "blue component"
 arg: float a, "alpha component"
-summary:
+deprecated:
+summary: Set the font color
 description:
  Sets the font color for all subsequent rendering calls
 test: none
@@ -558,7 +591,8 @@ end:
 function: rsgGetHeight
 size: 32
 ret: uint
-summary:
+deprecated:
+summary: Get the surface height
 description:
  Get the height of the current rendering surface.
 test: none
@@ -567,7 +601,8 @@ end:
 function: rsgGetWidth
 size: 32
 ret: uint
-summary:
+deprecated:
+summary: Get the surface width
 description:
  Get the width of the current rendering surface.
 test: none
@@ -581,7 +616,8 @@ arg: int* left
 arg: int* right
 arg: int* top
 arg: int* bottom
-summary:
+deprecated:
+summary: Get the bounding box for a text string
 description:
  Returns the bounding box of the text relative to (0, 0)
  Any of left, right, top, bottom could be NULL
@@ -609,7 +645,8 @@ arg: float* min
 arg: float* maxX
 arg: float* maxY
 arg: float* maxZ
-summary:
+deprecated:
+summary: Compute a bounding box
 description:
  Computes an axis aligned bounding box of a mesh object
 test: none
@@ -640,7 +677,8 @@ size: 32
 ret: rs_allocation, "allocation containing index data"
 arg: rs_mesh m, "mesh to get data from"
 arg: uint32_t index, "index of the index allocation"
-summary:
+deprecated:
+summary: Return an allocation containing index data
 description:
  Returns an allocation containing index data or a null
  allocation if only the primitive is specified
@@ -653,7 +691,8 @@ size: 32
 ret: rs_primitive, "primitive describing how the mesh is rendered"
 arg: rs_mesh m, "mesh to get data from"
 arg: uint32_t index, "index of the primitive"
-summary:
+deprecated:
+summary: Return the primitive
 description:
  Returns the primitive describing how a part of the mesh is
  rendered
@@ -665,7 +704,8 @@ version: 16
 size: 32
 ret: uint32_t, "number of primitive groups in the mesh. This would include simple primitives as well as allocations containing index data"
 arg: rs_mesh m, "mesh to get data from"
-summary:
+deprecated:
+summary: Return the number of index sets
 description:
  Meshes could have multiple index sets, this function returns
  the number.
@@ -678,7 +718,8 @@ size: 32
 ret: rs_allocation, "allocation containing vertex data"
 arg: rs_mesh m, "mesh to get data from"
 arg: uint32_t index, "index of the vertex allocation"
-summary:
+deprecated:
+summary: Return a vertex allocation
 description:
  Returns an allocation that is part of the mesh and contains
  vertex data, e.g. positions, normals, texcoords
@@ -690,7 +731,8 @@ version: 16
 size: 32
 ret: uint32_t, "number of allocations in the mesh that contain vertex data"
 arg: rs_mesh m, "mesh to get data from"
-summary:
+deprecated:
+summary: Return the number of vertex allocations
 description:
  Returns the number of allocations in the mesh that contain
  vertex data
@@ -705,7 +747,8 @@ arg: float r
 arg: float g
 arg: float b
 arg: float a
-summary:
+deprecated:
+summary: Set the constant color for a fixed function emulation program
 description:
  Set the constant color for a fixed function emulation program.
 test: none
@@ -715,7 +758,8 @@ function: rsgProgramVertexGetProjectionMatrix
 size: 32
 ret: void
 arg: rs_matrix4x4* proj, "matrix to store the current projection matrix into"
-summary:
+deprecated:
+summary: Get the projection matrix for a fixed function vertex program
 description:
  Get the projection matrix for a currently bound fixed function
  vertex program. Calling this function with a custom vertex shader
@@ -727,7 +771,8 @@ function: rsgProgramVertexLoadModelMatrix
 size: 32
 ret: void
 arg: const rs_matrix4x4* model, "model matrix"
-summary:
+deprecated:
+summary: Load the model matrix for a bound fixed function vertex program
 description:
  Load the model matrix for a currently bound fixed function
  vertex program. Calling this function with a custom vertex shader
@@ -739,7 +784,8 @@ function: rsgProgramVertexLoadProjectionMatrix
 size: 32
 ret: void
 arg: const rs_matrix4x4* proj, "projection matrix"
-summary:
+deprecated:
+summary: Load the projection matrix for a bound fixed function vertex program
 description:
  Load the projection matrix for a currently bound fixed function
  vertex program. Calling this function with a custom vertex shader
@@ -751,7 +797,8 @@ function: rsgProgramVertexLoadTextureMatrix
 size: 32
 ret: void
 arg: const rs_matrix4x4* tex, "texture matrix"
-summary:
+deprecated:
+summary:  Load the texture matrix for a bound fixed function vertex program
 description:
  Load the texture matrix for a currently bound fixed function
  vertex program. Calling this function with a custom vertex shader
@@ -764,7 +811,8 @@ version: 16
 size: 32
 ret: rs_cull_mode
 arg: rs_program_raster pr, "program raster to query"
-summary:
+deprecated:
+summary: Get program raster cull mode
 description:
  Get program raster cull mode
 test: none
@@ -775,7 +823,8 @@ version: 16
 size: 32
 ret: bool
 arg: rs_program_raster pr, "program raster to query"
-summary:
+deprecated:
+summary: Get program raster point sprite state
 description:
  Get program raster point sprite state
 test: none
@@ -786,7 +835,8 @@ version: 16
 size: 32
 ret: rs_blend_dst_func
 arg: rs_program_store ps, "program store to query"
-summary:
+deprecated:
+summary: Get program store blend destination function
 description:
  Get program store blend destination function
 test: none
@@ -797,7 +847,8 @@ version: 16
 size: 32
 ret: rs_blend_src_func
 arg: rs_program_store ps, "program store to query"
-summary:
+deprecated:
+summary: Get program store blend source function
 description:
  Get program store blend source function
 test: none
@@ -808,7 +859,8 @@ version: 16
 size: 32
 ret: rs_depth_func
 arg: rs_program_store ps, "program store to query"
-summary:
+deprecated:
+summary: Get program store depth function
 description:
  Get program store depth function
 test: none
@@ -819,7 +871,8 @@ version: 16
 size: 32
 ret: bool
 arg: rs_program_store ps, "program store to query"
-summary:
+deprecated:
+summary: Get program store alpha component color mask
 description:
  Get program store alpha component color mask
 test: none
@@ -830,7 +883,8 @@ version: 16
 size: 32
 ret: bool
 arg: rs_program_store ps, "program store to query"
-summary:
+deprecated:
+summary: Get program store blur component color mask
 description:
  Get program store blur component color mask
 test: none
@@ -841,7 +895,8 @@ version: 16
 size: 32
 ret: bool
 arg: rs_program_store ps, "program store to query"
-summary:
+deprecated:
+summary: Get program store green component color mask
 description:
  Get program store green component color mask
 test: none
@@ -852,7 +907,8 @@ version: 16
 size: 32
 ret: bool
 arg: rs_program_store ps, "program store to query"
-summary:
+deprecated:
+summary: Get program store red component color mask
 description:
  Get program store red component color mask
 test: none
@@ -863,7 +919,8 @@ version: 16
 size: 32
 ret: bool
 arg: rs_program_store ps, "program store to query"
-summary:
+deprecated:
+summary: Get program store depth mask
 description:
  Get program store depth mask
 test: none
@@ -874,7 +931,8 @@ version: 16
 size: 32
 ret: bool
 arg: rs_program_store ps, "program store to query"
-summary:
+deprecated:
+summary: Get program store dither state
 description:
  Get program store dither state
 test: none

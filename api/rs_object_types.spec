@@ -15,9 +15,11 @@
 #
 
 header:
-summary: Standard RenderScript types
+summary: Object Types
 description:
- TODO desc.
+ The types below are used to manipulate RenderScript objects like allocations,
+ samplers, elements, and scripts.  Most of these object are created using the Java
+ RenderScript APIs.
 include:
  #define NULL ((void *)0)
 
@@ -78,40 +80,6 @@ description:
  See: android.renderscript.ScriptC
 end:
 
-type: rs_matrix4x4
-struct:
-field: float m[16]
-summary: 4x4 matrix of 32 bit floats
-description:
- Native holder for RS matrix.  Elements are stored in the array at the
- location [row*4 + col]
-end:
-
-type: rs_matrix3x3
-struct:
-field: float m[9]
-summary: 3x3 matrix of 32 bit floats
-description:
- Native holder for RS matrix.  Elements are stored in the array at the
- location [row*3 + col]
-end:
-
-type: rs_matrix2x2
-struct:
-field: float m[4]
-summary: 2x2 matrix of 32 bit floats
-description:
- Native holder for RS matrix.  Elements are stored in the array at the
- location [row*2 + col]
-end:
-
-type: rs_quaternion
-simple: float4
-summary: Quarternion
-description:
- Quaternion type for use with the quaternion functions
-end:
-
 type: rs_allocation_cubemap_face
 version: 14
 enum:
@@ -142,36 +110,36 @@ end:
 type: rs_data_type
 version: 16
 enum:
-value: RS_TYPE_NONE             = 0
-value: RS_TYPE_FLOAT_32         = 2
-value: RS_TYPE_FLOAT_64         = 3
-value: RS_TYPE_SIGNED_8         = 4
-value: RS_TYPE_SIGNED_16        = 5
-value: RS_TYPE_SIGNED_32        = 6
-value: RS_TYPE_SIGNED_64        = 7
-value: RS_TYPE_UNSIGNED_8       = 8
-value: RS_TYPE_UNSIGNED_16      = 9
-value: RS_TYPE_UNSIGNED_32      = 10
-value: RS_TYPE_UNSIGNED_64      = 11
-value: RS_TYPE_BOOLEAN          = 12
-value: RS_TYPE_UNSIGNED_5_6_5   = 13
+value: RS_TYPE_NONE = 0
+value: RS_TYPE_FLOAT_32 = 2
+value: RS_TYPE_FLOAT_64 = 3
+value: RS_TYPE_SIGNED_8 = 4
+value: RS_TYPE_SIGNED_16 = 5
+value: RS_TYPE_SIGNED_32 = 6
+value: RS_TYPE_SIGNED_64 = 7
+value: RS_TYPE_UNSIGNED_8 = 8
+value: RS_TYPE_UNSIGNED_16 = 9
+value: RS_TYPE_UNSIGNED_32 = 10
+value: RS_TYPE_UNSIGNED_64 = 11
+value: RS_TYPE_BOOLEAN = 12
+value: RS_TYPE_UNSIGNED_5_6_5 = 13
 value: RS_TYPE_UNSIGNED_5_5_5_1 = 14
 value: RS_TYPE_UNSIGNED_4_4_4_4 = 15
-value: RS_TYPE_MATRIX_4X4       = 16
-value: RS_TYPE_MATRIX_3X3       = 17
-value: RS_TYPE_MATRIX_2X2       = 18
-value: RS_TYPE_ELEMENT          = 1000
-value: RS_TYPE_TYPE             = 1001
-value: RS_TYPE_ALLOCATION       = 1002
-value: RS_TYPE_SAMPLER          = 1003
-value: RS_TYPE_SCRIPT           = 1004
-value: RS_TYPE_MESH             = 1005
+value: RS_TYPE_MATRIX_4X4 = 16
+value: RS_TYPE_MATRIX_3X3 = 17
+value: RS_TYPE_MATRIX_2X2 = 18
+value: RS_TYPE_ELEMENT = 1000
+value: RS_TYPE_TYPE = 1001
+value: RS_TYPE_ALLOCATION = 1002
+value: RS_TYPE_SAMPLER = 1003
+value: RS_TYPE_SCRIPT = 1004
+value: RS_TYPE_MESH = 1005
 value: RS_TYPE_PROGRAM_FRAGMENT = 1006
-value: RS_TYPE_PROGRAM_VERTEX   = 1007
-value: RS_TYPE_PROGRAM_RASTER   = 1008
-value: RS_TYPE_PROGRAM_STORE    = 1009
-value: RS_TYPE_FONT             = 1010
-value: RS_TYPE_INVALID          = 10000
+value: RS_TYPE_PROGRAM_VERTEX = 1007
+value: RS_TYPE_PROGRAM_RASTER = 1008
+value: RS_TYPE_PROGRAM_STORE = 1009
+value: RS_TYPE_FONT = 1010
+value: RS_TYPE_INVALID = 10000
 summary: Element data types
 description:
  DataType represents the basic type information for a basic element.  The
@@ -213,14 +181,14 @@ end:
 type: rs_sampler_value
 version: 16
 enum:
-value: RS_SAMPLER_NEAREST              = 0
-value: RS_SAMPLER_LINEAR               = 1
-value: RS_SAMPLER_LINEAR_MIP_LINEAR    = 2
-value: RS_SAMPLER_WRAP                 = 3
-value: RS_SAMPLER_CLAMP                = 4
-value: RS_SAMPLER_LINEAR_MIP_NEAREST   = 5
-value: RS_SAMPLER_MIRRORED_REPEAT      = 6
-value: RS_SAMPLER_INVALID              = 100
+value: RS_SAMPLER_NEAREST = 0
+value: RS_SAMPLER_LINEAR = 1
+value: RS_SAMPLER_LINEAR_MIP_LINEAR = 2
+value: RS_SAMPLER_WRAP = 3
+value: RS_SAMPLER_CLAMP = 4
+value: RS_SAMPLER_LINEAR_MIP_NEAREST = 5
+value: RS_SAMPLER_MIRRORED_REPEAT = 6
+value: RS_SAMPLER_INVALID = 100
 summary: Sampler wrap T value
 description:
 end:
