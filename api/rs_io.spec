@@ -15,64 +15,79 @@
 #
 
 header:
-summary: Input/output functions
+summary: Input/Output Functions
 description:
- TODO Add documentation
+ These functions are used to:<ul>
+ <li>Send information to the Java client, and</li>
+#TODO We need better documentation for:
+ <li>Send the processed allocation or receive the next allocation to process.</li></ul>
 end:
 
 function: rsAllocationIoReceive
 version: 16
 ret: void
-arg: rs_allocation a, "allocation to work on"
+arg: rs_allocation a, "Allocation to work on."
 summary: Receive new content from the queue
 description:
  Receive a new set of contents from the queue.
+#TODO We need better documentation.
 test: none
 end:
 
 function: rsAllocationIoSend
 version: 16
 ret: void
-arg: rs_allocation a, "allocation to work on"
+arg: rs_allocation a, "Allocation to work on."
 summary: Send new content to the queue
 description:
  Send the contents of the Allocation to the queue.
+#TODO We need better documentation.
 test: none
 end:
 
 function: rsSendToClient
 ret: bool
 arg: int cmdID
-summary:
+summary: Send a message to the client, non-blocking
 description:
- Send a message back to the client.  Will not block and returns true
- if the message was sendable and false if the fifo was full.
- A message ID is required.  Data payload is optional.
+ Sends a message back to the client.  This call does not block.
+ It returns true if the message was sent and false if the
+ message queue is full.
+
+ A message ID is required.  The data payload is optional.
+
+ See <a href='http://developer.android.com/reference/android/renderscript/RenderScript.RSMessageHandler.html'>RenderScript.RSMessageHandler</a>.
 test: none
 end:
 
 function: rsSendToClient
 ret: bool
 arg: int cmdID
-arg: const void* data
-arg: uint len
+arg: const void* data, "Application specific data."
+arg: uint len, "Length of the data, in bytes."
 test: none
 end:
 
 function: rsSendToClientBlocking
 ret: void
 arg: int cmdID
-summary:
+summary: Send a message to the client, blocking
 description:
- Send a message back to the client, blocking until the message is queued.
- A message ID is required.  Data payload is optional.
+ Sends a message back to the client.  This function will block
+ until there is room on the message queue for this message.
+ This function may return before the message was delivered and
+ processed by the client.
+
+ A message ID is required.  The data payload is optional.
+
+ See <a href='http://developer.android.com/reference/android/renderscript/RenderScript.RSMessageHandler.html'>RenderScript.RSMessageHandler</a>.
 test: none
 end:
 
 function: rsSendToClientBlocking
 ret: void
 arg: int cmdID
-arg: const void* data
-arg: uint len
+arg: const void* data, "Application specific data."
+arg: uint len, "Length of the data, in bytes."
 test: none
 end:

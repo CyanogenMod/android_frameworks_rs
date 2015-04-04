@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2014 The Android Open Source Project
+# Copyright (C) 2015 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,9 +15,20 @@
 #
 
 header:
-summary: TODO Add documentation
+summary: Vector Math Functions
 description:
- TODO Add documentation
+ These functions interpret the input arguments as representation of vectors in n-dimensional space.
+
+ The precision of the mathematical operations is affected by the pragmas
+# TODO Create an anchor for the section of http://developer.android.com/guide/topics/renderscript/compute.html that details rs_fp_* and link them here.
+ rs_fp_relaxed and rs_fp_full.
+
+ Different precision/speed tradeoffs can be achieved by using three variants
+ of common math functions.  Functions with a name starting with<ul>
+ <li>native_ may have custom hardware implementations with weaker precision,</li>
+ <li>half_ may perform internal computations using 16 bit floats, and</li>
+ <li>fast_ are n-dimensional space computations that may use 16 bit floats.
+ </ul>
 end:
 
 function: cross

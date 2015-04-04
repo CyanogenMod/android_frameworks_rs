@@ -15,46 +15,104 @@
 #
 
 header:
-summary: Standard RenderScript types
+summary: Numerical Types
 description:
-  Integers:<ul>
-  <li>8 bit: char, int8_t</li>
-  <li>16 bit: short, int16_t</li>
-  <li>32 bit: int, in32_t</li>
-  <li>64 bit: long, long long, int64_t</li></ul>
+ <h5>Scalars:</h5>
 
-  Unsigned integers:<ul>
-  <li>8 bit: uchar, uint8_t</li>
-  <li>16 bit: ushort, uint16_t</li>
-  <li>32 bit: uint, uint32_t</li>
-  <li>64 bit: ulong, uint64_t</li></ul>
+ RenderScript supports the following scalar numerical types:
 
-  Floating point:<ul>
-  <li>32 bit: float</li>
-  <li>64 bit: double</li></ul>
+ Integers:<ul>
+ <li>8 bit: char, @int8_t</li>
+ <li>16 bit: short, @int16_t</li>
+ <li>32 bit: int, @int32_t</li>
+ <li>64 bit: long, long long, @int64_t</li></ul>
 
-  Vectors of length 2, 3, and 4 are supported for all the types above.
+ Unsigned integers:<ul>
+ <li>8 bit: uchar, @uint8_t</li>
+ <li>16 bit: ushort, @uint16_t</li>
+ <li>32 bit: uint, @uint32_t</li>
+ <li>64 bit: ulong, @uint64_t</li></ul>
+
+ Floating point:<ul>
+ <li>32 bit: float</li>
+ <li>64 bit: double</li></ul>
+
+ <h5>Vectors:</h5>
+
+ RenderScript supports fixed size vectors of length 2, 3, and 4.
+ Vectors are declared using the common type name followed by a 2, 3, or 4.
+ E.g. @float4, @int3, @double2, @ulong4.
+
+ To create vector literals, use the vector type followed by the values enclosed
+ between parentheses, e.g. <code>(float3)(1.0f, 2.0f, 3.0f)</code>.
+
+ Entries of a vector can be accessed using different naming styles.
+
+ Single entries can be accessed by following the variable name with a dot and:<ul>
+ <li>The letters x, y, z, and w,</li>
+ <li>The letters r, g, b, and a,</li>
+ <li>The letter s or S, followed by a zero based index.</li></ul>
+
+ For example, with <code>int4 myVar;</code> the following are equivalent:<code><br/>
+   myVar.x == myVar.r == myVar.s0 == myVar.S0<br/>
+   myVar.y == myVar.g == myVar.s1 == myVar.S1<br/>
+   myVar.z == myVar.b == myVar.s2 == myVar.S2<br/>
+   myVar.w == myVar.a == myVar.s3 == myVar.S3</code>
+
+ Multiple entries of a vector can be accessed at once by using an identifier
+ that is the concatenation of multiple letters or indices.  The resulting vector
+ has a size equal to the number of entries named.
+
+ With the example above, the middle two entries can be accessed using
+ <code>myVar.yz</code>, <code>myVar.gb</code>, <code>myVar.s12</code>, and <code>myVar.S12</code>.
+
+ The entries don't have to be contiguous or in increasing order.
+ Entries can even be repeated, as long as we're not trying to assign
+ to it.  You also can't mix the naming styles.
+
+ Here are examples of what can or can't be done: <code><br/>
+ float4 v4;<br/>
+ float3 v3;<br/>
+ float2 v2;<br/>
+ v2 = v4.xx; // Valid<br/>
+ v3 = v4.zxw; // Valid<br/>
+ v3 = v4.bba; // Valid<br/>
+ v3 = v4.s034; // Valid<br/>
+ v3.s120 = v4.S233; // Valid<br/>
+ v4.yz = v3.rg; // Valid<br/>
+ v4.yzx = v3.rg; // Invalid: mismatched sizes<br/>
+ v4.yzz = v3; // Invalid: z appears twice in an assignment<br/>
+ v3 = v3.xas0; // Invalid: can't mix xyzw with rgba nor s0...<br/>
+ </code>
+
+ <h5>Matrices and Quaternions:</h5>
+
+ RenderScript supports fixed size square matrices of floats of size 2x2, 3x3, and 4x4.
+ The types are named @rs_matrix2x2, @rs_matrix3x3, and @rs_matrix4x4.  See
+ <a href='rs_matrix.html'>Matrix Functions</a> for the list of operations.
+
+ Quaternions are also supported via @rs_quaternion.  See <a href='rs_quaternion.html'>Quaterion Functions</a>. for the list of operations.
 end:
 
 type: int8_t
 simple: char
 summary: 8 bit signed integer
 description:
- 8 bit integer type
+ 8 bit signed integer type.
 end:
 
 type: int16_t
 simple: short
 summary: 16 bit signed integer
 description:
- 16 bit integer type
+ A 16 bit signed integer type.
 end:
 
 type: int32_t
 simple: int
 summary: 32 bit signed integer
 description:
- 32 bit integer type
+ A 32 bit signed integer type.
 end:
 
 type: int64_t
@@ -62,7 +120,7 @@ version: 9 20
 simple: long long
 summary: 64 bit signed integer
 description:
- 64 bit integer type
+ A 64 bit signed integer type.
 end:
 
 type: int64_t
@@ -74,21 +132,21 @@ type: uint8_t
 simple: unsigned char
 summary: 8 bit unsigned integer
 description:
- 8 bit unsigned integer type
+ 8 bit unsigned integer type.
 end:
 
 type: uint16_t
 simple: unsigned short
 summary: 16 bit unsigned integer
 description:
- 16 bit unsigned integer type
+ A 16 bit unsigned integer type.
 end:
 
 type: uint32_t
 simple: unsigned int
 summary: 32 bit unsigned integer
 description:
- 32 bit unsigned integer type
+ A 32 bit unsigned integer type.
 end:
 
 type: uint64_t
@@ -96,7 +154,7 @@ version: 9 20
 simple: unsigned long long
 summary: 64 bit unsigned integer
 description:
- 64 bit unsigned integer type
+ A 64 bit unsigned integer type.
 end:
 
 type: uint64_t
@@ -108,28 +166,28 @@ type: uchar
 simple: uint8_t
 summary: 8 bit unsigned integer
 description:
- 8 bit unsigned integer type
+ 8 bit unsigned integer type.
 end:
 
 type: ushort
 simple: uint16_t
 summary: 16 bit unsigned integer
 description:
- 16 bit unsigned integer type
+ A 16 bit unsigned integer type.
 end:
 
 type: uint
 simple: uint32_t
 summary: 32 bit unsigned integer
 description:
- 32 bit unsigned integer type
+ A 32 bit unsigned integer type.
 end:
 
 type: ulong
 simple: uint64_t
 summary: 64 bit unsigned integer
 description:
- Typedef for unsigned long (use for 64-bit unsigned integers)
+ A 64 bit unsigned integer type.
 end:
 
 type: size_t
@@ -137,7 +195,7 @@ size: 64
 simple: uint64_t
 summary: Unsigned size type
 description:
- Typedef for size_t
+ Unsigned size type.  The number of bits depend on the compilation flags.
 end:
 
 type: size_t
@@ -150,7 +208,7 @@ size: 64
 simple: int64_t
 summary: Signed size type
 description:
- Typedef for ssize_t
+ Signed size type.  The number of bits depend on the compilation flags.
 end:
 
 type: ssize_t
@@ -332,6 +390,7 @@ description:
  a single 32 bit field with 32 bit alignment.
 end:
 
+
 type: short2
 simple: short __attribute__((ext_vector_type(2)))
 summary: Two 16 bit signed integers
@@ -404,4 +463,48 @@ summary: Four 64 bit signed integers
 description:
  Vector version of the basic long type. Provides four long fields packed into
  a single 256 bit field with 256 bit alignment.
+end:
+
+
+type: rs_matrix2x2
+struct:
+field: float m[4]
+summary: 2x2 matrix of 32 bit floats
+description:
+ A square 2x2 matrix of floats.  The entries are stored in the array at the
+ location [row*2 + col].
+
+ See <a href='rs_matrix.html'>Matrix Functions</a>.
+end:
+
+type: rs_matrix3x3
+struct:
+field: float m[9]
+summary: 3x3 matrix of 32 bit floats
+description:
+ A square 3x3 matrix of floats.  The entries are stored in the array at the
+ location [row*3 + col].
+
+ See <a href='rs_matrix.html'>Matrix Functions</a>.
+end:
+
+type: rs_matrix4x4
+struct:
+field: float m[16]
+summary: 4x4 matrix of 32 bit floats
+description:
+ A square 4x4 matrix of floats.  The entries are stored in the array at the
+ location [row*4 + col].
+
+ See <a href='rs_matrix.html'>Matrix Functions</a>.
+end:
+
+
+type: rs_quaternion
+simple: float4
+summary: Quaternion
+description:
+ A square 4x4 matrix of floats that represents a quaternion.
+
+ See <a href='rs_quaternion.html'>Quaternion Functions</a>.
 end:

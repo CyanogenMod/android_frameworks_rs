@@ -15,7 +15,7 @@
 #
 
 header:
-summary: Matrix functions
+summary: Matrix Functions
 description:
  These functions let you manipulate square matrices of rank 2x2, 3x3, and 4x4.
  They are particularly useful for graphical transformations and are
@@ -56,7 +56,7 @@ arg: float4* top, "top plane"
 arg: float4* bottom, "bottom plane"
 arg: float4* near, "near plane"
 arg: float4* far, "far plane"
-summary:
+summary: Compute frustum planes
 description:
  Computes 6 frustum planes from the view projection matrix
 inline:
@@ -116,9 +116,9 @@ arg: float4* top, "top plane"
 arg: float4* bottom, "bottom plane"
 arg: float4* near, "near plane"
 arg: float4* far, "far plane"
-summary:
+summary: Checks if a sphere is within the frustum planes
 description:
- Checks if a sphere is withing the 6 frustum planes
+ Returns true if the sphere is within the 6 frustum planes.
 inline:
  float distToCenter = dot(left->xyz, sphere->xyz) + left->w;
  if (distToCenter < -sphere->w) {
@@ -171,7 +171,6 @@ description:
 test: none
 end:
 
-
 function: rsMatrixInverseTranspose
 ret: bool
 arg: rs_matrix4x4* m, "The matrix to modify."
@@ -181,7 +180,6 @@ description:
  Returns true if the matrix was successfully inverted.
 test: none
 end:
-
 
 function: rsMatrixLoad
 t: rs_matrix4x4, rs_matrix3x3, rs_matrix2x2
