@@ -15,9 +15,9 @@
 #
 
 header:
-summary: Mathematical functions
+summary: Mathematical Constants and Functions
 description:
- Most mathematical functions can be applied to scalars and vectors.
+ The mathematical functions below can be applied to scalars and vectors.
  When applied to vectors, a vector of the function applied to each entry
  of the input is returned.
 
@@ -31,9 +31,8 @@ description:
  a = sin(b);<br/>
  </code>
 
-# TODO Adjust documentation
- A few functions like @distance() and @length() interpret instead the input
- as a single vector in n-dimensional space.
+ See <a href='rs_vector_math.html'>"Vector math functions"</a> for functions like @distance() and @length()
+ that interpret instead the input as a single vector in n-dimensional space.
 
  The precision of the mathematical operations is affected by the pragmas
 # TODO Create an anchor for the section of http://developer.android.com/guide/topics/renderscript/compute.html that details rs_fp_* and link them here.
@@ -64,8 +63,10 @@ end:
 constant: M_2_PIl
 value: 0.636619772367581343075535053490057448f
 hidden:
-summary: Deprecated.  Use M_2_PI instead.
+deprecated: Use M_2_PI instead.
+summary: 2 / pi, as a 32 bit float
 description:
+ 2 divided by pi, as a 32 bit float.
 end:
 
 constant: M_2_SQRTPI
@@ -2165,11 +2166,10 @@ ret: #1
 arg: #1 amount, "The value to clamp"
 arg: #1 low, "Lower bound"
 arg: #1 high, "Upper bound"
+deprecated: Use @clamp() instead.
 summary: Restrain a value to a range
 description:
  Clamp a value between low and high.
-
- Deprecated.  Use @clamp() instead.
 test: none
 end:
 
@@ -2177,7 +2177,8 @@ function: rsFrac
 attrib: const
 ret: float
 arg: float v
-summary:
+deprecated: Use @fract() instead.
+summary: Returns the fractional part of a float
 description:
  Returns the fractional part of a float
 test: none
@@ -2186,7 +2187,7 @@ end:
 function: rsRand
 ret: int
 arg: int max_value
-summary:
+summary: Pseudo-random number
 description:
  Return a random value between 0 (or min_value) and max_malue.
 test: none

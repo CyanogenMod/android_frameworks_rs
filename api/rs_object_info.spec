@@ -15,15 +15,16 @@
 #
 
 header:
-summary: Element functions
+summary: Object Characteristics Functions
 description:
- The term "element" is used a bit ambiguously in RenderScript, as both
- the type of an item of an allocation and the instantiation of that type:
- <ul>
- <li>@rs_element is a handle to a type specification, and</li>
+ The functions below can be used to query the characteristics of an allocation,
+ element, or sampler object.  These objects are created from Java.
 
+ The term "element" is used a bit ambiguously in RenderScript, as both
+ the type of an item of an allocation and the instantiation of that type:<ul>
+ <li>@rs_element is a handle to a type specification, and</li>
  <li>In functions like @rsGetElementAt(), "element" means the instantiation
- of the type, i.e. an item of an allocation.</li></ul>
+     of the type, i.e. an item of an allocation.</li></ul>
 
  The functions below let you query the characteristics of the type specificiation.
 
@@ -43,17 +44,22 @@ ret: uint32_t, "Returns 1 if more than one face is present, 0 otherwise."
 arg: rs_allocation a
 summary: Presence of more than one face
 description:
- If the allocation is a cubemap, this function returns 1 if there's more than one
- face present.  In all other cases, it returns 0.
+ If the allocation is a cubemap, this function returns 1 if there's more than
+ one face present.  In all other cases, it returns 0.
+
+ Use @rsGetDimHasFaces() to get the dimension of a currently running kernel.
 test: none
 end:
 
 function: rsAllocationGetDimLOD
 ret: uint32_t, "Returns 1 if more than one LOD is present, 0 otherwise."
 arg: rs_allocation a
-summary: Presence of levels of details
+summary: Presence of levels of detail
 description:
- Query an allocation for the presence of more than one Level Of Details.  This is useful for mipmaps.
+ Query an allocation for the presence of more than one Level Of Detail.
+ This is useful for mipmaps.
+
+ Use @rsGetDimLod() to get the dimension of a currently running kernel.
 test: none
 end:
 
@@ -63,6 +69,8 @@ arg: rs_allocation a
 summary: Size of the X dimension
 description:
  Returns the size of the X dimension of the allocation.
+
+ Use @rsGetDimX() to get the dimension of a currently running kernel.
 test: none
 end:
 
@@ -73,6 +81,8 @@ summary: Size of the Y dimension
 description:
  Returns the size of the Y dimension of the allocation.
  If the allocation has less than two dimensions, returns 0.
+
+ Use @rsGetDimY() to get the dimension of a currently running kernel.
 test: none
 end:
 
@@ -83,6 +93,8 @@ summary: Size of the Z dimension
 description:
  Returns the size of the Z dimension of the allocation.
  If the allocation has less than three dimensions, returns 0.
+
+ Use @rsGetDimZ() to get the dimension of a currently running kernel.
 test: none
 end:
 
@@ -99,9 +111,14 @@ function: rsClearObject
 t: rs_element, rs_type, rs_allocation, rs_sampler, rs_script
 ret: void
 arg: #1* dst
-hidden:
-summary: For internal use.
+summary: Release an object
 description:
+ Tells the run time that this handle will no longer be used to access the
+ the related object.  If this was the last handle to that object, resource
+ recovery may happen.
+
+ After calling this function, *dst will be set to an empty handle.  See
+ @rsIsObject().
 test: none
 end:
 
@@ -109,9 +126,16 @@ function: rsIsObject
 t: rs_element, rs_type, rs_allocation, rs_sampler, rs_script
 ret: bool
 arg: #1 v
-hidden:
-summary: For internal use.
+summary: Check for an empty handle
 description:
+ Returns true if the handle contains a non-null reference.
+
+ This function does not validate that the internal pointer used in the handle
+ points to an actual valid object; it only checks for null.
+
+ This function can be used to check the element returned by
+ @rsElementGetSubElement() or see if @rsClearObject() has been called on a
+ handle.
 test: none
 end:
 
@@ -247,14 +271,12 @@ end:
 function: rsGetAllocation
 ret: rs_allocation
 arg: const void* p
+deprecated: This function is deprecated and will be removed from the SDK in a future release.
 summary: Returns the Allocation for a given pointer
 description:
  Returns the Allocation for a given pointer.  The pointer should point within
  a valid allocation.  The results are undefined if the pointer is not from a
  valid allocation.
-
- This function is deprecated and will be removed from the SDK in a future
- release.
 test: none
 end:
 
