@@ -1962,6 +1962,15 @@ static void SC_debugF4(const char *s, float4 f) {
 static void SC_debugD(const char *s, double d) {
     ALOGD("%s %f, 0x%08llx", s, d, *((long long *) (&d)));
 }
+static void SC_debugD2(const char *s, double2 d) {
+    ALOGD("%s {%f, %f}", s, d.x, d.y);
+}
+static void SC_debugD3(const char *s, double3 d) {
+    ALOGD("%s {%f, %f, %f}", s, d.x, d.y, d.z);
+}
+static void SC_debugD4(const char *s, double4 d) {
+    ALOGD("%s {%f, %f, %f, %f}", s, d.x, d.y, d.z, d.w);
+}
 static void SC_debugFM4v4(const char *s, const float *f) {
     ALOGD("%s {%f, %f, %f, %f", s, f[0], f[4], f[8], f[12]);
     ALOGD("%s  %f, %f, %f, %f", s, f[1], f[5], f[9], f[13]);
@@ -2122,6 +2131,18 @@ void rsDebug(const char *s, const float4 *f) {
 
 void rsDebug(const char *s, double d) {
     SC_debugD(s, d);
+}
+
+void rsDebug(const char *s, const double2 *d) {
+    SC_debugD2(s, *d);
+}
+
+void rsDebug(const char *s, const double3 *d) {
+    SC_debugD3(s, *d);
+}
+
+void rsDebug(const char *s, const double4 *d) {
+    SC_debugD4(s, *d);
 }
 
 void rsDebug(const char *s, const rs_matrix4x4 *m) {
