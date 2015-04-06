@@ -10,21 +10,26 @@ declare i8* @rsOffsetNs([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z)
 ; can never access the same memory element. This is different from C, where
 ; a char or uchar load/store is special as it can alias with about everything.
 ;
-; The TBAA tree in this file has the the node "RenderScript TBAA" as its root.
+; The TBAA tree in this file has the the node "RenderScript Distinct TBAA" as
+; its root.
 ; This means all loads/stores that share this common root can be proven to not
 ; alias. However, the alias analysis still has to assume MayAlias between
 ; memory accesses in this file and memory accesses annotated with the C/C++
 ; TBAA metadata.
+; A node named "RenderScript TBAA" wraps our distinct TBAA root node.
 ; If we can ensure that all accesses to elements loaded from RenderScript
 ; allocations are either annotated with the RenderScript TBAA information or
 ; not annotated at all, but never annotated with the C/C++ metadata, we
-; can add the RenderScript TBAA tree under the C/C++ TBAA tree. This enables
-; then the TBAA to prove that an access to data from the RenderScript allocation
+; can add the "RenderScript TBAA" tree under the C/C++ TBAA tree. This enables
+; TBAA to prove that an access to data from the RenderScript allocation
 ; does not alias with a load/store accessing something not part of a RenderScript
 ; allocation.
+; We do this by swapping the second operand of "RenderScript TBAA" with the node
+; for "Simple C/C++ TBAA", thus connecting these TBAA groups. The other root
+; node (with no children) can then safely be dropped from the analysis.
 
-
-!14 = !{!"RenderScript TBAA"}
+!13 = !{!"RenderScript Distinct TBAA"}
+!14 = !{!"RenderScript TBAA", !13}
 !15 = !{!"allocation", !14}
 
 !21 = !{!"char", !15}
