@@ -41,8 +41,17 @@ end:
 function: rsDebug
 version: 17
 w: 2, 3, 4
-# TODO We're not doing it for f64?
 t: i32, u32, i64, u64
+ret: void
+arg: const char* message
+arg: #2#1 a
+test: none
+end:
+
+function: rsDebug
+version: 23
+w: 2, 3, 4
+t: f64
 ret: void
 arg: const char* message
 arg: #2#1 a
