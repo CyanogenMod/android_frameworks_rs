@@ -50,8 +50,6 @@ const NumericalType TYPES[] = {
 
 const int NUM_TYPES = sizeof(TYPES) / sizeof(TYPES[0]);
 
-const char BASE_URL[] = "http://developer.android.com/reference/android/graphics/drawable/";
-
 // The singleton of the collected information of all the spec files.
 SystemSpecification systemSpecification;
 
@@ -632,9 +630,7 @@ SpecFile::SpecFile(const string& specFileName) : mSpecFileName(specFileName) {
 
     // The header file name should have the same base but with a ".rsh" extension.
     mHeaderFileName = core + ".rsh";
-
-    mDetailedDocumentationUrl = BASE_URL;
-    mDetailedDocumentationUrl += core + ".html";
+    mDetailedDocumentationUrl = core + ".html";
 }
 
 void SpecFile::addConstantSpecification(ConstantSpecification* spec, bool hasDocumentation) {
