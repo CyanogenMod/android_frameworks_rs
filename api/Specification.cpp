@@ -811,10 +811,36 @@ bool SystemSpecification::readSpecFile(const string& fileName, int maxApiLevel) 
     return true;
 }
 
+
+static void updateMaxApiLevel(const VersionInfo& info, int* maxApiLevel) {
+    *maxApiLevel = max(*maxApiLevel, max(info.minVersion, info.maxVersion));
+}
+
+int SystemSpecification::getMaximumApiLevel() {
+    int maxApiLevel = 0;
+    for (auto i : mConstants) {
+        for (auto j: i.second->getSpecifications()) {
+            updateMaxApiLevel(j->getVersionInfo(), &maxApiLevel);
+        }
+    }
+    for (auto i : mTypes) {
+        for (auto j: i.second->getSpecifications()) {
+            updateMaxApiLevel(j->getVersionInfo(), &maxApiLevel);
+        }
+    }
+    for (auto i : mFunctions) {
+        for (auto j: i.second->getSpecifications()) {
+            updateMaxApiLevel(j->getVersionInfo(), &maxApiLevel);
+        }
+    }
+    return maxApiLevel;
+}
+
 bool SystemSpecification::generateFiles(bool forVerification, int maxApiLevel) const {
     bool success = generateHeaderFiles("scriptc") &&
                    generateDocumentation("docs", forVerification) &&
-                   generateTestFiles("test", maxApiLevel);
+                   generateTestFiles("test", maxApiLevel) &&
+                   generateStubsWhiteList("slangtest", maxApiLevel);
     if (success) {
         cout << "Successfully processed " << mTypes.size() << " types, " << mConstants.size()
              << " constants, and " << mFunctions.size() << " functions.\n";
