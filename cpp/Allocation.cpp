@@ -20,6 +20,7 @@
 using namespace android;
 using namespace RSC;
 
+
 void * Allocation::getIDSafe() const {
     return getID();
 }
@@ -162,27 +163,6 @@ void Allocation::syncAll(RsAllocationUsageType srcLocation) {
         return;
     }
     tryDispatch(mRS, RS::dispatch->AllocationSyncAll(mRS->getContext(), getIDSafe(), srcLocation));
-}
-
-void Allocation::ioSendOutput() {
-//TODO: Also make it able to use for compatlib.
-#ifndef RS_COMPATIBILITY_LIB
-    if ((mUsage & RS_ALLOCATION_USAGE_IO_OUTPUT) == 0) {
-        mRS->throwError(RS_ERROR_INVALID_PARAMETER, "Can only send buffer if IO_OUTPUT usage specified.");
-        return;
-    }
-    tryDispatch(mRS, RS::dispatch->AllocationIoSend(mRS->getContext(), getID()));
-#endif
-}
-
-void Allocation::ioGetInput() {
-#ifndef RS_COMPATIBILITY_LIB
-    if ((mUsage & RS_ALLOCATION_USAGE_IO_INPUT) == 0) {
-        mRS->throwError(RS_ERROR_INVALID_PARAMETER, "Can only get buffer if IO_INPUT usage specified.");
-        return;
-    }
-    tryDispatch(mRS, RS::dispatch->AllocationIoReceive(mRS->getContext(), getID()));
-#endif
 }
 
 void * Allocation::getPointer(size_t *stride) {
@@ -492,3 +472,51 @@ sp<Allocation> Allocation::createSized2D(sp<RS> rs, sp<const Element> e,
 
     return createTyped(rs, t, usage);
 }
+
+void Allocation::ioSendOutput() {
+#ifndef RS_COMPATIBILITY_LIB
+    if ((mUsage & RS_ALLOCATION_USAGE_IO_OUTPUT) == 0) {
+        mRS->throwError(RS_ERROR_INVALID_PARAMETER, "Can only send buffer if IO_OUTPUT usage specified.");
+        return;
+    }
+    tryDispatch(mRS, RS::dispatch->AllocationIoSend(mRS->getContext(), getID()));
+#endif
+}
+
+void Allocation::ioGetInput() {
+#ifndef RS_COMPATIBILITY_LIB
+    if ((mUsage & RS_ALLOCATION_USAGE_IO_INPUT) == 0) {
+        mRS->throwError(RS_ERROR_INVALID_PARAMETER, "Can only get buffer if IO_INPUT usage specified.");
+        return;
+    }
+    tryDispatch(mRS, RS::dispatch->AllocationIoReceive(mRS->getContext(), getID()));
+#endif
+}
+
+#if !defined(RS_SERVER) && !defined(RS_COMPATIBILITY_LIB)
+#include <gui/Surface.h>
+
+RSC::sp<Surface> Allocation::getSurface() {
+    if ((mUsage & RS_ALLOCATION_USAGE_IO_INPUT) == 0) {
+        mRS->throwError(RS_ERROR_INVALID_PARAMETER, "Can only get Surface if IO_INPUT usage specified.");
+        return nullptr;
+    }
+    IGraphicBufferProducer *v = (IGraphicBufferProducer *)RS::dispatch->AllocationGetSurface(mRS->getContext(),
+                                                                                             getID());
+    android::sp<IGraphicBufferProducer> bp = v;
+    v->decStrong(nullptr);
+
+    return new Surface(bp, true);;
+}
+
+void Allocation::setSurface(RSC::sp<Surface> s) {
+    if ((mUsage & RS_ALLOCATION_USAGE_IO_OUTPUT) == 0) {
+        mRS->throwError(RS_ERROR_INVALID_PARAMETER, "Can only set Surface if IO_OUTPUT usage specified.");
+        return;
+    }
+    tryDispatch(mRS, RS::dispatch->AllocationSetSurface(mRS->getContext(), getID(),
+                                                        static_cast<ANativeWindow *>(s.get())));
+}
+
+#endif
+

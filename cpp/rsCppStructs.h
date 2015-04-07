@@ -24,6 +24,7 @@
 #include <string>
 #include <pthread.h>
 
+
 /**
  * Every row in an RS allocation is guaranteed to be aligned by this amount, and
  * every row in a user-backed allocation must be aligned by this amount.
@@ -33,6 +34,8 @@
 struct dispatchTable;
 
 namespace android {
+class Surface;
+
 namespace RSC {
 
 
@@ -360,8 +363,35 @@ public:
      * @param[in] srcLocation source location with changes to propagate elsewhere
      */
     void syncAll(RsAllocationUsageType srcLocation);
+
+    /**
+     * Send a buffer to the output stream.  The contents of the Allocation will
+     * be undefined after this operation. This operation is only valid if
+     * USAGE_IO_OUTPUT is set on the Allocation.
+     */
     void ioSendOutput();
+
+    /**
+     * Receive the latest input into the Allocation. This operation
+     * is only valid if USAGE_IO_INPUT is set on the Allocation.
+     */
     void ioGetInput();
+
+#if !defined(RS_SERVER) && !defined(RS_COMPATIBILITY_LIB)
+    /**
+     * Returns the handle to a raw buffer that is being managed by the screen
+     * compositor. This operation is only valid for Allocations with USAGE_IO_INPUT.
+     * @return Surface associated with allocation
+     */
+    sp<Surface> getSurface();
+
+    /**
+     * Associate a Surface with this Allocation. This
+     * operation is only valid for Allocations with USAGE_IO_OUTPUT.
+     * @param[in] s Surface to associate with allocation
+     */
+    void setSurface(sp<Surface> s);
+#endif
 
     /**
      * Generate a mipmap chain. This is only valid if the Type of the Allocation
