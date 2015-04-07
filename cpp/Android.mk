@@ -46,6 +46,7 @@ LOCAL_SHARED_LIBRARIES := \
 	libutils \
 	liblog \
 	libdl \
+	libgui
 
 LOCAL_STATIC_LIBRARIES := \
         libRSDispatch
