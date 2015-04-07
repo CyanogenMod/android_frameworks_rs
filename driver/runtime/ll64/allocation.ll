@@ -669,6 +669,69 @@ define void @rsGetElementAtImpl_double4(<4 x double>* noalias nocapture sret %ag
   ret void
 }
 
+!61 = !{!"half", !15}
+define void @rsSetElementAtImpl_half(%struct.rs_allocation* nocapture readonly %a.coerce, half %val, i32 %x, i32 %y, i32 %z) #1 {
+  %1 = tail call i8* @rsOffset(%struct.rs_allocation* %a.coerce, i32 2, i32 %x, i32 %y, i32 %z) #2
+  %2 = bitcast i8* %1 to half*
+  store half %val, half* %2, align 2, !tbaa !61
+  ret void
+}
+
+define half @rsGetElementAtImpl_half(%struct.rs_allocation* nocapture readonly %a.coerce, i32 %x, i32 %y, i32 %z) #0 {
+  %1 = tail call i8* @rsOffset(%struct.rs_allocation* %a.coerce, i32 2, i32 %x, i32 %y, i32 %z) #2
+  %2 = bitcast i8* %1 to half*
+  %3 = load half, half* %2, align 2, !tbaa !61
+  ret half %3
+}
+
+!62 = !{!"half2", !15}
+define void @rsSetElementAtImpl_half2(%struct.rs_allocation* nocapture readonly %a.coerce, <2 x half> %val, i32 %x, i32 %y, i32 %z) #1 {
+  %1 = tail call i8* @rsOffset(%struct.rs_allocation* %a.coerce, i32 4, i32 %x, i32 %y, i32 %z) #2
+  %2 = bitcast i8* %1 to <2 x half>*
+  store <2 x half> %val, <2 x half>* %2, align 4, !tbaa !62
+  ret void
+}
+
+define <2 x half> @rsGetElementAtImpl_half2(%struct.rs_allocation* nocapture readonly %a.coerce, i32 %x, i32 %y, i32 %z) #0 {
+  %1 = tail call i8* @rsOffset(%struct.rs_allocation* %a.coerce, i32 4, i32 %x, i32 %y, i32 %z) #2
+  %2 = bitcast i8* %1 to <2 x half>*
+  %3 = load <2 x half>, <2 x half>* %2, align 4, !tbaa !62
+  ret <2 x half> %3
+}
+
+!63 = !{!"half3", !15}
+define void @rsSetElementAtImpl_half3(%struct.rs_allocation* nocapture readonly %a.coerce, <3 x half> %val, i32 %x, i32 %y, i32 %z) #1 {
+  %1 = tail call i8* @rsOffset(%struct.rs_allocation* %a.coerce, i32 8, i32 %x, i32 %y, i32 %z) #2
+  %2 = shufflevector <3 x half> %val, <3 x half> undef, <4 x i32> <i32 0, i32 1, i32 2, i32 undef>
+  %3 = bitcast i8* %1 to <4 x half>*
+  store <4 x half> %2, <4 x half>* %3, align 8, !tbaa !63
+  ret void
+}
+
+define void @rsGetElementAtImpl_half3(<3 x half>* noalias nocapture sret %agg.result, %struct.rs_allocation* nocapture readonly %a.coerce, i32 %x, i32 %y, i32 %z) #1 {
+  %1 = tail call i8* @rsOffset(%struct.rs_allocation* %a.coerce, i32 32, i32 %x, i32 %y, i32 %z) #2
+  %2 = bitcast i8* %1 to <4 x half>*
+  %3 = load <4 x half>, <4 x half>* %2, align 8
+  %4 = bitcast <3 x half>* %agg.result to <4 x half>*
+  store <4 x half> %3, <4 x half>* %4, align 8, !tbaa !63
+  ret void
+}
+
+!64 = !{!"half4", !15}
+define void @rsSetElementAtImpl_half4(%struct.rs_allocation* nocapture readonly %a.coerce, <4 x half> %val, i32 %x, i32 %y, i32 %z) #1 {
+  %1 = tail call i8* @rsOffset(%struct.rs_allocation* %a.coerce, i32 4, i32 %x, i32 %y, i32 %z) #2
+  %2 = bitcast i8* %1 to <4 x half>*
+  store <4 x half> %val, <4 x half>* %2, align 8, !tbaa !64
+  ret void
+}
+
+define <4 x half> @rsGetElementAtImpl_half4(%struct.rs_allocation* nocapture readonly %a.coerce, i32 %x, i32 %y, i32 %z) #0 {
+  %1 = tail call i8* @rsOffset(%struct.rs_allocation* %a.coerce, i32 8, i32 %x, i32 %y, i32 %z) #2
+  %2 = bitcast i8* %1 to <4 x half>*
+  %3 = load <4 x half>, <4 x half>* %2, align 8, !tbaa !64
+  ret <4 x half> %3
+}
+
 
 define void @__rsAllocationVLoadXImpl_long4(<4 x i64>* noalias nocapture sret %agg.result, %struct.rs_allocation* nocapture readonly %a, i32 %x, i32 %y, i32 %z) #1 {
   %1 = tail call i8* @rsOffsetNs(%struct.rs_allocation* %a, i32 %x, i32 %y, i32 %z) #2
