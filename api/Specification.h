@@ -135,6 +135,11 @@ struct VersionInfo {
      * minVersion is greater than the maxApiLevel.
      */
     bool scan(Scanner* scanner, int maxApiLevel);
+    /* Return true if the target can be found whitin the range. */
+    bool includesVersion(int target) const {
+        return (minVersion == 0 || target >= minVersion) &&
+               (maxVersion == 0 || target <= maxVersion);
+    }
 };
 
 // We have three type of definitions
@@ -398,6 +403,16 @@ public:
     // Return true if we need to generate tests for this function.
     bool hasTests(int versionOfTestFiles) const;
 
+    bool hasInline() const { return mInline.size() > 0; }
+
+    /* Return true if this function can be overloaded.  This is added by default to all
+     * specifications, so except for the very few exceptions that start the attributes
+     * with an '=' to avoid this, we'll return true.
+     */
+    bool isOverloadable() const {
+        return mAttribute.empty() || mAttribute[0] != '=';
+    }
+
     // Parse a function specification and add it to specFile.
     static void scanFunctionSpecification(Scanner* scanner, SpecFile* specFile, int maxApiLevel);
 };
@@ -557,6 +572,9 @@ public:
 
     // Returns "<a href='...'> for the named specification, or empty if not found.
     std::string getHtmlAnchor(const std::string& name) const;
+
+    // Returns the maximum API level specified in any spec file.
+    int getMaximumApiLevel();
 };
 
 // Singleton that represents the collection of all the specs we're processing.
