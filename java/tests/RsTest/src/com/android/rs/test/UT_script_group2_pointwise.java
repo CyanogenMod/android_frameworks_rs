@@ -64,7 +64,7 @@ public class UT_script_group2_pointwise extends UnitTest {
                                   Type.createX(pRS, Element.I32_4(pRS), ARRAY_SIZE),
                                   new Object[]{c0.getReturn()}, map);
 
-        ScriptGroup2 group = builder.create(c1.getReturn());
+        ScriptGroup2 group = builder.create("AddDouble", c1.getReturn());
 
         int[] a = new int[ARRAY_SIZE * 4];
         ((Allocation)group.execute(input)[0]).copyTo(a);

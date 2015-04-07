@@ -412,7 +412,9 @@ public class Filters extends TestBase {
             mOutPixelsAllocation.getType(),
             new Object[]{ c.getReturn() }, emptyMap);
 
-        mGroup2 = b2.create(c.getReturn());
+        final String name = mFilters[0].getClass().getSimpleName() + "-" +
+                mFilters[1].getClass().getSimpleName();
+        mGroup2 = b2.create(name, c.getReturn());
       }
         break;
       case EMULATED:
