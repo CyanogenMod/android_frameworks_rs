@@ -184,7 +184,62 @@ static uchar OneBiCubic(const uchar *yp0, const uchar *yp1, const uchar *yp2, co
     return (uchar)p;
 }
 
+extern "C" uint64_t rsdIntrinsicResize_oscctl_K(uint32_t xinc);
 
+extern "C" void rsdIntrinsicResizeB4_K(
+            uchar4 *dst,
+            size_t count,
+            uint32_t xf,
+            uint32_t xinc,
+            uchar4 const *srcn,
+            uchar4 const *src0,
+            uchar4 const *src1,
+            uchar4 const *src2,
+            size_t xclip,
+            size_t avail,
+            uint64_t osc_ctl,
+            int32_t const *yr);
+
+extern "C" void rsdIntrinsicResizeB2_K(
+            uchar2 *dst,
+            size_t count,
+            uint32_t xf,
+            uint32_t xinc,
+            uchar2 const *srcn,
+            uchar2 const *src0,
+            uchar2 const *src1,
+            uchar2 const *src2,
+            size_t xclip,
+            size_t avail,
+            uint64_t osc_ctl,
+            int32_t const *yr);
+
+extern "C" void rsdIntrinsicResizeB1_K(
+            uchar *dst,
+            size_t count,
+            uint32_t xf,
+            uint32_t xinc,
+            uchar const *srcn,
+            uchar const *src0,
+            uchar const *src1,
+            uchar const *src2,
+            size_t xclip,
+            size_t avail,
+            uint64_t osc_ctl,
+            int32_t const *yr);
+
+#if defined(ARCH_ARM_USE_INTRINSICS)
+static void mkYCoeff(int32_t *yr, float yf) {
+    int32_t yf1 = rint(yf * 0x10000);
+    int32_t yf2 = rint(yf * yf * 0x10000);
+    int32_t yf3 = rint(yf * yf * yf * 0x10000);
+
+    yr[0] = -(2 * yf2 - yf3 - yf1) >> 1;
+    yr[1] = (3 * yf3 - 5 * yf2 + 0x20000) >> 1;
+    yr[2] = (-3 * yf3 + 4 * yf2 + yf1) >> 1;
+    yr[3] = -(yf3 - yf2) >> 1;
+}
+#endif
 
 static float4 OneBiCubic(const float4 *yp0, const float4 *yp1, const float4 *yp2, const float4 *yp3,
                          float xf, float yf, int width) {
@@ -287,6 +342,33 @@ void RsdCpuScriptIntrinsicResize::kernelU4(const RsExpandKernelDriverInfo *info,
     uint32_t x1 = xstart;
     uint32_t x2 = xend;
 
+#if defined(ARCH_ARM_USE_INTRINSICS)
+    if (gArchUseSIMD && x2 > x1 && cp->scaleX < 4.0f) {
+        float xf = (x1 + 0.5f) * cp->scaleX - 0.5f;
+        long xf16 = rint(xf * 0x10000);
+        uint32_t xinc16 = rint(cp->scaleX * 0x10000);
+
+        int xoff = (xf16 >> 16) - 1;
+        int xclip = rsMax(0, xoff) - xoff;
+        int len = x2 - x1;
+
+        int32_t yr[4];
+        uint64_t osc_ctl = rsdIntrinsicResize_oscctl_K(xinc16);
+        mkYCoeff(yr, yf);
+
+        xoff += xclip;
+
+        rsdIntrinsicResizeB4_K(
+                out, len,
+                xf16 & 0xffff, xinc16,
+                yp0 + xoff, yp1 + xoff, yp2 + xoff, yp3 + xoff,
+                xclip, srcWidth - xoff + xclip,
+                osc_ctl, yr);
+        out += len;
+        x1 += len;
+    }
+#endif
+
     while(x1 < x2) {
         float xf = (x1 + 0.5f) * cp->scaleX - 0.5f;
         *out = OneBiCubic(yp0, yp1, yp2, yp3, xf, yf, srcWidth);
@@ -327,6 +409,33 @@ void RsdCpuScriptIntrinsicResize::kernelU2(const RsExpandKernelDriverInfo *info,
     uint32_t x1 = xstart;
     uint32_t x2 = xend;
 
+#if defined(ARCH_ARM_USE_INTRINSICS)
+    if (gArchUseSIMD && x2 > x1 && cp->scaleX < 4.0f) {
+        float xf = (x1 + 0.5f) * cp->scaleX - 0.5f;
+        long xf16 = rint(xf * 0x10000);
+        uint32_t xinc16 = rint(cp->scaleX * 0x10000);
+
+        int xoff = (xf16 >> 16) - 1;
+        int xclip = rsMax(0, xoff) - xoff;
+        int len = x2 - x1;
+
+        int32_t yr[4];
+        uint64_t osc_ctl = rsdIntrinsicResize_oscctl_K(xinc16);
+        mkYCoeff(yr, yf);
+
+        xoff += xclip;
+
+        rsdIntrinsicResizeB2_K(
+                out, len,
+                xf16 & 0xffff, xinc16,
+                yp0 + xoff, yp1 + xoff, yp2 + xoff, yp3 + xoff,
+                xclip, srcWidth - xoff + xclip,
+                osc_ctl, yr);
+        out += len;
+        x1 += len;
+    }
+#endif
+
     while(x1 < x2) {
         float xf = (x1 + 0.5f) * cp->scaleX - 0.5f;
         *out = OneBiCubic(yp0, yp1, yp2, yp3, xf, yf, srcWidth);
@@ -366,6 +475,33 @@ void RsdCpuScriptIntrinsicResize::kernelU1(const RsExpandKernelDriverInfo *info,
     uchar *out = ((uchar *)info->outPtr[0]) + xstart;
     uint32_t x1 = xstart;
     uint32_t x2 = xend;
+
+#if defined(ARCH_ARM_USE_INTRINSICS)
+    if (gArchUseSIMD && x2 > x1 && cp->scaleX < 4.0f) {
+        float xf = (x1 + 0.5f) * cp->scaleX - 0.5f;
+        long xf16 = rint(xf * 0x10000);
+        uint32_t xinc16 = rint(cp->scaleX * 0x10000);
+
+        int xoff = (xf16 >> 16) - 1;
+        int xclip = rsMax(0, xoff) - xoff;
+        int len = x2 - x1;
+
+        int32_t yr[4];
+        uint64_t osc_ctl = rsdIntrinsicResize_oscctl_K(xinc16);
+        mkYCoeff(yr, yf);
+
+        xoff += xclip;
+
+        rsdIntrinsicResizeB1_K(
+                out, len,
+                xf16 & 0xffff, xinc16,
+                yp0 + xoff, yp1 + xoff, yp2 + xoff, yp3 + xoff,
+                xclip, srcWidth - xoff + xclip,
+                osc_ctl, yr);
+        out += len;
+        x1 += len;
+    }
+#endif
 
     while(x1 < x2) {
         float xf = (x1 + 0.5f) * cp->scaleX - 0.5f;
