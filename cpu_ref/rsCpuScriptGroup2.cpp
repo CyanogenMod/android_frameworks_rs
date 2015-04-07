@@ -11,6 +11,8 @@
 #include <vector>
 
 #ifndef RS_COMPATIBILITY_LIB
+#include <zlib.h>
+
 #include "bcc/Config/Config.h"
 #endif
 
@@ -225,9 +227,34 @@ string getCoreLibPath(Context* context, string* coreLibRelaxedPath) {
 #endif
 }
 
-string getFileName(string path) {
-    unsigned found = path.find_last_of("/\\");
-    return path.substr(found + 1);
+bool getChecksum(const std::vector<string>& inputBitcodeFilenames,
+                 const string& coreLibPath, const string& coreLibRelaxedPath,
+                 const char* commandLine,
+                 char* checksumStr) {
+    uint32_t checksum = adler32(0L, Z_NULL, 0);
+
+    for (const auto& bcFilename : inputBitcodeFilenames) {
+        if (!android::renderscript::addFileToChecksum(bcFilename.c_str(), checksum)) {
+            return false;
+        }
+    }
+
+    if (!android::renderscript::addFileToChecksum(coreLibPath.c_str(), checksum)) {
+        return false;
+    }
+
+    if (!coreLibRelaxedPath.empty() &&
+        !android::renderscript::addFileToChecksum(coreLibRelaxedPath.c_str(), checksum)) {
+        return false;
+    }
+
+    // include checksum of command line arguments
+    checksum = adler32(checksum, (const unsigned char *) commandLine,
+                       strlen(commandLine));
+
+    sprintf(checksumStr, "%08x", checksum);
+
+    return true;
 }
 
 void setupCompileArguments(
@@ -260,7 +287,6 @@ void setupCompileArguments(
     args->push_back(output_dir.c_str());
     args->push_back("-o");
     args->push_back(output_filename.c_str());
-    args->push_back(nullptr);
 }
 
 void generateSourceSlot(const Closure& closure,
@@ -290,10 +316,6 @@ void CpuScriptGroup2Impl::compile(const char* cacheDir) {
     if (mGroup->mClosures.size() < 2) {
         return;
     }
-
-    //===--------------------------------------------------------------------===//
-    // Fuse the input kernels and generate native code in an object file
-    //===--------------------------------------------------------------------===//
 
     std::set<string> inputSet;
     for (Closure* closure : mGroup->mClosures) {
@@ -336,26 +358,66 @@ void CpuScriptGroup2Impl::compile(const char* cacheDir) {
 
     rsAssert(cacheDir != nullptr);
     string objFilePath(cacheDir);
-    objFilePath.append("/fusedXXXXXX.o");
-    // Find unique object file name, to make following file names unique.
-    int tempfd = mkstemps(&objFilePath[0], 2);
-    if (tempfd == -1) {
-      return;
-    }
-    TEMP_FAILURE_RETRY(close(tempfd));
+    objFilePath.append("/");
+    objFilePath.append(mGroup->mName);
+    objFilePath.append(".o");
 
-    string outputFileName = getFileName(objFilePath.substr(0, objFilePath.size() - 2));
+    string outputFileName(mGroup->mName);
     string coreLibRelaxedPath;
     const string& coreLibPath = getCoreLibPath(getCpuRefImpl()->getContext(),
                                                &coreLibRelaxedPath);
+
     vector<const char*> arguments;
     string output_dir(cacheDir);
     setupCompileArguments(inputs, kernelBatches, invokeBatches, output_dir,
-                          outputFileName, coreLibPath, coreLibRelaxedPath, &arguments);
+                          outputFileName, coreLibPath, coreLibRelaxedPath,
+                          &arguments);
+
+    std::unique_ptr<const char> cmdLine(rsuJoinStrings(arguments.size() - 1,
+                                                  arguments.data()));
+
+    if (!getChecksum(inputs, coreLibPath, coreLibRelaxedPath, cmdLine.get(),
+                     mChecksum)) {
+        return;
+    }
+
+    const char* resName = outputFileName.c_str();
+
+    //===--------------------------------------------------------------------===//
+    // Try to load a shared lib from code cache matching filename and checksum
+    //===--------------------------------------------------------------------===//
+
+    mScriptObj = SharedLibraryUtils::loadSharedLibrary(cacheDir, resName);
+    if (mScriptObj != nullptr) {
+        mExecutable = ScriptExecutable::createFromSharedObject(
+            getCpuRefImpl()->getContext(), mScriptObj);
+        if (mExecutable != nullptr) {
+            if (mExecutable->isChecksumValid(mChecksum)) {
+                return;
+            } else {
+                ALOGE("Invalid checksum from cached so: %s (expected: %s)",
+                      mExecutable->getBuildChecksum(), mChecksum);
+            }
+            delete mExecutable;
+            mExecutable = nullptr;
+        } else {
+            ALOGE("Failed to create an executable object from so file");
+        }
+        dlclose(mScriptObj);
+        mScriptObj = nullptr;
+    }
+
+    //===--------------------------------------------------------------------===//
+    // Fuse the input kernels and generate native code in an object file
+    //===--------------------------------------------------------------------===//
+
+    arguments.push_back("-build-checksum");
+    arguments.push_back(mChecksum);
+    arguments.push_back(nullptr);
 
     bool compiled = rsuExecuteCommand(RsdCpuScriptImpl::BCC_EXE_PATH,
-                                     arguments.size()-1,
-                                     arguments.data());
+                                      arguments.size()-1,
+                                      arguments.data());
     if (!compiled) {
         return;
     }
@@ -363,8 +425,6 @@ void CpuScriptGroup2Impl::compile(const char* cacheDir) {
     //===--------------------------------------------------------------------===//
     // Create and load the shared lib
     //===--------------------------------------------------------------------===//
-
-    const char* resName = outputFileName.c_str();
 
     if (!SharedLibraryUtils::createSharedLibrary(cacheDir, resName)) {
         ALOGE("Failed to link object file '%s'", resName);
