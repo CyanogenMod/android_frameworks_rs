@@ -36,7 +36,7 @@ define void @rsSetElementAtImpl_char([1 x i32] %a.coerce, i8 signext %val, i32 %
 
 define signext i8 @rsGetElementAtImpl_char([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #0 {
   %1 = tail call i8* @rsOffset([1 x i32] %a.coerce, i32 1, i32 %x, i32 %y, i32 %z) #2
-  %2 = load i8* %1, align 1, !tbaa !21
+  %2 = load i8, i8* %1, align 1, !tbaa !21
   ret i8 %2
 }
 
@@ -51,7 +51,7 @@ define void @rsSetElementAtImpl_char2([1 x i32] %a.coerce, <2 x i8> %val, i32 %x
 define <2 x i8> @rsGetElementAtImpl_char2([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #0 {
   %1 = tail call i8* @rsOffset([1 x i32] %a.coerce, i32 2, i32 %x, i32 %y, i32 %z) #2
   %2 = bitcast i8* %1 to <2 x i8>*
-  %3 = load <2 x i8>* %2, align 2, !tbaa !22
+  %3 = load <2 x i8>, <2 x i8>* %2, align 2, !tbaa !22
   ret <2 x i8> %3
 }
 
@@ -67,7 +67,7 @@ define void @rsSetElementAtImpl_char3([1 x i32] %a.coerce, <3 x i8> %val, i32 %x
 define <3 x i8> @rsGetElementAtImpl_char3([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #0 {
   %1 = tail call i8* @rsOffset([1 x i32] %a.coerce, i32 4, i32 %x, i32 %y, i32 %z) #2
   %2 = bitcast i8* %1 to <4 x i8>*
-  %3 = load <4 x i8>* %2, align 4, !tbaa !23
+  %3 = load <4 x i8>, <4 x i8>* %2, align 4, !tbaa !23
   %4 = shufflevector <4 x i8> %3, <4 x i8> undef, <3 x i32> <i32 0, i32 1, i32 2>
   ret <3 x i8> %4
 }
@@ -83,7 +83,7 @@ define void @rsSetElementAtImpl_char4([1 x i32] %a.coerce, <4 x i8> %val, i32 %x
 define <4 x i8> @rsGetElementAtImpl_char4([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #0 {
   %1 = tail call i8* @rsOffset([1 x i32] %a.coerce, i32 4, i32 %x, i32 %y, i32 %z) #2
   %2 = bitcast i8* %1 to <4 x i8>*
-  %3 = load <4 x i8>* %2, align 4, !tbaa !24
+  %3 = load <4 x i8>, <4 x i8>* %2, align 4, !tbaa !24
   ret <4 x i8> %3
 }
 
@@ -96,7 +96,7 @@ define void @rsSetElementAtImpl_uchar([1 x i32] %a.coerce, i8 zeroext %val, i32 
 
 define zeroext i8 @rsGetElementAtImpl_uchar([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #0 {
   %1 = tail call i8* @rsOffset([1 x i32] %a.coerce, i32 1, i32 %x, i32 %y, i32 %z) #2
-  %2 = load i8* %1, align 1, !tbaa !25
+  %2 = load i8, i8* %1, align 1, !tbaa !25
   ret i8 %2
 }
 
@@ -111,7 +111,7 @@ define void @rsSetElementAtImpl_uchar2([1 x i32] %a.coerce, <2 x i8> %val, i32 %
 define <2 x i8> @rsGetElementAtImpl_uchar2([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #0 {
   %1 = tail call i8* @rsOffset([1 x i32] %a.coerce, i32 2, i32 %x, i32 %y, i32 %z) #2
   %2 = bitcast i8* %1 to <2 x i8>*
-  %3 = load <2 x i8>* %2, align 2, !tbaa !26
+  %3 = load <2 x i8>, <2 x i8>* %2, align 2, !tbaa !26
   ret <2 x i8> %3
 }
 
@@ -127,7 +127,7 @@ define void @rsSetElementAtImpl_uchar3([1 x i32] %a.coerce, <3 x i8> %val, i32 %
 define <3 x i8> @rsGetElementAtImpl_uchar3([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #0 {
   %1 = tail call i8* @rsOffset([1 x i32] %a.coerce, i32 4, i32 %x, i32 %y, i32 %z) #2
   %2 = bitcast i8* %1 to <4 x i8>*
-  %3 = load <4 x i8>* %2, align 4, !tbaa !27
+  %3 = load <4 x i8>, <4 x i8>* %2, align 4, !tbaa !27
   %4 = shufflevector <4 x i8> %3, <4 x i8> undef, <3 x i32> <i32 0, i32 1, i32 2>
   ret <3 x i8> %4
 }
@@ -143,7 +143,7 @@ define void @rsSetElementAtImpl_uchar4([1 x i32] %a.coerce, <4 x i8> %val, i32 %
 define <4 x i8> @rsGetElementAtImpl_uchar4([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #0 {
   %1 = tail call i8* @rsOffset([1 x i32] %a.coerce, i32 4, i32 %x, i32 %y, i32 %z) #2
   %2 = bitcast i8* %1 to <4 x i8>*
-  %3 = load <4 x i8>* %2, align 4, !tbaa !28
+  %3 = load <4 x i8>, <4 x i8>* %2, align 4, !tbaa !28
   ret <4 x i8> %3
 }
 
@@ -158,7 +158,7 @@ define void @rsSetElementAtImpl_short([1 x i32] %a.coerce, i16 signext %val, i32
 define signext i16 @rsGetElementAtImpl_short([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #0 {
   %1 = tail call i8* @rsOffset([1 x i32] %a.coerce, i32 2, i32 %x, i32 %y, i32 %z) #2
   %2 = bitcast i8* %1 to i16*
-  %3 = load i16* %2, align 2, !tbaa !29
+  %3 = load i16, i16* %2, align 2, !tbaa !29
   ret i16 %3
 }
 
@@ -173,7 +173,7 @@ define void @rsSetElementAtImpl_short2([1 x i32] %a.coerce, <2 x i16> %val, i32 
 define <2 x i16> @rsGetElementAtImpl_short2([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #0 {
   %1 = tail call i8* @rsOffset([1 x i32] %a.coerce, i32 4, i32 %x, i32 %y, i32 %z) #2
   %2 = bitcast i8* %1 to <2 x i16>*
-  %3 = load <2 x i16>* %2, align 4, !tbaa !30
+  %3 = load <2 x i16>, <2 x i16>* %2, align 4, !tbaa !30
   ret <2 x i16> %3
 }
 
@@ -189,7 +189,7 @@ define void @rsSetElementAtImpl_short3([1 x i32] %a.coerce, <3 x i16> %val, i32 
 define <3 x i16> @rsGetElementAtImpl_short3([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #0 {
   %1 = tail call i8* @rsOffset([1 x i32] %a.coerce, i32 8, i32 %x, i32 %y, i32 %z) #2
   %2 = bitcast i8* %1 to <4 x i16>*
-  %3 = load <4 x i16>* %2, align 8, !tbaa !31
+  %3 = load <4 x i16>, <4 x i16>* %2, align 8, !tbaa !31
   %4 = shufflevector <4 x i16> %3, <4 x i16> undef, <3 x i32> <i32 0, i32 1, i32 2>
   ret <3 x i16> %4
 }
@@ -205,7 +205,7 @@ define void @rsSetElementAtImpl_short4([1 x i32] %a.coerce, <4 x i16> %val, i32 
 define <4 x i16> @rsGetElementAtImpl_short4([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #0 {
   %1 = tail call i8* @rsOffset([1 x i32] %a.coerce, i32 8, i32 %x, i32 %y, i32 %z) #2
   %2 = bitcast i8* %1 to <4 x i16>*
-  %3 = load <4 x i16>* %2, align 8, !tbaa !32
+  %3 = load <4 x i16>, <4 x i16>* %2, align 8, !tbaa !32
   ret <4 x i16> %3
 }
 
@@ -220,7 +220,7 @@ define void @rsSetElementAtImpl_ushort([1 x i32] %a.coerce, i16 zeroext %val, i3
 define zeroext i16 @rsGetElementAtImpl_ushort([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #0 {
   %1 = tail call i8* @rsOffset([1 x i32] %a.coerce, i32 2, i32 %x, i32 %y, i32 %z) #2
   %2 = bitcast i8* %1 to i16*
-  %3 = load i16* %2, align 2, !tbaa !33
+  %3 = load i16, i16* %2, align 2, !tbaa !33
   ret i16 %3
 }
 
@@ -235,7 +235,7 @@ define void @rsSetElementAtImpl_ushort2([1 x i32] %a.coerce, <2 x i16> %val, i32
 define <2 x i16> @rsGetElementAtImpl_ushort2([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #0 {
   %1 = tail call i8* @rsOffset([1 x i32] %a.coerce, i32 4, i32 %x, i32 %y, i32 %z) #2
   %2 = bitcast i8* %1 to <2 x i16>*
-  %3 = load <2 x i16>* %2, align 4, !tbaa !34
+  %3 = load <2 x i16>, <2 x i16>* %2, align 4, !tbaa !34
   ret <2 x i16> %3
 }
 
@@ -251,7 +251,7 @@ define void @rsSetElementAtImpl_ushort3([1 x i32] %a.coerce, <3 x i16> %val, i32
 define <3 x i16> @rsGetElementAtImpl_ushort3([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #0 {
   %1 = tail call i8* @rsOffset([1 x i32] %a.coerce, i32 8, i32 %x, i32 %y, i32 %z) #2
   %2 = bitcast i8* %1 to <4 x i16>*
-  %3 = load <4 x i16>* %2, align 8, !tbaa !35
+  %3 = load <4 x i16>, <4 x i16>* %2, align 8, !tbaa !35
   %4 = shufflevector <4 x i16> %3, <4 x i16> undef, <3 x i32> <i32 0, i32 1, i32 2>
   ret <3 x i16> %4
 }
@@ -267,7 +267,7 @@ define void @rsSetElementAtImpl_ushort4([1 x i32] %a.coerce, <4 x i16> %val, i32
 define <4 x i16> @rsGetElementAtImpl_ushort4([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #0 {
   %1 = tail call i8* @rsOffset([1 x i32] %a.coerce, i32 8, i32 %x, i32 %y, i32 %z) #2
   %2 = bitcast i8* %1 to <4 x i16>*
-  %3 = load <4 x i16>* %2, align 8, !tbaa !36
+  %3 = load <4 x i16>, <4 x i16>* %2, align 8, !tbaa !36
   ret <4 x i16> %3
 }
 
@@ -282,7 +282,7 @@ define void @rsSetElementAtImpl_int([1 x i32] %a.coerce, i32 %val, i32 %x, i32 %
 define i32 @rsGetElementAtImpl_int([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #0 {
   %1 = tail call i8* @rsOffset([1 x i32] %a.coerce, i32 4, i32 %x, i32 %y, i32 %z) #2
   %2 = bitcast i8* %1 to i32*
-  %3 = load i32* %2, align 4, !tbaa !37
+  %3 = load i32, i32* %2, align 4, !tbaa !37
   ret i32 %3
 }
 
@@ -297,7 +297,7 @@ define void @rsSetElementAtImpl_int2([1 x i32] %a.coerce, <2 x i32> %val, i32 %x
 define <2 x i32> @rsGetElementAtImpl_int2([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #0 {
   %1 = tail call i8* @rsOffset([1 x i32] %a.coerce, i32 8, i32 %x, i32 %y, i32 %z) #2
   %2 = bitcast i8* %1 to <2 x i32>*
-  %3 = load <2 x i32>* %2, align 8, !tbaa !38
+  %3 = load <2 x i32>, <2 x i32>* %2, align 8, !tbaa !38
   ret <2 x i32> %3
 }
 
@@ -313,7 +313,7 @@ define void @rsSetElementAtImpl_int3([1 x i32] %a.coerce, <3 x i32> %val, i32 %x
 define <3 x i32> @rsGetElementAtImpl_int3([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #0 {
   %1 = tail call i8* @rsOffset([1 x i32] %a.coerce, i32 16, i32 %x, i32 %y, i32 %z) #2
   %2 = bitcast i8* %1 to <4 x i32>*
-  %3 = load <4 x i32>* %2, align 8, !tbaa !39
+  %3 = load <4 x i32>, <4 x i32>* %2, align 8, !tbaa !39
   %4 = shufflevector <4 x i32> %3, <4 x i32> undef, <3 x i32> <i32 0, i32 1, i32 2>
   ret <3 x i32> %4
 }
@@ -329,7 +329,7 @@ define void @rsSetElementAtImpl_int4([1 x i32] %a.coerce, <4 x i32> %val, i32 %x
 define <4 x i32> @rsGetElementAtImpl_int4([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #0 {
   %1 = tail call i8* @rsOffset([1 x i32] %a.coerce, i32 16, i32 %x, i32 %y, i32 %z) #2
   %2 = bitcast i8* %1 to <4 x i32>*
-  %3 = load <4 x i32>* %2, align 16, !tbaa !40
+  %3 = load <4 x i32>, <4 x i32>* %2, align 16, !tbaa !40
   ret <4 x i32> %3
 }
 
@@ -344,7 +344,7 @@ define void @rsSetElementAtImpl_uint([1 x i32] %a.coerce, i32 %val, i32 %x, i32 
 define i32 @rsGetElementAtImpl_uint([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #0 {
   %1 = tail call i8* @rsOffset([1 x i32] %a.coerce, i32 4, i32 %x, i32 %y, i32 %z) #2
   %2 = bitcast i8* %1 to i32*
-  %3 = load i32* %2, align 4, !tbaa !41
+  %3 = load i32, i32* %2, align 4, !tbaa !41
   ret i32 %3
 }
 
@@ -359,7 +359,7 @@ define void @rsSetElementAtImpl_uint2([1 x i32] %a.coerce, <2 x i32> %val, i32 %
 define <2 x i32> @rsGetElementAtImpl_uint2([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #0 {
   %1 = tail call i8* @rsOffset([1 x i32] %a.coerce, i32 8, i32 %x, i32 %y, i32 %z) #2
   %2 = bitcast i8* %1 to <2 x i32>*
-  %3 = load <2 x i32>* %2, align 8, !tbaa !42
+  %3 = load <2 x i32>, <2 x i32>* %2, align 8, !tbaa !42
   ret <2 x i32> %3
 }
 
@@ -375,7 +375,7 @@ define void @rsSetElementAtImpl_uint3([1 x i32] %a.coerce, <3 x i32> %val, i32 %
 define <3 x i32> @rsGetElementAtImpl_uint3([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #0 {
   %1 = tail call i8* @rsOffset([1 x i32] %a.coerce, i32 16, i32 %x, i32 %y, i32 %z) #2
   %2 = bitcast i8* %1 to <4 x i32>*
-  %3 = load <4 x i32>* %2, align 8, !tbaa !43
+  %3 = load <4 x i32>, <4 x i32>* %2, align 8, !tbaa !43
   %4 = shufflevector <4 x i32> %3, <4 x i32> undef, <3 x i32> <i32 0, i32 1, i32 2>
   ret <3 x i32> %4
 }
@@ -391,7 +391,7 @@ define void @rsSetElementAtImpl_uint4([1 x i32] %a.coerce, <4 x i32> %val, i32 %
 define <4 x i32> @rsGetElementAtImpl_uint4([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #0 {
   %1 = tail call i8* @rsOffset([1 x i32] %a.coerce, i32 16, i32 %x, i32 %y, i32 %z) #2
   %2 = bitcast i8* %1 to <4 x i32>*
-  %3 = load <4 x i32>* %2, align 16, !tbaa !44
+  %3 = load <4 x i32>, <4 x i32>* %2, align 16, !tbaa !44
   ret <4 x i32> %3
 }
 
@@ -406,7 +406,7 @@ define void @rsSetElementAtImpl_long([1 x i32] %a.coerce, i64 %val, i32 %x, i32 
 define i64 @rsGetElementAtImpl_long([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #0 {
   %1 = tail call i8* @rsOffset([1 x i32] %a.coerce, i32 8, i32 %x, i32 %y, i32 %z) #2
   %2 = bitcast i8* %1 to i64*
-  %3 = load i64* %2, align 8, !tbaa !45
+  %3 = load i64, i64* %2, align 8, !tbaa !45
   ret i64 %3
 }
 
@@ -421,7 +421,7 @@ define void @rsSetElementAtImpl_long2([1 x i32] %a.coerce, <2 x i64> %val, i32 %
 define <2 x i64> @rsGetElementAtImpl_long2([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #0 {
   %1 = tail call i8* @rsOffset([1 x i32] %a.coerce, i32 16, i32 %x, i32 %y, i32 %z) #2
   %2 = bitcast i8* %1 to <2 x i64>*
-  %3 = load <2 x i64>* %2, align 16, !tbaa !46
+  %3 = load <2 x i64>, <2 x i64>* %2, align 16, !tbaa !46
   ret <2 x i64> %3
 }
 
@@ -437,7 +437,7 @@ define void @rsSetElementAtImpl_long3([1 x i32] %a.coerce, <3 x i64> %val, i32 %
 define void @rsGetElementAtImpl_long3(<3 x i64>* noalias nocapture sret %agg.result, [1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #1 {
   %1 = tail call i8* @rsOffset([1 x i32] %a.coerce, i32 32, i32 %x, i32 %y, i32 %z) #2
   %2 = bitcast i8* %1 to <4 x i64>*
-  %3 = load <4 x i64>* %2, align 32
+  %3 = load <4 x i64>, <4 x i64>* %2, align 32
   %4 = bitcast <3 x i64>* %agg.result to <4 x i64>*
   store <4 x i64> %3, <4 x i64>* %4, align 32, !tbaa !47
   ret void
@@ -454,7 +454,7 @@ define void @rsSetElementAtImpl_long4([1 x i32] %a.coerce, <4 x i64> %val, i32 %
 define void @rsGetElementAtImpl_long4(<4 x i64>* noalias nocapture sret %agg.result, [1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #1 {
   %1 = tail call i8* @rsOffset([1 x i32] %a.coerce, i32 32, i32 %x, i32 %y, i32 %z) #2
   %2 = bitcast i8* %1 to <4 x i64>*
-  %3 = load <4 x i64>* %2, align 32, !tbaa !15
+  %3 = load <4 x i64>, <4 x i64>* %2, align 32, !tbaa !15
   store <4 x i64> %3, <4 x i64>* %agg.result, align 32, !tbaa !48
   ret void
 }
@@ -470,7 +470,7 @@ define void @rsSetElementAtImpl_ulong([1 x i32] %a.coerce, i64 %val, i32 %x, i32
 define i64 @rsGetElementAtImpl_ulong([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #0 {
   %1 = tail call i8* @rsOffset([1 x i32] %a.coerce, i32 8, i32 %x, i32 %y, i32 %z) #2
   %2 = bitcast i8* %1 to i64*
-  %3 = load i64* %2, align 8, !tbaa !49
+  %3 = load i64, i64* %2, align 8, !tbaa !49
   ret i64 %3
 }
 
@@ -485,7 +485,7 @@ define void @rsSetElementAtImpl_ulong2([1 x i32] %a.coerce, <2 x i64> %val, i32 
 define <2 x i64> @rsGetElementAtImpl_ulong2([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #0 {
   %1 = tail call i8* @rsOffset([1 x i32] %a.coerce, i32 16, i32 %x, i32 %y, i32 %z) #2
   %2 = bitcast i8* %1 to <2 x i64>*
-  %3 = load <2 x i64>* %2, align 16, !tbaa !50
+  %3 = load <2 x i64>, <2 x i64>* %2, align 16, !tbaa !50
   ret <2 x i64> %3
 }
 
@@ -501,7 +501,7 @@ define void @rsSetElementAtImpl_ulong3([1 x i32] %a.coerce, <3 x i64> %val, i32 
 define void @rsGetElementAtImpl_ulong3(<3 x i64>* noalias nocapture sret %agg.result, [1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #1 {
   %1 = tail call i8* @rsOffset([1 x i32] %a.coerce, i32 32, i32 %x, i32 %y, i32 %z) #2
   %2 = bitcast i8* %1 to <4 x i64>*
-  %3 = load <4 x i64>* %2, align 32
+  %3 = load <4 x i64>, <4 x i64>* %2, align 32
   %4 = bitcast <3 x i64>* %agg.result to <4 x i64>*
   store <4 x i64> %3, <4 x i64>* %4, align 32, !tbaa !51
   ret void
@@ -518,7 +518,7 @@ define void @rsSetElementAtImpl_ulong4([1 x i32] %a.coerce, <4 x i64> %val, i32 
 define void @rsGetElementAtImpl_ulong4(<4 x i64>* noalias nocapture sret %agg.result, [1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #1 {
   %1 = tail call i8* @rsOffset([1 x i32] %a.coerce, i32 32, i32 %x, i32 %y, i32 %z) #2
   %2 = bitcast i8* %1 to <4 x i64>*
-  %3 = load <4 x i64>* %2, align 32, !tbaa !15
+  %3 = load <4 x i64>, <4 x i64>* %2, align 32, !tbaa !15
   store <4 x i64> %3, <4 x i64>* %agg.result, align 32, !tbaa !52
   ret void
 }
@@ -534,7 +534,7 @@ define void @rsSetElementAtImpl_float([1 x i32] %a.coerce, float %val, i32 %x, i
 define float @rsGetElementAtImpl_float([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #0 {
   %1 = tail call i8* @rsOffset([1 x i32] %a.coerce, i32 4, i32 %x, i32 %y, i32 %z) #2
   %2 = bitcast i8* %1 to float*
-  %3 = load float* %2, align 4, !tbaa !53
+  %3 = load float, float* %2, align 4, !tbaa !53
   ret float %3
 }
 
@@ -549,7 +549,7 @@ define void @rsSetElementAtImpl_float2([1 x i32] %a.coerce, <2 x float> %val, i3
 define <2 x float> @rsGetElementAtImpl_float2([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #0 {
   %1 = tail call i8* @rsOffset([1 x i32] %a.coerce, i32 8, i32 %x, i32 %y, i32 %z) #2
   %2 = bitcast i8* %1 to <2 x float>*
-  %3 = load <2 x float>* %2, align 8, !tbaa !54
+  %3 = load <2 x float>, <2 x float>* %2, align 8, !tbaa !54
   ret <2 x float> %3
 }
 
@@ -565,7 +565,7 @@ define void @rsSetElementAtImpl_float3([1 x i32] %a.coerce, <3 x float> %val, i3
 define <3 x float> @rsGetElementAtImpl_float3([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #0 {
   %1 = tail call i8* @rsOffset([1 x i32] %a.coerce, i32 16, i32 %x, i32 %y, i32 %z) #2
   %2 = bitcast i8* %1 to <4 x float>*
-  %3 = load <4 x float>* %2, align 8, !tbaa !55
+  %3 = load <4 x float>, <4 x float>* %2, align 8, !tbaa !55
   %4 = shufflevector <4 x float> %3, <4 x float> undef, <3 x i32> <i32 0, i32 1, i32 2>
   ret <3 x float> %4
 }
@@ -581,7 +581,7 @@ define void @rsSetElementAtImpl_float4([1 x i32] %a.coerce, <4 x float> %val, i3
 define <4 x float> @rsGetElementAtImpl_float4([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #0 {
   %1 = tail call i8* @rsOffset([1 x i32] %a.coerce, i32 16, i32 %x, i32 %y, i32 %z) #2
   %2 = bitcast i8* %1 to <4 x float>*
-  %3 = load <4 x float>* %2, align 16, !tbaa !56
+  %3 = load <4 x float>, <4 x float>* %2, align 16, !tbaa !56
   ret <4 x float> %3
 }
 
@@ -596,7 +596,7 @@ define void @rsSetElementAtImpl_double([1 x i32] %a.coerce, double %val, i32 %x,
 define double @rsGetElementAtImpl_double([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #0 {
   %1 = tail call i8* @rsOffset([1 x i32] %a.coerce, i32 8, i32 %x, i32 %y, i32 %z) #2
   %2 = bitcast i8* %1 to double*
-  %3 = load double* %2, align 8, !tbaa !57
+  %3 = load double, double* %2, align 8, !tbaa !57
   ret double %3
 }
 
@@ -611,7 +611,7 @@ define void @rsSetElementAtImpl_double2([1 x i32] %a.coerce, <2 x double> %val, 
 define <2 x double> @rsGetElementAtImpl_double2([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #0 {
   %1 = tail call i8* @rsOffset([1 x i32] %a.coerce, i32 16, i32 %x, i32 %y, i32 %z) #2
   %2 = bitcast i8* %1 to <2 x double>*
-  %3 = load <2 x double>* %2, align 16, !tbaa !58
+  %3 = load <2 x double>, <2 x double>* %2, align 16, !tbaa !58
   ret <2 x double> %3
 }
 
@@ -628,7 +628,7 @@ define void @rsSetElementAtImpl_double3([1 x i32] %a.coerce, <3 x double> %val, 
 define void @rsGetElementAtImpl_double3(<3 x double>* noalias nocapture sret %agg.result, [1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #1 {
   %1 = tail call i8* @rsOffset([1 x i32] %a.coerce, i32 32, i32 %x, i32 %y, i32 %z) #2
   %2 = bitcast i8* %1 to <4 x double>*
-  %3 = load <4 x double>* %2, align 32
+  %3 = load <4 x double>, <4 x double>* %2, align 32
   %4 = bitcast <3 x double>* %agg.result to <4 x double>*
   store <4 x double> %3, <4 x double>* %4, align 32, !tbaa !59
   ret void
@@ -644,7 +644,7 @@ define void @rsSetElementAtImpl_double4([1 x i32] %a.coerce, <4 x double> %val, 
 define void @rsGetElementAtImpl_double4(<4 x double>* noalias nocapture sret %agg.result, [1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #1 {
   %1 = tail call i8* @rsOffset([1 x i32] %a.coerce, i32 32, i32 %x, i32 %y, i32 %z) #2
   %2 = bitcast i8* %1 to <4 x double>*
-  %3 = load <4 x double>* %2, align 32, !tbaa !15
+  %3 = load <4 x double>, <4 x double>* %2, align 32, !tbaa !15
   store <4 x double> %3, <4 x double>* %agg.result, align 32, !tbaa !60
   ret void
 }
@@ -653,14 +653,14 @@ define void @rsGetElementAtImpl_double4(<4 x double>* noalias nocapture sret %ag
 define void @__rsAllocationVLoadXImpl_long4(<4 x i64>* noalias nocapture sret %agg.result, [1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #1 {
   %1 = tail call i8* @rsOffsetNs([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #2
   %2 = bitcast i8* %1 to <4 x i64>*
-  %3 = load <4 x i64>* %2, align 8
+  %3 = load <4 x i64>, <4 x i64>* %2, align 8
   store <4 x i64> %3, <4 x i64>* %agg.result, align 32, !tbaa !52
   ret void
 }
 define void @__rsAllocationVLoadXImpl_long3(<3 x i64>* noalias nocapture sret %agg.result, [1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #1 {
   %1 = tail call i8* @rsOffsetNs([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #2
   %2 = bitcast i8* %1 to <4 x i64>*
-  %3 = load <4 x i64>* %2, align 8
+  %3 = load <4 x i64>, <4 x i64>* %2, align 8
   %4 = bitcast <3 x i64>* %agg.result to <4 x i64>*
   store <4 x i64> %3, <4 x i64>* %4, align 32, !tbaa !47
   ret void
@@ -668,21 +668,21 @@ define void @__rsAllocationVLoadXImpl_long3(<3 x i64>* noalias nocapture sret %a
 define <2 x i64> @__rsAllocationVLoadXImpl_long2([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #0 {
   %1 = tail call i8* @rsOffsetNs([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #2
   %2 = bitcast i8* %1 to <2 x i64>*
-  %3 = load <2 x i64>* %2, align 8
+  %3 = load <2 x i64>, <2 x i64>* %2, align 8
   ret <2 x i64> %3
 }
 
 define void @__rsAllocationVLoadXImpl_ulong4(<4 x i64>* noalias nocapture sret %agg.result, [1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #1 {
   %1 = tail call i8* @rsOffsetNs([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #2
   %2 = bitcast i8* %1 to <4 x i64>*
-  %3 = load <4 x i64>* %2, align 8
+  %3 = load <4 x i64>, <4 x i64>* %2, align 8
   store <4 x i64> %3, <4 x i64>* %agg.result, align 32, !tbaa !48
   ret void
 }
 define void @__rsAllocationVLoadXImpl_ulong3(<3 x i64>* noalias nocapture sret %agg.result, [1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #1 {
   %1 = tail call i8* @rsOffsetNs([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #2
   %2 = bitcast i8* %1 to <4 x i64>*
-  %3 = load <4 x i64>* %2, align 8
+  %3 = load <4 x i64>, <4 x i64>* %2, align 8
   %4 = bitcast <3 x i64>* %agg.result to <4 x i64>*
   store <4 x i64> %3, <4 x i64>* %4, align 32, !tbaa !51
   ret void
@@ -690,154 +690,154 @@ define void @__rsAllocationVLoadXImpl_ulong3(<3 x i64>* noalias nocapture sret %
 define <2 x i64> @__rsAllocationVLoadXImpl_ulong2([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #0 {
   %1 = tail call i8* @rsOffsetNs([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #2
   %2 = bitcast i8* %1 to <2 x i64>*
-  %3 = load <2 x i64>* %2, align 8
+  %3 = load <2 x i64>, <2 x i64>* %2, align 8
   ret <2 x i64> %3
 }
 
 define <4 x i32> @__rsAllocationVLoadXImpl_int4([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #0 {
   %1 = tail call i8* @rsOffsetNs([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #2
   %2 = bitcast i8* %1 to <4 x i32>*
-  %3 = load <4 x i32>* %2, align 4
+  %3 = load <4 x i32>, <4 x i32>* %2, align 4
   ret <4 x i32> %3
 }
 define <3 x i32> @__rsAllocationVLoadXImpl_int3([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #0 {
   %1 = tail call i8* @rsOffsetNs([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #2
   %2 = bitcast i8* %1 to <3 x i32>*
-  %3 = load <3 x i32>* %2, align 4
+  %3 = load <3 x i32>, <3 x i32>* %2, align 4
   ret <3 x i32> %3
 }
 define <2 x i32> @__rsAllocationVLoadXImpl_int2([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #0 {
   %1 = tail call i8* @rsOffsetNs([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #2
   %2 = bitcast i8* %1 to <2 x i32>*
-  %3 = load <2 x i32>* %2, align 4
+  %3 = load <2 x i32>, <2 x i32>* %2, align 4
   ret <2 x i32> %3
 }
 
 define <4 x i32> @__rsAllocationVLoadXImpl_uint4([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #0 {
   %1 = tail call i8* @rsOffsetNs([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #2
   %2 = bitcast i8* %1 to <4 x i32>*
-  %3 = load <4 x i32>* %2, align 4
+  %3 = load <4 x i32>, <4 x i32>* %2, align 4
   ret <4 x i32> %3
 }
 define <3 x i32> @__rsAllocationVLoadXImpl_uint3([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #0 {
   %1 = tail call i8* @rsOffsetNs([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #2
   %2 = bitcast i8* %1 to <3 x i32>*
-  %3 = load <3 x i32>* %2, align 4
+  %3 = load <3 x i32>, <3 x i32>* %2, align 4
   ret <3 x i32> %3
 }
 define <2 x i32> @__rsAllocationVLoadXImpl_uint2([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #0 {
   %1 = tail call i8* @rsOffsetNs([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #2
   %2 = bitcast i8* %1 to <2 x i32>*
-  %3 = load <2 x i32>* %2, align 4
+  %3 = load <2 x i32>, <2 x i32>* %2, align 4
   ret <2 x i32> %3
 }
 
 define <4 x i16> @__rsAllocationVLoadXImpl_short4([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #0 {
   %1 = tail call i8* @rsOffsetNs([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #2
   %2 = bitcast i8* %1 to <4 x i16>*
-  %3 = load <4 x i16>* %2, align 2
+  %3 = load <4 x i16>, <4 x i16>* %2, align 2
   ret <4 x i16> %3
 }
 define <3 x i16> @__rsAllocationVLoadXImpl_short3([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #0 {
   %1 = tail call i8* @rsOffsetNs([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #2
   %2 = bitcast i8* %1 to <3 x i16>*
-  %3 = load <3 x i16>* %2, align 2
+  %3 = load <3 x i16>, <3 x i16>* %2, align 2
   ret <3 x i16> %3
 }
 define <2 x i16> @__rsAllocationVLoadXImpl_short2([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #0 {
   %1 = tail call i8* @rsOffsetNs([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #2
   %2 = bitcast i8* %1 to <2 x i16>*
-  %3 = load <2 x i16>* %2, align 2
+  %3 = load <2 x i16>, <2 x i16>* %2, align 2
   ret <2 x i16> %3
 }
 
 define <4 x i16> @__rsAllocationVLoadXImpl_ushort4([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #0 {
   %1 = tail call i8* @rsOffsetNs([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #2
   %2 = bitcast i8* %1 to <4 x i16>*
-  %3 = load <4 x i16>* %2, align 2
+  %3 = load <4 x i16>, <4 x i16>* %2, align 2
   ret <4 x i16> %3
 }
 define <3 x i16> @__rsAllocationVLoadXImpl_ushort3([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #0 {
   %1 = tail call i8* @rsOffsetNs([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #2
   %2 = bitcast i8* %1 to <3 x i16>*
-  %3 = load <3 x i16>* %2, align 2
+  %3 = load <3 x i16>, <3 x i16>* %2, align 2
   ret <3 x i16> %3
 }
 define <2 x i16> @__rsAllocationVLoadXImpl_ushort2([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #0 {
   %1 = tail call i8* @rsOffsetNs([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #2
   %2 = bitcast i8* %1 to <2 x i16>*
-  %3 = load <2 x i16>* %2, align 2
+  %3 = load <2 x i16>, <2 x i16>* %2, align 2
   ret <2 x i16> %3
 }
 
 define <4 x i8> @__rsAllocationVLoadXImpl_char4([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #0 {
   %1 = tail call i8* @rsOffsetNs([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #2
   %2 = bitcast i8* %1 to <4 x i8>*
-  %3 = load <4 x i8>* %2, align 1
+  %3 = load <4 x i8>, <4 x i8>* %2, align 1
   ret <4 x i8> %3
 }
 define <3 x i8> @__rsAllocationVLoadXImpl_char3([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #0 {
   %1 = tail call i8* @rsOffsetNs([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #2
   %2 = bitcast i8* %1 to <3 x i8>*
-  %3 = load <3 x i8>* %2, align 1
+  %3 = load <3 x i8>, <3 x i8>* %2, align 1
   ret <3 x i8> %3
 }
 define <2 x i8> @__rsAllocationVLoadXImpl_char2([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #0 {
   %1 = tail call i8* @rsOffsetNs([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #2
   %2 = bitcast i8* %1 to <2 x i8>*
-  %3 = load <2 x i8>* %2, align 1
+  %3 = load <2 x i8>, <2 x i8>* %2, align 1
   ret <2 x i8> %3
 }
 
 define <4 x i8> @__rsAllocationVLoadXImpl_uchar4([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #0 {
   %1 = tail call i8* @rsOffsetNs([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #2
   %2 = bitcast i8* %1 to <4 x i8>*
-  %3 = load <4 x i8>* %2, align 1
+  %3 = load <4 x i8>, <4 x i8>* %2, align 1
   ret <4 x i8> %3
 }
 define <3 x i8> @__rsAllocationVLoadXImpl_uchar3([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #0 {
   %1 = tail call i8* @rsOffsetNs([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #2
   %2 = bitcast i8* %1 to <3 x i8>*
-  %3 = load <3 x i8>* %2, align 1
+  %3 = load <3 x i8>, <3 x i8>* %2, align 1
   ret <3 x i8> %3
 }
 define <2 x i8> @__rsAllocationVLoadXImpl_uchar2([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #0 {
   %1 = tail call i8* @rsOffsetNs([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #2
   %2 = bitcast i8* %1 to <2 x i8>*
-  %3 = load <2 x i8>* %2, align 1
+  %3 = load <2 x i8>, <2 x i8>* %2, align 1
   ret <2 x i8> %3
 }
 
 define <4 x float> @__rsAllocationVLoadXImpl_float4([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #0 {
   %1 = tail call i8* @rsOffsetNs([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #2
   %2 = bitcast i8* %1 to <4 x float>*
-  %3 = load <4 x float>* %2, align 4
+  %3 = load <4 x float>, <4 x float>* %2, align 4
   ret <4 x float> %3
 }
 define <3 x float> @__rsAllocationVLoadXImpl_float3([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #0 {
   %1 = tail call i8* @rsOffsetNs([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #2
   %2 = bitcast i8* %1 to <3 x float>*
-  %3 = load <3 x float>* %2, align 4
+  %3 = load <3 x float>, <3 x float>* %2, align 4
   ret <3 x float> %3
 }
 define <2 x float> @__rsAllocationVLoadXImpl_float2([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #0 {
   %1 = tail call i8* @rsOffsetNs([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #2
   %2 = bitcast i8* %1 to <2 x float>*
-  %3 = load <2 x float>* %2, align 4
+  %3 = load <2 x float>, <2 x float>* %2, align 4
   ret <2 x float> %3
 }
 
 define void @__rsAllocationVLoadXImpl_double4(<4 x double>* noalias nocapture sret %agg.result, [1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #1 {
   %1 = tail call i8* @rsOffsetNs([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #2
   %2 = bitcast i8* %1 to <4 x double>*
-  %3 = load <4 x double>* %2, align 8
+  %3 = load <4 x double>, <4 x double>* %2, align 8
   store <4 x double> %3, <4 x double>* %agg.result, align 32, !tbaa !60
   ret void
 }
 define void @__rsAllocationVLoadXImpl_double3(<3 x double>* noalias nocapture sret %agg.result, [1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #1 {
   %1 = tail call i8* @rsOffsetNs([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #2
   %2 = bitcast i8* %1 to <4 x double>*
-  %3 = load <4 x double>* %2, align 8
+  %3 = load <4 x double>, <4 x double>* %2, align 8
   %4 = bitcast <3 x double>* %agg.result to <4 x double>*
   store <4 x double> %3, <4 x double>* %4, align 32, !tbaa !59
   ret void
@@ -845,7 +845,7 @@ define void @__rsAllocationVLoadXImpl_double3(<3 x double>* noalias nocapture sr
 define <2 x double> @__rsAllocationVLoadXImpl_double2([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #0 {
   %1 = tail call i8* @rsOffsetNs([1 x i32] %a.coerce, i32 %x, i32 %y, i32 %z) #2
   %2 = bitcast i8* %1 to <2 x double>*
-  %3 = load <2 x double>* %2, align 8
+  %3 = load <2 x double>, <2 x double>* %2, align 8
   ret <2 x double> %3
 }
 
