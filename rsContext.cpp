@@ -253,7 +253,6 @@ void * Context::threadProc(void *vrsc) {
 
     rsc->props.mLogTimes = getProp("debug.rs.profile") != 0;
     rsc->props.mLogScripts = getProp("debug.rs.script") != 0;
-    rsc->props.mLogObjects = getProp("debug.rs.object") != 0;
     rsc->props.mLogShaders = getProp("debug.rs.shader") != 0;
     rsc->props.mLogShadersAttr = getProp("debug.rs.shader.attributes") != 0;
     rsc->props.mLogShadersUniforms = getProp("debug.rs.shader.uniforms") != 0;
