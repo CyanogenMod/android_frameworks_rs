@@ -1028,7 +1028,7 @@ static bool writeTestFilesForFunction(const Function& function, const string& di
     return true;
 }
 
-bool GenerateTestFiles(const string& directory, int versionOfTestFiles) {
+bool generateTestFiles(const string& directory, int versionOfTestFiles) {
     bool success = true;
     for (auto f : systemSpecification.getFunctions()) {
         if (!writeTestFilesForFunction(*f.second, directory, versionOfTestFiles)) {
