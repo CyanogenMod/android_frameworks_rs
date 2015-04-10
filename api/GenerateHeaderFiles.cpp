@@ -370,7 +370,7 @@ static bool writeHeaderFile(const string& directory, const SpecFile& specFile) {
     return true;
 }
 
-bool GenerateHeaderFiles(const string& directory) {
+bool generateHeaderFiles(const string& directory) {
     bool success = true;
     for (auto specFile : systemSpecification.getSpecFiles()) {
         if (!writeHeaderFile(directory, *specFile)) {
