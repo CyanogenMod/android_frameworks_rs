@@ -62,6 +62,7 @@
  * [size: {32 or 64.  Used if this is available only for 32 or 64 bit code.}]
  * value: {The value of the constant.}
  * [hidden:]   ...If present, don't document the constant.  Omit the following two fields.
+ * [deprecated: [{Deprecation message.}]   ... This is deprecated.  Compiler will issue a wrning.
  * summary: {A one line string describing this section.}
  * description:
  *     {Multiline description.  Can include HTML.  References to constants, types,
@@ -75,6 +76,7 @@
  * [size: {32 or 64.  Used if this is available only for 32 or 64 bit code.}]
  * simple: {The C declaration that this type is the typedef equivalent.}
  * [hidden:]   ...If present, don't document the type.  Omit the following two fields.
+ * [deprecated: [{Deprecation message.}]   ... This is deprecated.  Compiler will issue a wrning.
  * summary: {A one line string describing this section.}
  * description:
  *     {Multiline description.  Can include HTML.  References to constants, types,
@@ -122,6 +124,7 @@
  * [arg: {Type}[, {Name}][, {ParameterEntry.testOption}][, "{One line documentation of the field}"]]
  * [arg:   ... Same for all the other arguments of the function.]
  * [hidden:]   ... If present, don't include in the HTML documentation.
+ * [deprecated: [{Deprecation message.}]   ... This is deprecated.  Compiler will issue a wrning.
  * summary: {A one line string describing this section.}
  * description:
  *     {Multiline description.  Can include HTML.  References to constants, types,

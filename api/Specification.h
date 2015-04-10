@@ -322,6 +322,7 @@ private:
      *           This is useful for APIs like dot() or length().
      * "noverify": Generate test code that calls the API but don't verify the returned value.
      *             This can discover unresolved references.
+     * "": Don't test.  This is the default.
      */
     std::string mTest;
     std::string mAttribute;       // Function attributes.
@@ -427,7 +428,7 @@ public:
     std::string getTest() const { return mTest; }
     std::string getPrecisionLimit() const { return mPrecisionLimit; }
 
-    const std::vector<std::string> getInline() const { return mInline; }
+    const std::vector<std::string>& getInline() const { return mInline; }
     const ParameterDefinition* getReturn() const { return mReturn; }
     int getInputCount() const { return mInputCount; }
     int getOutputCount() const { return mOutputCount; }
