@@ -256,12 +256,34 @@ public:
 
 #ifdef RS_COMPATIBILITY_LIB
     void setNativeLibDir(const char * libDir, uint32_t length) {
-        memcpy(nativeLibDir, libDir, length);
+        if (!hasSetNativeLibDir) {
+            if (length <= PATH_MAX) {
+                memcpy(nativeLibDir, libDir, length);
+                hasSetNativeLibDir = true;
+            } else {
+                setError(RS_ERROR_BAD_VALUE, "Invalid path");
+            }
+        }
     }
     const char * getNativeLibDir() {
         return nativeLibDir;
     }
 #endif
+
+    void setCacheDir(const char * cacheDir_arg, uint32_t length) {
+        if (!hasSetCacheDir) {
+            if (length <= PATH_MAX) {
+                memcpy(mCacheDir, cacheDir_arg, length);
+                hasSetCacheDir = true;
+            } else {
+                setError(RS_ERROR_BAD_VALUE, "Invalid path");
+            }
+        }
+    }
+    const char * getCacheDir() {
+        return mCacheDir;
+    }
+
 
 protected:
 
@@ -329,8 +351,11 @@ private:
     uint64_t mAverageFPSStartTime;
     uint32_t mAverageFPS;
 #ifdef RS_COMPATIBILITY_LIB
+    bool hasSetNativeLibDir = false;
     char nativeLibDir[PATH_MAX+1];
 #endif
+    bool hasSetCacheDir = false;
+    char mCacheDir[PATH_MAX+1];
 };
 
 void LF_ObjDestroy_handcode(const Context *rsc, RsAsyncVoidPtr objPtr);
