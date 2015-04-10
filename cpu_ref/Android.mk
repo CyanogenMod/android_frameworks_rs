@@ -23,7 +23,6 @@ LOCAL_SRC_FILES:= \
         rsCpuScript.cpp \
         rsCpuRuntimeMath.cpp \
         rsCpuRuntimeMathFuncs.cpp \
-        rsCpuRuntimeStubs.cpp \
         rsCpuScriptGroup.cpp \
         rsCpuScriptGroup2.cpp \
         rsCpuIntrinsic.cpp \
