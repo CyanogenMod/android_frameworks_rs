@@ -108,16 +108,25 @@ void ParameterDefinition::parseParameterDefinition(const string& type, const str
     // Determine if this is an output.
     isOutParameter = isReturn || charRemoved('*', &rsType);
 
-    // Extract the vector size out of the type.
-    int last = rsType.size() - 1;
-    char lastChar = rsType[last];
+    rsBaseType = rsType;
+    mVectorSize = "1";
+    /* If it's a vector type, we need to split the base type from the size.
+     * We know that's it's a vector type if the last character is a digit and
+     * the rest is an actual base type.   We used to only verify the first part,
+     * which created a problem with rs_matrix2x2.
+     */
+    const int last = rsType.size() - 1;
+    const char lastChar = rsType[last];
     if (lastChar >= '0' && lastChar <= '9') {
-        rsBaseType = rsType.substr(0, last);
-        mVectorSize = lastChar;
-    } else {
-        rsBaseType = rsType;
-        mVectorSize = "1";
+        const string trimmed = rsType.substr(0, last);
+        int i = findCType(trimmed);
+        if (i >= 0) {
+            rsBaseType = trimmed;
+            mVectorSize = lastChar;
+        }
     }
+    typeIndex = findCType(rsBaseType);
+
     if (mVectorSize == "3") {
         vectorWidth = "4";
     } else {
@@ -179,7 +188,6 @@ void ParameterDefinition::parseParameterDefinition(const string& type, const str
         }
     }
 
-    typeIndex = findCType(rsBaseType);
     isFloatType = false;
     if (typeIndex >= 0) {
         javaBaseType = TYPES[typeIndex].javaType;
@@ -762,8 +770,8 @@ bool SystemSpecification::readSpecFile(const string& fileName) {
 }
 
 bool SystemSpecification::generateFiles(int versionOfTestFiles) const {
-    bool success = GenerateHeaderFiles("scriptc") && generateHtmlDocumentation("html") &&
-                   GenerateTestFiles("test", versionOfTestFiles);
+    bool success = generateHeaderFiles("scriptc") && generateHtmlDocumentation("html") &&
+                   generateTestFiles("test", versionOfTestFiles);
     if (success) {
         cout << "Successfully processed " << mTypes.size() << " types, " << mConstants.size()
              << " constants, and " << mFunctions.size() << " functions.\n";

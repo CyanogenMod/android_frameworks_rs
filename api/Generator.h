@@ -18,10 +18,10 @@
 #define ANDROID_RS_API_GENERATOR_GENERATOR_H
 
 // Generates the RenderScript header files.  The implementation is in GenerateHeaderFiles.cpp.
-bool GenerateHeaderFiles(const std::string& directory);
+bool generateHeaderFiles(const std::string& directory);
 
 // Generates the Java and RenderScript test files.  The implementation is in GenerateTestFiles.cpp.
-bool GenerateTestFiles(const std::string& directory, int versionOfTestFiles);
+bool generateTestFiles(const std::string& directory, int versionOfTestFiles);
 
 // Generates all HTML documentation files.  The implementation is in GenerateHtmlDocumentation.cpp.
 bool generateHtmlDocumentation(const std::string& director);
