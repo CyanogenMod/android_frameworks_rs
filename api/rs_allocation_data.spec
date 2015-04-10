@@ -306,6 +306,39 @@ arg: uint32_t z
 test: none
 end:
 
+function: rsGetElementAt_#2#1
+version: 23
+w: 1, 2, 3, 4
+t: f16
+ret: #2#1
+arg: rs_allocation a
+arg: uint32_t x
+test: none
+end:
+
+function: rsGetElementAt_#2#1
+version: 23
+w: 1, 2, 3, 4
+t: f16
+ret: #2#1
+arg: rs_allocation a
+arg: uint32_t x
+arg: uint32_t y
+test: none
+end:
+
+function: rsGetElementAt_#2#1
+version: 23
+w: 1, 2, 3, 4
+t: f16
+ret: #2#1
+arg: rs_allocation a
+arg: uint32_t x
+arg: uint32_t y
+arg: uint32_t z
+test: none
+end:
+
 function: rsGetElementAtYuv_uchar_U
 version: 18
 ret: uchar
@@ -466,6 +499,42 @@ function: rsSetElementAt_#2#1
 version: 18
 w: 1, 2, 3, 4
 t: u8, u16, u32, u64, i8, i16, i32, i64, f32, f64
+ret: void
+arg: rs_allocation a
+arg: #2#1 val
+arg: uint32_t x
+arg: uint32_t y
+arg: uint32_t z
+test: none
+end:
+
+function: rsSetElementAt_#2#1
+version: 23
+w: 1, 2, 3, 4
+t: f16
+ret: void
+arg: rs_allocation a
+arg: #2#1 val
+arg: uint32_t x
+test: none
+end:
+
+function: rsSetElementAt_#2#1
+version: 23
+w: 1, 2, 3, 4
+t: f16
+ret: void
+arg: rs_allocation a
+arg: #2#1 val
+arg: uint32_t x
+arg: uint32_t y
+test: none
+end:
+
+function: rsSetElementAt_#2#1
+version: 23
+w: 1, 2, 3, 4
+t: f16
 ret: void
 arg: rs_allocation a
 arg: #2#1 val
