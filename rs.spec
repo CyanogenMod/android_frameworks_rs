@@ -1,4 +1,3 @@
-
 ContextDestroy {
     direct
 }
@@ -29,6 +28,11 @@ ContextInitToClient {
 
 ContextDeinitToClient {
     direct
+}
+
+ContextSetCacheDir {
+    direct
+    param const char * cacheDir
 }
 
 TypeCreate {
