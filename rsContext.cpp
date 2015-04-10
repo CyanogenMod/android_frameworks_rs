@@ -763,6 +763,10 @@ void rsi_ContextBindRootScript(Context *rsc, RsScript vs) {
 #endif
 }
 
+void rsi_ContextSetCacheDir(Context *rsc, const char *cacheDir, size_t cacheDir_length) {
+    rsc->setCacheDir(cacheDir, cacheDir_length);
+}
+
 void rsi_ContextBindSampler(Context *rsc, uint32_t slot, RsSampler vs) {
     Sampler *s = static_cast<Sampler *>(vs);
 
@@ -940,4 +944,3 @@ void rsaGetName(RsContext con, void * obj, const char **name) {
     ObjectBase *ob = static_cast<ObjectBase *>(obj);
     (*name) = ob->getName();
 }
-
