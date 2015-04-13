@@ -93,7 +93,7 @@ public class UT_script_group2_gatherscatter extends UnitTest {
             f = c.getReturn();
         }
 
-        ScriptGroup2 group = builder.create(c.getReturn());
+        ScriptGroup2 group = builder.create("Summation", c.getReturn());
 
         if (c == null) {
             return;
