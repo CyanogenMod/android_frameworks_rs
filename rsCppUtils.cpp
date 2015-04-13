@@ -53,6 +53,7 @@ const char* rsuJoinStrings(int n, const char* const* strs) {
 #ifndef RS_COMPATIBILITY_LIB
 bool rsuExecuteCommand(const char *exe, int nArgs, const char * const *args) {
     std::unique_ptr<const char> joined(rsuJoinStrings(nArgs, args));
+    ALOGV("Invoking %s with args '%s'", exe, joined.get());
 
     pid_t pid = fork();
 
@@ -62,7 +63,8 @@ bool rsuExecuteCommand(const char *exe, int nArgs, const char * const *args) {
         return false;
     }
     case 0: {  // Child process
-        ALOGV("Invoking %s with args '%s'", exe, joined.get());
+        // No (direct or indirect) call to malloc between fork and exec.  It is
+        // possible that a different thread holds the heap lock before the fork.
 
         // ProcessManager in libcore can reap unclaimed SIGCHLDs in its process
         // group.  To ensure that the exit signal is not caught by
