@@ -224,17 +224,30 @@ void rsrForEach(Context *rsc,
                 Script *target,
                 Allocation *in, Allocation *out,
                 const void *usr, uint32_t usrBytes,
-                const RsScriptCall *call) {
+                const RsScriptCall *call,
+                const Script *callingScript) {
+
+    RsScriptCall c, *cptr = nullptr;
+    memset(&c, 0, sizeof(c));
+    if (call != nullptr) {
+        cptr = &c;
+        if (callingScript->getApiLevel() < 23) {
+            // Up to API 23, the structure was smaller and we need to zero extend
+            memcpy(&c, call, 7*4);
+        } else {
+            c = *call;
+        }
+    }
 
     if (in == nullptr) {
         target->runForEach(rsc, /* root slot */ 0, nullptr, 0, out, usr,
-                           usrBytes, call);
+                           usrBytes, cptr);
 
     } else {
         const Allocation *ins[1] = {in};
         target->runForEach(rsc, /* root slot */ 0, ins,
                            sizeof(ins) / sizeof(RsAllocation), out, usr,
-                           usrBytes, call);
+                           usrBytes, cptr);
     }
 }
 
