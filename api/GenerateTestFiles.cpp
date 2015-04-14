@@ -147,8 +147,6 @@ private:
                                         const string& actualIndex, bool verifierValidates) const;
     void writeJavaAppendInputToMessage(const ParameterDefinition& p, const string& actual) const;
     void writeJavaAppendNewLineToMessage() const;
-    void writeJavaAppendVariableToMessage(const ParameterDefinition& p, const string& value) const;
-    void writeJavaAppendFloatVariableToMessage(const string& value, bool regularFloat) const;
     void writeJavaAppendVectorInputToMessage(const ParameterDefinition& p) const;
     void writeJavaAppendVectorOutputToMessage(const ParameterDefinition& p) const;
 
@@ -425,7 +423,7 @@ void PermutationWriter::writeJavaVerifyScalarMethod(bool verifierValidates) cons
         for (auto p : mAllInputsAndOutputs) {
             if (p->isOutParameter) {
                 mJava->indent() << "args." << p->variableName << " = " << p->javaArrayName
-                                << "[i * " + p->vectorWidth + " + j];\n";
+                                << "[i * " << p->vectorWidth << " + j];\n";
             }
         }
         mJava->indent() << "// Ask the CoreMathVerifier to validate.\n";
@@ -514,13 +512,13 @@ void PermutationWriter::writeJavaVerifyVectorMethod() const {
     for (auto p : mAllInputsAndOutputs) {
         if (!p->isOutParameter) {
             if (p->mVectorSize == "1") {
-                mJava->indent() << "args." << p->variableName << " = " << p->javaArrayName + "[i]"
+                mJava->indent() << "args." << p->variableName << " = " << p->javaArrayName << "[i]"
                                 << ";\n";
             } else {
                 mJava->indent() << "for (int j = 0; j < " << p->mVectorSize << " ; j++)";
                 mJava->startBlock();
-                mJava->indent() << "args." << p->variableName + "[j] = "
-                                << p->javaArrayName + "[i * " + p->vectorWidth + " + j]"
+                mJava->indent() << "args." << p->variableName << "[j] = "
+                                << p->javaArrayName << "[i * " << p->vectorWidth << " + j]"
                                 << ";\n";
                 mJava->endBlock();
             }
@@ -621,26 +619,19 @@ void PermutationWriter::writeJavaAppendOutputToMessage(const ParameterDefinition
                                                        const string& actualIndex,
                                                        bool verifierValidates) const {
     if (verifierValidates) {
-        const string actual = "args." + p.variableName + argsIndex;
-        mJava->indent() << "message.append(\"Output " + p.variableName + ": \");\n";
-        if (p.isFloatType) {
-            writeJavaAppendFloatVariableToMessage(actual, true);
-        } else {
-            writeJavaAppendVariableToMessage(p, actual);
-        }
+        mJava->indent() << "message.append(\"Output " << p.variableName << ": \");\n";
+        mJava->indent() << "appendVariableToMessage(message, args." << p.variableName << argsIndex
+                        << ");\n";
         writeJavaAppendNewLineToMessage();
     } else {
-        const string expected = "args." + p.variableName + argsIndex;
-        const string actual = p.javaArrayName + actualIndex;
-        mJava->indent() << "message.append(\"Expected output " + p.variableName + ": \");\n";
-        if (p.isFloatType) {
-            writeJavaAppendFloatVariableToMessage(expected, false);
-        } else {
-            writeJavaAppendVariableToMessage(p, expected);
-        }
+        mJava->indent() << "message.append(\"Expected output " << p.variableName << ": \");\n";
+        mJava->indent() << "appendVariableToMessage(message, args." << p.variableName << argsIndex
+                        << ");\n";
         writeJavaAppendNewLineToMessage();
-        mJava->indent() << "message.append(\"Actual   output " + p.variableName + ": \");\n";
-        writeJavaAppendVariableToMessage(p, actual);
+
+        mJava->indent() << "message.append(\"Actual   output " << p.variableName << ": \");\n";
+        mJava->indent() << "appendVariableToMessage(message, " << p.javaArrayName << actualIndex
+                        << ");\n";
 
         writeJavaTestOneValue(p, argsIndex, actualIndex);
         mJava->startBlock();
@@ -652,41 +643,13 @@ void PermutationWriter::writeJavaAppendOutputToMessage(const ParameterDefinition
 
 void PermutationWriter::writeJavaAppendInputToMessage(const ParameterDefinition& p,
                                                       const string& actual) const {
-    mJava->indent() << "message.append(\"Input " + p.variableName + ": \");\n";
-    writeJavaAppendVariableToMessage(p, actual);
+    mJava->indent() << "message.append(\"Input " << p.variableName << ": \");\n";
+    mJava->indent() << "appendVariableToMessage(message, " << actual << ");\n";
     writeJavaAppendNewLineToMessage();
 }
 
 void PermutationWriter::writeJavaAppendNewLineToMessage() const {
     mJava->indent() << "message.append(\"\\n\");\n";
-}
-
-void PermutationWriter::writeJavaAppendVariableToMessage(const ParameterDefinition& p,
-                                                         const string& value) const {
-    if (p.specType == "f16" || p.specType == "f32") {
-        mJava->indent() << "message.append(String.format(\"%14.8g {%8x} %15a\",\n";
-        mJava->indentPlus() << value << ", "
-                            << "Float.floatToRawIntBits(" << value << "), " << value << "));\n";
-    } else if (p.specType == "f64") {
-        mJava->indent() << "message.append(String.format(\"%24.8g {%16x} %31a\",\n";
-        mJava->indentPlus() << value << ", "
-                            << "Double.doubleToRawLongBits(" << value << "), " << value << "));\n";
-    } else if (p.specType[0] == 'u') {
-        mJava->indent() << "message.append(String.format(\"0x%x\", " << value << "));\n";
-    } else {
-        mJava->indent() << "message.append(String.format(\"%d\", " << value << "));\n";
-    }
-}
-
-void PermutationWriter::writeJavaAppendFloatVariableToMessage(const string& value,
-                                                              bool regularFloat) const {
-    mJava->indent() << "message.append(";
-    if (regularFloat) {
-        *mJava << "Float.toString(" << value << ")";
-    } else {
-        *mJava << value << ".toString()";
-    }
-    *mJava << ");\n";
 }
 
 void PermutationWriter::writeJavaAppendVectorInputToMessage(const ParameterDefinition& p) const {
