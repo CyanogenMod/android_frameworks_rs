@@ -357,7 +357,6 @@ void CpuScriptGroup2Impl::compile(const char* cacheDir) {
                                      arguments.size()-1,
                                      arguments.data());
     if (!compiled) {
-        unlink(objFilePath.c_str());
         return;
     }
 
@@ -369,8 +368,11 @@ void CpuScriptGroup2Impl::compile(const char* cacheDir) {
 
     if (!SharedLibraryUtils::createSharedLibrary(cacheDir, resName)) {
         ALOGE("Failed to link object file '%s'", resName);
+        unlink(objFilePath.c_str());
         return;
     }
+
+    unlink(objFilePath.c_str());
 
     mScriptObj = SharedLibraryUtils::loadSharedLibrary(cacheDir, resName);
     if (mScriptObj == nullptr) {
