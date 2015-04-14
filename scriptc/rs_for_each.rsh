@@ -85,6 +85,12 @@ typedef struct rs_script_call {
     uint32_t zEnd; // Ending index (exclusive) in the Z dimension.
     uint32_t arrayStart; // Starting index in the Array0 dimension.
     uint32_t arrayEnd; // Ending index (exclusive) in the Array0 dimension.
+    uint32_t array1Start; // Starting index in the Array1 dimension.
+    uint32_t array1End; // Ending index (exclusive) in the Array1 dimension.
+    uint32_t array2Start; // Starting index in the Array2 dimension.
+    uint32_t array2End; // Ending index (exclusive) in the Array2 dimension.
+    uint32_t array3Start; // Starting index in the Array3 dimension.
+    uint32_t array3End; // Ending index (exclusive) in the Array3 dimension.
 } rs_script_call_t;
 
 /*
