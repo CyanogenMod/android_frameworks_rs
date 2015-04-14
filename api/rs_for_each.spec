@@ -69,6 +69,12 @@ field: uint32_t zStart, "Starting index in the Z dimension."
 field: uint32_t zEnd, "Ending index (exclusive) in the Z dimension."
 field: uint32_t arrayStart, "Starting index in the Array0 dimension."
 field: uint32_t arrayEnd, "Ending index (exclusive) in the Array0 dimension."
+field: uint32_t array1Start, "Starting index in the Array1 dimension."
+field: uint32_t array1End, "Ending index (exclusive) in the Array1 dimension."
+field: uint32_t array2Start, "Starting index in the Array2 dimension."
+field: uint32_t array2End, "Ending index (exclusive) in the Array2 dimension."
+field: uint32_t array3Start, "Starting index in the Array3 dimension."
+field: uint32_t array3End, "Ending index (exclusive) in the Array3 dimension."
 summary: Cell iteration information
 description:
  This structure is used to provide iteration information to a rsForEach call.
