@@ -74,6 +74,7 @@ private:
     RsdCpuReferenceImpl* mCpuRefImpl;
     const ScriptGroup2* mGroup;
     List<Batch*> mBatches;
+    char mChecksum[9];
     ScriptExecutable* mExecutable;
     void* mScriptObj;
 };
