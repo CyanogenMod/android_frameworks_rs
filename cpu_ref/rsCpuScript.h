@@ -145,6 +145,8 @@ Allocation * rsdScriptGetAllocationForPointer(
                         const Script *script,
                         const void *);
 
+bool addFileToChecksum(const char *fileName, uint32_t &checksum);
+
 }
 
 #ifdef __LP64__

@@ -150,6 +150,38 @@ bool isChecksumNeeded() {
     return (buf[0] == '1');
 }
 
+char *constructBuildChecksum(uint8_t const *bitcode, size_t bitcodeSize,
+                             const char *commandLine,
+                             const std::vector<const char *> &bccFiles) {
+    uint32_t checksum = adler32(0L, Z_NULL, 0);
+
+    // include checksum of bitcode
+    checksum = adler32(checksum, bitcode, bitcodeSize);
+
+    // include checksum of command line arguments
+    checksum = adler32(checksum, (const unsigned char *) commandLine,
+                       strlen(commandLine));
+
+    // include checksum of bccFiles
+    for (auto bccFile : bccFiles) {
+        if (!android::renderscript::addFileToChecksum(bccFile, checksum)) {
+            // return empty checksum instead of something partial/corrupt
+            return nullptr;
+        }
+    }
+
+    char *checksumStr = new char[9]();
+    sprintf(checksumStr, "%08x", checksum);
+    return checksumStr;
+}
+
+#endif  // !defined(RS_COMPATIBILITY_LIB)
+}  // namespace
+
+namespace android {
+namespace renderscript {
+
+#ifndef RS_COMPATIBILITY_LIB
 bool addFileToChecksum(const char *fileName, uint32_t &checksum) {
     int FD = open(fileName, O_RDONLY);
     if (FD == -1) {
@@ -176,37 +208,7 @@ bool addFileToChecksum(const char *fileName, uint32_t &checksum) {
     }
     return true;
 }
-
-char *constructBuildChecksum(uint8_t const *bitcode, size_t bitcodeSize,
-                             const char *commandLine,
-                             const std::vector<const char *> &bccFiles) {
-    uint32_t checksum = adler32(0L, Z_NULL, 0);
-
-    // include checksum of bitcode
-    checksum = adler32(checksum, bitcode, bitcodeSize);
-
-    // include checksum of command line arguments
-    checksum = adler32(checksum, (const unsigned char *) commandLine,
-                       strlen(commandLine));
-
-    // include checksum of bccFiles
-    for (auto bccFile : bccFiles) {
-        if (!addFileToChecksum(bccFile, checksum)) {
-            // return empty checksum instead of something partial/corrupt
-            return nullptr;
-        }
-    }
-
-    char *checksumStr = new char[9]();
-    sprintf(checksumStr, "%08x", checksum);
-    return checksumStr;
-}
-
-#endif  // !defined(RS_COMPATIBILITY_LIB)
-}  // namespace
-
-namespace android {
-namespace renderscript {
+#endif  // !RS_COMPATIBILITY_LIB
 
 RsdCpuScriptImpl::RsdCpuScriptImpl(RsdCpuReferenceImpl *ctx, const Script *s) {
     mCtx = ctx;
