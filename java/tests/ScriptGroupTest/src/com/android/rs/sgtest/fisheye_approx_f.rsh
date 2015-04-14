@@ -54,6 +54,7 @@ float4 __attribute__((kernel)) fisheye(uint32_t x, uint32_t y) {
     const float radian = M_PI_2 - atan((alpha * half_sqrt(radius2 - dist2)) * inv_dist);
     const float scalar = radian * factor * inv_dist;
     const float2 new_coord = mad(coord, scalar, center);
+    // TODO: rsSample does not work with element type float4.
     const float4 fout = rsSample(in_alloc, sampler, new_coord);
     return fout;
 }

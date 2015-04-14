@@ -72,24 +72,22 @@ public class UT_script_group2_gatherscatter extends UnitTest {
 
         ScriptGroup2.Builder builder = new ScriptGroup2.Builder(pRS);
 
-        HashMap<Script.FieldID, Object> map = new HashMap<Script.FieldID, Object>();
-
         ScriptGroup2.UnboundValue unbound = builder.addInput();
 
         ScriptGroup2.Closure c = null;
         ScriptGroup2.Future f = null;
         int stride;
         for (stride = ARRAY_SIZE / 2; stride >= 1; stride >>= 1) {
-            map.put(s.getFieldID_reduction_stride(), new Integer(stride));
+            ScriptGroup2.Binding binding;
             if (f == null) {
-                map.put(s.getFieldID_a_in(), unbound);
+                binding = new ScriptGroup2.Binding(s.getFieldID_a_in(), unbound);
             } else {
-                map.put(s.getFieldID_a_in(), f);
+                binding = new ScriptGroup2.Binding(s.getFieldID_a_in(), f);
             }
             c = builder.addKernel(s.getKernelID_add(),
                                   Type.createX(pRS, Element.I32_4(pRS), stride),
-                                  new Object[0],
-                                  map);
+                                  new ScriptGroup2.Binding(s.getFieldID_reduction_stride(), stride),
+                                  binding);
             f = c.getReturn();
         }
 
