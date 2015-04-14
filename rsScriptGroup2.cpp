@@ -17,10 +17,13 @@ void ScriptGroup2::execute(Context* rsc) {
     }
 }
 
-RsScriptGroup2 rsi_ScriptGroup2Create(Context* rsc, const char* cacheDir,
+RsScriptGroup2 rsi_ScriptGroup2Create(Context* rsc, const char* name,
+                                      size_t nameLength,
+                                      const char* cacheDir,
                                       size_t cacheDirLength,
                                       RsClosure* closures, size_t numClosures) {
-    ScriptGroup2* group = new ScriptGroup2(rsc, cacheDir, (Closure**)closures, numClosures);
+    ScriptGroup2* group = new ScriptGroup2(rsc, name, cacheDir,
+                                           (Closure**)closures, numClosures);
 
     // Create a device-specific implementation by calling the device driver
     if (rsc->mHal.funcs.scriptgroup.init) {

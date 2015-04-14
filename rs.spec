@@ -507,6 +507,7 @@ ScriptGroupExecute {
 
 ScriptGroup2Create{
     direct
+    param const char * name
     param const char * cacheDir
     param RsClosure * closures
     ret RsScriptGroup2
