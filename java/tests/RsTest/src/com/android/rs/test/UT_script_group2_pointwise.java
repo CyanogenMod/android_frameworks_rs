@@ -50,19 +50,17 @@ public class UT_script_group2_pointwise extends UnitTest {
 
         ScriptGroup2.Builder builder = new ScriptGroup2.Builder(pRS);
 
-        HashMap<Script.FieldID, Object> map = new HashMap<Script.FieldID, Object>();
-
         ScriptGroup2.UnboundValue unbound = builder.addInput();
 
         ScriptGroup2.Closure c0 =
                 builder.addKernel(s_inc.getKernelID_increment(),
                                   Type.createX(pRS, Element.I32_4(pRS), ARRAY_SIZE),
-                                  new Object[]{unbound}, map);
+                                  unbound);
 
         ScriptGroup2.Closure c1 =
                 builder.addKernel(s_double.getKernelID_doubleKernel(),
                                   Type.createX(pRS, Element.I32_4(pRS), ARRAY_SIZE),
-                                  new Object[]{c0.getReturn()}, map);
+                                  c0.getReturn());
 
         ScriptGroup2 group = builder.create("AddDouble", c1.getReturn());
 
