@@ -19,7 +19,7 @@
 
 #include "rsUtils.h"
 #include "rsDefines.h"
-#include "rsDebugHelper.h"
+#include "rsInternalDefines.h"
 
 namespace android {
 namespace renderscript {
@@ -30,6 +30,11 @@ class OStream;
 // An element is a group of Components that occupies one cell in a structure.
 class ObjectBase {
 public:
+    static const bool gDebugStacks = false;
+    static const bool gDebugReferences = false;
+    static const bool gDebugLeaks = false;
+    static const bool gDebugLifetime = false;
+
     ObjectBase(Context *rsc);
 
     void incSysRef() const;
@@ -89,7 +94,7 @@ private:
     mutable const ObjectBase * mPrev;
     mutable const ObjectBase * mNext;
 
-    DebugHelper *mDH;
+    class DebugHelper *mDH;
 };
 
 template<class T>
