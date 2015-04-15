@@ -421,7 +421,7 @@ enum RsBlasFunction {
     RsBlas_zher2k = 142,
 
     // BLAS extensions start here
-    RsBlas_bgemm = 1000,
+    RsBlas_bnnm = 1000,
 };
 
 // custom complex types because of NDK support
