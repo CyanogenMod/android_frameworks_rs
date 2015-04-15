@@ -216,7 +216,6 @@ public:
     struct {
         bool mLogTimes;
         bool mLogScripts;
-        bool mLogObjects;
         bool mLogShaders;
         bool mLogShadersAttr;
         bool mLogShadersUniforms;
