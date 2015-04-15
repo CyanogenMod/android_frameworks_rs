@@ -439,8 +439,9 @@ void __attribute__((overloadable)) rsForEach(::rs_script script,
                                              const void *usr,
                                              const rs_script_call *call) {
     Context *rsc = RsdCpuReference::getTlsContext();
+    const Script *sc = RsdCpuReference::getTlsScript();
     rsrForEach(rsc, (Script *)script.p, (Allocation *)in.p,
-               (Allocation *)out.p, usr, 0, (RsScriptCall *)call);
+               (Allocation *)out.p, usr, 0, (RsScriptCall *)call, sc);
 }
 
 void __attribute__((overloadable)) rsForEach(::rs_script script,
@@ -448,16 +449,18 @@ void __attribute__((overloadable)) rsForEach(::rs_script script,
                                              ::rs_allocation out,
                                              const void *usr) {
     Context *rsc = RsdCpuReference::getTlsContext();
+    const Script *sc = RsdCpuReference::getTlsScript();
     rsrForEach(rsc, (Script *)script.p, (Allocation *)in.p, (Allocation *)out.p,
-               usr, 0, nullptr);
+               usr, 0, nullptr, sc);
 }
 
 void __attribute__((overloadable)) rsForEach(::rs_script script,
                                              ::rs_allocation in,
                                              ::rs_allocation out) {
     Context *rsc = RsdCpuReference::getTlsContext();
+    const Script *sc = RsdCpuReference::getTlsScript();
     rsrForEach(rsc, (Script *)script.p, (Allocation *)in.p, (Allocation *)out.p,
-               nullptr, 0, nullptr);
+               nullptr, 0, nullptr, sc);
 }
 
 // These functions are only supported in 32-bit.
@@ -468,8 +471,9 @@ void __attribute__((overloadable)) rsForEach(::rs_script script,
                                              const void *usr,
                                              uint32_t usrLen) {
     Context *rsc = RsdCpuReference::getTlsContext();
+    const Script *sc = RsdCpuReference::getTlsScript();
     rsrForEach(rsc, (Script *)script.p, (Allocation *)in.p, (Allocation *)out.p,
-               usr, usrLen, nullptr);
+               usr, usrLen, nullptr, sc);
 }
 
 void __attribute__((overloadable)) rsForEach(::rs_script script,
@@ -479,8 +483,9 @@ void __attribute__((overloadable)) rsForEach(::rs_script script,
                                              uint32_t usrLen,
                                              const rs_script_call *call) {
     Context *rsc = RsdCpuReference::getTlsContext();
+    const Script *sc = RsdCpuReference::getTlsScript();
     rsrForEach(rsc, (Script *)script.p, (Allocation *)in.p, (Allocation *)out.p,
-               usr, usrLen, (RsScriptCall *)call);
+               usr, usrLen, (RsScriptCall *)call, sc);
 }
 #endif
 
