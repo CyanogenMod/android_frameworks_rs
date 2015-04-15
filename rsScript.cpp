@@ -28,6 +28,7 @@ Script::Script(Context *rsc) : ObjectBase(rsc) {
     mTypes = nullptr;
     mInitialized = false;
     mHasObjectSlots = false;
+    mApiLevel = 0;
 }
 
 Script::~Script() {

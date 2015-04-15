@@ -142,9 +142,14 @@ public:
     }
     virtual void callUpdateCacheObject(const Context *rsc, void *dstObj) const;
 
+    uint32_t getApiLevel() const {
+        return mApiLevel;
+    }
+
 protected:
     bool mInitialized;
     bool mHasObjectSlots;
+    uint32_t mApiLevel;
     ObjectBaseRef<Allocation> *mSlots;
     ObjectBaseRef<const Type> *mTypes;
 

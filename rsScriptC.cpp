@@ -310,6 +310,10 @@ bool ScriptC::runCompiler(Context *rsc,
         sdkVersion = rsc->getTargetSdkVersion();
     }
 
+    // Save off the sdkVersion, so that we can handle broken cases later.
+    // Bug 19734267
+    mApiLevel = sdkVersion;
+
     if (BT) {
         delete BT;
     }
