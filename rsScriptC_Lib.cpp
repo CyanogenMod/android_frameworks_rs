@@ -142,28 +142,11 @@ static void SetObjectRef(const Context *rsc, const ObjectBase *dst, const Object
 }
 
 // Legacy, remove when drivers are updated
-void rsrSetObject(const Context *rsc, void *dst, ObjectBase *src) {
-    ObjectBase **odst = (ObjectBase **)dst;
-    //ALOGE("rsrSetObject (base) %p,%p  %p", dst, *odst, src);
-    SetObjectRef(rsc, odst[0], src);
-    if (src != nullptr) {
-        src->callUpdateCacheObject(rsc, dst);
-    }
-}
-
-void rsrSetObject(const Context *rsc, rs_object_base *dst, const ObjectBase *src) {
-    ObjectBase **odst = (ObjectBase **)dst;
-    //ALOGE("rsrSetObject (base) %p,%p  %p", dst, *odst, src);
-    SetObjectRef(rsc, odst[0], src);
-    if (src != nullptr) {
-        src->callUpdateCacheObject(rsc, dst);
-    }
-}
-
-// Legacy, remove when drivers are updated
 void rsrClearObject(const Context *rsc, void *dst) {
     ObjectBase **odst = (ObjectBase **)dst;
-    //ALOGE("rsrClearObject  %p,%p", odst, *odst);
+    if (ObjectBase::gDebugReferences) {
+        ALOGE("rsrClearObject  %p,%p", odst, *odst);
+    }
     if (odst[0]) {
         CHECK_OBJ(odst[0]);
         odst[0]->decSysRef();
@@ -172,12 +155,43 @@ void rsrClearObject(const Context *rsc, void *dst) {
 }
 
 void rsrClearObject(const Context *rsc, rs_object_base *dst) {
-    //ALOGE("rsrClearObject  %p,%p", odst, *odst);
+    if (ObjectBase::gDebugReferences) {
+        ALOGE("rsrClearObject  %p,%p", dst, dst->p);
+    }
     if (dst->p) {
         CHECK_OBJ(dst->p);
         dst->p->decSysRef();
     }
     dst->p = nullptr;
+}
+
+// Legacy, remove when drivers are updated
+void rsrSetObject(const Context *rsc, void *dst, ObjectBase *src) {
+    if (src == nullptr) {
+        rsrClearObject(rsc, dst);
+        return;
+    }
+
+    ObjectBase **odst = (ObjectBase **)dst;
+    if (ObjectBase::gDebugReferences) {
+        ALOGE("rsrSetObject (base) %p,%p  %p", dst, *odst, src);
+    }
+    SetObjectRef(rsc, odst[0], src);
+    src->callUpdateCacheObject(rsc, dst);
+}
+
+void rsrSetObject(const Context *rsc, rs_object_base *dst, const ObjectBase *src) {
+    if (src == nullptr) {
+        rsrClearObject(rsc, dst);
+        return;
+    }
+
+    ObjectBase **odst = (ObjectBase **)dst;
+    if (ObjectBase::gDebugReferences) {
+        ALOGE("rsrSetObject (base) %p,%p  %p", dst, *odst, src);
+    }
+    SetObjectRef(rsc, odst[0], src);
+    src->callUpdateCacheObject(rsc, dst);
 }
 
 // Legacy, remove when drivers are updated
