@@ -546,6 +546,10 @@ bool RsdCpuScriptImpl::forEachMtlsSetup(const Allocation ** ains,
         mtls->fep.dim.y = outType->getDimY();
         mtls->fep.dim.z = outType->getDimZ();
 
+    } else if (sc != nullptr) {
+        mtls->fep.dim.x = sc->xEnd;
+        mtls->fep.dim.y = sc->yEnd;
+        mtls->fep.dim.z = 0;
     } else {
         mCtx->getContext()->setError(RS_ERROR_BAD_SCRIPT,
                                      "rsForEach called with null allocations");
