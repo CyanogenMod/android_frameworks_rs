@@ -45,47 +45,12 @@ Allocation::Allocation(Context *rsc, const Allocation *alloc, const Type *type)
     : ObjectBase(rsc) {
 
     memset(&mHal, 0, sizeof(mHal));
-
-
     mHal.state.baseAlloc = alloc;
-    mHal.state.type = type;
     mHal.state.usageFlags = alloc->mHal.state.usageFlags;
     mHal.state.mipmapControl = RS_ALLOCATION_MIPMAP_NONE;
 
     setType(type);
     updateCache();
-
-
-
-
-    struct Hal {
-        void * drv;
-
-        struct DrvState {
-            struct LodState {
-                void * mallocPtr;
-                size_t stride;
-                uint32_t dimX;
-                uint32_t dimY;
-                uint32_t dimZ;
-            } lod[android::renderscript::Allocation::MAX_LOD];
-            size_t faceOffset;
-            uint32_t lodCount;
-            uint32_t faceCount;
-
-            struct YuvState {
-                uint32_t shift;
-                uint32_t step;
-            } yuv;
-
-            int grallocFlags;
-            uint32_t dimArray[Type::mMaxArrays];
-        };
-        mutable DrvState drvState;
-
-    };
-    Hal mHal;
-
 }
 
 void Allocation::operator delete(void* ptr) {
