@@ -331,7 +331,8 @@ android::RSC::sp<const Element> Element::createPixel(android::RSC::sp<RS> rs, Rs
           dk == RS_KIND_PIXEL_LA ||
           dk == RS_KIND_PIXEL_RGB ||
           dk == RS_KIND_PIXEL_RGBA ||
-          dk == RS_KIND_PIXEL_DEPTH)) {
+          dk == RS_KIND_PIXEL_DEPTH ||
+          dk == RS_KIND_PIXEL_YUV)) {
         rs->throwError(RS_ERROR_INVALID_PARAMETER, "Unsupported DataKind");
         return nullptr;
     }
