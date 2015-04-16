@@ -499,9 +499,12 @@ void RsdCpuReferenceImpl::launchThreads(const Allocation ** ains,
             // one per 16k bytes of reads/writes.
             if ((mtls->aout[0] != nullptr) && mtls->aout[0]->mHal.drvState.lod[0].stride) {
                 s2 = targetByteChunk / mtls->aout[0]->mHal.drvState.lod[0].stride;
-            } else {
-                // We know that there is either an output or an input.
+            } else if (mtls->ains[0]) {
                 s2 = targetByteChunk / mtls->ains[0]->mHal.drvState.lod[0].stride;
+            } else {
+                // Launch option only case
+                // Use s1 based only on the dimensions
+                s2 = s1;
             }
             mtls->mSliceSize = rsMin(s1, s2);
 
@@ -518,9 +521,12 @@ void RsdCpuReferenceImpl::launchThreads(const Allocation ** ains,
             // one per 16k bytes of reads/writes.
             if ((mtls->aout[0] != nullptr) && mtls->aout[0]->getType()->getElementSizeBytes()) {
                 s2 = targetByteChunk / mtls->aout[0]->getType()->getElementSizeBytes();
-            } else {
-                // We know that there is either an output or an input.
+            } else if (mtls->ains[0]) {
                 s2 = targetByteChunk / mtls->ains[0]->getType()->getElementSizeBytes();
+            } else {
+                // Launch option only case
+                // Use s1 based only on the dimensions
+                s2 = s1;
             }
             mtls->mSliceSize = rsMin(s1, s2);
 
