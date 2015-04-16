@@ -26,6 +26,11 @@ include $(BUILD_SYSTEM)/base_rules.mk
 
 BCC_STRIP_ATTR := $(BUILD_OUT_EXECUTABLES)/bcc_strip_attr$(BUILD_EXECUTABLE_SUFFIX)
 
+bc_clang := $(CLANG)
+ifdef RS_DRIVER_CLANG_EXE
+bc_clang := $(RS_DRIVER_CLANG_EXE)
+endif
+
 bc_clang_cc1_cflags :=
 ifeq ($(BCC_RS_TRIPLE),armv7-none-linux-gnueabi)
 # We need to pass the +long64 flag to the underlying version of Clang, since
@@ -70,10 +75,10 @@ $(c_bc_files): PRIVATE_INCLUDES := \
     external/clang/lib/Headers
 $(c_bc_files): PRIVATE_CFLAGS := $(bc_cflags)
 
-$(c_bc_files): $(intermediates)/%.bc: $(LOCAL_PATH)/%.c  $(CLANG)
+$(c_bc_files): $(intermediates)/%.bc: $(LOCAL_PATH)/%.c $(bc_clang)
 	@echo "bc: $(PRIVATE_MODULE) <= $<"
 	@mkdir -p $(dir $@)
-	$(hide) $(CLANG) $(addprefix -I, $(PRIVATE_INCLUDES)) $(PRIVATE_CFLAGS) $< -o $@
+	$(hide) $(bc_clang) $(addprefix -I, $(PRIVATE_INCLUDES)) $(PRIVATE_CFLAGS) $< -o $@
 	$(call transform-d-to-p-args,$(@:%.bc=%.d),$(@:%.bc=%.P))
 
 $(ll_bc_files): $(intermediates)/%.bc: $(LOCAL_PATH)/%.ll $(LLVM_AS)
