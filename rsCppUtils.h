@@ -134,11 +134,11 @@ namespace android {
         }
 
         bool* editArray() {
-            return (bool*)(this->begin());
+            return (bool*)(&*this->begin());
         }
 
         const bool* array() {
-            return (const bool*)(this->begin());
+            return (const bool*)(&*this->begin());
         }
     };
 
