@@ -82,7 +82,6 @@ LOCAL_SRC_FILES += ../rsCompatibilityLib.cpp
 
 LOCAL_WHOLE_STATIC_LIBRARIES := \
 	libutils \
-	libstlport_static \
 	libRSDispatch
 
 LOCAL_MODULE:= libRScpp_static
