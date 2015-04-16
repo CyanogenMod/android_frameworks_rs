@@ -281,7 +281,7 @@ static char* strgets(char *s, int size, const char **ppstr) {
 }
 
 ScriptExecutable* ScriptExecutable::createFromSharedObject(
-    Context* RSContext, void* sharedObj) {
+    Context* RSContext, void* sharedObj, uint32_t expectedChecksum) {
     char line[MAXLINE];
 
     size_t varCount = 0;
@@ -299,7 +299,7 @@ ScriptExecutable* ScriptExecutable::createFromSharedObject(
     uint32_t* forEachSignatures = nullptr;
     const char ** pragmaKeys = nullptr;
     const char ** pragmaValues = nullptr;
-    char *checksum = nullptr;
+    uint32_t checksum = 0;
 
     const char *rsInfo = (const char *) dlsym(sharedObj, ".rs.info");
 
@@ -519,22 +519,18 @@ ScriptExecutable* ScriptExecutable::createFromSharedObject(
     }
 
     if (strgets(line, MAXLINE, &rsInfo) != nullptr) {
-        if (strncmp(line, CHECKSUM_STR, strlen(CHECKSUM_STR)) != 0) {
+        if (sscanf(line, CHECKSUM_STR "%08x", &checksum) != 1) {
             ALOGE("Invalid checksum flag!: %s", line);
             goto error;
         }
-
-        // consume trailing newline character
-        char *c = strrchr(line, '\n');
-        if (c) {
-            *c = '\0';
-        }
-
-        char *checksumStart = &line[strlen(CHECKSUM_STR)];
-        checksum = new char[strlen(checksumStart) + 1];
-        strcpy(checksum, checksumStart);
     } else {
         ALOGE("Missing checksum in shared obj file");
+        goto error;
+    }
+
+    if (expectedChecksum != 0 && checksum != expectedChecksum) {
+        ALOGE("Found invalid checksum.  Expected %08x, got %08x\n",
+              expectedChecksum, checksum);
         goto error;
     }
 
@@ -550,7 +546,6 @@ ScriptExecutable* ScriptExecutable::createFromSharedObject(
 error:
 
 #ifndef RS_COMPATIBILITY_LIB
-    delete[] checksum;
 
     for (size_t idx = 0; idx < pragmaCount; ++idx) {
         delete [] pragmaKeys[idx];

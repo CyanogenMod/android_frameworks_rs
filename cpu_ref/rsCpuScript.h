@@ -136,7 +136,7 @@ public:
 
 private:
     String8 mBitcodeFilePath;
-    const char * mBuildChecksum;
+    uint32_t mBuildChecksum;
     bool mChecksumNeeded;
 };
 
@@ -145,7 +145,9 @@ Allocation * rsdScriptGetAllocationForPointer(
                         const Script *script,
                         const void *);
 
-bool addFileToChecksum(const char *fileName, uint32_t &checksum);
+uint32_t constructBuildChecksum(uint8_t const *bitcode, size_t bitcodeSize,
+                                const char *commandLine,
+                                const char ** bccFiles, size_t numFiles);
 
 }
 
