@@ -109,6 +109,7 @@ sp<const Type> Type::create(sp<RS> rs, sp<const Element> e, uint32_t dimX, uint3
     t->mDimZ = dimZ;
     t->mDimMipmaps = false;
     t->mDimFaces = false;
+    t->mYuvFormat = RS_YUV_NONE;
 
     t->calcElementCount();
 
@@ -123,6 +124,7 @@ Type::Builder::Builder(sp<RS> rs, sp<const Element> e) {
     mDimZ = 0;
     mDimMipmaps = false;
     mDimFaces = false;
+    mYuvFormat = RS_YUV_NONE;
 }
 
 void Type::Builder::setX(uint32_t value) {
