@@ -26,21 +26,21 @@ int gHeight;
 int gStep;
 int gSteps;
 
-void RS_KERNEL pass1(int in, uint x, uint y) {
+void RS_KERNEL pass1(uint x) {
     for (int i=0; i < (256); i++) {
-        rsSetElementAt_int(gSums, 0, i, y);
+        rsSetElementAt_int(gSums, 0, i, x);
     }
 
     for (int i = 0; i < gStep; i++) {
-        int py = y*gStep + i;
+        int py = x * gStep + i;
         if (py >= gHeight) return;
 
         for (int px=0; px < gWidth; px++) {
             uchar4 c = rsGetElementAt_uchar4(gSrc, px, py);
             int lum = (77 * c.r + 150 * c.g + 29 * c.b) >> 8;
 
-            int old = rsGetElementAt_int(gSums, lum, y);
-            rsSetElementAt_int(gSums, old+1, lum, y);
+            int old = rsGetElementAt_int(gSums, lum, x);
+            rsSetElementAt_int(gSums, old+1, lum, x);
         }
     }
 }
