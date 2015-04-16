@@ -20,8 +20,6 @@
 #include "rsDefines.h"
 #include "util/RefBase.h"
 
-#include <vector>
-#include <string>
 #include <pthread.h>
 
 
@@ -101,7 +99,7 @@ class Sampler;
      * @param[in] flags Optional flags for this context.
      * @return true on success
      */
-    bool init(std::string name, uint32_t flags = 0);
+    bool init(const char * name, uint32_t flags = 0);
 
     /**
      * Sets the error handler function for this context. This error handler is
@@ -155,7 +153,7 @@ class Sampler;
     static bool usingNative;
     static bool initDispatch(int targetApi);
 
-    bool init(std::string &name, int targetApi, uint32_t flags);
+    bool init(const char * name, int targetApi, uint32_t flags);
     static void * threadProc(void *);
 
     static bool gInitialized;
@@ -173,7 +171,8 @@ class Sampler;
     MessageHandlerFunc_t mMessageFunc;
     bool mInit;
 
-    std::string mCacheDir;
+    char mCacheDir[PATH_MAX+1];
+    uint32_t mCacheDirLen;
 
     struct {
         sp<const Element> U8;
@@ -272,7 +271,7 @@ public:
 protected:
     void *mID;
     RS* mRS;
-    std::string mName;
+    const char * mName;
 
     BaseObj(void *id, sp<RS> rs);
     void checkValid();
@@ -660,7 +659,7 @@ public:
      * @return number of sub-elements
      */
     size_t getSubElementCount() {
-        return mVisibleElementMap.size();
+        return mVisibleElementMapSize;
     }
 
     /**
@@ -1104,23 +1103,28 @@ public:
     class Builder {
     private:
         RS* mRS;
-        std::vector<sp<Element> > mElements;
-        std::vector<std::string> mElementNames;
-        std::vector<uint32_t> mArraySizes;
+        size_t mElementsCount;
+        size_t mElementsVecSize;
+        sp<const Element> * mElements;
+        char ** mElementNames;
+        size_t * mElementNameLengths;
+        uint32_t * mArraySizes;
         bool mSkipPadding;
 
     public:
         Builder(sp<RS> rs);
         ~Builder();
-        void add(sp<Element> e, std::string &name, uint32_t arraySize = 1);
+        void add(sp<const Element> e, const char * name, uint32_t arraySize = 1);
         sp<const Element> create();
     };
 
 protected:
     Element(void *id, sp<RS> rs,
-            std::vector<sp<Element> > &elements,
-            std::vector<std::string> &elementNames,
-            std::vector<uint32_t> &arraySizes);
+            sp<const Element> * elements,
+            size_t elementCount,
+            const char ** elementNames,
+            size_t * elementNameLengths,
+            uint32_t * arraySizes);
     Element(void *id, sp<RS> rs, RsDataType dt, RsDataKind dk, bool norm, uint32_t size);
     Element(sp<RS> rs);
     virtual ~Element();
@@ -1128,11 +1132,15 @@ protected:
 private:
     void updateVisibleSubElements();
 
-    std::vector<sp<Element> > mElements;
-    std::vector<std::string> mElementNames;
-    std::vector<uint32_t> mArraySizes;
-    std::vector<uint32_t> mVisibleElementMap;
-    std::vector<uint32_t> mOffsetInBytes;
+    size_t mElementsCount;
+    size_t mVisibleElementMapSize;
+
+    sp<const Element> * mElements;
+    char ** mElementNames;
+    size_t * mElementNameLengths;
+    uint32_t * mArraySizes;
+    uint32_t * mVisibleElementMap;
+    uint32_t * mOffsetInBytes;
 
     RsDataType mType;
     RsDataKind mKind;
