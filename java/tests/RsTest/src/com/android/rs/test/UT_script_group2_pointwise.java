@@ -48,21 +48,21 @@ public class UT_script_group2_pointwise extends UnitTest {
         Allocation input = Allocation.createSized(pRS, Element.I32_4(pRS), ARRAY_SIZE);
         input.copyFrom(array);
 
-        ScriptGroup2.Builder builder = new ScriptGroup2.Builder(pRS);
+        ScriptGroup.Builder2 builder = new ScriptGroup.Builder2(pRS);
 
-        ScriptGroup2.UnboundValue unbound = builder.addInput();
+        ScriptGroup.Input unbound = builder.addInput();
 
-        ScriptGroup2.Closure c0 =
+        ScriptGroup.Closure c0 =
                 builder.addKernel(s_inc.getKernelID_increment(),
                                   Type.createX(pRS, Element.I32_4(pRS), ARRAY_SIZE),
                                   unbound);
 
-        ScriptGroup2.Closure c1 =
+        ScriptGroup.Closure c1 =
                 builder.addKernel(s_double.getKernelID_doubleKernel(),
                                   Type.createX(pRS, Element.I32_4(pRS), ARRAY_SIZE),
                                   c0.getReturn());
 
-        ScriptGroup2 group = builder.create("AddDouble", c1.getReturn());
+        ScriptGroup group = builder.create("AddDouble", c1.getReturn());
 
         int[] a = new int[ARRAY_SIZE * 4];
         ((Allocation)group.execute(input)[0]).copyTo(a);
