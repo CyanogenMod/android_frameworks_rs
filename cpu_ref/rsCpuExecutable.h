@@ -64,7 +64,7 @@ public:
                      size_t forEachCount,
                      const char** pragmaKeys, const char** pragmaValues,
                      size_t pragmaCount,
-                     bool isThreadable, const char *buildChecksum) :
+                     bool isThreadable, uint32_t buildChecksum) :
         mFieldAddress(fieldAddress), mFieldIsObject(fieldIsObject),
         mFieldName(fieldName), mExportedVarCount(varCount),
         mInvokeFunctions(invokeFunctions), mFuncCount(funcCount),
@@ -86,7 +86,6 @@ public:
             }
         }
 
-        delete[] mBuildChecksum;
         for (size_t i = 0; i < mPragmaCount; ++i) {
             delete [] mPragmaKeys[i];
             delete [] mPragmaValues[i];
@@ -107,8 +106,13 @@ public:
         delete[] mFieldAddress;
     }
 
+    // Create an ScriptExecutable object from a shared object.
+    // If expectedChecksum is not zero, it will be compared to the checksum
+    // embedded in the shared object. A mismatch will cause a failure.
+    // If succeeded, returns the new object. Otherwise, returns nullptr.
     static ScriptExecutable*
-            createFromSharedObject(Context* RSContext, void* sharedObj);
+            createFromSharedObject(Context* RSContext, void* sharedObj,
+                                   uint32_t expectedChecksum = 0);
 
     size_t getExportedVariableCount() const { return mExportedVarCount; }
     size_t getExportedFunctionCount() const { return mFuncCount; }
@@ -130,11 +134,7 @@ public:
 
     bool getThreadable() const { return mIsThreadable; }
 
-    const char *getBuildChecksum() const { return mBuildChecksum; }
-    bool isChecksumValid(const char *checksum) const {
-      return (mBuildChecksum != nullptr &&
-              strcmp(checksum, mBuildChecksum) == 0);
-    }
+    uint32_t getBuildChecksum() const { return mBuildChecksum; }
 
 private:
     void** mFieldAddress;
@@ -154,7 +154,7 @@ private:
     size_t mPragmaCount;
 
     bool mIsThreadable;
-    const char *mBuildChecksum;
+    uint32_t mBuildChecksum;
 
     Context* mRS;
 };
