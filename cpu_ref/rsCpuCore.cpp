@@ -343,11 +343,6 @@ RsdCpuReferenceImpl::~RsdCpuReferenceImpl() {
 
 }
 
-typedef void (*rs_t)(const void *, void *, const void *, uint32_t, uint32_t, uint32_t, uint32_t);
-typedef void (*walk_loop_t)(const MTLaunchStruct*,
-                            RsExpandKernelDriverInfo,
-                            outer_foreach_t);
-
 static inline void FepPtrSetup(const MTLaunchStruct *mtls, RsExpandKernelDriverInfo *fep,
                                uint32_t x, uint32_t y,
                                uint32_t z = 0, uint32_t lod = 0,
