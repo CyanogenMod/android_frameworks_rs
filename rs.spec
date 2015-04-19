@@ -159,7 +159,7 @@ AllocationGetPointer {
     param uint32_t z
     param uint32_t array
     param size_t *stride
-    ret void *s
+    ret void *
     }
 
 Allocation1DData {
@@ -367,7 +367,7 @@ ScriptSetTimeZone {
 ScriptInvokeIDCreate {
     param RsScript s
     param uint32_t slot
-    ret RsScriptInvokeID;
+    ret RsScriptInvokeID
     }
 
 ScriptInvoke {
