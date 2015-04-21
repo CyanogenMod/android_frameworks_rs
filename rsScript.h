@@ -96,8 +96,6 @@ public:
     };
     Hal mHal;
 
-    typedef void (* InvokeFunc_t)(void);
-
     Script(Context *);
     virtual ~Script();
 

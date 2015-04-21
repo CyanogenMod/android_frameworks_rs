@@ -26,9 +26,6 @@ class RsdShaderCache;
 class RsdVertexArrayState;
 class RsdFrameBufferObj;
 
-typedef void (* InvokeFunc_t)(void);
-typedef void (*WorkerCallback_t)(void *usr, uint32_t idx);
-
 typedef struct RsdGLRec {
     struct {
         EGLint numConfigs;
@@ -96,4 +93,3 @@ void rsdGLDrawQuadTexCoords(const android::renderscript::Context *rsc,
                             float x4, float y4, float z4, float u4, float v4);
 
 #endif
-
