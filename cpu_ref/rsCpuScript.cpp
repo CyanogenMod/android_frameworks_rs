@@ -487,8 +487,6 @@ void RsdCpuScriptImpl::populateScript(Script *script) {
 }
 
 
-typedef void (*rs_t)(const void *, void *, const void *, uint32_t, uint32_t, uint32_t, uint32_t);
-
 bool RsdCpuScriptImpl::forEachMtlsSetup(const Allocation ** ains,
                                         uint32_t inLen,
                                         Allocation * aout,
