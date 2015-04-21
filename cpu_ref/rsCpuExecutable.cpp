@@ -118,13 +118,14 @@ bool SharedLibraryUtils::createSharedLibrary(const char *cacheDir, const char *r
     objFileName.append(".o");
 
     const char *compiler_rt = SYSLIBPATH"/libcompiler_rt.so";
+    const char *mTriple = "-mtriple=" DEFAULT_TARGET_TRIPLE_STRING;
+    const char *libPath = "--library-path=" SYSLIBPATH;
+
     std::vector<const char *> args = {
         LD_EXE_PATH,
         "-shared",
         "-nostdlib",
-        compiler_rt,
-        "-mtriple", DEFAULT_TARGET_TRIPLE_STRING,
-        "-L", SYSLIBPATH,
+        compiler_rt, mTriple, libPath,
         "-lRSDriver", "-lm", "-lc",
         objFileName.c_str(),
         "-o", sharedLibName.c_str(),
