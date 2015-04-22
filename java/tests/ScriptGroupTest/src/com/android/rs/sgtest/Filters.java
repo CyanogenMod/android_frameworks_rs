@@ -25,7 +25,6 @@ import android.renderscript.Type;
 import android.renderscript.Matrix3f;
 import android.renderscript.Matrix4f;
 import android.renderscript.ScriptGroup;
-import android.renderscript.ScriptGroup2;
 import android.util.Log;
 
 import java.lang.reflect.Constructor;
@@ -36,15 +35,15 @@ public class Filters extends TestBase {
 
   interface FilterInterface {
     public void init();
-    public ScriptGroup2.Closure prepInit(ScriptGroup2.Builder b);
+    public ScriptGroup.Closure prepInit(ScriptGroup.Builder2 b);
     public Script.KernelID getKernelID();
-      public ScriptGroup2.Closure asyncLaunch(ScriptGroup2.Builder builder,
+      public ScriptGroup.Closure asyncLaunch(ScriptGroup.Builder2 builder,
                                               Object in, Type outputType);
     public void forEach(Allocation in, Allocation out);
   }
 
     abstract class FilterBase implements FilterInterface {
-        public ScriptGroup2.Closure asyncLaunch(ScriptGroup2.Builder builder,
+        public ScriptGroup.Closure asyncLaunch(ScriptGroup.Builder2 builder,
                                                 Object in, Type outputType) {
             return builder.addKernel(getKernelID(), outputType, in);
         }
@@ -72,7 +71,7 @@ public class Filters extends TestBase {
 
     public void init() { }
 
-    public ScriptGroup2.Closure prepInit(ScriptGroup2.Builder b) { /* TODO */ return null; }
+    public ScriptGroup.Closure prepInit(ScriptGroup.Builder2 b) { /* TODO */ return null; }
 
     public Script.KernelID getKernelID() { return s_mat.getKernelID_colormatrix(); }
 
@@ -86,7 +85,7 @@ public class Filters extends TestBase {
 
     public void init() {}
 
-    public ScriptGroup2.Closure prepInit(ScriptGroup2.Builder b) { return null; }
+    public ScriptGroup.Closure prepInit(ScriptGroup.Builder2 b) { return null; }
 
     public Script.KernelID getKernelID() { return s.getKernelID_contrast(); }
 
@@ -100,7 +99,7 @@ public class Filters extends TestBase {
 
     public void init() {}
 
-    public ScriptGroup2.Closure prepInit(ScriptGroup2.Builder b) { return null; }
+    public ScriptGroup.Closure prepInit(ScriptGroup.Builder2 b) { return null; }
 
     public Script.KernelID getKernelID() { return s.getKernelID_exposure(); }
 
@@ -118,17 +117,17 @@ public class Filters extends TestBase {
     public void init() {
     }
 
-    public ScriptGroup2.Closure prepInit(ScriptGroup2.Builder b) {
+    public ScriptGroup.Closure prepInit(ScriptGroup.Builder2 b) {
         return b.addInvoke(s.getInvokeID_init_filter(),
                            dimX, dimY, 0.5f, 0.5f, 0.5f, Sampler.CLAMP_LINEAR(mRS));
     }
 
     public Script.KernelID getKernelID() { return s.getKernelID_fisheye(); }
 
-    public ScriptGroup2.Closure asyncLaunch(ScriptGroup2.Builder builder,
+    public ScriptGroup.Closure asyncLaunch(ScriptGroup.Builder2 builder,
                                             Object in, Type outputType) {
         return builder.addKernel(getKernelID(), outputType,
-                                 new ScriptGroup2.Binding(s.getFieldID_in_alloc(), in));
+                                 new ScriptGroup.Binding(s.getFieldID_in_alloc(), in));
     }
 
     public void forEach(Allocation in, Allocation out) {
@@ -146,7 +145,7 @@ public class Filters extends TestBase {
 
     public void init() {}
 
-    public ScriptGroup2.Closure prepInit(ScriptGroup2.Builder b) { return null; }
+    public ScriptGroup.Closure prepInit(ScriptGroup.Builder2 b) { return null; }
 
     public Script.KernelID getKernelID() { return s.getKernelID_greyscale(); }
 
@@ -201,7 +200,7 @@ public class Filters extends TestBase {
       setLevels();
     }
 
-    public ScriptGroup2.Closure prepInit(ScriptGroup2.Builder b) {
+    public ScriptGroup.Closure prepInit(ScriptGroup.Builder2 b) {
         return b.addInvoke(s.getInvokeID_initialize(),
                            mInBlack, mOutBlack, mInWMinInB, mOutWMinOutB,
                            mOverInWMinInB, mSatMatrix);
@@ -219,7 +218,7 @@ public class Filters extends TestBase {
 
     public void init() { s.invoke_prepareShadows(50.f); }
 
-    public ScriptGroup2.Closure prepInit(ScriptGroup2.Builder b) {
+    public ScriptGroup.Closure prepInit(ScriptGroup.Builder2 b) {
       cInit = b.addInvoke(s.getInvokeID_prepareShadows(), 50.f);
       return cInit;
     }
@@ -229,7 +228,7 @@ public class Filters extends TestBase {
     public void forEach(Allocation in, Allocation out) { s.forEach_shadowsKernel(in, out); }
 
     private ScriptC_shadows_f s;
-    private ScriptGroup2.Closure cInit;
+    private ScriptGroup.Closure cInit;
   }
 
   class VibranceFilter extends FilterBase {
@@ -237,7 +236,7 @@ public class Filters extends TestBase {
 
     public void init() {}
 
-    public ScriptGroup2.Closure prepInit(ScriptGroup2.Builder b) { return null; }
+    public ScriptGroup.Closure prepInit(ScriptGroup.Builder2 b) { return null; }
 
     public Script.KernelID getKernelID() { return s.getKernelID_vibranceKernel(); }
 
@@ -253,7 +252,7 @@ public class Filters extends TestBase {
     private final float scale = 0.5f;
     private final float shade = 0.5f;
     private final float slope = 20.0f;
-    private ScriptGroup2.Closure cInit;
+    private ScriptGroup.Closure cInit;
 
     public void init() {
       s.invoke_init_vignette(
@@ -262,7 +261,7 @@ public class Filters extends TestBase {
           center_y, scale, shade, slope);
     }
 
-    public ScriptGroup2.Closure prepInit(ScriptGroup2.Builder b) {
+    public ScriptGroup.Closure prepInit(ScriptGroup.Builder2 b) {
       cInit = b.addInvoke(s.getInvokeID_init_vignette(),
             mInPixelsAllocation.getType().getX(),
             mInPixelsAllocation.getType().getY(),
@@ -301,7 +300,7 @@ public class Filters extends TestBase {
 
   private Allocation[] mScratchPixelsAllocation = new Allocation[2];
   private ScriptGroup mGroup;
-  private ScriptGroup2 mGroup2;
+  private ScriptGroup mGroup2;
 
   private int mWidth;
   private int mHeight;
@@ -378,19 +377,16 @@ public class Filters extends TestBase {
           mGroup = b.create();
           break;
       case NATIVE2: {
-        ScriptGroup2.Builder b2 = new ScriptGroup2.Builder(mRS);
+        ScriptGroup.Builder2 b2 = new ScriptGroup.Builder2(mRS);
 
         for (int i = 0; i < mIndices.length; i++) {
           mFilters[i].prepInit(b2);
         }
 
-        ScriptGroup2.UnboundValue in = b2.addInput();
+        ScriptGroup.Input in = b2.addInput();
 
-        HashMap<Script.FieldID, Object> emptyMap =
-            new HashMap<Script.FieldID, Object>();
-
-        ScriptGroup2.Closure c = b2.addKernel(s_uc2f.getKernelID_uc4tof4(),
-            connect, new Object[]{ in }, emptyMap);
+        ScriptGroup.Closure c = b2.addKernel(s_uc2f.getKernelID_uc4tof4(),
+            connect, in);
 
         for (int i = 0; i < mIndices.length; i++) {
             c = mFilters[i].asyncLaunch(b2, c.getReturn(), connect);
@@ -398,7 +394,7 @@ public class Filters extends TestBase {
 
         c = b2.addKernel(s_f2uc.getKernelID_f4touc4(),
             mOutPixelsAllocation.getType(),
-            new Object[]{ c.getReturn() }, emptyMap);
+            c.getReturn());
 
         final String name = mFilters[0].getClass().getSimpleName() + "-" +
                 mFilters[1].getClass().getSimpleName();
