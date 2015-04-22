@@ -70,28 +70,28 @@ public class UT_script_group2_gatherscatter extends UnitTest {
         Allocation input = Allocation.createSized(pRS, Element.I32_4(pRS), ARRAY_SIZE);
         input.copyFrom(mArray);
 
-        ScriptGroup2.Builder builder = new ScriptGroup2.Builder(pRS);
+        ScriptGroup.Builder2 builder = new ScriptGroup.Builder2(pRS);
 
-        ScriptGroup2.UnboundValue unbound = builder.addInput();
+        ScriptGroup.Input unbound = builder.addInput();
 
-        ScriptGroup2.Closure c = null;
-        ScriptGroup2.Future f = null;
+        ScriptGroup.Closure c = null;
+        ScriptGroup.Future f = null;
         int stride;
         for (stride = ARRAY_SIZE / 2; stride >= 1; stride >>= 1) {
-            ScriptGroup2.Binding binding;
+            ScriptGroup.Binding binding;
             if (f == null) {
-                binding = new ScriptGroup2.Binding(s.getFieldID_a_in(), unbound);
+                binding = new ScriptGroup.Binding(s.getFieldID_a_in(), unbound);
             } else {
-                binding = new ScriptGroup2.Binding(s.getFieldID_a_in(), f);
+                binding = new ScriptGroup.Binding(s.getFieldID_a_in(), f);
             }
             c = builder.addKernel(s.getKernelID_add(),
                                   Type.createX(pRS, Element.I32_4(pRS), stride),
-                                  new ScriptGroup2.Binding(s.getFieldID_reduction_stride(), stride),
+                                  new ScriptGroup.Binding(s.getFieldID_reduction_stride(), stride),
                                   binding);
             f = c.getReturn();
         }
 
-        ScriptGroup2 group = builder.create("Summation", c.getReturn());
+        ScriptGroup group = builder.create("Summation", c.getReturn());
 
         if (c == null) {
             return;
