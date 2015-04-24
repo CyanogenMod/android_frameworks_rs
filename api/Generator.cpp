@@ -25,8 +25,9 @@
  *
  * Finally, this program generates HTML documentation files.
  *
- * This program takes an optional -v parameter, the RS version to target the
- * test files for.  The header file will always contain all the functions.
+ * This program takes an optional -v parameter, the API level to target.  The generated
+ * files will not contain APIs passed that API level.  Note that this does not affect
+ * generic comments found in headers.
  *
  * This program contains five main classes:
  * - SpecFile: Represents on spec file.
@@ -152,7 +153,7 @@
 
 using namespace std;
 
-static bool parseCommandLine(int argc, char* argv[], int* versionOfTestFiles,
+static bool parseCommandLine(int argc, char* argv[], int* maxApiLevel, bool* forVerification,
                              vector<string>* specFileNames) {
     for (int i = 1; i < argc; i++) {
         if (argv[i][0] == '-') {
@@ -160,7 +161,7 @@ static bool parseCommandLine(int argc, char* argv[], int* versionOfTestFiles,
                 i++;
                 if (i < argc) {
                     char* end;
-                    *versionOfTestFiles = strtol(argv[i], &end, 10);
+                    *maxApiLevel = strtol(argv[i], &end, 10);
                     if (*end != '\0') {
                         cerr << "Error. Can't parse the version number" << argv[i] << "\n";
                         return false;
@@ -169,6 +170,8 @@ static bool parseCommandLine(int argc, char* argv[], int* versionOfTestFiles,
                     cerr << "Missing version number after -v\n";
                     return false;
                 }
+            } else if (argv[i][1] == 'H') {
+                *forVerification = true;
             } else {
                 cerr << "Unrecognized flag %s\n" << argv[i] << "\n";
                 return false;
@@ -186,20 +189,21 @@ static bool parseCommandLine(int argc, char* argv[], int* versionOfTestFiles,
 
 int main(int argc, char* argv[]) {
     // If there's no restriction, generated test files for the very highest version.
-    int versionOfTestFiles = 999999;
+    int maxApiLevel = 999999;
     vector<string> specFileNames;
-    if (!parseCommandLine(argc, argv, &versionOfTestFiles, &specFileNames)) {
-        cout << "Usage: gen_runtime spec_file [spec_file...] [-v version_of_test_files]\n";
+    bool forVerification = false;
+    if (!parseCommandLine(argc, argv, &maxApiLevel, &forVerification, &specFileNames)) {
+        cout << "Usage: gen_runtime spec_file [spec_file...] [-v version_of_test_files][-H]\n";
         return -1;
     }
     bool success = true;
     for (auto i : specFileNames) {
-        if (!systemSpecification.readSpecFile(i)) {
+        if (!systemSpecification.readSpecFile(i, maxApiLevel)) {
             success = false;
         }
     }
     if (success) {
-        success = systemSpecification.generateFiles(versionOfTestFiles);
+        success = systemSpecification.generateFiles(forVerification, maxApiLevel);
     }
     return success ? 0 : -2;
 }

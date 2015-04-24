@@ -23,7 +23,10 @@ bool generateHeaderFiles(const std::string& directory);
 // Generates the Java and RenderScript test files.  The implementation is in GenerateTestFiles.cpp.
 bool generateTestFiles(const std::string& directory, int versionOfTestFiles);
 
-// Generates all HTML documentation files.  The implementation is in GenerateHtmlDocumentation.cpp.
-bool generateHtmlDocumentation(const std::string& director);
+/* Generates the documentation files.  The implementation is in GenerateDocumentation.cpp.
+ * If forVerification is false (the default), we generate the .jd files needed by the
+ * documentation system.  If it's true, we generate complete .html files for local debugging.
+ */
+bool generateDocumentation(const std::string& director, bool forVerification);
 
 #endif  // ANDROID_RS_API_GENERATOR_GENERATOR_H
