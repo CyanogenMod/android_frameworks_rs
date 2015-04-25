@@ -16,25 +16,30 @@
 #
 
 set -e
-g++ Generator.cpp Specification.cpp GenerateHtmlDocumentation.cpp GenerateHeaderFiles.cpp GenerateTestFiles.cpp Scanner.cpp Utilities.cpp -g -std=c++11 -Wall -o generator
+g++ Generator.cpp Specification.cpp GenerateDocumentation.cpp GenerateHeaderFiles.cpp GenerateTestFiles.cpp Scanner.cpp Utilities.cpp -g -std=c++11 -Wall -o generator
 
 mkdir -p test
 mkdir -p scriptc
-mkdir -p html
+mkdir -p docs
 
-# Because rsIs/Clear/SetObject is documented in rs_object_info but also found in rs_graphics, the latter must appear
-# after the former.
-./generator rs_core.spec rs_value_types.spec rs_object_types.spec rs_allocation_data.spec rs_atomic.spec rs_convert.spec rs_debug.spec rs_for_each.spec rs_io.spec rs_math.spec rs_matrix.spec rs_object_info.spec rs_quaternion.spec rs_time.spec rs_vector_math.spec rs_graphics.spec
+# The order of the arguments passed to generator matter because:
+# 1. The overview is expected to be in the first file.
+# 2. The order specified will be the order they will show in the guide_toc.cs snippet.
+#    This can be manually changed when cut&pasting the snippet into guide_toc.cs.
+# 3. rsIs/Clear/SetObject is documented in rs_object_info but also found in rs_graphics.
+#    The latter must appear after the former.
+./generator rs_core.spec rs_value_types.spec rs_object_types.spec rs_convert.spec rs_math.spec rs_vector_math.spec rs_matrix.spec rs_quaternion.spec rs_atomic.spec rs_time.spec rs_allocation_data.spec rs_object_info.spec rs_for_each.spec rs_io.spec rs_debug.spec rs_graphics.spec
+
+rm generator
 
 rm -f ../../../cts/tests/tests/renderscript/src/android/renderscript/cts/generated/*
 mv test/* ../../../cts/tests/tests/renderscript/src/android/renderscript/cts/generated/
 rmdir test
 
+rm -f ../scriptc/*.rsh
 mv scriptc/*.rsh ../scriptc
 rmdir scriptc
 
-# TODO handle the documentation files.
-rm html/*
-rmdir html
-
-rm generator
+rm -f ../../base/docs/html/guide/topics/renderscript/reference/*.jd
+mv docs/*.jd ../../base/docs/html/guide/topics/renderscript/reference/
+echo "Be sure to update platform/frameworks/base/docs/html/guide/guide_toc.cs if needed."

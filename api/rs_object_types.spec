@@ -45,7 +45,8 @@ simple: _RS_HANDLE
 summary: Handle to an element
 description:
  Opaque handle to a RenderScript element.
- See: android.renderscript.Element
+
+ See <a href="http://developer.android.com/reference/android/renderscript/Element.html">android.renderscript.Element</a>.
 end:
 
 type: rs_type
@@ -53,7 +54,8 @@ simple: _RS_HANDLE
 summary: Handle to a Type
 description:
  Opaque handle to a RenderScript type.
- See: android.renderscript.Type
+
+ See <a href="http://developer.android.com/reference/android/renderscript/Type.html">android.renderscript.Type</a>.
 end:
 
 type: rs_allocation
@@ -61,7 +63,8 @@ simple: _RS_HANDLE
 summary: Handle to an allocation
 description:
  Opaque handle to a RenderScript allocation.
- See: android.renderscript.Allocation
+
+ See <a href="http://developer.android.com/reference/android/renderscript/Allocation.html">android.renderscript.Allocation</a>.
 end:
 
 type: rs_sampler
@@ -69,7 +72,8 @@ simple: _RS_HANDLE
 summary: Handle to a Sampler
 description:
  Opaque handle to a RenderScript sampler object.
- See: android.renderscript.Sampler
+
+ See <a href="http://developer.android.com/reference/android/renderscript/Sampler.html">android.renderscript.Sampler</a>.
 end:
 
 type: rs_script
@@ -77,7 +81,8 @@ simple: _RS_HANDLE
 summary: Handle to a Script
 description:
  Opaque handle to a RenderScript script object.
- See: android.renderscript.ScriptC
+
+ See <a href="http://developer.android.com/reference/android/renderscript/ScriptC.html">android.renderscript.ScriptC</a>.
 end:
 
 type: rs_allocation_cubemap_face

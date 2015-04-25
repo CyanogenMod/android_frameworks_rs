@@ -19,16 +19,18 @@
 /*
  * rs_core.rsh: Overview
  *
- * RenderScript is a high-performance runtime that provides
- * compute operations at the native level. RenderScript code is compiled on devices
- * at runtime to allow platform-independence as well.
- * This reference documentation describes the RenderScript runtime APIs, which you
- * can utilize to write RenderScript code in C99. The RenderScript compute header
- * files are automatically included for you.
+ * RenderScript is a high-performance runtime that provides compute operations at the native level.
+ * RenderScript code is compiled on devices at runtime to allow platform-independence as well.
+ *
+ * This reference documentation describes the RenderScript runtime APIs, which you can utilize
+ * to write RenderScript code in C99. The RenderScript compute header files are automatically
+ * included for you.
  *
  * To use RenderScript, you need to utilize the RenderScript runtime APIs documented here
  * as well as the Android framework APIs for RenderScript.
+ *
  * For documentation on the Android framework APIs, see the android.renderscript package reference.
+ *
  * For more information on how to develop with RenderScript and how the runtime and
  * Android framework APIs interact, see the RenderScript developer guide
  * and the RenderScript samples.
