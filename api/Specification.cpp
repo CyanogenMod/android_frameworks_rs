@@ -201,7 +201,7 @@ void ParameterDefinition::parseParameterDefinition(const string& type, const str
     }
 }
 
-void VersionInfo::scan(Scanner* scanner) {
+bool VersionInfo::scan(Scanner* scanner, int maxApiLevel) {
     if (scanner->findOptionalTag("version:")) {
         const string s = scanner->getValue();
         sscanf(s.c_str(), "%i %i", &minVersion, &maxVersion);
@@ -218,6 +218,10 @@ void VersionInfo::scan(Scanner* scanner) {
     if (scanner->findOptionalTag("size:")) {
         sscanf(scanner->getValue().c_str(), "%i", &intSize);
     }
+    if (maxVersion > maxApiLevel) {
+        maxVersion = maxApiLevel;
+    }
+    return minVersion == 0 || minVersion <= maxApiLevel;
 }
 
 Definition::Definition(const std::string& name) : mName(name), mDeprecated(false), mHidden(false) {
@@ -305,20 +309,23 @@ void Function::addReturn(ParameterEntry* entry, Scanner* scanner) {
     mReturnDocumentation = entry->documentation;
 }
 
-void Specification::scanVersionInfo(Scanner* scanner) {
-    mVersionInfo.scan(scanner);
-}
-
-void ConstantSpecification::scanConstantSpecification(Scanner* scanner, SpecFile* specFile) {
+void ConstantSpecification::scanConstantSpecification(Scanner* scanner, SpecFile* specFile,
+                                                      int maxApiLevel) {
     string name = scanner->getValue();
+    VersionInfo info;
+    if (!info.scan(scanner, maxApiLevel)) {
+        cout << "Skipping some " << name << " definitions.\n";
+        scanner->skipUntilTag("end:");
+        return;
+    }
 
     bool created = false;
     Constant* constant = systemSpecification.findOrCreateConstant(name, &created);
     ConstantSpecification* spec = new ConstantSpecification(constant);
     constant->addSpecification(spec);
     specFile->addConstantSpecification(spec, created);
+    spec->mVersionInfo = info;
 
-    spec->scanVersionInfo(scanner);
     if (scanner->findTag("value:")) {
         spec->mValue = scanner->getValue();
     }
@@ -327,16 +334,23 @@ void ConstantSpecification::scanConstantSpecification(Scanner* scanner, SpecFile
     scanner->findTag("end:");
 }
 
-void TypeSpecification::scanTypeSpecification(Scanner* scanner, SpecFile* specFile) {
+void TypeSpecification::scanTypeSpecification(Scanner* scanner, SpecFile* specFile,
+                                              int maxApiLevel) {
     string name = scanner->getValue();
+    VersionInfo info;
+    if (!info.scan(scanner, maxApiLevel)) {
+        cout << "Skipping some " << name << " definitions.\n";
+        scanner->skipUntilTag("end:");
+        return;
+    }
 
     bool created = false;
     Type* type = systemSpecification.findOrCreateType(name, &created);
     TypeSpecification* spec = new TypeSpecification(type);
     type->addSpecification(spec);
     specFile->addTypeSpecification(spec, created);
+    spec->mVersionInfo = info;
 
-    spec->scanVersionInfo(scanner);
     if (scanner->findOptionalTag("simple:")) {
         spec->mKind = SIMPLE;
         spec->mSimpleType = scanner->getValue();
@@ -483,9 +497,6 @@ void FunctionSpecification::parseTest(Scanner* scanner) {
 }
 
 bool FunctionSpecification::hasTests(int versionOfTestFiles) const {
-    if (mVersionInfo.minVersion != 0 && mVersionInfo.minVersion > versionOfTestFiles) {
-        return false;
-    }
     if (mVersionInfo.maxVersion != 0 && mVersionInfo.maxVersion < versionOfTestFiles) {
         return false;
     }
@@ -495,15 +506,23 @@ bool FunctionSpecification::hasTests(int versionOfTestFiles) const {
     return true;
 }
 
-void FunctionSpecification::scanFunctionSpecification(Scanner* scanner, SpecFile* specFile) {
+void FunctionSpecification::scanFunctionSpecification(Scanner* scanner, SpecFile* specFile,
+                                                      int maxApiLevel) {
     // Some functions like convert have # part of the name.  Truncate at that point.
-    string name = scanner->getValue();
+    const string& unexpandedName = scanner->getValue();
+    string name = unexpandedName;
     size_t p = name.find('#');
     if (p != string::npos) {
         if (p > 0 && name[p - 1] == '_') {
             p--;
         }
         name.erase(p);
+    }
+    VersionInfo info;
+    if (!info.scan(scanner, maxApiLevel)) {
+        cout << "Skipping some " << name << " definitions.\n";
+        scanner->skipUntilTag("end:");
+        return;
     }
 
     bool created = false;
@@ -512,10 +531,9 @@ void FunctionSpecification::scanFunctionSpecification(Scanner* scanner, SpecFile
     function->addSpecification(spec);
     specFile->addFunctionSpecification(spec, created);
 
-    spec->mUnexpandedName = scanner->getValue();
+    spec->mUnexpandedName = unexpandedName;
     spec->mTest = "scalar";  // default
-
-    spec->scanVersionInfo(scanner);
+    spec->mVersionInfo = info;
 
     if (scanner->findOptionalTag("attrib:")) {
         spec->mAttribute = scanner->getValue();
@@ -666,7 +684,7 @@ void SpecFile::addFunctionSpecification(FunctionSpecification* spec, bool hasDoc
 }
 
 // Read the specification, adding the definitions to the global functions map.
-bool SpecFile::readSpecFile() {
+bool SpecFile::readSpecFile(int maxApiLevel) {
     FILE* specFile = fopen(mSpecFileName.c_str(), "rt");
     if (!specFile) {
         cerr << "Error opening input file: " << mSpecFileName << "\n";
@@ -703,11 +721,11 @@ bool SpecFile::readSpecFile() {
         }
         const string tag = scanner.getNextTag();
         if (tag == "function:") {
-            FunctionSpecification::scanFunctionSpecification(&scanner, this);
+            FunctionSpecification::scanFunctionSpecification(&scanner, this, maxApiLevel);
         } else if (tag == "type:") {
-            TypeSpecification::scanTypeSpecification(&scanner, this);
+            TypeSpecification::scanTypeSpecification(&scanner, this, maxApiLevel);
         } else if (tag == "constant:") {
-            ConstantSpecification::scanConstantSpecification(&scanner, this);
+            ConstantSpecification::scanConstantSpecification(&scanner, this, maxApiLevel);
         } else {
             scanner.error() << "Expected function:, type:, or constant:.  Found: " << tag << "\n";
             return false;
@@ -759,9 +777,9 @@ Function* SystemSpecification::findOrCreateFunction(const string& name, bool* cr
     return findOrCreate<Function>(name, &mFunctions, created);
 }
 
-bool SystemSpecification::readSpecFile(const string& fileName) {
+bool SystemSpecification::readSpecFile(const string& fileName, int maxApiLevel) {
     SpecFile* spec = new SpecFile(fileName);
-    if (!spec->readSpecFile()) {
+    if (!spec->readSpecFile(maxApiLevel)) {
         cerr << fileName << ": Failed to parse.\n";
         return false;
     }
@@ -769,9 +787,10 @@ bool SystemSpecification::readSpecFile(const string& fileName) {
     return true;
 }
 
-bool SystemSpecification::generateFiles(int versionOfTestFiles) const {
-    bool success = generateHeaderFiles("scriptc") && generateHtmlDocumentation("html") &&
-                   generateTestFiles("test", versionOfTestFiles);
+bool SystemSpecification::generateFiles(bool forVerification, int maxApiLevel) const {
+    bool success = generateHeaderFiles("scriptc") &&
+                   generateDocumentation("docs", forVerification) &&
+                   generateTestFiles("test", maxApiLevel);
     if (success) {
         cout << "Successfully processed " << mTypes.size() << " types, " << mConstants.size()
              << " constants, and " << mFunctions.size() << " functions.\n";

@@ -133,6 +133,12 @@ bool Scanner::findOptionalTag(const char* tag) {
     return mTagConsumed;
 }
 
+void Scanner::skipUntilTag(const char* tag) {
+    while(!findOptionalTag(tag)) {
+        mTagConsumed = true;
+    }
+}
+
 void Scanner::checkNoValue() {
     if (!mValue.empty()) {
         error() << "Did not expect \"" << mValue << "\" after \"" << mTag << "\".\n";
