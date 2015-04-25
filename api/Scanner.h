@@ -78,6 +78,8 @@ public:
     bool findTag(const char* tag);
     // Same as findTag but does not print an error if the tag is not found.
     bool findOptionalTag(const char* tag);
+    // Keep reading from the stream until the tag is found.
+    void skipUntilTag(const char* tag);
     // Verifies there's no value.
     void checkNoValue();
 

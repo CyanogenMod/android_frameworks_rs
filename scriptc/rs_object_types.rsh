@@ -49,7 +49,8 @@ struct {\
  * rs_element: Handle to an element
  *
  * Opaque handle to a RenderScript element.
- * See: android.renderscript.Element
+ *
+ * See android.renderscript.Element.
  */
 typedef _RS_HANDLE rs_element;
 
@@ -57,7 +58,8 @@ typedef _RS_HANDLE rs_element;
  * rs_type: Handle to a Type
  *
  * Opaque handle to a RenderScript type.
- * See: android.renderscript.Type
+ *
+ * See android.renderscript.Type.
  */
 typedef _RS_HANDLE rs_type;
 
@@ -65,7 +67,8 @@ typedef _RS_HANDLE rs_type;
  * rs_allocation: Handle to an allocation
  *
  * Opaque handle to a RenderScript allocation.
- * See: android.renderscript.Allocation
+ *
+ * See android.renderscript.Allocation.
  */
 typedef _RS_HANDLE rs_allocation;
 
@@ -73,7 +76,8 @@ typedef _RS_HANDLE rs_allocation;
  * rs_sampler: Handle to a Sampler
  *
  * Opaque handle to a RenderScript sampler object.
- * See: android.renderscript.Sampler
+ *
+ * See android.renderscript.Sampler.
  */
 typedef _RS_HANDLE rs_sampler;
 
@@ -81,7 +85,8 @@ typedef _RS_HANDLE rs_sampler;
  * rs_script: Handle to a Script
  *
  * Opaque handle to a RenderScript script object.
- * See: android.renderscript.ScriptC
+ *
+ * See android.renderscript.ScriptC.
  */
 typedef _RS_HANDLE rs_script;
 

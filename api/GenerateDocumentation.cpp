@@ -28,61 +28,75 @@ struct DetailedFunctionEntry {
     string htmlDeclaration;
 };
 
-static void writeHtmlHeader(GeneratedFile* file) {
-    *file << "<!DOCTYPE html>\n";
-    *file << "<!-- " << AUTO_GENERATED_WARNING << "-->\n";
+static const char OVERVIEW_HTML_FILE_NAME[] = "overview.html";
+static const char OVERVIEW_JD_FILE_NAME[] = "overview.jd";
+static const char INDEX_HTML_FILE_NAME[] = "index.html";
+static const char INDEX_JD_FILE_NAME[] = "index.jd";
 
-    *file << "<html><head><meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>\n"
-             "<meta name='viewport' content='width=device-width'>\n"
-             "<link rel='shortcut icon' type='image/x-icon' "
-             "href='http://developer.android.com/favicon.ico'>\n"
-             "<title>android.renderscript | Android Developers</title>\n"
-             "<!-- STYLESHEETS -->\n"
-             "<link rel='stylesheet' "
-             "href='http://fonts.googleapis.com/css?family=Roboto+Condensed'>\n"
-             "<link rel='stylesheet' href='http://fonts.googleapis.com/"
-             "css?family=Roboto:light,regular,medium,thin,italic,mediumitalic,bold' "
-             "title='roboto'>\n"
-             "<link href='./test_files/default.css' rel='stylesheet' type='text/css'>\n"
-             "<!-- FULLSCREEN STYLESHEET -->\n"
-             "<link href='./test_files/fullscreen.css' rel='stylesheet' class='fullscreen' "
-             "type='text/css'>\n"
-             "<!-- JAVASCRIPT -->\n"
-             "<script src='./test_files/cb=gapi.loaded_0' async=''></script><script "
-             "type='text/javascript' async='' src='./test_files/plusone.js' "
-             "gapi_processed='true'></script><script async='' "
-             "src='./test_files/analytics.js'></script><script src='./test_files/jsapi' "
-             "type='text/javascript'></script>\n"
-             "<script src='./test_files/android_3p-bundle.js' type='text/javascript'></script>\n"
-             "<script type='text/javascript'>\n"
-             "  var toRoot = '/';\n"
-             "  var metaTags = [];\n"
-             "  var devsite = false;\n"
-             "</script>\n"
-             "<script src='./test_files/docs.js' type='text/javascript'></script><script "
-             "type='text/javascript' src='./test_files/saved_resource'></script>\n"
-             "<script>\n"
-             "  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){\n"
-             "  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),\n"
-             "  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)\n"
-             "  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');\n"
-             "  ga('create', 'UA-5831155-1', 'android.com');\n"
-             "  ga('create', 'UA-49880327-2', 'android.com', {'name': 'universal'});  // New "
-             "tracker);\n"
-             "  ga('send', 'pageview');\n"
-             "  ga('universal.send', 'pageview'); // Send page view for new tracker.\n"
-             "</script>\n"
-             "<link type='text/css' href='./test_files/default+en.css' rel='stylesheet'><script "
-             "type='text/javascript' src='./test_files/default+en.I.js'></script></head>\n"
-             "<body class='gc-documentation\n"
-             "  develop reference'>\n";
-    //"  <div id='doc-api-level' class='11' style='display:none'></div>\n"
-    //"  <a name='top'></a>\n";
+static void writeHeader(GeneratedFile* file, bool forVerification, const string& title) {
+    if (forVerification) {
+        *file << "<!DOCTYPE html>\n";
+        *file << "<!-- " << AUTO_GENERATED_WARNING << "-->\n";
+
+        *file << "<html><head><meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>\n"
+                 "<meta name='viewport' content='width=device-width'>\n"
+                 "<link rel='shortcut icon' type='image/x-icon' "
+                 "href='http://developer.android.com/favicon.ico'>\n"
+                 "<title>android.renderscript | Android Developers</title>\n"
+                 "<!-- STYLESHEETS -->\n"
+                 "<link rel='stylesheet' "
+                 "href='http://fonts.googleapis.com/css?family=Roboto+Condensed'>\n"
+                 "<link rel='stylesheet' href='http://fonts.googleapis.com/"
+                 "css?family=Roboto:light,regular,medium,thin,italic,mediumitalic,bold' "
+                 "title='roboto'>\n"
+                 "<link href='./test_files/default.css' rel='stylesheet' type='text/css'>\n"
+                 "<!-- FULLSCREEN STYLESHEET -->\n"
+                 "<link href='./test_files/fullscreen.css' rel='stylesheet' class='fullscreen' "
+                 "type='text/css'>\n"
+                 "<!-- JAVASCRIPT -->\n"
+                 "<script src='./test_files/cb=gapi.loaded_0' async=''></script><script "
+                 "type='text/javascript' async='' src='./test_files/plusone.js' "
+                 "gapi_processed='true'></script><script async='' "
+                 "src='./test_files/analytics.js'></script><script src='./test_files/jsapi' "
+                 "type='text/javascript'></script>\n"
+                 "<script src='./test_files/android_3p-bundle.js' "
+                 "type='text/javascript'></script>\n"
+                 "<script type='text/javascript'>\n"
+                 "  var toRoot = '/';\n"
+                 "  var metaTags = [];\n"
+                 "  var devsite = false;\n"
+                 "</script>\n"
+                 "<script src='./test_files/docs.js' type='text/javascript'></script><script "
+                 "type='text/javascript' src='./test_files/saved_resource'></script>\n"
+                 "<script>\n"
+                 "  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){\n"
+                 "  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new "
+                 "Date();a=s.createElement(o),\n"
+                 "  "
+                 "m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)\n"
+                 "  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');\n"
+                 "  ga('create', 'UA-5831155-1', 'android.com');\n"
+                 "  ga('create', 'UA-49880327-2', 'android.com', {'name': 'universal'});  // New "
+                 "tracker);\n"
+                 "  ga('send', 'pageview');\n"
+                 "  ga('universal.send', 'pageview'); // Send page view for new tracker.\n"
+                 "</script>\n"
+                 "<link type='text/css' href='./test_files/default+en.css' "
+                 "rel='stylesheet'><script "
+                 "type='text/javascript' src='./test_files/default+en.I.js'></script></head>\n"
+                 "<body class='gc-documentation\n"
+                 "  develop reference'>\n\n";
+        *file << "<h1>" << title << "</h1>\n";
+    } else {
+        *file << "page.title=RenderScript " << title << "\n\n";
+        *file << "@jd:body\n\n";
+    }
 }
 
-static void writeHtmlFooter(GeneratedFile* file) {
-    //*file << "</div>n"
-    *file << "<!-- end body-content -->\n</body></html>\n";
+static void writeFooter(GeneratedFile* file, bool forVerification) {
+    if (forVerification) {
+        *file << "<!-- end body-content -->\n</body></html>\n";
+    }
 }
 
 // If prefix starts input, copy it to stream and remove it from input.
@@ -277,7 +291,8 @@ static void writeSummaryTableEntry(ostream* stream, Definition* definition,
 
     *stream << "  <tr class='alt-color api apilevel-1'>\n";
     *stream << "    <td class='jd-linkcol'>\n";
-    *stream << "      <a href='" << definition->getUrl() << "'>" << definition->getName() << "</a>\n";
+    *stream << "      <a href='" << definition->getUrl() << "'>" << definition->getName()
+            << "</a>\n";
     *stream << "    </td>\n";
     *stream << "    <td class='jd-descrcol' width='100%'>\n";
     *stream << "      ";
@@ -356,12 +371,9 @@ static void writeHtmlVersionTag(GeneratedFile* file, VersionInfo info) {
     }
     const string s = stream.str();
     if (!s.empty()) {
-        // TODO simplify
-        //*file << "    <p>" << s << "</p>\n";
         *file << "    " << s << "\n";
     }
 }
-
 
 static void writeDetailedTypeSpecification(GeneratedFile* file, const TypeSpecification* type) {
     switch (type->getKind()) {
@@ -390,7 +402,6 @@ static void writeDetailedTypeSpecification(GeneratedFile* file, const TypeSpecif
             break;
         }
         case STRUCT: {
-            // TODO string mStructName;             // The name found after the struct keyword
             *file << "<p>A structure with the following fields:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
             writeHtmlVersionTag(file, type->getVersionInfo());
             *file << "</p>\n";
@@ -434,15 +445,14 @@ static bool writeOverviewForFile(GeneratedFile* file, const SpecFile& specFile) 
     return success;
 }
 
-static bool generateOverview(const string& directory) {
+static bool generateOverview(const string& directory, bool forVerification) {
     GeneratedFile file;
-    if (!file.start(directory, "index.html")) {
+    if (!file.start(directory, forVerification ? OVERVIEW_HTML_FILE_NAME : OVERVIEW_JD_FILE_NAME)) {
         return false;
     }
     bool success = true;
-    writeHtmlHeader(&file);
 
-    file << "<h1>Overview</h1>\n";
+    writeHeader(&file, forVerification, "Overview");
 
     for (auto specFile : systemSpecification.getSpecFiles()) {
         if (!writeOverviewForFile(&file, *specFile)) {
@@ -450,17 +460,17 @@ static bool generateOverview(const string& directory) {
         }
     }
 
-    writeHtmlFooter(&file);
+    writeFooter(&file, forVerification);
     file.close();
     return success;
 }
 
-static bool generateAlphabeticalIndex(const string& directory) {
+static bool generateAlphabeticalIndex(const string& directory, bool forVerification) {
     GeneratedFile file;
-    if (!file.start(directory, "alpha_index.html")) {
+    if (!file.start(directory, forVerification ? INDEX_HTML_FILE_NAME : INDEX_JD_FILE_NAME)) {
         return false;
     }
-    writeHtmlHeader(&file);
+    writeHeader(&file, forVerification, "Index");
 
     writeSummaryTables(&file, systemSpecification.getConstants(), systemSpecification.getTypes(),
                        systemSpecification.getFunctions(), NON_DEPRECATED_ONLY, true);
@@ -468,7 +478,7 @@ static bool generateAlphabeticalIndex(const string& directory) {
     writeSummaryTables(&file, systemSpecification.getConstants(), systemSpecification.getTypes(),
                        systemSpecification.getFunctions(), DEPRECATED_ONLY, true);
 
-    writeHtmlFooter(&file);
+    writeFooter(&file, forVerification);
     file.close();
     return true;
 }
@@ -493,8 +503,6 @@ static bool writeDetailedConstant(GeneratedFile* file, Constant* constant) {
     }
     const string& name = constant->getName();
 
-    // TODO need names that distinguish fn.const. type
-    // TODO had attr_android:...
     *file << "<a id='android_rs:" << name << "'></a>\n";
     *file << "<div class='jd-details'>\n";
     *file << "  <h4 class='jd-details-title'>\n";
@@ -534,8 +542,6 @@ static bool writeDetailedType(GeneratedFile* file, Type* type) {
     }
     const string& name = type->getName();
 
-    // TODO need names that distinguish fn.const. type
-    // TODO had attr_android:...
     *file << "<a id='android_rs:" << name << "'></a>\n";
     *file << "<div class='jd-details'>\n";
     *file << "  <h4 class='jd-details-title'>\n";
@@ -562,8 +568,6 @@ static bool writeDetailedType(GeneratedFile* file, Type* type) {
 static bool writeDetailedFunction(GeneratedFile* file, Function* function) {
     const string& name = function->getName();
 
-    // TODO need names that distinguish fn.const. type
-    // TODO had attr_android:...
     *file << "<a id='android_rs:" << name << "'></a>\n";
     *file << "<div class='jd-details'>\n";
     *file << "  <h4 class='jd-details-title'>\n";
@@ -621,19 +625,23 @@ static bool writeDetailedFunction(GeneratedFile* file, Function* function) {
     return true;
 }
 
-static bool writeDetailedDocumentationFile(const string& directory, const SpecFile& specFile) {
+static bool writeDetailedDocumentationFile(const string& directory, const SpecFile& specFile,
+                                           bool forVerification) {
+    if (!specFile.hasSpecifications()) {
+        // This is true for rs_core.spec
+        return true;
+    }
+
     GeneratedFile file;
-    const string htmlFileName = stringReplace(specFile.getSpecFileName(), ".spec", ".html");
-    if (!file.start(directory, htmlFileName)) {
+    const string fileName = stringReplace(specFile.getSpecFileName(), ".spec",
+                                          forVerification ? ".html" : ".jd");
+    if (!file.start(directory, fileName)) {
         return false;
     }
     bool success = true;
 
-    writeHtmlHeader(&file);
-    file << "<br/>";
-
-    // Write the file documentation.
-    file << "<h1>" << specFile.getBriefDescription() << "</h1>\n";
+    string title = specFile.getBriefDescription();
+    writeHeader(&file, forVerification, title);
 
     file << "<h2>Overview</h2>\n";
     if (!generateHtmlParagraphs(&file, specFile.getFullDescription())) {
@@ -675,20 +683,52 @@ static bool writeDetailedDocumentationFile(const string& directory, const SpecFi
         }
     }
 
-    writeHtmlFooter(&file);
+    writeFooter(&file, forVerification);
     file.close();
 
     if (!success) {
         // If in error, write a final message to make it easier to figure out which file failed.
-        cerr << htmlFileName << ": Failed due to errors.\n";
+        cerr << fileName << ": Failed due to errors.\n";
     }
     return success;
 }
 
-bool generateHtmlDocumentation(const string& directory) {
-    bool success = generateOverview(directory) && generateAlphabeticalIndex(directory);
+static void generateSnippet(GeneratedFile* file, const string& fileName, const string& title) {
+    const char offset[] = "                  ";
+    *file << offset << "<li><a href=\"<?cs var:toroot ?>guide/topics/renderscript/reference/"
+          << fileName << "\">\n";
+    *file << offset << "  <span class=\"en\">" << title << "</span>\n";
+    *file << offset << "</a></li>\n";
+}
+
+/* Generate a partial file of links that should be cut & pasted into the proper section of the
+ * guide_toc.cs file.
+ */
+static bool generateAndroidTableOfContentSnippet(const string& directory) {
+    GeneratedFile file;
+    if (!file.start(directory, "guide_toc.cs")) {
+        return false;
+    }
+    file << "<!-- Copy and paste the following lines into the RenderScript section of\n";
+    file << "     platform/frameworks/base/docs/html/guide/guide_toc.cs\n\n";
+
+    generateSnippet(&file, OVERVIEW_HTML_FILE_NAME, "Overview");
     for (auto specFile : systemSpecification.getSpecFiles()) {
-        if (!writeDetailedDocumentationFile(directory, *specFile)) {
+        if (specFile->hasSpecifications()) {
+            const string fileName = stringReplace(specFile->getSpecFileName(), ".spec", ".html");
+            generateSnippet(&file, fileName, specFile->getBriefDescription());
+        }
+    }
+    generateSnippet(&file, INDEX_HTML_FILE_NAME, "Index");
+    return true;
+}
+
+bool generateDocumentation(const string& directory, bool forVerification) {
+    bool success = generateOverview(directory, forVerification) &&
+                   generateAlphabeticalIndex(directory, forVerification) &&
+                   generateAndroidTableOfContentSnippet(directory);
+    for (auto specFile : systemSpecification.getSpecFiles()) {
+        if (!writeDetailedDocumentationFile(directory, *specFile, forVerification)) {
             success = false;
         }
     }

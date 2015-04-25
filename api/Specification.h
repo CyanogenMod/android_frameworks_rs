@@ -130,7 +130,11 @@ struct VersionInfo {
     int intSize;
 
     VersionInfo() : minVersion(0), maxVersion(0), intSize(0) {}
-    void scan(Scanner* scanner);
+    /* Scan the version info from the spec file.  maxApiLevel specifies the maximum level
+     * we are interested in.  This may alter maxVersion.  This method returns false if the
+     * minVersion is greater than the maxApiLevel.
+     */
+    bool scan(Scanner* scanner, int maxApiLevel);
 };
 
 // We have three type of definitions
@@ -249,7 +253,7 @@ public:
     std::string getValue() const { return mValue; }
 
     // Parse a constant specification and add it to specFile.
-    static void scanConstantSpecification(Scanner* scanner, SpecFile* specFile);
+    static void scanConstantSpecification(Scanner* scanner, SpecFile* specFile, int maxApiLevel);
 };
 
 enum TypeKind {
@@ -295,7 +299,7 @@ public:
     const std::vector<std::string>& getValueComments() const { return mValueComments; }
 
     // Parse a type specification and add it to specFile.
-    static void scanTypeSpecification(Scanner* scanner, SpecFile* specFile);
+    static void scanTypeSpecification(Scanner* scanner, SpecFile* specFile, int maxApiLevel);
 };
 
 // Maximum number of placeholders (like #1, #2) in function specifications.
@@ -344,7 +348,7 @@ private:
      * This is the name with the #, e.g. convert_#1_#2
      */
     std::string mUnexpandedName;
-    ParameterEntry* mReturn;  // The return type. The name should be empty.  Owned.
+    ParameterEntry* mReturn;                   // The return type. The name should be empty.  Owned.
     std::vector<ParameterEntry*> mParameters;  // The parameters.  Owned.
     std::vector<std::string> mInline;          // The inline code to be included in the header
 
@@ -387,7 +391,7 @@ public:
     bool hasTests(int versionOfTestFiles) const;
 
     // Parse a function specification and add it to specFile.
-    static void scanFunctionSpecification(Scanner* scanner, SpecFile* specFile);
+    static void scanFunctionSpecification(Scanner* scanner, SpecFile* specFile, int maxApiLevel);
 };
 
 /* A concrete version of a function specification, where all placeholders have been replaced by
@@ -494,7 +498,12 @@ public:
         return mDocumentedFunctions;
     }
 
-    bool readSpecFile();
+    bool hasSpecifications() const {
+        return !mDocumentedConstants.empty() || !mDocumentedTypes.empty() ||
+               !mDocumentedFunctions.empty();
+    }
+
+    bool readSpecFile(int maxApiLevel);
 
     /* These are called by the parser to keep track of the specifications defined in this file.
      * hasDocumentation is true if this specification containes the documentation.
@@ -526,10 +535,12 @@ public:
     Type* findOrCreateType(const std::string& name, bool* created);
     Function* findOrCreateFunction(const std::string& name, bool* created);
 
-    // Parse the spec file and create the object hierarchy, adding a pointer to mSpecFiles.
-    bool readSpecFile(const std::string& fileName);
+    /* Parse the spec file and create the object hierarchy, adding a pointer to mSpecFiles.
+     * We won't include information passed the specified level.
+     */
+    bool readSpecFile(const std::string& fileName, int maxApiLevel);
     // Generate all the files.
-    bool generateFiles(int versionOfTestFiles) const;
+    bool generateFiles(bool forVerification, int maxApiLevel) const;
 
     const std::vector<SpecFile*>& getSpecFiles() const { return mSpecFiles; }
     const std::map<std::string, Constant*>& getConstants() const { return mConstants; }
