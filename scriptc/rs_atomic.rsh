@@ -89,9 +89,9 @@ extern int32_t __attribute__((overloadable))
  * by rsAtomicCas() is compareValue.
  *
  * Parameters:
- *   addr: The address of the value to compare and replace if the test passes.
- *   compareValue: The value to test *addr against.
- *   newValue: The value to write if the test passes.
+ *   addr: Address of the value to compare and replace if the test passes.
+ *   compareValue: Value to test *addr against.
+ *   newValue: Value to write if the test passes.
  *
  * Returns: Value of *addr prior to the operation.
  */

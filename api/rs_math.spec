@@ -17,12 +17,10 @@
 header:
 summary: Mathematical Constants and Functions
 description:
- The mathematical functions below can be applied to scalars and vectors.
- When applied to vectors, a vector of the function applied to each entry
- of the input is returned.
+ The mathematical functions below can be applied to scalars and vectors.   When applied
+ to vectors, the returned value is a vector of the function applied to each entry of the input.
 
- For example:<br/>
- <code>
+ For example:<code><br/>
  float3 a, b;<br/>
  // The following call sets<br/>
  //   a.x to sin(b.x),<br/>
@@ -31,18 +29,22 @@ description:
  a = sin(b);<br/>
  </code>
 
- See <a href='rs_vector_math.html'>"Vector math functions"</a> for functions like @distance() and @length()
- that interpret instead the input as a single vector in n-dimensional space.
+ See <a href='rs_vector_math.html'>Vector Math Functions</a> for functions like @distance() and @length() that interpret
+ instead the input as a single vector in n-dimensional space.
 
- The precision of the mathematical operations is affected by the pragmas
-# TODO Create an anchor for the section of http://developer.android.com/guide/topics/renderscript/compute.html that details rs_fp_* and link them here.
- rs_fp_relaxed and rs_fp_full.
+ The precision of the mathematical operations on 32 bit floats is affected by the pragmas
+ rs_fp_relaxed and rs_fp_full.  Under rs_fp_relaxed, subnormal values may be flushed to zero and
+ rounding may be done towards zero.  In comparison, rs_fp_full requires correct handling of
+ subnormal values, i.e. smaller than 1.17549435e-38f.  rs_fp_rull also requires round to nearest
+ with ties to even.
 
- Different precision/speed tradeoffs can be achieved by using three variants
- of common math functions.  Functions with a name starting with<ul>
- <li>native_ may have custom hardware implementations with weaker precision,</li>
- <li>half_ may perform internal computations using 16 bit floats, and</li>
- <li>fast_ are n-dimensional space computations that may use 16 bit floats.
+ Different precision/speed tradeoffs can be achieved by using variants of the common math
+ functions.  Functions with a name starting with<ul>
+ <li>native_: May have custom hardware implementations with weaker precision.  Additionally,
+   subnormal values may be flushed to zero, rounding towards zero may be used, and NaN and
+   infinity input may not be handled correctly.</li>
+ <li>half_: May perform internal computations using 16 bit floats.  Additionally, subnormal
+   values may be flushed to zero, and rounding towards zero may be used.</li>
  </ul>
 end:
 
@@ -268,8 +270,8 @@ attrib: const
 w: 1, 2, 3, 4
 t: f32
 ret: #2#1
-arg: #2#1 numerator, "The numerator"
-arg: #2#1 denominator, "The denominator.  Can be 0."
+arg: #2#1 numerator, "Numerator."
+arg: #2#1 denominator, "Denominator.  Can be 0."
 summary: Inverse tangent of a ratio
 description:
  Returns the inverse tangent of <code>(numerator / denominator)</code>, in radians.
@@ -283,8 +285,8 @@ attrib: const
 w: 1, 2, 3, 4
 t: f32
 ret: #2#1
-arg: #2#1 numerator, "The numerator"
-arg: #2#1 denominator, "The denominator.  Can be 0."
+arg: #2#1 numerator, "Numerator."
+arg: #2#1 denominator, "Denominator.  Can be 0."
 summary: Inverse tangent of a ratio, divided by pi
 description:
  Returns the inverse tangent of <code>(numerator / denominator)</code>, in radians, divided by pi.
@@ -632,10 +634,9 @@ summary: Multiply and add
 description:
  Multiply and add.  Returns <code>(multiplicand1 * multiplicand2) + offset</code>.
 
- This function is similar to @mad().  fma() retains full precision of the
- multiplied result and rounds only after the addition.  @mad() rounds after the
- multiplication and the addition.  This extra precision is not guaranteed in
- rs_fp_relaxed mode.
+ This function is similar to @mad().  fma() retains full precision of the multiplied result
+ and rounds only after the addition.  @mad() rounds after the multiplication and the addition.
+ This extra precision is not guaranteed in rs_fp_relaxed mode.
 end:
 
 function: fmax
@@ -716,8 +717,8 @@ summary: Positive fractional part
 description:
  Returns the positive fractional part of v, i.e. <code>v - floor(v)</code>.
 
- For example, <code>fract(1.3f, &val)</code> returns 0.3f and sets val to 1.f.
- <code>fract(-1.3f, &val)</code> returns 0.7f and sets val to -2.f.
+ For example, <code>fract(1.3f, &amp;val)</code> returns 0.3f and sets val to 1.f.
+ <code>fract(-1.3f, &amp;val)</code> returns 0.7f and sets val to -2.f.
 end:
 
 function: fract
@@ -825,8 +826,7 @@ description:
 
  For example, <code>ilogb(8.5f)</code> returns 3.
 
- Because of the difference in mantissa, this number is one less than
- is returned by @frexp().
+ Because of the difference in mantissa, this number is one less than is returned by @frexp().
 
  @logb() is similar but returns a float.
 test: custom
@@ -837,8 +837,8 @@ version: 9
 attrib: const
 w: 1, 2, 3, 4
 ret: float#1
-arg: float#1 mantissa, "The mantissa"
-arg: int#1 exponent, "The exponent, a single component or matching vector."
+arg: float#1 mantissa, "Mantissa."
+arg: int#1 exponent, "Exponent, a single component or matching vector."
 summary: Creates a floating point from mantissa and exponent
 description:
  Returns the floating point created from the mantissa and exponent,
@@ -952,8 +952,7 @@ description:
 
  For example, <code>logb(8.5f)</code> returns 3.f.
 
- Because of the difference in mantissa, this number is one less than
- is returned by frexp().
+ Because of the difference in mantissa, this number is one less than is returned by frexp().
 
  @ilogb() is similar but returns an integer.
 end:
@@ -971,10 +970,9 @@ summary: Multiply and add
 description:
  Multiply and add.  Returns <code>(multiplicand1 * multiplicand2) + offset</code>.
 
- This function is similar to @fma().  @fma() retains full precision of the
- multiplied result and rounds only after the addition.  mad() rounds after the
- multiplication and the addition.  In rs_fp_relaxed mode, mad() may not do the
- rounding after multiplicaiton.
+ This function is similar to @fma().  @fma() retains full precision of the multiplied result
+ and rounds only after the addition.  mad() rounds after the multiplication and the addition.
+ In rs_fp_relaxed mode, mad() may not do the rounding after multiplicaiton.
 end:
 
 function: max
@@ -1156,7 +1154,8 @@ summary: Mixes two values
 description:
  Returns start + ((stop - start) * fraction).
 
- This can be useful for mixing two values.  For example, to create a new color that is 40% color1 and 60% color2, use <code>mix(color1, color2, 0.6f)</code>.
+ This can be useful for mixing two values.  For example, to create a new color that is
+ 40% color1 and 60% color2, use <code>mix(color1, color2, 0.6f)</code>.
 end:
 
 function: mix
@@ -1174,14 +1173,15 @@ function: modf
 version: 9
 w: 1, 2, 3, 4
 t: f32
-ret: #2#1, "The floating point portion of the value."
-arg: #2#1 v, "Source value"
+ret: #2#1, "Floating point portion of the value."
+arg: #2#1 v, "Source value."
 arg: #2#1* integral_part, "*integral_part will be set to the integral portion of the number."
 summary: Integral and fractional components
 description:
  Returns the integral and fractional components of a number.
 
- Both components will have the same sign as x.  For example, for an input of -3.72f, iret will be set to -3.f and .72f will be returned.
+ Both components will have the same sign as x.  For example, for an input of -3.72f,
+ iret will be set to -3.f and .72f will be returned.
 end:
 
 function: nan
@@ -1209,8 +1209,7 @@ summary: Approximate inverse cosine
 description:
  Returns the approximate inverse cosine, in radians.
 
- This function yields undefined results from input values less than -1 or greater
- than 1.
+ This function yields undefined results from input values less than -1 or greater than 1.
 
  See also @acos().
 # TODO Temporary
@@ -1246,8 +1245,7 @@ description:
 
  To get an inverse cosine measured in degrees, use <code>acospi(a) * 180.f</code>.
 
- This function yields undefined results from input values less than -1 or greater
- than 1.
+ This function yields undefined results from input values less than -1 or greater than 1.
 
  See also @acospi().
 # TODO Temporary
@@ -1265,8 +1263,7 @@ summary: Approximate inverse sine
 description:
  Returns the approximate inverse sine, in radians.
 
- This function yields undefined results from input values less than -1 or greater
- than 1.
+ This function yields undefined results from input values less than -1 or greater than 1.
 
  See also @asin().
 # TODO Temporary
@@ -1302,8 +1299,7 @@ description:
 
  To get an inverse sine measured in degrees, use <code>asinpi(a) * 180.f</code>.
 
- This function yields undefined results from input values less than -1 or greater
- than 1.
+ This function yields undefined results from input values less than -1 or greater than 1.
 
  See also @asinpi().
 # TODO Temporary
@@ -1332,8 +1328,8 @@ attrib: const
 w: 1, 2, 3, 4
 t: f32
 ret: #2#1
-arg: #2#1 numerator, "The numerator"
-arg: #2#1 denominator, "The denominator.  Can be 0."
+arg: #2#1 numerator, "Numerator."
+arg: #2#1 denominator, "Denominator.  Can be 0."
 summary: Approximate inverse tangent of a ratio
 description:
  Returns the approximate inverse tangent of <code>(numerator / denominator)</code>, in radians.
@@ -1349,11 +1345,12 @@ attrib: const
 w: 1, 2, 3, 4
 t: f32
 ret: #2#1
-arg: #2#1 numerator, "The numerator"
-arg: #2#1 denominator, "The denominator.  Can be 0."
+arg: #2#1 numerator, "Numerator."
+arg: #2#1 denominator, "Denominator.  Can be 0."
 summary: Approximate inverse tangent of a ratio, divided by pi
 description:
- Returns the approximate inverse tangent of <code>(numerator / denominator)</code>, in radians, divided by pi.
+ Returns the approximate inverse tangent of <code>(numerator / denominator)</code>,
+ in radians, divided by pi.
 
  To get an inverse tangent measured in degrees, use <code>atan2pi(n, d) * 180.f</code>.
 
@@ -1478,7 +1475,8 @@ summary: Approximate e raised to a number
 description:
  Fast approximate exp.
 
- It is valid for inputs from -86.f to 86.f.  The precision is no worse than what would be expected from using 16 bit floating point values.
+ It is valid for inputs from -86.f to 86.f.  The precision is no worse than what would be
+ expected from using 16 bit floating point values.
 
  See also @exp().
 test: limited
@@ -1495,7 +1493,8 @@ summary: Approximate 10 raised to a number
 description:
  Fast approximate exp10.
 
- It is valid for inputs from -37.f to 37.f.  The precision is no worse than what would be expected from using 16 bit floating point values.
+ It is valid for inputs from -37.f to 37.f.  The precision is no worse than what would be
+ expected from using 16 bit floating point values.
 
  See also @exp10().
 test: limited
@@ -1512,7 +1511,8 @@ summary: Approximate 2 raised to a number
 description:
  Fast approximate exp2.
 
- It is valid for inputs from -125.f to 125.f.  The precision is no worse than what would be expected from using 16 bit floating point values.
+ It is valid for inputs from -125.f to 125.f.  The precision is no worse than what would be
+ expected from using 16 bit floating point values.
 
  See also @exp2().
 test: limited
@@ -1689,8 +1689,8 @@ function: native_sincos
 version: 21
 w: 1, 2, 3, 4
 t: f32
-ret: #2#1, "sine"
-arg: #2#1 v, "The incoming value in radians."
+ret: #2#1, "Sine."
+arg: #2#1 v, "Incoming value in radians."
 arg: #2#1* cos, "*cos will be set to the cosine value."
 summary: Approximate sine and cosine
 description:
@@ -1799,9 +1799,8 @@ summary: Next floating point number
 description:
  Returns the next representable floating point number from v towards target.
 
- In rs_fp_relaxed mode, a denormalized input value may not yield the next
- denormalized  value, as support of denormalized values is optional in
- relaxed mode.
+ In rs_fp_relaxed mode, a denormalized input value may not yield the next denormalized
+ value, as support of denormalized values is optional in relaxed mode.
 end:
 
 function: pow
@@ -1816,7 +1815,8 @@ summary: Base raised to an exponent
 description:
  Returns base raised to the power exponent, i.e. base ^ exponent.
 
- @pown() and @powr() are similar.  @pown() takes an integer exponent. @powr() assumes the base to be non-negative.
+ @pown() and @powr() are similar.  @pown() takes an integer exponent. @powr() assumes the
+ base to be non-negative.
 end:
 
 function: pown
@@ -1831,7 +1831,8 @@ summary: Base raised to an integer exponent
 description:
  Returns base raised to the power exponent, i.e. base ^ exponent.
 
- @pow() and @powr() are similar.  The both take a float exponent. @powr() also assumes the base to be non-negative.
+ @pow() and @powr() are similar.  The both take a float exponent. @powr() also assumes the
+ base to be non-negative.
 end:
 
 function: powr
@@ -1846,7 +1847,8 @@ summary: Positive base raised to an exponent
 description:
  Returns base raised to the power exponent, i.e. base ^ exponent.  base must be &gt;= 0.
 
- @pow() and @pown() are similar.  They both make no assumptions about the base.  @pow() takes a float exponent while @pown() take an integer.
+ @pow() and @pown() are similar.  They both make no assumptions about the base.
+ @pow() takes a float exponent while @pown() take an integer.
 
  See also @native_powr().
 end:
@@ -1873,7 +1875,8 @@ arg: #2#1 numerator
 arg: #2#1 denominator
 summary: Remainder of a division
 description:
- Returns the remainder of (numerator / denominator), where the quotient is rounded towards the nearest integer.
+ Returns the remainder of (numerator / denominator), where the quotient is rounded towards
+ the nearest integer.
 
  The function @fmod() is similar but rounds toward the closest interger.
  For example, <code>@fmod(-3.8f, 2.f)</code> returns -1.8f (-3.8f - -1.f * 2.f)
@@ -1884,9 +1887,9 @@ function: remquo
 version: 9
 w: 1, 2, 3, 4
 t: f32
-ret: #2#1, "The remainder, precise only for the low three bits."
-arg: #2#1 numerator, "The numerator."
-arg: #2#1 denominator, "The denominator."
+ret: #2#1, "Remainder, precise only for the low three bits."
+arg: #2#1 numerator, "Numerator."
+arg: #2#1 denominator, "Denominator."
 arg: int#1* quotient, "*quotient will be set to the integer quotient."
 summary: Remainder and quotient of a division
 description:
@@ -1894,9 +1897,13 @@ description:
 
  Only the sign and lowest three bits of the quotient are guaranteed to be accurate.
 
- This function is useful for implementing periodic functions.  The low three bits of the quotient gives the quadrant and the remainder the distance within the quadrant.  For example, an implementation of @sin(x) could call <code>remquo(x, PI / 2.f, &quadrant)</code> to reduce very large value of x to something within a limited range.
+ This function is useful for implementing periodic functions.  The low three bits of the
+ quotient gives the quadrant and the remainder the distance within the quadrant.
+ For example, an implementation of @sin(x) could call <code>remquo(x, PI / 2.f, &amp;quadrant)</code>
+ to reduce very large value of x to something within a limited range.
 
- Example: <code>remquo(-23.5f, 8.f, &quot)</code> sets the lowest three bits of quot to 3 and the sign negative.  It returns 0.5f.
+ Example: <code>remquo(-23.5f, 8.f, &amp;quot)</code> sets the lowest three bits of quot to 3
+ and the sign negative.  It returns 0.5f.
 test: custom
 end:
 
@@ -1911,7 +1918,9 @@ summary: Round to even
 description:
  Rounds to the nearest integral value.
 
- rint() rounds half values to even.  For example, <code>rint(0.5f)</code> returns 0.f and <code>rint(1.5f)</code> returns 2.f.  Similarly, <code>rint(-0.5f)</code> returns -0.f and <code>rint(-1.5f)</code> returns -2.f.
+ rint() rounds half values to even.  For example, <code>rint(0.5f)</code> returns 0.f and
+ <code>rint(1.5f)</code> returns 2.f.  Similarly, <code>rint(-0.5f)</code> returns -0.f and
+ <code>rint(-1.5f)</code> returns -2.f.
 
  @round() is similar but rounds away from zero.  @trunc() truncates the decimal fraction.
 end:
@@ -1942,7 +1951,9 @@ summary: Round away from zero
 description:
  Round to the nearest integral value.
 
- round() rounds half values away from zero.  For example, <code>round(0.5f)</code> returns 1.f and <code>round(1.5f)</code> returns 2.f.  Similarly, <code>round(-0.5f)</code> returns -1.f and <code>round(-1.5f)</code> returns -2.f.
+ round() rounds half values away from zero.  For example, <code>round(0.5f)</code> returns 1.f
+ and <code>round(1.5f)</code> returns 2.f.  Similarly, <code>round(-0.5f)</code> returns -1.f
+ and <code>round(-1.5f)</code> returns -2.f.
 
  @rint() is similar but rounds half values toward even.  @trunc() truncates the decimal fraction.
 end:
@@ -1995,8 +2006,8 @@ function: sincos
 version: 9
 w: 1, 2, 3, 4
 t: f32
-ret: #2#1, "sine of v"
-arg: #2#1 v, "The incoming value in radians"
+ret: #2#1, "Sine of v."
+arg: #2#1 v, "Incoming value in radians."
 arg: #2#1* cos, "*cos will be set to the cosine value."
 summary: Sine and cosine
 description:
@@ -2061,7 +2072,9 @@ summary: 0 if less than a value, 0 otherwise
 description:
  Returns 0.f if v &lt; edge, 1.f otherwise.
 
- This can be useful to create conditional computations without using loops and branching instructions.  For example, instead of computing <code>(a[i] &lt; b[i]) ? 0.f : @atan2(a[i], b[i])</code> for the corresponding elements of a vector, you could instead use <code>step(a, b) * @atan2(a, b)</code>.
+ This can be useful to create conditional computations without using loops and branching
+ instructions.  For example, instead of computing <code>(a[i] &lt; b[i]) ? 0.f : @atan2(a[i], b[i])</code>
+ for the corresponding elements of a vector, you could instead use <code>step(a, b) * @atan2(a, b)</code>.
 end:
 
 function: step
@@ -2163,9 +2176,9 @@ function: rsClamp
 attrib: const, always_inline
 t: i8, i16, i32, u8, u16, u32
 ret: #1
-arg: #1 amount, "The value to clamp"
-arg: #1 low, "Lower bound"
-arg: #1 high, "Upper bound"
+arg: #1 amount, "Value to clamp."
+arg: #1 low, "Lower bound."
+arg: #1 high, "Upper bound."
 deprecated: Use @clamp() instead.
 summary: Restrain a value to a range
 description:

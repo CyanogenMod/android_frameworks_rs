@@ -57,8 +57,8 @@ typedef enum rs_for_each_strategy {
  * A kernel may be executed in parallel over multiple threads.  Each thread will have its
  * own context.
  *
- * You can access the context by adding a rs_kernel_context argument to your
- * kernel function.  See rsGetDimX() and rsGetArray0() for examples.
+ * You can access the context by adding a rs_kernel_context argument to your kernel
+ * function.  See rsGetDimX() and rsGetArray0() for examples.
  */
 #if (defined(RS_VERSION) && (RS_VERSION >= 23))
 typedef const struct rs_kernel_context_t * rs_kernel_context;
@@ -121,7 +121,7 @@ typedef struct rs_script_call {
  *   output: Allocation to write date into.
  *   usrData: User defined data to pass to the script.  May be NULL.
  *   sc: Extra control information used to select a sub-region of the allocation to be processed or suggest a walking strategy.  May be NULL.
- *   usrDataLen: The size of the userData structure.  This will be used to perform a shallow copy of the data if necessary.
+ *   usrDataLen: Size of the userData structure.  This will be used to perform a shallow copy of the data if necessary.
  */
 #if !defined(RS_VERSION) || (RS_VERSION <= 13)
 extern void __attribute__((overloadable))
@@ -154,15 +154,15 @@ extern void __attribute__((overloadable))
 /*
  * rsGetArray0: Index in the Array0 dimension for the specified context
  *
- * Returns the index in the Array0 dimension of the cell being processed,
- * as specified by the supplied context.
+ * Returns the index in the Array0 dimension of the cell being processed, as specified
+ * by the supplied context.
  *
- * This context is created when a kernel is launched and updated at each
- * iteration.  It contains common characteristics of the allocations being
- * iterated over and rarely used indexes, like the Array0 index.
+ * This context is created when a kernel is launched and updated at each iteration.
+ * It contains common characteristics of the allocations being iterated over and rarely
+ * used indexes, like the Array0 index.
  *
- * You can access the context by adding a rs_kernel_context argument to your
- * kernel function.  E.g.
+ * You can access the context by adding a rs_kernel_context argument to your kernel
+ * function.  E.g.
  * short RS_KERNEL myKernel(short value, uint32_t x, rs_kernel_context context) {
  *   // The current index in the common x, y, z, w dimensions are accessed by
  *   // adding these variables as arguments.  For the more rarely used indexes
@@ -181,9 +181,8 @@ extern uint32_t __attribute__((overloadable))
 /*
  * rsGetArray1: Index in the Array1 dimension for the specified context
  *
- * Returns the index in the Array1 dimension of the cell being processed,
- * as specified by the supplied context.  See rsGetArray0() for an explanation
- * of the context.
+ * Returns the index in the Array1 dimension of the cell being processed, as specified
+ * by the supplied context.  See rsGetArray0() for an explanation of the context.
  *
  * Returns 0 if the Array1 dimension is not present.
  */
@@ -209,9 +208,8 @@ extern uint32_t __attribute__((overloadable))
 /*
  * rsGetArray3: Index in the Array3 dimension for the specified context
  *
- * Returns the index in the Array3 dimension of the cell being processed,
- * as specified by the supplied context.  See rsGetArray0() for an explanation
- * of the context.
+ * Returns the index in the Array3 dimension of the cell being processed, as specified
+ * by the supplied context.  See rsGetArray0() for an explanation of the context.
  *
  * Returns 0 if the Array3 dimension is not present.
  */
@@ -275,9 +273,9 @@ extern uint32_t __attribute__((overloadable))
 /*
  * rsGetDimHasFaces: Presence of more than one face for the specified context
  *
- * If the context refers to a cubemap, this function returns true if there's
- * more than one face present.  In all other cases, it returns false.
- * See rsGetDimX() for an explanation of the context.
+ * If the context refers to a cubemap, this function returns true if there's more than
+ * one face present.  In all other cases, it returns false.  See rsGetDimX() for an
+ * explanation of the context.
  *
  * rsAllocationGetDimFaces() is similar but returns 0 or 1 instead of a bool.
  *
@@ -291,8 +289,9 @@ extern bool __attribute__((overloadable))
 /*
  * rsGetDimLod: Number of levels of detail for the specified context
  *
- * Returns the number of levels of detail for the specified context.
- * This is useful for mipmaps.  See rsGetDimX() for an explanation of the context.
+ * Returns the number of levels of detail for the specified context.  This is useful
+ * for mipmaps.  See rsGetDimX() for an explanation of the context.
+ *
  * Returns 0 if Level of Detail is not used.
  *
  * rsAllocationGetDimLOD() is similar but returns 0 or 1 instead the actual
@@ -357,8 +356,8 @@ extern uint32_t __attribute__((overloadable))
 /*
  * rsGetFace: Coordinate of the Face for the specified context
  *
- * Returns the face on which the cell being processed is found, as specified
- * by the supplied context.  See rsGetArray0() for an explanation of the context.
+ * Returns the face on which the cell being processed is found, as specified by the
+ * supplied context.  See rsGetArray0() for an explanation of the context.
  *
  * Returns RS_ALLOCATION_CUBEMAP_FACE_POSITIVE_X if the face dimension is not
  * present.
@@ -371,9 +370,9 @@ extern rs_allocation_cubemap_face __attribute__((overloadable))
 /*
  * rsGetLod: Index in the Levels of Detail dimension for the specified context
  *
- * Returns the index in the Levels of Detail dimension of the cell being
- * processed, as specified by the supplied context.  See rsGetArray0() for
- * an explanation of the context.
+ * Returns the index in the Levels of Detail dimension of the cell being processed,
+ * as specified by the supplied context.  See rsGetArray0() for an explanation of
+ * the context.
  *
  * Returns 0 if the Levels of Detail dimension is not present.
  */

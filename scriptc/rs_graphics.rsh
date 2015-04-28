@@ -214,12 +214,10 @@ typedef _RS_HANDLE rs_program_store;
 /*
  * rsClearObject: Release an object
  *
- * Tells the run time that this handle will no longer be used to access the
- * the related object.  If this was the last handle to that object, resource
- * recovery may happen.
+ * Tells the run time that this handle will no longer be used to access the the related
+ * object.  If this was the last handle to that object, resource recovery may happen.
  *
- * After calling this function, *dst will be set to an empty handle.  See
- * rsIsObject().
+ * After calling this function, *dst will be set to an empty handle.  See rsIsObject().
  */
 #ifndef __LP64__
 extern void __attribute__((overloadable))
@@ -259,9 +257,8 @@ extern void __attribute__((overloadable))
  * This function does not validate that the internal pointer used in the handle
  * points to an actual valid object; it only checks for null.
  *
- * This function can be used to check the element returned by
- * rsElementGetSubElement() or see if rsClearObject() has been called on a
- * handle.
+ * This function can be used to check the Element returned by rsElementGetSubElement()
+ * or see if rsClearObject() has been called on a handle.
  */
 #ifndef __LP64__
 extern bool __attribute__((overloadable))

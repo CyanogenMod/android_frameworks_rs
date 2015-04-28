@@ -117,6 +117,7 @@ string stripHtml(const string& html) {
     out = stringReplace(out, "&gt;", ">");
     out = stringReplace(out, "&lt;", "<");
     out = stringReplace(out, "&nbsp;", " ");
+    out = stringReplace(out, "&amp;", "&");
     return out;
 }
 

@@ -19,9 +19,8 @@
 /*
  * rs_object_types.rsh: Object Types
  *
- * The types below are used to manipulate RenderScript objects like allocations,
- * samplers, elements, and scripts.  Most of these object are created using the Java
- * RenderScript APIs.
+ * The types below are used to manipulate RenderScript objects like allocations, samplers,
+ * elements, and scripts.  Most of these object are created using the Java RenderScript APIs.
  */
 
 #ifndef RENDERSCRIPT_RS_OBJECT_TYPES_RSH
@@ -48,7 +47,7 @@ struct {\
 /*
  * rs_element: Handle to an element
  *
- * Opaque handle to a RenderScript element.
+ * An opaque handle to a RenderScript element.
  *
  * See android.renderscript.Element.
  */
@@ -57,7 +56,7 @@ typedef _RS_HANDLE rs_element;
 /*
  * rs_type: Handle to a Type
  *
- * Opaque handle to a RenderScript type.
+ * An opaque handle to a RenderScript type.
  *
  * See android.renderscript.Type.
  */
@@ -66,7 +65,7 @@ typedef _RS_HANDLE rs_type;
 /*
  * rs_allocation: Handle to an allocation
  *
- * Opaque handle to a RenderScript allocation.
+ * An opaque handle to a RenderScript allocation.
  *
  * See android.renderscript.Allocation.
  */
@@ -75,7 +74,7 @@ typedef _RS_HANDLE rs_allocation;
 /*
  * rs_sampler: Handle to a Sampler
  *
- * Opaque handle to a RenderScript sampler object.
+ * An opaque handle to a RenderScript sampler object.
  *
  * See android.renderscript.Sampler.
  */
@@ -84,7 +83,7 @@ typedef _RS_HANDLE rs_sampler;
 /*
  * rs_script: Handle to a Script
  *
- * Opaque handle to a RenderScript script object.
+ * An opaque handle to a RenderScript script object.
  *
  * See android.renderscript.ScriptC.
  */
@@ -93,6 +92,7 @@ typedef _RS_HANDLE rs_script;
 /*
  * rs_allocation_cubemap_face: Enum for selecting cube map faces
  *
+ * An enum used to specify one the six faces of a cubemap.
  */
 #if (defined(RS_VERSION) && (RS_VERSION >= 14))
 typedef enum {
@@ -106,7 +106,7 @@ typedef enum {
 #endif
 
 /*
- * rs_allocation_usage_type: Bitfield to specify the usage types for an allocation
+ * rs_allocation_usage_type: Bitfield to specify how an allocation is used
  *
  * These values are ORed together to specify which usages or memory spaces are
  * relevant to an allocation or an operation on an allocation.
@@ -125,54 +125,45 @@ typedef enum {
 #endif
 
 /*
- * rs_data_type: Element data types
+ * rs_data_type: Element basic data type
  *
- * DataType represents the basic type information for a basic element.  The
- * naming convention follows.  For numeric types it is FLOAT,
- * SIGNED, or UNSIGNED followed by the _BITS where BITS is the
- * size of the data.  BOOLEAN is a true / false (1,0)
- * represented in an 8 bit container.  The UNSIGNED variants
- * with multiple bit definitions are for packed graphical data
- * formats and represent vectors with per vector member sizes
- * which are treated as a single unit for packing and alignment
- * purposes.
+ * rs_data_type is used to encode the type information of a basic element.
  *
- * MATRIX the three matrix types contain FLOAT_32 elements and are treated
- * as 32 bits for alignment purposes.
- *
- * RS_* objects.  32 bit opaque handles.
+ * RS_TYPE_UNSIGNED_5_6_5, RS_TYPE_UNSIGNED_5_5_5_1, RS_TYPE_UNSIGNED_4_4_4_4 are for packed
+ * graphical data formats and represent vectors with per vector member sizes which are treated
+ * as a single unit for packing and alignment purposes.
  */
 #if (defined(RS_VERSION) && (RS_VERSION >= 16))
 typedef enum {
-    RS_TYPE_NONE = 0,
-    RS_TYPE_FLOAT_32 = 2,
-    RS_TYPE_FLOAT_64 = 3,
-    RS_TYPE_SIGNED_8 = 4,
-    RS_TYPE_SIGNED_16 = 5,
-    RS_TYPE_SIGNED_32 = 6,
-    RS_TYPE_SIGNED_64 = 7,
-    RS_TYPE_UNSIGNED_8 = 8,
-    RS_TYPE_UNSIGNED_16 = 9,
-    RS_TYPE_UNSIGNED_32 = 10,
-    RS_TYPE_UNSIGNED_64 = 11,
-    RS_TYPE_BOOLEAN = 12,
-    RS_TYPE_UNSIGNED_5_6_5 = 13,
-    RS_TYPE_UNSIGNED_5_5_5_1 = 14,
-    RS_TYPE_UNSIGNED_4_4_4_4 = 15,
-    RS_TYPE_MATRIX_4X4 = 16,
-    RS_TYPE_MATRIX_3X3 = 17,
-    RS_TYPE_MATRIX_2X2 = 18,
-    RS_TYPE_ELEMENT = 1000,
-    RS_TYPE_TYPE = 1001,
-    RS_TYPE_ALLOCATION = 1002,
-    RS_TYPE_SAMPLER = 1003,
-    RS_TYPE_SCRIPT = 1004,
-    RS_TYPE_MESH = 1005,
-    RS_TYPE_PROGRAM_FRAGMENT = 1006,
-    RS_TYPE_PROGRAM_VERTEX = 1007,
-    RS_TYPE_PROGRAM_RASTER = 1008,
-    RS_TYPE_PROGRAM_STORE = 1009,
-    RS_TYPE_FONT = 1010,
+    RS_TYPE_NONE = 0, // Element is a complex type, i.e. a struct.
+    RS_TYPE_FLOAT_32 = 2, // A 32 bit float point value.
+    RS_TYPE_FLOAT_64 = 3, // A 64 bit floating point value.
+    RS_TYPE_SIGNED_8 = 4, // An 8 bit signed integer.
+    RS_TYPE_SIGNED_16 = 5, // A 16 bit signed integer.
+    RS_TYPE_SIGNED_32 = 6, // A 32 bit signed integer.
+    RS_TYPE_SIGNED_64 = 7, // A 64 bit signed integer.
+    RS_TYPE_UNSIGNED_8 = 8, // An 8 bit unsigned integer.
+    RS_TYPE_UNSIGNED_16 = 9, // A 16 bit unsigned integer.
+    RS_TYPE_UNSIGNED_32 = 10, // A 32 bit unsigned integer.
+    RS_TYPE_UNSIGNED_64 = 11, // A 64 bit unsigned integer.
+    RS_TYPE_BOOLEAN = 12, // 0 or 1 (false or true) stored in an 8 bit container.
+    RS_TYPE_UNSIGNED_5_6_5 = 13, // A 16 bit unsigned integer packing graphical data in 5, 6, and 5 bit sections.
+    RS_TYPE_UNSIGNED_5_5_5_1 = 14, // A 16 bit unsigned integer packing graphical data in 5, 5, 5, and 1 bit sections.
+    RS_TYPE_UNSIGNED_4_4_4_4 = 15, // A 16 bit unsigned integer packing graphical data in 4, 4, 4, and 4 bit sections.
+    RS_TYPE_MATRIX_4X4 = 16, // A 4x4 matrix of 32 bit floats, aligned on a 32 bit boundary.
+    RS_TYPE_MATRIX_3X3 = 17, // A 3x3 matrix of 32 bit floats, aligned on a 32 bit boundary.
+    RS_TYPE_MATRIX_2X2 = 18, // A 2x2 matrix of 32 bit floats, aligned on a 32 bit boundary.
+    RS_TYPE_ELEMENT = 1000, // A handle to an Element.
+    RS_TYPE_TYPE = 1001, // A handle to a Type.
+    RS_TYPE_ALLOCATION = 1002, // A handle to an Allocation.
+    RS_TYPE_SAMPLER = 1003, // A handle to a Sampler.
+    RS_TYPE_SCRIPT = 1004, // A handle to a Script.
+    RS_TYPE_MESH = 1005, // Deprecated.
+    RS_TYPE_PROGRAM_FRAGMENT = 1006, // Deprecated.
+    RS_TYPE_PROGRAM_VERTEX = 1007, // Deprecated.
+    RS_TYPE_PROGRAM_RASTER = 1008, // Deprecated.
+    RS_TYPE_PROGRAM_STORE = 1009, // Deprecated.
+    RS_TYPE_FONT = 1010, // Deprecated.
     RS_TYPE_INVALID = 10000
 } rs_data_type;
 #endif
@@ -180,21 +171,26 @@ typedef enum {
 /*
  * rs_data_kind: Element data kind
  *
- * The special interpretation of the data if required.  This is primarly
- * useful for graphical data.  USER indicates no special interpretation is
- * expected.  PIXEL is used in conjunction with the standard data types for
- * representing texture formats.
+ * This enumeration is primarly useful for graphical data.  It provides additional information to
+ * help interpret the rs_data_type.
+ *
+ * RS_KIND_USER indicates no special interpretation is expected.
+ *
+ * The RS_KIND_PIXEL_* values are used in conjunction with the standard data types for representing
+ * texture formats.
+ *
+ * See the Element.createPixel() method.
  */
 #if (defined(RS_VERSION) && (RS_VERSION >= 16))
 typedef enum {
-    RS_KIND_USER         = 0,
-    RS_KIND_PIXEL_L      = 7,
-    RS_KIND_PIXEL_A      = 8,
-    RS_KIND_PIXEL_LA     = 9,
-    RS_KIND_PIXEL_RGB    = 10,
-    RS_KIND_PIXEL_RGBA   = 11,
-    RS_KIND_PIXEL_DEPTH  = 12,
-    RS_KIND_PIXEL_YUV    = 13,
+    RS_KIND_USER         = 0, // No special interpretation.
+    RS_KIND_PIXEL_L      = 7, // Luminance.
+    RS_KIND_PIXEL_A      = 8, // Alpha.
+    RS_KIND_PIXEL_LA     = 9, // Luminance and Alpha.
+    RS_KIND_PIXEL_RGB    = 10, // Red, Green, Blue.
+    RS_KIND_PIXEL_RGBA   = 11, // Red, Green, Blue, and Alpha.
+    RS_KIND_PIXEL_DEPTH  = 12, // Depth for a depth texture.
+    RS_KIND_PIXEL_YUV    = 13, // Luminance and chrominance.
     RS_KIND_INVALID      = 100
 } rs_data_kind;
 #endif

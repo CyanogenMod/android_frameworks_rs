@@ -19,9 +19,8 @@
 /*
  * rs_time.rsh: Time Functions and Types
  *
- * The functions below can be used to tell the current clock time and the
- * current system up time.  It's not recommended to call these functions
- * inside of a kernel.
+ * The functions below can be used to tell the current clock time and the current
+ * system up time.  It is not recommended to call these functions inside of a kernel.
  */
 
 #ifndef RENDERSCRIPT_RS_TIME_RSH
@@ -61,8 +60,7 @@ typedef struct {
 /*
  * rsGetDt: Elapsed time since last call
  *
- * Returns the time in seconds since this function was last called in this
- * script.
+ * Returns the time in seconds since this function was last called in this script.
  *
  * Returns: Time in seconds.
  */
@@ -72,11 +70,11 @@ extern float __attribute__((overloadable))
 /*
  * rsLocaltime: Convert to local time
  *
- * Converts the time specified by timer into a rs_tm structure that provides year, month, hour, etc.
- * This value is stored at *local.
+ * Converts the time specified by timer into a rs_tm structure that provides year, month,
+ * hour, etc.  This value is stored at *local.
  *
- * This functions returns the same pointer that is passed as first argument.
- * If the local parameter is NULL, this function does nothing and returns NULL.
+ * This functions returns the same pointer that is passed as first argument.  If the
+ * local parameter is NULL, this function does nothing and returns NULL.
  *
  * Parameters:
  *   local: Pointer to time structure where the local time will be stored.
@@ -90,8 +88,7 @@ extern rs_tm* __attribute__((overloadable))
 /*
  * rsTime: Seconds since January 1, 1970
  *
- * Returns the number of seconds since the Epoch (00:00:00 UTC, January 1,
- * 1970).
+ * Returns the number of seconds since the Epoch (00:00:00 UTC, January 1, 1970).
  *
  * If timer is non-NULL, the result is also stored in the memory pointed to by
  * this variable.
@@ -119,8 +116,7 @@ extern int64_t __attribute__((overloadable))
  *
  * Returns the current system clock (uptime) in nanoseconds.
  *
- * The granularity of the values return by this call may be much
- * larger than a nanosecond.
+ * The granularity of the values return by this call may be much larger than a nanosecond.
  *
  * Returns: Uptime in nanoseconds.
  */
