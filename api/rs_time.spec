@@ -17,9 +17,8 @@
 header:
 summary: Time Functions and Types
 description:
- The functions below can be used to tell the current clock time and the
- current system up time.  It's not recommended to call these functions
- inside of a kernel.
+ The functions below can be used to tell the current clock time and the current
+ system up time.  It is not recommended to call these functions inside of a kernel.
 end:
 
 type: rs_time_t
@@ -56,8 +55,7 @@ function: rsGetDt
 ret: float, "Time in seconds."
 summary: Elapsed time since last call
 description:
- Returns the time in seconds since this function was last called in this
- script.
+ Returns the time in seconds since this function was last called in this script.
 test: none
 end:
 
@@ -67,11 +65,11 @@ arg: rs_tm* local, "Pointer to time structure where the local time will be store
 arg: const rs_time_t* timer, "Input time as a number of seconds since January 1, 1970."
 summary: Convert to local time
 description:
- Converts the time specified by timer into a @rs_tm structure that provides year, month, hour, etc.
- This value is stored at *local.
+ Converts the time specified by timer into a @rs_tm structure that provides year, month,
+ hour, etc.  This value is stored at *local.
 
- This functions returns the same pointer that is passed as first argument.
- If the local parameter is NULL, this function does nothing and returns NULL.
+ This functions returns the same pointer that is passed as first argument.  If the
+ local parameter is NULL, this function does nothing and returns NULL.
 test: none
 end:
 
@@ -80,8 +78,7 @@ ret: rs_time_t, "Seconds since the Epoch, -1 if there's an error."
 arg: rs_time_t* timer, "Location to also store the returned calendar time."
 summary: Seconds since January 1, 1970
 description:
- Returns the number of seconds since the Epoch (00:00:00 UTC, January 1,
- 1970).
+ Returns the number of seconds since the Epoch (00:00:00 UTC, January 1, 1970).
 
  If timer is non-NULL, the result is also stored in the memory pointed to by
  this variable.
@@ -102,7 +99,6 @@ summary: System uptime in nanoseconds
 description:
  Returns the current system clock (uptime) in nanoseconds.
 
- The granularity of the values return by this call may be much
- larger than a nanosecond.
+ The granularity of the values return by this call may be much larger than a nanosecond.
 test: none
 end:

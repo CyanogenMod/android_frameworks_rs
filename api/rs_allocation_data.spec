@@ -104,16 +104,16 @@ description:
  values incrementing other dimensions.  Use multiple calls to rsGetElementAt()
  instead.
 
- For example, when calling rsAllocationVLoadX_int4(a, 20, 30),
- an int4 composed of a[20, 30], a[21, 30], a[22, 30], and a[23, 30] is returned.
+ For example, when calling rsAllocationVLoadX_int4(a, 20, 30), an int4 composed
+ of a[20, 30], a[21, 30], a[22, 30], and a[23, 30] is returned.
 
- When retrieving from a three dimensional allocations, use the x, y, z
- variant.   Similarly, use the x, y variant for two dimensional
- allocations and x for the mono dimensional allocations.
+ When retrieving from a three dimensional allocations, use the x, y, z variant.
+ Similarly, use the x, y variant for two dimensional allocations and x for the
+ mono dimensional allocations.
 
- For efficiency, this function does not validate the inputs.  Trying to
- wrap the X index, exceeding the size of the allocation, or using indexes
- incompatible with the dimensionality of the allocation yields undefined results.
+ For efficiency, this function does not validate the inputs.  Trying to wrap
+ the X index, exceeding the size of the allocation, or using indices incompatible
+ with the dimensionality of the allocation yields undefined results.
 
  See also @rsAllocationVStoreX().
 test: none
@@ -152,24 +152,23 @@ arg: #2#1 val, "Value to be stored."
 arg: uint32_t x, "X offset in the allocation of the first cell to be copied into."
 summary: Store a vector into an allocation of scalars
 description:
- This function stores the entries of a vector into successive cells of an
- allocation.  It assumes that the allocation contains scalars.
+ This function stores the entries of a vector into successive cells of an allocation.
+ It assumes that the allocation contains scalars.
 
- The "X" in the name indicates that successive values are stored by
- increasing the X index.  There are currently no functions to store successive
- values incrementing other dimensions.  Use multiple calls to rsSetElementAt()
- instead.
+ The "X" in the name indicates that successive values are stored by increasing
+ the X index.  There are currently no functions to store successive values
+ incrementing other dimensions.  Use multiple calls to rsSetElementAt() instead.
 
- For example, when calling rsAllocationVStoreX_int3(a, v, 20, 30),
- v.x is stored at a[20, 30], v.y at a[21, 30], and v.z at a[22, 30].
+ For example, when calling rsAllocationVStoreX_int3(a, v, 20, 30), v.x is stored
+ at a[20, 30], v.y at a[21, 30], and v.z at a[22, 30].
 
- When storing into a three dimensional allocations, use the x, y, z
- variant.   Similarly, use the x, y variant for two dimensional
- allocations and x for the mono dimensional allocations.
+ When storing into a three dimensional allocations, use the x, y, z variant.
+ Similarly, use the x, y variant for two dimensional allocations and x for the
+ mono dimensional allocations.
 
- For efficiency, this function does not validate the inputs.  Trying to
- wrap the X index, exceeding the size of the allocation, or using indexes
- incompatible with the dimensionality of the allocation yiels undefined results.
+ For efficiency, this function does not validate the inputs.  Trying to wrap the
+ X index, exceeding the size of the allocation, or using indexes incompatible
+ with the dimensionality of the allocation yiels undefined results.
 
  See also @rsAllocationVLoadX().
 test: none
@@ -208,14 +207,13 @@ summary: Return a cell from an allocation
 description:
  This function extracts a single cell from an allocation.
 
- When retrieving from a three dimensional allocations, use the x, y, z
- variant.   Similarly, use the x, y variant for two dimensional
- allocations and x for the mono dimensional allocations.
+ When retrieving from a three dimensional allocations, use the x, y, z variant.
+ Similarly, use the x, y variant for two dimensional allocations and x for the
+ mono dimensional allocations.
 
- This function has two styles.  One returns the address of the value using a
- void*, the other returns the actual value, e.g. rsGetElementAt() vs.
- rsGetElementAt_int4().  For primitive types, always use the latter as it is
- more efficient.
+ This function has two styles.  One returns the address of the value using a void*,
+ the other returns the actual value, e.g. rsGetElementAt() vs. rsGetElementAt_int4().
+ For primitive types, always use the latter as it is more efficient.
 test: none
 end:
 
@@ -418,13 +416,13 @@ summary: Set a cell of an allocation
 description:
  This function stores a value into a single cell of an allocation.
 
- When storing into a three dimensional allocations, use the x, y, z
- variant.   Similarly, use the x, y variant for two dimensional
- allocations and x for the mono dimensional allocations.
+ When storing into a three dimensional allocations, use the x, y, z variant.
+ Similarly, use the x, y variant for two dimensional allocations and x for
+ the mono dimensional allocations.
 
- This function has two styles.  One passes the value to be stored using
- a void*, the other has the actual value as an argument, e.g. rsSetElementAt()
- vs. rsSetElementAt_int4().  For primitive types, always use the latter as it is
+ This function has two styles.  One passes the value to be stored using a void*,
+ the other has the actual value as an argument, e.g. rsSetElementAt() vs.
+ rsSetElementAt_int4().  For primitive types, always use the latter as it is
  more efficient.
 
  See also @rsGetElementAt().

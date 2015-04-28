@@ -19,6 +19,7 @@
 /*
  * rs_quaternion.rsh: Quaternion Functions
  *
+ * The following functions manipulate quaternions.
  */
 
 #ifndef RENDERSCRIPT_RS_QUATERNION_RSH
@@ -129,7 +130,7 @@ static inline void __attribute__((overloadable))
 }
 
 /*
- * rsQuaternionSet: Create a quarternion
+ * rsQuaternionSet: Create a quaternion
  *
  * Creates a quaternion from its four components or from another quaternion.
  *
@@ -210,8 +211,8 @@ static inline void __attribute__((overloadable))
  *
  * Parameters:
  *   q: Destination quaternion.
- *   scalar: Scalar to multiply the quarternion by.
- *   rhs: Quarternion to multiply the destination quaternion by.
+ *   scalar: Scalar to multiply the quaternion by.
+ *   rhs: Quaternion to multiply the destination quaternion by.
  */
 static inline void __attribute__((overloadable))
     rsQuaternionMultiply(rs_quaternion* q, float scalar) {
