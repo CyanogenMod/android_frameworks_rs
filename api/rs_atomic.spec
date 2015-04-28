@@ -58,7 +58,7 @@ arg: int32_t value, "Value to and with."
 summary: Thread-safe bitwise and
 description:
  Atomicly performs a bitwise and of two values, storing the result back at addr,
- i.e. <code>*addr &= value</code>.
+ i.e. <code>*addr &amp;= value</code>.
 test: none
 end:
 
@@ -73,9 +73,9 @@ end:
 function: rsAtomicCas
 version: 14
 ret: int32_t, "Value of *addr prior to the operation."
-arg: volatile int32_t* addr, "The address of the value to compare and replace if the test passes."
-arg: int32_t compareValue, "The value to test *addr against."
-arg: int32_t newValue, "The value to write if the test passes."
+arg: volatile int32_t* addr, "Address of the value to compare and replace if the test passes."
+arg: int32_t compareValue, "Value to test *addr against."
+arg: int32_t newValue, "Value to write if the test passes."
 summary: Thread-safe compare and set
 description:
  If the value at addr matches compareValue then the newValue is written at addr,

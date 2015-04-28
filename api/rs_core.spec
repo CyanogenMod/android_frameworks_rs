@@ -24,14 +24,12 @@ description:
  to write RenderScript code in C99. The RenderScript compute header files are automatically
  included for you.
 
- To use RenderScript, you need to utilize the RenderScript runtime APIs documented here
- as well as the Android framework APIs for RenderScript.
+ To use RenderScript, you need to utilize the RenderScript runtime APIs documented here as well
+ as the Android framework APIs for RenderScript.  For documentation on the Android framework
+ APIs, see the <a target="_parent" href="http://developer.android.com/reference/android/renderscript/package-summary.html">android.renderscript</a> package reference.
 
- For documentation on the Android framework APIs, see the <a target="_parent" href="http://developer.android.com/reference/android/renderscript/package-summary.html">android.renderscript</a> package reference.
-
- For more information on how to develop with RenderScript and how the runtime and
- Android framework APIs interact, see the <a target="_parent" href="http://developer.android.com/guide/topics/renderscript/index.html">RenderScript developer guide</a>
- and the <a target="_parent" href="http://developer.android.com/resources/samples/RenderScript/index.html">RenderScript samples</a>.
+ For more information on how to develop with RenderScript and how the runtime and Android
+ framework APIs interact, see the <a target="_parent" href="http://developer.android.com/guide/topics/renderscript/index.html">RenderScript developer guide</a> and the <a target="_parent" href="http://developer.android.com/resources/samples/RenderScript/index.html">RenderScript samples</a>.
 include:
  #define RS_KERNEL __attribute__((kernel))
 

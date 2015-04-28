@@ -20,22 +20,12 @@ description:
  <h5>Scalars:</h5>
 
  RenderScript supports the following scalar numerical types:
-
- Integers:<ul>
- <li>8 bit: char, @int8_t</li>
- <li>16 bit: short, @int16_t</li>
- <li>32 bit: int, @int32_t</li>
- <li>64 bit: long, long long, @int64_t</li></ul>
-
- Unsigned integers:<ul>
- <li>8 bit: uchar, @uint8_t</li>
- <li>16 bit: ushort, @uint16_t</li>
- <li>32 bit: uint, @uint32_t</li>
- <li>64 bit: ulong, @uint64_t</li></ul>
-
- Floating point:<ul>
- <li>32 bit: float</li>
- <li>64 bit: double</li></ul>
+ <table>
+ <tr><td>                 </td>  <td>8 bits        </td>   <td>16 bits         </td>   <td>32 bits       </td>   <td>64 bits</td></tr>
+ <tr><td>Integer:         </td>  <td>char, @int8_t  </td>   <td>short, @int16_t  </td>   <td>@int32_t       </td>   <td>long, long long, @int64_t</td></tr>
+ <tr><td>Unsigned integer:</td>  <td>uchar, @uint8_t</td>   <td>ushort, @uint16_t</td>   <td>uint, @uint32_t</td>   <td>ulong, @uint64_t</td></tr>
+ <tr><td>Floating point:  </td>  <td>              </td>   <td>                </td>   <td>float         </td>   <td>double</td></tr>
+ </table>
 
  <h5>Vectors:</h5>
 
@@ -59,30 +49,31 @@ description:
    myVar.z == myVar.b == myVar.s2 == myVar.S2<br/>
    myVar.w == myVar.a == myVar.s3 == myVar.S3</code>
 
- Multiple entries of a vector can be accessed at once by using an identifier
- that is the concatenation of multiple letters or indices.  The resulting vector
- has a size equal to the number of entries named.
+ Multiple entries of a vector can be accessed at once by using an identifier that is
+ the concatenation of multiple letters or indices.  The resulting vector has a size
+ equal to the number of entries named.
 
  With the example above, the middle two entries can be accessed using
  <code>myVar.yz</code>, <code>myVar.gb</code>, <code>myVar.s12</code>, and <code>myVar.S12</code>.
 
- The entries don't have to be contiguous or in increasing order.
- Entries can even be repeated, as long as we're not trying to assign
- to it.  You also can't mix the naming styles.
+ The entries don't have to be contiguous or in increasing order.  Entries can even be
+ repeated, as long as we're not trying to assign to it.  You also can't mix the naming
+ styles.
 
- Here are examples of what can or can't be done: <code><br/>
+ Here are examples of what can or can't be done:<code><br/>
  float4 v4;<br/>
  float3 v3;<br/>
  float2 v2;<br/>
  v2 = v4.xx; // Valid<br/>
  v3 = v4.zxw; // Valid<br/>
  v3 = v4.bba; // Valid<br/>
- v3 = v4.s034; // Valid<br/>
+ v3 = v4.s032; // Valid<br/>
  v3.s120 = v4.S233; // Valid<br/>
  v4.yz = v3.rg; // Valid<br/>
  v4.yzx = v3.rg; // Invalid: mismatched sizes<br/>
  v4.yzz = v3; // Invalid: z appears twice in an assignment<br/>
  v3 = v3.xas0; // Invalid: can't mix xyzw with rgba nor s0...<br/>
+ v3 = v4.s034; // Invalid: the digit can only be 0, 1, 2, or 3<br/>
  </code>
 
  <h5>Matrices and Quaternions:</h5>
@@ -91,7 +82,8 @@ description:
  The types are named @rs_matrix2x2, @rs_matrix3x3, and @rs_matrix4x4.  See
  <a href='rs_matrix.html'>Matrix Functions</a> for the list of operations.
 
- Quaternions are also supported via @rs_quaternion.  See <a href='rs_quaternion.html'>Quaterion Functions</a>. for the list of operations.
+ Quaternions are also supported via @rs_quaternion.  See <a href='rs_quaternion.html'>Quaterion Functions</a> for the list
+ of operations.
 end:
 
 type: int8_t
@@ -220,24 +212,27 @@ type: float2
 simple: float __attribute__((ext_vector_type(2)))
 summary: Two 32 bit floats
 description:
- Vector version of the basic float type.
- Provides two float fields packed into a single 64 bit field with 64 bit alignment.
+ A vector of two floats.  These two floats are packed into a single 64 bit field
+ with a 64 bit alignment.
+
+ A vector of two floats.  These two floats are packed into a single 64 bit field
+ with a 64 bit alignment.
 end:
 
 type: float3
 simple: float __attribute__((ext_vector_type(3)))
 summary: Three 32 bit floats
 description:
- Vector version of the basic float type.
- Provides three float fields packed into a single 128 bit field with 128 bit alignment.
+ A vector of three floats.  These three floats are packed into a single 128 bit field
+ with a 128 bit alignment.
 end:
 
 type: float4
 simple: float __attribute__((ext_vector_type(4)))
 summary: Four 32 bit floats
 description:
- Vector version of the basic float type.
- Provides four float fields packed into a single 128 bit field with 128 bit alignment.
+ A vector of four floats type.  These four floats are packed into a single 128 bit field
+ with a 128 bit alignment.
 end:
 
 
@@ -245,24 +240,24 @@ type: double2
 simple: double __attribute__((ext_vector_type(2)))
 summary: Two 64 bit floats
 description:
- Vector version of the basic double type. Provides two double fields packed
- into a single 128 bit field with 128 bit alignment.
+ A vector of two doubles.  These two double fields packed into a single 128 bit field
+ with a 128 bit alignment.
 end:
 
 type: double3
 simple: double __attribute__((ext_vector_type(3)))
 summary: Three 64 bit floats
 description:
- Vector version of the basic double type. Provides three double fields packed
- into a single 256 bit field with 256 bit alignment.
+ A vector of three doubles.  These three double fields packed into a single 256 bit field
+ with a 256 bit alignment.
 end:
 
 type: double4
 simple: double __attribute__((ext_vector_type(4)))
 summary: Four 64 bit floats
 description:
- Vector version of the basic double type. Provides four double fields packed
- into a single 256 bit field with 256 bit alignment.
+ A vector of four doubles.  These four double fields packed into a single 256 bit field
+ with a 256 bit alignment.
 end:
 
 
@@ -270,24 +265,24 @@ type: uchar2
 simple: uchar __attribute__((ext_vector_type(2)))
 summary: Two 8 bit unsigned integers
 description:
- Vector version of the basic uchar type. Provides two uchar fields packed
- into a single 16 bit field with 16 bit alignment.
+ A vector of two uchars.  These two uchar fields packed into a single 16 bit field
+ with a 16 bit alignment.
 end:
 
 type: uchar3
 simple: uchar __attribute__((ext_vector_type(3)))
 summary: Three 8 bit unsigned integers
 description:
- Vector version of the basic uchar type. Provides three uchar fields packed
- into a single 32 bit field with 32 bit alignment.
+ A vector of three uchars.  These three uchar fields packed into a single 32 bit field
+ with a 32 bit alignment.
 end:
 
 type: uchar4
 simple: uchar __attribute__((ext_vector_type(4)))
 summary: Four 8 bit unsigned integers
 description:
- Vector version of the basic uchar type. Provides four uchar fields packed
- into a single 32 bit field with 32 bit alignment.
+ A vector of four uchars.  These four uchar fields packed into a single 32 bit field
+ with a 32 bit alignment.
 end:
 
 
@@ -295,24 +290,24 @@ type: ushort2
 simple: ushort __attribute__((ext_vector_type(2)))
 summary: Two 16 bit unsigned integers
 description:
- Vector version of the basic ushort type. Provides two ushort fields packed
- into a single 32 bit field with 32 bit alignment.
+ A vector of two ushorts.  These two ushort fields packed into a single 32 bit field
+ with a 32 bit alignment.
 end:
 
 type: ushort3
 simple: ushort __attribute__((ext_vector_type(3)))
 summary: Three 16 bit unsigned integers
 description:
- Vector version of the basic ushort type. Provides three ushort fields packed
- into a single 64 bit field with 64 bit alignment.
+ A vector of three ushorts.  These three ushort fields packed into a single 64 bit field
+ with a 64 bit alignment.
 end:
 
 type: ushort4
 simple: ushort __attribute__((ext_vector_type(4)))
 summary: Four 16 bit unsigned integers
 description:
- Vector version of the basic ushort type. Provides four ushort fields packed
- into a single 64 bit field with 64 bit alignment.
+ A vector of four ushorts.  These four ushort fields packed into a single 64 bit field
+ with a 64 bit alignment.
 end:
 
 
@@ -320,24 +315,24 @@ type: uint2
 simple: uint __attribute__((ext_vector_type(2)))
 summary: Two 32 bit unsigned integers
 description:
- Vector version of the basic uint type. Provides two uint fields packed into a
- single 64 bit field with 64 bit alignment.
+ A vector of two uints.  These two uints are packed into a single 64 bit field
+ with a 64 bit alignment.
 end:
 
 type: uint3
 simple: uint __attribute__((ext_vector_type(3)))
 summary: Three 32 bit unsigned integers
 description:
- Vector version of the basic uint type. Provides three uint fields packed into
- a single 128 bit field with 128 bit alignment.
+ A vector of three uints.  These three uints are packed into a single 128 bit field
+ with a 128 bit alignment.
 end:
 
 type: uint4
 simple: uint __attribute__((ext_vector_type(4)))
 summary: Four 32 bit unsigned integers
 description:
- Vector version of the basic uint type. Provides four uint fields packed into
- a single 128 bit field with 128 bit alignment.
+ A vector of four uints.  These four uints are packed into a single 128 bit field
+ with a 128 bit alignment.
 end:
 
 
@@ -345,24 +340,24 @@ type: ulong2
 simple: ulong __attribute__((ext_vector_type(2)))
 summary: Two 64 bit unsigned integers
 description:
- Vector version of the basic ulong type. Provides two ulong fields packed into
- a single 128 bit field with 128 bit alignment.
+ A vector of two ulongs.  These two ulongs are packed into a single 128 bit field
+ with a 128 bit alignment.
 end:
 
 type: ulong3
 simple: ulong __attribute__((ext_vector_type(3)))
 summary: Three 64 bit unsigned integers
 description:
- Vector version of the basic ulong type. Provides three ulong fields packed
- into a single 256 bit field with 256 bit alignment.
+ A vector of three ulongs.  These three ulong fields packed into a single 256 bit field
+ with a 256 bit alignment.
 end:
 
 type: ulong4
 simple: ulong __attribute__((ext_vector_type(4)))
 summary: Four 64 bit unsigned integers
 description:
- Vector version of the basic ulong type. Provides four ulong fields packed
- into a single 256 bit field with 256 bit alignment.
+ A vector of four ulongs.  These four ulong fields packed into a single 256 bit field
+ with a 256 bit alignment.
 end:
 
 
@@ -370,24 +365,24 @@ type: char2
 simple: char __attribute__((ext_vector_type(2)))
 summary: Two 8 bit signed integers
 description:
- Vector version of the basic char type. Provides two char fields packed into a
- single 16 bit field with 16 bit alignment.
+ A vector of two chars.  These two chars are packed into a single 16 bit field
+ with a 16 bit alignment.
 end:
 
 type: char3
 simple: char __attribute__((ext_vector_type(3)))
 summary: Three 8 bit signed integers
 description:
- Vector version of the basic char type. Provides three char fields packed into
- a single 32 bit field with 32 bit alignment.
+ A vector of three chars.  These three chars are packed into a single 32 bit field
+ with a 32 bit alignment.
 end:
 
 type: char4
 simple: char __attribute__((ext_vector_type(4)))
 summary: Four 8 bit signed integers
 description:
- Vector version of the basic char type. Provides four char fields packed into
- a single 32 bit field with 32 bit alignment.
+ A vector of four chars.  These four chars are packed into a single 32 bit field
+ with a 32 bit alignment.
 end:
 
 
@@ -395,24 +390,24 @@ type: short2
 simple: short __attribute__((ext_vector_type(2)))
 summary: Two 16 bit signed integers
 description:
- Vector version of the basic short type. Provides two short fields packed into
- a single 32 bit field with 32 bit alignment.
+ A vector of two shorts.  These two shorts are packed into a single 32 bit field
+ with a 32 bit alignment.
 end:
 
 type: short3
 simple: short __attribute__((ext_vector_type(3)))
 summary: Three 16 bit signed integers
 description:
- Vector version of the basic short type. Provides three short fields packed
- into a single 64 bit field with 64 bit alignment.
+ A vector of three shorts.  These three short fields packed into a single 64 bit field
+ with a 64 bit alignment.
 end:
 
 type: short4
 simple: short __attribute__((ext_vector_type(4)))
 summary: Four 16 bit signed integers
 description:
- Vector version of the basic short type. Provides four short fields packed
- into a single 64 bit field with 64 bit alignment.
+ A vector of four shorts.  These four short fields packed into a single 64 bit field
+ with a 64 bit alignment.
 end:
 
 
@@ -420,24 +415,24 @@ type: int2
 simple: int __attribute__((ext_vector_type(2)))
 summary: Two 32 bit signed integers
 description:
- Vector version of the basic int type. Provides two int fields packed into a
- single 64 bit field with 64 bit alignment.
+ A vector of two ints.  These two ints are packed into a single 64 bit field
+ with a 64 bit alignment.
 end:
 
 type: int3
 simple: int __attribute__((ext_vector_type(3)))
 summary: Three 32 bit signed integers
 description:
- Vector version of the basic int type. Provides three int fields packed into a
- single 128 bit field with 128 bit alignment.
+ A vector of three ints.  These three ints are packed into a single 128 bit field
+ with a 128 bit alignment.
 end:
 
 type: int4
 simple: int __attribute__((ext_vector_type(4)))
 summary: Four 32 bit signed integers
 description:
- Vector version of the basic int type. Provides two four fields packed into a
- single 128 bit field with 128 bit alignment.
+ A vector of four ints.  These two fours are packed into a single 128 bit field
+ with a 128 bit alignment.
 end:
 
 
@@ -445,24 +440,24 @@ type: long2
 simple: long __attribute__((ext_vector_type(2)))
 summary: Two 64 bit signed integers
 description:
- Vector version of the basic long type. Provides two long fields packed into a
- single 128 bit field with 128 bit alignment.
+ A vector of two longs.  These two longs are packed into a single 128 bit field
+ with a 128 bit alignment.
 end:
 
 type: long3
 simple: long __attribute__((ext_vector_type(3)))
 summary: Three 64 bit signed integers
 description:
- Vector version of the basic long type. Provides three long fields packed into
- a single 256 bit field with 256 bit alignment.
+ A vector of three longs.  These three longs are packed into a single 256 bit field
+ with a 256 bit alignment.
 end:
 
 type: long4
 simple: long __attribute__((ext_vector_type(4)))
 summary: Four 64 bit signed integers
 description:
- Vector version of the basic long type. Provides four long fields packed into
- a single 256 bit field with 256 bit alignment.
+ A vector of four longs.  These four longs are packed into a single 256 bit field
+ with a 256 bit alignment.
 end:
 
 

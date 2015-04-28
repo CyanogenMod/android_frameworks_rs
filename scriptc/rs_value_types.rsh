@@ -23,21 +23,11 @@
  *
  * RenderScript supports the following scalar numerical types:
  *
- * Integers:
- * - 8 bit: char, int8_t
- * - 16 bit: short, int16_t
- * - 32 bit: int, int32_t
- * - 64 bit: long, long long, int64_t
+ *                    8 bits           16 bits            32 bits          64 bits
+ * Integer:           char, int8_t     short, int16_t     int32_t          long, long long, int64_t
+ * Unsigned integer:  uchar, uint8_t   ushort, uint16_t   uint, uint32_t   ulong, uint64_t
+ * Floating point:                                        float            double
  *
- * Unsigned integers:
- * - 8 bit: uchar, uint8_t
- * - 16 bit: ushort, uint16_t
- * - 32 bit: uint, uint32_t
- * - 64 bit: ulong, uint64_t
- *
- * Floating point:
- * - 32 bit: float
- * - 64 bit: double
  *
  * Vectors:
  *
@@ -61,30 +51,31 @@
  *   myVar.z == myVar.b == myVar.s2 == myVar.S2
  *   myVar.w == myVar.a == myVar.s3 == myVar.S3
  *
- * Multiple entries of a vector can be accessed at once by using an identifier
- * that is the concatenation of multiple letters or indices.  The resulting vector
- * has a size equal to the number of entries named.
+ * Multiple entries of a vector can be accessed at once by using an identifier that is
+ * the concatenation of multiple letters or indices.  The resulting vector has a size
+ * equal to the number of entries named.
  *
  * With the example above, the middle two entries can be accessed using
  * myVar.yz, myVar.gb, myVar.s12, and myVar.S12.
  *
- * The entries don't have to be contiguous or in increasing order.
- * Entries can even be repeated, as long as we're not trying to assign
- * to it.  You also can't mix the naming styles.
+ * The entries don't have to be contiguous or in increasing order.  Entries can even be
+ * repeated, as long as we're not trying to assign to it.  You also can't mix the naming
+ * styles.
  *
- * Here are examples of what can or can't be done: 
+ * Here are examples of what can or can't be done:
  * float4 v4;
  * float3 v3;
  * float2 v2;
  * v2 = v4.xx; // Valid
  * v3 = v4.zxw; // Valid
  * v3 = v4.bba; // Valid
- * v3 = v4.s034; // Valid
+ * v3 = v4.s032; // Valid
  * v3.s120 = v4.S233; // Valid
  * v4.yz = v3.rg; // Valid
  * v4.yzx = v3.rg; // Invalid: mismatched sizes
  * v4.yzz = v3; // Invalid: z appears twice in an assignment
  * v3 = v3.xas0; // Invalid: can't mix xyzw with rgba nor s0...
+ * v3 = v4.s034; // Invalid: the digit can only be 0, 1, 2, or 3
  *
  *
  * Matrices and Quaternions:
@@ -93,7 +84,8 @@
  * The types are named rs_matrix2x2, rs_matrix3x3, and rs_matrix4x4.  See
  * Matrix Functions for the list of operations.
  *
- * Quaternions are also supported via rs_quaternion.  See Quaterion Functions. for the list of operations.
+ * Quaternions are also supported via rs_quaternion.  See Quaterion Functions for the list
+ * of operations.
  */
 
 #ifndef RENDERSCRIPT_RS_VALUE_TYPES_RSH
@@ -224,240 +216,243 @@ typedef int32_t ssize_t;
 /*
  * float2: Two 32 bit floats
  *
- * Vector version of the basic float type.
- * Provides two float fields packed into a single 64 bit field with 64 bit alignment.
+ * A vector of two floats.  These two floats are packed into a single 64 bit field
+ * with a 64 bit alignment.
+ *
+ * A vector of two floats.  These two floats are packed into a single 64 bit field
+ * with a 64 bit alignment.
  */
 typedef float __attribute__((ext_vector_type(2))) float2;
 
 /*
  * float3: Three 32 bit floats
  *
- * Vector version of the basic float type.
- * Provides three float fields packed into a single 128 bit field with 128 bit alignment.
+ * A vector of three floats.  These three floats are packed into a single 128 bit field
+ * with a 128 bit alignment.
  */
 typedef float __attribute__((ext_vector_type(3))) float3;
 
 /*
  * float4: Four 32 bit floats
  *
- * Vector version of the basic float type.
- * Provides four float fields packed into a single 128 bit field with 128 bit alignment.
+ * A vector of four floats type.  These four floats are packed into a single 128 bit field
+ * with a 128 bit alignment.
  */
 typedef float __attribute__((ext_vector_type(4))) float4;
 
 /*
  * double2: Two 64 bit floats
  *
- * Vector version of the basic double type. Provides two double fields packed
- * into a single 128 bit field with 128 bit alignment.
+ * A vector of two doubles.  These two double fields packed into a single 128 bit field
+ * with a 128 bit alignment.
  */
 typedef double __attribute__((ext_vector_type(2))) double2;
 
 /*
  * double3: Three 64 bit floats
  *
- * Vector version of the basic double type. Provides three double fields packed
- * into a single 256 bit field with 256 bit alignment.
+ * A vector of three doubles.  These three double fields packed into a single 256 bit field
+ * with a 256 bit alignment.
  */
 typedef double __attribute__((ext_vector_type(3))) double3;
 
 /*
  * double4: Four 64 bit floats
  *
- * Vector version of the basic double type. Provides four double fields packed
- * into a single 256 bit field with 256 bit alignment.
+ * A vector of four doubles.  These four double fields packed into a single 256 bit field
+ * with a 256 bit alignment.
  */
 typedef double __attribute__((ext_vector_type(4))) double4;
 
 /*
  * uchar2: Two 8 bit unsigned integers
  *
- * Vector version of the basic uchar type. Provides two uchar fields packed
- * into a single 16 bit field with 16 bit alignment.
+ * A vector of two uchars.  These two uchar fields packed into a single 16 bit field
+ * with a 16 bit alignment.
  */
 typedef uchar __attribute__((ext_vector_type(2))) uchar2;
 
 /*
  * uchar3: Three 8 bit unsigned integers
  *
- * Vector version of the basic uchar type. Provides three uchar fields packed
- * into a single 32 bit field with 32 bit alignment.
+ * A vector of three uchars.  These three uchar fields packed into a single 32 bit field
+ * with a 32 bit alignment.
  */
 typedef uchar __attribute__((ext_vector_type(3))) uchar3;
 
 /*
  * uchar4: Four 8 bit unsigned integers
  *
- * Vector version of the basic uchar type. Provides four uchar fields packed
- * into a single 32 bit field with 32 bit alignment.
+ * A vector of four uchars.  These four uchar fields packed into a single 32 bit field
+ * with a 32 bit alignment.
  */
 typedef uchar __attribute__((ext_vector_type(4))) uchar4;
 
 /*
  * ushort2: Two 16 bit unsigned integers
  *
- * Vector version of the basic ushort type. Provides two ushort fields packed
- * into a single 32 bit field with 32 bit alignment.
+ * A vector of two ushorts.  These two ushort fields packed into a single 32 bit field
+ * with a 32 bit alignment.
  */
 typedef ushort __attribute__((ext_vector_type(2))) ushort2;
 
 /*
  * ushort3: Three 16 bit unsigned integers
  *
- * Vector version of the basic ushort type. Provides three ushort fields packed
- * into a single 64 bit field with 64 bit alignment.
+ * A vector of three ushorts.  These three ushort fields packed into a single 64 bit field
+ * with a 64 bit alignment.
  */
 typedef ushort __attribute__((ext_vector_type(3))) ushort3;
 
 /*
  * ushort4: Four 16 bit unsigned integers
  *
- * Vector version of the basic ushort type. Provides four ushort fields packed
- * into a single 64 bit field with 64 bit alignment.
+ * A vector of four ushorts.  These four ushort fields packed into a single 64 bit field
+ * with a 64 bit alignment.
  */
 typedef ushort __attribute__((ext_vector_type(4))) ushort4;
 
 /*
  * uint2: Two 32 bit unsigned integers
  *
- * Vector version of the basic uint type. Provides two uint fields packed into a
- * single 64 bit field with 64 bit alignment.
+ * A vector of two uints.  These two uints are packed into a single 64 bit field
+ * with a 64 bit alignment.
  */
 typedef uint __attribute__((ext_vector_type(2))) uint2;
 
 /*
  * uint3: Three 32 bit unsigned integers
  *
- * Vector version of the basic uint type. Provides three uint fields packed into
- * a single 128 bit field with 128 bit alignment.
+ * A vector of three uints.  These three uints are packed into a single 128 bit field
+ * with a 128 bit alignment.
  */
 typedef uint __attribute__((ext_vector_type(3))) uint3;
 
 /*
  * uint4: Four 32 bit unsigned integers
  *
- * Vector version of the basic uint type. Provides four uint fields packed into
- * a single 128 bit field with 128 bit alignment.
+ * A vector of four uints.  These four uints are packed into a single 128 bit field
+ * with a 128 bit alignment.
  */
 typedef uint __attribute__((ext_vector_type(4))) uint4;
 
 /*
  * ulong2: Two 64 bit unsigned integers
  *
- * Vector version of the basic ulong type. Provides two ulong fields packed into
- * a single 128 bit field with 128 bit alignment.
+ * A vector of two ulongs.  These two ulongs are packed into a single 128 bit field
+ * with a 128 bit alignment.
  */
 typedef ulong __attribute__((ext_vector_type(2))) ulong2;
 
 /*
  * ulong3: Three 64 bit unsigned integers
  *
- * Vector version of the basic ulong type. Provides three ulong fields packed
- * into a single 256 bit field with 256 bit alignment.
+ * A vector of three ulongs.  These three ulong fields packed into a single 256 bit field
+ * with a 256 bit alignment.
  */
 typedef ulong __attribute__((ext_vector_type(3))) ulong3;
 
 /*
  * ulong4: Four 64 bit unsigned integers
  *
- * Vector version of the basic ulong type. Provides four ulong fields packed
- * into a single 256 bit field with 256 bit alignment.
+ * A vector of four ulongs.  These four ulong fields packed into a single 256 bit field
+ * with a 256 bit alignment.
  */
 typedef ulong __attribute__((ext_vector_type(4))) ulong4;
 
 /*
  * char2: Two 8 bit signed integers
  *
- * Vector version of the basic char type. Provides two char fields packed into a
- * single 16 bit field with 16 bit alignment.
+ * A vector of two chars.  These two chars are packed into a single 16 bit field
+ * with a 16 bit alignment.
  */
 typedef char __attribute__((ext_vector_type(2))) char2;
 
 /*
  * char3: Three 8 bit signed integers
  *
- * Vector version of the basic char type. Provides three char fields packed into
- * a single 32 bit field with 32 bit alignment.
+ * A vector of three chars.  These three chars are packed into a single 32 bit field
+ * with a 32 bit alignment.
  */
 typedef char __attribute__((ext_vector_type(3))) char3;
 
 /*
  * char4: Four 8 bit signed integers
  *
- * Vector version of the basic char type. Provides four char fields packed into
- * a single 32 bit field with 32 bit alignment.
+ * A vector of four chars.  These four chars are packed into a single 32 bit field
+ * with a 32 bit alignment.
  */
 typedef char __attribute__((ext_vector_type(4))) char4;
 
 /*
  * short2: Two 16 bit signed integers
  *
- * Vector version of the basic short type. Provides two short fields packed into
- * a single 32 bit field with 32 bit alignment.
+ * A vector of two shorts.  These two shorts are packed into a single 32 bit field
+ * with a 32 bit alignment.
  */
 typedef short __attribute__((ext_vector_type(2))) short2;
 
 /*
  * short3: Three 16 bit signed integers
  *
- * Vector version of the basic short type. Provides three short fields packed
- * into a single 64 bit field with 64 bit alignment.
+ * A vector of three shorts.  These three short fields packed into a single 64 bit field
+ * with a 64 bit alignment.
  */
 typedef short __attribute__((ext_vector_type(3))) short3;
 
 /*
  * short4: Four 16 bit signed integers
  *
- * Vector version of the basic short type. Provides four short fields packed
- * into a single 64 bit field with 64 bit alignment.
+ * A vector of four shorts.  These four short fields packed into a single 64 bit field
+ * with a 64 bit alignment.
  */
 typedef short __attribute__((ext_vector_type(4))) short4;
 
 /*
  * int2: Two 32 bit signed integers
  *
- * Vector version of the basic int type. Provides two int fields packed into a
- * single 64 bit field with 64 bit alignment.
+ * A vector of two ints.  These two ints are packed into a single 64 bit field
+ * with a 64 bit alignment.
  */
 typedef int __attribute__((ext_vector_type(2))) int2;
 
 /*
  * int3: Three 32 bit signed integers
  *
- * Vector version of the basic int type. Provides three int fields packed into a
- * single 128 bit field with 128 bit alignment.
+ * A vector of three ints.  These three ints are packed into a single 128 bit field
+ * with a 128 bit alignment.
  */
 typedef int __attribute__((ext_vector_type(3))) int3;
 
 /*
  * int4: Four 32 bit signed integers
  *
- * Vector version of the basic int type. Provides two four fields packed into a
- * single 128 bit field with 128 bit alignment.
+ * A vector of four ints.  These two fours are packed into a single 128 bit field
+ * with a 128 bit alignment.
  */
 typedef int __attribute__((ext_vector_type(4))) int4;
 
 /*
  * long2: Two 64 bit signed integers
  *
- * Vector version of the basic long type. Provides two long fields packed into a
- * single 128 bit field with 128 bit alignment.
+ * A vector of two longs.  These two longs are packed into a single 128 bit field
+ * with a 128 bit alignment.
  */
 typedef long __attribute__((ext_vector_type(2))) long2;
 
 /*
  * long3: Three 64 bit signed integers
  *
- * Vector version of the basic long type. Provides three long fields packed into
- * a single 256 bit field with 256 bit alignment.
+ * A vector of three longs.  These three longs are packed into a single 256 bit field
+ * with a 256 bit alignment.
  */
 typedef long __attribute__((ext_vector_type(3))) long3;
 
 /*
  * long4: Four 64 bit signed integers
  *
- * Vector version of the basic long type. Provides four long fields packed into
- * a single 256 bit field with 256 bit alignment.
+ * A vector of four longs.  These four longs are packed into a single 256 bit field
+ * with a 256 bit alignment.
  */
 typedef long __attribute__((ext_vector_type(4))) long4;
 
