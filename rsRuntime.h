@@ -159,8 +159,7 @@ void rsrForEach(Context *, Script *target,
                 Allocation *out,
                 const void *usr,
                 uint32_t usrBytes,
-                const RsScriptCall *call,
-                const Script *callingScript);
+                const RsScriptCall *call);
 
 
 //////////////////////////////////////////////////////////////////////////////
