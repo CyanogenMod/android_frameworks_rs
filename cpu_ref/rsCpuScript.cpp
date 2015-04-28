@@ -566,7 +566,11 @@ bool RsdCpuScriptImpl::forEachMtlsSetup(const Allocation ** ains,
     } else {
         mtls->start.x = rsMin(mtls->fep.dim.x, sc->xStart);
         mtls->end.x = rsMin(mtls->fep.dim.x, sc->xEnd);
-        if (mtls->start.x >= mtls->end.x) return false;
+        if (mtls->start.x >= mtls->end.x) {
+            mCtx->getContext()->setError(RS_ERROR_BAD_SCRIPT,
+              "Failed to launch kernel; Invalid xStart or xEnd.");
+            return false;
+        }
     }
 
     if (!sc || (sc->yEnd == 0)) {
@@ -574,7 +578,11 @@ bool RsdCpuScriptImpl::forEachMtlsSetup(const Allocation ** ains,
     } else {
         mtls->start.y = rsMin(mtls->fep.dim.y, sc->yStart);
         mtls->end.y = rsMin(mtls->fep.dim.y, sc->yEnd);
-        if (mtls->start.y >= mtls->end.y) return false;
+        if (mtls->start.y >= mtls->end.y) {
+            mCtx->getContext()->setError(RS_ERROR_BAD_SCRIPT,
+              "Failed to launch kernel; Invalid yStart or yEnd.");
+            return false;
+        }
     }
 
     if (!sc || (sc->zEnd == 0)) {
@@ -582,7 +590,11 @@ bool RsdCpuScriptImpl::forEachMtlsSetup(const Allocation ** ains,
     } else {
         mtls->start.z = rsMin(mtls->fep.dim.z, sc->zStart);
         mtls->end.z = rsMin(mtls->fep.dim.z, sc->zEnd);
-        if (mtls->start.z >= mtls->end.z) return false;
+        if (mtls->start.z >= mtls->end.z) {
+            mCtx->getContext()->setError(RS_ERROR_BAD_SCRIPT,
+              "Failed to launch kernel; Invalid zStart or zEnd.");
+            return false;
+        }
     }
 
     if (!sc || (sc->arrayEnd == 0)) {
@@ -590,7 +602,11 @@ bool RsdCpuScriptImpl::forEachMtlsSetup(const Allocation ** ains,
     } else {
         mtls->start.array[0] = rsMin(mtls->fep.dim.array[0], sc->arrayStart);
         mtls->end.array[0] = rsMin(mtls->fep.dim.array[0], sc->arrayEnd);
-        if (mtls->start.array[0] >= mtls->end.array[0]) return false;
+        if (mtls->start.array[0] >= mtls->end.array[0]) {
+            mCtx->getContext()->setError(RS_ERROR_BAD_SCRIPT,
+              "Failed to launch kernel; Invalid arrayStart or arrayEnd.");
+            return false;
+        }
     }
 
     if (!sc || (sc->array2End == 0)) {
@@ -598,7 +614,11 @@ bool RsdCpuScriptImpl::forEachMtlsSetup(const Allocation ** ains,
     } else {
         mtls->start.array[1] = rsMin(mtls->fep.dim.array[1], sc->array2Start);
         mtls->end.array[1] = rsMin(mtls->fep.dim.array[1], sc->array2End);
-        if (mtls->start.array[1] >= mtls->end.array[1]) return false;
+        if (mtls->start.array[1] >= mtls->end.array[1]) {
+            mCtx->getContext()->setError(RS_ERROR_BAD_SCRIPT,
+              "Failed to launch kernel; Invalid array2Start or array2End.");
+            return false;
+        }
     }
 
     if (!sc || (sc->array3End == 0)) {
@@ -606,7 +626,11 @@ bool RsdCpuScriptImpl::forEachMtlsSetup(const Allocation ** ains,
     } else {
         mtls->start.array[2] = rsMin(mtls->fep.dim.array[2], sc->array3Start);
         mtls->end.array[2] = rsMin(mtls->fep.dim.array[2], sc->array3End);
-        if (mtls->start.array[2] >= mtls->end.array[2]) return false;
+        if (mtls->start.array[2] >= mtls->end.array[2]) {
+            mCtx->getContext()->setError(RS_ERROR_BAD_SCRIPT,
+              "Failed to launch kernel; Invalid array3Start or array3End.");
+            return false;
+        }
     }
 
     if (!sc || (sc->array4End == 0)) {
@@ -614,7 +638,11 @@ bool RsdCpuScriptImpl::forEachMtlsSetup(const Allocation ** ains,
     } else {
         mtls->start.array[3] = rsMin(mtls->fep.dim.array[3], sc->array4Start);
         mtls->end.array[3] = rsMin(mtls->fep.dim.array[3], sc->array4End);
-        if (mtls->start.array[3] >= mtls->end.array[3]) return false;
+        if (mtls->start.array[3] >= mtls->end.array[3]) {
+            mCtx->getContext()->setError(RS_ERROR_BAD_SCRIPT,
+              "Failed to launch kernel; Invalid array4Start or array4End.");
+            return false;
+        }
     }
 
 
