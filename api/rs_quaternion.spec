@@ -17,6 +17,7 @@
 header:
 summary: Quaternion Functions
 description:
+ The following functions manipulate quaternions.
 end:
 
 function: rsQuaternionAdd
@@ -120,7 +121,7 @@ arg: float w, "W component."
 arg: float x, "X component."
 arg: float y, "Y component."
 arg: float z, "Z component."
-summary: Create a quarternion
+summary: Create a quaternion
 description:
  Creates a quaternion from its four components or from another quaternion.
 inline:
@@ -190,7 +191,7 @@ end:
 function: rsQuaternionMultiply
 ret: void
 arg: rs_quaternion* q, "Destination quaternion."
-arg: float scalar, "Scalar to multiply the quarternion by."
+arg: float scalar, "Scalar to multiply the quaternion by."
 summary:  Multiply a quaternion by a scalar or another quaternion
 description:
  Multiplies a quaternion by a scalar or by another quaternion, e.g
@@ -206,7 +207,7 @@ end:
 function: rsQuaternionMultiply
 ret: void
 arg: rs_quaternion* q
-arg: const rs_quaternion* rhs, "Quarternion to multiply the destination quaternion by."
+arg: const rs_quaternion* rhs, "Quaternion to multiply the destination quaternion by."
 inline:
  rs_quaternion qtmp;
  rsQuaternionSet(&qtmp, q);

@@ -17,17 +17,20 @@
 header:
 summary: Vector Math Functions
 description:
- These functions interpret the input arguments as representation of vectors in n-dimensional space.
+ These functions interpret the input arguments as representation of vectors in
+ n-dimensional space.
 
- The precision of the mathematical operations is affected by the pragmas
+ The precision of the mathematical operations on 32 bit floats is affected by the pragmas
 # TODO Create an anchor for the section of http://developer.android.com/guide/topics/renderscript/compute.html that details rs_fp_* and link them here.
- rs_fp_relaxed and rs_fp_full.
+ rs_fp_relaxed and rs_fp_full.  See <a href='rs_math.html'>Mathematical Constants and Functions</a> for details.
 
- Different precision/speed tradeoffs can be achieved by using three variants
- of common math functions.  Functions with a name starting with<ul>
- <li>native_ may have custom hardware implementations with weaker precision,</li>
- <li>half_ may perform internal computations using 16 bit floats, and</li>
- <li>fast_ are n-dimensional space computations that may use 16 bit floats.
+ Different precision/speed tradeoffs can be achieved by using variants of the common math
+ functions.  Functions with a name starting with<ul>
+ <li>native_: May have custom hardware implementations with weaker precision.  Additionally,
+   subnormal values may be flushed to zero, rounding towards zero may be used, and NaN and
+   infinity input may not be handled correctly.</li>
+ <li>fast_: May perform internal computations using 16 bit floats.  Additionally, subnormal
+   values may be flushed to zero, and rounding towards zero may be used.</li>
  </ul>
 end:
 
@@ -87,7 +90,8 @@ summary: Approximate distance between two points
 description:
  Computes the approximate distance between two points.
 
- The precision is what would be expected from doing the computation using 16 bit floating point values.
+ The precision is what would be expected from doing the computation using 16 bit floating
+ point values.
 
  See also @distance(), @native_distance().
 test: vector
@@ -104,7 +108,8 @@ summary: Approximate length of a vector
 description:
  Computes the approximate length of a vector.
 
- The precision is what would be expected from doing the computation using 16 bit floating point values.
+ The precision is what would be expected from doing the computation using 16 bit floating
+ point values.
 
  See also @length(), @native_length().
 test: vector
@@ -121,9 +126,11 @@ summary: Approximate normalized vector
 description:
  Approximately normalizes a vector.
 
- For vectors of size 1, returns -1.f for negative values, 0.f for null values, and 1.f for positive values.
+ For vectors of size 1, returns -1.f for negative values, 0.f for null values, and 1.f for
+ positive values.
 
- The precision is what would be expected from doing the computation using 16 bit floating point values.
+ The precision is what would be expected from doing the computation using 16 bit floating
+ point values.
 
  See also @normalize(), @native_normalize().
 test: vector
@@ -201,7 +208,8 @@ summary: Normalize a vector
 description:
  Normalize a vector.
 
- For vectors of size 1, returns -1.f for negative values, 0.f for null values, and 1.f for positive values.
+ For vectors of size 1, returns -1.f for negative values, 0.f for null values, and 1.f for
+ positive values.
 
  See also @fast_normalize(), @native_normalize().
 test: vector

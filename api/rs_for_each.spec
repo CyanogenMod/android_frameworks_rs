@@ -54,8 +54,8 @@ description:
  A kernel may be executed in parallel over multiple threads.  Each thread will have its
  own context.
 
- You can access the context by adding a rs_kernel_context argument to your
- kernel function.  See @rsGetDimX() and @rsGetArray0() for examples.
+ You can access the context by adding a rs_kernel_context argument to your kernel
+ function.  See @rsGetDimX() and @rsGetArray0() for examples.
 end:
 
 type: rs_script_call_t
@@ -134,7 +134,7 @@ arg: rs_script script
 arg: rs_allocation input
 arg: rs_allocation output
 arg: const void* usrData
-arg: size_t usrDataLen, "The size of the userData structure.  This will be used to perform a shallow copy of the data if necessary."
+arg: size_t usrDataLen, "Size of the userData structure.  This will be used to perform a shallow copy of the data if necessary."
 arg: const rs_script_call_t* sc
 test: none
 end:
@@ -165,15 +165,15 @@ ret: uint32_t
 arg: rs_kernel_context ctxt
 summary: Index in the Array0 dimension for the specified context
 description:
- Returns the index in the Array0 dimension of the cell being processed,
- as specified by the supplied context.
+ Returns the index in the Array0 dimension of the cell being processed, as specified
+ by the supplied context.
 
- This context is created when a kernel is launched and updated at each
- iteration.  It contains common characteristics of the allocations being
- iterated over and rarely used indexes, like the Array0 index.
+ This context is created when a kernel is launched and updated at each iteration.
+ It contains common characteristics of the allocations being iterated over and rarely
+ used indexes, like the Array0 index.
 
- You can access the context by adding a rs_kernel_context argument to your
- kernel function.  E.g.<br/>
+ You can access the context by adding a rs_kernel_context argument to your kernel
+ function.  E.g.<br/>
  <code>short RS_KERNEL myKernel(short value, uint32_t x, rs_kernel_context context) {<br/>
  &nbsp;&nbsp;// The current index in the common x, y, z, w dimensions are accessed by<br/>
  &nbsp;&nbsp;// adding these variables as arguments.  For the more rarely used indexes<br/>
@@ -192,9 +192,8 @@ ret: uint32_t
 arg: rs_kernel_context ctxt
 summary: Index in the Array1 dimension for the specified context
 description:
- Returns the index in the Array1 dimension of the cell being processed,
- as specified by the supplied context.  See @rsGetArray0() for an explanation
- of the context.
+ Returns the index in the Array1 dimension of the cell being processed, as specified
+ by the supplied context.  See @rsGetArray0() for an explanation of the context.
 
  Returns 0 if the Array1 dimension is not present.
 test: none
@@ -220,9 +219,8 @@ ret: uint32_t
 arg: rs_kernel_context ctxt
 summary: Index in the Array3 dimension for the specified context
 description:
- Returns the index in the Array3 dimension of the cell being processed,
- as specified by the supplied context.  See @rsGetArray0() for an explanation
- of the context.
+ Returns the index in the Array3 dimension of the cell being processed, as specified
+ by the supplied context.  See @rsGetArray0() for an explanation of the context.
 
  Returns 0 if the Array3 dimension is not present.
 test: none
@@ -288,9 +286,9 @@ ret: bool, "Returns true if more than one face is present, false otherwise."
 arg: rs_kernel_context ctxt
 summary: Presence of more than one face for the specified context
 description:
- If the context refers to a cubemap, this function returns true if there's
- more than one face present.  In all other cases, it returns false.
- See @rsGetDimX() for an explanation of the context.
+ If the context refers to a cubemap, this function returns true if there's more than
+ one face present.  In all other cases, it returns false.  See @rsGetDimX() for an
+ explanation of the context.
 
  @rsAllocationGetDimFaces() is similar but returns 0 or 1 instead of a bool.
 test: none
@@ -302,8 +300,9 @@ ret: uint32_t
 arg: rs_kernel_context ctxt
 summary: Number of levels of detail for the specified context
 description:
- Returns the number of levels of detail for the specified context.
- This is useful for mipmaps.  See @rsGetDimX() for an explanation of the context.
+ Returns the number of levels of detail for the specified context.  This is useful
+ for mipmaps.  See @rsGetDimX() for an explanation of the context.
+
  Returns 0 if Level of Detail is not used.
 
  @rsAllocationGetDimLOD() is similar but returns 0 or 1 instead the actual
@@ -368,8 +367,8 @@ ret: rs_allocation_cubemap_face
 arg: rs_kernel_context ctxt
 summary: Coordinate of the Face for the specified context
 description:
- Returns the face on which the cell being processed is found, as specified
- by the supplied context.  See @rsGetArray0() for an explanation of the context.
+ Returns the face on which the cell being processed is found, as specified by the
+ supplied context.  See @rsGetArray0() for an explanation of the context.
 
  Returns RS_ALLOCATION_CUBEMAP_FACE_POSITIVE_X if the face dimension is not
  present.
@@ -382,9 +381,9 @@ ret: uint32_t
 arg: rs_kernel_context ctxt
 summary: Index in the Levels of Detail dimension for the specified context
 description:
- Returns the index in the Levels of Detail dimension of the cell being
- processed, as specified by the supplied context.  See @rsGetArray0() for
- an explanation of the context.
+ Returns the index in the Levels of Detail dimension of the cell being processed,
+ as specified by the supplied context.  See @rsGetArray0() for an explanation of
+ the context.
 
  Returns 0 if the Levels of Detail dimension is not present.
 test: none

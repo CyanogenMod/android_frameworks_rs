@@ -19,8 +19,8 @@
 /*
  * rs_convert.rsh: Conversion Functions
  *
- * The functions below convert from a numerical vector type to another,
- * of from one color representation to another.
+ * The functions below convert from a numerical vector type to another, of from one color
+ * representation to another.
  */
 
 #ifndef RENDERSCRIPT_RS_CONVERT_RSH
@@ -29,10 +29,9 @@
 /*
  * convert: Convert numerical vectors
  *
- * Converts a vector from one numerical type to another.  The conversion are
- * done entry per entry.
+ * Converts a vector from one numerical type to another.  The conversion are done entry per entry.
  *
- * E.g calling a = convert_short3(b) is equivalent to doing
+ * E.g calling a = convert_short3(b); is equivalent to doing
  * a.x = (short)b.x; a.y = (short)b.y; a.z = (short)b.z;.
  *
  * Converting floating point values to integer types truncates.
@@ -1250,13 +1249,12 @@ extern ulong4 __attribute__((const, overloadable))
 /*
  * rsPackColorTo8888: Create a uchar4 RGBA from floats
  *
- * Packs three or four floating point RGBA values into a uchar4.  The RGBA values should
- * be between 0.0 and 1.0 inclusive.  Values outside of this range are clamped to
- * this range.  However numbers greater than INT_MAX or less than INT_MIN can result
- * in undefined behavior.
+ * Packs three or four floating point RGBA values into a uchar4.  The RGBA values should be
+ * between 0.0 and 1.0 inclusive.  Values outside of this range are clamped to this range.
+ * However numbers greater than INT_MAX or less than INT_MIN can result in undefined behavior.
  *
- * If the alpha component is not specified, it is assumed to be 1.0, i.e. the
- * result will have an alpha set to 255.
+ * If the alpha component is not specified, it is assumed to be 1.0, i.e. the result will
+ * have an alpha set to 255.
  *
  * Parameters:
  *   r: Red component.
@@ -1280,8 +1278,7 @@ extern uchar4 __attribute__((const, overloadable))
 /*
  * rsUnpackColor8888: Create a float4 RGBA from uchar4
  *
- * Unpacks a uchar4 color to float4.  The resulting floats will be between 0.0 and
- * 1.0 inclusive.
+ * Unpacks a uchar4 color to float4.  The resulting floats will be between 0.0 and 1.0 inclusive.
  */
 extern float4 __attribute__((const))
     rsUnpackColor8888(uchar4 c);
@@ -1294,9 +1291,9 @@ extern float4 __attribute__((const))
  * We currently don't provide a function to do the reverse conversion.
  *
  * Parameters:
- *   y: Luminance component
- *   u: U chrominance component
- *   v: V chrominance component
+ *   y: Luminance component.
+ *   u: U chrominance component.
+ *   v: V chrominance component.
  */
 extern float4 __attribute__((const, overloadable))
     rsYuvToRGBA_float4(uchar y, uchar u, uchar v);
