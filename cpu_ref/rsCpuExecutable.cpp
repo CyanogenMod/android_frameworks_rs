@@ -303,6 +303,11 @@ ScriptExecutable* ScriptExecutable::createFromSharedObject(
     uint32_t checksum = 0;
 
     const char *rsInfo = (const char *) dlsym(sharedObj, ".rs.info");
+    int numEntries = 0;
+    const int *rsGlobalEntries = (const int *) dlsym(sharedObj, ".rs.global_entries");
+    const char **rsGlobalNames = (const char **) dlsym(sharedObj, ".rs.global_names");
+    const void **rsGlobalAddresses = (const void **) dlsym(sharedObj, ".rs.global_addresses");
+    const size_t *rsGlobalSizes = (const size_t *) dlsym(sharedObj, ".rs.global_sizes");
 
     if (strgets(line, MAXLINE, &rsInfo) == nullptr) {
         return nullptr;
@@ -537,11 +542,25 @@ ScriptExecutable* ScriptExecutable::createFromSharedObject(
 
 #endif  // RS_COMPATIBILITY_LIB
 
+    // Read in information about mutable global variables provided by bcc's
+    // RSGlobalInfoPass
+    if (rsGlobalEntries) {
+        numEntries = *rsGlobalEntries;
+        if (numEntries > 0) {
+            rsAssert(rsGlobalNames);
+            rsAssert(rsGlobalAddresses);
+            rsAssert(rsGlobalSizes);
+        }
+    } else {
+        ALOGD("Missing .rs.global_entries from shared object");
+    }
+
     return new ScriptExecutable(
         RSContext, fieldAddress, fieldIsObject, fieldName, varCount,
         invokeFunctions, funcCount,
         forEachFunctions, forEachSignatures, forEachCount,
         pragmaKeys, pragmaValues, pragmaCount,
+        rsGlobalNames, rsGlobalAddresses, rsGlobalSizes, numEntries,
         isThreadable, checksum);
 
 error:
@@ -580,6 +599,15 @@ void* ScriptExecutable::getFieldAddress(const char* name) const {
         }
     }
     return nullptr;
+}
+
+bool ScriptExecutable::dumpGlobalInfo() const {
+    ALOGE("Globals: %p %p %p", mGlobalAddresses, mGlobalSizes, mGlobalNames);
+    for (int i = 0; i < mGlobalEntries; i++) {
+        ALOGE("Global[%d]: %p %zu %s", i, mGlobalAddresses[i], mGlobalSizes[i],
+              mGlobalNames[i]);
+    }
+    return true;
 }
 
 }  // namespace renderscript
