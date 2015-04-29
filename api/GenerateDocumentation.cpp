@@ -37,55 +37,18 @@ static void writeHeader(GeneratedFile* file, bool forVerification, const string&
     if (forVerification) {
         *file << "<!DOCTYPE html>\n";
         *file << "<!-- " << AUTO_GENERATED_WARNING << "-->\n";
-
-        *file << "<html><head><meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>\n"
-                 "<meta name='viewport' content='width=device-width'>\n"
-                 "<link rel='shortcut icon' type='image/x-icon' "
-                 "href='http://developer.android.com/favicon.ico'>\n"
-                 "<title>android.renderscript | Android Developers</title>\n"
-                 "<!-- STYLESHEETS -->\n"
+        *file << "<html><head>\n"
+                 "<title>RenderScript Reference</title>\n"
+                 "<meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>\n"
                  "<link rel='stylesheet' "
                  "href='http://fonts.googleapis.com/css?family=Roboto+Condensed'>\n"
                  "<link rel='stylesheet' href='http://fonts.googleapis.com/"
                  "css?family=Roboto:light,regular,medium,thin,italic,mediumitalic,bold' "
                  "title='roboto'>\n"
-                 "<link href='./test_files/default.css' rel='stylesheet' type='text/css'>\n"
-                 "<!-- FULLSCREEN STYLESHEET -->\n"
-                 "<link href='./test_files/fullscreen.css' rel='stylesheet' class='fullscreen' "
+                 "<link href='default.css' rel='stylesheet' type='text/css'>\n"
+                 "<link href='fullscreen.css' rel='stylesheet' class='fullscreen' "
                  "type='text/css'>\n"
-                 "<!-- JAVASCRIPT -->\n"
-                 "<script src='./test_files/cb=gapi.loaded_0' async=''></script><script "
-                 "type='text/javascript' async='' src='./test_files/plusone.js' "
-                 "gapi_processed='true'></script><script async='' "
-                 "src='./test_files/analytics.js'></script><script src='./test_files/jsapi' "
-                 "type='text/javascript'></script>\n"
-                 "<script src='./test_files/android_3p-bundle.js' "
-                 "type='text/javascript'></script>\n"
-                 "<script type='text/javascript'>\n"
-                 "  var toRoot = '/';\n"
-                 "  var metaTags = [];\n"
-                 "  var devsite = false;\n"
-                 "</script>\n"
-                 "<script src='./test_files/docs.js' type='text/javascript'></script><script "
-                 "type='text/javascript' src='./test_files/saved_resource'></script>\n"
-                 "<script>\n"
-                 "  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){\n"
-                 "  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new "
-                 "Date();a=s.createElement(o),\n"
-                 "  "
-                 "m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)\n"
-                 "  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');\n"
-                 "  ga('create', 'UA-5831155-1', 'android.com');\n"
-                 "  ga('create', 'UA-49880327-2', 'android.com', {'name': 'universal'});  // New "
-                 "tracker);\n"
-                 "  ga('send', 'pageview');\n"
-                 "  ga('universal.send', 'pageview'); // Send page view for new tracker.\n"
-                 "</script>\n"
-                 "<link type='text/css' href='./test_files/default+en.css' "
-                 "rel='stylesheet'><script "
-                 "type='text/javascript' src='./test_files/default+en.I.js'></script></head>\n"
-                 "<body class='gc-documentation\n"
-                 "  develop reference'>\n\n";
+                 "<body class='gc-documentation develop reference'>\n\n";
         *file << "<h1>" << title << "</h1>\n";
     } else {
         *file << "page.title=RenderScript " << title << "\n\n";
@@ -95,7 +58,7 @@ static void writeHeader(GeneratedFile* file, bool forVerification, const string&
 
 static void writeFooter(GeneratedFile* file, bool forVerification) {
     if (forVerification) {
-        *file << "<!-- end body-content -->\n</body></html>\n";
+        *file << "</body></html>\n";
     }
 }
 
@@ -260,7 +223,7 @@ static bool generateHtmlParagraphs(GeneratedFile* file, const vector<string>& de
 
 static void writeSummaryTableStart(GeneratedFile* file, const string& label, bool labelIsHeading) {
     if (labelIsHeading) {
-        *file << "<h2 style='margin-bottom: 0px;'>" << label << "</h2><hr/>\n";
+        *file << "<h2 style='margin-bottom: 0px;'>" << label << "</h2>\n";
     }
     *file << "<table class='jd-sumtable'><tbody>\n";
     if (!labelIsHeading) {
@@ -452,7 +415,7 @@ static bool generateOverview(const string& directory, bool forVerification) {
     }
     bool success = true;
 
-    writeHeader(&file, forVerification, "Overview");
+    writeHeader(&file, forVerification, "Runtime API Reference");
 
     for (auto specFile : systemSpecification.getSpecFiles()) {
         if (!writeOverviewForFile(&file, *specFile)) {
@@ -566,6 +529,9 @@ static bool writeDetailedType(GeneratedFile* file, Type* type) {
 }
 
 static bool writeDetailedFunction(GeneratedFile* file, Function* function) {
+    if (function->hidden()) {
+        return true;
+    }
     const string& name = function->getName();
 
     *file << "<a id='android_rs:" << name << "'></a>\n";
@@ -712,7 +678,15 @@ static bool generateAndroidTableOfContentSnippet(const string& directory) {
     file << "<!-- Copy and paste the following lines into the RenderScript section of\n";
     file << "     platform/frameworks/base/docs/html/guide/guide_toc.cs\n\n";
 
-    generateSnippet(&file, OVERVIEW_HTML_FILE_NAME, "Overview");
+    const char offset[] = "              ";
+    file << offset << "<li class=\"nav-section\">\n";
+    file << offset << "  <div class=\"nav-section-header\">\n";
+    file << offset << "    <a href=\"<?cs var:toroot ?>guide/topics/renderscript/reference/" <<
+            OVERVIEW_HTML_FILE_NAME << "\">\n";
+    file << offset << "      <span class=\"en\">Runtime API Reference</span>\n";
+    file << offset << "    </a></div>\n";
+    file << offset << "  <ul>\n";
+
     for (auto specFile : systemSpecification.getSpecFiles()) {
         if (specFile->hasSpecifications()) {
             const string fileName = stringReplace(specFile->getSpecFileName(), ".spec", ".html");
@@ -720,6 +694,10 @@ static bool generateAndroidTableOfContentSnippet(const string& directory) {
         }
     }
     generateSnippet(&file, INDEX_HTML_FILE_NAME, "Index");
+
+    file << offset << "  </ul>\n";
+    file << offset << "</li>\n";
+
     return true;
 }
 

@@ -19,12 +19,10 @@
 /*
  * rs_math.rsh: Mathematical Constants and Functions
  *
- * The mathematical functions below can be applied to scalars and vectors.
- * When applied to vectors, a vector of the function applied to each entry
- * of the input is returned.
+ * The mathematical functions below can be applied to scalars and vectors.   When applied
+ * to vectors, the returned value is a vector of the function applied to each entry of the input.
  *
  * For example:
- *
  * float3 a, b;
  * // The following call sets
  * //   a.x to sin(b.x),
@@ -33,17 +31,22 @@
  * a = sin(b);
  *
  *
- * See "Vector math functions" for functions like distance() and length()
- * that interpret instead the input as a single vector in n-dimensional space.
+ * See Vector Math Functions for functions like distance() and length() that interpret
+ * instead the input as a single vector in n-dimensional space.
  *
- * The precision of the mathematical operations is affected by the pragmas
- * rs_fp_relaxed and rs_fp_full.
+ * The precision of the mathematical operations on 32 bit floats is affected by the pragmas
+ * rs_fp_relaxed and rs_fp_full.  Under rs_fp_relaxed, subnormal values may be flushed to zero and
+ * rounding may be done towards zero.  In comparison, rs_fp_full requires correct handling of
+ * subnormal values, i.e. smaller than 1.17549435e-38f.  rs_fp_rull also requires round to nearest
+ * with ties to even.
  *
- * Different precision/speed tradeoffs can be achieved by using three variants
- * of common math functions.  Functions with a name starting with
- * - native_ may have custom hardware implementations with weaker precision,
- * - half_ may perform internal computations using 16 bit floats, and
- * - fast_ are n-dimensional space computations that may use 16 bit floats.
+ * Different precision/speed tradeoffs can be achieved by using variants of the common math
+ * functions.  Functions with a name starting with
+ * - native_: May have custom hardware implementations with weaker precision.  Additionally,
+ *   subnormal values may be flushed to zero, rounding towards zero may be used, and NaN and
+ *   infinity input may not be handled correctly.
+ * - half_: May perform internal computations using 16 bit floats.  Additionally, subnormal
+ *   values may be flushed to zero, and rounding towards zero may be used.
  *
  */
 
@@ -338,8 +341,8 @@ extern float4 __attribute__((const, overloadable))
  * See also native_atan2().
  *
  * Parameters:
- *   numerator: The numerator
- *   denominator: The denominator.  Can be 0.
+ *   numerator: Numerator.
+ *   denominator: Denominator.  Can be 0.
  */
 extern float __attribute__((const, overloadable))
     atan2(float numerator, float denominator);
@@ -363,8 +366,8 @@ extern float4 __attribute__((const, overloadable))
  * See also native_atan2pi().
  *
  * Parameters:
- *   numerator: The numerator
- *   denominator: The denominator.  Can be 0.
+ *   numerator: Numerator.
+ *   denominator: Denominator.  Can be 0.
  */
 extern float __attribute__((const, overloadable))
     atan2pi(float numerator, float denominator);
@@ -1125,10 +1128,9 @@ extern float4 __attribute__((const, overloadable))
  *
  * Multiply and add.  Returns (multiplicand1 * multiplicand2) + offset.
  *
- * This function is similar to mad().  fma() retains full precision of the
- * multiplied result and rounds only after the addition.  mad() rounds after the
- * multiplication and the addition.  This extra precision is not guaranteed in
- * rs_fp_relaxed mode.
+ * This function is similar to mad().  fma() retains full precision of the multiplied result
+ * and rounds only after the addition.  mad() rounds after the multiplication and the addition.
+ * This extra precision is not guaranteed in rs_fp_relaxed mode.
  */
 extern float __attribute__((const, overloadable))
     fma(float multiplicand1, float multiplicand2, float offset);
@@ -1406,8 +1408,7 @@ extern float4 __attribute__((const, overloadable))
  *
  * For example, ilogb(8.5f) returns 3.
  *
- * Because of the difference in mantissa, this number is one less than
- * is returned by frexp().
+ * Because of the difference in mantissa, this number is one less than is returned by frexp().
  *
  * logb() is similar but returns a float.
  */
@@ -1432,8 +1433,8 @@ extern int4 __attribute__((const, overloadable))
  * See frexp() for the reverse operation.
  *
  * Parameters:
- *   mantissa: The mantissa
- *   exponent: The exponent, a single component or matching vector.
+ *   mantissa: Mantissa.
+ *   exponent: Exponent, a single component or matching vector.
  */
 extern float __attribute__((const, overloadable))
     ldexp(float mantissa, int exponent);
@@ -1575,8 +1576,7 @@ extern float4 __attribute__((const, overloadable))
  *
  * For example, logb(8.5f) returns 3.f.
  *
- * Because of the difference in mantissa, this number is one less than
- * is returned by frexp().
+ * Because of the difference in mantissa, this number is one less than is returned by frexp().
  *
  * ilogb() is similar but returns an integer.
  */
@@ -1597,10 +1597,9 @@ extern float4 __attribute__((const, overloadable))
  *
  * Multiply and add.  Returns (multiplicand1 * multiplicand2) + offset.
  *
- * This function is similar to fma().  fma() retains full precision of the
- * multiplied result and rounds only after the addition.  mad() rounds after the
- * multiplication and the addition.  In rs_fp_relaxed mode, mad() may not do the
- * rounding after multiplicaiton.
+ * This function is similar to fma().  fma() retains full precision of the multiplied result
+ * and rounds only after the addition.  mad() rounds after the multiplication and the addition.
+ * In rs_fp_relaxed mode, mad() may not do the rounding after multiplicaiton.
  */
 extern float __attribute__((const, overloadable))
     mad(float multiplicand1, float multiplicand2, float offset);
@@ -2453,7 +2452,8 @@ extern ulong4 __attribute__((const, overloadable))
  *
  * Returns start + ((stop - start) * fraction).
  *
- * This can be useful for mixing two values.  For example, to create a new color that is 40% color1 and 60% color2, use mix(color1, color2, 0.6f).
+ * This can be useful for mixing two values.  For example, to create a new color that is
+ * 40% color1 and 60% color2, use mix(color1, color2, 0.6f).
  */
 extern float __attribute__((const, overloadable))
     mix(float start, float stop, float fraction);
@@ -2481,13 +2481,14 @@ extern float4 __attribute__((const, overloadable))
  *
  * Returns the integral and fractional components of a number.
  *
- * Both components will have the same sign as x.  For example, for an input of -3.72f, iret will be set to -3.f and .72f will be returned.
+ * Both components will have the same sign as x.  For example, for an input of -3.72f,
+ * iret will be set to -3.f and .72f will be returned.
  *
  * Parameters:
- *   v: Source value
+ *   v: Source value.
  *   integral_part: *integral_part will be set to the integral portion of the number.
  *
- * Returns: The floating point portion of the value.
+ * Returns: Floating point portion of the value.
  */
 extern float __attribute__((overloadable))
     modf(float v, float* integral_part);
@@ -2517,8 +2518,7 @@ extern float __attribute__((const, overloadable))
  *
  * Returns the approximate inverse cosine, in radians.
  *
- * This function yields undefined results from input values less than -1 or greater
- * than 1.
+ * This function yields undefined results from input values less than -1 or greater than 1.
  *
  * See also acos().
  */
@@ -2576,8 +2576,7 @@ extern float4 __attribute__((const, overloadable))
  *
  * To get an inverse cosine measured in degrees, use acospi(a) * 180.f.
  *
- * This function yields undefined results from input values less than -1 or greater
- * than 1.
+ * This function yields undefined results from input values less than -1 or greater than 1.
  *
  * See also acospi().
  */
@@ -2606,8 +2605,7 @@ extern float4 __attribute__((const, overloadable))
  *
  * Returns the approximate inverse sine, in radians.
  *
- * This function yields undefined results from input values less than -1 or greater
- * than 1.
+ * This function yields undefined results from input values less than -1 or greater than 1.
  *
  * See also asin().
  */
@@ -2665,8 +2663,7 @@ extern float4 __attribute__((const, overloadable))
  *
  * To get an inverse sine measured in degrees, use asinpi(a) * 180.f.
  *
- * This function yields undefined results from input values less than -1 or greater
- * than 1.
+ * This function yields undefined results from input values less than -1 or greater than 1.
  *
  * See also asinpi().
  */
@@ -2725,8 +2722,8 @@ extern float4 __attribute__((const, overloadable))
  * See also atan2().
  *
  * Parameters:
- *   numerator: The numerator
- *   denominator: The denominator.  Can be 0.
+ *   numerator: Numerator.
+ *   denominator: Denominator.  Can be 0.
  */
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 extern float __attribute__((const, overloadable))
@@ -2751,15 +2748,16 @@ extern float4 __attribute__((const, overloadable))
 /*
  * native_atan2pi: Approximate inverse tangent of a ratio, divided by pi
  *
- * Returns the approximate inverse tangent of (numerator / denominator), in radians, divided by pi.
+ * Returns the approximate inverse tangent of (numerator / denominator),
+ * in radians, divided by pi.
  *
  * To get an inverse tangent measured in degrees, use atan2pi(n, d) * 180.f.
  *
  * See also atan2pi().
  *
  * Parameters:
- *   numerator: The numerator
- *   denominator: The denominator.  Can be 0.
+ *   numerator: Numerator.
+ *   denominator: Denominator.  Can be 0.
  */
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 extern float __attribute__((const, overloadable))
@@ -2977,7 +2975,8 @@ extern float4 __attribute__((const, overloadable))
  *
  * Fast approximate exp.
  *
- * It is valid for inputs from -86.f to 86.f.  The precision is no worse than what would be expected from using 16 bit floating point values.
+ * It is valid for inputs from -86.f to 86.f.  The precision is no worse than what would be
+ * expected from using 16 bit floating point values.
  *
  * See also exp().
  */
@@ -3006,7 +3005,8 @@ extern float4 __attribute__((const, overloadable))
  *
  * Fast approximate exp10.
  *
- * It is valid for inputs from -37.f to 37.f.  The precision is no worse than what would be expected from using 16 bit floating point values.
+ * It is valid for inputs from -37.f to 37.f.  The precision is no worse than what would be
+ * expected from using 16 bit floating point values.
  *
  * See also exp10().
  */
@@ -3035,7 +3035,8 @@ extern float4 __attribute__((const, overloadable))
  *
  * Fast approximate exp2.
  *
- * It is valid for inputs from -125.f to 125.f.  The precision is no worse than what would be expected from using 16 bit floating point values.
+ * It is valid for inputs from -125.f to 125.f.  The precision is no worse than what would be
+ * expected from using 16 bit floating point values.
  *
  * See also exp2().
  */
@@ -3374,10 +3375,10 @@ extern float4 __attribute__((const, overloadable))
  * See also sincos().
  *
  * Parameters:
- *   v: The incoming value in radians.
+ *   v: Incoming value in radians.
  *   cos: *cos will be set to the cosine value.
  *
- * Returns: sine
+ * Returns: Sine.
  */
 #if (defined(RS_VERSION) && (RS_VERSION >= 21))
 extern float __attribute__((overloadable))
@@ -3568,9 +3569,8 @@ extern float4 __attribute__((const, overloadable))
  *
  * Returns the next representable floating point number from v towards target.
  *
- * In rs_fp_relaxed mode, a denormalized input value may not yield the next
- * denormalized  value, as support of denormalized values is optional in
- * relaxed mode.
+ * In rs_fp_relaxed mode, a denormalized input value may not yield the next denormalized
+ * value, as support of denormalized values is optional in relaxed mode.
  */
 extern float __attribute__((const, overloadable))
     nextafter(float v, float target);
@@ -3589,7 +3589,8 @@ extern float4 __attribute__((const, overloadable))
  *
  * Returns base raised to the power exponent, i.e. base ^ exponent.
  *
- * pown() and powr() are similar.  pown() takes an integer exponent. powr() assumes the base to be non-negative.
+ * pown() and powr() are similar.  pown() takes an integer exponent. powr() assumes the
+ * base to be non-negative.
  */
 extern float __attribute__((const, overloadable))
     pow(float base, float exponent);
@@ -3608,7 +3609,8 @@ extern float4 __attribute__((const, overloadable))
  *
  * Returns base raised to the power exponent, i.e. base ^ exponent.
  *
- * pow() and powr() are similar.  The both take a float exponent. powr() also assumes the base to be non-negative.
+ * pow() and powr() are similar.  The both take a float exponent. powr() also assumes the
+ * base to be non-negative.
  */
 extern float __attribute__((const, overloadable))
     pown(float base, int exponent);
@@ -3627,7 +3629,8 @@ extern float4 __attribute__((const, overloadable))
  *
  * Returns base raised to the power exponent, i.e. base ^ exponent.  base must be >= 0.
  *
- * pow() and pown() are similar.  They both make no assumptions about the base.  pow() takes a float exponent while pown() take an integer.
+ * pow() and pown() are similar.  They both make no assumptions about the base.
+ * pow() takes a float exponent while pown() take an integer.
  *
  * See also native_powr().
  */
@@ -3663,7 +3666,8 @@ extern float4 __attribute__((const, overloadable))
 /*
  * remainder: Remainder of a division
  *
- * Returns the remainder of (numerator / denominator), where the quotient is rounded towards the nearest integer.
+ * Returns the remainder of (numerator / denominator), where the quotient is rounded towards
+ * the nearest integer.
  *
  * The function fmod() is similar but rounds toward the closest interger.
  * For example, fmod(-3.8f, 2.f) returns -1.8f (-3.8f - -1.f * 2.f)
@@ -3688,16 +3692,20 @@ extern float4 __attribute__((const, overloadable))
  *
  * Only the sign and lowest three bits of the quotient are guaranteed to be accurate.
  *
- * This function is useful for implementing periodic functions.  The low three bits of the quotient gives the quadrant and the remainder the distance within the quadrant.  For example, an implementation of sin(x) could call remquo(x, PI / 2.f, &quadrant) to reduce very large value of x to something within a limited range.
+ * This function is useful for implementing periodic functions.  The low three bits of the
+ * quotient gives the quadrant and the remainder the distance within the quadrant.
+ * For example, an implementation of sin(x) could call remquo(x, PI / 2.f, &quadrant)
+ * to reduce very large value of x to something within a limited range.
  *
- * Example: remquo(-23.5f, 8.f, &quot) sets the lowest three bits of quot to 3 and the sign negative.  It returns 0.5f.
+ * Example: remquo(-23.5f, 8.f, &quot) sets the lowest three bits of quot to 3
+ * and the sign negative.  It returns 0.5f.
  *
  * Parameters:
- *   numerator: The numerator.
- *   denominator: The denominator.
+ *   numerator: Numerator.
+ *   denominator: Denominator.
  *   quotient: *quotient will be set to the integer quotient.
  *
- * Returns: The remainder, precise only for the low three bits.
+ * Returns: Remainder, precise only for the low three bits.
  */
 extern float __attribute__((overloadable))
     remquo(float numerator, float denominator, int* quotient);
@@ -3716,7 +3724,9 @@ extern float4 __attribute__((overloadable))
  *
  * Rounds to the nearest integral value.
  *
- * rint() rounds half values to even.  For example, rint(0.5f) returns 0.f and rint(1.5f) returns 2.f.  Similarly, rint(-0.5f) returns -0.f and rint(-1.5f) returns -2.f.
+ * rint() rounds half values to even.  For example, rint(0.5f) returns 0.f and
+ * rint(1.5f) returns 2.f.  Similarly, rint(-0.5f) returns -0.f and
+ * rint(-1.5f) returns -2.f.
  *
  * round() is similar but rounds away from zero.  trunc() truncates the decimal fraction.
  */
@@ -3756,7 +3766,9 @@ extern float4 __attribute__((const, overloadable))
  *
  * Round to the nearest integral value.
  *
- * round() rounds half values away from zero.  For example, round(0.5f) returns 1.f and round(1.5f) returns 2.f.  Similarly, round(-0.5f) returns -1.f and round(-1.5f) returns -2.f.
+ * round() rounds half values away from zero.  For example, round(0.5f) returns 1.f
+ * and round(1.5f) returns 2.f.  Similarly, round(-0.5f) returns -1.f
+ * and round(-1.5f) returns -2.f.
  *
  * rint() is similar but rounds half values toward even.  trunc() truncates the decimal fraction.
  */
@@ -3839,10 +3851,10 @@ extern float4 __attribute__((const, overloadable))
  * See also native_sincos().
  *
  * Parameters:
- *   v: The incoming value in radians
+ *   v: Incoming value in radians.
  *   cos: *cos will be set to the cosine value.
  *
- * Returns: sine of v
+ * Returns: Sine of v.
  */
 extern float __attribute__((overloadable))
     sincos(float v, float* cos);
@@ -3920,7 +3932,9 @@ extern float4 __attribute__((const, overloadable))
  *
  * Returns 0.f if v < edge, 1.f otherwise.
  *
- * This can be useful to create conditional computations without using loops and branching instructions.  For example, instead of computing (a[i] < b[i]) ? 0.f : atan2(a[i], b[i]) for the corresponding elements of a vector, you could instead use step(a, b) * atan2(a, b).
+ * This can be useful to create conditional computations without using loops and branching
+ * instructions.  For example, instead of computing (a[i] < b[i]) ? 0.f : atan2(a[i], b[i])
+ * for the corresponding elements of a vector, you could instead use step(a, b) * atan2(a, b).
  */
 extern float __attribute__((const, overloadable))
     step(float edge, float v);
@@ -4065,9 +4079,9 @@ extern float4 __attribute__((const, overloadable))
  * Clamp a value between low and high.
  *
  * Parameters:
- *   amount: The value to clamp
- *   low: Lower bound
- *   high: Upper bound
+ *   amount: Value to clamp.
+ *   low: Lower bound.
+ *   high: Upper bound.
  */
 extern char __attribute__((const, always_inline, overloadable))
     rsClamp(char amount, char low, char high);

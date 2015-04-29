@@ -19,26 +19,52 @@
 /*
  * rs_object_info.rsh: Object Characteristics Functions
  *
- * The functions below can be used to query the characteristics of an allocation,
- * element, or sampler object.  These objects are created from Java.
+ * The functions below can be used to query the characteristics of an Allocation, Element,
+ * or Sampler object.  These objects are created from Java.  You can't create them from a
+ * script.
  *
- * The term "element" is used a bit ambiguously in RenderScript, as both
- * the type of an item of an allocation and the instantiation of that type:
+ * Allocations:
+ *
+ * Allocations are the primary method used to pass data to and from RenderScript kernels.
+ *
+ * They are a structured collection of cells that can be used to store bitmaps, textures,
+ * arbitrary data points, etc.
+ *
+ * This collection of cells may have many dimensions (X, Y, Z, Array0, Array1, Array2, Array3),
+ * faces (for cubemaps), and level of details (for mipmapping).
+ *
+ * See the android.renderscript.Allocation for details on to create Allocations.
+ *
+ * Elements:
+ *
+ * The term "element" is used a bit ambiguously in RenderScript, as both type information
+ * for the cells of an Allocation and the instantiation of that type.  For example:
  * - rs_element is a handle to a type specification, and
- * - In functions like rsGetElementAt(), "element" means the instantiation
- *     of the type, i.e. an item of an allocation.
+ * - In functions like rsGetElementAt(), "element" means the instantiation of the type,
+ *     i.e. a cell of an Allocation.
  *
  * The functions below let you query the characteristics of the type specificiation.
  *
- * To create complex elements, use the Element.Builder Java class.
- * For common elements, in Java you can simply use one of the many predefined elements
- * like F32_2.  You can't create elements from a script.
+ * An Element can specify a simple data types as found in C, e.g. an integer, float, or
+ * boolean.  It can also specify a handle to a RenderScript object.  See rs_data_type for
+ * a list of basic types.
  *
- * An element can be a simple data type as found in C/C++, a handle type,
- * a structure, or a fixed size vector (of size 2, 3, or 4) of sub-elements.
+ * Elements can specify fixed size vector (of size 2, 3, or 4) versions of the basic types.
+ * Elements can be grouped together into complex Elements, creating the equivalent of
+ * C structure definitions.
  *
- * Elements can also have a kind, which is semantic information used mostly to
- * interpret pixel data.
+ * Elements can also have a kind, which is semantic information used to interpret pixel
+ * data.  See rs_data_kind.
+ *
+ * When creating Allocations of common elements, you can simply use one of the many predefined
+ * Elements like F32_2.
+ *
+ * To create complex Elements, use the Element.Builder Java class.
+ *
+ * Samplers:
+ *
+ * Samplers objects define how Allocations can be read as structure within a kernel.
+ * See android.renderscript.S.
  */
 
 #ifndef RENDERSCRIPT_RS_OBJECT_INFO_RSH
@@ -47,8 +73,8 @@
 /*
  * rsAllocationGetDimFaces: Presence of more than one face
  *
- * If the allocation is a cubemap, this function returns 1 if there's more than
- * one face present.  In all other cases, it returns 0.
+ * If the Allocation is a cubemap, this function returns 1 if there's more than one face
+ * present.  In all other cases, it returns 0.
  *
  * Use rsGetDimHasFaces() to get the dimension of a currently running kernel.
  *
@@ -60,8 +86,8 @@ extern uint32_t __attribute__((overloadable))
 /*
  * rsAllocationGetDimLOD: Presence of levels of detail
  *
- * Query an allocation for the presence of more than one Level Of Detail.
- * This is useful for mipmaps.
+ * Query an Allocation for the presence of more than one Level Of Detail.  This is useful
+ * for mipmaps.
  *
  * Use rsGetDimLod() to get the dimension of a currently running kernel.
  *
@@ -73,11 +99,11 @@ extern uint32_t __attribute__((overloadable))
 /*
  * rsAllocationGetDimX: Size of the X dimension
  *
- * Returns the size of the X dimension of the allocation.
+ * Returns the size of the X dimension of the Allocation.
  *
  * Use rsGetDimX() to get the dimension of a currently running kernel.
  *
- * Returns: The X dimension of the allocation.
+ * Returns: X dimension of the Allocation.
  */
 extern uint32_t __attribute__((overloadable))
     rsAllocationGetDimX(rs_allocation a);
@@ -85,12 +111,12 @@ extern uint32_t __attribute__((overloadable))
 /*
  * rsAllocationGetDimY: Size of the Y dimension
  *
- * Returns the size of the Y dimension of the allocation.
- * If the allocation has less than two dimensions, returns 0.
+ * Returns the size of the Y dimension of the Allocation.  If the Allocation has less
+ * than two dimensions, returns 0.
  *
  * Use rsGetDimY() to get the dimension of a currently running kernel.
  *
- * Returns: The Y dimension of the allocation.
+ * Returns: Y dimension of the Allocation.
  */
 extern uint32_t __attribute__((overloadable))
     rsAllocationGetDimY(rs_allocation a);
@@ -98,23 +124,26 @@ extern uint32_t __attribute__((overloadable))
 /*
  * rsAllocationGetDimZ: Size of the Z dimension
  *
- * Returns the size of the Z dimension of the allocation.
- * If the allocation has less than three dimensions, returns 0.
+ * Returns the size of the Z dimension of the Allocation.  If the Allocation has less
+ * than three dimensions, returns 0.
  *
  * Use rsGetDimZ() to get the dimension of a currently running kernel.
  *
- * Returns: The Z dimension of the allocation.
+ * Returns: Z dimension of the Allocation.
  */
 extern uint32_t __attribute__((overloadable))
     rsAllocationGetDimZ(rs_allocation a);
 
 /*
- * Get the element object describing the allocation's layout
+ * rsAllocationGetElement: Get the object that describes the cell of an Allocation
+ *
+ * Get the Element object describing the type, kind, and other characteristics of a cell
+ * of an Allocation.  See the rsElement* functions below.
  *
  * Parameters:
- *   a: allocation to get data from
+ *   a: Allocation to get data from.
  *
- * Returns: element describing allocation layout
+ * Returns: Element describing Allocation layout.
  */
 extern rs_element __attribute__((overloadable))
     rsAllocationGetElement(rs_allocation a);
@@ -122,12 +151,10 @@ extern rs_element __attribute__((overloadable))
 /*
  * rsClearObject: Release an object
  *
- * Tells the run time that this handle will no longer be used to access the
- * the related object.  If this was the last handle to that object, resource
- * recovery may happen.
+ * Tells the run time that this handle will no longer be used to access the the related
+ * object.  If this was the last handle to that object, resource recovery may happen.
  *
- * After calling this function, *dst will be set to an empty handle.  See
- * rsIsObject().
+ * After calling this function, *dst will be set to an empty handle.  See rsIsObject().
  */
 extern void __attribute__((overloadable))
     rsClearObject(rs_element* dst);
@@ -152,9 +179,8 @@ extern void __attribute__((overloadable))
  * This function does not validate that the internal pointer used in the handle
  * points to an actual valid object; it only checks for null.
  *
- * This function can be used to check the element returned by
- * rsElementGetSubElement() or see if rsClearObject() has been called on a
- * handle.
+ * This function can be used to check the Element returned by rsElementGetSubElement()
+ * or see if rsClearObject() has been called on a handle.
  */
 extern bool __attribute__((overloadable))
     rsIsObject(rs_element v);
@@ -172,9 +198,9 @@ extern bool __attribute__((overloadable))
     rsIsObject(rs_script v);
 
 /*
- * rsElementGetBytesSize: Return the size of an element
+ * rsElementGetBytesSize: Size of an Element
  *
- * Returns the size in bytes that an instantiation of this element will occupy.
+ * Returns the size in bytes that an instantiation of this Element will occupy.
  */
 #if (defined(RS_VERSION) && (RS_VERSION >= 16))
 extern uint32_t __attribute__((overloadable))
@@ -182,9 +208,9 @@ extern uint32_t __attribute__((overloadable))
 #endif
 
 /*
- * rsElementGetDataKind: Return the kind of an element
+ * rsElementGetDataKind: Kind of an Element
  *
- * Returns the element's data kind.  This is used to interpret pixel data.
+ * Returns the Element's data kind.  This is used to interpret pixel data.
  *
  * See rs_data_kind.
  */
@@ -194,17 +220,18 @@ extern rs_data_kind __attribute__((overloadable))
 #endif
 
 /*
- * rsElementGetDataType: Return the data type of an element
+ * rsElementGetDataType: Data type of an Element
  *
- * Returns the element's base data type.  This can be a type similar to C/C++ (e.g. RS_TYPE_UNSIGNED_8),
- * a handle (e.g. RS_TYPE_ALLOCATION and RS_TYPE_ELEMENT), or a more complex numerical type
- * (e.g.RS_TYPE_UNSIGNED_5_6_5 and RS_TYPE_MATRIX_4X4).
- *
- * If the element describes a vector, this function returns the data type of one of its items.
- *
- * If the element describes a structure, RS_TYPE_NONE is returned.
- *
+ * Returns the Element's base data type.  This can be a type similar to C/C++ (e.g.
+ * RS_TYPE_UNSIGNED_8), a handle (e.g. RS_TYPE_ALLOCATION and RS_TYPE_ELEMENT), or a
+ * more complex numerical type (e.g. RS_TYPE_UNSIGNED_5_6_5 and RS_TYPE_MATRIX_4X4).
  * See rs_data_type.
+ *
+ * If the Element describes a vector, this function returns the data type of one of its items.
+ * Use rsElementGetVectorSize to get the size of the vector.
+ *
+ * If the Element describes a structure, RS_TYPE_NONE is returned.  Use the rsElementGetSub*
+ * functions to explore this complex Element.
  */
 #if (defined(RS_VERSION) && (RS_VERSION >= 16))
 extern rs_data_type __attribute__((overloadable))
@@ -212,19 +239,19 @@ extern rs_data_type __attribute__((overloadable))
 #endif
 
 /*
- * rsElementGetSubElement: Return a sub element of a complex element
+ * rsElementGetSubElement: Sub-element of a complex Element
  *
- * For the element represents a structure, this function returns the sub-element at
- * the specified index.
+ * For Elements that represents a structure, this function returns the sub-element at the
+ * specified index.
  *
- * If the element is not a structure or the index is greater or equal to the number
- * of sub-elements, an invalid handle is returned.
+ * If the Element is not a structure or the index is greater or equal to the number of
+ * sub-elements, an invalid handle is returned.
  *
  * Parameters:
- *   e: Element to query
- *   index: Index of the sub-element to return
+ *   e: Element to query.
+ *   index: Index of the sub-element to return.
  *
- * Returns: Sub-element at the given index
+ * Returns: Sub-element at the given index.
  */
 #if (defined(RS_VERSION) && (RS_VERSION >= 16))
 extern rs_element __attribute__((overloadable))
@@ -232,17 +259,17 @@ extern rs_element __attribute__((overloadable))
 #endif
 
 /*
- * rsElementGetSubElementArraySize: Return the array size of a sub element of a complex element
+ * rsElementGetSubElementArraySize: Array size of a sub-element of a complex Element
  *
- * For complex elements, some sub-elements could be statically
- * sized arrays. This function returns the array size of the
- * sub-element at the index.
+ * For complex Elements, sub-elements can be statically sized arrays.  This function
+ * returns the array size of the sub-element at the index.  This sub-element repetition
+ * is different than fixed size vectors.
  *
  * Parameters:
- *   e: Element to query
- *   index: Index of the sub-element
+ *   e: Element to query.
+ *   index: Index of the sub-element.
  *
- * Returns: Array size of the sub-element at the given index
+ * Returns: Array size of the sub-element.
  */
 #if (defined(RS_VERSION) && (RS_VERSION >= 16))
 extern uint32_t __attribute__((overloadable))
@@ -250,17 +277,16 @@ extern uint32_t __attribute__((overloadable))
 #endif
 
 /*
- * rsElementGetSubElementCount: Return the number of sub-elements
+ * rsElementGetSubElementCount: Number of sub-elements
  *
- * Elements could be simple, such as an int or a float, or a
- * structure with multiple sub-elements, such as a collection of
- * floats, float2, float4.  This function returns zero for simple
- * elements or the number of sub-elements otherwise.
+ * Elements can be simple, such as an int or a float, or a structure with multiple
+ * sub-elements.  This function returns zero for simple Elements and the number of
+ * sub-elements for complex Elements.
  *
  * Parameters:
- *   e: Element to get data from
+ *   e: Element to get data from.
  *
- * Returns: Number of sub-elements in this element
+ * Returns: Number of sub-elements.
  */
 #if (defined(RS_VERSION) && (RS_VERSION >= 16))
 extern uint32_t __attribute__((overloadable))
@@ -268,18 +294,18 @@ extern uint32_t __attribute__((overloadable))
 #endif
 
 /*
- * rsElementGetSubElementName: Return the name of a sub-element
+ * rsElementGetSubElementName: Name of a sub-element
  *
- * For complex elements, this function returns the name of the sub-element
- * at the specified index.
+ * For complex Elements, this function returns the name of the sub-element at the
+ * specified index.
  *
  * Parameters:
- *   e: Element to get data from
- *   index: Index of the sub-element
- *   name: Array to store the name into
- *   nameLength: Length of the provided name array
+ *   e: Element to get data from.
+ *   index: Index of the sub-element.
+ *   name: Address of the array to store the name into.
+ *   nameLength: Length of the provided name array.
  *
- * Returns: Number of characters actually written, excluding the null terminator
+ * Returns: Number of characters copied, excluding the null terminator.
  */
 #if (defined(RS_VERSION) && (RS_VERSION >= 16))
 extern uint32_t __attribute__((overloadable))
@@ -287,16 +313,16 @@ extern uint32_t __attribute__((overloadable))
 #endif
 
 /*
- * rsElementGetSubElementNameLength: Return the length of the name of a sub-element
+ * rsElementGetSubElementNameLength: Length of the name of a sub-element
  *
- * For complex elements, this function will return the length of
- * sub-element name at index
+ * For complex Elements, this function returns the length of the name of the sub-element
+ * at the specified index.
  *
  * Parameters:
- *   e: Element to get data from
- *   index: Index of the sub-element to return
+ *   e: Element to get data from.
+ *   index: Index of the sub-element.
  *
- * Returns: Length of the sub-element name including the null terminator (size of buffer needed to write the name)
+ * Returns: Length of the sub-element name including the null terminator.
  */
 #if (defined(RS_VERSION) && (RS_VERSION >= 16))
 extern uint32_t __attribute__((overloadable))
@@ -304,14 +330,19 @@ extern uint32_t __attribute__((overloadable))
 #endif
 
 /*
- * This function specifies the location of a sub-element within
- * the element
+ * rsElementGetSubElementOffsetBytes: Offset of the instantiated sub-element
+ *
+ * This function returns the relative position of the instantiation of the specified
+ * sub-element within the instantiation of the Element.
+ *
+ * For example, if the Element describes a 32 bit float followed by a 32 bit integer,
+ * the offset return for the first will be 0 and the second 4.
  *
  * Parameters:
- *   e: Element to get data from
- *   index: Index of the sub-element
+ *   e: Element to get data from.
+ *   index: Index of the sub-element.
  *
- * Returns: Offset in bytes of sub-element in this element at given index
+ * Returns: Offset in bytes.
  */
 #if (defined(RS_VERSION) && (RS_VERSION >= 16))
 extern uint32_t __attribute__((overloadable))
@@ -319,12 +350,15 @@ extern uint32_t __attribute__((overloadable))
 #endif
 
 /*
- * Returns the element's vector size
+ * rsElementGetVectorSize: Vector size of the Element
+ *
+ * Returns the Element's vector size.  If the Element does not represent a vector,
+ * 1 is returned.
  *
  * Parameters:
- *   e: Element to get data from
+ *   e: Element to get data from.
  *
- * Returns: Length of the element vector (for float2, float3, etc.)
+ * Returns: Length of the element vector.
  */
 #if (defined(RS_VERSION) && (RS_VERSION >= 16))
 extern uint32_t __attribute__((overloadable))
@@ -332,24 +366,22 @@ extern uint32_t __attribute__((overloadable))
 #endif
 
 /*
- * rsGetAllocation: Returns the Allocation for a given pointer
+ * rsGetAllocation: Return the Allocation for a given pointer
  *
  * DEPRECATED.  Do not use.
  *
- * Returns the Allocation for a given pointer.  The pointer should point within
- * a valid allocation.  The results are undefined if the pointer is not from a
- * valid allocation.
+ * Returns the Allocation for a given pointer.  The pointer should point within a valid
+ * allocation.  The results are undefined if the pointer is not from a valid Allocation.
  */
 extern rs_allocation __attribute__((overloadable))
     rsGetAllocation(const void* p);
 
 /*
- *  Get sampler anisotropy
+ * rsSamplerGetAnisotropy: Anisotropy of the Sampler
  *
- * Parameters:
- *   s: sampler to query
+ * Get the Sampler's anisotropy.
  *
- * Returns: anisotropy
+ * See android.renderscript.S.
  */
 #if (defined(RS_VERSION) && (RS_VERSION >= 16))
 extern float __attribute__((overloadable))
@@ -357,12 +389,11 @@ extern float __attribute__((overloadable))
 #endif
 
 /*
- * Get sampler magnification value
+ * rsSamplerGetMagnification: Sampler magnification value
  *
- * Parameters:
- *   s: sampler to query
+ * Get the Sampler's magnification value.
  *
- * Returns: magnification value
+ * See android.renderscript.S.
  */
 #if (defined(RS_VERSION) && (RS_VERSION >= 16))
 extern rs_sampler_value __attribute__((overloadable))
@@ -370,12 +401,11 @@ extern rs_sampler_value __attribute__((overloadable))
 #endif
 
 /*
- * Get sampler minification value
+ * rsSamplerGetMinification: Sampler minification value
  *
- * Parameters:
- *   s: sampler to query
+ * Get the Sampler's minification value.
  *
- * Returns: minification value
+ * See android.renderscript.S.
  */
 #if (defined(RS_VERSION) && (RS_VERSION >= 16))
 extern rs_sampler_value __attribute__((overloadable))
@@ -383,12 +413,11 @@ extern rs_sampler_value __attribute__((overloadable))
 #endif
 
 /*
- * Get sampler wrap S value
+ * rsSamplerGetWrapS: Sampler wrap S value
  *
- * Parameters:
- *   s: sampler to query
+ * Get the Sampler's wrap S value.
  *
- * Returns: wrap S value
+ * See android.renderscript.S.
  */
 #if (defined(RS_VERSION) && (RS_VERSION >= 16))
 extern rs_sampler_value __attribute__((overloadable))
@@ -396,12 +425,11 @@ extern rs_sampler_value __attribute__((overloadable))
 #endif
 
 /*
- * Get sampler wrap T value
+ * rsSamplerGetWrapT: Sampler wrap T value
  *
- * Parameters:
- *   s: sampler to query
+ * Get the sampler's wrap T value.
  *
- * Returns: wrap T value
+ * See android.renderscript.S.
  */
 #if (defined(RS_VERSION) && (RS_VERSION >= 16))
 extern rs_sampler_value __attribute__((overloadable))

@@ -17,8 +17,8 @@
 header:
 summary: Conversion Functions
 description:
- The functions below convert from a numerical vector type to another,
- of from one color representation to another.
+ The functions below convert from a numerical vector type to another, of from one color
+ representation to another.
 end:
 
 function: convert_#3#1
@@ -31,10 +31,9 @@ ret: #3#1
 arg: #2#1 v, compatible(#3)
 summary: Convert numerical vectors
 description:
- Converts a vector from one numerical type to another.  The conversion are
- done entry per entry.
+ Converts a vector from one numerical type to another.  The conversion are done entry per entry.
 
- E.g calling <code>a = convert_short3(b)</code> is equivalent to doing
+ E.g calling <code>a = convert_short3(b);</code> is equivalent to doing
  <code>a.x = (short)b.x; a.y = (short)b.y; a.z = (short)b.z;</code>.
 
  Converting floating point values to integer types truncates.
@@ -82,13 +81,12 @@ arg: float g, "Green component."
 arg: float b, "Blue component."
 summary: Create a uchar4 RGBA from floats
 description:
- Packs three or four floating point RGBA values into a uchar4.  The RGBA values should
- be between 0.0 and 1.0 inclusive.  Values outside of this range are clamped to
- this range.  However numbers greater than INT_MAX or less than INT_MIN can result
- in undefined behavior.
+ Packs three or four floating point RGBA values into a uchar4.  The RGBA values should be
+ between 0.0 and 1.0 inclusive.  Values outside of this range are clamped to this range.
+ However numbers greater than INT_MAX or less than INT_MIN can result in undefined behavior.
 
- If the alpha component is not specified, it is assumed to be 1.0, i.e. the
- result will have an alpha set to 255.
+ If the alpha component is not specified, it is assumed to be 1.0, i.e. the result will
+ have an alpha set to 255.
 test: none
 end:
 
@@ -125,8 +123,7 @@ ret: float4
 arg: uchar4 c
 summary: Create a float4 RGBA from uchar4
 description:
- Unpacks a uchar4 color to float4.  The resulting floats will be between 0.0 and
- 1.0 inclusive.
+ Unpacks a uchar4 color to float4.  The resulting floats will be between 0.0 and 1.0 inclusive.
 test: none
 end:
 
@@ -135,9 +132,9 @@ attrib: const
 w: 4
 t: u8, f32
 ret: #2#1
-arg: uchar y, "Luminance component"
-arg: uchar u, "U chrominance component"
-arg: uchar v, "V chrominance component"
+arg: uchar y, "Luminance component."
+arg: uchar u, "U chrominance component."
+arg: uchar v, "V chrominance component."
 summary: Convert a YUV value to RGBA
 description:
  Converts a color from a YUV representation to RGBA.
