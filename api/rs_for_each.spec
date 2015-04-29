@@ -109,8 +109,8 @@ description:
  This can be done by defining an rs_allocation variable and not initializing it.  E.g.<code><br/>
  rs_script gCustomScript;<br/>
  void specializedProcessing(rs_allocation in) {<br/>
-   rs_allocation ignoredOut;<br/>
-   rsForEach(gCustomScript, in, ignoredOut);<br/>
+ &nbsp;&nbsp;rs_allocation ignoredOut;<br/>
+ &nbsp;&nbsp;rsForEach(gCustomScript, in, ignoredOut);<br/>
  }<br/></code>
 
  If both input and output allocations are specified, they must have the same dimensions.
