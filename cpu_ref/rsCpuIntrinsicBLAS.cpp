@@ -406,13 +406,13 @@ void RsdCpuScriptIntrinsicBLAS::invokeForEach(uint32_t slot,
                     X, call->incX, Y, call->incY, A, lda);
         break;
     case (RsBlas_cher):
-        initABC(ain, sizeof(float)*2, &X, &A, nullptr, &ldb, &lda, nullptr);
+        initABC(ain, sizeof(float)*2, &X, nullptr, &A, &ldb, nullptr, &lda);
         cblas_cher(CblasRowMajor, Uplo, call->N, call->alpha.f,
                    X, call->incX, A, lda);
         break;
     // packed 1D Allocations only
     case (RsBlas_chpr):
-        initABC(ain, sizeof(float)*2, &X, &A, nullptr, &ldb, &lda, nullptr);
+        initABC(ain, sizeof(float)*2, &X, nullptr, &A, &ldb, nullptr, &lda);
         cblas_chpr(CblasRowMajor, Uplo, call->N, call->alpha.f, X,
                    call->incX, A);
         break;
@@ -453,13 +453,13 @@ void RsdCpuScriptIntrinsicBLAS::invokeForEach(uint32_t slot,
                     X, call->incX, Y, call->incY, A, lda);
         break;
     case (RsBlas_zher):
-        initABC(ain, sizeof(double)*2, &X, &A, nullptr, &ldb, &lda, nullptr);
+        initABC(ain, sizeof(double)*2, &X, nullptr, &A, &ldb, nullptr, &lda);
         cblas_zher(CblasRowMajor, Uplo, call->N, call->alpha.d,
                    X, call->incX, A, lda);
         break;
     // packed 1D Allocations only
     case (RsBlas_zhpr):
-        initABC(ain, sizeof(double)*2, &X, &A, nullptr, &ldb, &lda, nullptr);
+        initABC(ain, sizeof(double)*2, &X, nullptr, &A, &ldb, nullptr, &lda);
         cblas_zhpr(CblasRowMajor, Uplo, call->N, call->alpha.d, X,
                    call->incX, A);
         break;
