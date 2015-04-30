@@ -41,7 +41,11 @@
  */
 #ifndef __LP64__
 #if (defined(RS_VERSION) && (RS_VERSION >= 16) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 22))
-typedef enum {
+typedef enum __attribute__((
+#if (defined(RS_VERSION) && (RS_VERSION >= 22))
+deprecated
+#endif
+)) {
     RS_BLEND_SRC_ZERO = 0,
     RS_BLEND_SRC_ONE = 1,
     RS_BLEND_SRC_DST_COLOR = 2,
@@ -64,7 +68,11 @@ typedef enum {
  */
 #ifndef __LP64__
 #if (defined(RS_VERSION) && (RS_VERSION >= 16) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 22))
-typedef enum {
+typedef enum __attribute__((
+#if (defined(RS_VERSION) && (RS_VERSION >= 22))
+deprecated
+#endif
+)) {
     RS_BLEND_DST_ZERO = 0,
     RS_BLEND_DST_ONE = 1,
     RS_BLEND_DST_SRC_COLOR = 2,
@@ -86,7 +94,11 @@ typedef enum {
  */
 #ifndef __LP64__
 #if (defined(RS_VERSION) && (RS_VERSION >= 16) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 22))
-typedef enum {
+typedef enum __attribute__((
+#if (defined(RS_VERSION) && (RS_VERSION >= 22))
+deprecated
+#endif
+)) {
     RS_CULL_BACK = 0,
     RS_CULL_FRONT = 1,
     RS_CULL_NONE = 2,
@@ -105,7 +117,11 @@ typedef enum {
  */
 #ifndef __LP64__
 #if (defined(RS_VERSION) && (RS_VERSION >= 16) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 22))
-typedef enum {
+typedef enum __attribute__((
+#if (defined(RS_VERSION) && (RS_VERSION >= 22))
+deprecated
+#endif
+)) {
     RS_DEPTH_FUNC_ALWAYS = 0, // Always drawn
     RS_DEPTH_FUNC_LESS = 1, // Drawn if the incoming depth value is less than that in the depth buffer
     RS_DEPTH_FUNC_LEQUAL = 2, // Drawn if the incoming depth value is less or equal to that in the depth buffer
@@ -127,7 +143,11 @@ typedef enum {
  */
 #ifndef __LP64__
 #if (defined(RS_VERSION) && (RS_VERSION >= 16) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 22))
-typedef enum {
+typedef enum __attribute__((
+#if (defined(RS_VERSION) && (RS_VERSION >= 22))
+deprecated
+#endif
+)) {
     RS_PRIMITIVE_POINT = 0, // Vertex data will be rendered as a series of points
     RS_PRIMITIVE_LINE = 1, // Vertex pairs will be rendered as lines
     RS_PRIMITIVE_LINE_STRIP = 2, // Vertex data will be rendered as a connected line strip
@@ -149,7 +169,11 @@ typedef enum {
  */
 #ifndef __LP64__
 #if !defined(RS_VERSION) || (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 22)
-typedef _RS_HANDLE rs_font;
+typedef _RS_HANDLE __attribute__((
+#if (defined(RS_VERSION) && (RS_VERSION >= 22))
+deprecated
+#endif
+)) rs_font;
 #endif
 #endif
 
@@ -163,7 +187,11 @@ typedef _RS_HANDLE rs_font;
  */
 #ifndef __LP64__
 #if !defined(RS_VERSION) || (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 22)
-typedef _RS_HANDLE rs_mesh;
+typedef _RS_HANDLE __attribute__((
+#if (defined(RS_VERSION) && (RS_VERSION >= 22))
+deprecated
+#endif
+)) rs_mesh;
 #endif
 #endif
 
@@ -177,7 +205,11 @@ typedef _RS_HANDLE rs_mesh;
  */
 #ifndef __LP64__
 #if !defined(RS_VERSION) || (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 22)
-typedef _RS_HANDLE rs_program_fragment;
+typedef _RS_HANDLE __attribute__((
+#if (defined(RS_VERSION) && (RS_VERSION >= 22))
+deprecated
+#endif
+)) rs_program_fragment;
 #endif
 #endif
 
@@ -191,7 +223,11 @@ typedef _RS_HANDLE rs_program_fragment;
  */
 #ifndef __LP64__
 #if !defined(RS_VERSION) || (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 22)
-typedef _RS_HANDLE rs_program_vertex;
+typedef _RS_HANDLE __attribute__((
+#if (defined(RS_VERSION) && (RS_VERSION >= 22))
+deprecated
+#endif
+)) rs_program_vertex;
 #endif
 #endif
 
@@ -205,7 +241,11 @@ typedef _RS_HANDLE rs_program_vertex;
  */
 #ifndef __LP64__
 #if !defined(RS_VERSION) || (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 22)
-typedef _RS_HANDLE rs_program_raster;
+typedef _RS_HANDLE __attribute__((
+#if (defined(RS_VERSION) && (RS_VERSION >= 22))
+deprecated
+#endif
+)) rs_program_raster;
 #endif
 #endif
 
@@ -219,7 +259,11 @@ typedef _RS_HANDLE rs_program_raster;
  */
 #ifndef __LP64__
 #if !defined(RS_VERSION) || (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 22)
-typedef _RS_HANDLE rs_program_store;
+typedef _RS_HANDLE __attribute__((
+#if (defined(RS_VERSION) && (RS_VERSION >= 22))
+deprecated
+#endif
+)) rs_program_store;
 #endif
 #endif
 
@@ -386,14 +430,22 @@ extern void __attribute__((overloadable))
  */
 #ifndef __LP64__
 #if !defined(RS_VERSION) || (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 22)
-extern void __attribute__((overloadable))
+extern void __attribute__((overloadable
+#if (defined(RS_VERSION) && (RS_VERSION >= 22))
+, deprecated
+#endif
+))
     rsgAllocationSyncAll(rs_allocation alloc);
 #endif
 #endif
 
 #ifndef __LP64__
 #if (defined(RS_VERSION) && (RS_VERSION >= 14) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 22))
-extern void __attribute__((overloadable))
+extern void __attribute__((overloadable
+#if (defined(RS_VERSION) && (RS_VERSION >= 22))
+, deprecated
+#endif
+))
     rsgAllocationSyncAll(rs_allocation alloc, rs_allocation_usage_type source);
 #endif
 #endif
@@ -407,7 +459,11 @@ extern void __attribute__((overloadable))
  */
 #ifndef __LP64__
 #if (defined(RS_VERSION) && (RS_VERSION >= 14) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 22))
-extern void __attribute__((overloadable))
+extern void __attribute__((overloadable
+#if (defined(RS_VERSION) && (RS_VERSION >= 22))
+, deprecated
+#endif
+))
     rsgBindColorTarget(rs_allocation colorTarget, uint slot);
 #endif
 #endif
@@ -428,14 +484,22 @@ extern void __attribute__((overloadable))
  */
 #ifndef __LP64__
 #if !defined(RS_VERSION) || (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 22)
-extern void __attribute__((overloadable))
+extern void __attribute__((overloadable
+#if (defined(RS_VERSION) && (RS_VERSION >= 22))
+, deprecated
+#endif
+))
     rsgBindConstant(rs_program_fragment ps, uint slot, rs_allocation c);
 #endif
 #endif
 
 #ifndef __LP64__
 #if !defined(RS_VERSION) || (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 22)
-extern void __attribute__((overloadable))
+extern void __attribute__((overloadable
+#if (defined(RS_VERSION) && (RS_VERSION >= 22))
+, deprecated
+#endif
+))
     rsgBindConstant(rs_program_vertex pv, uint slot, rs_allocation c);
 #endif
 #endif
@@ -449,7 +513,11 @@ extern void __attribute__((overloadable))
  */
 #ifndef __LP64__
 #if (defined(RS_VERSION) && (RS_VERSION >= 14) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 22))
-extern void __attribute__((overloadable))
+extern void __attribute__((overloadable
+#if (defined(RS_VERSION) && (RS_VERSION >= 22))
+, deprecated
+#endif
+))
     rsgBindDepthTarget(rs_allocation depthTarget);
 #endif
 #endif
@@ -466,7 +534,11 @@ extern void __attribute__((overloadable))
  */
 #ifndef __LP64__
 #if !defined(RS_VERSION) || (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 22)
-extern void __attribute__((overloadable))
+extern void __attribute__((overloadable
+#if (defined(RS_VERSION) && (RS_VERSION >= 22))
+, deprecated
+#endif
+))
     rsgBindFont(rs_font font);
 #endif
 #endif
@@ -480,7 +552,11 @@ extern void __attribute__((overloadable))
  */
 #ifndef __LP64__
 #if !defined(RS_VERSION) || (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 22)
-extern void __attribute__((overloadable))
+extern void __attribute__((overloadable
+#if (defined(RS_VERSION) && (RS_VERSION >= 22))
+, deprecated
+#endif
+))
     rsgBindProgramFragment(rs_program_fragment pf);
 #endif
 #endif
@@ -494,7 +570,11 @@ extern void __attribute__((overloadable))
  */
 #ifndef __LP64__
 #if !defined(RS_VERSION) || (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 22)
-extern void __attribute__((overloadable))
+extern void __attribute__((overloadable
+#if (defined(RS_VERSION) && (RS_VERSION >= 22))
+, deprecated
+#endif
+))
     rsgBindProgramRaster(rs_program_raster pr);
 #endif
 #endif
@@ -508,7 +588,11 @@ extern void __attribute__((overloadable))
  */
 #ifndef __LP64__
 #if !defined(RS_VERSION) || (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 22)
-extern void __attribute__((overloadable))
+extern void __attribute__((overloadable
+#if (defined(RS_VERSION) && (RS_VERSION >= 22))
+, deprecated
+#endif
+))
     rsgBindProgramStore(rs_program_store ps);
 #endif
 #endif
@@ -522,7 +606,11 @@ extern void __attribute__((overloadable))
  */
 #ifndef __LP64__
 #if !defined(RS_VERSION) || (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 22)
-extern void __attribute__((overloadable))
+extern void __attribute__((overloadable
+#if (defined(RS_VERSION) && (RS_VERSION >= 22))
+, deprecated
+#endif
+))
     rsgBindProgramVertex(rs_program_vertex pv);
 #endif
 #endif
@@ -537,7 +625,11 @@ extern void __attribute__((overloadable))
  */
 #ifndef __LP64__
 #if !defined(RS_VERSION) || (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 22)
-extern void __attribute__((overloadable))
+extern void __attribute__((overloadable
+#if (defined(RS_VERSION) && (RS_VERSION >= 22))
+, deprecated
+#endif
+))
     rsgBindSampler(rs_program_fragment fragment, uint slot, rs_sampler sampler);
 #endif
 #endif
@@ -554,7 +646,11 @@ extern void __attribute__((overloadable))
  */
 #ifndef __LP64__
 #if !defined(RS_VERSION) || (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 22)
-extern void __attribute__((overloadable))
+extern void __attribute__((overloadable
+#if (defined(RS_VERSION) && (RS_VERSION >= 22))
+, deprecated
+#endif
+))
     rsgBindTexture(rs_program_fragment v, uint slot, rs_allocation alloc);
 #endif
 #endif
@@ -569,7 +665,11 @@ extern void __attribute__((overloadable))
  */
 #ifndef __LP64__
 #if (defined(RS_VERSION) && (RS_VERSION >= 14) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 22))
-extern void __attribute__((overloadable))
+extern void __attribute__((overloadable
+#if (defined(RS_VERSION) && (RS_VERSION >= 22))
+, deprecated
+#endif
+))
     rsgClearAllRenderTargets(void);
 #endif
 #endif
@@ -583,7 +683,11 @@ extern void __attribute__((overloadable))
  */
 #ifndef __LP64__
 #if !defined(RS_VERSION) || (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 22)
-extern void __attribute__((overloadable))
+extern void __attribute__((overloadable
+#if (defined(RS_VERSION) && (RS_VERSION >= 22))
+, deprecated
+#endif
+))
     rsgClearColor(float r, float g, float b, float a);
 #endif
 #endif
@@ -597,7 +701,11 @@ extern void __attribute__((overloadable))
  */
 #ifndef __LP64__
 #if (defined(RS_VERSION) && (RS_VERSION >= 14) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 22))
-extern void __attribute__((overloadable))
+extern void __attribute__((overloadable
+#if (defined(RS_VERSION) && (RS_VERSION >= 22))
+, deprecated
+#endif
+))
     rsgClearColorTarget(uint slot);
 #endif
 #endif
@@ -611,7 +719,11 @@ extern void __attribute__((overloadable))
  */
 #ifndef __LP64__
 #if !defined(RS_VERSION) || (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 22)
-extern void __attribute__((overloadable))
+extern void __attribute__((overloadable
+#if (defined(RS_VERSION) && (RS_VERSION >= 22))
+, deprecated
+#endif
+))
     rsgClearDepth(float value);
 #endif
 #endif
@@ -625,7 +737,11 @@ extern void __attribute__((overloadable))
  */
 #ifndef __LP64__
 #if (defined(RS_VERSION) && (RS_VERSION >= 14) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 22))
-extern void __attribute__((overloadable))
+extern void __attribute__((overloadable
+#if (defined(RS_VERSION) && (RS_VERSION >= 22))
+, deprecated
+#endif
+))
     rsgClearDepthTarget(void);
 #endif
 #endif
@@ -651,21 +767,33 @@ extern void __attribute__((overloadable))
  */
 #ifndef __LP64__
 #if !defined(RS_VERSION) || (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 22)
-extern void __attribute__((overloadable))
+extern void __attribute__((overloadable
+#if (defined(RS_VERSION) && (RS_VERSION >= 22))
+, deprecated
+#endif
+))
     rsgDrawMesh(rs_mesh ism);
 #endif
 #endif
 
 #ifndef __LP64__
 #if !defined(RS_VERSION) || (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 22)
-extern void __attribute__((overloadable))
+extern void __attribute__((overloadable
+#if (defined(RS_VERSION) && (RS_VERSION >= 22))
+, deprecated
+#endif
+))
     rsgDrawMesh(rs_mesh ism, uint primitiveIndex);
 #endif
 #endif
 
 #ifndef __LP64__
 #if !defined(RS_VERSION) || (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 22)
-extern void __attribute__((overloadable))
+extern void __attribute__((overloadable
+#if (defined(RS_VERSION) && (RS_VERSION >= 22))
+, deprecated
+#endif
+))
     rsgDrawMesh(rs_mesh ism, uint primitiveIndex, uint start, uint len);
 #endif
 #endif
@@ -680,7 +808,11 @@ extern void __attribute__((overloadable))
  */
 #ifndef __LP64__
 #if !defined(RS_VERSION) || (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 22)
-extern void __attribute__((overloadable))
+extern void __attribute__((overloadable
+#if (defined(RS_VERSION) && (RS_VERSION >= 22))
+, deprecated
+#endif
+))
     rsgDrawQuad(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3,
                 float z3, float x4, float y4, float z4);
 #endif
@@ -696,7 +828,11 @@ extern void __attribute__((overloadable))
  */
 #ifndef __LP64__
 #if !defined(RS_VERSION) || (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 22)
-extern void __attribute__((overloadable))
+extern void __attribute__((overloadable
+#if (defined(RS_VERSION) && (RS_VERSION >= 22))
+, deprecated
+#endif
+))
     rsgDrawQuadTexCoords(float x1, float y1, float z1, float u1, float v1, float x2, float y2,
                          float z2, float u2, float v2, float x3, float y3, float z3, float u3,
                          float v3, float x4, float y4, float z4, float u4, float v4);
@@ -713,7 +849,11 @@ extern void __attribute__((overloadable))
  */
 #ifndef __LP64__
 #if !defined(RS_VERSION) || (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 22)
-extern void __attribute__((overloadable))
+extern void __attribute__((overloadable
+#if (defined(RS_VERSION) && (RS_VERSION >= 22))
+, deprecated
+#endif
+))
     rsgDrawRect(float x1, float y1, float x2, float y2, float z);
 #endif
 #endif
@@ -730,7 +870,11 @@ extern void __attribute__((overloadable))
  */
 #ifndef __LP64__
 #if !defined(RS_VERSION) || (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 22)
-extern void __attribute__((overloadable))
+extern void __attribute__((overloadable
+#if (defined(RS_VERSION) && (RS_VERSION >= 22))
+, deprecated
+#endif
+))
     rsgDrawSpriteScreenspace(float x, float y, float z, float w, float h);
 #endif
 #endif
@@ -744,14 +888,22 @@ extern void __attribute__((overloadable))
  */
 #ifndef __LP64__
 #if !defined(RS_VERSION) || (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 22)
-extern void __attribute__((overloadable))
+extern void __attribute__((overloadable
+#if (defined(RS_VERSION) && (RS_VERSION >= 22))
+, deprecated
+#endif
+))
     rsgDrawText(const char* text, int x, int y);
 #endif
 #endif
 
 #ifndef __LP64__
 #if !defined(RS_VERSION) || (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 22)
-extern void __attribute__((overloadable))
+extern void __attribute__((overloadable
+#if (defined(RS_VERSION) && (RS_VERSION >= 22))
+, deprecated
+#endif
+))
     rsgDrawText(rs_allocation alloc, int x, int y);
 #endif
 #endif
@@ -765,7 +917,11 @@ extern void __attribute__((overloadable))
  */
 #ifndef __LP64__
 #if (defined(RS_VERSION) && (RS_VERSION >= 14) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 22))
-extern uint __attribute__((overloadable))
+extern uint __attribute__((overloadable
+#if (defined(RS_VERSION) && (RS_VERSION >= 22))
+, deprecated
+#endif
+))
     rsgFinish(void);
 #endif
 #endif
@@ -785,7 +941,11 @@ extern uint __attribute__((overloadable))
  */
 #ifndef __LP64__
 #if !defined(RS_VERSION) || (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 22)
-extern void __attribute__((overloadable))
+extern void __attribute__((overloadable
+#if (defined(RS_VERSION) && (RS_VERSION >= 22))
+, deprecated
+#endif
+))
     rsgFontColor(float r, float g, float b, float a);
 #endif
 #endif
@@ -799,7 +959,11 @@ extern void __attribute__((overloadable))
  */
 #ifndef __LP64__
 #if !defined(RS_VERSION) || (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 22)
-extern uint __attribute__((overloadable))
+extern uint __attribute__((overloadable
+#if (defined(RS_VERSION) && (RS_VERSION >= 22))
+, deprecated
+#endif
+))
     rsgGetHeight(void);
 #endif
 #endif
@@ -813,7 +977,11 @@ extern uint __attribute__((overloadable))
  */
 #ifndef __LP64__
 #if !defined(RS_VERSION) || (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 22)
-extern uint __attribute__((overloadable))
+extern uint __attribute__((overloadable
+#if (defined(RS_VERSION) && (RS_VERSION >= 22))
+, deprecated
+#endif
+))
     rsgGetWidth(void);
 #endif
 #endif
@@ -828,14 +996,22 @@ extern uint __attribute__((overloadable))
  */
 #ifndef __LP64__
 #if !defined(RS_VERSION) || (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 22)
-extern void __attribute__((overloadable))
+extern void __attribute__((overloadable
+#if (defined(RS_VERSION) && (RS_VERSION >= 22))
+, deprecated
+#endif
+))
     rsgMeasureText(const char* text, int* left, int* right, int* top, int* bottom);
 #endif
 #endif
 
 #ifndef __LP64__
 #if !defined(RS_VERSION) || (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 22)
-extern void __attribute__((overloadable))
+extern void __attribute__((overloadable
+#if (defined(RS_VERSION) && (RS_VERSION >= 22))
+, deprecated
+#endif
+))
     rsgMeasureText(rs_allocation alloc, int* left, int* right, int* top, int* bottom);
 #endif
 #endif
@@ -849,7 +1025,11 @@ extern void __attribute__((overloadable))
  */
 #ifndef __LP64__
 #if !defined(RS_VERSION) || (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 22)
-extern void __attribute__((overloadable))
+extern void __attribute__((overloadable
+#if (defined(RS_VERSION) && (RS_VERSION >= 22))
+, deprecated
+#endif
+))
     rsgMeshComputeBoundingBox(rs_mesh mesh, float* minX, float* minY, float* min, float* maxX,
                               float* maxY, float* maxZ);
 #endif
@@ -857,7 +1037,11 @@ extern void __attribute__((overloadable))
 
 #ifndef __LP64__
 #if !defined(RS_VERSION) || (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 22)
-static inline void __attribute__((always_inline, overloadable))
+static inline void __attribute__((always_inline, overloadable
+#if (defined(RS_VERSION) && (RS_VERSION >= 22))
+, deprecated
+#endif
+))
     rsgMeshComputeBoundingBox(rs_mesh mesh, float3* bBoxMin, float3* bBoxMax) {
     float x1, y1, z1, x2, y2, z2;
     rsgMeshComputeBoundingBox(mesh, &x1, &y1, &z1, &x2, &y2, &z2);
@@ -887,7 +1071,11 @@ static inline void __attribute__((always_inline, overloadable))
  */
 #ifndef __LP64__
 #if (defined(RS_VERSION) && (RS_VERSION >= 16) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 22))
-extern rs_allocation __attribute__((overloadable))
+extern rs_allocation __attribute__((overloadable
+#if (defined(RS_VERSION) && (RS_VERSION >= 22))
+, deprecated
+#endif
+))
     rsgMeshGetIndexAllocation(rs_mesh m, uint32_t index);
 #endif
 #endif
@@ -908,7 +1096,11 @@ extern rs_allocation __attribute__((overloadable))
  */
 #ifndef __LP64__
 #if (defined(RS_VERSION) && (RS_VERSION >= 16) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 22))
-extern rs_primitive __attribute__((overloadable))
+extern rs_primitive __attribute__((overloadable
+#if (defined(RS_VERSION) && (RS_VERSION >= 22))
+, deprecated
+#endif
+))
     rsgMeshGetPrimitive(rs_mesh m, uint32_t index);
 #endif
 #endif
@@ -928,7 +1120,11 @@ extern rs_primitive __attribute__((overloadable))
  */
 #ifndef __LP64__
 #if (defined(RS_VERSION) && (RS_VERSION >= 16) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 22))
-extern uint32_t __attribute__((overloadable))
+extern uint32_t __attribute__((overloadable
+#if (defined(RS_VERSION) && (RS_VERSION >= 22))
+, deprecated
+#endif
+))
     rsgMeshGetPrimitiveCount(rs_mesh m);
 #endif
 #endif
@@ -949,7 +1145,11 @@ extern uint32_t __attribute__((overloadable))
  */
 #ifndef __LP64__
 #if (defined(RS_VERSION) && (RS_VERSION >= 16) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 22))
-extern rs_allocation __attribute__((overloadable))
+extern rs_allocation __attribute__((overloadable
+#if (defined(RS_VERSION) && (RS_VERSION >= 22))
+, deprecated
+#endif
+))
     rsgMeshGetVertexAllocation(rs_mesh m, uint32_t index);
 #endif
 #endif
@@ -969,7 +1169,11 @@ extern rs_allocation __attribute__((overloadable))
  */
 #ifndef __LP64__
 #if (defined(RS_VERSION) && (RS_VERSION >= 16) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 22))
-extern uint32_t __attribute__((overloadable))
+extern uint32_t __attribute__((overloadable
+#if (defined(RS_VERSION) && (RS_VERSION >= 22))
+, deprecated
+#endif
+))
     rsgMeshGetVertexAllocationCount(rs_mesh m);
 #endif
 #endif
@@ -983,7 +1187,11 @@ extern uint32_t __attribute__((overloadable))
  */
 #ifndef __LP64__
 #if !defined(RS_VERSION) || (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 22)
-extern void __attribute__((overloadable))
+extern void __attribute__((overloadable
+#if (defined(RS_VERSION) && (RS_VERSION >= 22))
+, deprecated
+#endif
+))
     rsgProgramFragmentConstantColor(rs_program_fragment pf, float r, float g, float b, float a);
 #endif
 #endif
@@ -1002,7 +1210,11 @@ extern void __attribute__((overloadable))
  */
 #ifndef __LP64__
 #if !defined(RS_VERSION) || (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 22)
-extern void __attribute__((overloadable))
+extern void __attribute__((overloadable
+#if (defined(RS_VERSION) && (RS_VERSION >= 22))
+, deprecated
+#endif
+))
     rsgProgramVertexGetProjectionMatrix(rs_matrix4x4* proj);
 #endif
 #endif
@@ -1021,7 +1233,11 @@ extern void __attribute__((overloadable))
  */
 #ifndef __LP64__
 #if !defined(RS_VERSION) || (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 22)
-extern void __attribute__((overloadable))
+extern void __attribute__((overloadable
+#if (defined(RS_VERSION) && (RS_VERSION >= 22))
+, deprecated
+#endif
+))
     rsgProgramVertexLoadModelMatrix(const rs_matrix4x4* model);
 #endif
 #endif
@@ -1040,7 +1256,11 @@ extern void __attribute__((overloadable))
  */
 #ifndef __LP64__
 #if !defined(RS_VERSION) || (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 22)
-extern void __attribute__((overloadable))
+extern void __attribute__((overloadable
+#if (defined(RS_VERSION) && (RS_VERSION >= 22))
+, deprecated
+#endif
+))
     rsgProgramVertexLoadProjectionMatrix(const rs_matrix4x4* proj);
 #endif
 #endif
@@ -1059,7 +1279,11 @@ extern void __attribute__((overloadable))
  */
 #ifndef __LP64__
 #if !defined(RS_VERSION) || (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 22)
-extern void __attribute__((overloadable))
+extern void __attribute__((overloadable
+#if (defined(RS_VERSION) && (RS_VERSION >= 22))
+, deprecated
+#endif
+))
     rsgProgramVertexLoadTextureMatrix(const rs_matrix4x4* tex);
 #endif
 #endif
@@ -1076,7 +1300,11 @@ extern void __attribute__((overloadable))
  */
 #ifndef __LP64__
 #if (defined(RS_VERSION) && (RS_VERSION >= 16) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 22))
-extern rs_cull_mode __attribute__((overloadable))
+extern rs_cull_mode __attribute__((overloadable
+#if (defined(RS_VERSION) && (RS_VERSION >= 22))
+, deprecated
+#endif
+))
     rsgProgramRasterGetCullMode(rs_program_raster pr);
 #endif
 #endif
@@ -1093,7 +1321,11 @@ extern rs_cull_mode __attribute__((overloadable))
  */
 #ifndef __LP64__
 #if (defined(RS_VERSION) && (RS_VERSION >= 16) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 22))
-extern bool __attribute__((overloadable))
+extern bool __attribute__((overloadable
+#if (defined(RS_VERSION) && (RS_VERSION >= 22))
+, deprecated
+#endif
+))
     rsgProgramRasterIsPointSpriteEnabled(rs_program_raster pr);
 #endif
 #endif
@@ -1110,7 +1342,11 @@ extern bool __attribute__((overloadable))
  */
 #ifndef __LP64__
 #if (defined(RS_VERSION) && (RS_VERSION >= 16) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 22))
-extern rs_blend_dst_func __attribute__((overloadable))
+extern rs_blend_dst_func __attribute__((overloadable
+#if (defined(RS_VERSION) && (RS_VERSION >= 22))
+, deprecated
+#endif
+))
     rsgProgramStoreGetBlendDstFunc(rs_program_store ps);
 #endif
 #endif
@@ -1127,7 +1363,11 @@ extern rs_blend_dst_func __attribute__((overloadable))
  */
 #ifndef __LP64__
 #if (defined(RS_VERSION) && (RS_VERSION >= 16) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 22))
-extern rs_blend_src_func __attribute__((overloadable))
+extern rs_blend_src_func __attribute__((overloadable
+#if (defined(RS_VERSION) && (RS_VERSION >= 22))
+, deprecated
+#endif
+))
     rsgProgramStoreGetBlendSrcFunc(rs_program_store ps);
 #endif
 #endif
@@ -1144,7 +1384,11 @@ extern rs_blend_src_func __attribute__((overloadable))
  */
 #ifndef __LP64__
 #if (defined(RS_VERSION) && (RS_VERSION >= 16) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 22))
-extern rs_depth_func __attribute__((overloadable))
+extern rs_depth_func __attribute__((overloadable
+#if (defined(RS_VERSION) && (RS_VERSION >= 22))
+, deprecated
+#endif
+))
     rsgProgramStoreGetDepthFunc(rs_program_store ps);
 #endif
 #endif
@@ -1161,7 +1405,11 @@ extern rs_depth_func __attribute__((overloadable))
  */
 #ifndef __LP64__
 #if (defined(RS_VERSION) && (RS_VERSION >= 16) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 22))
-extern bool __attribute__((overloadable))
+extern bool __attribute__((overloadable
+#if (defined(RS_VERSION) && (RS_VERSION >= 22))
+, deprecated
+#endif
+))
     rsgProgramStoreIsColorMaskAlphaEnabled(rs_program_store ps);
 #endif
 #endif
@@ -1178,7 +1426,11 @@ extern bool __attribute__((overloadable))
  */
 #ifndef __LP64__
 #if (defined(RS_VERSION) && (RS_VERSION >= 16) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 22))
-extern bool __attribute__((overloadable))
+extern bool __attribute__((overloadable
+#if (defined(RS_VERSION) && (RS_VERSION >= 22))
+, deprecated
+#endif
+))
     rsgProgramStoreIsColorMaskBlueEnabled(rs_program_store ps);
 #endif
 #endif
@@ -1195,7 +1447,11 @@ extern bool __attribute__((overloadable))
  */
 #ifndef __LP64__
 #if (defined(RS_VERSION) && (RS_VERSION >= 16) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 22))
-extern bool __attribute__((overloadable))
+extern bool __attribute__((overloadable
+#if (defined(RS_VERSION) && (RS_VERSION >= 22))
+, deprecated
+#endif
+))
     rsgProgramStoreIsColorMaskGreenEnabled(rs_program_store ps);
 #endif
 #endif
@@ -1212,7 +1468,11 @@ extern bool __attribute__((overloadable))
  */
 #ifndef __LP64__
 #if (defined(RS_VERSION) && (RS_VERSION >= 16) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 22))
-extern bool __attribute__((overloadable))
+extern bool __attribute__((overloadable
+#if (defined(RS_VERSION) && (RS_VERSION >= 22))
+, deprecated
+#endif
+))
     rsgProgramStoreIsColorMaskRedEnabled(rs_program_store ps);
 #endif
 #endif
@@ -1229,7 +1489,11 @@ extern bool __attribute__((overloadable))
  */
 #ifndef __LP64__
 #if (defined(RS_VERSION) && (RS_VERSION >= 16) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 22))
-extern bool __attribute__((overloadable))
+extern bool __attribute__((overloadable
+#if (defined(RS_VERSION) && (RS_VERSION >= 22))
+, deprecated
+#endif
+))
     rsgProgramStoreIsDepthMaskEnabled(rs_program_store ps);
 #endif
 #endif
@@ -1246,7 +1510,11 @@ extern bool __attribute__((overloadable))
  */
 #ifndef __LP64__
 #if (defined(RS_VERSION) && (RS_VERSION >= 16) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 22))
-extern bool __attribute__((overloadable))
+extern bool __attribute__((overloadable
+#if (defined(RS_VERSION) && (RS_VERSION >= 22))
+, deprecated
+#endif
+))
     rsgProgramStoreIsDitherEnabled(rs_program_store ps);
 #endif
 #endif

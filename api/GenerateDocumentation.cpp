@@ -338,22 +338,26 @@ static void writeHtmlVersionTag(GeneratedFile* file, VersionInfo info) {
     }
 }
 
-static void writeDetailedTypeSpecification(GeneratedFile* file, const TypeSpecification* type) {
-    switch (type->getKind()) {
-        case SIMPLE:
-            *file << "<p>A typedef of: " << type->getSimpleType()
+static void writeDetailedTypeSpecification(GeneratedFile* file, const TypeSpecification* spec) {
+    switch (spec->getKind()) {
+        case SIMPLE: {
+            Type* type = spec->getType();
+            *file << "<p>A typedef of: " << spec->getSimpleType()
+                  << makeAttributeTag(spec->getAttribute(), "", type->deprecated(),
+                                      type->getDeprecatedMessage())
                   << "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
-            writeHtmlVersionTag(file, type->getVersionInfo());
+            writeHtmlVersionTag(file, spec->getVersionInfo());
             *file << "</p>\n";
             break;
+        }
         case ENUM: {
             *file << "<p>An enum with the following values:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\n";
-            writeHtmlVersionTag(file, type->getVersionInfo());
+            writeHtmlVersionTag(file, spec->getVersionInfo());
             *file << "</p>\n";
 
             *file << "  <table class='jd-tagtable'><tbody>\n";
-            const vector<string>& values = type->getValues();
-            const vector<string>& valueComments = type->getValueComments();
+            const vector<string>& values = spec->getValues();
+            const vector<string>& valueComments = spec->getValueComments();
             for (size_t i = 0; i < values.size(); i++) {
                 *file << "    <tr><th>" << values[i] << "</th><td>";
                 if (valueComments.size() > i) {
@@ -366,12 +370,12 @@ static void writeDetailedTypeSpecification(GeneratedFile* file, const TypeSpecif
         }
         case STRUCT: {
             *file << "<p>A structure with the following fields:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
-            writeHtmlVersionTag(file, type->getVersionInfo());
+            writeHtmlVersionTag(file, spec->getVersionInfo());
             *file << "</p>\n";
 
             *file << "  <table class='jd-tagtable'><tbody>\n";
-            const vector<string>& fields = type->getFields();
-            const vector<string>& fieldComments = type->getFieldComments();
+            const vector<string>& fields = spec->getFields();
+            const vector<string>& fieldComments = spec->getFieldComments();
             for (size_t i = 0; i < fields.size(); i++) {
                 *file << "    <tr><th>" << fields[i] << "</th><td>";
                 if (fieldComments.size() > i && !fieldComments[i].empty()) {
