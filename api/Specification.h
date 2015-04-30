@@ -141,7 +141,10 @@ struct VersionInfo {
 class Definition {
 protected:
     std::string mName;
-    bool mDeprecated;                       // True if this API should not be used
+    /* If greater than 0, this definition is deprecated.  It's the API level at which
+     * we added the deprecation warning.
+     */
+    int mDeprecatedApiLevel;
     std::string mDeprecatedMessage;         // Optional specific warning if the API is deprecated
     bool mHidden;                           // True if it should not be documented
     std::string mSummary;                   // A one-line description
@@ -153,7 +156,8 @@ public:
     Definition(const std::string& name);
 
     std::string getName() const { return mName; }
-    bool deprecated() const { return mDeprecated; }
+    bool deprecated() const { return mDeprecatedApiLevel > 0; }
+    int getDeprecatedApiLevel() const { return mDeprecatedApiLevel; }
     std::string getDeprecatedMessage() const { return mDeprecatedMessage; }
     bool hidden() const { return mHidden; }
     std::string getSummary() const { return mSummary; }
@@ -282,7 +286,7 @@ private:
     std::string mStructName;                  // The name found after the struct keyword
     std::vector<std::string> mFields;         // One entry per struct field
     std::vector<std::string> mFieldComments;  // One entry per struct field
-    std::string mAttrib;                      // Some structures may have attributes
+    std::string mAttribute;                   // Some structures may have attributes
 
     // If mKind is ENUM:
     std::string mEnumName;                    // The name found after the enum keyword
@@ -297,7 +301,7 @@ public:
     std::string getStructName() const { return mStructName; }
     const std::vector<std::string>& getFields() const { return mFields; }
     const std::vector<std::string>& getFieldComments() const { return mFieldComments; }
-    std::string getAttrib() const { return mAttrib; }
+    std::string getAttribute() const { return mAttribute; }
     std::string getEnumName() const { return mEnumName; }
     const std::vector<std::string>& getValues() const { return mValues; }
     const std::vector<std::string>& getValueComments() const { return mValueComments; }

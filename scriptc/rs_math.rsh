@@ -4083,22 +4083,46 @@ extern float4 __attribute__((const, overloadable))
  *   low: Lower bound.
  *   high: Upper bound.
  */
-extern char __attribute__((const, always_inline, overloadable))
+extern char __attribute__((const, always_inline, overloadable
+#if (defined(RS_VERSION) && (RS_VERSION >= 22))
+, deprecated("Use clamp() instead.")
+#endif
+))
     rsClamp(char amount, char low, char high);
 
-extern uchar __attribute__((const, always_inline, overloadable))
+extern uchar __attribute__((const, always_inline, overloadable
+#if (defined(RS_VERSION) && (RS_VERSION >= 22))
+, deprecated("Use clamp() instead.")
+#endif
+))
     rsClamp(uchar amount, uchar low, uchar high);
 
-extern short __attribute__((const, always_inline, overloadable))
+extern short __attribute__((const, always_inline, overloadable
+#if (defined(RS_VERSION) && (RS_VERSION >= 22))
+, deprecated("Use clamp() instead.")
+#endif
+))
     rsClamp(short amount, short low, short high);
 
-extern ushort __attribute__((const, always_inline, overloadable))
+extern ushort __attribute__((const, always_inline, overloadable
+#if (defined(RS_VERSION) && (RS_VERSION >= 22))
+, deprecated("Use clamp() instead.")
+#endif
+))
     rsClamp(ushort amount, ushort low, ushort high);
 
-extern int __attribute__((const, always_inline, overloadable))
+extern int __attribute__((const, always_inline, overloadable
+#if (defined(RS_VERSION) && (RS_VERSION >= 22))
+, deprecated("Use clamp() instead.")
+#endif
+))
     rsClamp(int amount, int low, int high);
 
-extern uint __attribute__((const, always_inline, overloadable))
+extern uint __attribute__((const, always_inline, overloadable
+#if (defined(RS_VERSION) && (RS_VERSION >= 22))
+, deprecated("Use clamp() instead.")
+#endif
+))
     rsClamp(uint amount, uint low, uint high);
 
 /*
@@ -4108,7 +4132,11 @@ extern uint __attribute__((const, always_inline, overloadable))
  *
  * Returns the fractional part of a float
  */
-extern float __attribute__((const, overloadable))
+extern float __attribute__((const, overloadable
+#if (defined(RS_VERSION) && (RS_VERSION >= 22))
+, deprecated("Use fract() instead.")
+#endif
+))
     rsFrac(float v);
 
 /*
