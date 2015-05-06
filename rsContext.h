@@ -283,6 +283,11 @@ public:
         return mCacheDir;
     }
 
+    // Returns the actual loaded driver's name (like "libRSDriver.so").
+    const char * getDriverName() {
+        return mDriverName;
+    }
+
 
 protected:
 
@@ -335,6 +340,11 @@ private:
 
     bool mHasSurface;
     bool mIsContextLite;
+
+    // This holds the name of the driver (like "libRSDriver.so").
+    // Since this is always just a static string, we don't have to
+    // allocate, copy, or free any memory here.
+    const char* mDriverName;
 
     Vector<ObjectBase *> mNames;
 
