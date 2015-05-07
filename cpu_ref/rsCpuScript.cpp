@@ -385,7 +385,8 @@ bool RsdCpuScriptImpl::init(char const *resName, char const *cacheDir,
             return false;
         }
 
-        if (!SharedLibraryUtils::createSharedLibrary(cacheDir, resName)) {
+        if (!SharedLibraryUtils::createSharedLibrary(mCtx->getContext()->getDriverName(),
+                                                     cacheDir, resName)) {
             ALOGE("Linker: Failed to link object file '%s'", resName);
             mCtx->unlockMutex();
             return false;
