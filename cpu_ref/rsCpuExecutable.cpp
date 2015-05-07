@@ -110,12 +110,20 @@ const char* SharedLibraryUtils::RS_CACHE_DIR = "com.android.renderscript.cache";
 
 #ifndef RS_COMPATIBILITY_LIB
 
-bool SharedLibraryUtils::createSharedLibrary(const char *cacheDir, const char *resName) {
+bool SharedLibraryUtils::createSharedLibrary(const char *driverName,
+                                             const char *cacheDir,
+                                             const char *resName) {
     std::string sharedLibName = findSharedObjectName(cacheDir, resName);
     std::string objFileName = cacheDir;
     objFileName.append("/");
     objFileName.append(resName);
     objFileName.append(".o");
+    // Should be something like "libRSDriver.so".
+    std::string linkDriverName = driverName;
+    // Remove ".so" and replace "lib" with "-l".
+    // This will leave us with "-lRSDriver" instead.
+    linkDriverName.erase(linkDriverName.length() - 3);
+    linkDriverName.replace(0, 3, "-l");
 
     const char *compiler_rt = SYSLIBPATH"/libcompiler_rt.so";
     const char *mTriple = "-mtriple=" DEFAULT_TARGET_TRIPLE_STRING;
@@ -126,7 +134,7 @@ bool SharedLibraryUtils::createSharedLibrary(const char *cacheDir, const char *r
         "-shared",
         "-nostdlib",
         compiler_rt, mTriple, libPath,
-        "-lRSDriver", "-lm", "-lc",
+        linkDriverName.c_str(), "-lm", "-lc",
         objFileName.c_str(),
         "-o", sharedLibName.c_str(),
         nullptr

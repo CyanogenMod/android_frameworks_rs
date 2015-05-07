@@ -517,6 +517,7 @@ bool Context::initContext(Device *dev, const RsSurfaceConfig *sc) {
     }
 
     mHasSurface = false;
+    mDriverName = NULL;
 
     timerInit();
     timerSet(RS_TIMER_INTERNAL);

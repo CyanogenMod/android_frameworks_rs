@@ -29,7 +29,9 @@ class Context;
 class SharedLibraryUtils {
 public:
 #ifndef RS_COMPATIBILITY_LIB
-    static bool createSharedLibrary(const char* cacheDir, const char* resName);
+    static bool createSharedLibrary(const char* driverName,
+                                    const char* cacheDir,
+                                    const char* resName);
 #endif
 
     // Load the shared library referred to by cacheDir and resName. If we have

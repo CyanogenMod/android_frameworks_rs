@@ -397,7 +397,8 @@ void CpuScriptGroup2Impl::compile(const char* cacheDir) {
     // Create and load the shared lib
     //===--------------------------------------------------------------------===//
 
-    if (!SharedLibraryUtils::createSharedLibrary(cacheDir, resName)) {
+    if (!SharedLibraryUtils::createSharedLibrary(
+            getCpuRefImpl()->getContext()->getDriverName(), cacheDir, resName)) {
         ALOGE("Failed to link object file '%s'", resName);
         unlink(objFilePath.c_str());
         return;
