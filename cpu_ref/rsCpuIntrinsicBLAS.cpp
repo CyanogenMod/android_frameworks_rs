@@ -118,12 +118,12 @@ void RsdCpuScriptIntrinsicBLAS::invokeForEach(uint32_t slot,
 
     // Level 2 BLAS
     case (RsBlas_sgemv):
-        initABC(ain, sizeof(float), &A, &X, &C, &lda, &ldb, &ldc);
+        initABC(ain, sizeof(float), &A, &X, &Y, &lda, &ldb, &ldc);
         cblas_sgemv(CblasRowMajor, TransA, call->M, call->N, call->alpha.f, (float*)A,
                     lda, (float*)X, call->incX, call->beta.f, (float*)Y, call->incY);
         break;
     case (RsBlas_sgbmv):
-        initABC(ain, sizeof(float), &A, &X, &C, &lda, &ldb, &ldc);
+        initABC(ain, sizeof(float), &A, &X, &Y, &lda, &ldb, &ldc);
         cblas_sgbmv(CblasRowMajor, TransA, call->M, call->N, call->KL, call->KU,
                     call->alpha.f, (float*)A, lda, (float*)X, call->incX,
                     call->beta.f, (float*)Y, call->incY);
@@ -160,12 +160,12 @@ void RsdCpuScriptIntrinsicBLAS::invokeForEach(uint32_t slot,
                     (float*)X, call->incX);
         break;
     case (RsBlas_dgemv):
-        initABC(ain, sizeof(double), &A, &X, &C, &lda, &ldb, &ldc);
+        initABC(ain, sizeof(double), &A, &X, &Y, &lda, &ldb, &ldc);
         cblas_dgemv(CblasRowMajor, TransA, call->M, call->N, call->alpha.d, (double*)A,
                     lda, (double*)X, call->incX, call->beta.d, (double*)Y, call->incY);
         break;
     case (RsBlas_dgbmv):
-        initABC(ain, sizeof(double), &A, &X, &C, &lda, &ldb, &ldc);
+        initABC(ain, sizeof(double), &A, &X, &Y, &lda, &ldb, &ldc);
         cblas_dgbmv(CblasRowMajor, TransA, call->M, call->N, call->KL, call->KU,
                     call->alpha.d, (double*)A, lda, (double*)X, call->incX,
                     call->beta.d, (double*)Y, call->incY);
@@ -202,12 +202,12 @@ void RsdCpuScriptIntrinsicBLAS::invokeForEach(uint32_t slot,
                     (double*)X, call->incX);
         break;
     case (RsBlas_cgemv):
-        initABC(ain, sizeof(float)*2, &A, &X, &C, &lda, &ldb, &ldc);
+        initABC(ain, sizeof(float)*2, &A, &X, &Y, &lda, &ldb, &ldc);
         cblas_cgemv(CblasRowMajor, TransA, call->M, call->N, (void*)&call->alpha.c, (void*)A,
                     lda, (void*)X, call->incX, (void*)&call->beta.c, (void*)Y, call->incY);
         break;
     case (RsBlas_cgbmv):
-        initABC(ain, sizeof(float)*2, &A, &X, &C, &lda, &ldb, &ldc);
+        initABC(ain, sizeof(float)*2, &A, &X, &Y, &lda, &ldb, &ldc);
         cblas_cgbmv(CblasRowMajor, TransA, call->M, call->N, call->KL, call->KU,
                     (void*)&call->alpha.c, (void*)A, lda, (void*)X, call->incX,
                     (void*)&call->beta.c, (void*)Y, call->incY);
@@ -244,12 +244,12 @@ void RsdCpuScriptIntrinsicBLAS::invokeForEach(uint32_t slot,
                     (void*)X, call->incX);
         break;
     case (RsBlas_zgemv):
-        initABC(ain, sizeof(double)*2, &A, &X, &C, &lda, &ldb, &ldc);
+        initABC(ain, sizeof(double)*2, &A, &X, &Y, &lda, &ldb, &ldc);
         cblas_zgemv(CblasRowMajor, TransA, call->M, call->N, (void*)&call->alpha.z, (void*)A,
                     lda, (void*)X, call->incX, (void*)&call->beta.z, (void*)Y, call->incY);
         break;
     case (RsBlas_zgbmv):
-        initABC(ain, sizeof(double)*2, &A, &X, &C, &lda, &ldb, &ldc);
+        initABC(ain, sizeof(double)*2, &A, &X, &Y, &lda, &ldb, &ldc);
         cblas_zgbmv(CblasRowMajor, TransA, call->M, call->N, call->KL, call->KU,
                     (void*)&call->alpha.z, (void*)A, lda, (void*)X, call->incX,
                     (void*)&call->beta.z, (void*)Y, call->incY);
