@@ -153,8 +153,10 @@ uint32_t constructBuildChecksum(uint8_t const *bitcode, size_t bitcodeSize,
 
 #ifdef __LP64__
 #define SYSLIBPATH "/system/lib64"
+#define SYSLIBPATH_VENDOR "/system/vendor/lib64"
 #else
 #define SYSLIBPATH "/system/lib"
+#define SYSLIBPATH_VENDOR "/system/vendor/lib"
 #endif
 
 }
