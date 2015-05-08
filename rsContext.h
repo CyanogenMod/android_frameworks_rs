@@ -45,6 +45,13 @@
 
 #endif
 
+/*
+ * This global will be found by the debugger and will have its value flipped.
+ * It's independent of the Context class to allow the debugger to do the above
+ * without knowing the type makeup. This allows the debugger to be attached at
+ * an earlier stage.
+*/
+extern "C" int gDebuggerPresent;
 
 // ---------------------------------------------------------------------------
 namespace android {
@@ -321,7 +328,7 @@ protected:
 private:
     Context();
     bool initContext(Device *, const RsSurfaceConfig *sc);
-
+    void waitForDebugger();
     bool mSynchronous;
     bool initGLThread();
     void deinitEGL();
