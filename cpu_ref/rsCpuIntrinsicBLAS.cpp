@@ -478,7 +478,6 @@ void RsdCpuScriptIntrinsicBLAS::invokeForEach(uint32_t slot,
     // Level 3 BLAS
     case (RsBlas_sgemm):
         initABC(ain, sizeof(float), &A, &B, &C, &lda, &ldb, &ldc);
-        ALOGE("call->M = %d, call->N = %d, call->K = %d, lda = %d, ldb = %d, ldc = %d", call->M, call->N, call->K, lda, ldb, ldc);
         cblas_sgemm(CblasRowMajor, TransA, TransB, call->M, call->N, call->K, call->alpha.f,
                     (float*)A, lda, (float*)B, ldb, call->beta.f, (float*)C, ldc);
         break;
