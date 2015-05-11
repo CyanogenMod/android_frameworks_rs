@@ -128,12 +128,13 @@ bool SharedLibraryUtils::createSharedLibrary(const char *driverName,
     const char *compiler_rt = SYSLIBPATH"/libcompiler_rt.so";
     const char *mTriple = "-mtriple=" DEFAULT_TARGET_TRIPLE_STRING;
     const char *libPath = "--library-path=" SYSLIBPATH;
+    const char *vendorLibPath = "--library-path=" SYSLIBPATH_VENDOR;
 
     std::vector<const char *> args = {
         LD_EXE_PATH,
         "-shared",
         "-nostdlib",
-        compiler_rt, mTriple, libPath,
+        compiler_rt, mTriple, vendorLibPath, libPath,
         linkDriverName.c_str(), "-lm", "-lc",
         objFileName.c_str(),
         "-o", sharedLibName.c_str(),
