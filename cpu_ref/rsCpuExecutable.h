@@ -66,6 +66,8 @@ public:
                      size_t forEachCount,
                      const char** pragmaKeys, const char** pragmaValues,
                      size_t pragmaCount,
+                     const char **globalNames, const void **globalAddresses,
+                     const size_t *globalSizes, size_t globalEntries,
                      bool isThreadable, uint32_t buildChecksum) :
         mFieldAddress(fieldAddress), mFieldIsObject(fieldIsObject),
         mFieldName(fieldName), mExportedVarCount(varCount),
@@ -73,7 +75,9 @@ public:
         mForEachFunctions(forEachFunctions), mForEachSignatures(forEachSignatures),
         mForEachCount(forEachCount),
         mPragmaKeys(pragmaKeys), mPragmaValues(pragmaValues),
-        mPragmaCount(pragmaCount), mIsThreadable(isThreadable),
+        mPragmaCount(pragmaCount), mGlobalNames(globalNames),
+        mGlobalAddresses(globalAddresses), mGlobalSizes(globalSizes),
+        mGlobalEntries(globalEntries), mIsThreadable(isThreadable),
         mBuildChecksum(buildChecksum), mRS(RSContext) {
     }
 
@@ -134,9 +138,34 @@ public:
     const char ** getPragmaKeys() const { return mPragmaKeys; }
     const char ** getPragmaValues() const { return mPragmaValues; }
 
+    const char* getGlobalName(int i) const {
+        if (i < mGlobalEntries) {
+            return mGlobalNames[i];
+        } else {
+            return nullptr;
+        }
+    }
+    const void* getGlobalAddress(int i) const {
+        if (i < mGlobalEntries) {
+            return mGlobalAddresses[i];
+        } else {
+            return nullptr;
+        }
+    }
+    size_t getGlobalSize(int i) const {
+        if (i < mGlobalEntries) {
+            return mGlobalSizes[i];
+        } else {
+            return 0;
+        }
+    }
+    int getGlobalEntries() const { return mGlobalEntries; }
+
     bool getThreadable() const { return mIsThreadable; }
 
     uint32_t getBuildChecksum() const { return mBuildChecksum; }
+
+    bool dumpGlobalInfo() const;
 
 private:
     void** mFieldAddress;
@@ -154,6 +183,11 @@ private:
     const char ** mPragmaKeys;
     const char ** mPragmaValues;
     size_t mPragmaCount;
+
+    const char ** mGlobalNames;
+    const void ** mGlobalAddresses;
+    const size_t * mGlobalSizes;
+    int mGlobalEntries;
 
     bool mIsThreadable;
     uint32_t mBuildChecksum;
