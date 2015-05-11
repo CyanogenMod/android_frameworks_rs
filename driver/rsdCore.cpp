@@ -102,6 +102,8 @@ extern "C" bool rsdHalQueryHal(RsHalInitEnums entry, void **fnPtr) {
 
     case RS_HAL_ALLOCATION_INIT:
         fnPtr[0] = (void *)rsdAllocationInit; break;
+    case RS_HAL_ALLOCATION_INIT_OEM:
+        fnPtr[0] = (void *)nullptr; break;
     case RS_HAL_ALLOCATION_INIT_ADAPTER:
         fnPtr[0] = (void *)rsdAllocationAdapterInit; break;
     case RS_HAL_ALLOCATION_DESTROY:
