@@ -55,6 +55,9 @@
 #endif
 
 namespace {
+
+static const bool kDebugGlobalVariables = false;
+
 #ifndef RS_COMPATIBILITY_LIB
 
 static bool is_force_recompile() {
@@ -83,11 +86,18 @@ static void setCompileArguments(std::vector<const char*>* args,
                                 const std::string& bcFileName,
                                 const char* cacheDir, const char* resName,
                                 const char* core_lib, bool useRSDebugContext,
-                                const char* bccPluginName) {
+                                const char* bccPluginName, bool emitGlobalInfo,
+                                bool emitGlobalInfoSkipConstant) {
     rsAssert(cacheDir && resName && core_lib);
     args->push_back(android::renderscript::RsdCpuScriptImpl::BCC_EXE_PATH);
     args->push_back("-unroll-runtime");
     args->push_back("-scalarize-load-store");
+    if (emitGlobalInfo) {
+        args->push_back("-rs-global-info");
+        if (emitGlobalInfoSkipConstant) {
+            args->push_back("-rs-global-info-skip-constant");
+        }
+    }
     args->push_back("-o");
     args->push_back(resName);
     args->push_back("-output_path");
@@ -276,6 +286,10 @@ bool RsdCpuScriptImpl::storeRSInfoFromSO() {
     mIsThreadable = mScriptExec->getThreadable();
     //ALOGE("Script isThreadable? %d", mIsThreadable);
 
+    if (kDebugGlobalVariables) {
+        mScriptExec->dumpGlobalInfo();
+    }
+
     return true;
 }
 
@@ -326,8 +340,11 @@ bool RsdCpuScriptImpl::init(char const *resName, char const *cacheDir,
     bcFileName.append(".bc");
 
     std::vector<const char*> compileArguments;
+    bool emitGlobalInfo = mCtx->getEmbedGlobalInfo();
+    bool emitGlobalInfoSkipConstant = mCtx->getEmbedGlobalInfoSkipConstant();
     setCompileArguments(&compileArguments, bcFileName, cacheDir, resName, core_lib,
-                        useRSDebugContext, bccPluginName);
+                        useRSDebugContext, bccPluginName, emitGlobalInfo,
+                        emitGlobalInfoSkipConstant);
 
     mChecksumNeeded = isChecksumNeeded();
     if (mChecksumNeeded) {
@@ -887,6 +904,22 @@ Allocation * RsdCpuScriptImpl::getAllocationForPointer(const void *ptr) const {
     }
     ALOGE("rsGetAllocation, failed to find %p", ptr);
     return nullptr;
+}
+
+int RsdCpuScriptImpl::getGlobalEntries() const {
+    return mScriptExec->getGlobalEntries();
+}
+
+const char * RsdCpuScriptImpl::getGlobalName(int i) const {
+    return mScriptExec->getGlobalName(i);
+}
+
+const void * RsdCpuScriptImpl::getGlobalAddress(int i) const {
+    return mScriptExec->getGlobalAddress(i);
+}
+
+size_t RsdCpuScriptImpl::getGlobalSize(int i) const {
+    return mScriptExec->getGlobalSize(i);
 }
 
 void RsdCpuScriptImpl::preLaunch(uint32_t slot, const Allocation ** ains,

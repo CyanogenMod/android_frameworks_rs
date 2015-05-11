@@ -135,6 +135,28 @@ public:
     }
     virtual bool getInForEach() { return mInForEach; }
 
+    // Set to true if we should embed global variable information in the code.
+    virtual void setEmbedGlobalInfo(bool v) {
+        mEmbedGlobalInfo = v;
+    }
+
+    // Returns true if we should embed global variable information in the code.
+    virtual bool getEmbedGlobalInfo() const {
+        return mEmbedGlobalInfo;
+    }
+
+    // Set to true if we should skip constant (immutable) global variables when
+    // potentially embedding information about globals.
+    virtual void setEmbedGlobalInfoSkipConstant(bool v) {
+        mEmbedGlobalInfoSkipConstant = v;
+    }
+
+    // Returns true if we should skip constant (immutable) global variables when
+    // potentially embedding information about globals.
+    virtual bool getEmbedGlobalInfoSkipConstant() const {
+        return mEmbedGlobalInfoSkipConstant;
+    }
+
 protected:
     Context *mRSC;
     uint32_t version_major;
@@ -164,6 +186,16 @@ protected:
     RSSelectRTCallback mSelectRTCallback;
     RSSetupCompilerCallback mSetupCompilerCallback;
     String8 mBccPluginName;
+
+    // Specifies whether we should embed global variable information in the
+    // code via special RS variables that can be examined later by the driver.
+    // Defaults to true.
+    bool mEmbedGlobalInfo;
+
+    // Specifies whether we should skip constant (immutable) global variables
+    // when potentially embedding information about globals.
+    // Defaults to true.
+    bool mEmbedGlobalInfoSkipConstant;
 };
 
 

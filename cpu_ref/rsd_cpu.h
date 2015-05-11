@@ -87,6 +87,17 @@ public:
         virtual void setGlobalObj(uint32_t slot, ObjectBase *obj) = 0;
 
         virtual Allocation * getAllocationForPointer(const void *ptr) const = 0;
+
+        // Returns number of global variables in this Script (may be 0 if
+        // compiler is not configured to emit this information).
+        virtual int getGlobalEntries() const = 0;
+        // Returns the name of the global variable at index i.
+        virtual const char * getGlobalName(int i) const = 0;
+        // Returns the CPU address of the global variable at index i.
+        virtual const void * getGlobalAddress(int i) const = 0;
+        // Returns the size (in bytes) of the global variable at index i.
+        virtual size_t getGlobalSize(int i) const = 0;
+
         virtual ~CpuScript() {}
     };
     typedef CpuScript * (* script_lookup_t)(Context *, const Script *s);
