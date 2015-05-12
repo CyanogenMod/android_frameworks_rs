@@ -38,27 +38,37 @@ static string makeGuardString(const string& filename) {
     return s;
 }
 
-// Write #ifdef's that ensure that the specified version is present
-static void writeVersionGuardStart(GeneratedFile* file, VersionInfo info) {
+/* Write #ifdef's that ensure that the specified version is present.  If we're at the final version,
+ * add a check on a flag that can be set for internal builds.  This enables us to keep supporting
+ * old APIs in the runtime code.
+ */
+static void writeVersionGuardStart(GeneratedFile* file, VersionInfo info, int finalVersion) {
     if (info.intSize == 32) {
         *file << "#ifndef __LP64__\n";
     } else if (info.intSize == 64) {
         *file << "#ifdef __LP64__\n";
     }
 
+    ostringstream checkMaxVersion;
+    if (info.maxVersion > 0) {
+        checkMaxVersion << "(";
+        if (info.maxVersion == finalVersion) {
+            checkMaxVersion << "defined(RS_DECLARE_EXPIRED_APIS) || ";
+        }
+        checkMaxVersion << "RS_VERSION <= " << info.maxVersion << ")";
+    }
+
     if (info.minVersion <= 1) {
         // No minimum
         if (info.maxVersion > 0) {
-            *file << "#if !defined(RS_VERSION) || (RS_VERSION <= " << info.maxVersion << ")\n";
+            *file << "#if !defined(RS_VERSION) || " << checkMaxVersion.str() << "\n";
         }
     } else {
-        if (info.maxVersion == 0) {
-            // No maximum
-            *file << "#if (defined(RS_VERSION) && (RS_VERSION >= " << info.minVersion << "))\n";
-        } else {
-            *file << "#if (defined(RS_VERSION) && (RS_VERSION >= " << info.minVersion
-                  << ") && (RS_VERSION <= " << info.maxVersion << "))\n";
+        *file << "#if (defined(RS_VERSION) && (RS_VERSION >= " << info.minVersion << ")";
+        if (info.maxVersion > 0) {
+            *file << " && " << checkMaxVersion.str();
         }
+        *file << ")\n";
     }
 }
 
@@ -107,16 +117,18 @@ static void writeConstantComment(GeneratedFile* file, const Constant& constant) 
 }
 
 static void writeConstantSpecification(GeneratedFile* file, const ConstantSpecification& spec) {
+    const Constant* constant = spec.getConstant();
     VersionInfo info = spec.getVersionInfo();
-    writeVersionGuardStart(file, info);
-    *file << "#define " << spec.getConstant()->getName() << " " << spec.getValue() << "\n\n";
+    writeVersionGuardStart(file, info, constant->getFinalVersion());
+    *file << "#define " << constant->getName() << " " << spec.getValue() << "\n\n";
     writeVersionGuardEnd(file, info);
 }
 
 static void writeTypeSpecification(GeneratedFile* file, const TypeSpecification& spec) {
-    const string& typeName = spec.getType()->getName();
+    const Type* type = spec.getType();
+    const string& typeName = type->getName();
     const VersionInfo info = spec.getVersionInfo();
-    writeVersionGuardStart(file, info);
+    writeVersionGuardStart(file, info, type->getFinalVersion());
     switch (spec.getKind()) {
         case SIMPLE:
             *file << "typedef " << spec.getSimpleType() << " " << typeName << ";\n";
@@ -182,7 +194,8 @@ static void writeTypeComment(GeneratedFile* file, const Type& type) {
 
 static void writeFunctionPermutation(GeneratedFile* file, const FunctionSpecification& spec,
                                      const FunctionPermutation& permutation) {
-    writeVersionGuardStart(file, spec.getVersionInfo());
+    Function* function = spec.getFunction();
+    writeVersionGuardStart(file, spec.getVersionInfo(), function->getFinalVersion());
 
     // Write linkage info.
     const auto inlineCodeLines = permutation.getInline();
