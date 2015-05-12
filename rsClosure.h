@@ -75,7 +75,7 @@ class Closure : public ObjectBase {
     Map<const Closure*, Map<const ScriptFieldID*,
             ObjectBaseRef<ScriptFieldID>>*> mGlobalDeps;
 
-    const void* mParams;
+    uint8_t* mParams;
     const size_t mParamLength;
 };
 
