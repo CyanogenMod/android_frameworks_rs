@@ -113,7 +113,9 @@ Closure::Closure(Context* context, const ScriptInvokeID* invokeID,
                  const void** values, const int* sizes) :
     ObjectBase(context), mContext(context), mFunctionID((IDBase*)invokeID), mIsKernel(false),
     mArgs(nullptr), mNumArg(0),
-    mReturnValue(nullptr), mParams(params), mParamLength(paramLength) {
+    mReturnValue(nullptr), mParamLength(paramLength) {
+    mParams = new uint8_t[mParamLength];
+    memcpy(mParams, params, mParamLength);
     for (size_t i = 0; i < numValues; i++) {
         mGlobals[fieldIDs[i]] = make_pair(values[i], sizes[i]);
     }
@@ -134,6 +136,7 @@ Closure::~Closure() {
     }
 
     delete[] mArgs;
+    delete[] mParams;
 }
 
 void Closure::setArg(const uint32_t index, const void* value, const size_t size) {
