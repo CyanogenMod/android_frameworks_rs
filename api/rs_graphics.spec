@@ -17,7 +17,7 @@
 header:
 summary: Graphics Functions and Types
 description:
- The graphics subsystem of RenderScript has been deprecated.
+ The graphics subsystem of RenderScript was removed at API level 23.
 include:
  #ifdef __LP64__
  // TODO We need to fix some of the builds before enabling this error:
@@ -29,7 +29,7 @@ include:
 end:
 
 type: rs_blend_src_func
-version: 16
+version: 16 22
 size: 32
 enum:
 value: RS_BLEND_SRC_ZERO = 0
@@ -48,7 +48,7 @@ description:
 end:
 
 type: rs_blend_dst_func
-version: 16
+version: 16 22
 size: 32
 enum:
 value: RS_BLEND_DST_ZERO = 0
@@ -66,7 +66,7 @@ description:
 end:
 
 type: rs_cull_mode
-version: 16
+version: 16 22
 size: 32
 enum:
 value: RS_CULL_BACK = 0
@@ -79,7 +79,7 @@ description:
 end:
 
 type: rs_depth_func
-version: 16
+version: 16 22
 size: 32
 enum:
 value: RS_DEPTH_FUNC_ALWAYS = 0, "Always drawn"
@@ -98,7 +98,7 @@ description:
 end:
 
 type: rs_primitive
-version: 16
+version: 16 22
 size: 32
 enum:
 value: RS_PRIMITIVE_POINT = 0, "Vertex data will be rendered as a series of points"
@@ -115,6 +115,7 @@ description:
 end:
 
 type: rs_font
+version: 9 22
 size: 32
 simple: _RS_HANDLE
 deprecated:
@@ -126,6 +127,7 @@ end:
 
 
 type: rs_mesh
+version: 9 22
 size: 32
 simple: _RS_HANDLE
 deprecated:
@@ -136,6 +138,7 @@ description:
 end:
 
 type: rs_program_fragment
+version: 9 22
 size: 32
 simple: _RS_HANDLE
 deprecated:
@@ -146,6 +149,7 @@ description:
 end:
 
 type: rs_program_vertex
+version: 9 22
 size: 32
 simple: _RS_HANDLE
 deprecated:
@@ -156,6 +160,7 @@ description:
 end:
 
 type: rs_program_raster
+version: 9 22
 size: 32
 simple: _RS_HANDLE
 deprecated:
@@ -166,6 +171,7 @@ description:
 end:
 
 type: rs_program_store
+version: 9 22
 size: 32
 simple: _RS_HANDLE
 deprecated:
@@ -176,6 +182,7 @@ description:
 end:
 
 function: rsClearObject
+version: 9 22
 size: 32
 t: rs_mesh, rs_program_fragment, rs_program_vertex, rs_program_raster, rs_program_store, rs_font
 ret: void
@@ -184,6 +191,7 @@ test: none
 end:
 
 function: rsIsObject
+version: 9 22
 size: 32
 t: rs_mesh, rs_program_fragment, rs_program_vertex, rs_program_raster, rs_program_store, rs_font
 ret: bool
@@ -192,6 +200,7 @@ test: none
 end:
 
 function: rsSetObject
+version: 9 22
 size: 32
 t: rs_mesh, rs_program_fragment, rs_program_vertex, rs_program_raster, rs_program_store, rs_font
 ret: void
@@ -201,6 +210,7 @@ test: none
 end:
 
 function: rsgAllocationSyncAll
+version: 9 22
 size: 32
 ret: void
 arg: rs_allocation alloc
@@ -217,7 +227,7 @@ test: none
 end:
 
 function: rsgAllocationSyncAll
-version: 14
+version: 14 22
 size: 32
 ret: void
 arg: rs_allocation alloc
@@ -226,7 +236,7 @@ test: none
 end:
 
 function: rsgBindColorTarget
-version: 14
+version: 14 22
 size: 32
 ret: void
 arg: rs_allocation colorTarget
@@ -239,6 +249,7 @@ test: none
 end:
 
 function: rsgBindConstant
+version: 9 22
 size: 32
 ret: void
 arg: rs_program_fragment ps, "program fragment object"
@@ -253,6 +264,7 @@ test: none
 end:
 
 function: rsgBindConstant
+version: 9 22
 size: 32
 ret: void
 arg: rs_program_vertex pv, "program vertex object"
@@ -262,7 +274,7 @@ test: none
 end:
 
 function: rsgBindDepthTarget
-version: 14
+version: 14 22
 size: 32
 ret: void
 arg: rs_allocation depthTarget
@@ -274,6 +286,7 @@ test: none
 end:
 
 function: rsgBindFont
+version: 9 22
 size: 32
 ret: void
 arg: rs_font font, "object to bind"
@@ -285,6 +298,7 @@ test: none
 end:
 
 function: rsgBindProgramFragment
+version: 9 22
 size: 32
 ret: void
 arg: rs_program_fragment pf
@@ -296,6 +310,7 @@ test: none
 end:
 
 function: rsgBindProgramRaster
+version: 9 22
 size: 32
 ret: void
 arg: rs_program_raster pr
@@ -307,6 +322,7 @@ test: none
 end:
 
 function: rsgBindProgramStore
+version: 9 22
 size: 32
 ret: void
 arg: rs_program_store ps
@@ -318,6 +334,7 @@ test: none
 end:
 
 function: rsgBindProgramVertex
+version: 9 22
 size: 32
 ret: void
 arg: rs_program_vertex pv
@@ -329,6 +346,7 @@ test: none
 end:
 
 function: rsgBindSampler
+version: 9 22
 size: 32
 ret: void
 arg: rs_program_fragment fragment
@@ -343,6 +361,7 @@ test: none
 end:
 
 function: rsgBindTexture
+version: 9 22
 size: 32
 ret: void
 arg: rs_program_fragment v
@@ -359,7 +378,7 @@ test: none
 end:
 
 function: rsgClearAllRenderTargets
-version: 14
+version: 14 22
 size: 32
 ret: void
 deprecated:
@@ -371,6 +390,7 @@ test: none
 end:
 
 function: rsgClearColor
+version: 9 22
 size: 32
 ret: void
 arg: float r
@@ -385,7 +405,7 @@ test: none
 end:
 
 function: rsgClearColorTarget
-version: 14
+version: 14 22
 size: 32
 ret: void
 arg: uint slot
@@ -397,6 +417,7 @@ test: none
 end:
 
 function: rsgClearDepth
+version: 9 22
 size: 32
 ret: void
 arg: float value
@@ -408,7 +429,7 @@ test: none
 end:
 
 function: rsgClearDepthTarget
-version: 14
+version: 14 22
 size: 32
 ret: void
 deprecated:
@@ -419,6 +440,7 @@ test: none
 end:
 
 function: rsgDrawMesh
+version: 9 22
 size: 32
 ret: void
 arg: rs_mesh ism, "mesh object to render"
@@ -436,6 +458,7 @@ test: none
 end:
 
 function: rsgDrawMesh
+version: 9 22
 size: 32
 ret: void
 arg: rs_mesh ism
@@ -444,6 +467,7 @@ test: none
 end:
 
 function: rsgDrawMesh
+version: 9 22
 size: 32
 ret: void
 arg: rs_mesh ism
@@ -454,6 +478,7 @@ test: none
 end:
 
 function: rsgDrawQuad
+version: 9 22
 size: 32
 ret: void
 arg: float x1
@@ -477,6 +502,7 @@ test: none
 end:
 
 function: rsgDrawQuadTexCoords
+version: 9 22
 size: 32
 ret: void
 arg: float x1
@@ -508,6 +534,7 @@ test: none
 end:
 
 function: rsgDrawRect
+version: 9 22
 size: 32
 ret: void
 arg: float x1
@@ -524,6 +551,7 @@ test: none
 end:
 
 function: rsgDrawSpriteScreenspace
+version: 9 22
 size: 32
 ret: void
 arg: float x
@@ -542,6 +570,7 @@ test: none
 end:
 
 function: rsgDrawText
+version: 9 22
 size: 32
 ret: void
 arg: const char* text
@@ -555,6 +584,7 @@ test: none
 end:
 
 function: rsgDrawText
+version: 9 22
 size: 32
 ret: void
 arg: rs_allocation alloc
@@ -564,7 +594,7 @@ test: none
 end:
 
 function: rsgFinish
-version: 14
+version: 14 22
 size: 32
 ret: uint
 deprecated:
@@ -575,6 +605,7 @@ test: none
 end:
 
 function: rsgFontColor
+version: 9 22
 size: 32
 ret: void
 arg: float r, "red component"
@@ -589,6 +620,7 @@ test: none
 end:
 
 function: rsgGetHeight
+version: 9 22
 size: 32
 ret: uint
 deprecated:
@@ -599,6 +631,7 @@ test: none
 end:
 
 function: rsgGetWidth
+version: 9 22
 size: 32
 ret: uint
 deprecated:
@@ -609,6 +642,7 @@ test: none
 end:
 
 function: rsgMeasureText
+version: 9 22
 size: 32
 ret: void
 arg: const char* text
@@ -625,6 +659,7 @@ test: none
 end:
 
 function: rsgMeasureText
+version: 9 22
 size: 32
 ret: void
 arg: rs_allocation alloc
@@ -636,6 +671,7 @@ test: none
 end:
 
 function: rsgMeshComputeBoundingBox
+version: 9 22
 size: 32
 ret: void
 arg: rs_mesh mesh
@@ -653,6 +689,7 @@ test: none
 end:
 
 function: rsgMeshComputeBoundingBox
+version: 9 22
 size: 32
 attrib: always_inline
 ret: void
@@ -672,7 +709,7 @@ test: none
 end:
 
 function: rsgMeshGetIndexAllocation
-version: 16
+version: 16 22
 size: 32
 ret: rs_allocation, "allocation containing index data"
 arg: rs_mesh m, "mesh to get data from"
@@ -686,7 +723,7 @@ test: none
 end:
 
 function: rsgMeshGetPrimitive
-version: 16
+version: 16 22
 size: 32
 ret: rs_primitive, "primitive describing how the mesh is rendered"
 arg: rs_mesh m, "mesh to get data from"
@@ -700,7 +737,7 @@ test: none
 end:
 
 function: rsgMeshGetPrimitiveCount
-version: 16
+version: 16 22
 size: 32
 ret: uint32_t, "number of primitive groups in the mesh. This would include simple primitives as well as allocations containing index data"
 arg: rs_mesh m, "mesh to get data from"
@@ -713,7 +750,7 @@ test: none
 end:
 
 function: rsgMeshGetVertexAllocation
-version: 16
+version: 16 22
 size: 32
 ret: rs_allocation, "allocation containing vertex data"
 arg: rs_mesh m, "mesh to get data from"
@@ -727,7 +764,7 @@ test: none
 end:
 
 function: rsgMeshGetVertexAllocationCount
-version: 16
+version: 16 22
 size: 32
 ret: uint32_t, "number of allocations in the mesh that contain vertex data"
 arg: rs_mesh m, "mesh to get data from"
@@ -740,6 +777,7 @@ test: none
 end:
 
 function: rsgProgramFragmentConstantColor
+version: 9 22
 size: 32
 ret: void
 arg: rs_program_fragment pf
@@ -755,6 +793,7 @@ test: none
 end:
 
 function: rsgProgramVertexGetProjectionMatrix
+version: 9 22
 size: 32
 ret: void
 arg: rs_matrix4x4* proj, "matrix to store the current projection matrix into"
@@ -768,6 +807,7 @@ test: none
 end:
 
 function: rsgProgramVertexLoadModelMatrix
+version: 9 22
 size: 32
 ret: void
 arg: const rs_matrix4x4* model, "model matrix"
@@ -781,6 +821,7 @@ test: none
 end:
 
 function: rsgProgramVertexLoadProjectionMatrix
+version: 9 22
 size: 32
 ret: void
 arg: const rs_matrix4x4* proj, "projection matrix"
@@ -794,6 +835,7 @@ test: none
 end:
 
 function: rsgProgramVertexLoadTextureMatrix
+version: 9 22
 size: 32
 ret: void
 arg: const rs_matrix4x4* tex, "texture matrix"
@@ -807,7 +849,7 @@ test: none
 end:
 
 function: rsgProgramRasterGetCullMode
-version: 16
+version: 16 22
 size: 32
 ret: rs_cull_mode
 arg: rs_program_raster pr, "program raster to query"
@@ -819,7 +861,7 @@ test: none
 end:
 
 function: rsgProgramRasterIsPointSpriteEnabled
-version: 16
+version: 16 22
 size: 32
 ret: bool
 arg: rs_program_raster pr, "program raster to query"
@@ -831,7 +873,7 @@ test: none
 end:
 
 function: rsgProgramStoreGetBlendDstFunc
-version: 16
+version: 16 22
 size: 32
 ret: rs_blend_dst_func
 arg: rs_program_store ps, "program store to query"
@@ -843,7 +885,7 @@ test: none
 end:
 
 function: rsgProgramStoreGetBlendSrcFunc
-version: 16
+version: 16 22
 size: 32
 ret: rs_blend_src_func
 arg: rs_program_store ps, "program store to query"
@@ -855,7 +897,7 @@ test: none
 end:
 
 function: rsgProgramStoreGetDepthFunc
-version: 16
+version: 16 22
 size: 32
 ret: rs_depth_func
 arg: rs_program_store ps, "program store to query"
@@ -867,7 +909,7 @@ test: none
 end:
 
 function: rsgProgramStoreIsColorMaskAlphaEnabled
-version: 16
+version: 16 22
 size: 32
 ret: bool
 arg: rs_program_store ps, "program store to query"
@@ -879,7 +921,7 @@ test: none
 end:
 
 function: rsgProgramStoreIsColorMaskBlueEnabled
-version: 16
+version: 16 22
 size: 32
 ret: bool
 arg: rs_program_store ps, "program store to query"
@@ -891,7 +933,7 @@ test: none
 end:
 
 function: rsgProgramStoreIsColorMaskGreenEnabled
-version: 16
+version: 16 22
 size: 32
 ret: bool
 arg: rs_program_store ps, "program store to query"
@@ -903,7 +945,7 @@ test: none
 end:
 
 function: rsgProgramStoreIsColorMaskRedEnabled
-version: 16
+version: 16 22
 size: 32
 ret: bool
 arg: rs_program_store ps, "program store to query"
@@ -915,7 +957,7 @@ test: none
 end:
 
 function: rsgProgramStoreIsDepthMaskEnabled
-version: 16
+version: 16 22
 size: 32
 ret: bool
 arg: rs_program_store ps, "program store to query"
@@ -927,7 +969,7 @@ test: none
 end:
 
 function: rsgProgramStoreIsDitherEnabled
-version: 16
+version: 16 22
 size: 32
 ret: bool
 arg: rs_program_store ps, "program store to query"

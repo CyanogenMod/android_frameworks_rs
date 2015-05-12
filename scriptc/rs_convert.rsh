@@ -1249,9 +1249,13 @@ extern ulong4 __attribute__((const, overloadable))
 /*
  * rsPackColorTo8888: Create a uchar4 RGBA from floats
  *
- * Packs three or four floating point RGBA values into a uchar4.  The RGBA values should be
- * between 0.0 and 1.0 inclusive.  Values outside of this range are clamped to this range.
- * However numbers greater than INT_MAX or less than INT_MIN can result in undefined behavior.
+ * Packs three or four floating point RGBA values into a uchar4.
+ *
+ * The input values are typically between 0.0 and 1.0 inclusive.  For input values outside
+ * of this range, the resulting outputs will be clamped to be between 0 and 255.  As this
+ * clamping may be done after the input is multiplied by 255.f and converted to an integer,
+ * input numbers greater than INT_MAX/255.f or less than INT_MIN/255.f can result in
+ * undefined behavior.
  *
  * If the alpha component is not specified, it is assumed to be 1.0, i.e. the result will
  * have an alpha set to 255.

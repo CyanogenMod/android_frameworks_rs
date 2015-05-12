@@ -147,6 +147,7 @@ protected:
     std::string mSummary;                   // A one-line description
     std::vector<std::string> mDescription;  // The comments to be included in the header
     std::string mUrl;                       // The URL of the detailed documentation
+    int mFinalVersion;  // API level at which this API was removed, 0 if API is still valid
 
 public:
     Definition(const std::string& name);
@@ -158,8 +159,11 @@ public:
     std::string getSummary() const { return mSummary; }
     const std::vector<std::string>& getDescription() const { return mDescription; }
     std::string getUrl() const { return mUrl; }
+    int getFinalVersion() const { return mFinalVersion; }
 
     void scanDocumentationTags(Scanner* scanner, bool firstOccurence, const SpecFile* specFile);
+    // Keep track of the final version of this API, if any.
+    void updateFinalVersion(const VersionInfo& info);
 };
 
 /* Represents a constant, like M_PI.  This is a grouping of the version specific specifications.
@@ -368,7 +372,7 @@ public:
     FunctionSpecification(Function* function) : mFunction(function), mReturn(nullptr) {}
     ~FunctionSpecification();
 
-    Function* getFunction() { return mFunction; }
+    Function* getFunction() const { return mFunction; }
     std::string getAttribute() const { return mAttribute; }
     std::string getTest() const { return mTest; }
     std::string getPrecisionLimit() const { return mPrecisionLimit; }
