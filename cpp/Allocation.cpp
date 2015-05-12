@@ -49,6 +49,7 @@ Allocation::Allocation(void *id, sp<RS> rs, sp<const Type> t, uint32_t usage) :
                    RS_ALLOCATION_USAGE_GRAPHICS_RENDER_TARGET |
                    RS_ALLOCATION_USAGE_IO_INPUT |
                    RS_ALLOCATION_USAGE_IO_OUTPUT |
+                   RS_ALLOCATION_USAGE_OEM |
                    RS_ALLOCATION_USAGE_SHARED)) != 0) {
         ALOGE("Unknown usage specified.");
     }

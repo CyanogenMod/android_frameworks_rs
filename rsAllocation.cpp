@@ -70,9 +70,22 @@ Allocation * Allocation::createAllocation(Context *rsc, const Type *type, uint32
         return nullptr;
     }
 
-    Allocation *a = new (allocMem) Allocation(rsc, type, usages, mc, ptr);
+    bool success = false;
+    Allocation *a = nullptr;
+    if (usages & RS_ALLOCATION_USAGE_OEM) {
+        if (rsc->mHal.funcs.allocation.initOem != nullptr) {
+            a = new (allocMem) Allocation(rsc, type, usages, mc, nullptr);
+            success = rsc->mHal.funcs.allocation.initOem(rsc, a, type->getElement()->getHasReferences(), ptr);
+        } else {
+            rsc->setError(RS_ERROR_FATAL_DRIVER, "Allocation Init called with USAGE_OEM but driver does not support it");
+            return nullptr;
+        }
+    } else {
+        a = new (allocMem) Allocation(rsc, type, usages, mc, ptr);
+        success = rsc->mHal.funcs.allocation.init(rsc, a, type->getElement()->getHasReferences());
+    }
 
-    if (!rsc->mHal.funcs.allocation.init(rsc, a, type->getElement()->getHasReferences())) {
+    if (!success) {
         rsc->setError(RS_ERROR_FATAL_DRIVER, "Allocation::Allocation, alloc failure");
         delete a;
         return nullptr;
