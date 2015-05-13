@@ -82,6 +82,7 @@ static bool LoadHalTable(Context *rsc, HalQueryHal fn, bool loadGraphics) {
     ret &= fn(RS_HAL_SCRIPT_UPDATE_CACHED_OBJECT, (void **)&rsc->mHal.funcs.script.updateCachedObject);
 
     ret &= fn(RS_HAL_ALLOCATION_INIT, (void **)&rsc->mHal.funcs.allocation.init);
+    ret &= fn(RS_HAL_ALLOCATION_INIT_OEM, (void **)&rsc->mHal.funcs.allocation.initOem);
     ret &= fn(RS_HAL_ALLOCATION_INIT_ADAPTER, (void **)&rsc->mHal.funcs.allocation.initAdapter);
     ret &= fn(RS_HAL_ALLOCATION_DESTROY, (void **)&rsc->mHal.funcs.allocation.destroy);
     ret &= fn(RS_HAL_ALLOCATION_GET_GRALLOC_BITS, (void **)&rsc->mHal.funcs.allocation.grallocBits);
