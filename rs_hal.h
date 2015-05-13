@@ -190,6 +190,7 @@ typedef struct {
 
     struct {
         bool (*init)(const Context *rsc, Allocation *alloc, bool forceZero);
+        bool (*initOem)(const Context *rsc, Allocation *alloc, bool forceZero, void *usrPtr);
         bool (*initAdapter)(const Context *rsc, Allocation *alloc);
         void (*destroy)(const Context *rsc, Allocation *alloc);
         uint32_t (*grallocBits)(const Context *rsc, Allocation *alloc);
@@ -400,6 +401,7 @@ enum RsHalInitEnums {
     RS_HAL_ALLOCATION_GENERATE_MIPMAPS                      = 2023,
     RS_HAL_ALLOCATION_UPDATE_CACHED_OBJECT                  = 2024,
     RS_HAL_ALLOCATION_ADAPTER_OFFSET                        = 2025,
+    RS_HAL_ALLOCATION_INIT_OEM                              = 2026,
 
     RS_HAL_SAMPLER_INIT                                     = 3000,
     RS_HAL_SAMPLER_DESTROY                                  = 3001,
