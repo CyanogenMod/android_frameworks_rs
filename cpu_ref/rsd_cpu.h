@@ -147,6 +147,20 @@ public:
             RSSetupCompilerCallback pSetupCompilerCallback) = 0;
     virtual RSSetupCompilerCallback getSetupCompilerCallback() const = 0;
 #endif
+
+    // Set to true if we should embed global variable information in the code.
+    virtual void setEmbedGlobalInfo(bool v) = 0;
+
+    // Returns true if we should embed global variable information in the code.
+    virtual bool getEmbedGlobalInfo() const = 0;
+
+    // Set to true if we should skip constant (immutable) global variables when
+    // potentially embedding information about globals.
+    virtual void setEmbedGlobalInfoSkipConstant(bool v) = 0;
+
+    // Returns true if we should skip constant (immutable) global variables when
+    // potentially embedding information about globals.
+    virtual bool getEmbedGlobalInfoSkipConstant() const = 0;
 };
 
 
