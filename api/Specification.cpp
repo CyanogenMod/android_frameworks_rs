@@ -224,7 +224,20 @@ bool VersionInfo::scan(Scanner* scanner, int maxApiLevel) {
     return minVersion == 0 || minVersion <= maxApiLevel;
 }
 
-Definition::Definition(const std::string& name) : mName(name), mDeprecated(false), mHidden(false) {
+Definition::Definition(const std::string& name)
+    : mName(name), mDeprecated(false), mHidden(false), mFinalVersion(-1) {
+}
+
+void Definition::updateFinalVersion(const VersionInfo& info) {
+    /* We set it if:
+     * - We have never set mFinalVersion before, or
+     * - The max version is 0, which means we have not expired this API, or
+     * - We have a max that's later than what we currently have.
+     */
+    if (mFinalVersion < 0 || info.maxVersion == 0 ||
+        (mFinalVersion > 0 && info.maxVersion > mFinalVersion)) {
+        mFinalVersion = info.maxVersion;
+    }
 }
 
 void Definition::scanDocumentationTags(Scanner* scanner, bool firstOccurence,
@@ -323,6 +336,7 @@ void ConstantSpecification::scanConstantSpecification(Scanner* scanner, SpecFile
     Constant* constant = systemSpecification.findOrCreateConstant(name, &created);
     ConstantSpecification* spec = new ConstantSpecification(constant);
     constant->addSpecification(spec);
+    constant->updateFinalVersion(info);
     specFile->addConstantSpecification(spec, created);
     spec->mVersionInfo = info;
 
@@ -348,6 +362,7 @@ void TypeSpecification::scanTypeSpecification(Scanner* scanner, SpecFile* specFi
     Type* type = systemSpecification.findOrCreateType(name, &created);
     TypeSpecification* spec = new TypeSpecification(type);
     type->addSpecification(spec);
+    type->updateFinalVersion(info);
     specFile->addTypeSpecification(spec, created);
     spec->mVersionInfo = info;
 
@@ -529,6 +544,7 @@ void FunctionSpecification::scanFunctionSpecification(Scanner* scanner, SpecFile
     Function* function = systemSpecification.findOrCreateFunction(name, &created);
     FunctionSpecification* spec = new FunctionSpecification(function);
     function->addSpecification(spec);
+    function->updateFinalVersion(info);
     specFile->addFunctionSpecification(spec, created);
 
     spec->mUnexpandedName = unexpandedName;
