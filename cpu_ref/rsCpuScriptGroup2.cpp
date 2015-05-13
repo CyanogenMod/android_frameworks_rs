@@ -230,10 +230,17 @@ void setupCompileArguments(
         const vector<string>& invokeBatches,
         const char* outputDir, const char* outputFileName,
         const char* coreLibPath, const char* coreLibRelaxedPath,
+        const bool emitGlobalInfo, const bool emitGlobalInfoSkipConstant,
         vector<const char*>* args) {
     args->push_back(RsdCpuScriptImpl::BCC_EXE_PATH);
     args->push_back("-fPIC");
     args->push_back("-embedRSInfo");
+    if (emitGlobalInfo) {
+        args->push_back("-rs-global-info");
+        if (emitGlobalInfoSkipConstant) {
+            args->push_back("-rs-global-info-skip-constant");
+        }
+    }
     args->push_back("-mtriple");
     args->push_back(DEFAULT_TARGET_TRIPLE_STRING);
     args->push_back("-bclib");
@@ -340,8 +347,11 @@ void CpuScriptGroup2Impl::compile(const char* cacheDir) {
                                                &coreLibRelaxedPath);
 
     vector<const char*> arguments;
+    bool emitGlobalInfo = getCpuRefImpl()->getEmbedGlobalInfo();
+    bool emitGlobalInfoSkipConstant = getCpuRefImpl()->getEmbedGlobalInfoSkipConstant();
     setupCompileArguments(inputs, kernelBatches, invokeBatches, cacheDir,
                           resName, coreLibPath.c_str(), coreLibRelaxedPath.c_str(),
+                          emitGlobalInfo, emitGlobalInfoSkipConstant,
                           &arguments);
 
     std::unique_ptr<const char> cmdLine(rsuJoinStrings(arguments.size() - 1,
