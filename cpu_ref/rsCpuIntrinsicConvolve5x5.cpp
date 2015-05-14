@@ -27,13 +27,13 @@ namespace renderscript {
 
 class RsdCpuScriptIntrinsicConvolve5x5 : public RsdCpuScriptIntrinsic {
 public:
-    virtual void populateScript(Script *);
-    virtual void invokeFreeChildren();
+    void populateScript(Script *) override;
+    void invokeFreeChildren() override;
 
-    virtual void setGlobalVar(uint32_t slot, const void *data, size_t dataLength);
-    virtual void setGlobalObj(uint32_t slot, ObjectBase *data);
+    void setGlobalVar(uint32_t slot, const void *data, size_t dataLength) override;
+    void setGlobalObj(uint32_t slot, ObjectBase *data) override;
 
-    virtual ~RsdCpuScriptIntrinsicConvolve5x5();
+    ~RsdCpuScriptIntrinsicConvolve5x5() override;
     RsdCpuScriptIntrinsicConvolve5x5(RsdCpuReferenceImpl *ctx, const Script *s, const Element *e);
 
 protected:
