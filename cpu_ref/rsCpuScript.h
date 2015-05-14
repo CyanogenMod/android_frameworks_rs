@@ -57,10 +57,10 @@ public:
     bool init(char const *resName, char const *cacheDir,
               uint8_t const *bitcode, size_t bitcodeSize, uint32_t flags,
               char const *bccPluginName = nullptr);
-    virtual void populateScript(Script *);
+    void populateScript(Script *) override;
 
-    virtual void invokeFunction(uint32_t slot, const void *params, size_t paramLength);
-    virtual int invokeRoot();
+    void invokeFunction(uint32_t slot, const void *params, size_t paramLength) override;
+    int invokeRoot() override;
     virtual void preLaunch(uint32_t slot, const Allocation ** ains,
                            uint32_t inLen, Allocation * aout, const void * usr,
                            uint32_t usrLen, const RsScriptCall *sc);
@@ -69,27 +69,28 @@ public:
                             const void * usr, uint32_t usrLen,
                             const RsScriptCall *sc);
 
-    virtual void invokeForEach(uint32_t slot,
-                               const Allocation ** ains,
-                               uint32_t inLen,
-                               Allocation* aout,
-                               const void* usr,
-                               uint32_t usrLen,
-                               const RsScriptCall* sc);
+    void invokeForEach(uint32_t slot,
+                       const Allocation ** ains,
+                       uint32_t inLen,
+                       Allocation* aout,
+                       const void* usr,
+                       uint32_t usrLen,
+                       const RsScriptCall* sc) override;
 
-    virtual void invokeInit();
-    virtual void invokeFreeChildren();
+    void invokeInit() override;
+    void invokeFreeChildren() override;
 
-    virtual void setGlobalVar(uint32_t slot, const void *data, size_t dataLength);
-    virtual void getGlobalVar(uint32_t slot, void *data, size_t dataLength);
-    virtual void setGlobalVarWithElemDims(uint32_t slot, const void *data, size_t dataLength,
-                                  const Element *e, const uint32_t *dims, size_t dimLength);
-    virtual void setGlobalBind(uint32_t slot, Allocation *data);
-    virtual void setGlobalObj(uint32_t slot, ObjectBase *data);
+    void setGlobalVar(uint32_t slot, const void *data, size_t dataLength) override;
+    void getGlobalVar(uint32_t slot, void *data, size_t dataLength) override;
+    void setGlobalVarWithElemDims(uint32_t slot, const void *data, size_t dataLength,
+                                  const Element *e, const uint32_t *dims,
+                                  size_t dimLength) override;
+    void setGlobalBind(uint32_t slot, Allocation *data) override;
+    void setGlobalObj(uint32_t slot, ObjectBase *data) override;
 
     const char* getFieldName(uint32_t slot) const;
 
-    virtual ~RsdCpuScriptImpl();
+    ~RsdCpuScriptImpl() override;
     RsdCpuScriptImpl(RsdCpuReferenceImpl *ctx, const Script *s);
 
     const Script * getScript() {return mScript;}
@@ -104,7 +105,7 @@ public:
     const RsdCpuReference::CpuSymbol * lookupSymbolMath(const char *sym);
     static void * lookupRuntimeStub(void* pContext, char const* name);
 
-    virtual Allocation * getAllocationForPointer(const void *ptr) const;
+    Allocation * getAllocationForPointer(const void *ptr) const override;
     bool storeRSInfoFromSO();
 
     int getGlobalEntries() const override;

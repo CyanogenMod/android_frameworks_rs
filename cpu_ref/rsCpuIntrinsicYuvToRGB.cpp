@@ -35,12 +35,12 @@ namespace renderscript {
 
 class RsdCpuScriptIntrinsicYuvToRGB : public RsdCpuScriptIntrinsic {
 public:
-    virtual void populateScript(Script *);
-    virtual void invokeFreeChildren();
+    void populateScript(Script *) override;
+    void invokeFreeChildren() override;
 
-    virtual void setGlobalObj(uint32_t slot, ObjectBase *data);
+    void setGlobalObj(uint32_t slot, ObjectBase *data) override;
 
-    virtual ~RsdCpuScriptIntrinsicYuvToRGB();
+    ~RsdCpuScriptIntrinsicYuvToRGB() override;
     RsdCpuScriptIntrinsicYuvToRGB(RsdCpuReferenceImpl *ctx, const Script *s, const Element *e);
 
 protected:
