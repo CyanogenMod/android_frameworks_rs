@@ -411,6 +411,11 @@ bool loadSymbols(void* handle, dispatchTable& dispatchTab, int device_api) {
             LOG_API("Couldn't initialize dispatchTab.Allocation3DRead");
             return false;
         }
+        dispatchTab.ScriptForEachMulti = (ScriptForEachMultiFnPtr)dlsym(handle, "rsScriptForEachMulti");
+        if (dispatchTab.ScriptForEachMulti == NULL) {
+            LOG_API("Couldn't initialize dispatchTab.ScriptForEachMulti");
+            return false;
+        }
     }
 
     return true;
