@@ -181,7 +181,7 @@ bool addFileToChecksum(const char *fileName, uint32_t &checksum) {
             break;
     }
 
-    if (TEMP_FAILURE_RETRY(close(FD)) != 0) {
+    if (close(FD) != 0) {
         ALOGE("Cannot close file \'%s\' after computing checksum", fileName);
         return false;
     }
