@@ -134,7 +134,6 @@ rs_generated_source += $(GEN)
 LOCAL_GENERATED_SOURCES += $(GEN)
 
 LOCAL_SRC_FILES:= \
-	rsAdapter.cpp \
 	rsAllocation.cpp \
 	rsAnimation.cpp \
 	rsComponent.cpp \
@@ -240,7 +239,6 @@ LOCAL_CFLAGS += -fPIC
 LOCAL_CPPFLAGS += -fno-exceptions
 
 LOCAL_SRC_FILES:= \
-	rsAdapter.cpp \
 	rsAllocation.cpp \
 	rsAnimation.cpp \
 	rsComponent.cpp \
