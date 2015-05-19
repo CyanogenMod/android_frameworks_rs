@@ -167,8 +167,12 @@ void * Allocation::getPointer(const Context *rsc, uint32_t lod, RsAllocationCube
         return nullptr;
     }
 
+    if (mRSC->mHal.funcs.allocation.getPointer != nullptr) {
+        // Notify the driver, if present that the user is mapping the buffer
+        mRSC->mHal.funcs.allocation.getPointer(rsc, this, lod, face, z, array);
+    }
+
     size_t s = 0;
-    //void *ptr = mRSC->mHal.funcs.allocation.lock1D(rsc, this);
     if ((stride != nullptr) && mHal.drvState.lod[0].dimY) {
         *stride = mHal.drvState.lod[lod].stride;
     }
