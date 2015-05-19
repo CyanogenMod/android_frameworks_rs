@@ -459,7 +459,25 @@ Context::Context() {
     mContextType = RS_CONTEXT_TYPE_NORMAL;
     mSynchronous = false;
     mFatalErrorOccured = false;
+
+    memset(mCacheDir, 0, sizeof(mCacheDir));
+#ifdef RS_COMPATIBILITY_LIB
+    memset(nativeLibDir, 0, sizeof(nativeLibDir));
+#endif
 }
+
+void Context::setCacheDir(const char * cacheDir_arg, uint32_t length) {
+    if (!hasSetCacheDir) {
+        if (length <= PATH_MAX) {
+            memcpy(mCacheDir, cacheDir_arg, length);
+            mCacheDir[length] = 0;
+            hasSetCacheDir = true;
+        } else {
+            setError(RS_ERROR_BAD_VALUE, "Invalid path");
+        }
+    }
+}
+
 
 Context * Context::createContext(Device *dev, const RsSurfaceConfig *sc,
                                  RsContextType ct, uint32_t flags) {
