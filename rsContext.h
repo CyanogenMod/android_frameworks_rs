@@ -258,6 +258,7 @@ public:
         if (!hasSetNativeLibDir) {
             if (length <= PATH_MAX) {
                 memcpy(nativeLibDir, libDir, length);
+                nativeLibDir[length] = 0;
                 hasSetNativeLibDir = true;
             } else {
                 setError(RS_ERROR_BAD_VALUE, "Invalid path");
@@ -269,18 +270,12 @@ public:
     }
 #endif
 
-    void setCacheDir(const char * cacheDir_arg, uint32_t length) {
-        if (!hasSetCacheDir) {
-            if (length <= PATH_MAX) {
-                memcpy(mCacheDir, cacheDir_arg, length);
-                hasSetCacheDir = true;
-            } else {
-                setError(RS_ERROR_BAD_VALUE, "Invalid path");
-            }
-        }
-    }
+    void setCacheDir(const char * cacheDir_arg, uint32_t length);
     const char * getCacheDir() {
-        return mCacheDir;
+        if (hasSetCacheDir) {
+            return mCacheDir;
+        }
+        return nullptr;
     }
 
     // Returns the actual loaded driver's name (like "libRSDriver.so").
