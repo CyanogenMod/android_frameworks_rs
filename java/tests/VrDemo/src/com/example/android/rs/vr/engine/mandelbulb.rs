@@ -22,6 +22,7 @@ int size;
 int z;
 rs_allocation volume;
 
+/* Unused function:
 static float3 nylander(float3 p, int n) {
     float3 out;
     float r = length(p);
@@ -33,6 +34,7 @@ static float3 nylander(float3 p, int n) {
     out.z = cos(n * theta);
     return out * rn;
 }
+*/
 
 /**
 * 8 x faster than the above for n = 3
@@ -46,10 +48,6 @@ static float3 nylander3(float3 p) {
     out.y = (z23x2y2 * p.y * (3 * p.x * p.x - p.y * p.y)) / xy2;
     out.z = p.z * (p.z * p.z - 3 * p.x * p.x - 3 * p.y * p.y);
     return out;
-}
-
-static float vsize(float3 p) {
-    return sqrt(p.x * p.x + p.y * p.y + p.z * p.z);
 }
 
 short __attribute__((kernel)) mandelbulb(uint32_t x, uint32_t y) {

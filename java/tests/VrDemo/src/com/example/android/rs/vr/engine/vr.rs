@@ -104,7 +104,6 @@ uchar4 __attribute__ ((kernel)) draw_z_buffer(float2 in, uint32_t x, uint32_t y)
     float zstart = zsuface;
     float zend = in.y - 2.f;//0.5f;
     float zlen = zend - zstart;
-    float step_dist = length(dz);
 
     if (zstart == FLOAT_MAX || zlen < 0) {
         return out;
@@ -124,7 +123,7 @@ uchar4 __attribute__ ((kernel)) draw_z_buffer(float2 in, uint32_t x, uint32_t y)
         int intensity = (((short) pix) & 0xFFFF);
         //   intensity = clamp(intensity,0,400);
         uchar4 color = rsGetElementAt_uchar4(color_map, intensity * 2);
-        int op = rsGetElementAt_uchar(opacity, intensity);
+        // int op = rsGetElementAt_uchar(opacity, intensity);
 
         out.r = color.r;
         out.g = color.g;
@@ -167,7 +166,7 @@ uchar4 __attribute__ ((kernel)) draw_z_buffer(float2 in, uint32_t x, uint32_t y)
                 float4 fcolor = convert_float4(color);;
 
                 float ambient = mat.x * (1/255.f);
-                float specular = mat.y * (1/255.f);
+                // float specular = mat.y * (1/255.f);
                 float diffuse = mat.z * (1/255.f);
                 float lop = (ambient + diffuse * dot_prod) * light * opf;
                 light -= opf;
