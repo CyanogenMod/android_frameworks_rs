@@ -16,7 +16,6 @@
 
 #include "rsContext.h"
 #include "rsAllocation.h"
-#include "rsAdapter.h"
 #include "rs_hal.h"
 
 #if !defined(RS_SERVER) && !defined(RS_COMPATIBILITY_LIB)

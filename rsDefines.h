@@ -29,8 +29,6 @@ extern "C" {
 
 typedef void * RsAsyncVoidPtr;
 
-typedef void * RsAdapter1D;
-typedef void * RsAdapter2D;
 typedef void * RsAllocation;
 typedef void * RsAnimation;
 typedef void * RsClosure;
