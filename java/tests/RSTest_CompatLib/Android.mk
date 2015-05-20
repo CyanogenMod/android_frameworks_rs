@@ -38,6 +38,4 @@ LOCAL_RENDERSCRIPT_FLAGS := -rs-package-name=android.support.v8.renderscript
 LOCAL_JNI_SHARED_LIBRARIES := librsjni
 LOCAL_32_BIT_ONLY := true
 
-LOCAL_JACK_ENABLED := disabled
-
 include $(BUILD_PACKAGE)
