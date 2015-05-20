@@ -35,7 +35,6 @@ float4 RS_KERNEL vibranceKernel(float4 in) {
     float Rt = Rf * MS;
     float Gt = Gf * MS;
     float Bt = Bf * MS;
-    int t = (r + g) >> 1;
 
     float R = r;
     float G = g;

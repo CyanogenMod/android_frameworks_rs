@@ -345,16 +345,10 @@ TEST_US_US_ALL(func)            \
 TEST_SI_SI_ALL(func)            \
 TEST_UI_UI_ALL(func)
 
-// TODO:  add long types to ALL macro
-#if 0
-TEST_SL_SL_ALL(func)            \
-TEST_UL_UL_ALL(func)
-#endif
-
 #define DECLARE_TEMP_SET(type, abbrev)  \
-volatile type    temp_##abbrev##1;               \
-volatile type##2 temp_##abbrev##2;               \
-volatile type##3 temp_##abbrev##3;               \
+volatile type    temp_##abbrev##1;      \
+volatile type##2 temp_##abbrev##2;      \
+volatile type##3 temp_##abbrev##3;      \
 volatile type##4 temp_##abbrev##4;
 
 #define DECLARE_ALL_TEMP_SETS() \
@@ -364,9 +358,7 @@ DECLARE_TEMP_SET(uchar, uc);    \
 DECLARE_TEMP_SET(short, ss);    \
 DECLARE_TEMP_SET(ushort, us);   \
 DECLARE_TEMP_SET(int, si);      \
-DECLARE_TEMP_SET(uint, ui);     \
-DECLARE_TEMP_SET(long, sl);     \
-DECLARE_TEMP_SET(ulong, ul);
+DECLARE_TEMP_SET(uint, ui);
 
 static bool test_math_agree() {
     bool failed = false;
@@ -406,4 +398,3 @@ void math_agree_test() {
         rsSendToClientBlocking(RS_MSG_TEST_PASSED);
     }
 }
-

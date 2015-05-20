@@ -92,11 +92,13 @@ static float distanceDisk(float3 center, float radius, float3 normal,
     return tmp1;
 }
 
+/* Unused function:
 static short disk(float3 center, float circleRadius, float3 normal, float rad,
         short max, float3 img) {
     return (short) (max
             * sigmoid(distanceDisk(center, circleRadius, normal, img) - rad));
 }
+*/
 
 static short cogDisk(float3 center, float circleRadius, float3 normal,
         float rad, short max, float3 img) {
