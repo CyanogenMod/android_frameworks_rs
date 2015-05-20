@@ -18,7 +18,6 @@
 
 #include "rsContext.h"
 #include "rsAllocation.h"
-#include "rsAdapter.h"
 #include "rs_hal.h"
 
 #include <cutils/compiler.h>
