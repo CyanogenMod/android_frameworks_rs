@@ -275,6 +275,10 @@ typedef struct {
         void (*updateCachedObject)(const Context *rsc, const Allocation *alloc, rs_allocation *obj);
 
         void (*adapterOffset)(const Context *rsc, const Allocation *alloc);
+
+        void (*getPointer)(const Context *rsc, const Allocation *alloc,
+                           uint32_t lod, RsAllocationCubemapFace face,
+                           uint32_t z, uint32_t array);
     } allocation;
 
     struct {
@@ -402,6 +406,7 @@ enum RsHalInitEnums {
     RS_HAL_ALLOCATION_UPDATE_CACHED_OBJECT                  = 2024,
     RS_HAL_ALLOCATION_ADAPTER_OFFSET                        = 2025,
     RS_HAL_ALLOCATION_INIT_OEM                              = 2026,
+    RS_HAL_ALLOCATION_GET_POINTER                           = 2027,
 
     RS_HAL_SAMPLER_INIT                                     = 3000,
     RS_HAL_SAMPLER_DESTROY                                  = 3001,
