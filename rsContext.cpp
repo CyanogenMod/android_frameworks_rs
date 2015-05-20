@@ -45,6 +45,8 @@
 #include "rsCompatibilityLib.h"
 #endif
 
+int gDebuggerPresent = 0;
+
 #ifdef RS_SERVER
 // Android exposes gettid(), standard Linux does not
 static pid_t gettid() {
@@ -478,6 +480,11 @@ void Context::setCacheDir(const char * cacheDir_arg, uint32_t length) {
     }
 }
 
+void Context::waitForDebugger() {
+    while (!gDebuggerPresent) {
+        sleep(0);
+    }
+}
 
 Context * Context::createContext(Device *dev, const RsSurfaceConfig *sc,
                                  RsContextType ct, uint32_t flags) {
@@ -496,6 +503,11 @@ Context * Context::createContext(Device *dev, const RsSurfaceConfig *sc,
         delete rsc;
         return nullptr;
     }
+
+    if (flags & RS_CONTEXT_WAIT_FOR_ATTACH) {
+        rsc->waitForDebugger();
+    }
+
     return rsc;
 }
 
