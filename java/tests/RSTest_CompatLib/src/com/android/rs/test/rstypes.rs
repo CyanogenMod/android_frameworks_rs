@@ -22,6 +22,9 @@ static bool basic_test(uint32_t index) {
     rs_matrix4x4 matrix4x4TestLocal;
     rs_matrix3x3 matrix3x3TestLocal;
     rs_matrix2x2 matrix2x2TestLocal;
+    (void) matrix4x4TestLocal;
+    (void) matrix3x3TestLocal;
+    (void) matrix2x2TestLocal;
 
     // This test focuses primarily on compilation-time, not run-time.
     rs_element elementTestLocal;
@@ -29,8 +32,14 @@ static bool basic_test(uint32_t index) {
     rs_allocation allocationTestLocal;
     rs_sampler samplerTestLocal;
     rs_script scriptTestLocal;
+    (void) elementTestLocal;
+    (void) typeTestLocal;
+    (void) allocationTestLocal;
+    (void) samplerTestLocal;
+    (void) scriptTestLocal;
 
     struct my_struct structTest;
+    (void) structTest;
 
     //allocationTestLocal = allocationTest;
 
