@@ -112,6 +112,7 @@ public:
     const char * getGlobalName(int i) const override;
     const void * getGlobalAddress(int i) const override;
     size_t getGlobalSize(int i) const override;
+    uint32_t getGlobalProperties(int i) const override;
 
 protected:
     RsdCpuReferenceImpl *mCtx;
