@@ -97,6 +97,8 @@ public:
         virtual const void * getGlobalAddress(int i) const = 0;
         // Returns the size (in bytes) of the global variable at index i.
         virtual size_t getGlobalSize(int i) const = 0;
+        // Returns the properties of the global variable at index i.
+        virtual uint32_t getGlobalProperties(int i) const = 0;
 
         virtual ~CpuScript() {}
     };
