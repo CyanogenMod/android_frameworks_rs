@@ -70,14 +70,14 @@ struct MTLaunchStruct {
 
 class RsdCpuReferenceImpl : public RsdCpuReference {
 public:
-    virtual ~RsdCpuReferenceImpl();
+    ~RsdCpuReferenceImpl() override;
     RsdCpuReferenceImpl(Context *);
 
     void lockMutex();
     void unlockMutex();
 
     bool init(uint32_t version_major, uint32_t version_minor, sym_lookup_t, script_lookup_t);
-    virtual void setPriority(int32_t priority);
+    void setPriority(int32_t priority) override;
     virtual void launchThreads(WorkerCallback_t cbk, void *data);
     static void * helperThreadProc(void *vrsc);
     RsdCpuScriptImpl * setTLS(RsdCpuScriptImpl *sc);
@@ -90,13 +90,10 @@ public:
     void launchThreads(const Allocation** ains, uint32_t inLen, Allocation* aout,
                        const RsScriptCall* sc, MTLaunchStruct* mtls);
 
-    virtual CpuScript * createScript(const ScriptC *s,
-                                     char const *resName, char const *cacheDir,
-                                     uint8_t const *bitcode, size_t bitcodeSize,
-                                     uint32_t flags);
-    virtual CpuScript * createIntrinsic(const Script *s,
-                                        RsScriptIntrinsicID iid, Element *e);
-    virtual void* createScriptGroup(const ScriptGroupBase *sg);
+    CpuScript * createScript(const ScriptC *s, char const *resName, char const *cacheDir,
+                             uint8_t const *bitcode, size_t bitcodeSize, uint32_t flags) override;
+    CpuScript * createIntrinsic(const Script *s, RsScriptIntrinsicID iid, Element *e) override;
+    void* createScriptGroup(const ScriptGroupBase *sg) override;
 
     const RsdCpuReference::CpuSymbol *symLookup(const char *);
 
@@ -119,13 +116,14 @@ public:
         return mSelectRTCallback;
     }
 
-    virtual void setSetupCompilerCallback(
-            RSSetupCompilerCallback pSetupCompilerCallback) {
+#ifndef RS_COMPATIBILITY_LIB
+    void setSetupCompilerCallback(RSSetupCompilerCallback pSetupCompilerCallback) override {
         mSetupCompilerCallback = pSetupCompilerCallback;
     }
-    virtual RSSetupCompilerCallback getSetupCompilerCallback() const {
+    RSSetupCompilerCallback getSetupCompilerCallback() const override {
         return mSetupCompilerCallback;
     }
+#endif
 
     virtual void setBccPluginName(const char *name) {
         mBccPluginName.setTo(name);
@@ -133,27 +131,27 @@ public:
     virtual const char *getBccPluginName() const {
         return mBccPluginName.string();
     }
-    virtual bool getInForEach() { return mInForEach; }
+    bool getInForEach() override { return mInForEach; }
 
     // Set to true if we should embed global variable information in the code.
-    virtual void setEmbedGlobalInfo(bool v) {
+    void setEmbedGlobalInfo(bool v) override {
         mEmbedGlobalInfo = v;
     }
 
     // Returns true if we should embed global variable information in the code.
-    virtual bool getEmbedGlobalInfo() const {
+    bool getEmbedGlobalInfo() const override {
         return mEmbedGlobalInfo;
     }
 
     // Set to true if we should skip constant (immutable) global variables when
     // potentially embedding information about globals.
-    virtual void setEmbedGlobalInfoSkipConstant(bool v) {
+    void setEmbedGlobalInfoSkipConstant(bool v) override {
         mEmbedGlobalInfoSkipConstant = v;
     }
 
     // Returns true if we should skip constant (immutable) global variables when
     // potentially embedding information about globals.
-    virtual bool getEmbedGlobalInfoSkipConstant() const {
+    bool getEmbedGlobalInfoSkipConstant() const override {
         return mEmbedGlobalInfoSkipConstant;
     }
 

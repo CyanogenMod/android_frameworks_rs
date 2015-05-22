@@ -27,17 +27,17 @@ namespace renderscript {
 
 class RsdCpuScriptIntrinsicResize : public RsdCpuScriptIntrinsic {
 public:
-    virtual void populateScript(Script *);
-    virtual void invokeFreeChildren();
+    void populateScript(Script *) override;
+    void invokeFreeChildren() override;
 
-    virtual void setGlobalObj(uint32_t slot, ObjectBase *data);
+    void setGlobalObj(uint32_t slot, ObjectBase *data) override;
 
-    virtual ~RsdCpuScriptIntrinsicResize();
+    ~RsdCpuScriptIntrinsicResize() override;
     RsdCpuScriptIntrinsicResize(RsdCpuReferenceImpl *ctx, const Script *s, const Element *);
 
-    virtual void preLaunch(uint32_t slot, const Allocation ** ains,
-                           uint32_t inLen, Allocation * aout, const void * usr,
-                           uint32_t usrLen, const RsScriptCall *sc);
+    void preLaunch(uint32_t slot, const Allocation ** ains,
+                   uint32_t inLen, Allocation * aout, const void * usr,
+                   uint32_t usrLen, const RsScriptCall *sc) override;
 
     float scaleX;
     float scaleY;

@@ -27,9 +27,9 @@ namespace renderscript {
 
 class RsdCpuScriptIntrinsicBlend : public RsdCpuScriptIntrinsic {
 public:
-    virtual void populateScript(Script *);
+    void populateScript(Script *) override;
 
-    virtual ~RsdCpuScriptIntrinsicBlend();
+    ~RsdCpuScriptIntrinsicBlend() override;
     RsdCpuScriptIntrinsicBlend(RsdCpuReferenceImpl *ctx, const Script *s, const Element *e);
 
 protected:

@@ -27,12 +27,12 @@ namespace renderscript {
 
 class RsdCpuScriptIntrinsicLUT : public RsdCpuScriptIntrinsic {
 public:
-    virtual void populateScript(Script *);
-    virtual void invokeFreeChildren();
+    void populateScript(Script *) override;
+    void invokeFreeChildren() override;
 
-    virtual void setGlobalObj(uint32_t slot, ObjectBase *data);
+    void setGlobalObj(uint32_t slot, ObjectBase *data) override;
 
-    virtual ~RsdCpuScriptIntrinsicLUT();
+    ~RsdCpuScriptIntrinsicLUT() override;
     RsdCpuScriptIntrinsicLUT(RsdCpuReferenceImpl *ctx, const Script *s, const Element *e);
 
 protected:

@@ -160,16 +160,16 @@ extern "C" void rsdIntrinsicColorMatrixSetup_float_K(
 
 class RsdCpuScriptIntrinsicColorMatrix : public RsdCpuScriptIntrinsic {
 public:
-    virtual void populateScript(Script *);
+    void populateScript(Script *) override;
 
-    virtual void setGlobalVar(uint32_t slot, const void *data, size_t dataLength);
+    void setGlobalVar(uint32_t slot, const void *data, size_t dataLength) override;
 
-    virtual ~RsdCpuScriptIntrinsicColorMatrix();
+    ~RsdCpuScriptIntrinsicColorMatrix() override;
     RsdCpuScriptIntrinsicColorMatrix(RsdCpuReferenceImpl *ctx, const Script *s, const Element *e);
 
-    virtual void preLaunch(uint32_t slot, const Allocation ** ains,
-                           uint32_t inLen, Allocation * aout, const void * usr,
-                           uint32_t usrLen, const RsScriptCall *sc);
+    void preLaunch(uint32_t slot, const Allocation ** ains,
+                   uint32_t inLen, Allocation * aout, const void * usr,
+                   uint32_t usrLen, const RsScriptCall *sc) override;
 
 protected:
     float fp[16];
