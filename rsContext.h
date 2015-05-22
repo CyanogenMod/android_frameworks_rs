@@ -258,6 +258,9 @@ public:
     // the process lives long enough to get the error to the developer
     bool hadFatalError() {return mFatalErrorOccured;}
 
+    uint32_t getOptLevel() const { return mOptLevel; }
+    void setOptLevel(uint32_t optLevel) { mOptLevel = optLevel; }
+
     Device *mDev;
 
 #ifdef RS_COMPATIBILITY_LIB
@@ -311,6 +314,7 @@ protected:
     bool mForceCpu;
 
     RsContextType mContextType;
+    uint32_t mOptLevel;
 
     bool mRunning;
     bool mExit;

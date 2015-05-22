@@ -165,7 +165,8 @@ bool RS::init(const char * name, int targetApi, uint32_t flags) {
     }
 
     if (flags & ~(RS_CONTEXT_SYNCHRONOUS | RS_CONTEXT_LOW_LATENCY |
-                  RS_CONTEXT_LOW_POWER | RS_CONTEXT_WAIT_FOR_ATTACH)) {
+                  RS_CONTEXT_LOW_POWER | RS_CONTEXT_WAIT_FOR_ATTACH |
+                  RS_CONTEXT_OPT_LEVEL_0)) {
         ALOGE("Invalid flags passed");
         return false;
     }
