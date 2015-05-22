@@ -114,7 +114,7 @@ enum RsAllocationCubemapFace {
 };
 
 enum RsDataType {
-    RS_TYPE_NONE,
+    RS_TYPE_NONE = 0,
     RS_TYPE_FLOAT_16,
     RS_TYPE_FLOAT_32,
     RS_TYPE_FLOAT_64,
@@ -463,6 +463,37 @@ typedef struct {
     uint32_t c_offset;
     uint32_t c_mult_int;
 } RsBlasCall;
+
+enum RsGlobalProperty {
+    RS_GLOBAL_TYPE     = 0x0000FFFF,
+    RS_GLOBAL_CONSTANT = 0x00010000,
+    RS_GLOBAL_STATIC   = 0x00020000,
+    RS_GLOBAL_POINTER  = 0x00040000
+};
+
+// Special symbols embedded into a shared object compiled by bcc.
+static const char kRoot[] = "root";
+static const char kInit[] = "init";
+static const char kRsDtor[] = ".rs.dtor";
+static const char kRsInfo[] = ".rs.info";
+static const char kRsGlobalEntries[] = ".rs.global_entries";
+static const char kRsGlobalNames[] = ".rs.global_names";
+static const char kRsGlobalAddresses[] = ".rs.global_addresses";
+static const char kRsGlobalSizes[] = ".rs.global_sizes";
+static const char kRsGlobalProperties[] = ".rs.global_properties";
+
+static inline uint32_t getGlobalRsType(uint32_t properties) {
+    return properties & RS_GLOBAL_TYPE;
+}
+static inline bool isGlobalConstant(uint32_t properties) {
+    return properties & RS_GLOBAL_CONSTANT;
+}
+static inline bool isGlobalStatic(uint32_t properties) {
+    return properties & RS_GLOBAL_STATIC;
+}
+static inline bool isGlobalPointer(uint32_t properties) {
+    return properties & RS_GLOBAL_POINTER;
+}
 
 #ifdef __cplusplus
 };

@@ -67,7 +67,8 @@ public:
                      const char** pragmaKeys, const char** pragmaValues,
                      size_t pragmaCount,
                      const char **globalNames, const void **globalAddresses,
-                     const size_t *globalSizes, size_t globalEntries,
+                     const size_t *globalSizes,
+                     const uint32_t *globalProperties, size_t globalEntries,
                      bool isThreadable, uint32_t buildChecksum) :
         mFieldAddress(fieldAddress), mFieldIsObject(fieldIsObject),
         mFieldName(fieldName), mExportedVarCount(varCount),
@@ -77,8 +78,9 @@ public:
         mPragmaKeys(pragmaKeys), mPragmaValues(pragmaValues),
         mPragmaCount(pragmaCount), mGlobalNames(globalNames),
         mGlobalAddresses(globalAddresses), mGlobalSizes(globalSizes),
-        mGlobalEntries(globalEntries), mIsThreadable(isThreadable),
-        mBuildChecksum(buildChecksum), mRS(RSContext) {
+        mGlobalProperties(globalProperties), mGlobalEntries(globalEntries),
+        mIsThreadable(isThreadable), mBuildChecksum(buildChecksum),
+        mRS(RSContext) {
     }
 
     ~ScriptExecutable() {
@@ -159,6 +161,13 @@ public:
             return 0;
         }
     }
+    uint32_t getGlobalProperties(int i) const {
+        if (i < mGlobalEntries) {
+            return mGlobalProperties[i];
+        } else {
+            return 0;
+        }
+    }
     int getGlobalEntries() const { return mGlobalEntries; }
 
     bool getThreadable() const { return mIsThreadable; }
@@ -187,6 +196,7 @@ private:
     const char ** mGlobalNames;
     const void ** mGlobalAddresses;
     const size_t * mGlobalSizes;
+    const uint32_t * mGlobalProperties;
     int mGlobalEntries;
 
     bool mIsThreadable;

@@ -311,12 +311,13 @@ ScriptExecutable* ScriptExecutable::createFromSharedObject(
     const char ** pragmaValues = nullptr;
     uint32_t checksum = 0;
 
-    const char *rsInfo = (const char *) dlsym(sharedObj, ".rs.info");
+    const char *rsInfo = (const char *) dlsym(sharedObj, kRsInfo);
     int numEntries = 0;
-    const int *rsGlobalEntries = (const int *) dlsym(sharedObj, ".rs.global_entries");
-    const char **rsGlobalNames = (const char **) dlsym(sharedObj, ".rs.global_names");
-    const void **rsGlobalAddresses = (const void **) dlsym(sharedObj, ".rs.global_addresses");
-    const size_t *rsGlobalSizes = (const size_t *) dlsym(sharedObj, ".rs.global_sizes");
+    const int *rsGlobalEntries = (const int *) dlsym(sharedObj, kRsGlobalEntries);
+    const char **rsGlobalNames = (const char **) dlsym(sharedObj, kRsGlobalNames);
+    const void **rsGlobalAddresses = (const void **) dlsym(sharedObj, kRsGlobalAddresses);
+    const size_t *rsGlobalSizes = (const size_t *) dlsym(sharedObj, kRsGlobalSizes);
+    const uint32_t *rsGlobalProperties = (const uint32_t *) dlsym(sharedObj, kRsGlobalProperties);
 
     if (strgets(line, MAXLINE, &rsInfo) == nullptr) {
         return nullptr;
@@ -559,6 +560,7 @@ ScriptExecutable* ScriptExecutable::createFromSharedObject(
             rsAssert(rsGlobalNames);
             rsAssert(rsGlobalAddresses);
             rsAssert(rsGlobalSizes);
+            rsAssert(rsGlobalProperties);
         }
     } else {
         ALOGD("Missing .rs.global_entries from shared object");
@@ -569,8 +571,8 @@ ScriptExecutable* ScriptExecutable::createFromSharedObject(
         invokeFunctions, funcCount,
         forEachFunctions, forEachSignatures, forEachCount,
         pragmaKeys, pragmaValues, pragmaCount,
-        rsGlobalNames, rsGlobalAddresses, rsGlobalSizes, numEntries,
-        isThreadable, checksum);
+        rsGlobalNames, rsGlobalAddresses, rsGlobalSizes, rsGlobalProperties,
+        numEntries, isThreadable, checksum);
 
 error:
 
@@ -612,9 +614,18 @@ void* ScriptExecutable::getFieldAddress(const char* name) const {
 
 bool ScriptExecutable::dumpGlobalInfo() const {
     ALOGE("Globals: %p %p %p", mGlobalAddresses, mGlobalSizes, mGlobalNames);
+    ALOGE("P   - Pointer");
+    ALOGE(" C  - Constant");
+    ALOGE("  S - Static");
     for (int i = 0; i < mGlobalEntries; i++) {
         ALOGE("Global[%d]: %p %zu %s", i, mGlobalAddresses[i], mGlobalSizes[i],
               mGlobalNames[i]);
+        uint32_t properties = mGlobalProperties[i];
+        ALOGE("%c%c%c Type: %u",
+              isGlobalPointer(properties)  ? 'P' : ' ',
+              isGlobalConstant(properties) ? 'C' : ' ',
+              isGlobalStatic(properties)   ? 'S' : ' ',
+              getGlobalRsType(properties));
     }
     return true;
 }

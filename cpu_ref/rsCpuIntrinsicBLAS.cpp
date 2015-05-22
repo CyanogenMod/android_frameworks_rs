@@ -28,16 +28,16 @@ namespace renderscript {
 
 class RsdCpuScriptIntrinsicBLAS : public RsdCpuScriptIntrinsic {
 public:
-    virtual void invokeForEach(uint32_t slot,
-                               const Allocation ** ain,
-                               uint32_t inLen,
-                               Allocation * aout,
-                               const void * usr,
-                               uint32_t usrLen,
-                               const RsScriptCall *sc);
+    void invokeForEach(uint32_t slot,
+                       const Allocation ** ain,
+                       uint32_t inLen,
+                       Allocation * aout,
+                       const void * usr,
+                       uint32_t usrLen,
+                       const RsScriptCall *sc) override;
 
-    virtual void populateScript(Script *);
-    virtual ~RsdCpuScriptIntrinsicBLAS();
+    void populateScript(Script *) override;
+    ~RsdCpuScriptIntrinsicBLAS() override;
     RsdCpuScriptIntrinsicBLAS(RsdCpuReferenceImpl *ctx, const Script *s);
 
 protected:

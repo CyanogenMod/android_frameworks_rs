@@ -922,6 +922,10 @@ size_t RsdCpuScriptImpl::getGlobalSize(int i) const {
     return mScriptExec->getGlobalSize(i);
 }
 
+uint32_t RsdCpuScriptImpl::getGlobalProperties(int i) const {
+    return mScriptExec->getGlobalProperties(i);
+}
+
 void RsdCpuScriptImpl::preLaunch(uint32_t slot, const Allocation ** ains,
                                  uint32_t inLen, Allocation * aout,
                                  const void * usr, uint32_t usrLen,
