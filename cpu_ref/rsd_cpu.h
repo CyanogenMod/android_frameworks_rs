@@ -97,6 +97,8 @@ public:
         virtual const void * getGlobalAddress(int i) const = 0;
         // Returns the size (in bytes) of the global variable at index i.
         virtual size_t getGlobalSize(int i) const = 0;
+        // Returns the properties of the global variable at index i.
+        virtual uint32_t getGlobalProperties(int i) const = 0;
 
         virtual ~CpuScript() {}
     };
@@ -112,14 +114,12 @@ public:
     public:
         virtual void setInput(const ScriptKernelID *kid, Allocation *) = 0;
         virtual void setOutput(const ScriptKernelID *kid, Allocation *) = 0;
-        virtual void execute() = 0;
-        virtual ~CpuScriptGroup() {};
+        ~CpuScriptGroup() override {};
     };
 
     class CpuScriptGroup2 : public CpuScriptGroupBase {
      public:
-      virtual void execute() = 0;
-      virtual ~CpuScriptGroup2() {}
+      ~CpuScriptGroup2() override {}
     };
 
     static Context * getTlsContext();

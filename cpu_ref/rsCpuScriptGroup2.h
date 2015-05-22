@@ -60,10 +60,10 @@ public:
 class CpuScriptGroup2Impl : public RsdCpuReference::CpuScriptGroup2 {
 public:
     CpuScriptGroup2Impl(RsdCpuReferenceImpl *cpuRefImpl, const ScriptGroupBase* group);
-    virtual ~CpuScriptGroup2Impl();
+    ~CpuScriptGroup2Impl() override;
 
     bool init();
-    virtual void execute();
+    void execute() override;
 
     RsdCpuReferenceImpl* getCpuRefImpl() const { return mCpuRefImpl; }
     ScriptExecutable* getExecutable() const { return mExecutable; }

@@ -25,10 +25,10 @@ namespace renderscript {
 
 class CpuScriptGroupImpl : public RsdCpuReference::CpuScriptGroup {
 public:
-    virtual void setInput(const ScriptKernelID *kid, Allocation *);
-    virtual void setOutput(const ScriptKernelID *kid, Allocation *);
-    virtual void execute();
-    virtual ~CpuScriptGroupImpl();
+    void setInput(const ScriptKernelID *kid, Allocation *) override;
+    void setOutput(const ScriptKernelID *kid, Allocation *) override;
+    void execute() override;
+    ~CpuScriptGroupImpl() override;
 
     CpuScriptGroupImpl(RsdCpuReferenceImpl *ctx, const ScriptGroupBase *sg);
     bool init();
