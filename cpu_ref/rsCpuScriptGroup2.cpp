@@ -264,7 +264,8 @@ void setupCompileArguments(
     args->push_back(outputFileName);
 }
 
-void generateSourceSlot(const Closure& closure,
+void generateSourceSlot(RsdCpuReferenceImpl* ctxt,
+                        const Closure& closure,
                         const std::vector<const char*>& inputs,
                         std::stringstream& ss) {
     const IDBase* funcID = (const IDBase*)closure.mFunctionID.get();
@@ -273,7 +274,7 @@ void generateSourceSlot(const Closure& closure,
     rsAssert (!script->isIntrinsic());
 
     const RsdCpuScriptImpl *cpuScript =
-            (const RsdCpuScriptImpl*)script->mHal.drv;
+            (const RsdCpuScriptImpl *)ctxt->lookupScript(script);
     const string& bitcodeFilename = cpuScript->getBitcodeFilePath();
 
     const int index = find(inputs.begin(), inputs.end(), bitcodeFilename) -
@@ -306,7 +307,8 @@ void CpuScriptGroup2Impl::compile(const char* cacheDir) {
         }
 
         const RsdCpuScriptImpl *cpuScript =
-                (const RsdCpuScriptImpl*)script->mHal.drv;
+            (const RsdCpuScriptImpl *)mCpuRefImpl->lookupScript(script);
+
         const char* bitcodeFilename = cpuScript->getBitcodeFilePath();
         inputSet.insert(bitcodeFilename);
     }
@@ -325,11 +327,11 @@ void CpuScriptGroup2Impl::compile(const char* cacheDir) {
 
         if (!batch->mClosures.front()->mClosure->mIsKernel) {
             rsAssert(batch->size() == 1);
-            generateSourceSlot(*batch->mClosures.front()->mClosure, inputs, ss);
+            generateSourceSlot(mCpuRefImpl, *batch->mClosures.front()->mClosure, inputs, ss);
             invokeBatches.push_back(ss.str());
         } else {
             for (const auto& cpuClosure : batch->mClosures) {
-                generateSourceSlot(*cpuClosure->mClosure, inputs, ss);
+                generateSourceSlot(mCpuRefImpl, *cpuClosure->mClosure, inputs, ss);
             }
             kernelBatches.push_back(ss.str());
         }
@@ -453,8 +455,9 @@ void Batch::setGlobalsForBatch() {
             }
             rsAssert(p.first != nullptr);
             Script* script = p.first->mScript;
+            RsdCpuReferenceImpl* ctxt = mGroup->getCpuRefImpl();
             const RsdCpuScriptImpl *cpuScript =
-                    (const RsdCpuScriptImpl*)script->mHal.drv;
+                    (const RsdCpuScriptImpl *)ctxt->lookupScript(script);
             int slot = p.first->mSlot;
             ScriptExecutable* exec = mGroup->getExecutable();
             if (exec != nullptr) {
