@@ -47,6 +47,13 @@ bool testAndSet(const std::string& flag, std::set<std::string>* set);
  */
 double maxDoubleForInteger(int numberOfIntegerBits, int mantissaSize);
 
+/* Creates an " __attribute__((...))" tag.  If userAttribute starts with '=', we don't
+ * use the additionalAttribute.  An empty string will be returned if there are no attributes.
+ */
+std::string makeAttributeTag(const std::string& userAttribute,
+                             const std::string& additionalAttribute, int deprecatedApiLevel,
+                             const std::string& deprecatedMessage);
+
 /* This class is used to generate one source file.  There will be one instance
  * for each generated file.
  */

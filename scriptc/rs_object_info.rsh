@@ -373,7 +373,11 @@ extern uint32_t __attribute__((overloadable))
  * Returns the Allocation for a given pointer.  The pointer should point within a valid
  * allocation.  The results are undefined if the pointer is not from a valid Allocation.
  */
-extern rs_allocation __attribute__((overloadable))
+extern rs_allocation __attribute__((overloadable
+#if (defined(RS_VERSION) && (RS_VERSION >= 22))
+, deprecated("This function is deprecated and will be removed from the SDK in a future release.")
+#endif
+))
     rsGetAllocation(const void* p);
 
 /*
