@@ -65,7 +65,7 @@ end:
 constant: M_2_PIl
 value: 0.636619772367581343075535053490057448f
 hidden:
-deprecated: Use M_2_PI instead.
+deprecated: 22, Use M_2_PI instead.
 summary: 2 / pi, as a 32 bit float
 description:
  2 divided by pi, as a 32 bit float.
@@ -2179,7 +2179,7 @@ ret: #1
 arg: #1 amount, "Value to clamp."
 arg: #1 low, "Lower bound."
 arg: #1 high, "Upper bound."
-deprecated: Use @clamp() instead.
+deprecated: 22, Use @clamp() instead.
 summary: Restrain a value to a range
 description:
  Clamp a value between low and high.
@@ -2190,7 +2190,7 @@ function: rsFrac
 attrib: const
 ret: float
 arg: float v
-deprecated: Use @fract() instead.
+deprecated: 22, Use @fract() instead.
 summary: Returns the fractional part of a float
 description:
  Returns the fractional part of a float

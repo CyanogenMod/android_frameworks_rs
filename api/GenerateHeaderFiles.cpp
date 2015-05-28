@@ -129,12 +129,17 @@ static void writeTypeSpecification(GeneratedFile* file, const TypeSpecification&
     const string& typeName = type->getName();
     const VersionInfo info = spec.getVersionInfo();
     writeVersionGuardStart(file, info, type->getFinalVersion());
+
+    const string attribute =
+                makeAttributeTag(spec.getAttribute(), "", type->getDeprecatedApiLevel(),
+                                 type->getDeprecatedMessage());
+    *file << "typedef ";
     switch (spec.getKind()) {
         case SIMPLE:
-            *file << "typedef " << spec.getSimpleType() << " " << typeName << ";\n";
+            *file << spec.getSimpleType() << attribute;
             break;
         case ENUM: {
-            *file << "typedef enum ";
+            *file << "enum" << attribute << " ";
             const string name = spec.getEnumName();
             if (!name.empty()) {
                 *file << name << " ";
@@ -154,11 +159,11 @@ static void writeTypeSpecification(GeneratedFile* file, const TypeSpecification&
                 }
                 *file << "\n";
             }
-            *file << "} " << typeName << ";\n";
+            *file << "}";
             break;
         }
         case STRUCT: {
-            *file << "typedef struct ";
+            *file << "struct" << attribute << " ";
             const string name = spec.getStructName();
             if (!name.empty()) {
                 *file << name << " ";
@@ -174,15 +179,12 @@ static void writeTypeSpecification(GeneratedFile* file, const TypeSpecification&
                 }
                 *file << "\n";
             }
-            *file << "} ";
-            const string attrib = spec.getAttrib();
-            if (!attrib.empty()) {
-                *file << attrib << " ";
-            }
-            *file << typeName << ";\n";
+            *file << "}";
             break;
         }
     }
+    *file << " " << typeName << ";\n";
+
     writeVersionGuardEnd(file, info);
     *file << "\n";
 }
@@ -213,20 +215,9 @@ static void writeFunctionPermutation(GeneratedFile* file, const FunctionSpecific
         *file << "void";
     }
 
-    // Write the attribute.
-    *file << " __attribute__((";
-    const string attrib = spec.getAttribute();
-    if (attrib.empty()) {
-        *file << "overloadable";
-    } else if (attrib[0] == '=') {
-        /* If starts with an equal, we don't automatically add overloadable.
-         * This is because of the error we made defining rsUnpackColor8888().
-         */
-        *file << attrib.substr(1);
-    } else {
-        *file << attrib << ", overloadable";
-    }
-    *file << "))\n";
+    *file << makeAttributeTag(spec.getAttribute(), "overloadable",
+                              function->getDeprecatedApiLevel(), function->getDeprecatedMessage());
+    *file << "\n";
 
     // Write the function name.
     *file << "    " << permutation.getName() << "(";
