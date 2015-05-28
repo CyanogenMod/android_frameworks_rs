@@ -768,6 +768,10 @@ void RsdCpuScriptImpl::invokeFunction(uint32_t slot, const void *params,
     reinterpret_cast<void (*)(const void *, uint32_t)>(
         mScriptExec->getInvokeFunction(slot))(ap? (const void *) ap: params, paramLength);
 
+#if defined(__x86_64__)
+    free(ap);
+#endif
+
     mCtx->setTLS(oldTLS);
 }
 
