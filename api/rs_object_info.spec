@@ -299,7 +299,7 @@ end:
 function: rsGetAllocation
 ret: rs_allocation
 arg: const void* p
-deprecated: This function is deprecated and will be removed from the SDK in a future release.
+deprecated: 22, This function is deprecated and will be removed from the SDK in a future release.
 summary: Return the Allocation for a given pointer
 description:
  Returns the Allocation for a given pointer.  The pointer should point within a valid

@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+#include <algorithm>
 #include <iostream>
 #include <sstream>
 
@@ -147,6 +148,48 @@ double maxDoubleForInteger(int numberOfIntegerBits, int mantissaSize) {
     unsigned long l = (0xffffffffffffffff >> (64 - numberOfIntegerBits + lowZeroBits))
                       << lowZeroBits;
     return (double)l;
+}
+
+// Add the value to the stream, prefixed with a ", " if needed.
+static void addCommaSeparated(const string& value, ostringstream* stream, bool* needComma) {
+    if (value.empty()) {
+        return;
+    }
+    if (*needComma) {
+        *stream << ", ";
+    }
+    *stream << value;
+    *needComma = true;
+}
+
+string makeAttributeTag(const string& userAttribute, const string& additionalAttribute,
+                        int deprecatedApiLevel, const string& deprecatedMessage) {
+    ostringstream stream;
+    bool needComma = false;
+    if (userAttribute[0] == '=') {
+        /* If starts with an equal, we don't automatically add additionalAttribute.
+         * This is because of the error we made defining rsUnpackColor8888().
+         */
+        addCommaSeparated(userAttribute.substr(1), &stream, &needComma);
+    } else {
+        addCommaSeparated(userAttribute, &stream, &needComma);
+        addCommaSeparated(additionalAttribute, &stream, &needComma);
+    }
+    if (deprecatedApiLevel > 0) {
+        stream << "\n#if (defined(RS_VERSION) && (RS_VERSION >= " << deprecatedApiLevel << "))\n";
+        addCommaSeparated("deprecated", &stream, &needComma);
+        if (!deprecatedMessage.empty()) {
+            // Remove any @ that's used for generating documentation cross references.
+            string s = deprecatedMessage;
+            s.erase(std::remove(s.begin(), s.end(), '@'), s.end());
+            stream << "(\"" << s << "\")";
+        }
+        stream << "\n#endif\n";
+    }
+    if (stream.tellp() == 0) {
+        return "";
+    }
+    return " __attribute__((" + stream.str() + "))";
 }
 
 // Opens the stream.  Reports an error if it can't.

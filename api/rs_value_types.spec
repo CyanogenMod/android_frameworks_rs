@@ -209,7 +209,8 @@ simple: int32_t
 end:
 
 type: float2
-simple: float __attribute__((ext_vector_type(2)))
+simple: float
+attrib: ext_vector_type(2)
 summary: Two 32 bit floats
 description:
  A vector of two floats.  These two floats are packed into a single 64 bit field
@@ -220,7 +221,8 @@ description:
 end:
 
 type: float3
-simple: float __attribute__((ext_vector_type(3)))
+simple: float
+attrib: ext_vector_type(3)
 summary: Three 32 bit floats
 description:
  A vector of three floats.  These three floats are packed into a single 128 bit field
@@ -228,7 +230,8 @@ description:
 end:
 
 type: float4
-simple: float __attribute__((ext_vector_type(4)))
+simple: float
+attrib: ext_vector_type(4)
 summary: Four 32 bit floats
 description:
  A vector of four floats type.  These four floats are packed into a single 128 bit field
@@ -237,7 +240,8 @@ end:
 
 
 type: double2
-simple: double __attribute__((ext_vector_type(2)))
+simple: double
+attrib: ext_vector_type(2)
 summary: Two 64 bit floats
 description:
  A vector of two doubles.  These two double fields packed into a single 128 bit field
@@ -245,7 +249,8 @@ description:
 end:
 
 type: double3
-simple: double __attribute__((ext_vector_type(3)))
+simple: double
+attrib: ext_vector_type(3)
 summary: Three 64 bit floats
 description:
  A vector of three doubles.  These three double fields packed into a single 256 bit field
@@ -253,7 +258,8 @@ description:
 end:
 
 type: double4
-simple: double __attribute__((ext_vector_type(4)))
+simple: double
+attrib: ext_vector_type(4)
 summary: Four 64 bit floats
 description:
  A vector of four doubles.  These four double fields packed into a single 256 bit field
@@ -262,7 +268,8 @@ end:
 
 
 type: uchar2
-simple: uchar __attribute__((ext_vector_type(2)))
+simple: uchar
+attrib: ext_vector_type(2)
 summary: Two 8 bit unsigned integers
 description:
  A vector of two uchars.  These two uchar fields packed into a single 16 bit field
@@ -270,7 +277,8 @@ description:
 end:
 
 type: uchar3
-simple: uchar __attribute__((ext_vector_type(3)))
+simple: uchar
+attrib: ext_vector_type(3)
 summary: Three 8 bit unsigned integers
 description:
  A vector of three uchars.  These three uchar fields packed into a single 32 bit field
@@ -278,7 +286,8 @@ description:
 end:
 
 type: uchar4
-simple: uchar __attribute__((ext_vector_type(4)))
+simple: uchar
+attrib: ext_vector_type(4)
 summary: Four 8 bit unsigned integers
 description:
  A vector of four uchars.  These four uchar fields packed into a single 32 bit field
@@ -287,7 +296,8 @@ end:
 
 
 type: ushort2
-simple: ushort __attribute__((ext_vector_type(2)))
+simple: ushort
+attrib: ext_vector_type(2)
 summary: Two 16 bit unsigned integers
 description:
  A vector of two ushorts.  These two ushort fields packed into a single 32 bit field
@@ -295,7 +305,8 @@ description:
 end:
 
 type: ushort3
-simple: ushort __attribute__((ext_vector_type(3)))
+simple: ushort
+attrib: ext_vector_type(3)
 summary: Three 16 bit unsigned integers
 description:
  A vector of three ushorts.  These three ushort fields packed into a single 64 bit field
@@ -303,7 +314,8 @@ description:
 end:
 
 type: ushort4
-simple: ushort __attribute__((ext_vector_type(4)))
+simple: ushort
+attrib: ext_vector_type(4)
 summary: Four 16 bit unsigned integers
 description:
  A vector of four ushorts.  These four ushort fields packed into a single 64 bit field
@@ -312,7 +324,8 @@ end:
 
 
 type: uint2
-simple: uint __attribute__((ext_vector_type(2)))
+simple: uint
+attrib: ext_vector_type(2)
 summary: Two 32 bit unsigned integers
 description:
  A vector of two uints.  These two uints are packed into a single 64 bit field
@@ -320,7 +333,8 @@ description:
 end:
 
 type: uint3
-simple: uint __attribute__((ext_vector_type(3)))
+simple: uint
+attrib: ext_vector_type(3)
 summary: Three 32 bit unsigned integers
 description:
  A vector of three uints.  These three uints are packed into a single 128 bit field
@@ -328,7 +342,8 @@ description:
 end:
 
 type: uint4
-simple: uint __attribute__((ext_vector_type(4)))
+simple: uint
+attrib: ext_vector_type(4)
 summary: Four 32 bit unsigned integers
 description:
  A vector of four uints.  These four uints are packed into a single 128 bit field
@@ -337,7 +352,8 @@ end:
 
 
 type: ulong2
-simple: ulong __attribute__((ext_vector_type(2)))
+simple: ulong
+attrib: ext_vector_type(2)
 summary: Two 64 bit unsigned integers
 description:
  A vector of two ulongs.  These two ulongs are packed into a single 128 bit field
@@ -345,7 +361,8 @@ description:
 end:
 
 type: ulong3
-simple: ulong __attribute__((ext_vector_type(3)))
+simple: ulong
+attrib: ext_vector_type(3)
 summary: Three 64 bit unsigned integers
 description:
  A vector of three ulongs.  These three ulong fields packed into a single 256 bit field
@@ -353,7 +370,8 @@ description:
 end:
 
 type: ulong4
-simple: ulong __attribute__((ext_vector_type(4)))
+simple: ulong
+attrib: ext_vector_type(4)
 summary: Four 64 bit unsigned integers
 description:
  A vector of four ulongs.  These four ulong fields packed into a single 256 bit field
@@ -362,7 +380,8 @@ end:
 
 
 type: char2
-simple: char __attribute__((ext_vector_type(2)))
+simple: char
+attrib: ext_vector_type(2)
 summary: Two 8 bit signed integers
 description:
  A vector of two chars.  These two chars are packed into a single 16 bit field
@@ -370,7 +389,8 @@ description:
 end:
 
 type: char3
-simple: char __attribute__((ext_vector_type(3)))
+simple: char
+attrib: ext_vector_type(3)
 summary: Three 8 bit signed integers
 description:
  A vector of three chars.  These three chars are packed into a single 32 bit field
@@ -378,7 +398,8 @@ description:
 end:
 
 type: char4
-simple: char __attribute__((ext_vector_type(4)))
+simple: char
+attrib: ext_vector_type(4)
 summary: Four 8 bit signed integers
 description:
  A vector of four chars.  These four chars are packed into a single 32 bit field
@@ -387,7 +408,8 @@ end:
 
 
 type: short2
-simple: short __attribute__((ext_vector_type(2)))
+simple: short
+attrib: ext_vector_type(2)
 summary: Two 16 bit signed integers
 description:
  A vector of two shorts.  These two shorts are packed into a single 32 bit field
@@ -395,7 +417,8 @@ description:
 end:
 
 type: short3
-simple: short __attribute__((ext_vector_type(3)))
+simple: short
+attrib: ext_vector_type(3)
 summary: Three 16 bit signed integers
 description:
  A vector of three shorts.  These three short fields packed into a single 64 bit field
@@ -403,7 +426,8 @@ description:
 end:
 
 type: short4
-simple: short __attribute__((ext_vector_type(4)))
+simple: short
+attrib: ext_vector_type(4)
 summary: Four 16 bit signed integers
 description:
  A vector of four shorts.  These four short fields packed into a single 64 bit field
@@ -412,7 +436,8 @@ end:
 
 
 type: int2
-simple: int __attribute__((ext_vector_type(2)))
+simple: int
+attrib: ext_vector_type(2)
 summary: Two 32 bit signed integers
 description:
  A vector of two ints.  These two ints are packed into a single 64 bit field
@@ -420,7 +445,8 @@ description:
 end:
 
 type: int3
-simple: int __attribute__((ext_vector_type(3)))
+simple: int
+attrib: ext_vector_type(3)
 summary: Three 32 bit signed integers
 description:
  A vector of three ints.  These three ints are packed into a single 128 bit field
@@ -428,7 +454,8 @@ description:
 end:
 
 type: int4
-simple: int __attribute__((ext_vector_type(4)))
+simple: int
+attrib: ext_vector_type(4)
 summary: Four 32 bit signed integers
 description:
  A vector of four ints.  These two fours are packed into a single 128 bit field
@@ -437,7 +464,8 @@ end:
 
 
 type: long2
-simple: long __attribute__((ext_vector_type(2)))
+simple: long
+attrib: ext_vector_type(2)
 summary: Two 64 bit signed integers
 description:
  A vector of two longs.  These two longs are packed into a single 128 bit field
@@ -445,7 +473,8 @@ description:
 end:
 
 type: long3
-simple: long __attribute__((ext_vector_type(3)))
+simple: long
+attrib: ext_vector_type(3)
 summary: Three 64 bit signed integers
 description:
  A vector of three longs.  These three longs are packed into a single 256 bit field
@@ -453,7 +482,8 @@ description:
 end:
 
 type: long4
-simple: long __attribute__((ext_vector_type(4)))
+simple: long
+attrib: ext_vector_type(4)
 summary: Four 64 bit signed integers
 description:
  A vector of four longs.  These four longs are packed into a single 256 bit field
