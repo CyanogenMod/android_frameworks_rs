@@ -25,9 +25,7 @@
 #else
     #include "rsCppUtils.h"
 
-    #include <bcc/BCCContext.h>
     #include <bcc/Config/Config.h>
-    #include <bcc/Renderscript/RSCompilerDriver.h>
     #include <bcinfo/MetadataExtractor.h>
     #include <cutils/properties.h>
 
@@ -230,11 +228,6 @@ RsdCpuScriptImpl::RsdCpuScriptImpl(RsdCpuReferenceImpl *ctx, const Script *s) {
 
     mScriptSO = nullptr;
 
-#ifndef RS_COMPATIBILITY_LIB
-    mCompilerDriver = nullptr;
-#endif
-
-
     mRoot = nullptr;
     mRootExpand = nullptr;
     mInit = nullptr;
@@ -304,22 +297,6 @@ bool RsdCpuScriptImpl::init(char const *resName, char const *cacheDir,
 #ifndef RS_COMPATIBILITY_LIB
     bool useRSDebugContext = false;
 
-    mCompilerDriver = nullptr;
-
-    mCompilerDriver = new bcc::RSCompilerDriver();
-    if (mCompilerDriver == nullptr) {
-        ALOGE("bcc: FAILS to create compiler driver (out of memory)");
-        mCtx->unlockMutex();
-        return false;
-    }
-
-    // Run any compiler setup functions we have been provided with.
-    RSSetupCompilerCallback setupCompilerCallback =
-            mCtx->getSetupCompilerCallback();
-    if (setupCompilerCallback != nullptr) {
-        setupCompilerCallback(mCompilerDriver);
-    }
-
     bcinfo::MetadataExtractor bitcodeMetadata((const char *) bitcode, bitcodeSize);
     if (!bitcodeMetadata.extract()) {
         ALOGE("Could not extract metadata from bitcode");
@@ -330,7 +307,6 @@ bool RsdCpuScriptImpl::init(char const *resName, char const *cacheDir,
     const char* core_lib = findCoreLib(bitcodeMetadata, (const char*)bitcode, bitcodeSize);
 
     if (mCtx->getContext()->getContextType() == RS_CONTEXT_TYPE_DEBUG) {
-        mCompilerDriver->setDebugContext(true);
         useRSDebugContext = true;
     }
 
@@ -879,12 +855,6 @@ const char* RsdCpuScriptImpl::getFieldName(uint32_t slot) const {
 }
 
 RsdCpuScriptImpl::~RsdCpuScriptImpl() {
-#ifndef RS_COMPATIBILITY_LIB
-    if (mCompilerDriver) {
-        delete mCompilerDriver;
-    }
-#endif
-
     if (mScriptExec != nullptr) {
         delete mScriptExec;
     }
