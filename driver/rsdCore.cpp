@@ -331,13 +331,6 @@ extern "C" bool rsdHalInit(RsContext c, uint32_t version_major,
         return false;
     }
 
-#ifndef RS_COMPATIBILITY_LIB
-    // Set a callback for compiler setup here.
-    if (false) {
-        dc->mCpuRef->setSetupCompilerCallback(nullptr);
-    }
-#endif
-
     return true;
 }
 
