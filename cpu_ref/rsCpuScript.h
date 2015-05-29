@@ -26,11 +26,6 @@
 
 #include "rsCpuCore.h"
 
-namespace bcc {
-    class BCCContext;
-    class RSCompilerDriver;
-}
-
 namespace bcinfo {
     class MetadataExtractor;
 }
@@ -123,8 +118,6 @@ protected:
     // Returns the path to the core library we'll use.
     const char* findCoreLib(const bcinfo::MetadataExtractor& bitCodeMetaData, const char* bitcode,
                             size_t bitcodeSize);
-
-    bcc::RSCompilerDriver *mCompilerDriver;
 #endif
 
     RootFunc_t mRoot;

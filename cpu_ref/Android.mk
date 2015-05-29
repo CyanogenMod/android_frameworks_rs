@@ -84,7 +84,7 @@ endif
 
 LOCAL_SHARED_LIBRARIES += libRS libcutils libutils liblog libsync libc++ libdl libz
 
-LOCAL_SHARED_LIBRARIES += libbcc libbcinfo libblas
+LOCAL_SHARED_LIBRARIES += libbcinfo libblas
 
 
 LOCAL_C_INCLUDES += frameworks/compile/libbcc/include
