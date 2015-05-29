@@ -122,7 +122,7 @@ status_t GrallocConsumer::lockNextBuffer() {
     }
 
     size_t lockedIdx = 0;
-    assert(mAcquiredBuffer.mSlot == BufferQueue::INVALID_BUFFER_SLOT);
+    rsAssert(mAcquiredBuffer.mSlot == BufferQueue::INVALID_BUFFER_SLOT);
 
     mAcquiredBuffer.mSlot = buf;
     mAcquiredBuffer.mBufferPointer = bufferPointer;
@@ -134,10 +134,10 @@ status_t GrallocConsumer::lockNextBuffer() {
     mAlloc->mHal.state.nativeBuffer = mAcquiredBuffer.mGraphicBuffer->getNativeBuffer();
     mAlloc->mHal.state.timestamp = b.mTimestamp;
 
-    assert(mAlloc->mHal.drvState.lod[0].dimX ==
-           mSlots[buf].mGraphicBuffer->getWidth());
-    assert(mAlloc->mHal.drvState.lod[0].dimY ==
-           mSlots[buf].mGraphicBuffer->getHeight());
+    rsAssert(mAlloc->mHal.drvState.lod[0].dimX ==
+             mSlots[buf].mGraphicBuffer->getWidth());
+    rsAssert(mAlloc->mHal.drvState.lod[0].dimY ==
+             mSlots[buf].mGraphicBuffer->getHeight());
 
     //mAlloc->format = mSlots[buf].mGraphicBuffer->getPixelFormat();
 
@@ -194,4 +194,3 @@ status_t GrallocConsumer::releaseAcquiredBufferLocked() {
 
 } // namespace renderscript
 } // namespace android
-
