@@ -25,12 +25,6 @@
 #include "rsScriptC.h"
 #include "rsCpuCoreRuntime.h"
 
-namespace bcc {
-    class BCCContext;
-    class RSCompilerDriver;
-    class RSExecutable;
-}
-
 namespace android {
 namespace renderscript {
 
@@ -101,29 +95,12 @@ public:
         return mScriptLookupFn(mRSC, s);
     }
 
-    void setLinkRuntimeCallback(
-            bcc::RSLinkRuntimeCallback pLinkRuntimeCallback) {
-        mLinkRuntimeCallback = pLinkRuntimeCallback;
-    }
-    bcc::RSLinkRuntimeCallback getLinkRuntimeCallback() {
-        return mLinkRuntimeCallback;
-    }
-
     void setSelectRTCallback(RSSelectRTCallback pSelectRTCallback) {
         mSelectRTCallback = pSelectRTCallback;
     }
     RSSelectRTCallback getSelectRTCallback() {
         return mSelectRTCallback;
     }
-
-#ifndef RS_COMPATIBILITY_LIB
-    void setSetupCompilerCallback(RSSetupCompilerCallback pSetupCompilerCallback) override {
-        mSetupCompilerCallback = pSetupCompilerCallback;
-    }
-    RSSetupCompilerCallback getSetupCompilerCallback() const override {
-        return mSetupCompilerCallback;
-    }
-#endif
 
     virtual void setBccPluginName(const char *name) {
         mBccPluginName.setTo(name);
@@ -180,9 +157,7 @@ protected:
 
     ScriptTLSStruct mTlsStruct;
 
-    bcc::RSLinkRuntimeCallback mLinkRuntimeCallback;
     RSSelectRTCallback mSelectRTCallback;
-    RSSetupCompilerCallback mSetupCompilerCallback;
     String8 mBccPluginName;
 
     // Specifies whether we should embed global variable information in the

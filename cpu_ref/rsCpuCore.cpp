@@ -64,8 +64,7 @@ RsdCpuReference::~RsdCpuReference() {
 
 RsdCpuReference * RsdCpuReference::create(Context *rsc, uint32_t version_major,
         uint32_t version_minor, sym_lookup_t lfn, script_lookup_t slfn
-        , bcc::RSLinkRuntimeCallback pLinkRuntimeCallback,
-        RSSelectRTCallback pSelectRTCallback,
+        , RSSelectRTCallback pSelectRTCallback,
         const char *pBccPluginName
         ) {
 
@@ -78,7 +77,6 @@ RsdCpuReference * RsdCpuReference::create(Context *rsc, uint32_t version_major,
         return nullptr;
     }
 
-    cpu->setLinkRuntimeCallback(pLinkRuntimeCallback);
     cpu->setSelectRTCallback(pSelectRTCallback);
     if (pBccPluginName) {
         cpu->setBccPluginName(pBccPluginName);
@@ -112,9 +110,7 @@ RsdCpuReferenceImpl::RsdCpuReferenceImpl(Context *rsc) {
     memset(&mWorkers, 0, sizeof(mWorkers));
     memset(&mTlsStruct, 0, sizeof(mTlsStruct));
     mExit = false;
-    mLinkRuntimeCallback = nullptr;
     mSelectRTCallback = nullptr;
-    mSetupCompilerCallback = nullptr;
     mEmbedGlobalInfo = true;
     mEmbedGlobalInfoSkipConstant = true;
 }
