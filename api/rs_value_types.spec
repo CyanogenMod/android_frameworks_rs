@@ -24,7 +24,7 @@ description:
  <tr><td>                 </td>  <td>8 bits        </td>   <td>16 bits         </td>   <td>32 bits       </td>   <td>64 bits</td></tr>
  <tr><td>Integer:         </td>  <td>char, @int8_t  </td>   <td>short, @int16_t  </td>   <td>@int32_t       </td>   <td>long, long long, @int64_t</td></tr>
  <tr><td>Unsigned integer:</td>  <td>uchar, @uint8_t</td>   <td>ushort, @uint16_t</td>   <td>uint, @uint32_t</td>   <td>ulong, @uint64_t</td></tr>
- <tr><td>Floating point:  </td>  <td>              </td>   <td>                </td>   <td>float         </td>   <td>double</td></tr>
+ <tr><td>Floating point:  </td>  <td>              </td>   <td>half            </td>   <td>float         </td>   <td>double</td></tr>
  </table>
 
  <h5>Vectors:</h5>
@@ -85,6 +85,42 @@ description:
  Quaternions are also supported via @rs_quaternion.  See <a href='rs_quaternion.html'>Quaterion Functions</a> for the list
  of operations.
 end:
+
+type: half
+version: 23
+simple: __fp16
+summary: 16 bit floating point value
+description:
+ A 16 bit floating point value.
+end:
+
+type: half2
+version: 23
+simple: half __attribute__((ext_vector_type(2)))
+summary: Two 16 bit floats
+description:
+ Vector version of the half float type. Provides two half fields packed
+ into a single 32 bit field with 32 bit alignment.
+end:
+
+type: half3
+version: 23
+simple: half __attribute__((ext_vector_type(3)))
+summary: Three 16 bit floats
+description:
+ Vector version of the half float type. Provides three half fields packed
+ into a single 64 bit field with 64 bit alignment.
+end:
+
+type: half4
+version: 23
+simple: half __attribute__((ext_vector_type(4)))
+summary: Four 16 bit floats
+description:
+ Vector version of the half float type. Provides four half fields packed
+ into a single 64 bit field with 64 bit alignment.
+end:
+
 
 type: int8_t
 simple: char

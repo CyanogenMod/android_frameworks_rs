@@ -35,7 +35,7 @@ using namespace std;
 const int MIN_API_LEVEL = 9;
 
 const NumericalType TYPES[] = {
-            {"f16", "FLOAT_16", "half", "half", FLOATING_POINT, 11, 5},
+            {"f16", "FLOAT_16", "half", "float", FLOATING_POINT, 11, 5},
             {"f32", "FLOAT_32", "float", "float", FLOATING_POINT, 24, 8},
             {"f64", "FLOAT_64", "double", "double", FLOATING_POINT, 53, 11},
             {"i8", "SIGNED_8", "char", "byte", SIGNED_INTEGER, 7, 0},
