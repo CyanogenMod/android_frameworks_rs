@@ -2524,6 +2524,66 @@ extern ulong4 __attribute__((overloadable))
     rsGetElementAt_ulong4(rs_allocation a, uint32_t x, uint32_t y, uint32_t z);
 #endif
 
+#if (defined(RS_VERSION) && (RS_VERSION >= 23))
+extern half __attribute__((overloadable))
+    rsGetElementAt_half(rs_allocation a, uint32_t x);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 23))
+extern half2 __attribute__((overloadable))
+    rsGetElementAt_half2(rs_allocation a, uint32_t x);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 23))
+extern half3 __attribute__((overloadable))
+    rsGetElementAt_half3(rs_allocation a, uint32_t x);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 23))
+extern half4 __attribute__((overloadable))
+    rsGetElementAt_half4(rs_allocation a, uint32_t x);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 23))
+extern half __attribute__((overloadable))
+    rsGetElementAt_half(rs_allocation a, uint32_t x, uint32_t y);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 23))
+extern half2 __attribute__((overloadable))
+    rsGetElementAt_half2(rs_allocation a, uint32_t x, uint32_t y);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 23))
+extern half3 __attribute__((overloadable))
+    rsGetElementAt_half3(rs_allocation a, uint32_t x, uint32_t y);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 23))
+extern half4 __attribute__((overloadable))
+    rsGetElementAt_half4(rs_allocation a, uint32_t x, uint32_t y);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 23))
+extern half __attribute__((overloadable))
+    rsGetElementAt_half(rs_allocation a, uint32_t x, uint32_t y, uint32_t z);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 23))
+extern half2 __attribute__((overloadable))
+    rsGetElementAt_half2(rs_allocation a, uint32_t x, uint32_t y, uint32_t z);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 23))
+extern half3 __attribute__((overloadable))
+    rsGetElementAt_half3(rs_allocation a, uint32_t x, uint32_t y, uint32_t z);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 23))
+extern half4 __attribute__((overloadable))
+    rsGetElementAt_half4(rs_allocation a, uint32_t x, uint32_t y, uint32_t z);
+#endif
+
 /*
  * rsGetElementAtYuv_uchar_U: Get the U component of an allocation of YUVs
  *
@@ -3232,6 +3292,66 @@ extern void __attribute__((overloadable))
 #if (defined(RS_VERSION) && (RS_VERSION >= 18))
 extern void __attribute__((overloadable))
     rsSetElementAt_ulong4(rs_allocation a, ulong4 val, uint32_t x, uint32_t y, uint32_t z);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 23))
+extern void __attribute__((overloadable))
+    rsSetElementAt_half(rs_allocation a, half val, uint32_t x);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 23))
+extern void __attribute__((overloadable))
+    rsSetElementAt_half2(rs_allocation a, half2 val, uint32_t x);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 23))
+extern void __attribute__((overloadable))
+    rsSetElementAt_half3(rs_allocation a, half3 val, uint32_t x);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 23))
+extern void __attribute__((overloadable))
+    rsSetElementAt_half4(rs_allocation a, half4 val, uint32_t x);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 23))
+extern void __attribute__((overloadable))
+    rsSetElementAt_half(rs_allocation a, half val, uint32_t x, uint32_t y);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 23))
+extern void __attribute__((overloadable))
+    rsSetElementAt_half2(rs_allocation a, half2 val, uint32_t x, uint32_t y);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 23))
+extern void __attribute__((overloadable))
+    rsSetElementAt_half3(rs_allocation a, half3 val, uint32_t x, uint32_t y);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 23))
+extern void __attribute__((overloadable))
+    rsSetElementAt_half4(rs_allocation a, half4 val, uint32_t x, uint32_t y);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 23))
+extern void __attribute__((overloadable))
+    rsSetElementAt_half(rs_allocation a, half val, uint32_t x, uint32_t y, uint32_t z);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 23))
+extern void __attribute__((overloadable))
+    rsSetElementAt_half2(rs_allocation a, half2 val, uint32_t x, uint32_t y, uint32_t z);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 23))
+extern void __attribute__((overloadable))
+    rsSetElementAt_half3(rs_allocation a, half3 val, uint32_t x, uint32_t y, uint32_t z);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 23))
+extern void __attribute__((overloadable))
+    rsSetElementAt_half4(rs_allocation a, half4 val, uint32_t x, uint32_t y, uint32_t z);
 #endif
 
 #endif // RENDERSCRIPT_RS_ALLOCATION_DATA_RSH
