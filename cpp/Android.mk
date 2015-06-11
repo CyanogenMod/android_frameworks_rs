@@ -12,6 +12,8 @@ LOCAL_CFLAGS += -Wno-unused-parameter
 LOCAL_MODULE:= libRSDispatch
 LOCAL_MODULE_TAGS := optional
 LOCAL_LDFLAGS += -ldl
+# Used in librsjni, which is built as NDK code => no ASan.
+LOCAL_SANITIZE := never
 
 include $(BUILD_STATIC_LIBRARY)
 
