@@ -22,10 +22,6 @@
     <application android:label="RsBlasBenchmark">
         <activity android:name="BlasBenchmark"
                   android:hardwareAccelerated="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
 
         <activity class=".BlasControls" android:name="BlasControls">
