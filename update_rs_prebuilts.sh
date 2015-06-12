@@ -138,7 +138,7 @@ if [ $DARWIN -eq 0 ]; then
   done
 
   # javalib.jar
-  cp $MY_ANDROID_DIR/out/target/common/obj/JAVA_LIBRARIES/android-support-v8-renderscript_intermediates/javalib.jar renderscript/lib
+  cp $MY_ANDROID_DIR/out/target/common/obj/JAVA_LIBRARIES/android-support-v8-renderscript_intermediates/classes.jar renderscript/lib/javalib.jar
 
 fi
 
