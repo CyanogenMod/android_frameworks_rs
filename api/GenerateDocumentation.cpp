@@ -54,9 +54,11 @@ static void writeHeader(GeneratedFile* file, bool forVerification, const string&
         *file << "page.title=RenderScript " << title << "\n\n";
         *file << "@jd:body\n\n";
     }
+    *file << "<div class='renderscript'>\n";
 }
 
 static void writeFooter(GeneratedFile* file, bool forVerification) {
+    *file << "</div>\n";
     if (forVerification) {
         *file << "</body></html>\n";
     }
@@ -470,7 +472,7 @@ static bool writeDetailedConstant(GeneratedFile* file, Constant* constant) {
     }
     const string& name = constant->getName();
 
-    *file << "<a id='android_rs:" << name << "'></a>\n";
+    *file << "<a name='android_rs:" << name << "'></a>\n";
     *file << "<div class='jd-details'>\n";
     *file << "  <h4 class='jd-details-title'>\n";
     *file << "    <span class='sympad'>" << name << "</span>\n";
@@ -509,7 +511,7 @@ static bool writeDetailedType(GeneratedFile* file, Type* type) {
     }
     const string& name = type->getName();
 
-    *file << "<a id='android_rs:" << name << "'></a>\n";
+    *file << "<a name='android_rs:" << name << "'></a>\n";
     *file << "<div class='jd-details'>\n";
     *file << "  <h4 class='jd-details-title'>\n";
     *file << "    <span class='sympad'>" << name << "</span>\n";
@@ -538,7 +540,7 @@ static bool writeDetailedFunction(GeneratedFile* file, Function* function) {
     }
     const string& name = function->getName();
 
-    *file << "<a id='android_rs:" << name << "'></a>\n";
+    *file << "<a name='android_rs:" << name << "'></a>\n";
     *file << "<div class='jd-details'>\n";
     *file << "  <h4 class='jd-details-title'>\n";
     *file << "    <span class='sympad'>" << name << "</span>\n";
