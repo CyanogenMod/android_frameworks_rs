@@ -81,7 +81,7 @@ LOCAL_SRC_FILES:= \
     rsg_generator.c
 
 LOCAL_CXX_STL := none
-LOCAL_ADDRESS_SANITIZER := false
+LOCAL_SANITIZE := never
 
 include $(BUILD_HOST_EXECUTABLE)
 
