@@ -252,6 +252,15 @@ static void UploadToBufferObject(const Context *rsc, const Allocation *alloc) {
 
 
 static size_t DeriveYUVLayout(int yuv, Allocation::Hal::DrvState *state) {
+#ifndef RS_COMPATIBILITY_LIB
+    // For the flexible YCbCr format, layout is initialized during call to
+    // Allocation::ioReceive.  Return early and avoid clobberring any
+    // pre-existing layout.
+    if (yuv == HAL_PIXEL_FORMAT_YCbCr_420_888) {
+        return 0;
+    }
+#endif
+
     // YUV only supports basic 2d
     // so we can stash the plane pointers in the mipmap levels.
     size_t uvSize = 0;
@@ -286,11 +295,6 @@ static size_t DeriveYUVLayout(int yuv, Allocation::Hal::DrvState *state) {
         uvSize += state->lod[1].stride * state->lod[1].dimY;
         state->yuv.step = 2;
         break;
-#ifndef RS_COMPATIBILITY_LIB
-    case HAL_PIXEL_FORMAT_YCbCr_420_888:
-        // This will be filled in by ioReceive()
-        break;
-#endif
     default:
         rsAssert(0);
     }
