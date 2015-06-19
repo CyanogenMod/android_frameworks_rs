@@ -96,7 +96,8 @@ end:
 
 type: half2
 version: 23
-simple: half __attribute__((ext_vector_type(2)))
+simple: half
+attrib: ext_vector_type(2)
 summary: Two 16 bit floats
 description:
  Vector version of the half float type. Provides two half fields packed
@@ -105,7 +106,8 @@ end:
 
 type: half3
 version: 23
-simple: half __attribute__((ext_vector_type(3)))
+simple: half
+attrib: ext_vector_type(3)
 summary: Three 16 bit floats
 description:
  Vector version of the half float type. Provides three half fields packed
@@ -114,7 +116,8 @@ end:
 
 type: half4
 version: 23
-simple: half __attribute__((ext_vector_type(4)))
+simple: half
+attrib: ext_vector_type(4)
 summary: Four 16 bit floats
 description:
  Vector version of the half float type. Provides four half fields packed
