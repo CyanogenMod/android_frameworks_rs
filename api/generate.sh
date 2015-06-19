@@ -15,12 +15,15 @@
 # limitations under the License.
 #
 
+CLANG=$ANDROID_BUILD_TOP/prebuilts/clang/linux-x86/host/3.6/bin/clang++
+
 set -e
-g++ Generator.cpp Specification.cpp GenerateDocumentation.cpp GenerateHeaderFiles.cpp GenerateTestFiles.cpp Scanner.cpp Utilities.cpp -g -std=c++11 -Wall -o generator
+$CLANG Generator.cpp Specification.cpp GenerateDocumentation.cpp GenerateHeaderFiles.cpp GenerateTestFiles.cpp Scanner.cpp Utilities.cpp GenerateStubsWhiteList.cpp -g -std=c++11 -Wall -o generator
 
 mkdir -p test
 mkdir -p scriptc
 mkdir -p docs
+mkdir -p slangtest
 
 # The order of the arguments passed to generator matter because:
 # 1. The overview is expected to be in the first file.
@@ -42,4 +45,13 @@ rmdir scriptc
 
 rm -f ../../base/docs/html/guide/topics/renderscript/reference/*.jd
 mv docs/*.jd ../../base/docs/html/guide/topics/renderscript/reference/
+
+for i in {11..23}
+  do
+    mv slangtest/all$i.rs ../../compile/slang/tests/P_all_api_$i
+done
+rmdir slangtest
+
+mv RSStubsWhiteList.cpp ../../compile/libbcc/lib/Renderscript/
+
 echo "Be sure to update platform/frameworks/base/docs/html/guide/guide_toc.cs if needed."
