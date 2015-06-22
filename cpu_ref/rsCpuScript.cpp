@@ -48,12 +48,6 @@
 #include <iostream>
 #include <sstream>
 
-#ifdef __LP64__
-#define SYSLIBPATH "/system/lib64"
-#else
-#define SYSLIBPATH "/system/lib"
-#endif
-
 namespace {
 
 static const bool kDebugGlobalVariables = false;
@@ -155,7 +149,20 @@ static bool compileBitcode(const std::string &bcFileName,
                    compileArguments.size()-1, compileArguments.data());
 }
 
-bool isChecksumNeeded() {
+// The checksum is unnecessary under a few conditions, since the primary
+// use-case for it is debugging. If we are loading something from the
+// system partition (read-only), we know that it was precompiled as part of
+// application ahead of time (and thus the checksum is completely
+// unnecessary). The checksum is also unnecessary on release (non-debug)
+// builds, as the only way to get a shared object is to have compiled the
+// script once already. On a release build, there is no way to adjust the
+// other libraries/dependencies, and so the only reason to recompile would
+// be for a source APK change or an OTA. In either case, the APK would be
+// reinstalled, which would already clear the code_cache/ directory.
+bool isChecksumNeeded(const char *cacheDir) {
+    if ((::strcmp(SYSLIBPATH, cacheDir) == 0) ||
+        (::strcmp(SYSLIBPATH_VENDOR, cacheDir) == 0))
+        return false;
     char buf[PROPERTY_VALUE_MAX];
     property_get("ro.debuggable", buf, "");
     return (buf[0] == '1');
@@ -346,7 +353,7 @@ bool RsdCpuScriptImpl::init(char const *resName, char const *cacheDir,
                         useRSDebugContext, bccPluginName, emitGlobalInfo,
                         emitGlobalInfoSkipConstant);
 
-    mChecksumNeeded = isChecksumNeeded();
+    mChecksumNeeded = isChecksumNeeded(cacheDir);
     if (mChecksumNeeded) {
         std::vector<const char *> bccFiles = { BCC_EXE_PATH,
                                                core_lib,
