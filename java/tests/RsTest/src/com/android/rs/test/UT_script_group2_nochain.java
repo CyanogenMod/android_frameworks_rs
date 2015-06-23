@@ -58,18 +58,18 @@ public class UT_script_group2_nochain extends UnitTest {
                                   Type.createX(pRS, Element.I32_4(pRS), ARRAY_SIZE),
                                   unbound);
 
-        ScriptGroup.Closure c0_5 =
+        ScriptGroup.Closure c1 =
                 builder.addKernel(s_inc2.getKernelID_increment2(),
                                   Type.createX(pRS, Element.I32_4(pRS), ARRAY_SIZE),
                                   unbound,
                                   new ScriptGroup.Binding(s_inc2.getFieldID_a(), unbound));
 
-        ScriptGroup.Closure c1 =
+        ScriptGroup.Closure c2 =
                 builder.addKernel(s_double.getKernelID_doubleKernel(),
                                   Type.createX(pRS, Element.I32_4(pRS), ARRAY_SIZE),
                                   unbound);
 
-        ScriptGroup group = builder.create("AddDouble2", c1.getReturn());
+        ScriptGroup group = builder.create("AddDouble2", c2.getReturn());
 
         int[] a = new int[ARRAY_SIZE * 4];
         ((Allocation)group.execute(input)[0]).copyTo(a);
