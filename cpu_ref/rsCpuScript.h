@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef RSD_BCC_H
-#define RSD_BCC_H
+#ifndef RSD_CPU_SCRIPT_H
+#define RSD_CPU_SCRIPT_H
 
 #include <rs_hal.h>
 #include <rsRuntime.h>
@@ -161,4 +161,4 @@ uint32_t constructBuildChecksum(uint8_t const *bitcode, size_t bitcodeSize,
 
 }
 
-#endif
+#endif  // RSD_CPU_SCRIPT_H
