@@ -128,7 +128,26 @@ bool Batch::conflict(CPUClosure* cpuClosure) const {
         }
     }
 
-    return false;
+    // The compiler fusion pass in bcc expects that kernels chained up through
+    // (1st) input and output.
+
+    const Closure* lastBatched = mClosures.back()->mClosure;
+    const auto& it = argDeps.find(lastBatched);
+
+    if (it == argDeps.end()) {
+        return true;
+    }
+
+    const auto& args = (*it).second;
+    for (const auto &p1 : *args) {
+        if (p1.first == 0 && p1.second.get() == nullptr) {
+            // The new closure depends on the last batched closure's return
+            // value (fieldId being nullptr) for its first argument (argument 0)
+            return false;
+        }
+    }
+
+    return true;
 }
 
 CpuScriptGroup2Impl::CpuScriptGroup2Impl(RsdCpuReferenceImpl *cpuRefImpl,
