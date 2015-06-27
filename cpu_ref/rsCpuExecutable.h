@@ -43,14 +43,18 @@ public:
     // For 64bit RS Support Lib, the shared lib path cannot be constructed from
     // cacheDir, so nativeLibDir is needed to load shared libs.
     static void* loadSharedLibrary(const char *cacheDir, const char *resName,
-                                   const char *nativeLibDir = nullptr);
+                                   const char *nativeLibDir = nullptr,
+                                   bool *alreadyLoaded = nullptr);
+
+    // Create a len length string containing random characters from [A-Za-z0-9].
+    static String8 getRandomString(size_t len);
 
 private:
     // Attempt to load the shared library from origName, but then fall back to
     // creating a copy of the shared library if necessary (to ensure instancing).
     // This function returns the dlopen()-ed handle if successful.
     static void *loadSOHelper(const char *origName, const char *cacheDir,
-                              const char *resName);
+                              const char *resName, bool* alreadyLoaded = nullptr);
 
     static const char* LD_EXE_PATH;
     static const char* RS_CACHE_DIR;
