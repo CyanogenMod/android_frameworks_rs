@@ -20,27 +20,6 @@ namespace renderscript {
 
 namespace {
 
-// Create a len length string containing random characters from [A-Za-z0-9].
-static std::string getRandomString(size_t len) {
-    char buf[len + 1];
-    for (size_t i = 0; i < len; i++) {
-        uint32_t r = arc4random() & 0xffff;
-        r %= 62;
-        if (r < 26) {
-            // lowercase
-            buf[i] = 'a' + r;
-        } else if (r < 52) {
-            // uppercase
-            buf[i] = 'A' + (r - 26);
-        } else {
-            // Use a number
-            buf[i] = '0' + (r - 52);
-        }
-    }
-    buf[len] = '\0';
-    return std::string(buf);
-}
-
 // Check if a path exists and attempt to create it if it doesn't.
 static bool ensureCacheDirExists(const char *path) {
     if (access(path, R_OK | W_OK | X_OK) == 0) {
@@ -151,7 +130,8 @@ const char* RsdCpuScriptImpl::BCC_EXE_PATH = "/system/bin/bcc";
 
 void* SharedLibraryUtils::loadSharedLibrary(const char *cacheDir,
                                             const char *resName,
-                                            const char *nativeLibDir) {
+                                            const char *nativeLibDir,
+                                            bool* alreadyLoaded) {
     void *loaded = nullptr;
 
 #if defined(RS_COMPATIBILITY_LIB) && defined(__LP64__)
@@ -162,7 +142,7 @@ void* SharedLibraryUtils::loadSharedLibrary(const char *cacheDir,
 
     // We should check if we can load the library from the standard app
     // location for shared libraries first.
-    loaded = loadSOHelper(scriptSOName.c_str(), cacheDir, resName);
+    loaded = loadSOHelper(scriptSOName.c_str(), cacheDir, resName, alreadyLoaded);
 
     if (loaded == nullptr) {
         ALOGE("Unable to open shared library (%s): %s",
@@ -189,8 +169,28 @@ void* SharedLibraryUtils::loadSharedLibrary(const char *cacheDir,
     return loaded;
 }
 
+String8 SharedLibraryUtils::getRandomString(size_t len) {
+    char buf[len + 1];
+    for (size_t i = 0; i < len; i++) {
+        uint32_t r = arc4random() & 0xffff;
+        r %= 62;
+        if (r < 26) {
+            // lowercase
+            buf[i] = 'a' + r;
+        } else if (r < 52) {
+            // uppercase
+            buf[i] = 'A' + (r - 26);
+        } else {
+            // Use a number
+            buf[i] = '0' + (r - 52);
+        }
+    }
+    buf[len] = '\0';
+    return String8(buf);
+}
+
 void* SharedLibraryUtils::loadSOHelper(const char *origName, const char *cacheDir,
-                                       const char *resName) {
+                                       const char *resName, bool *alreadyLoaded) {
     // Keep track of which .so libraries have been loaded. Once a library is
     // in the set (per-process granularity), we must instead make a copy of
     // the original shared object (randomly named .so file) and load that one
@@ -208,11 +208,18 @@ void* SharedLibraryUtils::loadSOHelper(const char *origName, const char *cacheDi
 
     // Common path is that we have not loaded this Script/library before.
     if (LoadedLibraries.find(origName) == LoadedLibraries.end()) {
+        if (alreadyLoaded != nullptr) {
+            *alreadyLoaded = false;
+        }
         loaded = dlopen(origName, RTLD_NOW | RTLD_LOCAL);
         if (loaded) {
             LoadedLibraries.insert(origName);
         }
         return loaded;
+    }
+
+    if (alreadyLoaded != nullptr) {
+        *alreadyLoaded = true;
     }
 
     std::string newName(cacheDir);
@@ -234,7 +241,7 @@ void* SharedLibraryUtils::loadSOHelper(const char *origName, const char *cacheDi
     newName.append("librs.");
     newName.append(resName);
     newName.append("#");
-    newName.append(getRandomString(6));  // 62^6 potential filename variants.
+    newName.append(getRandomString(6).string());  // 62^6 potential filename variants.
     newName.append(".so");
 
     int r = copyFile(newName.c_str(), origName);

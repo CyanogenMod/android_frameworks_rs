@@ -883,15 +883,12 @@ const char* RsdCpuScriptImpl::getFieldName(uint32_t slot) const {
 
 RsdCpuScriptImpl::~RsdCpuScriptImpl() {
 #ifndef RS_COMPATIBILITY_LIB
-    if (mCompilerDriver) {
-        delete mCompilerDriver;
-    }
+    delete mCompilerDriver;
 #endif
 
-    if (mScriptExec != nullptr) {
-        delete mScriptExec;
-    }
-    if (mBoundAllocs) delete[] mBoundAllocs;
+    delete mScriptExec;
+
+    delete[] mBoundAllocs;
     if (mScriptSO) {
         dlclose(mScriptSO);
     }
