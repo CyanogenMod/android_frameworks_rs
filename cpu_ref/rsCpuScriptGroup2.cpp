@@ -156,6 +156,7 @@ CpuScriptGroup2Impl::CpuScriptGroup2Impl(RsdCpuReferenceImpl *cpuRefImpl,
     mExecutable(nullptr), mScriptObj(nullptr) {
     rsAssert(!mGroup->mClosures.empty());
 
+    mCpuRefImpl->lockMutex();
     Batch* batch = new Batch(this, "Batch0");
     int i = 0;
     for (Closure* closure: mGroup->mClosures) {
@@ -192,6 +193,7 @@ CpuScriptGroup2Impl::CpuScriptGroup2Impl(RsdCpuReferenceImpl *cpuRefImpl,
         }
     }
 #endif  // RS_COMPATIBILITY_LIB
+    mCpuRefImpl->unlockMutex();
 }
 
 void Batch::resolveFuncPtr(void* sharedObj) {
@@ -279,6 +281,9 @@ void setupCompileArguments(
     }
     args->push_back("-output_path");
     args->push_back(outputDir);
+
+    // The output filename has to be the last, in case we need to pop it out and
+    // replace with a different name.
     args->push_back("-o");
     args->push_back(outputFileName);
 }
@@ -396,15 +401,41 @@ void CpuScriptGroup2Impl::compile(const char* cacheDir) {
     // Try to load a shared lib from code cache matching filename and checksum
     //===--------------------------------------------------------------------===//
 
-    mScriptObj = SharedLibraryUtils::loadSharedLibrary(cacheDir, resName);
+    bool alreadyLoaded = false;
+    std::string cloneName;
+
+    mScriptObj = SharedLibraryUtils::loadSharedLibrary(cacheDir, resName, nullptr,
+                                                       &alreadyLoaded);
     if (mScriptObj != nullptr) {
+        // A shared library named resName is found in code cache directory
+        // cacheDir, and loaded with the handle stored in mScriptObj.
+
         mExecutable = ScriptExecutable::createFromSharedObject(
             getCpuRefImpl()->getContext(), mScriptObj, checksum);
+
         if (mExecutable != nullptr) {
+            // The loaded shared library in mScriptObj has a matching checksum.
+            // An executable object has been created.
             return;
-        } else {
-            ALOGE("Failed to create an executable object from so file");
         }
+
+        ALOGV("Failed to create an executable object from so file due to "
+              "mismatching checksum");
+
+        if (alreadyLoaded) {
+            // The shared object found in code cache has already been loaded.
+            // A different file name is needed for the new shared library, to
+            // avoid corrupting the currently loaded instance.
+
+            cloneName.append(resName);
+            cloneName.append("#");
+            cloneName.append(SharedLibraryUtils::getRandomString(6).string());
+
+            // The last element in arguments is the output filename.
+            arguments.pop_back();
+            arguments.push_back(cloneName.c_str());
+        }
+
         dlclose(mScriptObj);
         mScriptObj = nullptr;
     }
@@ -441,6 +472,16 @@ void CpuScriptGroup2Impl::compile(const char* cacheDir) {
     if (mScriptObj == nullptr) {
         ALOGE("Unable to load '%s'", resName);
         return;
+    }
+
+    if (alreadyLoaded) {
+        // Delete the temporary, random-named file that we created to avoid
+        // interfering with an already loaded shared library.
+        string cloneFilePath(cacheDir);
+        cloneFilePath.append("/");
+        cloneFilePath.append(cloneName.c_str());
+        cloneFilePath.append(".so");
+        unlink(cloneFilePath.c_str());
     }
 
     mExecutable = ScriptExecutable::createFromSharedObject(
