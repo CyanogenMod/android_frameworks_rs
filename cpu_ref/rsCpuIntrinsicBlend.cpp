@@ -121,7 +121,9 @@ void RsdCpuScriptIntrinsicBlend::kernel(const RsExpandKernelDriverInfo *info,
     uint32_t x2 = xend;
 
 #if defined(ARCH_ARM_USE_INTRINSICS) && !defined(ARCH_ARM64_USE_INTRINSICS)
-    if (gArchUseSIMD) {
+    // Bug: 22047392 - Skip optimized version for BLEND_DST_ATOP until this
+    // been fixed.
+    if (gArchUseSIMD && info->slot != BLEND_DST_ATOP) {
         if (rsdIntrinsicBlend_K(out, in, info->slot, x1, x2) >= 0)
             return;
     }
@@ -271,6 +273,9 @@ void RsdCpuScriptIntrinsicBlend::kernel(const RsExpandKernelDriverInfo *info,
         }
         break;
     case BLEND_DST_ATOP:
+    // Bug: 22047392 - We need to make sure that "out->w = in->w;" in all
+    // accelerated versions before re-enabling optimizations.
+    #if false  // Bug: 22047392
     #if defined(ARCH_X86_HAVE_SSSE3)
         if (gArchUseSIMD) {
             if ((x1 + 8) < x2) {
@@ -282,11 +287,13 @@ void RsdCpuScriptIntrinsicBlend::kernel(const RsExpandKernelDriverInfo *info,
             }
         }
      #endif
+     #endif  // false for Bug: 22047392
         for (;x1 < x2; x1++, out++, in++) {
             short4 in_s = convert_short4(*in);
             short4 out_s = convert_short4(*out);
             out_s.xyz = ((out_s.xyz * in_s.w) +
               (in_s.xyz * ((short3)255 - (short3)out_s.w))) >> (short3)8;
+            out_s.w = in_s.w;
             *out = convert_uchar4(out_s);
         }
         break;
