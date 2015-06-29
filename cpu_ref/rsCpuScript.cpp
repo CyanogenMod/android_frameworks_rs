@@ -862,10 +862,8 @@ const char* RsdCpuScriptImpl::getFieldName(uint32_t slot) const {
 }
 
 RsdCpuScriptImpl::~RsdCpuScriptImpl() {
-    if (mScriptExec != nullptr) {
-        delete mScriptExec;
-    }
-    if (mBoundAllocs) delete[] mBoundAllocs;
+    delete mScriptExec;
+    delete[] mBoundAllocs;
     if (mScriptSO) {
         dlclose(mScriptSO);
     }
