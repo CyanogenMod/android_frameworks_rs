@@ -54,7 +54,7 @@ FileA3D::~FileA3D() {
         delete mWriteStream;
     }
     if (mReadStream) {
-        delete mWriteStream;
+        delete mReadStream;
     }
     if (mAlloc) {
         free(mAlloc);
