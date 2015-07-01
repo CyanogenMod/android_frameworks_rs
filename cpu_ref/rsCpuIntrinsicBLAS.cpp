@@ -47,10 +47,10 @@ protected:
     uint8_t c_offset = 0;
 
     static void kernelBNNM(size_t m, size_t n, size_t k,
-                           const uint8_t* a, uint32_t a_offset, size_t lda,
-                           const uint8_t* b, uint32_t b_offset, size_t ldb,
-                           uint8_t* c, uint32_t c_offset, size_t ldc,
-                           uint32_t c_mult_int);
+                           const uint8_t* a, uint8_t a_offset, size_t lda,
+                           const uint8_t* b, uint8_t b_offset, size_t ldb,
+                           uint8_t* c, int32_t c_offset, size_t ldc,
+                           int32_t c_mult_int);
 
 
 
@@ -653,10 +653,10 @@ void RsdCpuScriptIntrinsicBLAS::invokeForEach(uint32_t slot,
 }
 
 void RsdCpuScriptIntrinsicBLAS::kernelBNNM(size_t m, size_t n, size_t k,
-                                           const uint8_t* a, uint32_t a_offset, size_t lda,
-                                           const uint8_t* b, uint32_t b_offset, size_t ldb,
-                                           uint8_t* c, uint32_t c_offset, size_t ldc,
-                                           uint32_t c_mult_int) {
+                                           const uint8_t* a, uint8_t a_offset, size_t lda,
+                                           const uint8_t* b, uint8_t b_offset, size_t ldb,
+                                           uint8_t* c, int32_t c_offset, size_t ldc,
+                                           int32_t c_mult_int) {
     // Calculations are done in 1.10.21 fixed-point format for the final output,
     // just before there's a shift down to drop the fractional parts. The output
     // values are gated to 0 to 255 to fit in a byte, but the 10-bit format
