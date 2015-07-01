@@ -93,6 +93,7 @@ typedef RsScriptGroup2 (*ScriptGroup2CreateFnPtr)(RsContext, const char*, size_t
 typedef void (*ScriptGroupSetOutputFnPtr) (RsContext, RsScriptGroup, RsScriptKernelID, RsAllocation);
 typedef void (*ScriptGroupSetInputFnPtr) (RsContext, RsScriptGroup, RsScriptKernelID, RsAllocation);
 typedef void (*ScriptGroupExecuteFnPtr) (RsContext, RsScriptGroup);
+typedef void (*ScriptForEachMultiFnPtr) (RsContext, RsScript, uint32_t, RsAllocation *, size_t, RsAllocation, const void *, size_t, const RsScriptCall *, size_t);
 typedef void (*AllocationIoSendFnPtr) (RsContext, RsAllocation);
 typedef void (*AllocationIoReceiveFnPtr) (RsContext, RsAllocation);
 typedef void * (*AllocationGetPointerFnPtr) (RsContext, RsAllocation, uint32_t lod, RsAllocationCubemapFace face, uint32_t z, uint32_t array, size_t *stride, size_t stride_len);
@@ -176,6 +177,7 @@ struct dispatchTable {
     ScriptGroupSetOutputFnPtr ScriptGroupSetOutput;
     ScriptGroupSetInputFnPtr ScriptGroupSetInput;
     ScriptGroupExecuteFnPtr ScriptGroupExecute;
+    ScriptForEachMultiFnPtr ScriptForEachMulti;
     AllocationIoSendFnPtr AllocationIoSend;
     AllocationIoReceiveFnPtr AllocationIoReceive;
     AllocationGetPointerFnPtr AllocationGetPointer;
