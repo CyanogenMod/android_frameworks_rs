@@ -460,10 +460,10 @@ typedef struct {
     int incY;
     int KL;
     int KU;
-    uint32_t a_offset;
-    uint32_t b_offset;
-    uint32_t c_offset;
-    uint32_t c_mult_int;
+    uint8_t a_offset;
+    uint8_t b_offset;
+    int32_t c_offset;
+    int32_t c_mult_int;
 } RsBlasCall;
 
 enum RsGlobalProperty {
