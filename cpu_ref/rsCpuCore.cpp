@@ -646,11 +646,9 @@ RsdCpuReference::CpuScript * RsdCpuReferenceImpl::createIntrinsic(const Script *
     case RS_SCRIPT_INTRINSIC_ID_RESIZE:
         i = rsdIntrinsic_Resize(this, s, e);
         break;
-#if !defined(RS_COMPATIBILITY_LIB)
     case RS_SCRIPT_INTRINSIC_ID_BLAS:
         i = rsdIntrinsic_BLAS(this, s, e);
         break;
-#endif
 
     default:
         rsAssert(0);
