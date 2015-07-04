@@ -36,7 +36,7 @@
  * E.g. float4, int3, double2, ulong4.
  *
  * To create vector literals, use the vector type followed by the values enclosed
- * between parentheses, e.g. (float3)(1.0f, 2.0f, 3.0f).
+ * between curly braces, e.g. (float3){1.0f, 2.0f, 3.0f}.
  *
  * Entries of a vector can be accessed using different naming styles.
  *
