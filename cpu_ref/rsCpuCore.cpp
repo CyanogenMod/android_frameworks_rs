@@ -26,12 +26,9 @@
 #include <sys/resource.h>
 #include <sched.h>
 #include <sys/syscall.h>
+#include <stdio.h>
 #include <string.h>
 #include <unistd.h>
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <fcntl.h>
 
 #if !defined(RS_SERVER) && !defined(RS_COMPATIBILITY_LIB)
 #include <cutils/properties.h>
@@ -196,38 +193,25 @@ void RsdCpuReferenceImpl::unlockMutex() {
     pthread_mutex_unlock(&gInitMutex);
 }
 
-static int
-read_file(const char*  pathname, char*  buffer, size_t  buffsize)
-{
-    int  fd, len;
-
-    fd = open(pathname, O_RDONLY);
-    if (fd < 0)
-        return -1;
-
-    do {
-        len = read(fd, buffer, buffsize);
-    } while (len < 0 && errno == EINTR);
-
-    close(fd);
-
-    return len;
-}
-
+// Determine if the CPU we're running on supports SIMD instructions.
 static void GetCpuInfo() {
-    char cpuinfo[4096];
-    int  cpuinfo_len;
+    // Read the CPU flags from /proc/cpuinfo.
+    FILE *cpuinfo = fopen("/proc/cpuinfo", "r");
 
-    cpuinfo_len = read_file("/proc/cpuinfo", cpuinfo, sizeof cpuinfo);
-    if (cpuinfo_len < 0)  /* should not happen */ {
+    if (!cpuinfo) {
         return;
     }
 
+    char cpuinfostr[4096];
+    if (!fgets(cpuinfostr, sizeof(cpuinfostr), cpuinfo)) {
+        cpuinfostr[0] = '\0';
+    }
+    fclose(cpuinfo);
+
 #if defined(ARCH_ARM_HAVE_VFP) || defined(ARCH_ARM_USE_INTRINSICS)
-    gArchUseSIMD = (!!strstr(cpuinfo, " neon")) ||
-                   (!!strstr(cpuinfo, " asimd"));
+    gArchUseSIMD = strstr(cpuinfostr, " neon") || strstr(cpuinfostr, " asimd");
 #elif defined(ARCH_X86_HAVE_SSSE3)
-    gArchUseSIMD = !!strstr(cpuinfo, " ssse3");
+    gArchUseSIMD = strstr(cpuinfostr, " ssse3");
 #endif
 }
 
