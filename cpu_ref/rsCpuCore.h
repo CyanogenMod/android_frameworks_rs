@@ -34,6 +34,7 @@ namespace bcc {
 namespace android {
 namespace renderscript {
 
+// Whether the CPU we're running on supports SIMD instructions
 extern bool gArchUseSIMD;
 
 typedef void (* InvokeFunc_t)(void);
