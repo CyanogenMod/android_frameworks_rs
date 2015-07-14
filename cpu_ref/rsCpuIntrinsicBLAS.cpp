@@ -17,7 +17,7 @@
 
 #include "rsCpuIntrinsic.h"
 #include "rsCpuIntrinsicInlines.h"
-#include "cblas.h"
+#include "rsCpuBLASDispatch.h"
 #include "eight_bit_int_gemm.h"
 
 using namespace android;
@@ -47,6 +47,9 @@ protected:
     uint8_t b_offset = 0;
     uint8_t c_offset = 0;
 
+#ifdef RS_COMPATIBILITY_LIB
+    bool isBlasLibInitialized = false;
+#endif
     static void kernelBNNM(size_t m, size_t n, size_t k,
                            const uint8_t* a, uint8_t a_offset, size_t lda,
                            const uint8_t* b, uint8_t b_offset, size_t ldb,
@@ -111,6 +114,17 @@ void RsdCpuScriptIntrinsicBLAS::invokeForEach(uint32_t slot,
     void *Y = nullptr;
 
     int lda = 0, ldb = 0, ldc = 0;
+
+#ifdef RS_COMPATIBILITY_LIB
+    // Allow BNNM even without libblas
+    if (call->func != RsBlas_bnnm && !isBlasLibInitialized) {
+        if (!loadBLASLib()) {
+            ALOGE("Failed to load the BLAS lib, IntrinsicBLAS NOT supported!\n");
+            return;
+        }
+        isBlasLibInitialized = true;
+    }
+#endif
 
     switch (call->func) {
 
