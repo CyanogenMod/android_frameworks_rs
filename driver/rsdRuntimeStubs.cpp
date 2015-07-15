@@ -134,8 +134,8 @@ static bool failIfInKernel(Context *rsc, const char *funcName) {
 //////////////////////////////////////////////////////////////////////////////
 // Allocation routines
 //////////////////////////////////////////////////////////////////////////////
-#ifdef __i386__
-// i386 has different struct return passing to ARM; emulate with a pointer
+#if defined(__i386__) || (defined(__mips__) && __mips==32)
+// i386 and MIPS32 have different struct return passing to ARM; emulate with a pointer
 const Allocation * rsGetAllocation(const void *ptr) {
     Context *rsc = RsdCpuReference::getTlsContext();
     const Script *sc = RsdCpuReference::getTlsScript();
@@ -150,7 +150,7 @@ const android::renderscript::rs_allocation rsGetAllocation(const void *ptr) {
     const Script *sc = RsdCpuReference::getTlsScript();
     Allocation* alloc = rsdScriptGetAllocationForPointer(rsc, sc, ptr);
 
-#ifndef __LP64__ // ARMv7/MIPS
+#ifndef __LP64__ // ARMv7
     android::renderscript::rs_allocation obj = {0};
 #else // AArch64/x86_64/MIPS64
     android::renderscript::rs_allocation obj = {0, 0, 0, 0};
