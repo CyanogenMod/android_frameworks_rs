@@ -673,10 +673,53 @@ void RsdCpuScriptIntrinsicBLAS::kernelBNNM(size_t m, size_t n, size_t k,
                                            uint8_t* c, int32_t c_offset, size_t ldc,
                                            int32_t c_mult_int) {
     const int c_shift = 21;
+#if defined(ARCH_ARM_HAVE_VFP) || defined(ARCH_ARM_USE_INTRINSICS)
+    // Non-optimized path for ARMv7 devices without SIMD instructions.
+    if (!gArchUseSIMD) {
+        // Calculations are done in 1.10.21 fixed-point format for the final output,
+        // just before there's a shift down to drop the fractional parts. The output
+        // values are gated to 0 to 255 to fit in a byte, but the 10-bit format
+        // gives some headroom to avoid wrapping around on small overflows.
+        size_t i = 0, j = 0, l = 0;
+        for (j = 0; j < n; j++) {
+            for (i = 0; i < m; i++) {
+                int32_t total = 0;
+                for (l = 0; l < k; l++) {
+                    const int a_index = ((i * lda) + l);
+                    const uint8_t a_as_byte = a[a_index];
+                    const int32_t a_as_int = (((int32_t)(a_as_byte)) - a_offset);
+                    const int b_index = ((j * ldb) + l);
+                    const uint8_t b_as_byte = b[b_index];
+                    const int32_t b_as_int = (((int32_t)(b_as_byte)) - b_offset);
+                    const int32_t mult_as_int = (a_as_int * b_as_int);
+                    total += mult_as_int;
+                }
+                const int c_index = ((ldc * i) + j);
+                int32_t output =
+                    ((((total + c_offset) * c_mult_int) + (1 << (c_shift - 1)))
+                     >> c_shift);
+                if (output > 255) {
+                    output = 255;
+                }
+                if (output < 0) {
+                    output = 0;
+                }
+                c[c_index] = (uint8_t)(output);
+            }
+        }
+        return;
+    }
+#endif
+
     // Using gemmlowp to calculate the low precision 8 bit GEMM.
-    gemmlowp::eight_bit_int_gemm::EightBitIntGemm(m, n, k, a, -a_offset, lda,
+    bool transpose_a = false;
+    bool transpose_b = true;
+    bool transpose_c = true;
+    gemmlowp::eight_bit_int_gemm::EightBitIntGemm(transpose_a, transpose_b, transpose_c,
+                                                  m, n, k, a, -a_offset, lda,
                                                   b, -b_offset, ldb, c, c_offset,
                                                   c_mult_int, c_shift, ldc);
+
 }
 
 
