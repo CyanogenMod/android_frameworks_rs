@@ -207,16 +207,19 @@ static void GetCpuInfo() {
     }
 
     char cpuinfostr[4096];
-    if (!fgets(cpuinfostr, sizeof(cpuinfostr), cpuinfo)) {
-        cpuinfostr[0] = '\0';
+    // fgets() ends with newline or EOF, need to check the whole
+    // "cpuinfo" file to make sure we can use SIMD or not.
+    while (fgets(cpuinfostr, sizeof(cpuinfostr), cpuinfo)) {
+#if defined(ARCH_ARM_HAVE_VFP) || defined(ARCH_ARM_USE_INTRINSICS)
+        gArchUseSIMD = strstr(cpuinfostr, " neon") || strstr(cpuinfostr, " asimd");
+#elif defined(ARCH_X86_HAVE_SSSE3)
+        gArchUseSIMD = strstr(cpuinfostr, " ssse3");
+#endif
+        if (gArchUseSIMD) {
+            break;
+        }
     }
     fclose(cpuinfo);
-
-#if defined(ARCH_ARM_HAVE_VFP) || defined(ARCH_ARM_USE_INTRINSICS)
-    gArchUseSIMD = strstr(cpuinfostr, " neon") || strstr(cpuinfostr, " asimd");
-#elif defined(ARCH_X86_HAVE_SSSE3)
-    gArchUseSIMD = strstr(cpuinfostr, " ssse3");
-#endif
 }
 
 bool RsdCpuReferenceImpl::init(uint32_t version_major, uint32_t version_minor,
