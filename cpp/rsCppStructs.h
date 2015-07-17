@@ -82,7 +82,8 @@ class Sampler;
      RS_INIT_LOW_LATENCY = 2, ///< Prefer low latency devices over potentially higher throughput devices.
      // Bitflag 4 is reserved for the context flag low power
      RS_INIT_WAIT_FOR_ATTACH = 8,   ///< Kernel execution will hold to give time for a debugger to be attached
-     RS_INIT_MAX = 16
+     RS_INIT_OPT_LEVEL_0 = 16, ///< Use the -O0 option to set the optimization level to zero when calling the bcc compiler.
+     RS_INIT_MAX = 32
  };
 
  /**

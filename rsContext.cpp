@@ -459,6 +459,7 @@ Context::Context() {
     memset(&mHal, 0, sizeof(mHal));
     mForceCpu = false;
     mContextType = RS_CONTEXT_TYPE_NORMAL;
+    mOptLevel = 3;
     mSynchronous = false;
     mFatalErrorOccured = false;
 
@@ -495,6 +496,9 @@ Context * Context::createContext(Device *dev, const RsSurfaceConfig *sc,
     }
     if (flags & RS_CONTEXT_SYNCHRONOUS) {
         rsc->mSynchronous = true;
+    }
+    if (flags & RS_CONTEXT_OPT_LEVEL_0) {
+        rsc->mOptLevel = 0;
     }
     rsc->mContextType = ct;
     rsc->mHal.flags = flags;
