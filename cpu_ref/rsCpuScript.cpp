@@ -79,7 +79,7 @@ static void setCompileArguments(std::vector<const char*>* args,
                                 const char* cacheDir, const char* resName,
                                 const char* core_lib, bool useRSDebugContext,
                                 const char* bccPluginName, bool emitGlobalInfo,
-                                bool emitGlobalInfoSkipConstant) {
+                                int optLevel, bool emitGlobalInfoSkipConstant) {
     rsAssert(cacheDir && resName && core_lib);
     args->push_back(android::renderscript::RsdCpuScriptImpl::BCC_EXE_PATH);
     args->push_back("-unroll-runtime");
@@ -98,6 +98,20 @@ static void setCompileArguments(std::vector<const char*>* args,
     args->push_back(core_lib);
     args->push_back("-mtriple");
     args->push_back(DEFAULT_TARGET_TRIPLE_STRING);
+    args->push_back("-O");
+
+    switch (optLevel) {
+    case (0):
+        args->push_back("0");
+        break;
+    case (3):
+        args->push_back("3");
+        break;
+    default:
+        ALOGW("Expected optimization level of 0 or 3. Received %d", optLevel);
+        args->push_back("3");
+        break;
+    }
 
     // Enable workaround for A53 codegen by default.
 #if defined(__aarch64__) && !defined(DISABLE_A53_WORKAROUND)
@@ -317,6 +331,8 @@ bool RsdCpuScriptImpl::init(char const *resName, char const *cacheDir,
         useRSDebugContext = true;
     }
 
+    int optLevel = mCtx->getContext()->getOptLevel();
+
     std::string bcFileName(cacheDir);
     bcFileName.append("/");
     bcFileName.append(resName);
@@ -327,7 +343,7 @@ bool RsdCpuScriptImpl::init(char const *resName, char const *cacheDir,
     bool emitGlobalInfoSkipConstant = mCtx->getEmbedGlobalInfoSkipConstant();
     setCompileArguments(&compileArguments, bcFileName, cacheDir, resName, core_lib,
                         useRSDebugContext, bccPluginName, emitGlobalInfo,
-                        emitGlobalInfoSkipConstant);
+                        optLevel, emitGlobalInfoSkipConstant);
 
     mChecksumNeeded = isChecksumNeeded(cacheDir);
     if (mChecksumNeeded) {
