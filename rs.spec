@@ -399,6 +399,14 @@ ScriptForEachMulti {
     param const RsScriptCall * sc
 }
 
+ScriptReduce {
+    param RsScript s
+    param uint32_t slot
+    param RsAllocation ain
+    param RsAllocation aout
+    param const RsScriptCall * sc
+}
+
 ScriptSetVarI {
     param RsScript s
     param uint32_t slot
