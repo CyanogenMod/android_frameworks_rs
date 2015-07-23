@@ -224,6 +224,12 @@ void rsi_ScriptForEach(Context *rsc, RsScript vs, uint32_t slot,
     }
 }
 
+void rsi_ScriptReduce(Context *rsc, RsScript vs, uint32_t slot,
+                      RsAllocation vain, RsAllocation vaout,
+                      const RsScriptCall *sc, size_t scLen) {
+    // TODO(wala)
+}
+
 void rsi_ScriptInvoke(Context *rsc, RsScript vs, uint32_t slot) {
     Script *s = static_cast<Script *>(vs);
     s->Invoke(rsc, slot, nullptr, 0);
