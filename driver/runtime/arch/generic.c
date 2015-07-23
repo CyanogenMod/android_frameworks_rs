@@ -79,7 +79,10 @@ extern T##4 __attribute__((overloadable)) clamp(T##4 amount, T low, T high) {   
     return r;                                                                       \
 }
 
-#if !defined(__i386__) && !defined(__x86_64__)
+#if (!defined(__i386__) && !defined(__x86_64__)) || defined(RS_DEBUG_RUNTIME)
+// These functions must be defined here if we are not using the SSE
+// implementation, which includes when we are built as part of the
+// debug runtime (libclcore_debug.bc).
 
 _CLAMP(float);
 
@@ -93,7 +96,7 @@ extern float2 __attribute__((overloadable)) clamp(float2 amount, float low, floa
 extern float3 __attribute__((overloadable)) clamp(float3 amount, float low, float high);
 extern float4 __attribute__((overloadable)) clamp(float4 amount, float low, float high);
 
-#endif // !defined(__i386__) && !defined(__x86_64__)
+#endif // (!defined(__i386__) && !defined(__x86_64__)) || defined(RS_DEBUG_RUNTIME)
 
 _CLAMP(double);
 _CLAMP(char);
