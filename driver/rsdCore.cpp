@@ -156,6 +156,10 @@ extern "C" bool rsdHalQueryHal(RsHalInitEnums entry, void **fnPtr) {
         fnPtr[0] = (void *)rsdAllocationAdapterOffset; break;
     case RS_HAL_ALLOCATION_GET_POINTER:
         fnPtr[0] = (void *)nullptr; break;
+#ifdef RS_COMPATIBILITY_LIB
+    case RS_HAL_ALLOCATION_INIT_STRIDED:
+        fnPtr[0] = (void *)rsdAllocationInitStrided; break;
+#endif
 
     case RS_HAL_SAMPLER_INIT:
         fnPtr[0] = (void *)rsdSamplerInit; break;

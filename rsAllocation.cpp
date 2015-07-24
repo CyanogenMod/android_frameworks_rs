@@ -59,8 +59,9 @@ void Allocation::operator delete(void* ptr) {
     }
 }
 
-Allocation * Allocation::createAllocation(Context *rsc, const Type *type, uint32_t usages,
-                              RsAllocationMipmapControl mc, void * ptr) {
+Allocation * Allocation::createAllocationStrided(Context *rsc, const Type *type, uint32_t usages,
+                                                 RsAllocationMipmapControl mc, void * ptr,
+                                                 size_t requiredAlignment) {
     // Allocation objects must use allocator specified by the driver
     void* allocMem = rsc->mHal.funcs.allocRuntimeMem(sizeof(Allocation), 0);
 
@@ -79,6 +80,11 @@ Allocation * Allocation::createAllocation(Context *rsc, const Type *type, uint32
             rsc->setError(RS_ERROR_FATAL_DRIVER, "Allocation Init called with USAGE_OEM but driver does not support it");
             return nullptr;
         }
+#ifdef RS_COMPATIBILITY_LIB
+    } else if (usages & RS_ALLOCATION_USAGE_INCREMENTAL_SUPPORT){
+        a = new (allocMem) Allocation(rsc, type, usages, mc, ptr);
+        success = rsc->mHal.funcs.allocation.initStrided(rsc, a, type->getElement()->getHasReferences(), requiredAlignment);
+#endif
     } else {
         a = new (allocMem) Allocation(rsc, type, usages, mc, ptr);
         success = rsc->mHal.funcs.allocation.init(rsc, a, type->getElement()->getHasReferences());
@@ -91,6 +97,11 @@ Allocation * Allocation::createAllocation(Context *rsc, const Type *type, uint32
     }
 
     return a;
+}
+
+Allocation * Allocation::createAllocation(Context *rsc, const Type *type, uint32_t usages,
+                              RsAllocationMipmapControl mc, void * ptr) {
+    return Allocation::createAllocationStrided(rsc, type, usages, mc, ptr, kMinimumRSAlignment);
 }
 
 Allocation * Allocation::createAdapter(Context *rsc, const Allocation *alloc, const Type *type) {
@@ -719,6 +730,19 @@ RsAllocation rsi_AllocationCreateTyped(Context *rsc, RsType vtype,
                                        RsAllocationMipmapControl mipmaps,
                                        uint32_t usages, uintptr_t ptr) {
     Allocation * alloc = Allocation::createAllocation(rsc, static_cast<Type *>(vtype), usages, mipmaps, (void*)ptr);
+    if (!alloc) {
+        return nullptr;
+    }
+    alloc->incUserRef();
+    return alloc;
+}
+
+RsAllocation rsi_AllocationCreateStrided(Context *rsc, RsType vtype,
+                                         RsAllocationMipmapControl mipmaps,
+                                         uint32_t usages, uintptr_t ptr,
+                                         size_t requiredAlignment) {
+    Allocation * alloc = Allocation::createAllocationStrided(rsc, static_cast<Type *>(vtype), usages, mipmaps,
+                                                             (void*)ptr, requiredAlignment);
     if (!alloc) {
         return nullptr;
     }
