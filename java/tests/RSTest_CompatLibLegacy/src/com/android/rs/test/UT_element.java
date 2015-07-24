@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.rs.test_compat;
+package com.android.rs.test_compatlegacy;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -96,6 +96,8 @@ public class UT_element extends UnitTest {
 
         subElemCount = complexElem.getSubElementCount();
         _RS_ASSERT("subElemCount == 10", subElemCount == 10);
+        _RS_ASSERT("complexElem.getSizeBytes() == ScriptField_ComplexStruct.Item.sizeof",
+                   complexElem.getBytesSize() == ScriptField_ComplexStruct.Item.sizeof);
 
         for (int i = 0; i < subElemCount; i ++) {
             _RS_ASSERT("complexElem.getSubElement(i) != null",
