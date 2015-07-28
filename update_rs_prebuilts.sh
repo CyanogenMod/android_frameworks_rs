@@ -39,6 +39,10 @@ export FORCE_BUILD_LLVM_COMPONENTS=true
 # actual required compiler pieces.
 export FORCE_BUILD_RS_COMPAT=true
 
+# Disable JACK when buiding RS prebuilts. Without this variable, we won't be
+# able to get classes.jar.
+export UPDATE_RS_PREBUILTS_DISABLE_JACK=true
+
 # ANDROID_HOST_OUT is where the new prebuilts will be constructed/copied from.
 ANDROID_HOST_OUT=$MY_ANDROID_DIR/out/host/$SHORT_OSNAME-x86/
 
