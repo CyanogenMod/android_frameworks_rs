@@ -99,6 +99,8 @@ extern "C" bool rsdHalQueryHal(RsHalInitEnums entry, void **fnPtr) {
         fnPtr[0] = (void *)rsdScriptInvokeForEachMulti; break;
     case RS_HAL_SCRIPT_UPDATE_CACHED_OBJECT:
         fnPtr[0] = (void *)rsdScriptUpdateCachedObject; break;
+    case RS_HAL_SCRIPT_INVOKE_REDUCE:
+        fnPtr[0] = (void *)rsdScriptInvokeReduce; break;
 
     case RS_HAL_ALLOCATION_INIT:
         fnPtr[0] = (void *)rsdAllocationInit; break;
