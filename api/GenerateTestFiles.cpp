@@ -399,6 +399,8 @@ void PermutationWriter::writeJavaVerifyScalarMethod(bool verifierValidates) cons
         }
     }
 
+    mJava->indent() << "StringBuilder message = new StringBuilder();\n";
+    mJava->indent() << "boolean errorFound = false;\n";
     mJava->indent() << "for (int i = 0; i < INPUTSIZE; i++)";
     mJava->startBlock();
 
@@ -458,8 +460,10 @@ void PermutationWriter::writeJavaVerifyScalarMethod(bool verifierValidates) cons
 
     mJava->indent() << "if (!valid)";
     mJava->startBlock();
+    mJava->indent() << "if (!errorFound)";
+    mJava->startBlock();
+    mJava->indent() << "errorFound = true;\n";
 
-    mJava->indent() << "StringBuilder message = new StringBuilder();\n";
     for (auto p : mAllInputsAndOutputs) {
         if (p->isOutParameter) {
             writeJavaAppendOutputToMessage(*p, "", "[i * " + p->vectorWidth + " + j]",
@@ -471,14 +475,23 @@ void PermutationWriter::writeJavaVerifyScalarMethod(bool verifierValidates) cons
     if (verifierValidates) {
         mJava->indent() << "message.append(errorMessage);\n";
     }
+    mJava->indent() << "message.append(\"Errors at\");\n";
+    mJava->endBlock();
 
-    mJava->indent() << "assertTrue(\"Incorrect output for " << mJavaCheckMethodName << "\" +\n";
+    mJava->indent() << "message.append(\" [\");\n";
+    mJava->indent() << "message.append(Integer.toString(i));\n";
+    mJava->indent() << "message.append(\", \");\n";
+    mJava->indent() << "message.append(Integer.toString(j));\n";
+    mJava->indent() << "message.append(\"]\");\n";
+
+    mJava->endBlock();
+    mJava->endBlock();
+    mJava->endBlock();
+
+    mJava->indent() << "assertFalse(\"Incorrect output for " << mJavaCheckMethodName << "\" +\n";
     mJava->indentPlus()
-                << "(relaxed ? \"_relaxed\" : \"\") + \":\\n\" + message.toString(), valid);\n";
+                << "(relaxed ? \"_relaxed\" : \"\") + \":\\n\" + message.toString(), errorFound);\n";
 
-    mJava->endBlock();
-    mJava->endBlock();
-    mJava->endBlock();
     mJava->endBlock();
     *mJava << "\n";
 }
@@ -490,6 +503,8 @@ void PermutationWriter::writeJavaVerifyVectorMethod() const {
     for (auto p : mAllInputsAndOutputs) {
         writeJavaArrayInitialization(*p);
     }
+    mJava->indent() << "StringBuilder message = new StringBuilder();\n";
+    mJava->indent() << "boolean errorFound = false;\n";
     mJava->indent() << "for (int i = 0; i < INPUTSIZE; i++)";
     mJava->startBlock();
 
@@ -538,8 +553,10 @@ void PermutationWriter::writeJavaVerifyVectorMethod() const {
 
     mJava->indent() << "if (!valid)";
     mJava->startBlock();
+    mJava->indent() << "if (!errorFound)";
+    mJava->startBlock();
+    mJava->indent() << "errorFound = true;\n";
 
-    mJava->indent() << "StringBuilder message = new StringBuilder();\n";
     for (auto p : mAllInputsAndOutputs) {
         if (p->isOutParameter) {
             writeJavaAppendVectorOutputToMessage(*p);
@@ -547,13 +564,20 @@ void PermutationWriter::writeJavaVerifyVectorMethod() const {
             writeJavaAppendVectorInputToMessage(*p);
         }
     }
+    mJava->indent() << "message.append(\"Errors at\");\n";
+    mJava->endBlock();
 
-    mJava->indent() << "assertTrue(\"Incorrect output for " << mJavaCheckMethodName << "\" +\n";
+    mJava->indent() << "message.append(\" [\");\n";
+    mJava->indent() << "message.append(Integer.toString(i));\n";
+    mJava->indent() << "message.append(\"]\");\n";
+
+    mJava->endBlock();
+    mJava->endBlock();
+
+    mJava->indent() << "assertFalse(\"Incorrect output for " << mJavaCheckMethodName << "\" +\n";
     mJava->indentPlus()
-                << "(relaxed ? \"_relaxed\" : \"\") + \":\\n\" + message.toString(), valid);\n";
+                << "(relaxed ? \"_relaxed\" : \"\") + \":\\n\" + message.toString(), errorFound);\n";
 
-    mJava->endBlock();
-    mJava->endBlock();
     mJava->endBlock();
     *mJava << "\n";
 }
@@ -569,6 +593,16 @@ void PermutationWriter::writeJavaVerifyMethodHeader() const {
 void PermutationWriter::writeJavaArrayInitialization(const ParameterDefinition& p) const {
     mJava->indent() << p.javaBaseType << "[] " << p.javaArrayName << " = new " << p.javaBaseType
                     << "[INPUTSIZE * " << p.vectorWidth << "];\n";
+
+    /* For basic types, populate the array with values, to help understand failures.  We have had
+     * bugs where the output buffer was all 0.  We were not sure if there was a failed copy or
+     * the GPU driver was copying zeroes.
+     */
+    if (p.typeIndex >= 0) {
+        mJava->indent() << "Arrays.fill(" << p.javaArrayName << ", (" << TYPES[p.typeIndex].javaType
+                        << ") 42);\n";
+    }
+
     mJava->indent() << p.javaAllocName << ".copyTo(" << p.javaArrayName << ");\n";
 }
 
@@ -870,6 +904,7 @@ static bool startJavaFile(GeneratedFile* file, const Function& function, const s
     *file << "import android.renderscript.Allocation;\n";
     *file << "import android.renderscript.RSRuntimeException;\n";
     *file << "import android.renderscript.Element;\n\n";
+    *file << "import java.util.Arrays;\n\n";
 
     *file << "public class " << testName << " extends RSBaseCompute";
     file->startBlock();  // The corresponding endBlock() is in finishJavaFile()
