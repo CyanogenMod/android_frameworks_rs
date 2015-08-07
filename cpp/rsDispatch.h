@@ -42,6 +42,7 @@ typedef void (*ContextInitToClientFnPtr) (RsContext);
 typedef void (*ContextDeinitToClientFnPtr) (RsContext);
 typedef RsType (*TypeCreateFnPtr) (RsContext, RsElement, uint32_t, uint32_t, uint32_t, bool, bool, uint32_t);
 typedef RsAllocation (*AllocationCreateTypedFnPtr) (RsContext, RsType, RsAllocationMipmapControl, uint32_t, uintptr_t);
+typedef RsAllocation (*AllocationCreateStridedFnPtr) (RsContext, RsType, RsAllocationMipmapControl, uint32_t, uintptr_t, size_t);
 typedef RsAllocation (*AllocationCreateFromBitmapFnPtr) (RsContext, RsType, RsAllocationMipmapControl, const void*, size_t, uint32_t);
 typedef RsAllocation (*AllocationCubeCreateFromBitmapFnPtr) (RsContext, RsType, RsAllocationMipmapControl, const void*, size_t, uint32_t);
 typedef RsNativeWindow (*AllocationGetSurfaceFnPtr) (RsContext, RsAllocation);
@@ -181,6 +182,7 @@ struct dispatchTable {
     AllocationIoSendFnPtr AllocationIoSend;
     AllocationIoReceiveFnPtr AllocationIoReceive;
     AllocationGetPointerFnPtr AllocationGetPointer;
+    AllocationCreateStridedFnPtr AllocationCreateStrided;
 };
 
 bool loadSymbols(void* handle, dispatchTable& dispatchTab, int device_api = 0);
