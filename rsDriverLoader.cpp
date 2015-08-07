@@ -109,6 +109,9 @@ static bool LoadHalTable(Context *rsc, HalQueryHal fn, bool loadGraphics) {
     ret &= fn(RS_HAL_ALLOCATION_UPDATE_CACHED_OBJECT, (void **)&rsc->mHal.funcs.allocation.updateCachedObject);
     ret &= fn(RS_HAL_ALLOCATION_ADAPTER_OFFSET, (void **)&rsc->mHal.funcs.allocation.adapterOffset);
     ret &= fn(RS_HAL_ALLOCATION_GET_POINTER, (void **)&rsc->mHal.funcs.allocation.getPointer);
+#ifdef RS_COMPATIBILITY_LIB
+    ret &= fn(RS_HAL_ALLOCATION_INIT_STRIDED, (void **)&rsc->mHal.funcs.allocation.initStrided);
+#endif
 
     ret &= fn(RS_HAL_SAMPLER_INIT, (void **)&rsc->mHal.funcs.sampler.init);
     ret &= fn(RS_HAL_SAMPLER_DESTROY, (void **)&rsc->mHal.funcs.sampler.destroy);
