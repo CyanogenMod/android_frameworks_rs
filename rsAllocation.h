@@ -48,6 +48,8 @@ class Allocation : public ObjectBase {
 
 public:
     const static int MAX_LOD = 16;
+    // The mininum alignment requirement for RenderScript. Must be power of 2 and larger than 0.
+    const static size_t kMinimumRSAlignment = 16;
 
     struct Hal {
         void * drv;
@@ -111,6 +113,9 @@ public:
     static Allocation * createAllocation(Context *rsc, const Type *, uint32_t usages,
                                          RsAllocationMipmapControl mc = RS_ALLOCATION_MIPMAP_NONE,
                                          void *ptr = 0);
+    static Allocation * createAllocationStrided(Context *rsc, const Type *, uint32_t usages,
+                                                RsAllocationMipmapControl mc = RS_ALLOCATION_MIPMAP_NONE,
+                                                void *ptr = 0, size_t byteAligned = 16);
     static Allocation * createAdapter(Context *rsc, const Allocation *alloc, const Type *type);
 
 

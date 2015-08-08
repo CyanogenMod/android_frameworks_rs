@@ -279,6 +279,9 @@ typedef struct {
         void (*getPointer)(const Context *rsc, const Allocation *alloc,
                            uint32_t lod, RsAllocationCubemapFace face,
                            uint32_t z, uint32_t array);
+#ifdef RS_COMPATIBILITY_LIB
+        bool (*initStrided)(const Context *rsc, Allocation *alloc, bool forceZero, size_t requiredAlignment);
+#endif
     } allocation;
 
     struct {
@@ -407,6 +410,9 @@ enum RsHalInitEnums {
     RS_HAL_ALLOCATION_ADAPTER_OFFSET                        = 2025,
     RS_HAL_ALLOCATION_INIT_OEM                              = 2026,
     RS_HAL_ALLOCATION_GET_POINTER                           = 2027,
+#ifdef RS_COMPATIBILITY_LIB
+    RS_HAL_ALLOCATION_INIT_STRIDED                          = 2999,
+#endif
 
     RS_HAL_SAMPLER_INIT                                     = 3000,
     RS_HAL_SAMPLER_DESTROY                                  = 3001,
