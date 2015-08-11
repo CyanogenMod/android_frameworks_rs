@@ -9,11 +9,11 @@ void init_vars(int *out) {
     *out = 7;
 }
 
-int RS_KERNEL root(int ain, rs_kernel_context ctxt, uint32_t x, uint32_t y) {
+int RS_KERNEL root(int ain, rs_kernel_context context, uint32_t x, uint32_t y) {
     if (!_RS_ASSERT_EQU(ain, 7))
         rsDebug("root at x, y", x, y);
-    uint32_t dimX = rsGetDimX(ctxt);
-    uint32_t dimY = rsGetDimY(ctxt);
+    uint32_t dimX = rsGetDimX(context);
+    uint32_t dimY = rsGetDimY(context);
     _RS_ASSERT_EQU(dimX, gDimX);
     _RS_ASSERT_EQU(dimY, gDimY);
     return ain + x + dimX * y;
