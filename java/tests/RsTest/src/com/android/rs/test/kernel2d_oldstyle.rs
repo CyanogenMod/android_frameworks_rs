@@ -9,11 +9,11 @@ void init_vars(int *out) {
     *out = 7;
 }
 
-void xform(const int *in, int *out, rs_kernel_context ctxt, uint32_t x, uint32_t y) {
+void xform(const int *in, int *out, rs_kernel_context context, uint32_t x, uint32_t y) {
     if (!_RS_ASSERT_EQU(*in, 7))
         rsDebug("xform at x, y", x, y);
-    uint32_t dimX = rsGetDimX(ctxt);
-    uint32_t dimY = rsGetDimY(ctxt);
+    uint32_t dimX = rsGetDimX(context);
+    uint32_t dimY = rsGetDimY(context);
     _RS_ASSERT_EQU(dimX, gDimX);
     _RS_ASSERT_EQU(dimY, gDimY);
     *out = *in + x + dimX * y;
