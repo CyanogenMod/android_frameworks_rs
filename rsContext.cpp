@@ -37,7 +37,7 @@
 #include <unistd.h>
 
 #if !defined(RS_SERVER) && !defined(RS_COMPATIBILITY_LIB) && \
-        defined(HAVE_ANDROID_OS)
+        defined(__ANDROID__)
 #include <cutils/properties.h>
 #endif
 
@@ -215,7 +215,7 @@ void Context::setupProgramStore() {
 #endif
 
 static uint32_t getProp(const char *str) {
-#if !defined(RS_SERVER) && defined(HAVE_ANDROID_OS)
+#if !defined(RS_SERVER) && defined(__ANDROID__)
     char buf[PROPERTY_VALUE_MAX];
     property_get(str, buf, "0");
     return atoi(buf);
