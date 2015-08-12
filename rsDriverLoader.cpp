@@ -37,7 +37,7 @@
 #include <unistd.h>
 
 #if !defined(RS_SERVER) && !defined(RS_COMPATIBILITY_LIB) && \
-        defined(HAVE_ANDROID_OS)
+        defined(__ANDROID__)
 #include <cutils/properties.h>
 #endif
 
