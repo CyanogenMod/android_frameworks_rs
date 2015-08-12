@@ -25,7 +25,7 @@
 #include <dlfcn.h>
 #include <unistd.h>
 
-#if !defined(RS_SERVER) && !defined(RS_COMPATIBILITY_LIB) && defined(HAVE_ANDROID_OS)
+#if !defined(RS_SERVER) && !defined(RS_COMPATIBILITY_LIB) && defined(__ANDROID__)
 #include <cutils/properties.h>
 #else
 #include "rsCompatibilityLib.h"
@@ -96,7 +96,7 @@ static bool loadSO(const char* filename, int targetApi) {
 }
 
 static uint32_t getProp(const char *str) {
-#if !defined(__LP64__) && !defined(RS_SERVER) && defined(HAVE_ANDROID_OS)
+#if !defined(__LP64__) && !defined(RS_SERVER) && defined(__ANDROID__)
     char buf[256];
     property_get(str, buf, "0");
     return atoi(buf);
