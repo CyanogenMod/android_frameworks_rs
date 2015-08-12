@@ -9,26 +9,26 @@ void init_vars(int *out) {
     *out = 7;
 }
 
-int RS_KERNEL root(int ain, rs_kernel_context ctxt, uint32_t x) {
-    _RS_ASSERT_EQU(rsGetArray0(ctxt), 0);
-    _RS_ASSERT_EQU(rsGetArray1(ctxt), 0);
-    _RS_ASSERT_EQU(rsGetArray2(ctxt), 0);
-    _RS_ASSERT_EQU(rsGetArray3(ctxt), 0);
-    _RS_ASSERT_EQU(rsGetFace(ctxt), RS_ALLOCATION_CUBEMAP_FACE_POSITIVE_X);
-    _RS_ASSERT_EQU(rsGetLod(ctxt), 0);
+int RS_KERNEL root(int ain, rs_kernel_context context, uint32_t x) {
+    _RS_ASSERT_EQU(rsGetArray0(context), 0);
+    _RS_ASSERT_EQU(rsGetArray1(context), 0);
+    _RS_ASSERT_EQU(rsGetArray2(context), 0);
+    _RS_ASSERT_EQU(rsGetArray3(context), 0);
+    _RS_ASSERT_EQU(rsGetFace(context), RS_ALLOCATION_CUBEMAP_FACE_POSITIVE_X);
+    _RS_ASSERT_EQU(rsGetLod(context), 0);
 
-    _RS_ASSERT_EQU(rsGetDimY(ctxt), 0);
-    _RS_ASSERT_EQU(rsGetDimZ(ctxt), 0);
-    _RS_ASSERT_EQU(rsGetDimArray0(ctxt), 0);
-    _RS_ASSERT_EQU(rsGetDimArray1(ctxt), 0);
-    _RS_ASSERT_EQU(rsGetDimArray2(ctxt), 0);
-    _RS_ASSERT_EQU(rsGetDimArray3(ctxt), 0);
-    _RS_ASSERT_EQU(rsGetDimHasFaces(ctxt), false);
-    _RS_ASSERT_EQU(rsGetDimLod(ctxt), 0);
+    _RS_ASSERT_EQU(rsGetDimY(context), 0);
+    _RS_ASSERT_EQU(rsGetDimZ(context), 0);
+    _RS_ASSERT_EQU(rsGetDimArray0(context), 0);
+    _RS_ASSERT_EQU(rsGetDimArray1(context), 0);
+    _RS_ASSERT_EQU(rsGetDimArray2(context), 0);
+    _RS_ASSERT_EQU(rsGetDimArray3(context), 0);
+    _RS_ASSERT_EQU(rsGetDimHasFaces(context), false);
+    _RS_ASSERT_EQU(rsGetDimLod(context), 0);
 
     if (!_RS_ASSERT_EQU(ain, 7))
         rsDebug("root at x", x);
-    uint32_t dimX = rsGetDimX(ctxt);
+    uint32_t dimX = rsGetDimX(context);
     _RS_ASSERT_EQU(dimX, gDimX);
     return ain + x;
 }
