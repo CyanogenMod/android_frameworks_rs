@@ -57,8 +57,8 @@ typedef enum rs_for_each_strategy {
  * A kernel may be executed in parallel over multiple threads.  Each thread will have its
  * own context.
  *
- * You can access the context by adding a rs_kernel_context argument to your kernel
- * function.  See rsGetDimX() and rsGetArray0() for examples.
+ * You can access the context by adding a special parameter named "context" and of type
+ * rs_kernel_context to your kernel function.  See rsGetDimX() and rsGetArray0() for examples.
  */
 #if (defined(RS_VERSION) && (RS_VERSION >= 23))
 typedef const struct rs_kernel_context_t * rs_kernel_context;
@@ -161,8 +161,8 @@ extern void __attribute__((overloadable))
  * It contains common characteristics of the allocations being iterated over and rarely
  * used indexes, like the Array0 index.
  *
- * You can access the context by adding a rs_kernel_context argument to your kernel
- * function.  E.g.
+ * You can access the context by adding a special parameter named "context" and of
+ * type rs_kernel_context to your kernel function.  E.g.
  * short RS_KERNEL myKernel(short value, uint32_t x, rs_kernel_context context) {
  *   // The current index in the common x, y, z, w dimensions are accessed by
  *   // adding these variables as arguments.  For the more rarely used indexes
@@ -175,7 +175,7 @@ extern void __attribute__((overloadable))
  */
 #if (defined(RS_VERSION) && (RS_VERSION >= 23))
 extern uint32_t __attribute__((overloadable))
-    rsGetArray0(rs_kernel_context ctxt);
+    rsGetArray0(rs_kernel_context context);
 #endif
 
 /*
@@ -188,7 +188,7 @@ extern uint32_t __attribute__((overloadable))
  */
 #if (defined(RS_VERSION) && (RS_VERSION >= 23))
 extern uint32_t __attribute__((overloadable))
-    rsGetArray1(rs_kernel_context ctxt);
+    rsGetArray1(rs_kernel_context context);
 #endif
 
 /*
@@ -202,7 +202,7 @@ extern uint32_t __attribute__((overloadable))
  */
 #if (defined(RS_VERSION) && (RS_VERSION >= 23))
 extern uint32_t __attribute__((overloadable))
-    rsGetArray2(rs_kernel_context ctxt);
+    rsGetArray2(rs_kernel_context context);
 #endif
 
 /*
@@ -215,7 +215,7 @@ extern uint32_t __attribute__((overloadable))
  */
 #if (defined(RS_VERSION) && (RS_VERSION >= 23))
 extern uint32_t __attribute__((overloadable))
-    rsGetArray3(rs_kernel_context ctxt);
+    rsGetArray3(rs_kernel_context context);
 #endif
 
 /*
@@ -228,7 +228,7 @@ extern uint32_t __attribute__((overloadable))
  */
 #if (defined(RS_VERSION) && (RS_VERSION >= 23))
 extern uint32_t __attribute__((overloadable))
-    rsGetDimArray0(rs_kernel_context ctxt);
+    rsGetDimArray0(rs_kernel_context context);
 #endif
 
 /*
@@ -241,7 +241,7 @@ extern uint32_t __attribute__((overloadable))
  */
 #if (defined(RS_VERSION) && (RS_VERSION >= 23))
 extern uint32_t __attribute__((overloadable))
-    rsGetDimArray1(rs_kernel_context ctxt);
+    rsGetDimArray1(rs_kernel_context context);
 #endif
 
 /*
@@ -254,7 +254,7 @@ extern uint32_t __attribute__((overloadable))
  */
 #if (defined(RS_VERSION) && (RS_VERSION >= 23))
 extern uint32_t __attribute__((overloadable))
-    rsGetDimArray2(rs_kernel_context ctxt);
+    rsGetDimArray2(rs_kernel_context context);
 #endif
 
 /*
@@ -267,7 +267,7 @@ extern uint32_t __attribute__((overloadable))
  */
 #if (defined(RS_VERSION) && (RS_VERSION >= 23))
 extern uint32_t __attribute__((overloadable))
-    rsGetDimArray3(rs_kernel_context ctxt);
+    rsGetDimArray3(rs_kernel_context context);
 #endif
 
 /*
@@ -283,7 +283,7 @@ extern uint32_t __attribute__((overloadable))
  */
 #if (defined(RS_VERSION) && (RS_VERSION >= 23))
 extern bool __attribute__((overloadable))
-    rsGetDimHasFaces(rs_kernel_context ctxt);
+    rsGetDimHasFaces(rs_kernel_context context);
 #endif
 
 /*
@@ -299,7 +299,7 @@ extern bool __attribute__((overloadable))
  */
 #if (defined(RS_VERSION) && (RS_VERSION >= 23))
 extern uint32_t __attribute__((overloadable))
-    rsGetDimLod(rs_kernel_context ctxt);
+    rsGetDimLod(rs_kernel_context context);
 #endif
 
 /*
@@ -311,8 +311,8 @@ extern uint32_t __attribute__((overloadable))
  * characteristics of the allocations being iterated over by the kernel in
  * a very efficient structure.  It also contains rarely used indexes.
  *
- * You can access it by adding a rs_kernel_context argument to your kernel
- * function.  E.g.
+ * You can access it by adding a special parameter named "context" and of
+ * type rs_kernel_context to your kernel function.  E.g.
  * int4 RS_KERNEL myKernel(int4 value, rs_kernel_context context) {
  *   uint32_t size = rsGetDimX(context); //...
  *
@@ -320,7 +320,7 @@ extern uint32_t __attribute__((overloadable))
  */
 #if (defined(RS_VERSION) && (RS_VERSION >= 23))
 extern uint32_t __attribute__((overloadable))
-    rsGetDimX(rs_kernel_context ctxt);
+    rsGetDimX(rs_kernel_context context);
 #endif
 
 /*
@@ -335,7 +335,7 @@ extern uint32_t __attribute__((overloadable))
  */
 #if (defined(RS_VERSION) && (RS_VERSION >= 23))
 extern uint32_t __attribute__((overloadable))
-    rsGetDimY(rs_kernel_context ctxt);
+    rsGetDimY(rs_kernel_context context);
 #endif
 
 /*
@@ -350,7 +350,7 @@ extern uint32_t __attribute__((overloadable))
  */
 #if (defined(RS_VERSION) && (RS_VERSION >= 23))
 extern uint32_t __attribute__((overloadable))
-    rsGetDimZ(rs_kernel_context ctxt);
+    rsGetDimZ(rs_kernel_context context);
 #endif
 
 /*
@@ -364,7 +364,7 @@ extern uint32_t __attribute__((overloadable))
  */
 #if (defined(RS_VERSION) && (RS_VERSION >= 23))
 extern rs_allocation_cubemap_face __attribute__((overloadable))
-    rsGetFace(rs_kernel_context ctxt);
+    rsGetFace(rs_kernel_context context);
 #endif
 
 /*
@@ -378,7 +378,7 @@ extern rs_allocation_cubemap_face __attribute__((overloadable))
  */
 #if (defined(RS_VERSION) && (RS_VERSION >= 23))
 extern uint32_t __attribute__((overloadable))
-    rsGetLod(rs_kernel_context ctxt);
+    rsGetLod(rs_kernel_context context);
 #endif
 
 #endif // RENDERSCRIPT_RS_FOR_EACH_RSH
