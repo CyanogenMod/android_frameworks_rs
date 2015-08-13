@@ -430,7 +430,7 @@ static void generateTestCall(GeneratedFile* file, ostringstream* calls,
         *calls << separator;
         // Special case for the kernel context, as it has a special existence.
         if (p->rsType == "rs_kernel_context") {
-            *calls << "ctxt";
+            *calls << "context";
         } else if (p->isOutParameter) {
             *calls << "(" << p->rsType << "*) " << addVariable(file, variableNumber);
         } else {
@@ -498,7 +498,7 @@ static bool generateApiTesterFile(const string& slangTestDirectory, int apiLevel
 
     // Modify the style of kernel as required by the API level.
     if (apiLevel >= 23) {
-        file << "void RS_KERNEL test(int in, rs_kernel_context ctxt) {\n";
+        file << "void RS_KERNEL test(int in, rs_kernel_context context) {\n";
     } else if (apiLevel >= 17) {
         file << "void RS_KERNEL test(int in) {\n";
     } else {

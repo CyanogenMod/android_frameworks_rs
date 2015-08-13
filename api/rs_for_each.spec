@@ -54,8 +54,8 @@ description:
  A kernel may be executed in parallel over multiple threads.  Each thread will have its
  own context.
 
- You can access the context by adding a rs_kernel_context argument to your kernel
- function.  See @rsGetDimX() and @rsGetArray0() for examples.
+ You can access the context by adding a special parameter named "context" and of type
+ rs_kernel_context to your kernel function.  See @rsGetDimX() and @rsGetArray0() for examples.
 end:
 
 type: rs_script_call_t
@@ -162,7 +162,7 @@ end:
 function: rsGetArray0
 version: 23
 ret: uint32_t
-arg: rs_kernel_context ctxt
+arg: rs_kernel_context context
 summary: Index in the Array0 dimension for the specified context
 description:
  Returns the index in the Array0 dimension of the cell being processed, as specified
@@ -172,8 +172,8 @@ description:
  It contains common characteristics of the allocations being iterated over and rarely
  used indexes, like the Array0 index.
 
- You can access the context by adding a rs_kernel_context argument to your kernel
- function.  E.g.<br/>
+ You can access the context by adding a special parameter named "context" and of
+ type rs_kernel_context to your kernel function.  E.g.<br/>
  <code>short RS_KERNEL myKernel(short value, uint32_t x, rs_kernel_context context) {<br/>
  &nbsp;&nbsp;// The current index in the common x, y, z, w dimensions are accessed by<br/>
  &nbsp;&nbsp;// adding these variables as arguments.  For the more rarely used indexes<br/>
@@ -189,7 +189,7 @@ end:
 function: rsGetArray1
 version: 23
 ret: uint32_t
-arg: rs_kernel_context ctxt
+arg: rs_kernel_context context
 summary: Index in the Array1 dimension for the specified context
 description:
  Returns the index in the Array1 dimension of the cell being processed, as specified
@@ -202,7 +202,7 @@ end:
 function: rsGetArray2
 version: 23
 ret: uint32_t
-arg: rs_kernel_context ctxt
+arg: rs_kernel_context context
 summary: Index in the Array2 dimension for the specified context
 description:
  Returns the index in the Array2 dimension of the cell being processed,
@@ -216,7 +216,7 @@ end:
 function: rsGetArray3
 version: 23
 ret: uint32_t
-arg: rs_kernel_context ctxt
+arg: rs_kernel_context context
 summary: Index in the Array3 dimension for the specified context
 description:
  Returns the index in the Array3 dimension of the cell being processed, as specified
@@ -229,7 +229,7 @@ end:
 function: rsGetDimArray0
 version: 23
 ret: uint32_t
-arg: rs_kernel_context ctxt
+arg: rs_kernel_context context
 summary: Size of the Array0 dimension for the specified context
 description:
  Returns the size of the Array0 dimension for the specified context.
@@ -244,7 +244,7 @@ end:
 function: rsGetDimArray1
 version: 23
 ret: uint32_t
-arg: rs_kernel_context ctxt
+arg: rs_kernel_context context
 summary: Size of the Array1 dimension for the specified context
 description:
  Returns the size of the Array1 dimension for the specified context.
@@ -257,7 +257,7 @@ end:
 function: rsGetDimArray2
 version: 23
 ret: uint32_t
-arg: rs_kernel_context ctxt
+arg: rs_kernel_context context
 summary: Size of the Array2 dimension for the specified context
 description:
  Returns the size of the Array2 dimension for the specified context.
@@ -270,7 +270,7 @@ end:
 function: rsGetDimArray3
 version: 23
 ret: uint32_t
-arg: rs_kernel_context ctxt
+arg: rs_kernel_context context
 summary: Size of the Array3 dimension for the specified context
 description:
  Returns the size of the Array3 dimension for the specified context.
@@ -283,7 +283,7 @@ end:
 function: rsGetDimHasFaces
 version: 23
 ret: bool, "Returns true if more than one face is present, false otherwise."
-arg: rs_kernel_context ctxt
+arg: rs_kernel_context context
 summary: Presence of more than one face for the specified context
 description:
  If the context refers to a cubemap, this function returns true if there's more than
@@ -297,7 +297,7 @@ end:
 function: rsGetDimLod
 version: 23
 ret: uint32_t
-arg: rs_kernel_context ctxt
+arg: rs_kernel_context context
 summary: Number of levels of detail for the specified context
 description:
  Returns the number of levels of detail for the specified context.  This is useful
@@ -313,7 +313,7 @@ end:
 function: rsGetDimX
 version: 23
 ret: uint32_t
-arg: rs_kernel_context ctxt
+arg: rs_kernel_context context
 summary: Size of the X dimension for the specified context
 description:
  Returns the size of the X dimension for the specified context.
@@ -322,8 +322,8 @@ description:
  characteristics of the allocations being iterated over by the kernel in
  a very efficient structure.  It also contains rarely used indexes.
 
- You can access it by adding a rs_kernel_context argument to your kernel
- function.  E.g.<br/>
+ You can access it by adding a special parameter named "context" and of
+ type rs_kernel_context to your kernel function.  E.g.<br/>
  <code>int4 RS_KERNEL myKernel(int4 value, rs_kernel_context context) {<br/>
  &nbsp;&nbsp;uint32_t size = rsGetDimX(context); //...<br/></code>
 
@@ -334,7 +334,7 @@ end:
 function: rsGetDimY
 version: 23
 ret: uint32_t
-arg: rs_kernel_context ctxt
+arg: rs_kernel_context context
 summary: Size of the Y dimension for the specified context
 description:
  Returns the size of the X dimension for the specified context.
@@ -349,7 +349,7 @@ end:
 function: rsGetDimZ
 version: 23
 ret: uint32_t
-arg: rs_kernel_context ctxt
+arg: rs_kernel_context context
 summary: Size of the Z dimension for the specified context
 description:
  Returns the size of the Z dimension for the specified context.
@@ -364,7 +364,7 @@ end:
 function: rsGetFace
 version: 23
 ret: rs_allocation_cubemap_face
-arg: rs_kernel_context ctxt
+arg: rs_kernel_context context
 summary: Coordinate of the Face for the specified context
 description:
  Returns the face on which the cell being processed is found, as specified by the
@@ -378,7 +378,7 @@ end:
 function: rsGetLod
 version: 23
 ret: uint32_t
-arg: rs_kernel_context ctxt
+arg: rs_kernel_context context
 summary: Index in the Levels of Detail dimension for the specified context
 description:
  Returns the index in the Levels of Detail dimension of the cell being processed,
