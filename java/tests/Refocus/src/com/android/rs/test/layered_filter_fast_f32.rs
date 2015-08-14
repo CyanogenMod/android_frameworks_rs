@@ -488,8 +488,9 @@ uchar4 __attribute__((kernel)) PackOutputImage(uint32_t x, uint32_t y) {
   return rsPackColorTo8888(result);
 }
 
-// Copies g_fuzzy_image to output color image, excluding the padded margin.
+// Copies g_sharp_image to output color image, excluding the padded margin.
 // (x, y) is the pixel coordinate in the output image.
+// This kernel extracts intermediate images for testing purpose.
 uchar4 __attribute__((kernel)) PackSharpImage(uint32_t x, uint32_t y) {
   // Maps (x,y) to the padded image coordinate system.
   x += g_image_size.margin;
@@ -511,6 +512,7 @@ uchar4 __attribute__((kernel)) PackSharpImage(uint32_t x, uint32_t y) {
 
 // Copies g_fuzzy_image to output color image, excluding the padded margin.
 // (x, y) is the pixel coordinate in the output image.
+// This kernel extracts intermediate images for testing purpose.
 uchar4 __attribute__((kernel)) PackFuzzyImage(uint32_t x, uint32_t y) {
   // Maps (x,y) to the padded image coordinate system.
   x += g_image_size.margin;
