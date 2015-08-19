@@ -600,7 +600,7 @@ extern ulong4 __attribute__((overloadable))
  * mono dimensional allocations.
  *
  * For efficiency, this function does not validate the inputs.  Trying to wrap the
- * X index, exceeding the size of the allocation, or using indexes incompatible
+ * X index, exceeding the size of the allocation, or using indices incompatible
  * with the dimensionality of the allocation yiels undefined results.
  *
  * See also rsAllocationVLoadX().

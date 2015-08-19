@@ -20,7 +20,7 @@ description:
  The @rsForEach() function can be used to invoke the root kernel of a script.
 
  The other functions are used to get the characteristics of the invocation of
- an executing kernel, like dimensions and current indexes.  These functions take
+ an executing kernel, like dimensions and current indices.  These functions take
  a @rs_kernel_context as argument.
 end:
 
@@ -48,13 +48,10 @@ simple: const struct rs_kernel_context_t *
 summary: Handle to a kernel invocation context
 description:
  The kernel context contains common characteristics of the allocations being iterated
- over, like dimensions, and rarely used indexes, like the Array0 index or the current
- level of detail.
+ over, like dimensions.  It also contains rarely used indices of the currently processed
+ cell, like the Array0 index or the current level of detail.
 
- A kernel may be executed in parallel over multiple threads.  Each thread will have its
- own context.
-
- You can access the context by adding a special parameter named "context" and of type
+ You can access the kernel context by adding a special parameter named "context" of type
  rs_kernel_context to your kernel function.  See @rsGetDimX() and @rsGetArray0() for examples.
 end:
 
@@ -163,21 +160,20 @@ function: rsGetArray0
 version: 23
 ret: uint32_t
 arg: rs_kernel_context context
-summary: Index in the Array0 dimension for the specified context
+summary: Index in the Array0 dimension for the specified kernel context
 description:
  Returns the index in the Array0 dimension of the cell being processed, as specified
- by the supplied context.
+ by the supplied kernel context.
 
- This context is created when a kernel is launched and updated at each iteration.
- It contains common characteristics of the allocations being iterated over and rarely
- used indexes, like the Array0 index.
+ The kernel context contains common characteristics of the allocations being iterated
+ over and rarely used indices, like the Array0 index.
 
- You can access the context by adding a special parameter named "context" and of
+ You can access the kernel context by adding a special parameter named "context" of
  type rs_kernel_context to your kernel function.  E.g.<br/>
  <code>short RS_KERNEL myKernel(short value, uint32_t x, rs_kernel_context context) {<br/>
- &nbsp;&nbsp;// The current index in the common x, y, z, w dimensions are accessed by<br/>
- &nbsp;&nbsp;// adding these variables as arguments.  For the more rarely used indexes<br/>
- &nbsp;&nbsp;// to the other dimensions, extract them from the context:<br/>
+ &nbsp;&nbsp;// The current index in the common x, y, z dimensions are accessed by<br/>
+ &nbsp;&nbsp;// adding these variables as arguments.  For the more rarely used indices<br/>
+ &nbsp;&nbsp;// to the other dimensions, extract them from the kernel context:<br/>
  &nbsp;&nbsp;uint32_t index_a0 = rsGetArray0(context);<br/>
  &nbsp;&nbsp;//...<br/>
  }<br/></code>
@@ -190,10 +186,10 @@ function: rsGetArray1
 version: 23
 ret: uint32_t
 arg: rs_kernel_context context
-summary: Index in the Array1 dimension for the specified context
+summary: Index in the Array1 dimension for the specified kernel context
 description:
  Returns the index in the Array1 dimension of the cell being processed, as specified
- by the supplied context.  See @rsGetArray0() for an explanation of the context.
+ by the supplied kernel context.  See @rsGetArray0() for an explanation of the context.
 
  Returns 0 if the Array1 dimension is not present.
 test: none
@@ -203,10 +199,10 @@ function: rsGetArray2
 version: 23
 ret: uint32_t
 arg: rs_kernel_context context
-summary: Index in the Array2 dimension for the specified context
+summary: Index in the Array2 dimension for the specified kernel context
 description:
  Returns the index in the Array2 dimension of the cell being processed,
- as specified by the supplied context.  See @rsGetArray0() for an explanation
+ as specified by the supplied kernel context.  See @rsGetArray0() for an explanation
  of the context.
 
  Returns 0 if the Array2 dimension is not present.
@@ -217,10 +213,10 @@ function: rsGetArray3
 version: 23
 ret: uint32_t
 arg: rs_kernel_context context
-summary: Index in the Array3 dimension for the specified context
+summary: Index in the Array3 dimension for the specified kernel context
 description:
  Returns the index in the Array3 dimension of the cell being processed, as specified
- by the supplied context.  See @rsGetArray0() for an explanation of the context.
+ by the supplied kernel context.  See @rsGetArray0() for an explanation of the context.
 
  Returns 0 if the Array3 dimension is not present.
 test: none
@@ -230,9 +226,9 @@ function: rsGetDimArray0
 version: 23
 ret: uint32_t
 arg: rs_kernel_context context
-summary: Size of the Array0 dimension for the specified context
+summary: Size of the Array0 dimension for the specified kernel context
 description:
- Returns the size of the Array0 dimension for the specified context.
+ Returns the size of the Array0 dimension for the specified kernel context.
  See @rsGetDimX() for an explanation of the context.
 
  Returns 0 if the Array0 dimension is not present.
@@ -245,9 +241,9 @@ function: rsGetDimArray1
 version: 23
 ret: uint32_t
 arg: rs_kernel_context context
-summary: Size of the Array1 dimension for the specified context
+summary: Size of the Array1 dimension for the specified kernel context
 description:
- Returns the size of the Array1 dimension for the specified context.
+ Returns the size of the Array1 dimension for the specified kernel context.
  See @rsGetDimX() for an explanation of the context.
 
  Returns 0 if the Array1 dimension is not present.
@@ -258,9 +254,9 @@ function: rsGetDimArray2
 version: 23
 ret: uint32_t
 arg: rs_kernel_context context
-summary: Size of the Array2 dimension for the specified context
+summary: Size of the Array2 dimension for the specified kernel context
 description:
- Returns the size of the Array2 dimension for the specified context.
+ Returns the size of the Array2 dimension for the specified kernel context.
  See @rsGetDimX() for an explanation of the context.
 
  Returns 0 if the Array2 dimension is not present.
@@ -271,9 +267,9 @@ function: rsGetDimArray3
 version: 23
 ret: uint32_t
 arg: rs_kernel_context context
-summary: Size of the Array3 dimension for the specified context
+summary: Size of the Array3 dimension for the specified kernel context
 description:
- Returns the size of the Array3 dimension for the specified context.
+ Returns the size of the Array3 dimension for the specified kernel context.
  See @rsGetDimX() for an explanation of the context.
 
  Returns 0 if the Array3 dimension is not present.
@@ -284,10 +280,10 @@ function: rsGetDimHasFaces
 version: 23
 ret: bool, "Returns true if more than one face is present, false otherwise."
 arg: rs_kernel_context context
-summary: Presence of more than one face for the specified context
+summary: Presence of more than one face for the specified kernel context
 description:
- If the context refers to a cubemap, this function returns true if there's more than
- one face present.  In all other cases, it returns false.  See @rsGetDimX() for an
+ If the kernel is iterating over a cubemap, this function returns true if there's more
+ than one face present.  In all other cases, it returns false.  See @rsGetDimX() for an
  explanation of the context.
 
  @rsAllocationGetDimFaces() is similar but returns 0 or 1 instead of a bool.
@@ -298,9 +294,9 @@ function: rsGetDimLod
 version: 23
 ret: uint32_t
 arg: rs_kernel_context context
-summary: Number of levels of detail for the specified context
+summary: Number of levels of detail for the specified kernel context
 description:
- Returns the number of levels of detail for the specified context.  This is useful
+ Returns the number of levels of detail for the specified kernel context.  This is useful
  for mipmaps.  See @rsGetDimX() for an explanation of the context.
 
  Returns 0 if Level of Detail is not used.
@@ -314,15 +310,14 @@ function: rsGetDimX
 version: 23
 ret: uint32_t
 arg: rs_kernel_context context
-summary: Size of the X dimension for the specified context
+summary: Size of the X dimension for the specified kernel context
 description:
- Returns the size of the X dimension for the specified context.
+ Returns the size of the X dimension for the specified kernel context.
 
- This context is created when a kernel is launched.  It contains common
- characteristics of the allocations being iterated over by the kernel in
- a very efficient structure.  It also contains rarely used indexes.
+ The kernel context contains common characteristics of the allocations being iterated
+ over and rarely used indices, like the Array0 index.
 
- You can access it by adding a special parameter named "context" and of
+ You can access it by adding a special parameter named "context" of
  type rs_kernel_context to your kernel function.  E.g.<br/>
  <code>int4 RS_KERNEL myKernel(int4 value, rs_kernel_context context) {<br/>
  &nbsp;&nbsp;uint32_t size = rsGetDimX(context); //...<br/></code>
@@ -335,9 +330,9 @@ function: rsGetDimY
 version: 23
 ret: uint32_t
 arg: rs_kernel_context context
-summary: Size of the Y dimension for the specified context
+summary: Size of the Y dimension for the specified kernel context
 description:
- Returns the size of the X dimension for the specified context.
+ Returns the size of the X dimension for the specified kernel context.
  See @rsGetDimX() for an explanation of the context.
 
  Returns 0 if the Y dimension is not present.
@@ -350,9 +345,9 @@ function: rsGetDimZ
 version: 23
 ret: uint32_t
 arg: rs_kernel_context context
-summary: Size of the Z dimension for the specified context
+summary: Size of the Z dimension for the specified kernel context
 description:
- Returns the size of the Z dimension for the specified context.
+ Returns the size of the Z dimension for the specified kernel context.
  See @rsGetDimX() for an explanation of the context.
 
  Returns 0 if the Z dimension is not present.
@@ -365,10 +360,10 @@ function: rsGetFace
 version: 23
 ret: rs_allocation_cubemap_face
 arg: rs_kernel_context context
-summary: Coordinate of the Face for the specified context
+summary: Coordinate of the Face for the specified kernel context
 description:
  Returns the face on which the cell being processed is found, as specified by the
- supplied context.  See @rsGetArray0() for an explanation of the context.
+ supplied kernel context.  See @rsGetArray0() for an explanation of the context.
 
  Returns RS_ALLOCATION_CUBEMAP_FACE_POSITIVE_X if the face dimension is not
  present.
@@ -379,10 +374,10 @@ function: rsGetLod
 version: 23
 ret: uint32_t
 arg: rs_kernel_context context
-summary: Index in the Levels of Detail dimension for the specified context
+summary: Index in the Levels of Detail dimension for the specified kernel context
 description:
  Returns the index in the Levels of Detail dimension of the cell being processed,
- as specified by the supplied context.  See @rsGetArray0() for an explanation of
+ as specified by the supplied kernel context.  See @rsGetArray0() for an explanation of
  the context.
 
  Returns 0 if the Levels of Detail dimension is not present.
