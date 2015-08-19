@@ -68,6 +68,7 @@ public:
                      InvokeFunc_t* invokeFunctions, size_t funcCount,
                      ForEachFunc_t* forEachFunctions, uint32_t* forEachSignatures,
                      size_t forEachCount,
+                     ReduceFunc_t* reduceFunctions, size_t reduceCount,
                      const char** pragmaKeys, const char** pragmaValues,
                      size_t pragmaCount,
                      const char **globalNames, const void **globalAddresses,
@@ -79,6 +80,7 @@ public:
         mInvokeFunctions(invokeFunctions), mFuncCount(funcCount),
         mForEachFunctions(forEachFunctions), mForEachSignatures(forEachSignatures),
         mForEachCount(forEachCount),
+        mReduceFunctions(reduceFunctions), mReduceCount(reduceCount),
         mPragmaKeys(pragmaKeys), mPragmaValues(pragmaValues),
         mPragmaCount(pragmaCount), mGlobalNames(globalNames),
         mGlobalAddresses(globalAddresses), mGlobalSizes(globalSizes),
@@ -105,6 +107,8 @@ public:
         delete[] mPragmaValues;
         delete[] mPragmaKeys;
 
+        delete[] mReduceFunctions;
+
         delete[] mForEachSignatures;
         delete[] mForEachFunctions;
 
@@ -129,6 +133,7 @@ public:
     size_t getExportedVariableCount() const { return mExportedVarCount; }
     size_t getExportedFunctionCount() const { return mFuncCount; }
     size_t getExportedForEachCount() const { return mForEachCount; }
+    size_t getExportedReduceCount() const { return mReduceCount; }
     size_t getPragmaCount() const { return mPragmaCount; }
 
     void* getFieldAddress(int slot) const { return mFieldAddress[slot]; }
@@ -140,6 +145,8 @@ public:
 
     ForEachFunc_t getForEachFunction(int slot) const { return mForEachFunctions[slot]; }
     uint32_t getForEachSignature(int slot) const { return mForEachSignatures[slot]; }
+
+    ReduceFunc_t getReduceFunction(int slot) const { return mReduceFunctions[slot]; }
 
     const char ** getPragmaKeys() const { return mPragmaKeys; }
     const char ** getPragmaValues() const { return mPragmaValues; }
@@ -192,6 +199,9 @@ private:
     ForEachFunc_t* mForEachFunctions;
     uint32_t* mForEachSignatures;
     size_t mForEachCount;
+
+    ReduceFunc_t* mReduceFunctions;
+    size_t mReduceCount;
 
     const char ** mPragmaKeys;
     const char ** mPragmaValues;
