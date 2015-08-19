@@ -50,6 +50,12 @@ namespace {
 
 static const bool kDebugGlobalVariables = false;
 
+static bool allocationLODIsNull(const android::renderscript::Allocation *alloc) {
+  // Even if alloc != nullptr, mallocPtr could be null if
+  // IO_OUTPUT/IO_INPUT with no bound surface.
+  return alloc && alloc->mHal.drvState.lod[0].mallocPtr == nullptr;
+}
+
 #ifndef RS_COMPATIBILITY_LIB
 
 static bool is_force_recompile() {
@@ -282,11 +288,11 @@ bool RsdCpuScriptImpl::storeRSInfoFromSO() {
     if (mRootExpand) {
         //ALOGE("Found root.expand(): %p", mRootExpand);
     }
-    mInit = (InvokeFunc_t) dlsym(mScriptSO, "init");
+    mInit = (InitOrDtorFunc_t) dlsym(mScriptSO, "init");
     if (mInit) {
         //ALOGE("Found init(): %p", mInit);
     }
-    mFreeChildren = (InvokeFunc_t) dlsym(mScriptSO, ".rs.dtor");
+    mFreeChildren = (InitOrDtorFunc_t) dlsym(mScriptSO, ".rs.dtor");
     if (mFreeChildren) {
         //ALOGE("Found .rs.dtor(): %p", mFreeChildren);
     }
@@ -490,6 +496,8 @@ const char* RsdCpuScriptImpl::findCoreLib(const bcinfo::MetadataExtractor& ME, c
 void RsdCpuScriptImpl::populateScript(Script *script) {
     // Copy info over to runtime
     script->mHal.info.exportedFunctionCount = mScriptExec->getExportedFunctionCount();
+    script->mHal.info.exportedReduceCount = mScriptExec->getExportedReduceCount();
+    script->mHal.info.exportedForEachCount = mScriptExec->getExportedForEachCount();
     script->mHal.info.exportedVariableCount = mScriptExec->getExportedVariableCount();
     script->mHal.info.exportedPragmaCount = mScriptExec->getPragmaCount();;
     script->mHal.info.exportedPragmaKeyList = mScriptExec->getPragmaKeys();
@@ -503,32 +511,105 @@ void RsdCpuScriptImpl::populateScript(Script *script) {
     }
 }
 
+// Set up the launch dimensions, and write the values of the launch
+// dimensions into the mtls start/end fields.
+//
+// Inputs:
+//    baseDim - base shape of the input
+//         sc - used to constrain the launch dimensions
+//
+// Returns:
+//   True on success, false on failure to set up
+bool RsdCpuScriptImpl::setUpMtlsDimensions(MTLaunchStructCommon *mtls,
+                                           const RsLaunchDimensions &baseDim,
+                                           const RsScriptCall *sc) {
+    rsAssert(mtls);
 
+#define SET_UP_DIMENSION(DIM_FIELD, SC_FIELD) do {            \
+    if (!sc || (sc->SC_FIELD##End == 0)) {                    \
+        mtls->end.DIM_FIELD = baseDim.DIM_FIELD;              \
+    } else {                                                  \
+        mtls->start.DIM_FIELD =                               \
+            rsMin(baseDim.DIM_FIELD, sc->SC_FIELD##Start);    \
+        mtls->end.DIM_FIELD =                                 \
+            rsMin(baseDim.DIM_FIELD, sc->SC_FIELD##End);      \
+        if (mtls->start.DIM_FIELD >= mtls->end.DIM_FIELD) {   \
+            mCtx->getContext()->setError(RS_ERROR_BAD_SCRIPT, \
+                "Failed to launch kernel; Invalid "           \
+                #SC_FIELD "Start or " #SC_FIELD "End.");      \
+            return false;                                     \
+        }                                                     \
+    }} while(0)
+
+    SET_UP_DIMENSION(x, x);
+    SET_UP_DIMENSION(y, y);
+    SET_UP_DIMENSION(z, z);
+    SET_UP_DIMENSION(array[0], array);
+    SET_UP_DIMENSION(array[1], array2);
+    SET_UP_DIMENSION(array[2], array3);
+    SET_UP_DIMENSION(array[3], array4);
+#undef SET_UP_DIMENSION
+
+    return true;
+}
+
+// Preliminary work to prepare a reduce-style kernel for launch.
+bool RsdCpuScriptImpl::reduceMtlsSetup(const Allocation *ain,
+                                       const Allocation *aout,
+                                       const RsScriptCall *sc,
+                                       MTLaunchStructReduce *mtls) {
+    rsAssert(ain && aout);
+    memset(mtls, 0, sizeof(MTLaunchStructReduce));
+    mtls->dimPtr = &mtls->inputDim;
+
+    if (allocationLODIsNull(ain) || allocationLODIsNull(aout)) {
+        mCtx->getContext()->setError(RS_ERROR_BAD_SCRIPT,
+                                     "reduce called with a null allocation");
+        return false;
+    }
+
+    // Set up the dimensions of the input.
+    const Type *inType = ain->getType();
+    mtls->inputDim.x = inType->getDimX();
+    rsAssert(inType->getDimY() == 0);
+
+    if (!setUpMtlsDimensions(mtls, mtls->inputDim, sc)) {
+        return false;
+    }
+
+    mtls->rs = mCtx;
+    // Currently not threaded.
+    mtls->isThreadable = false;
+    mtls->mSliceNum = -1;
+
+    // Set up input and output.
+    mtls->inBuf = static_cast<uint8_t *>(ain->getPointerUnchecked(0, 0));
+    mtls->outBuf = static_cast<uint8_t *>(aout->getPointerUnchecked(0, 0));
+
+    rsAssert(mtls->inBuf && mtls->outBuf);
+
+    return true;
+}
+
+// Preliminary work to prepare a forEach-style kernel for launch.
 bool RsdCpuScriptImpl::forEachMtlsSetup(const Allocation ** ains,
                                         uint32_t inLen,
                                         Allocation * aout,
                                         const void * usr, uint32_t usrLen,
                                         const RsScriptCall *sc,
-                                        MTLaunchStruct *mtls) {
-
-    memset(mtls, 0, sizeof(MTLaunchStruct));
+                                        MTLaunchStructForEach *mtls) {
+    memset(mtls, 0, sizeof(MTLaunchStructForEach));
+    mtls->dimPtr = &mtls->fep.dim;
 
     for (int index = inLen; --index >= 0;) {
-        const Allocation* ain = ains[index];
-
-        // possible for this to occur if IO_OUTPUT/IO_INPUT with no bound surface
-        if (ain != nullptr &&
-            (const uint8_t *)ain->mHal.drvState.lod[0].mallocPtr == nullptr) {
-
+        if (allocationLODIsNull(ains[index])) {
             mCtx->getContext()->setError(RS_ERROR_BAD_SCRIPT,
                                          "rsForEach called with null in allocations");
             return false;
         }
     }
 
-    if (aout &&
-        (const uint8_t *)aout->mHal.drvState.lod[0].mallocPtr == nullptr) {
-
+    if (allocationLODIsNull(aout)) {
         mCtx->getContext()->setError(RS_ERROR_BAD_SCRIPT,
                                      "rsForEach called with null out allocations");
         return false;
@@ -578,96 +659,14 @@ bool RsdCpuScriptImpl::forEachMtlsSetup(const Allocation ** ains,
         }
     }
 
-    if (!sc || (sc->xEnd == 0)) {
-        mtls->end.x = mtls->fep.dim.x;
-    } else {
-        mtls->start.x = rsMin(mtls->fep.dim.x, sc->xStart);
-        mtls->end.x = rsMin(mtls->fep.dim.x, sc->xEnd);
-        if (mtls->start.x >= mtls->end.x) {
-            mCtx->getContext()->setError(RS_ERROR_BAD_SCRIPT,
-              "Failed to launch kernel; Invalid xStart or xEnd.");
-            return false;
-        }
+    if (!setUpMtlsDimensions(mtls, mtls->fep.dim, sc)) {
+        return false;
     }
-
-    if (!sc || (sc->yEnd == 0)) {
-        mtls->end.y = mtls->fep.dim.y;
-    } else {
-        mtls->start.y = rsMin(mtls->fep.dim.y, sc->yStart);
-        mtls->end.y = rsMin(mtls->fep.dim.y, sc->yEnd);
-        if (mtls->start.y >= mtls->end.y) {
-            mCtx->getContext()->setError(RS_ERROR_BAD_SCRIPT,
-              "Failed to launch kernel; Invalid yStart or yEnd.");
-            return false;
-        }
-    }
-
-    if (!sc || (sc->zEnd == 0)) {
-        mtls->end.z = mtls->fep.dim.z;
-    } else {
-        mtls->start.z = rsMin(mtls->fep.dim.z, sc->zStart);
-        mtls->end.z = rsMin(mtls->fep.dim.z, sc->zEnd);
-        if (mtls->start.z >= mtls->end.z) {
-            mCtx->getContext()->setError(RS_ERROR_BAD_SCRIPT,
-              "Failed to launch kernel; Invalid zStart or zEnd.");
-            return false;
-        }
-    }
-
-    if (!sc || (sc->arrayEnd == 0)) {
-        mtls->end.array[0] = mtls->fep.dim.array[0];
-    } else {
-        mtls->start.array[0] = rsMin(mtls->fep.dim.array[0], sc->arrayStart);
-        mtls->end.array[0] = rsMin(mtls->fep.dim.array[0], sc->arrayEnd);
-        if (mtls->start.array[0] >= mtls->end.array[0]) {
-            mCtx->getContext()->setError(RS_ERROR_BAD_SCRIPT,
-              "Failed to launch kernel; Invalid arrayStart or arrayEnd.");
-            return false;
-        }
-    }
-
-    if (!sc || (sc->array2End == 0)) {
-        mtls->end.array[1] = mtls->fep.dim.array[1];
-    } else {
-        mtls->start.array[1] = rsMin(mtls->fep.dim.array[1], sc->array2Start);
-        mtls->end.array[1] = rsMin(mtls->fep.dim.array[1], sc->array2End);
-        if (mtls->start.array[1] >= mtls->end.array[1]) {
-            mCtx->getContext()->setError(RS_ERROR_BAD_SCRIPT,
-              "Failed to launch kernel; Invalid array2Start or array2End.");
-            return false;
-        }
-    }
-
-    if (!sc || (sc->array3End == 0)) {
-        mtls->end.array[2] = mtls->fep.dim.array[2];
-    } else {
-        mtls->start.array[2] = rsMin(mtls->fep.dim.array[2], sc->array3Start);
-        mtls->end.array[2] = rsMin(mtls->fep.dim.array[2], sc->array3End);
-        if (mtls->start.array[2] >= mtls->end.array[2]) {
-            mCtx->getContext()->setError(RS_ERROR_BAD_SCRIPT,
-              "Failed to launch kernel; Invalid array3Start or array3End.");
-            return false;
-        }
-    }
-
-    if (!sc || (sc->array4End == 0)) {
-        mtls->end.array[3] = mtls->fep.dim.array[3];
-    } else {
-        mtls->start.array[3] = rsMin(mtls->fep.dim.array[3], sc->array4Start);
-        mtls->end.array[3] = rsMin(mtls->fep.dim.array[3], sc->array4End);
-        if (mtls->start.array[3] >= mtls->end.array[3]) {
-            mCtx->getContext()->setError(RS_ERROR_BAD_SCRIPT,
-              "Failed to launch kernel; Invalid array4Start or array4End.");
-            return false;
-        }
-    }
-
 
     // The X & Y walkers always want 0-1 min even if dim is not present
     mtls->end.x    = rsMax((uint32_t)1, mtls->end.x);
     mtls->end.y    = rsMax((uint32_t)1, mtls->end.y);
-
-    mtls->rsc        = mCtx;
+    mtls->rs       = mCtx;
     if (ains) {
         memcpy(mtls->ains, ains, inLen * sizeof(ains[0]));
     }
@@ -705,23 +704,43 @@ void RsdCpuScriptImpl::invokeForEach(uint32_t slot,
                                      uint32_t usrLen,
                                      const RsScriptCall *sc) {
 
-    MTLaunchStruct mtls;
+    MTLaunchStructForEach mtls;
 
     if (forEachMtlsSetup(ains, inLen, aout, usr, usrLen, sc, &mtls)) {
         forEachKernelSetup(slot, &mtls);
 
         RsdCpuScriptImpl * oldTLS = mCtx->setTLS(this);
-        mCtx->launchThreads(ains, inLen, aout, sc, &mtls);
+        mCtx->launchForEach(ains, inLen, aout, sc, &mtls);
         mCtx->setTLS(oldTLS);
     }
 }
 
-void RsdCpuScriptImpl::forEachKernelSetup(uint32_t slot, MTLaunchStruct *mtls) {
+void RsdCpuScriptImpl::invokeReduce(uint32_t slot,
+                                    const Allocation *ain,
+                                    Allocation *aout,
+                                    const RsScriptCall *sc) {
+    MTLaunchStructReduce mtls;
+
+    if (reduceMtlsSetup(ain, aout, sc, &mtls)) {
+        reduceKernelSetup(slot, &mtls);
+        RsdCpuScriptImpl *oldTLS = mCtx->setTLS(this);
+        mCtx->launchReduce(ain, aout, &mtls);
+        mCtx->setTLS(oldTLS);
+    }
+}
+
+void RsdCpuScriptImpl::forEachKernelSetup(uint32_t slot, MTLaunchStructForEach *mtls) {
     mtls->script = this;
     mtls->fep.slot = slot;
     mtls->kernel = mScriptExec->getForEachFunction(slot);
     rsAssert(mtls->kernel != nullptr);
     mtls->sig = mScriptExec->getForEachSignature(slot);
+}
+
+void RsdCpuScriptImpl::reduceKernelSetup(uint32_t slot, MTLaunchStructReduce *mtls) {
+    mtls->script = this;
+    mtls->kernel = mScriptExec->getReduceFunction(slot);
+    rsAssert(mtls->kernel != nullptr);
 }
 
 int RsdCpuScriptImpl::invokeRoot() {
