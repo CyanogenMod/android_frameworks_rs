@@ -201,6 +201,12 @@ void ScriptC::runForEach(Context *rsc,
         sc = &sc_copy;
     }
 
+    if (slot >= mHal.info.exportedForEachCount) {
+        rsc->setError(RS_ERROR_BAD_SCRIPT,
+                      "The forEach kernel index is out of bounds");
+        return;
+    }
+
     // Trace this function call.
     // To avoid overhead we only build the string if tracing is actually
     // enabled.
@@ -220,6 +226,10 @@ void ScriptC::runForEach(Context *rsc,
     setupGLState(rsc);
     setupScript(rsc);
 
+    if (rsc->props.mLogScripts) {
+        ALOGV("%p ScriptC::runForEach invoking slot %i, ptr %p", rsc, slot, this);
+    }
+
     if (rsc->mHal.funcs.script.invokeForEachMulti != nullptr) {
         rsc->mHal.funcs.script.invokeForEachMulti(rsc, this, slot, ains, inLen,
                                                   aout, usr, usrBytes, sc);
@@ -238,11 +248,31 @@ void ScriptC::runForEach(Context *rsc,
     }
 }
 
+void ScriptC::runReduce(Context *rsc, uint32_t slot, const Allocation *ain,
+                        Allocation *aout, const RsScriptCall *sc) {
+    // TODO: Record the name of the kernel in the tracing information.
+    ATRACE_CALL();
+
+    if (slot >= mHal.info.exportedReduceCount) {
+        rsc->setError(RS_ERROR_BAD_SCRIPT, "The reduce kernel index is out of bounds");
+        return;
+    }
+    if (mRSC->hadFatalError()) return;
+
+    setupScript(rsc);
+
+    if (rsc->props.mLogScripts) {
+        ALOGV("%p ScriptC::runReduce invoking slot %i, ptr %p", rsc, slot, this);
+    }
+
+    rsc->mHal.funcs.script.invokeReduce(rsc, this, slot, ain, aout, sc);
+}
+
 void ScriptC::Invoke(Context *rsc, uint32_t slot, const void *data, size_t len) {
     ATRACE_CALL();
 
     if (slot >= mHal.info.exportedFunctionCount) {
-        rsc->setError(RS_ERROR_BAD_SCRIPT, "Calling invoke on bad script");
+        rsc->setError(RS_ERROR_BAD_SCRIPT, "The invokable index is out of bounds");
         return;
     }
     if (mRSC->hadFatalError()) return;

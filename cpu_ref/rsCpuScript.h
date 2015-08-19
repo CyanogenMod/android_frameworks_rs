@@ -37,18 +37,6 @@ class ScriptExecutable;
 
 class RsdCpuScriptImpl : public RsdCpuReferenceImpl::CpuScript {
 public:
-    typedef void (*outer_foreach_t)(
-        const RsExpandKernelDriverInfo *,
-        uint32_t x1, uint32_t x2,
-        uint32_t outstep);
-
-    typedef void (* InvokeFunc_t)(void);
-    typedef void (* ForEachFunc_t)(void);
-    typedef int (* RootFunc_t)(void);
-#ifdef RS_COMPATIBILITY_LIB
-    typedef void (*WorkerCallback_t)(void *usr, uint32_t idx);
-#endif
-
     bool init(char const *resName, char const *cacheDir,
               uint8_t const *bitcode, size_t bitcodeSize, uint32_t flags,
               char const *bccPluginName = nullptr);
@@ -72,6 +60,11 @@ public:
                        uint32_t usrLen,
                        const RsScriptCall* sc) override;
 
+    void invokeReduce(uint32_t slot,
+                      const Allocation* ain,
+                      Allocation* aout,
+                      const RsScriptCall* sc) override;
+
     void invokeInit() override;
     void invokeFreeChildren() override;
 
@@ -92,10 +85,15 @@ public:
 
     bool forEachMtlsSetup(const Allocation ** ains, uint32_t inLen,
                           Allocation * aout, const void * usr, uint32_t usrLen,
-                          const RsScriptCall *sc, MTLaunchStruct *mtls);
+                          const RsScriptCall *sc, MTLaunchStructForEach *mtls);
 
-    virtual void forEachKernelSetup(uint32_t slot, MTLaunchStruct *mtls);
+    virtual void forEachKernelSetup(uint32_t slot, MTLaunchStructForEach *mtls);
 
+    // Build an MTLaunchStruct suitable for launching a reduce-style kernel.
+    bool reduceMtlsSetup(const Allocation *ain, const Allocation *aout,
+                         const RsScriptCall *sc, MTLaunchStructReduce *mtls);
+    // Finalize an MTLaunchStruct for launching a reduce-style kernel.
+    virtual void reduceKernelSetup(uint32_t slot, MTLaunchStructReduce *mtls);
 
     const RsdCpuReference::CpuSymbol * lookupSymbolMath(const char *sym);
     static void * lookupRuntimeStub(void* pContext, char const* name);
@@ -122,8 +120,8 @@ protected:
 
     RootFunc_t mRoot;
     RootFunc_t mRootExpand;
-    InvokeFunc_t mInit;
-    InvokeFunc_t mFreeChildren;
+    InitOrDtorFunc_t mInit;
+    InitOrDtorFunc_t mFreeChildren;
     ScriptExecutable* mScriptExec;
 
     Allocation **mBoundAllocs;
@@ -135,6 +133,10 @@ public:
     const char* getBitcodeFilePath() const { return mBitcodeFilePath.string(); }
 
 private:
+    bool setUpMtlsDimensions(MTLaunchStructCommon *mtls,
+                             const RsLaunchDimensions &baseDim,
+                             const RsScriptCall *sc);
+
     String8 mBitcodeFilePath;
     uint32_t mBuildChecksum;
     bool mChecksumNeeded;
