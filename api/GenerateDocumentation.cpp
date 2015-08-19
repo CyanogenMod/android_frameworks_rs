@@ -322,7 +322,7 @@ static void writeHtmlVersionTag(GeneratedFile* file, VersionInfo info) {
         if (info.minVersion <= 1) {
             // No minimum
             if (info.maxVersion > 0) {
-                stream << "Removed from " << mid << info.maxVersion + 1 << " and beyond";
+                stream << "Removed from " << mid << info.maxVersion + 1 << " and higher";
             }
         } else {
             if (info.maxVersion == 0) {
