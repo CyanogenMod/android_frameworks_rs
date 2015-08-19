@@ -58,6 +58,11 @@ public:
                                    uint32_t usrLen,
                                    const RsScriptCall *sc) = 0;
 
+        virtual void invokeReduce(uint32_t slot,
+                                  const Allocation *ain,
+                                  Allocation *aout,
+                                  const RsScriptCall *sc) = 0;
+
         virtual void invokeInit() = 0;
         virtual void invokeFreeChildren() = 0;
 
