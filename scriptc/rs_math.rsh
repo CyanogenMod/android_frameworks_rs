@@ -1630,6 +1630,15 @@ extern float3 __attribute__((const, overloadable))
 extern float4 __attribute__((const, overloadable))
     max(float4 a, float4 b);
 
+extern float2 __attribute__((const, overloadable))
+    max(float2 a, float b);
+
+extern float3 __attribute__((const, overloadable))
+    max(float3 a, float b);
+
+extern float4 __attribute__((const, overloadable))
+    max(float4 a, float b);
+
 #if !defined(RS_VERSION) || (RS_VERSION <= 20)
 static inline char __attribute__((const, overloadable))
     max(char a, char b) {
@@ -2046,6 +2055,15 @@ extern float3 __attribute__((const, overloadable))
 
 extern float4 __attribute__((const, overloadable))
     min(float4 a, float4 b);
+
+extern float2 __attribute__((const, overloadable))
+    min(float2 a, float b);
+
+extern float3 __attribute__((const, overloadable))
+    min(float3 a, float b);
+
+extern float4 __attribute__((const, overloadable))
+    min(float4 a, float b);
 
 #if !defined(RS_VERSION) || (RS_VERSION <= 20)
 static inline char __attribute__((const, overloadable))
