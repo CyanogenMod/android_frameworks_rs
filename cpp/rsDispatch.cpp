@@ -18,8 +18,10 @@
 
 #include "rsDispatch.h"
 #include <dlfcn.h>
+#include <limits.h>
 
 #define LOG_API(...)
+#define REDUCE_API_LEVEL INT_MAX
 
 bool loadSymbols(void* handle, dispatchTable& dispatchTab, int device_api) {
     //fucntion to set the native lib path for 64bit compat lib.
@@ -414,6 +416,14 @@ bool loadSymbols(void* handle, dispatchTable& dispatchTab, int device_api) {
         dispatchTab.ScriptForEachMulti = (ScriptForEachMultiFnPtr)dlsym(handle, "rsScriptForEachMulti");
         if (dispatchTab.ScriptForEachMulti == NULL) {
             LOG_API("Couldn't initialize dispatchTab.ScriptForEachMulti");
+            return false;
+        }
+    }
+    // TODO: Update the API level when reduce is added.
+    if (device_api >= REDUCE_API_LEVEL) {
+        dispatchTab.ScriptReduce = (ScriptReduceFnPtr)dlsym(handle, "rsScriptReduce");
+        if (dispatchTab.ScriptReduce == nullptr) {
+            LOG_API("Couldn't initialize dispatchTab.ScriptReduce");
             return false;
         }
     }
