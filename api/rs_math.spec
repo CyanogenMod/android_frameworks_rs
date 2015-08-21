@@ -989,6 +989,16 @@ description:
 end:
 
 function: max
+version: 9
+attrib: const
+w: 2, 3, 4
+t: f32
+ret: #2#1
+arg: #2#1 a
+arg: #2 b
+end:
+
+function: max
 version: 9 20
 attrib: const
 w: 1
@@ -1069,6 +1079,16 @@ arg: #2#1 b
 summary: Minimum
 description:
  Returns the minimum value of two arguments.
+end:
+
+function: min
+version: 9
+attrib: const
+w: 2, 3, 4
+t: f32
+ret: #2#1
+arg: #2#1 a
+arg: #2 b
 end:
 
 function: min
