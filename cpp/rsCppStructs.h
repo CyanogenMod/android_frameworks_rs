@@ -1401,6 +1401,8 @@ protected:
     Script(void *id, sp<RS> rs);
     void forEach(uint32_t slot, sp<const Allocation> in, sp<const Allocation> out,
             const void *v, size_t) const;
+    void reduce(uint32_t slot, sp<const Allocation> in, sp<const Allocation> out,
+                const RsScriptCall *sc) const;
     void bindAllocation(sp<Allocation> va, uint32_t slot) const;
     void setVar(uint32_t index, const void *, size_t len) const;
     void setVar(uint32_t index, sp<const BaseObj> o) const;
