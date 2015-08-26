@@ -1358,7 +1358,7 @@ END(prefetch_clampright4)
 5:          nop
 .endm
 
-.irep r, TUNED_LIST1, 25
+.irp r, TUNED_LIST1, 25
 PRIVATE(convolve1_\r)
             push        {r12,lr}
 
@@ -1372,7 +1372,7 @@ PRIVATE(convolve1_\r)
 END(convolve1_\r)
 .endr
 
-.irep r, TUNED_LIST4, 25
+.irp r, TUNED_LIST4, 25
 PRIVATE(convolve4_\r)
             sub         r12, sp, #0x200
             bic         r9, r12, #0x3fc
@@ -1441,7 +1441,7 @@ ENTRY(rsdIntrinsicBlurU1_K)
             vld1.u16    {d4,d5,d6}, [r12]!
 
             adr         lr, 1f
-  .irep r, TUNED_LIST1
+  .irp r, TUNED_LIST1
             cmp         r5, #\r
             bls         convolve1_\r
   .endr
@@ -1497,7 +1497,7 @@ ENTRY(rsdIntrinsicBlurU4_K)
             vld1.u16    {d4,d5,d6}, [r12]!
 
             adr         lr, 1f
-  .irep r, TUNED_LIST4
+  .irp r, TUNED_LIST4
             cmp         r5, #\r
             bls         convolve4_\r
   .endr
