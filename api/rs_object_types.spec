@@ -24,13 +24,13 @@ include:
 
  // Opaque handle to a RenderScript object. Do not use this directly.
  #ifndef __LP64__
- #define _RS_HANDLE \
- struct {\
+ #define _RS_OBJECT_DECL \
+ {\
    const int* const p;\
  } __attribute__((packed, aligned(4)))
  #else
- #define _RS_HANDLE \
- struct {\
+ #define _RS_OBJECT_DECL \
+ {\
    const long* const p;\
    const long* const r;\
    const long* const v1;\
@@ -40,7 +40,7 @@ include:
 end:
 
 type: rs_element
-simple: _RS_HANDLE
+rs_object:
 summary: Handle to an element
 description:
  An opaque handle to a RenderScript element.
@@ -49,7 +49,7 @@ description:
 end:
 
 type: rs_type
-simple: _RS_HANDLE
+rs_object:
 summary: Handle to a Type
 description:
  An opaque handle to a RenderScript type.
@@ -58,7 +58,7 @@ description:
 end:
 
 type: rs_allocation
-simple: _RS_HANDLE
+rs_object:
 summary: Handle to an allocation
 description:
  An opaque handle to a RenderScript allocation.
@@ -67,7 +67,7 @@ description:
 end:
 
 type: rs_sampler
-simple: _RS_HANDLE
+rs_object:
 summary: Handle to a Sampler
 description:
  An opaque handle to a RenderScript sampler object.
@@ -76,7 +76,7 @@ description:
 end:
 
 type: rs_script
-simple: _RS_HANDLE
+rs_object:
 summary: Handle to a Script
 description:
  An opaque handle to a RenderScript script object.

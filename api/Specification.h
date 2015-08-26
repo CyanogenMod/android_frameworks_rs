@@ -271,6 +271,7 @@ public:
 
 enum TypeKind {
     SIMPLE,
+    RS_OBJECT,
     STRUCT,
     ENUM,
 };
