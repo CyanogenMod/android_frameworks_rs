@@ -92,6 +92,7 @@
   .irp rowclamp, 1, 0
     .set cc, \rowclamp
     .align 4
+    // clang does not support nested .irp
     .irp dreg, 4, 3, 2, 1, 0 ; .irp lane, 7, 6, 5, 4, 3, 2, 1, 0 ; .irp doth, .h
         .set i, \dreg * 8 + \lane
         .if 0 < i && i <= \max_r
@@ -1350,7 +1351,7 @@ END(prefetch_clampright4)
 5:          nop
 .endm
 
-.irep r, TUNED_LIST1, 25
+.irp r, TUNED_LIST1, 25
 PRIVATE(convolve1_\r)
             stp         x29,x30, [sp, #-16]!
 
@@ -1363,7 +1364,7 @@ PRIVATE(convolve1_\r)
 END(convolve1_\r)
 .endr
 
-.irep r, TUNED_LIST4, 25
+.irp r, TUNED_LIST4, 25
 PRIVATE(convolve4_\r)
             sub         x12, sp, #0x040
             bic         x9, x12, #0x07f
@@ -1439,7 +1440,7 @@ ENTRY(rsdIntrinsicBlurU1_K)
             ld1         {v2.8h,v3.8h}, [x12], #32
 
             adr         x30, 1f
-  .irep r, TUNED_LIST1
+  .irp r, TUNED_LIST1
             cmp         x5, #\r
             bls         convolve1_\r
   .endr
@@ -1505,7 +1506,7 @@ ENTRY(rsdIntrinsicBlurU4_K)
             ld1         {v2.8h,v3.8h}, [x12], #32
 
             adr         x30, 1f
-  .irep r, TUNED_LIST4
+  .irp r, TUNED_LIST4
             cmp         x5, #\r
             bls         convolve4_\r
   .endr
