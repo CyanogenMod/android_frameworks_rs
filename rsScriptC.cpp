@@ -373,6 +373,11 @@ bool ScriptC::runCompiler(Context *rsc,
         }
     }
 
+
+    // Set the optimization level of bcc to be the same as the
+    // optimization level used to compile the bitcode.
+    rsc->setOptLevel(bcWrapper.getOptimizationLevel());
+
 #endif
     if (!cacheDir) {
         // MUST BE FIXED BEFORE ANYTHING USING C++ API IS RELEASED
