@@ -19,9 +19,7 @@ ifeq ($(RS_FIND_OFFSETS), true)
 endif
 
 include $(CLEAR_VARS)
-ifneq ($(HOST_OS),windows)
 LOCAL_CLANG := true
-endif
 LOCAL_MODULE := libRSDriver
 LOCAL_MODULE_TARGET_ARCH_WARN := arm mips mips64 x86 x86_64 arm64
 
@@ -89,9 +87,7 @@ include $(BUILD_HOST_EXECUTABLE)
 RSG_GENERATOR:=$(LOCAL_BUILT_MODULE)
 
 include $(CLEAR_VARS)
-ifneq ($(HOST_OS),windows)
 LOCAL_CLANG := true
-endif
 LOCAL_MODULE := libRS
 LOCAL_MODULE_TARGET_ARCH_WARN := arm mips mips64 x86 x86_64 arm64
 
