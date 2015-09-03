@@ -37,9 +37,7 @@ local_cflags_for_rs_cpp += -Werror -Wall -Wno-unused-parameter -Wno-unused-varia
 
 LOCAL_SRC_FILES := $(rs_cpp_SRC_FILES)
 
-ifneq ($(HOST_OS),windows)
 LOCAL_CLANG := true
-endif
 LOCAL_CFLAGS += $(local_cflags_for_rs_cpp)
 
 LOCAL_SHARED_LIBRARIES := \
@@ -66,9 +64,7 @@ include $(BUILD_SHARED_LIBRARY)
 include $(CLEAR_VARS)
 LOCAL_ADDITIONAL_DEPENDENCIES := $(LOCAL_PATH)/Android.mk
 
-ifneq ($(HOST_OS),windows)
 LOCAL_CLANG := true
-endif
 LOCAL_CFLAGS += $(local_cflags_for_rs_cpp)
 
 ifeq ($(my_32_64_bit_suffix),32)
