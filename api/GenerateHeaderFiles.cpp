@@ -138,6 +138,9 @@ static void writeTypeSpecification(GeneratedFile* file, const TypeSpecification&
         case SIMPLE:
             *file << spec.getSimpleType() << attribute;
             break;
+        case RS_OBJECT:
+            *file << "struct " << typeName << " _RS_OBJECT_DECL" << attribute;
+            break;
         case ENUM: {
             *file << "enum" << attribute << " ";
             const string name = spec.getEnumName();
