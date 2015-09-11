@@ -83,6 +83,7 @@ LOCAL_SRC_FILES_64 := $(clcore_arm64_files)
 LOCAL_CFLAGS_64 += -DARCH_ARM64_HAVE_NEON
 else
 LOCAL_SRC_FILES_64 := $(clcore_files_64)
+LOCAL_SRC_FILES_64 += arch/generic.c
 endif
 
 include $(LOCAL_PATH)/build_bc_lib.mk
