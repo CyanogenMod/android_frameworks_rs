@@ -59,6 +59,7 @@ RS::~RS() {
         mMessageRun = false;
 
         if (mContext) {
+            finish();
             RS::dispatch->ContextDeinitToClient(mContext);
 
             void *res = nullptr;
