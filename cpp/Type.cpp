@@ -77,26 +77,34 @@ Type::Type(void *id, sp<RS> rs) : BaseObj(id, rs) {
 }
 
 void Type::updateFromNative() {
-    // We have 6 integer to obtain mDimX; mDimY; mDimZ;
-    // mDimLOD; mDimFaces; mElement;
+    BaseObj::updateFromNative();
 
     /*
-    int[] dataBuffer = new int[6];
-    mRS.nTypeGetNativeData(getID(), dataBuffer);
+     * We have 6 integers / pointers (uintptr_t) to obtain from the return buffer:
+     * mDimX     (buffer[0]);
+     * mDimY     (buffer[1]);
+     * mDimZ     (buffer[2]);
+     * mDimLOD   (buffer[3]);
+     * mDimFaces (buffer[4]);
+     * mElement  (buffer[5]);
+     */
+    uintptr_t dataBuffer[6];
+    RS::dispatch->TypeGetNativeData(mRS->getContext(), getID(), dataBuffer, 6);
 
-    mDimX = dataBuffer[0];
-    mDimY = dataBuffer[1];
-    mDimZ = dataBuffer[2];
+    mDimX = (uint32_t)dataBuffer[0];
+    mDimY = (uint32_t)dataBuffer[1];
+    mDimZ = (uint32_t)dataBuffer[2];
     mDimMipmaps = dataBuffer[3] == 1 ? true : false;
     mDimFaces = dataBuffer[4] == 1 ? true : false;
 
-    int elementID = dataBuffer[5];
+    uintptr_t elementID = dataBuffer[5];
     if(elementID != 0) {
-        mElement = new Element(elementID, mRS);
-        mElement.updateFromNative();
+        // Just create a new Element and update it from native.
+        sp<Element> e = new Element((void *)elementID, mRS);
+        e->updateFromNative();
+        mElement = e;
     }
     calcElementCount();
-    */
 }
 
 sp<const Type> Type::create(sp<RS> rs, sp<const Element> e, uint32_t dimX, uint32_t dimY, uint32_t dimZ) {

@@ -212,6 +212,9 @@ Element::Element(void *id, android::RSC::sp<RS> rs,
     updateVisibleSubElements();
 }
 
+Element::Element(void *id, android::RSC::sp<RS> rs) :
+    BaseObj(id, rs) {
+}
 
 static uint32_t GetSizeInBytesForType(RsDataType dt) {
     switch(dt) {

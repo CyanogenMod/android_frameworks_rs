@@ -1122,6 +1122,7 @@ public:
     };
 
 protected:
+    friend class Type;
     Element(void *id, sp<RS> rs,
             sp<const Element> * elements,
             size_t elementCount,
@@ -1129,6 +1130,7 @@ protected:
             size_t * elementNameLengths,
             uint32_t * arraySizes);
     Element(void *id, sp<RS> rs, RsDataType dt, RsDataKind dk, bool norm, uint32_t size);
+    Element(void *id, sp<RS> rs);
     Element(sp<RS> rs);
     virtual ~Element();
 
