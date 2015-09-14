@@ -81,7 +81,7 @@ status_t GrallocConsumer::lockNextBuffer() {
         }
     }
 
-    int buf = b.mBuf;
+    int slot = b.mSlot;
 
     if (b.mFence.get()) {
         err = b.mFence->waitForever("GrallocConsumer::lockNextBuffer");
@@ -95,9 +95,9 @@ status_t GrallocConsumer::lockNextBuffer() {
     void *bufferPointer = nullptr;
     android_ycbcr ycbcr = android_ycbcr();
 
-    if (mSlots[buf].mGraphicBuffer->getPixelFormat() ==
+    if (mSlots[slot].mGraphicBuffer->getPixelFormat() ==
             HAL_PIXEL_FORMAT_YCbCr_420_888) {
-        err = mSlots[buf].mGraphicBuffer->lockYCbCr(
+        err = mSlots[slot].mGraphicBuffer->lockYCbCr(
             GraphicBuffer::USAGE_SW_READ_OFTEN,
             b.mCrop,
             &ycbcr);
@@ -109,7 +109,7 @@ status_t GrallocConsumer::lockNextBuffer() {
         }
         bufferPointer = ycbcr.y;
     } else {
-        err = mSlots[buf].mGraphicBuffer->lock(
+        err = mSlots[slot].mGraphicBuffer->lock(
             GraphicBuffer::USAGE_SW_READ_OFTEN,
             b.mCrop,
             &bufferPointer);
@@ -124,20 +124,20 @@ status_t GrallocConsumer::lockNextBuffer() {
     size_t lockedIdx = 0;
     rsAssert(mAcquiredBuffer.mSlot == BufferQueue::INVALID_BUFFER_SLOT);
 
-    mAcquiredBuffer.mSlot = buf;
+    mAcquiredBuffer.mSlot = slot;
     mAcquiredBuffer.mBufferPointer = bufferPointer;
-    mAcquiredBuffer.mGraphicBuffer = mSlots[buf].mGraphicBuffer;
+    mAcquiredBuffer.mGraphicBuffer = mSlots[slot].mGraphicBuffer;
 
     mAlloc->mHal.drvState.lod[0].mallocPtr = reinterpret_cast<uint8_t*>(bufferPointer);
-    mAlloc->mHal.drvState.lod[0].stride = mSlots[buf].mGraphicBuffer->getStride() *
+    mAlloc->mHal.drvState.lod[0].stride = mSlots[slot].mGraphicBuffer->getStride() *
             mAlloc->mHal.state.type->getElementSizeBytes();
     mAlloc->mHal.state.nativeBuffer = mAcquiredBuffer.mGraphicBuffer->getNativeBuffer();
     mAlloc->mHal.state.timestamp = b.mTimestamp;
 
     rsAssert(mAlloc->mHal.drvState.lod[0].dimX ==
-             mSlots[buf].mGraphicBuffer->getWidth());
+             mSlots[slot].mGraphicBuffer->getWidth());
     rsAssert(mAlloc->mHal.drvState.lod[0].dimY ==
-             mSlots[buf].mGraphicBuffer->getHeight());
+             mSlots[slot].mGraphicBuffer->getHeight());
 
     //mAlloc->format = mSlots[buf].mGraphicBuffer->getPixelFormat();
 
