@@ -676,10 +676,12 @@ void RsdCpuScriptIntrinsicBLAS::kernelBNNM(size_t m, size_t n, size_t k,
 #if defined(ARCH_ARM_HAVE_VFP) || defined(ARCH_ARM_USE_INTRINSICS)
     // Non-optimized path for ARMv7 devices without SIMD instructions.
     if (!gArchUseSIMD) {
-        // Calculations are done in 1.10.21 fixed-point format for the final output,
-        // just before there's a shift down to drop the fractional parts. The output
-        // values are gated to 0 to 255 to fit in a byte, but the 10-bit format
-        // gives some headroom to avoid wrapping around on small overflows.
+        /*
+         * Calculations are done in 1.10.21 fixed-point format for the final output,
+         * just before there's a shift down to drop the fractional parts. The output
+         * values are gated to 0 to 255 to fit in a byte, but the 10-bit format
+         * gives some headroom to avoid wrapping around on small overflows.
+         */
         size_t i = 0, j = 0, l = 0;
         for (j = 0; j < n; j++) {
             for (i = 0; i < m; i++) {
@@ -718,7 +720,8 @@ void RsdCpuScriptIntrinsicBLAS::kernelBNNM(size_t m, size_t n, size_t k,
     gemmlowp::eight_bit_int_gemm::EightBitIntGemm(transpose_a, transpose_b, transpose_c,
                                                   m, n, k, a, -a_offset, lda,
                                                   b, -b_offset, ldb, c, c_offset,
-                                                  c_mult_int, c_shift, ldc);
+                                                  c_mult_int, c_shift, ldc,
+                                                  gemmlowp::eight_bit_int_gemm::BitDepthSetting::A8B8);
 
 }
 
