@@ -156,14 +156,14 @@ void Element::updateVisibleSubElements() {
 
     int noPaddingFieldCount = 0;
     size_t fieldCount = mElementsCount;
-    // Find out how many elements are not padding
+    // Find out how many elements are not padding.
     for (size_t ct = 0; ct < fieldCount; ct ++) {
         if (mElementNames[ct][0] != '#') {
             noPaddingFieldCount ++;
         }
     }
 
-    // Make a map that points us at non-padding elements
+    // Make a map that points us at non-padding elements.
     size_t i = 0;
     for (size_t ct = 0; ct < fieldCount; ct ++) {
         if (mElementNames[ct][0] != '#') {
@@ -194,7 +194,7 @@ Element::Element(void *id, android::RSC::sp<RS> rs,
     memcpy(mElements, elements, mElementsCount * sizeof(android::RSC::sp<Element>));
     memcpy(mArraySizes, arraySizes, mElementsCount * sizeof(uint32_t));
 
-    //copy strings (char array)
+    // Copy strings (char array).
     memcpy(mElementNameLengths, elementNameLengths, mElementsCount * sizeof(size_t));
     for (size_t ct = 0; ct < mElementsCount; ct++ ) {
         size_t elemNameLen = mElementNameLengths[ct];
@@ -392,10 +392,12 @@ bool Element::isCompatible(android::RSC::sp<const Element>e) const {
         return true;
     }
 
-    // Ignore mKind because it is allowed to be different (user vs. pixel).
-    // We also ignore mNormalized because it can be different. The mType
-    // field must be non-null since we require name equivalence for
-    // user-created Elements.
+    /*
+     * Ignore mKind because it is allowed to be different (user vs. pixel).
+     * We also ignore mNormalized because it can be different. The mType
+     * field must be non-null since we require name equivalence for
+     * user-created Elements.
+     */
     return ((mSizeBytes == e->mSizeBytes) &&
             (mType != RS_TYPE_NONE) &&
             (mType == e->mType) &&
@@ -407,7 +409,7 @@ Element::Builder::Builder(android::RSC::sp<RS> rs) {
     mSkipPadding = false;
     mElementsVecSize = 8;
     mElementsCount = 0;
-    // Initialize space
+    // Initialize space.
     mElements = (android::RSC::sp<const Element> *)calloc(mElementsVecSize, sizeof(android::RSC::sp<Element>));
     mElementNames = (char **)calloc(mElementsVecSize, sizeof(char *));
     mElementNameLengths = (size_t*)calloc(mElementsVecSize, sizeof(size_t));
@@ -415,7 +417,7 @@ Element::Builder::Builder(android::RSC::sp<RS> rs) {
 }
 
 Element::Builder::~Builder() {
-    // free allocated space
+    // Free allocated space.
     free(mElements);
     for (size_t ct = 0; ct < mElementsCount; ct++ ) {
         free(mElementNames[ct]);
@@ -446,7 +448,7 @@ void Element::Builder::add(android::RSC::sp<const Element>e, const char * name, 
     }
 
     if (mElementsCount >= mElementsVecSize) {
-        //if pre-allocated space is full, allocate a larger one.
+        // If pre-allocated space is full, allocate a larger one.
         mElementsVecSize += 8;
 
         android::RSC::sp<const Element> * newElements = (android::RSC::sp<const Element> *)calloc(mElementsVecSize, sizeof(android::RSC::sp<Element>));
@@ -459,7 +461,7 @@ void Element::Builder::add(android::RSC::sp<const Element>e, const char * name, 
         memcpy(newElementNameLengths, mElementNameLengths, mElementsCount * sizeof(size_t));
         memcpy(newArraySizes, mArraySizes, mElementsCount * sizeof(uint32_t));
 
-        //free the old arrays
+        // Free the old arrays.
         free(mElements);
         free(mElementNames);
         free(mArraySizes);

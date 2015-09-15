@@ -20,10 +20,10 @@
 #include "RenderScript.h"
 #include "rsCppInternal.h"
 
-// from system/graphics.h
+// From system/graphics.h
 enum {
-    HAL_PIXEL_FORMAT_YV12   = 0x32315659, // YCrCb 4:2:0 Planar
-    HAL_PIXEL_FORMAT_YCrCb_420_SP       = 0x11, // NV21
+    HAL_PIXEL_FORMAT_YV12               = 0x32315659, // YCrCb 4:2:0 Planar
+    HAL_PIXEL_FORMAT_YCrCb_420_SP       = 0x11,       // NV21
 };
 
 using namespace android;

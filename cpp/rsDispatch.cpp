@@ -24,8 +24,8 @@
 #define REDUCE_API_LEVEL INT_MAX
 
 bool loadSymbols(void* handle, dispatchTable& dispatchTab, int device_api) {
-    //fucntion to set the native lib path for 64bit compat lib.
 #ifdef __LP64__
+    // Function to set the native lib path for 64bit compat lib.
     dispatchTab.SetNativeLibDir = (SetNativeLibDirFnPtr)dlsym(handle, "rsaContextSetNativeLibDir");
     if (dispatchTab.SetNativeLibDir == NULL) {
         LOG_API("Couldn't initialize dispatchTab.SetNativeLibDir");
@@ -367,7 +367,7 @@ bool loadSymbols(void* handle, dispatchTable& dispatchTab, int device_api) {
     }
     // API_23 functions
     if (device_api >= 23) {
-        //ScriptGroup V2 functions
+        // ScriptGroup V2 functions
         dispatchTab.ScriptInvokeIDCreate = (ScriptInvokeIDCreateFnPtr)dlsym(handle, "rsScriptInvokeIDCreate");
         if (dispatchTab.ScriptInvokeIDCreate == NULL) {
             LOG_API("Couldn't initialize dispatchTab.ScriptInvokeIDCreate");
