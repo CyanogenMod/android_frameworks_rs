@@ -103,7 +103,7 @@ typedef void * (*AllocationGetPointerFnPtr) (RsContext, RsAllocation, uint32_t l
 struct dispatchTable {
     SetNativeLibDirFnPtr SetNativeLibDir;
 
-    // inserted by hand from rs.h
+    // Inserted by hand from rs.h
     AllocationGetTypeFnPtr AllocationGetType;
     TypeGetNativeDataFnPtr TypeGetNativeData;
     ElementGetNativeDataFnPtr ElementGetNativeData;
@@ -189,10 +189,10 @@ struct dispatchTable {
 
 bool loadSymbols(void* handle, dispatchTable& dispatchTab, int device_api = 0);
 
-//USAGE_IO for RS Support lib
+// USAGE_IO for RS Support lib
 typedef void (*sAllocationSetSurfaceFnPtr) (JNIEnv *, jobject, RsContext, RsAllocation, RsNativeWindow, dispatchTable);
 struct ioSuppDT {
-    //USAGE_IO_OUTPUT
+    // USAGE_IO_OUTPUT
     sAllocationSetSurfaceFnPtr sAllocationSetSurface;
 };
 
