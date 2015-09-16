@@ -79,8 +79,8 @@ bool RS::init(const char * name, uint32_t flags) {
     return RS::init(name, RS_VERSION, flags);
 }
 
-// this will only open API 19+ libRS
-// because that's when we changed libRS to extern "C" entry points
+// This will only open API 19+ libRS, because that's when
+// we changed libRS to extern "C" entry points.
 static bool loadSO(const char* filename, int targetApi) {
     void* handle = dlopen(filename, RTLD_LAZY | RTLD_LOCAL);
     if (handle == nullptr) {
@@ -92,7 +92,6 @@ static bool loadSO(const char* filename, int targetApi) {
         ALOGV("%s init failed!", filename);
         return false;
     }
-    //ALOGE("Successfully loaded %s", filename);
     return true;
 }
 
@@ -117,8 +116,8 @@ bool RS::initDispatch(int targetApi) {
 
     RS::dispatch = new dispatchTable;
 
-    // attempt to load libRS, load libRSSupport on failure
-    // if property is set, proceed directly to libRSSupport
+    // Attempt to load libRS, load libRSSupport on failure.
+    // If property is set, proceed directly to libRSSupport.
     if (getProp("debug.rs.forcecompat") == 0) {
         usingNative = loadSO("libRS.so", targetApi);
     }
@@ -156,7 +155,8 @@ bool RS::init(const char * name, int targetApi, uint32_t flags) {
         return false;
     }
     memcpy(mCacheDir, name, nameLen);
-    mCacheDir[nameLen] = 0; //add the null character even if the user does not.
+    // Add the null character even if the user does not.
+    mCacheDir[nameLen] = 0;
     mCacheDirLen = nameLen + 1;
 
     mDev = RS::dispatch->DeviceCreate();
@@ -247,10 +247,12 @@ void * RS::threadProc(void *vrsc) {
         case RS_MESSAGE_TO_CLIENT_NONE:
         case RS_MESSAGE_TO_CLIENT_EXCEPTION:
         case RS_MESSAGE_TO_CLIENT_RESIZE:
-            // teardown. But we want to avoid starving other threads during
-            // teardown by yielding until the next line in the destructor can
-            // execute to set mRun = false. Note that the FIFO sends an
-            // empty NONE message when it reaches its destructor.
+            /*
+             * Teardown. We want to avoid starving other threads during
+             * teardown by yielding until the next line in the destructor can
+             * execute to set mRun = false. Note that the FIFO sends an
+             * empty NONE message when it reaches its destructor.
+             */
             usleep(1000);
             break;
         case RS_MESSAGE_TO_CLIENT_USER:
