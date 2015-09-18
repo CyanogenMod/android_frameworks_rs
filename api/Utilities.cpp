@@ -163,7 +163,7 @@ static void addCommaSeparated(const string& value, ostringstream* stream, bool* 
 }
 
 string makeAttributeTag(const string& userAttribute, const string& additionalAttribute,
-                        int deprecatedApiLevel, const string& deprecatedMessage) {
+                        unsigned int deprecatedApiLevel, const string& deprecatedMessage) {
     ostringstream stream;
     bool needComma = false;
     if (userAttribute[0] == '=') {

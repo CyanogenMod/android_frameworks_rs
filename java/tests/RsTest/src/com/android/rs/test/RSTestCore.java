@@ -85,6 +85,7 @@ public class RSTestCore {
         unitTests.add(new UT_foreach(this, mRes, mCtx));
         unitTests.add(new UT_foreach_bounds(this, mRes, mCtx));
         unitTests.add(new UT_noroot(this, mRes, mCtx));
+        unitTests.add(new UT_single_source_script(this, mRes, mCtx));
         unitTests.add(new UT_script_group2_pointwise(this, mRes, mCtx));
         unitTests.add(new UT_script_group2_gatherscatter(this, mRes, mCtx));
         unitTests.add(new UT_script_group2_nochain(this, mRes, mCtx));

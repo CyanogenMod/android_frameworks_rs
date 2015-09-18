@@ -156,6 +156,48 @@ arg: rs_allocation output
 test: none
 end:
 
+type: rs_kernel
+version: UNRELEASED
+simple: void*
+summary: Handle to a kernel function
+description:
+  An opaque type for a function that is defined with the kernel attribute.  A value
+  of this type can be used in a @rsParallelFor call to launch a kernel.
+end:
+
+function: rsParallelFor
+version: UNRELEASED
+intrinsic: true
+attrib: =
+ret: void
+arg: rs_kernel kernel, "Function designator to a function that is defined with the kernel attribute."
+arg: ..., "Input and output allocations"
+summary: Run a kernel defined in the current Script
+description:
+  Runs the kernel over zero or more input allocations. They are passed after the
+  @rs_kernel argument. If the specified kernel returns a value, an output allocation
+  must be specified as the last argument. All input allocations,
+  and the output allocation if it exists, must have the same dimensions.
+
+  This is a synchronous function. A call to this function only returns after all
+  the work has completed for all cells of the input allocations. If the kernel
+  function returns any value, the call waits until all results have been written
+  to the output allocation.
+test: none
+end:
+
+function: rsForEachInternal
+version: UNRELEASED
+internal: true
+ret: void
+arg: int slot
+arg: rs_allocation input
+arg: rs_allocation output
+summary: (Internal API) Launch a kernel in the current Script (with the slot number)
+description:
+test: none
+end:
+
 function: rsGetArray0
 version: 23
 ret: uint32_t
