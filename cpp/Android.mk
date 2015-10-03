@@ -33,7 +33,7 @@ rs_cpp_SRC_FILES := \
 LOCAL_ADDITIONAL_DEPENDENCIES := $(LOCAL_PATH)/Android.mk
 include frameworks/compile/slang/rs_version.mk
 local_cflags_for_rs_cpp += $(RS_VERSION_DEFINE)
-local_cflags_for_rs_cpp += -Werror -Wall -Wno-unused-parameter -Wno-unused-variable -fno-exceptions -std=c++11
+local_cflags_for_rs_cpp += -Werror -Wall -Wextra -Wno-unused-parameter -Wno-unused-variable -fno-exceptions -std=c++11
 
 LOCAL_SRC_FILES := $(rs_cpp_SRC_FILES)
 
