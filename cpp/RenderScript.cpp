@@ -75,10 +75,6 @@ RS::~RS() {
     }
 }
 
-bool RS::init(const char * name, uint32_t flags) {
-    return RS::init(name, RS_VERSION, flags);
-}
-
 // This will only open API 19+ libRS, because that's when
 // we changed libRS to extern "C" entry points.
 static bool loadSO(const char* filename, int targetApi) {
@@ -139,9 +135,14 @@ bool RS::initDispatch(int targetApi) {
     return false;
 }
 
-bool RS::init(const char * name, int targetApi, uint32_t flags) {
+bool RS::init(const char * name, uint32_t flags, int targetApi) {
     if (mInit) {
         return true;
+    }
+    // When using default value 0, set targetApi to RS_VERSION,
+    // to preserve the behavior of existing apps.
+    if (targetApi == 0) {
+        targetApi = RS_VERSION;
     }
 
     if (initDispatch(targetApi) == false) {

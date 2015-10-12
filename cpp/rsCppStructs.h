@@ -371,9 +371,10 @@ class Double4 {
      * @param[in] name Directory name to be used by this context. This should be equivalent to
      * Context.getCacheDir().
      * @param[in] flags Optional flags for this context.
+     * @param[in] targetApi Optional target RS API level. (Default 0: Using the latest SDK/Platform API).
      * @return true on success
      */
-    bool init(const char * name, uint32_t flags = 0);
+    bool init(const char * name, uint32_t flags = 0, int targetApi = 0);
 
     /**
      * Sets the error handler function for this context. This error handler is
@@ -427,7 +428,6 @@ class Double4 {
     static bool usingNative;
     static bool initDispatch(int targetApi);
 
-    bool init(const char * name, int targetApi, uint32_t flags);
     static void * threadProc(void *);
 
     static bool gInitialized;
