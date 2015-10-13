@@ -28,6 +28,7 @@ rs_cpp_SRC_FILES := \
 	Script.cpp \
 	ScriptC.cpp \
 	ScriptIntrinsics.cpp \
+	ScriptIntrinsicBLAS.cpp \
 	Sampler.cpp
 
 LOCAL_ADDITIONAL_DEPENDENCIES := $(LOCAL_PATH)/Android.mk
