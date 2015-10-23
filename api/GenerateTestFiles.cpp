@@ -46,7 +46,7 @@ static void convertToRsType(const string& name, string* dataType, char* vectorSi
 }
 
 // Returns true if any permutation of the function have tests to b
-static bool needTestFiles(const Function& function, int versionOfTestFiles) {
+static bool needTestFiles(const Function& function, unsigned int versionOfTestFiles) {
     for (auto spec : function.getSpecifications()) {
         if (spec->hasTests(versionOfTestFiles)) {
             return true;
@@ -974,7 +974,7 @@ static bool writeRelaxedRsFile(const Function& function, const string& directory
  * to test.
  */
 static bool writeTestFilesForFunction(const Function& function, const string& directory,
-                                      int versionOfTestFiles) {
+                                      unsigned int versionOfTestFiles) {
     // Avoid creating empty files if we're not testing this function.
     if (!needTestFiles(function, versionOfTestFiles)) {
         return true;
@@ -1026,7 +1026,7 @@ static bool writeTestFilesForFunction(const Function& function, const string& di
     return true;
 }
 
-bool generateTestFiles(const string& directory, int versionOfTestFiles) {
+bool generateTestFiles(const string& directory, unsigned int versionOfTestFiles) {
     bool success = true;
     for (auto f : systemSpecification.getFunctions()) {
         if (!writeTestFilesForFunction(*f.second, directory, versionOfTestFiles)) {

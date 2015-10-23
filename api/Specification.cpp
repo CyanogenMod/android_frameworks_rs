@@ -32,7 +32,7 @@
 using namespace std;
 
 // API level when RenderScript was added.
-const int MIN_API_LEVEL = 9;
+const unsigned int MIN_API_LEVEL = 9;
 
 const NumericalType TYPES[] = {
             {"f16", "FLOAT_16", "half", "float", FLOATING_POINT, 11, 5},
@@ -49,6 +49,8 @@ const NumericalType TYPES[] = {
 };
 
 const int NUM_TYPES = sizeof(TYPES) / sizeof(TYPES[0]);
+
+static const char kTagUnreleased[] = "UNRELEASED";
 
 // The singleton of the collected information of all the spec files.
 SystemSpecification systemSpecification;
@@ -201,26 +203,34 @@ void ParameterDefinition::parseParameterDefinition(const string& type, const str
     }
 }
 
-bool VersionInfo::scan(Scanner* scanner, int maxApiLevel) {
+bool VersionInfo::scan(Scanner* scanner, unsigned int maxApiLevel) {
     if (scanner->findOptionalTag("version:")) {
         const string s = scanner->getValue();
-        sscanf(s.c_str(), "%i %i", &minVersion, &maxVersion);
-        if (minVersion && minVersion < MIN_API_LEVEL) {
-            scanner->error() << "Minimum version must >= 9\n";
-        }
-        if (minVersion == MIN_API_LEVEL) {
-            minVersion = 0;
-        }
-        if (maxVersion && maxVersion < MIN_API_LEVEL) {
-            scanner->error() << "Maximum version must >= 9\n";
+        if (s.compare(0, sizeof(kTagUnreleased), kTagUnreleased) == 0) {
+            // The API is still under development and does not have
+            // an official version number.
+            minVersion = maxVersion = kUnreleasedVersion;
+        } else {
+            sscanf(s.c_str(), "%u %u", &minVersion, &maxVersion);
+            if (minVersion && minVersion < MIN_API_LEVEL) {
+                scanner->error() << "Minimum version must >= 9\n";
+            }
+            if (minVersion == MIN_API_LEVEL) {
+                minVersion = 0;
+            }
+            if (maxVersion && maxVersion < MIN_API_LEVEL) {
+                scanner->error() << "Maximum version must >= 9\n";
+            }
         }
     }
     if (scanner->findOptionalTag("size:")) {
         sscanf(scanner->getValue().c_str(), "%i", &intSize);
     }
+
     if (maxVersion > maxApiLevel) {
         maxVersion = maxApiLevel;
     }
+
     return minVersion == 0 || minVersion <= maxApiLevel;
 }
 
@@ -331,7 +341,7 @@ void Function::addReturn(ParameterEntry* entry, Scanner* scanner) {
 }
 
 void ConstantSpecification::scanConstantSpecification(Scanner* scanner, SpecFile* specFile,
-                                                      int maxApiLevel) {
+                                                      unsigned int maxApiLevel) {
     string name = scanner->getValue();
     VersionInfo info;
     if (!info.scan(scanner, maxApiLevel)) {
@@ -357,7 +367,7 @@ void ConstantSpecification::scanConstantSpecification(Scanner* scanner, SpecFile
 }
 
 void TypeSpecification::scanTypeSpecification(Scanner* scanner, SpecFile* specFile,
-                                              int maxApiLevel) {
+                                              unsigned int maxApiLevel) {
     string name = scanner->getValue();
     VersionInfo info;
     if (!info.scan(scanner, maxApiLevel)) {
@@ -522,7 +532,7 @@ void FunctionSpecification::parseTest(Scanner* scanner) {
     }
 }
 
-bool FunctionSpecification::hasTests(int versionOfTestFiles) const {
+bool FunctionSpecification::hasTests(unsigned int versionOfTestFiles) const {
     if (mVersionInfo.maxVersion != 0 && mVersionInfo.maxVersion < versionOfTestFiles) {
         return false;
     }
@@ -533,7 +543,7 @@ bool FunctionSpecification::hasTests(int versionOfTestFiles) const {
 }
 
 void FunctionSpecification::scanFunctionSpecification(Scanner* scanner, SpecFile* specFile,
-                                                      int maxApiLevel) {
+                                                      unsigned int maxApiLevel) {
     // Some functions like convert have # part of the name.  Truncate at that point.
     const string& unexpandedName = scanner->getValue();
     string name = unexpandedName;
@@ -562,6 +572,12 @@ void FunctionSpecification::scanFunctionSpecification(Scanner* scanner, SpecFile
     spec->mTest = "scalar";  // default
     spec->mVersionInfo = info;
 
+    if (scanner->findOptionalTag("internal:")) {
+        spec->mInternal = (scanner->getValue() == "true");
+    }
+    if (scanner->findOptionalTag("intrinsic:")) {
+        spec->mIntrinsic = (scanner->getValue() == "true");
+    }
     if (scanner->findOptionalTag("attrib:")) {
         spec->mAttribute = scanner->getValue();
     }
@@ -711,7 +727,7 @@ void SpecFile::addFunctionSpecification(FunctionSpecification* spec, bool hasDoc
 }
 
 // Read the specification, adding the definitions to the global functions map.
-bool SpecFile::readSpecFile(int maxApiLevel) {
+bool SpecFile::readSpecFile(unsigned int maxApiLevel) {
     FILE* specFile = fopen(mSpecFileName.c_str(), "rt");
     if (!specFile) {
         cerr << "Error opening input file: " << mSpecFileName << "\n";
@@ -804,7 +820,7 @@ Function* SystemSpecification::findOrCreateFunction(const string& name, bool* cr
     return findOrCreate<Function>(name, &mFunctions, created);
 }
 
-bool SystemSpecification::readSpecFile(const string& fileName, int maxApiLevel) {
+bool SystemSpecification::readSpecFile(const string& fileName, unsigned int maxApiLevel) {
     SpecFile* spec = new SpecFile(fileName);
     if (!spec->readSpecFile(maxApiLevel)) {
         cerr << fileName << ": Failed to parse.\n";
@@ -815,12 +831,16 @@ bool SystemSpecification::readSpecFile(const string& fileName, int maxApiLevel) 
 }
 
 
-static void updateMaxApiLevel(const VersionInfo& info, int* maxApiLevel) {
+static void updateMaxApiLevel(const VersionInfo& info, unsigned int* maxApiLevel) {
+    if (info.minVersion == VersionInfo::kUnreleasedVersion) {
+        // Ignore development API level in consideration of max API level.
+        return;
+    }
     *maxApiLevel = max(*maxApiLevel, max(info.minVersion, info.maxVersion));
 }
 
-int SystemSpecification::getMaximumApiLevel() {
-    int maxApiLevel = 0;
+unsigned int SystemSpecification::getMaximumApiLevel() {
+    unsigned int maxApiLevel = 0;
     for (auto i : mConstants) {
         for (auto j: i.second->getSpecifications()) {
             updateMaxApiLevel(j->getVersionInfo(), &maxApiLevel);
@@ -839,7 +859,7 @@ int SystemSpecification::getMaximumApiLevel() {
     return maxApiLevel;
 }
 
-bool SystemSpecification::generateFiles(bool forVerification, int maxApiLevel) const {
+bool SystemSpecification::generateFiles(bool forVerification, unsigned int maxApiLevel) const {
     bool success = generateHeaderFiles("scriptc") &&
                    generateDocumentation("docs", forVerification) &&
                    generateTestFiles("test", maxApiLevel) &&
