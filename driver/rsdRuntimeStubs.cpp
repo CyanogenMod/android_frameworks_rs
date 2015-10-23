@@ -433,13 +433,20 @@ ELEMENT_AT_OVERLOADS(long, long long)
 //////////////////////////////////////////////////////////////////////////////
 // ForEach routines
 //////////////////////////////////////////////////////////////////////////////
+void rsForEachInternal(int slot, ::rs_allocation in, ::rs_allocation out) {
+    Context *rsc = RsdCpuReference::getTlsContext();
+    Script *s = const_cast<Script*>(RsdCpuReference::getTlsScript());
+    rsrForEach(rsc, s, slot, (Allocation *)in.p, (Allocation *)out.p,
+               nullptr, 0, nullptr);
+}
+
 void __attribute__((overloadable)) rsForEach(::rs_script script,
                                              ::rs_allocation in,
                                              ::rs_allocation out,
                                              const void *usr,
                                              const rs_script_call *call) {
     Context *rsc = RsdCpuReference::getTlsContext();
-    rsrForEach(rsc, (Script *)script.p, (Allocation *)in.p,
+    rsrForEach(rsc, (Script *)script.p, 0, (Allocation *)in.p,
                (Allocation *)out.p, usr, 0, (RsScriptCall *)call);
 }
 
@@ -448,7 +455,7 @@ void __attribute__((overloadable)) rsForEach(::rs_script script,
                                              ::rs_allocation out,
                                              const void *usr) {
     Context *rsc = RsdCpuReference::getTlsContext();
-    rsrForEach(rsc, (Script *)script.p, (Allocation *)in.p, (Allocation *)out.p,
+    rsrForEach(rsc, (Script *)script.p, 0, (Allocation *)in.p, (Allocation *)out.p,
                usr, 0, nullptr);
 }
 
@@ -456,7 +463,7 @@ void __attribute__((overloadable)) rsForEach(::rs_script script,
                                              ::rs_allocation in,
                                              ::rs_allocation out) {
     Context *rsc = RsdCpuReference::getTlsContext();
-    rsrForEach(rsc, (Script *)script.p, (Allocation *)in.p, (Allocation *)out.p,
+    rsrForEach(rsc, (Script *)script.p, 0, (Allocation *)in.p, (Allocation *)out.p,
                nullptr, 0, nullptr);
 }
 
@@ -468,7 +475,7 @@ void __attribute__((overloadable)) rsForEach(::rs_script script,
                                              const void *usr,
                                              uint32_t usrLen) {
     Context *rsc = RsdCpuReference::getTlsContext();
-    rsrForEach(rsc, (Script *)script.p, (Allocation *)in.p, (Allocation *)out.p,
+    rsrForEach(rsc, (Script *)script.p, 0, (Allocation *)in.p, (Allocation *)out.p,
                usr, usrLen, nullptr);
 }
 
@@ -479,7 +486,7 @@ void __attribute__((overloadable)) rsForEach(::rs_script script,
                                              uint32_t usrLen,
                                              const rs_script_call *call) {
     Context *rsc = RsdCpuReference::getTlsContext();
-    rsrForEach(rsc, (Script *)script.p, (Allocation *)in.p, (Allocation *)out.p,
+    rsrForEach(rsc, (Script *)script.p, 0, (Allocation *)in.p, (Allocation *)out.p,
                usr, usrLen, (RsScriptCall *)call);
 }
 #endif

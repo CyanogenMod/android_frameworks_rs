@@ -91,6 +91,16 @@ typedef struct rs_script_call {
 } rs_script_call_t;
 
 /*
+ * rs_kernel: Handle to a kernel function
+ *
+ *  An opaque type for a function that is defined with the kernel attribute.  A value
+ *  of this type can be used in a rsParallelFor call to launch a kernel.
+ */
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+typedef void* rs_kernel;
+#endif
+
+/*
  * rsForEach: Invoke the root kernel of a script
  *
  * Invoke the kernel named "root" of the specified script.  Like other kernels, this root()
@@ -146,6 +156,28 @@ extern void __attribute__((overloadable))
 #if (defined(RS_VERSION) && (RS_VERSION >= 14))
 extern void __attribute__((overloadable))
     rsForEach(rs_script script, rs_allocation input, rs_allocation output);
+#endif
+
+/*
+ * rsParallelFor: Run a kernel defined in the current Script
+ *
+ *  Runs the kernel over zero or more input allocations. They are passed after the
+ *  rs_kernel argument. If the specified kernel returns a value, an output allocation
+ *  must be specified as the last argument. All input allocations,
+ *  and the output allocation if it exists, must have the same dimensions.
+ *
+ *  This is a synchronous function. A call to this function only returns after all
+ *  the work has completed for all cells of the input allocations. If the kernel
+ *  function returns any value, the call would also have to wait until all results
+ *  have been written to the output allocation.
+ *
+ * Parameters:
+ *   kernel: Function designator to a function that is defined with the kernel attribute.
+ *   ...: Input and output allocations
+ */
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+extern void
+    rsParallelFor(rs_kernel kernel,  ...);
 #endif
 
 /*

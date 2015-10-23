@@ -50,7 +50,7 @@ for i in {11..23}
   do
     mv slangtest/all$i.rs ../../compile/slang/tests/P_all_api_$i
 done
-rmdir slangtest
+rm -rf slangtest
 
 mv RSStubsWhiteList.cpp ../../compile/libbcc/lib/Renderscript/
 
