@@ -237,20 +237,11 @@ void rsrAllocationIoReceive(Context *rsc, Allocation *src) {
 void rsrForEach(Context *rsc,
                 Script *target,
                 uint32_t slot,
-                Allocation *in, Allocation *out,
+                uint32_t numInputs,
+                Allocation **in, Allocation *out,
                 const void *usr, uint32_t usrBytes,
                 const RsScriptCall *call) {
-
-    if (in == nullptr) {
-        target->runForEach(rsc, slot, nullptr, 0, out, usr,
-                           usrBytes, call);
-
-    } else {
-        const Allocation *ins[1] = {in};
-        target->runForEach(rsc, slot, ins,
-                           sizeof(ins) / sizeof(RsAllocation), out, usr,
-                           usrBytes, call);
-    }
+    target->runForEach(rsc, slot, (const Allocation**)in, numInputs, out, usr, usrBytes, call);
 }
 
 void rsrAllocationSyncAll(Context *rsc, Allocation *a, RsAllocationUsageType usage) {

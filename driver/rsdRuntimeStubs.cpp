@@ -433,11 +433,31 @@ ELEMENT_AT_OVERLOADS(long, long long)
 //////////////////////////////////////////////////////////////////////////////
 // ForEach routines
 //////////////////////////////////////////////////////////////////////////////
-void rsForEachInternal(int slot, ::rs_allocation in, ::rs_allocation out) {
+void rsForEachInternal(int slot,
+                       rs_script_call *call,
+                       int hasOutput,
+                       int numIn,
+                       ...) {
     Context *rsc = RsdCpuReference::getTlsContext();
     Script *s = const_cast<Script*>(RsdCpuReference::getTlsScript());
-    rsrForEach(rsc, s, slot, (Allocation *)in.p, (Allocation *)out.p,
-               nullptr, 0, nullptr);
+    std::unique_ptr<Allocation*> inputs(numIn > 0 ? new Allocation*[numIn] : nullptr);
+    if (numIn > 0 && inputs == nullptr) {
+        ALOGE("rsForEachInternal: out of memory for %u inputs.", numIn);
+        return;
+    }
+    Allocation* out = nullptr;
+    va_list argp;
+    va_start(argp, numIn);
+    for (int i = 0; i < numIn; i++) {
+        ::rs_allocation alloc = va_arg(argp, ::rs_allocation);
+        inputs.get()[i] = reinterpret_cast<Allocation*>(const_cast<int*>(alloc.p));
+    }
+    if (hasOutput) {
+        ::rs_allocation outAlloc = va_arg(argp, ::rs_allocation);
+        out = reinterpret_cast<Allocation*>(const_cast<int*>(outAlloc.p));
+    }
+    va_end(argp);
+    rsrForEach(rsc, s, slot, numIn, inputs.get(), out, nullptr, 0, (RsScriptCall*)call);
 }
 
 void __attribute__((overloadable)) rsForEach(::rs_script script,
@@ -446,7 +466,7 @@ void __attribute__((overloadable)) rsForEach(::rs_script script,
                                              const void *usr,
                                              const rs_script_call *call) {
     Context *rsc = RsdCpuReference::getTlsContext();
-    rsrForEach(rsc, (Script *)script.p, 0, (Allocation *)in.p,
+    rsrForEach(rsc, (Script *)script.p, 0, 1, (Allocation **)&in.p,
                (Allocation *)out.p, usr, 0, (RsScriptCall *)call);
 }
 
@@ -455,7 +475,7 @@ void __attribute__((overloadable)) rsForEach(::rs_script script,
                                              ::rs_allocation out,
                                              const void *usr) {
     Context *rsc = RsdCpuReference::getTlsContext();
-    rsrForEach(rsc, (Script *)script.p, 0, (Allocation *)in.p, (Allocation *)out.p,
+    rsrForEach(rsc, (Script *)script.p, 0, 1, (Allocation **)&in.p, (Allocation *)out.p,
                usr, 0, nullptr);
 }
 
@@ -463,7 +483,7 @@ void __attribute__((overloadable)) rsForEach(::rs_script script,
                                              ::rs_allocation in,
                                              ::rs_allocation out) {
     Context *rsc = RsdCpuReference::getTlsContext();
-    rsrForEach(rsc, (Script *)script.p, 0, (Allocation *)in.p, (Allocation *)out.p,
+    rsrForEach(rsc, (Script *)script.p, 0, 1, (Allocation **)&in.p, (Allocation *)out.p,
                nullptr, 0, nullptr);
 }
 
@@ -475,7 +495,7 @@ void __attribute__((overloadable)) rsForEach(::rs_script script,
                                              const void *usr,
                                              uint32_t usrLen) {
     Context *rsc = RsdCpuReference::getTlsContext();
-    rsrForEach(rsc, (Script *)script.p, 0, (Allocation *)in.p, (Allocation *)out.p,
+    rsrForEach(rsc, (Script *)script.p, 0, 1, (Allocation **)&in.p, (Allocation *)out.p,
                usr, usrLen, nullptr);
 }
 
@@ -486,7 +506,7 @@ void __attribute__((overloadable)) rsForEach(::rs_script script,
                                              uint32_t usrLen,
                                              const rs_script_call *call) {
     Context *rsc = RsdCpuReference::getTlsContext();
-    rsrForEach(rsc, (Script *)script.p, 0, (Allocation *)in.p, (Allocation *)out.p,
+    rsrForEach(rsc, (Script *)script.p, 0, 1, (Allocation **)&in.p, (Allocation *)out.p,
                usr, usrLen, (RsScriptCall *)call);
 }
 #endif
