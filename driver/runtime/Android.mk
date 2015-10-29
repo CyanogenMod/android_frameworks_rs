@@ -103,6 +103,7 @@ LOCAL_SRC_FILES_64 := $(clcore_arm64_files)
 LOCAL_CFLAGS_64 += -DARCH_ARM64_HAVE_NEON
 else
 LOCAL_SRC_FILES_64 := $(clcore_files_64)
+LOCAL_SRC_FILES_64 += arch/generic.c
 endif
 
 include $(LOCAL_PATH)/build_bc_lib.mk
@@ -113,7 +114,7 @@ ifeq ($(TARGET_ARCH),$(filter $(TARGET_ARCH),x86 x86_64))
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := libclcore_x86.bc
-LOCAL_CFLAGS += $(clcore_cflags)
+LOCAL_CFLAGS += $(clcore_cflags) -DARCH_X86_HAVE_SSSE3
 LOCAL_SRC_FILES := $(clcore_x86_files)
 LOCAL_SRC_FILES_32 := $(clcore_base_files_32)
 LOCAL_SRC_FILES_64 := $(clcore_base_files_64)
@@ -177,7 +178,7 @@ BCC_RS_TRIPLE := armv7-none-linux-gnueabi
 RS_TRIPLE_CFLAGS := -D__i386__
 LOCAL_MODULE := librsrt_x86.bc
 LOCAL_IS_HOST_MODULE := true
-LOCAL_CFLAGS += $(clcore_cflags)
+LOCAL_CFLAGS += $(clcore_cflags) -DARCH_X86_HAVE_SSSE3
 LOCAL_SRC_FILES := $(clcore_x86_files) $(clcore_base_files_32)
 include $(LOCAL_PATH)/build_bc_lib.mk
 
