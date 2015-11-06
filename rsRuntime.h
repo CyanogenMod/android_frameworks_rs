@@ -156,7 +156,8 @@ void rsrAllocationSyncAll(Context *, Allocation *a, RsAllocationUsageType source
 
 void rsrForEach(Context *, Script *target,
                 uint32_t slot,
-                Allocation *in,
+                uint32_t numInputs,
+                Allocation **in,
                 Allocation *out,
                 const void *usr,
                 uint32_t usrBytes,

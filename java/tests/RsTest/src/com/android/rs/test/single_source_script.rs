@@ -7,6 +7,10 @@ int __attribute__((kernel)) foo(int a) {
     return a * 2;
 }
 
+int __attribute__((kernel)) goo(int a, int b) {
+    return a + b;
+}
+
 static void validate(rs_allocation out) {
     bool failed = false;
 
@@ -15,7 +19,11 @@ static void validate(rs_allocation out) {
     for (j = 0; j < dimY; j++) {
         for (i = 0; i < dimX; i++) {
             const int actual = rsGetElementAt_int(out, i, j);
-            const int expected = (i + j * dimX) * 4;
+            int expected = (i + j * dimX) * 4;
+            if (j < dimY / 2) {
+                expected *= 2;
+            }
+            expected += (i + j * dimX);
             if (actual != expected) {
                 failed = true;
                 rsDebug("row     ", j);
@@ -47,8 +55,16 @@ void entrypoint(rs_allocation in, rs_allocation out) {
         }
     }
 
-    rsParallelFor(foo, in, out);
-    rsParallelFor(foo, out, out);
+    rsForEach(foo, in, out);
+    rsForEach(foo, out, out);
+    rs_script_call_t opts = {0};
+    opts.xStart = 0;
+    opts.xEnd = dimX;
+    opts.yStart = 0;
+    opts.yEnd = dimY / 2;
+    rsForEachWithOptions(foo, &opts, out, out);
+
+    rsForEach(goo, in, out, out);
 
     validate(out);
 }

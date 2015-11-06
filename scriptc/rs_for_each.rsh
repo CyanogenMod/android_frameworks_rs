@@ -94,7 +94,7 @@ typedef struct rs_script_call {
  * rs_kernel: Handle to a kernel function
  *
  *  An opaque type for a function that is defined with the kernel attribute.  A value
- *  of this type can be used in a rsParallelFor call to launch a kernel.
+ *  of this type can be used in a rsForEach call to launch a kernel.
  */
 #if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
 typedef void* rs_kernel;
@@ -129,6 +129,8 @@ typedef void* rs_kernel;
  *   usrData: User defined data to pass to the script.  May be NULL.
  *   sc: Extra control information used to select a sub-region of the allocation to be processed or suggest a walking strategy.  May be NULL.
  *   usrDataLen: Size of the userData structure.  This will be used to perform a shallow copy of the data if necessary.
+ *   kernel: Function designator to a function that is defined with the kernel attribute.
+ *   ...: Input and output allocations
  */
 #if !defined(RS_VERSION) || (RS_VERSION <= 13)
 extern void __attribute__((overloadable))
@@ -153,31 +155,29 @@ extern void __attribute__((overloadable))
               size_t usrDataLen);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 14))
+#if (defined(RS_VERSION) && (RS_VERSION >= 14) && (RS_VERSION <= 23))
 extern void __attribute__((overloadable))
     rsForEach(rs_script script, rs_allocation input, rs_allocation output);
 #endif
 
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+extern void
+    rsForEach(rs_kernel kernel,  ...);
+#endif
+
 /*
- * rsParallelFor: Run a kernel defined in the current Script
+ * rsForEachWithOptions: TBD
  *
- *  Runs the kernel over zero or more input allocations. They are passed after the
- *  rs_kernel argument. If the specified kernel returns a value, an output allocation
- *  must be specified as the last argument. All input allocations,
- *  and the output allocation if it exists, must have the same dimensions.
- *
- *  This is a synchronous function. A call to this function only returns after all
- *  the work has completed for all cells of the input allocations. If the kernel
- *  function returns any value, the call would also have to wait until all results
- *  have been written to the output allocation.
+ *  TBD
  *
  * Parameters:
  *   kernel: Function designator to a function that is defined with the kernel attribute.
+ *   options: Launch options
  *   ...: Input and output allocations
  */
 #if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
 extern void
-    rsParallelFor(rs_kernel kernel,  ...);
+    rsForEachWithOptions(rs_kernel kernel, rs_script_call_t* options,  ...);
 #endif
 
 /*

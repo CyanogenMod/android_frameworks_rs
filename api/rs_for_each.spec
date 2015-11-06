@@ -83,6 +83,15 @@ description:
  over cells 4, 5, 6, and 7 in the X dimension, set xStart to 4 and xEnd to 8.
 end:
 
+type: rs_kernel
+version: UNRELEASED
+simple: void*
+summary: Handle to a kernel function
+description:
+  An opaque type for a function that is defined with the kernel attribute.  A value
+  of this type can be used in a @rsForEach call to launch a kernel.
+end:
+
 function: rsForEach
 version: 9 13
 ret: void
@@ -91,26 +100,34 @@ arg: rs_allocation input, "Allocation to source data from."
 arg: rs_allocation output, "Allocation to write date into."
 arg: const void* usrData, "User defined data to pass to the script.  May be NULL."
 arg: const rs_script_call_t* sc, "Extra control information used to select a sub-region of the allocation to be processed or suggest a walking strategy.  May be NULL."
-summary: Invoke the root kernel of a script
+summary: Launches a kernel
 description:
- Invoke the kernel named "root" of the specified script.  Like other kernels, this root()
- function will be invoked repeatedly over the cells of the specificed allocation, filling
- the output allocation with the results.
+ Runs the kernel over zero or more input allocations. They are passed after the
+ @rs_kernel argument. If the specified kernel returns a value, an output allocation
+ must be specified as the last argument. All input allocations,
+ and the output allocation if it exists, must have the same dimensions.
 
- When rsForEach is called, the root script is launched immediately.  rsForEach returns
- only when the script has completed and the output allocation is ready to use.
+ This is a synchronous function. A call to this function only returns after all
+ the work has completed for all cells of the input allocations. If the kernel
+ function returns any value, the call waits until all results have been written
+ to the output allocation.
 
- The rs_script argument is typically initialized using a global variable set from Java.
+ Up to API level 23, the kernel is implicitly specified as the kernel named
+ "root" in the specified script, and only a single input allocation can be used.
+ Starting in API level *UNRELEASED*, an arbitrary kernel function can be used,
+ as specified by the kernel argument. The script argument is removed.
+ The kernel must be defined in the current script. In addition, more than one
+ inputs can be used.
 
- The kernel can be invoked with just an input allocation or just an output allocation.
- This can be done by defining an rs_allocation variable and not initializing it.  E.g.<code><br/>
- rs_script gCustomScript;<br/>
- void specializedProcessing(rs_allocation in) {<br/>
- &nbsp;&nbsp;rs_allocation ignoredOut;<br/>
- &nbsp;&nbsp;rsForEach(gCustomScript, in, ignoredOut);<br/>
- }<br/></code>
-
- If both input and output allocations are specified, they must have the same dimensions.
+E.g.<code><br/>
+ float __attribute__((kernel)) square(float a) {<br/>
+ &nbsp;&nbsp;return a * a;<br/>
+ }<br/>
+<br/>
+ void compute(rs_allocation ain, rs_allocation aout) {<br/>
+ &nbsp;&nbsp;rsForEach(square, ain, aout);<br/>
+ }<br/>
+<br/></code>
 test: none
 end:
 
@@ -148,7 +165,7 @@ test: none
 end:
 
 function: rsForEach
-version: 14
+version: 14 23
 ret: void
 arg: rs_script script
 arg: rs_allocation input
@@ -156,33 +173,43 @@ arg: rs_allocation output
 test: none
 end:
 
-type: rs_kernel
-version: UNRELEASED
-simple: void*
-summary: Handle to a kernel function
-description:
-  An opaque type for a function that is defined with the kernel attribute.  A value
-  of this type can be used in a @rsParallelFor call to launch a kernel.
-end:
-
-function: rsParallelFor
+function: rsForEach
 version: UNRELEASED
 intrinsic: true
-attrib: =
+attrib: =  # Not overloadable
 ret: void
 arg: rs_kernel kernel, "Function designator to a function that is defined with the kernel attribute."
 arg: ..., "Input and output allocations"
-summary: Run a kernel defined in the current Script
-description:
-  Runs the kernel over zero or more input allocations. They are passed after the
-  @rs_kernel argument. If the specified kernel returns a value, an output allocation
-  must be specified as the last argument. All input allocations,
-  and the output allocation if it exists, must have the same dimensions.
+test: none
+end:
 
-  This is a synchronous function. A call to this function only returns after all
-  the work has completed for all cells of the input allocations. If the kernel
-  function returns any value, the call waits until all results have been written
-  to the output allocation.
+function: rsForEachWithOptions
+version: UNRELEASED
+intrinsic: true
+attrib: =  # Not overloadable
+ret: void
+arg: rs_kernel kernel, "Function designator to a function that is defined with the kernel attribute."
+arg: rs_script_call_t* options, "Launch options"
+arg: ..., "Input and output allocations"
+summary: Launches a kernel with options
+description:
+ Launches kernel in a way similar to @rsForEach. However, instead of processing
+ all cells in the input, this function only processes cells in the subspace of
+ the index space specified in options. With the index space explicitly specified
+ by options, no input or output allocation is required for a kernel launch using
+ this API. If allocations are passed in, they must match the number of arguments
+ and return value expected by the kernel function. The output allocation is
+ present if and only if the kernel has a non-void return value.
+
+ E.g., <code><br/>
+    rs_script_call_t opts = {0};<br/>
+    opts.xStart = 0;<br/>
+    opts.xEnd = dimX;<br/>
+    opts.yStart = 0;<br/>
+    opts.yEnd = dimY / 2;<br/>
+    rsForEachWithOptions(foo, &opts, out, out);<br/>
+</code>
+
 test: none
 end:
 
@@ -191,6 +218,7 @@ version: UNRELEASED
 internal: true
 ret: void
 arg: int slot
+arg: rs_script_call_t* options
 arg: rs_allocation input
 arg: rs_allocation output
 summary: (Internal API) Launch a kernel in the current Script (with the slot number)
