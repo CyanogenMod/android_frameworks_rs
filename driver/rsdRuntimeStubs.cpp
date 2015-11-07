@@ -440,24 +440,24 @@ void rsForEachInternal(int slot,
                        ...) {
     Context *rsc = RsdCpuReference::getTlsContext();
     Script *s = const_cast<Script*>(RsdCpuReference::getTlsScript());
-    std::unique_ptr<Allocation*> inputs(numIn > 0 ? new Allocation*[numIn] : nullptr);
-    if (numIn > 0 && inputs == nullptr) {
-        ALOGE("rsForEachInternal: out of memory for %u inputs.", numIn);
+    if (numIn > 100) {
+        ALOGE("rsForEachInternal: too many inputs to a kernel.");
         return;
     }
+    Allocation* inputs[100];
     Allocation* out = nullptr;
     va_list argp;
     va_start(argp, numIn);
     for (int i = 0; i < numIn; i++) {
         ::rs_allocation alloc = va_arg(argp, ::rs_allocation);
-        inputs.get()[i] = reinterpret_cast<Allocation*>(const_cast<int*>(alloc.p));
+        inputs[i] = (Allocation*)alloc.p;
     }
     if (hasOutput) {
         ::rs_allocation outAlloc = va_arg(argp, ::rs_allocation);
-        out = reinterpret_cast<Allocation*>(const_cast<int*>(outAlloc.p));
+        out = (Allocation*)outAlloc.p;
     }
     va_end(argp);
-    rsrForEach(rsc, s, slot, numIn, inputs.get(), out, nullptr, 0, (RsScriptCall*)call);
+    rsrForEach(rsc, s, slot, numIn, numIn > 0 ? inputs : nullptr, out, nullptr, 0, (RsScriptCall*)call);
 }
 
 void __attribute__((overloadable)) rsForEach(::rs_script script,
