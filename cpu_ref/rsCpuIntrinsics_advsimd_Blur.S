@@ -18,6 +18,8 @@
 #define PRIVATE(f) .text; .align 4; .type f,#function; f:
 #define END(f) .size f, .-f;
 
+//#define ARCH_ARM64_USE_BLUR_PRELOAD
+
 .set FRACTION_BITS, 7
 .set MAX_R, 25
 
@@ -31,6 +33,15 @@
             \zzz
 .endif
 .endm
+
+/* It's not always clear that prefetching is beneficial and this needs further
+ * testing on different cores, so it's made switchable here.
+ */
+#if defined(ARCH_ARM64_USE_BLUR_PRELOAD)
+#define VERTPLD(...) prfm        PLDL1KEEP, [__VA_ARGS__]
+#else
+#define VERTPLD(...) nop
+#endif
 
 /* Fetch 16 columns of bytes (regardless of image format), convolve these
  * vertically, and leave them in the register file.  If working near the top or
@@ -71,7 +82,7 @@
             mov         x10, x15
 
             uxtl        v14.8h, v15.8b
-//            prfm        PLDL1KEEP,[x1, #16] // TODO: confirm
+            VERTPLD(x1, #16)
             uxtl2       v15.8h, v15.16b
   .if \max_r < 16 // approximate
     ifcc    adr         \reg, 1f
@@ -89,40 +100,128 @@
             umull2      v15.4s, v15.8h, v0.h[0]
             br          \reg
 
-  .irp rowclamp, 1, 0
-    .set cc, \rowclamp
-    .align 4
-    // clang does not support nested .irp
-    .irp dreg, 4, 3, 2, 1, 0 ; .irp lane, 7, 6, 5, 4, 3, 2, 1, 0 ; .irp doth, .h
-        .set i, \dreg * 8 + \lane
-        .if 0 < i && i <= \max_r
+  /* This version of the vertical fetch loop body is used away from the edges
+   * of the source image.  The pointers start at the top and bottom source rows
+   * and work their way towards the centre on each iteration.  This way the
+   * number of taps used can be controlled by jumping directly into the middle
+   * of the loop and running to completion.
+   * If the loop body changes size then the code which caculates the address of
+   * the initial iteration must be updated to accordingly.
+   */
+  .macro vertfetch_noclamp i, dreg
+    .if 0 < \i && \i <= \max_r
             ld1         {v10.16b}, [x10], x2
-    ifcc    cmp         x6, #i
             ld1         {v11.16b}, [x11], x13
-    ifcc    csel        x10, x15, x10, lo
             uaddl       v16.8h, v10.8b, v11.8b
-    ifcc    cmp         x7, #i
             uaddl2      v11.8h, v10.16b, v11.16b
-    ifcc    csel        x11, x19, x11, lo
-            umlal       v12.4s, v16.4h, v\dreg\doth[\lane]
-            umlal2      v13.4s, v16.8h, v\dreg\doth[\lane]
-//            prfm        PLDL1KEEP,[x10, #32] // TODO: confirm
-nop
-            umlal       v14.4s, v11.4h, v\dreg\doth[\lane]
-//            prfm        PLDL1KEEP,[x11, #32] // TODO: confirm
-nop
-            umlal2      v15.4s, v11.8h, v\dreg\doth[\lane]
-        .endif
-    .endr ; .endr ; .endr
-    .if \rowclamp == 1
-        1: \labelc :
-            b           2f
-    .else
-        2: \labelnc :
+            umlal       v12.4s, v16.4h, \dreg
+            umlal2      v13.4s, v16.8h, \dreg
+            VERTPLD(x10, #32)
+            umlal       v14.4s, v11.4h, \dreg
+            VERTPLD(x11, #32)
+            umlal2      v15.4s, v11.8h, \dreg
     .endif
-  .endr
+  .endm
 
-            uqrshrn     v10.4h, v12.4s, #16 - FRACTION_BITS
+  /* This version of the vertical fetch loop body is used near the edges of the
+   * source image, where one or both of the accesses may start with a clamped
+   * value, and the row addresses only begin to change after some number of
+   * iterations before the end.
+   * If the loop body changes size then the code which caculates the address of
+   * the initial iteration must be updated to accordingly.
+   */
+  .macro vertfetch_clamped i, dreg
+    .if 0 < \i && \i <= \max_r
+            ld1         {v10.16b}, [x10], x2
+            cmp         x6, #\i
+            ld1         {v11.16b}, [x11], x13
+            csel        x10, x15, x10, lo
+            uaddl       v16.8h, v10.8b, v11.8b
+            cmp         x7, #\i
+            uaddl2      v11.8h, v10.16b, v11.16b
+            csel        x11, x19, x11, lo
+            umlal       v12.4s, v16.4h, \dreg
+            umlal2      v13.4s, v16.8h, \dreg
+            VERTPLD(x10, #32)
+            umlal       v14.4s, v11.4h, \dreg
+            VERTPLD(x11, #32)
+            umlal2      v15.4s, v11.8h, \dreg
+    .endif
+  .endm
+
+  /* Entry into this unrolled loop is computed as a negative index from
+   * \labelc at the end of the block.
+   */
+  .align 4
+  vertfetch_clamped 27, v3.h[3]
+  vertfetch_clamped 26, v3.h[2]
+  vertfetch_clamped 25, v3.h[1]
+  vertfetch_clamped 24, v3.h[0]
+  vertfetch_clamped 23, v2.h[7]
+  vertfetch_clamped 22, v2.h[6]
+  vertfetch_clamped 21, v2.h[5]
+  vertfetch_clamped 20, v2.h[4]
+  vertfetch_clamped 19, v2.h[3]
+  vertfetch_clamped 18, v2.h[2]
+  vertfetch_clamped 17, v2.h[1]
+  vertfetch_clamped 16, v2.h[0]
+  vertfetch_clamped 15, v1.h[7]
+  vertfetch_clamped 14, v1.h[6]
+  vertfetch_clamped 13, v1.h[5]
+  vertfetch_clamped 12, v1.h[4]
+  vertfetch_clamped 11, v1.h[3]
+  vertfetch_clamped 10, v1.h[2]
+  vertfetch_clamped  9, v1.h[1]
+  vertfetch_clamped  8, v1.h[0]
+  vertfetch_clamped  7, v0.h[7]
+  vertfetch_clamped  6, v0.h[6]
+  vertfetch_clamped  5, v0.h[5]
+  vertfetch_clamped  4, v0.h[4]
+  vertfetch_clamped  3, v0.h[3]
+  vertfetch_clamped  2, v0.h[2]
+  vertfetch_clamped  1, v0.h[1]
+  vertfetch_clamped  0, v0.h[0]
+  1:
+  \labelc : b 2f    /* done with clamped loop, skip over non-clamped loop */
+
+  /* Entry into this unrolled loop is computed as a negative index from
+   * \labelnc at the end of the block.
+   */
+  .align 4
+  vertfetch_noclamp 27, v3.h[3]
+  vertfetch_noclamp 26, v3.h[2]
+  vertfetch_noclamp 25, v3.h[1]
+  vertfetch_noclamp 24, v3.h[0]
+  vertfetch_noclamp 23, v2.h[7]
+  vertfetch_noclamp 22, v2.h[6]
+  vertfetch_noclamp 21, v2.h[5]
+  vertfetch_noclamp 20, v2.h[4]
+  vertfetch_noclamp 19, v2.h[3]
+  vertfetch_noclamp 18, v2.h[2]
+  vertfetch_noclamp 17, v2.h[1]
+  vertfetch_noclamp 16, v2.h[0]
+  vertfetch_noclamp 15, v1.h[7]
+  vertfetch_noclamp 14, v1.h[6]
+  vertfetch_noclamp 13, v1.h[5]
+  vertfetch_noclamp 12, v1.h[4]
+  vertfetch_noclamp 11, v1.h[3]
+  vertfetch_noclamp 10, v1.h[2]
+  vertfetch_noclamp  9, v1.h[1]
+  vertfetch_noclamp  8, v1.h[0]
+  vertfetch_noclamp  7, v0.h[7]
+  vertfetch_noclamp  6, v0.h[6]
+  vertfetch_noclamp  5, v0.h[5]
+  vertfetch_noclamp  4, v0.h[4]
+  vertfetch_noclamp  3, v0.h[3]
+  vertfetch_noclamp  2, v0.h[2]
+  vertfetch_noclamp  1, v0.h[1]
+  vertfetch_noclamp  0, v0.h[0]
+  \labelnc :
+
+  .purgem vertfetch_clamped
+  .purgem vertfetch_noclamp
+
+  2:        uqrshrn     v10.4h, v12.4s, #16 - FRACTION_BITS
             add         x15, x15, #16
             uqrshrn2    v10.8h, v13.4s, #16 - FRACTION_BITS
             add         x19, x19, #16
