@@ -399,3 +399,164 @@ VOP(double3)
 VOP(double4)
 
 #undef VOP
+
+static const rs_element kInvalidElement = {0};
+
+extern rs_element __attribute__((overloadable)) rsCreateElement(
+        int32_t dt, int32_t dk, bool isNormalized, uint32_t vecSize);
+
+extern rs_type __attribute__((overloadable)) rsCreateType(
+    rs_element element, uint32_t dimX, uint32_t dimY, uint32_t dimZ,
+    bool mipmaps, bool faces, rs_yuv_format yuv_format);
+
+extern rs_allocation __attribute__((overloadable)) rsCreateAllocation(
+        rs_type type, rs_allocation_mipmap_control mipmaps, uint32_t usages,
+        void *ptr);
+
+rs_element __attribute__((overloadable)) rsCreateElement(
+        rs_data_type data_type) {
+
+    switch (data_type) {
+        case RS_TYPE_BOOLEAN:
+        // Bug: 24862914: Add RS_TYPE_FLOAT_16 once the bug is fixed
+        // case RS_TYPE_FLOAT_16:
+        case RS_TYPE_FLOAT_32:
+        case RS_TYPE_FLOAT_64:
+        case RS_TYPE_SIGNED_8:
+        case RS_TYPE_SIGNED_16:
+        case RS_TYPE_SIGNED_32:
+        case RS_TYPE_SIGNED_64:
+        case RS_TYPE_UNSIGNED_8:
+        case RS_TYPE_UNSIGNED_16:
+        case RS_TYPE_UNSIGNED_32:
+        case RS_TYPE_UNSIGNED_64:
+        case RS_TYPE_MATRIX_4X4:
+        case RS_TYPE_MATRIX_3X3:
+        case RS_TYPE_MATRIX_2X2:
+        case RS_TYPE_ELEMENT:
+        case RS_TYPE_TYPE:
+        case RS_TYPE_ALLOCATION:
+        case RS_TYPE_SCRIPT:
+            return rsCreateElement(data_type, RS_KIND_USER, false, 1);
+        default:
+            rsDebug("Invalid data_type", data_type);
+            return kInvalidElement;
+    }
+}
+
+rs_element __attribute__((overloadable)) rsCreateVectorElement(
+        rs_data_type data_type, uint32_t vector_width) {
+    if (vector_width < 2 || vector_width > 4) {
+        rsDebug("Invalid vector_width", vector_width);
+        return kInvalidElement;
+    }
+    switch (data_type) {
+        case RS_TYPE_BOOLEAN:
+        // Bug: 24862914: Add RS_TYPE_FLOAT_16 once the bug is fixed
+        // case RS_TYPE_FLOAT_16:
+        case RS_TYPE_FLOAT_32:
+        case RS_TYPE_FLOAT_64:
+        case RS_TYPE_SIGNED_8:
+        case RS_TYPE_SIGNED_16:
+        case RS_TYPE_SIGNED_32:
+        case RS_TYPE_SIGNED_64:
+        case RS_TYPE_UNSIGNED_8:
+        case RS_TYPE_UNSIGNED_16:
+        case RS_TYPE_UNSIGNED_32:
+        case RS_TYPE_UNSIGNED_64:
+            return rsCreateElement(data_type, RS_KIND_USER, false,
+                                   vector_width);
+        default:
+            rsDebug("Invalid data_type for vector element", data_type);
+            return kInvalidElement;
+    }
+}
+
+rs_element __attribute__((overloadable)) rsCreatePixelElement(
+        rs_data_type data_type, rs_data_kind data_kind) {
+    if (data_type != RS_TYPE_UNSIGNED_8 &&
+        data_type != RS_TYPE_UNSIGNED_16 &&
+        data_type != RS_TYPE_UNSIGNED_5_6_5 &&
+        data_type != RS_TYPE_UNSIGNED_4_4_4_4 &&
+        data_type != RS_TYPE_UNSIGNED_5_5_5_1) {
+
+        rsDebug("Invalid data_type for pixel element", data_type);
+        return kInvalidElement;
+    }
+    if (data_kind != RS_KIND_PIXEL_L &&
+        data_kind != RS_KIND_PIXEL_A &&
+        data_kind != RS_KIND_PIXEL_LA &&
+        data_kind != RS_KIND_PIXEL_RGB &&
+        data_kind != RS_KIND_PIXEL_RGBA &&
+        data_kind != RS_KIND_PIXEL_DEPTH &&
+        data_kind != RS_KIND_PIXEL_YUV) {
+
+        rsDebug("Invalid data_kind for pixel element", data_type);
+        return kInvalidElement;
+    }
+    if (data_type == RS_TYPE_UNSIGNED_5_6_5 && data_kind != RS_KIND_PIXEL_RGB) {
+        rsDebug("Bad data_type and data_kind combo", data_type, data_kind);
+        return kInvalidElement;
+    }
+    if (data_type == RS_TYPE_UNSIGNED_5_5_5_1 &&
+        data_kind != RS_KIND_PIXEL_RGBA) {
+
+        rsDebug("Bad data_type and data_kind combo", data_type, data_kind);
+        return kInvalidElement;
+    }
+    if (data_type == RS_TYPE_UNSIGNED_4_4_4_4 &&
+        data_kind != RS_KIND_PIXEL_RGBA) {
+
+        rsDebug("Bad data_type and data_kind combo", data_type, data_kind);
+        return kInvalidElement;
+    }
+    if (data_type == RS_TYPE_UNSIGNED_16 && data_kind != RS_KIND_PIXEL_DEPTH) {
+        rsDebug("Bad data_type and data_kind combo", data_type, data_kind);
+        return kInvalidElement;
+    }
+
+    int vector_width = 1;
+    switch (data_kind) {
+        case RS_KIND_PIXEL_LA:
+            vector_width = 2;
+            break;
+        case RS_KIND_PIXEL_RGB:
+            vector_width = 3;
+            break;
+        case RS_KIND_PIXEL_RGBA:
+            vector_width = 4;
+            break;
+        case RS_KIND_PIXEL_DEPTH:
+            vector_width = 2;
+            break;
+    }
+
+    return rsCreateElement(data_type, data_kind, true, vector_width);
+}
+
+rs_type __attribute__((overloadable)) rsCreateType(rs_element element,
+                                                   uint32_t dimX, uint32_t dimY,
+                                                   uint32_t dimZ) {
+    return rsCreateType(element, dimX, dimY, dimZ, false, false, RS_YUV_NONE);
+}
+
+rs_type __attribute__((overloadable)) rsCreateType(rs_element element,
+                                                   uint32_t dimX,
+                                                   uint32_t dimY) {
+    return rsCreateType(element, dimX, dimY, 0, false, false, RS_YUV_NONE);
+}
+
+rs_type __attribute__((overloadable)) rsCreateType(rs_element element,
+                                                   uint32_t dimX) {
+    return rsCreateType(element, dimX, 0, 0, false, false, RS_YUV_NONE);
+}
+
+rs_allocation __attribute__((overloadable)) rsCreateAllocation(rs_type type,
+                                                               uint32_t usage) {
+    return rsCreateAllocation(type, RS_ALLOCATION_MIPMAP_NONE, usage, NULL);
+}
+
+rs_allocation __attribute__((overloadable)) rsCreateAllocation(rs_type type) {
+    return rsCreateAllocation(type, RS_ALLOCATION_MIPMAP_NONE,
+                              RS_ALLOCATION_USAGE_SCRIPT, NULL);
+}

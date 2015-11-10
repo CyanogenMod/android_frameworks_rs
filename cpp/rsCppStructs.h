@@ -65,16 +65,6 @@ class Sampler;
  };
 
  /**
-  * YUV formats supported by the RenderScript API.
-  */
- enum RSYuvFormat {
-     RS_YUV_NONE = 0, ///< No YUV data
-     RS_YUV_YV12 = 1, ///< YUV data in YV12 format
-     RS_YUV_NV21 = 2, ///< YUV data in NV21 format
-     RS_YUV_MAX = 3
- };
-
- /**
   * Flags that can control RenderScript behavior on a per-context level.
   */
  enum RSInitFlags {
@@ -1534,7 +1524,7 @@ public:
  * present.
  *
  * A Type also supports YUV format information to support an Allocation in a YUV
- * format. The YUV formats supported are YV12 and NV21.
+ * format. The YUV formats supported are RS_YUV_YV12 and RS_YUV_NV21.
  */
 class Type : public BaseObj {
 protected:
@@ -1543,7 +1533,7 @@ protected:
     uint32_t mDimX;
     uint32_t mDimY;
     uint32_t mDimZ;
-    RSYuvFormat mYuvFormat;
+    RsYuvFormat mYuvFormat;
     bool mDimMipmaps;
     bool mDimFaces;
     size_t mElementCount;
@@ -1560,7 +1550,7 @@ public:
      * Returns the YUV format.
      * @return YUV format of the Allocation
      */
-    RSYuvFormat getYuvFormat() const {
+    RsYuvFormat getYuvFormat() const {
         return mYuvFormat;
     }
 
@@ -1645,7 +1635,7 @@ public:
         uint32_t mDimX;
         uint32_t mDimY;
         uint32_t mDimZ;
-        RSYuvFormat mYuvFormat;
+        RsYuvFormat mYuvFormat;
         bool mDimMipmaps;
         bool mDimFaces;
         sp<const Element> mElement;
@@ -1656,7 +1646,7 @@ public:
         void setX(uint32_t value);
         void setY(uint32_t value);
         void setZ(uint32_t value);
-        void setYuvFormat(RSYuvFormat format);
+        void setYuvFormat(RsYuvFormat format);
         void setMipmaps(bool value);
         void setFaces(bool value);
         sp<const Type> create();

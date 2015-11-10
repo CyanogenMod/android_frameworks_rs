@@ -163,6 +163,16 @@ void rsrForEach(Context *, Script *target,
                 uint32_t usrBytes,
                 const RsScriptCall *call);
 
+RsElement rsrElementCreate(Context *rsc, RsDataType dt, RsDataKind dk,
+                           bool norm, uint32_t vecSize);
+
+RsType rsrTypeCreate(Context *, const RsElement element, uint32_t dimX,
+                     uint32_t dimY, uint32_t dimZ, bool mipmaps, bool faces,
+                     uint32_t yuv);
+
+RsAllocation rsrAllocationCreateTyped(Context *, const RsType type,
+                                      RsAllocationMipmapControl mipmaps,
+                                      uint32_t usages, uintptr_t ptr);
 
 //////////////////////////////////////////////////////////////////////////////
 // Heavy math functions

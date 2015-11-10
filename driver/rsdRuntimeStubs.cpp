@@ -15,11 +15,13 @@
  */
 
 #include "rsContext.h"
+#include "rsElement.h"
 #include "rsScriptC.h"
 #include "rsMatrix4x4.h"
 #include "rsMatrix3x3.h"
 #include "rsMatrix2x2.h"
 #include "rsRuntime.h"
+#include "rsType.h"
 
 #include "rsdCore.h"
 #include "rsdBcc.h"
@@ -98,6 +100,14 @@ OPAQUETYPE(rs_font);
 typedef enum {
     // Empty to avoid conflicting definitions with RsAllocationCubemapFace
 } rs_allocation_cubemap_face;
+
+typedef enum {
+    // Empty to avoid conflicting definitions with RsYuvFormat
+} rs_yuv_format;
+
+typedef enum {
+    // Empty to avoid conflicting definitions with RsAllocationMipmapControl
+} rs_allocation_mipmap_control;
 
 typedef struct { unsigned int val; } rs_allocation_usage_type;
 
@@ -202,6 +212,187 @@ void __attribute__((overloadable)) rsAllocationCopy2DRange(
                              width, height, (Allocation *)srcAlloc.p,
                              srcXoff, srcYoff, srcMip, srcFace);
 }
+
+static android::renderscript::rs_element CreateElement(RsDataType dt,
+                                                       RsDataKind dk,
+                                                       bool isNormalized,
+                                                       uint32_t vecSize) {
+    Context *rsc = RsdCpuReference::getTlsContext();
+
+    // No need for validation here.  The rsCreateElement overload below is not
+    // exposed to the Script.  The Element-creation APIs call this function in a
+    // consistent manner and rsComponent.cpp asserts on any inconsistency.
+    Element *element = (Element *) rsrElementCreate(rsc, dt, dk, isNormalized,
+                                                    vecSize);
+    android::renderscript::rs_element obj = {};
+    if (element == nullptr)
+        return obj;
+    element->callUpdateCacheObject(rsc, &obj);
+    return obj;
+}
+
+static android::renderscript::rs_type CreateType(RsElement element,
+                                                 uint32_t dimX, uint32_t dimY,
+                                                 uint32_t dimZ, bool mipmaps,
+                                                 bool faces,
+                                                 uint32_t yuv_format) {
+
+    Context *rsc = RsdCpuReference::getTlsContext();
+    android::renderscript::rs_type obj = {};
+
+    if (element == nullptr) {
+        ALOGE("rs_type creation error: Invalid element");
+        return obj;
+    }
+
+    // validate yuv_format
+    RsYuvFormat yuv = (RsYuvFormat) yuv_format;
+    if (yuv != RS_YUV_NONE &&
+        yuv != RS_YUV_YV12 &&
+        yuv != RS_YUV_NV21 &&
+        yuv != RS_YUV_420_888) {
+
+        ALOGE("rs_type creation error: Invalid yuv_format %d\n", yuv_format);
+        return obj;
+    }
+
+    // validate consistency of shape parameters
+    if (dimZ > 0) {
+        if (dimX < 1 || dimY < 1) {
+            ALOGE("rs_type creation error: Both X and Y dimension required "
+                  "when Z is present.");
+            return obj;
+        }
+        if (mipmaps) {
+            ALOGE("rs_type creation error: mipmap control requires 2D types");
+            return obj;
+        }
+        if (faces) {
+            ALOGE("rs_type creation error: Cube maps require 2D types");
+            return obj;
+        }
+    }
+    if (dimY > 0 && dimX < 1) {
+        ALOGE("rs_type creation error: X dimension required when Y is "
+              "present.");
+        return obj;
+    }
+    if (mipmaps && dimY < 1) {
+        ALOGE("rs_type creation error: mipmap control require 2D Types.");
+        return obj;
+    }
+    if (faces && dimY < 1) {
+        ALOGE("rs_type creation error: Cube maps require 2D Types.");
+        return obj;
+    }
+    if (yuv_format != RS_YUV_NONE) {
+        if (dimZ != 0 || dimY == 0 || faces || mipmaps) {
+            ALOGE("rs_type creation error: YUV only supports basic 2D.");
+            return obj;
+        }
+    }
+
+    Type *type = (Type *) rsrTypeCreate(rsc, element, dimX, dimY, dimZ, mipmaps,
+                                        faces, yuv_format);
+    if (type == nullptr)
+        return obj;
+    type->callUpdateCacheObject(rsc, &obj);
+    return obj;
+}
+
+static android::renderscript::rs_allocation CreateAllocation(
+        RsType type, RsAllocationMipmapControl mipmaps, uint32_t usages,
+        void *ptr) {
+
+    Context *rsc = RsdCpuReference::getTlsContext();
+    android::renderscript::rs_allocation obj = {};
+
+    if (type == nullptr) {
+        ALOGE("rs_allocation creation error: Invalid type");
+        return obj;
+    }
+
+    uint32_t validUsages = RS_ALLOCATION_USAGE_SCRIPT | \
+                           RS_ALLOCATION_USAGE_GRAPHICS_TEXTURE;
+    if (usages & ~validUsages) {
+        ALOGE("rs_allocation creation error: Invalid usage flag");
+        return obj;
+    }
+
+    Allocation *alloc = (Allocation *) rsrAllocationCreateTyped(rsc, type,
+                                                                mipmaps, usages,
+                                                                (uintptr_t) ptr);
+    if (alloc == nullptr)
+        return obj;
+    alloc->callUpdateCacheObject(rsc, &obj);
+
+    return obj;
+}
+
+// Define rsCreateElement, rsCreateType and rsCreateAllocation entry points
+// differently for 32-bit x86 and Mips.  The definitions for ARM32 and all
+// 64-bit architectures is further below.
+#if defined(__i386__) || (defined(__mips__) && __mips==32)
+
+// The calling convention for the driver on 32-bit x86 and Mips returns
+// rs_element etc. as a stack-return parameter.  The Script uses ARM32 calling
+// conventions that return the structs in a register.  To match this convention,
+// emulate the return value using a pointer.
+Element *rsCreateElement(int32_t dt, int32_t dk, bool isNormalized,
+                         uint32_t vecSize) {
+
+    android::renderscript::rs_element obj = CreateElement((RsDataType) dt,
+                                                          (RsDataKind) dk,
+                                                          isNormalized,
+                                                          vecSize);
+    return (Element *) obj.p;
+}
+
+Type *rsCreateType(::rs_element element, uint32_t dimX, uint32_t dimY,
+                   uint32_t dimZ, bool mipmaps, bool faces,
+                   rs_yuv_format yuv_format) {
+    android::renderscript::rs_type obj = CreateType((RsElement) element.p, dimX,
+                                                    dimY, dimZ, mipmaps, faces,
+                                                    (RsYuvFormat) yuv_format);
+    return (Type *) obj.p;
+}
+
+Allocation *rsCreateAllocation(::rs_type type,
+                               rs_allocation_mipmap_control mipmaps,
+                               uint32_t usages, void *ptr) {
+
+    android::renderscript::rs_allocation obj;
+    obj = CreateAllocation((RsType) type.p, (RsAllocationMipmapControl) mipmaps,
+                           usages, ptr);
+    return (Allocation *) obj.p;
+}
+
+#else
+android::renderscript::rs_element rsCreateElement(int32_t dt, int32_t dk,
+                                                  bool isNormalized,
+                                                  uint32_t vecSize) {
+
+    return CreateElement((RsDataType) dt, (RsDataKind) dk, isNormalized,
+                         vecSize);
+}
+
+android::renderscript::rs_type rsCreateType(::rs_element element, uint32_t dimX,
+                                            uint32_t dimY, uint32_t dimZ,
+                                            bool mipmaps, bool faces,
+                                            rs_yuv_format yuv_format) {
+    return CreateType((RsElement) element.p, dimX, dimY, dimZ, mipmaps, faces,
+                      yuv_format);
+}
+
+android::renderscript::rs_allocation rsCreateAllocation(
+        ::rs_type type, rs_allocation_mipmap_control mipmaps, uint32_t usages,
+        void *ptr) {
+
+    return CreateAllocation((RsType) type.p,
+                            (RsAllocationMipmapControl) mipmaps,
+                            usages, ptr);
+}
+#endif
 
 //////////////////////////////////////////////////////////////////////////////
 // Object routines

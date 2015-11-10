@@ -40,8 +40,11 @@ bc_clang_cc1_cflags += -target-feature +long64
 endif
 bc_translated_clang_cc1_cflags := $(addprefix -Xclang , $(bc_clang_cc1_cflags))
 
+# Bug: 25435756 - must be switched back to the proper API level
+bc_RS_VERSION := -DRS_VERSION=4294967295
+
 bc_cflags := -MD \
-             $(RS_VERSION_DEFINE) \
+             $(bc_RS_VERSION) \
              -std=c99 \
              -c \
              -O3 \
