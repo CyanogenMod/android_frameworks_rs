@@ -182,6 +182,20 @@ description:
  See the <a href='http://developer.android.com/reference/android/renderscript/Element.html#createPixel(android.renderscript.RenderScript,%20android.renderscript.Element.DataType, android.renderscript.Element.DataKind)'>Element.createPixel()</a> method.
 end:
 
+type: rs_yuv_format
+version: UNRELEASED
+enum:
+value: RS_YUV_NONE = 0
+value: RS_YUV_YV12 = 0x32315659
+value: RS_YUV_NV21 = 0x11
+value: RS_YUV_420_888 = 0x23
+summary: YUV format
+description:
+  Android YUV formats that can be associated with a RenderScript Type.
+
+  See <a href='http://developer.android.com/reference/android/graphics/ImageFormat.html'>android.graphics.ImageFormat</a> for a description of each format.
+end:
+
 type: rs_sampler_value
 version: 16
 enum:

@@ -196,6 +196,22 @@ typedef enum {
 #endif
 
 /*
+ * rs_yuv_format: YUV format
+ *
+ *  Android YUV formats that can be associated with a RenderScript Type.
+ *
+ *  See android.graphics.ImageFormat for a description of each format.
+ */
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+typedef enum {
+    RS_YUV_NONE = 0,
+    RS_YUV_YV12 = 0x32315659,
+    RS_YUV_NV21 = 0x11,
+    RS_YUV_420_888 = 0x23
+} rs_yuv_format;
+#endif
+
+/*
  * rs_sampler_value: Sampler wrap T value
  *
  */

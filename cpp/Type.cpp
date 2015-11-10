@@ -156,13 +156,16 @@ void Type::Builder::setZ(uint32_t value) {
     mDimZ = value;
 }
 
-void Type::Builder::setYuvFormat(RSYuvFormat format) {
+void Type::Builder::setYuvFormat(RsYuvFormat format) {
     if (format != RS_YUV_NONE && !(mElement->isCompatible(Element::YUV(mRS)))) {
         ALOGE("Invalid element for use with YUV.");
         return;
     }
 
-    if (format >= RS_YUV_MAX) {
+    if (format != RS_YUV_NONE &&
+        format != RS_YUV_YV12 &&
+        format != RS_YUV_NV21 &&
+        format != RS_YUV_420_888) {
         ALOGE("Invalid YUV format.");
         return;
     }
@@ -202,27 +205,20 @@ sp<const Type> Type::Builder::create() {
         }
     }
 
-    if (mYuvFormat) {
+    if (mYuvFormat != RS_YUV_NONE) {
         if (mDimZ || mDimFaces || mDimMipmaps) {
             ALOGE("YUV only supports basic 2D.");
             return nullptr;
         }
     }
 
-    uint32_t nativeYuv;
-    switch(mYuvFormat) {
-    case(RS_YUV_YV12):
-        nativeYuv = HAL_PIXEL_FORMAT_YV12;
-        break;
-    case (RS_YUV_NV21):
-        nativeYuv = HAL_PIXEL_FORMAT_YCrCb_420_SP;
-        break;
-    default:
-        nativeYuv = 0;
+    if (mYuvFormat == RS_YUV_420_888) {
+        ALOGE("YUV_420_888 not supported.");
+        return nullptr;
     }
 
     void * id = RS::dispatch->TypeCreate(mRS->getContext(), mElement->getID(), mDimX, mDimY, mDimZ,
-                                         mDimMipmaps, mDimFaces, nativeYuv);
+                                         mDimMipmaps, mDimFaces, mYuvFormat);
     Type *t = new Type(id, mRS);
     t->mElement = mElement;
     t->mDimX = mDimX;

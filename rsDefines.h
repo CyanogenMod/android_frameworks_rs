@@ -167,6 +167,13 @@ enum RsDataKind {
     RS_KIND_INVALID = 100,
 };
 
+enum RsYuvFormat {
+    RS_YUV_NONE    = 0,
+    RS_YUV_YV12    = 0x32315659, // HAL_PIXEL_FORMAT_YV12 in system/graphics.h
+    RS_YUV_NV21    = 0x11,       // HAL_PIXEL_FORMAT_YCrCb_420_SP
+    RS_YUV_420_888 = 0x23,       // HAL_PIXEL_FORMAT_YCbCr_420_888
+};
+
 enum RsSamplerParam {
     RS_SAMPLER_MIN_FILTER,
     RS_SAMPLER_MAG_FILTER,
