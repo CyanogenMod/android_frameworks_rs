@@ -177,7 +177,7 @@ ParameterEntry* Scanner::parseArgString(bool isReturn) {
         if (nameStart == string::npos) {
             if (s == "...") {
                 p->name = s;
-                p->type = "";
+                p->type = s;
                 p->lineNumber = mLineNumber;
                 return p;
             } else {

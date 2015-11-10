@@ -199,6 +199,9 @@ static bool mangleType(string vectorSize, list<string>* tokens, vector<string>* 
         delta = mangleLongName(tokens->front());
         isTerminal = true;
         tokens->pop_front();
+    } else if (eatFront(tokens, "...")) {
+        delta = "z";
+        isTerminal = true;
     } else {
         const char* c = findManglingOfBuiltInType(tokens);
         if (c) {

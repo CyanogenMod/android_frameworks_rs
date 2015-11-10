@@ -119,15 +119,15 @@ description:
  The kernel must be defined in the current script. In addition, more than one
  inputs can be used.
 
-E.g.<code><br/>
+ E.g.<code><br/>
  float __attribute__((kernel)) square(float a) {<br/>
  &nbsp;&nbsp;return a * a;<br/>
  }<br/>
-<br/>
+ <br/>
  void compute(rs_allocation ain, rs_allocation aout) {<br/>
  &nbsp;&nbsp;rsForEach(square, ain, aout);<br/>
  }<br/>
-<br/></code>
+ <br/></code>
 test: none
 end:
 
@@ -176,7 +176,8 @@ end:
 function: rsForEach
 version: UNRELEASED
 intrinsic: true
-attrib: =  # Not overloadable
+# Not overloadable
+attrib: =
 ret: void
 arg: rs_kernel kernel, "Function designator to a function that is defined with the kernel attribute."
 arg: ..., "Input and output allocations"
@@ -186,7 +187,8 @@ end:
 function: rsForEachWithOptions
 version: UNRELEASED
 intrinsic: true
-attrib: =  # Not overloadable
+# Not overloadable
+attrib: =
 ret: void
 arg: rs_kernel kernel, "Function designator to a function that is defined with the kernel attribute."
 arg: rs_script_call_t* options, "Launch options"
@@ -201,15 +203,14 @@ description:
  and return value expected by the kernel function. The output allocation is
  present if and only if the kernel has a non-void return value.
 
- E.g., <code><br/>
+ E.g.,<code><br/>
     rs_script_call_t opts = {0};<br/>
     opts.xStart = 0;<br/>
     opts.xEnd = dimX;<br/>
     opts.yStart = 0;<br/>
     opts.yEnd = dimY / 2;<br/>
     rsForEachWithOptions(foo, &opts, out, out);<br/>
-</code>
-
+ </code>
 test: none
 end:
 
@@ -219,10 +220,12 @@ internal: true
 ret: void
 arg: int slot
 arg: rs_script_call_t* options
-arg: rs_allocation input
-arg: rs_allocation output
+arg: int hasOutput, "Indicates whether the kernel generates output"
+arg: int numInputs, "Number of input allocations"
+arg: ..., "Input and output allocations"
 summary: (Internal API) Launch a kernel in the current Script (with the slot number)
 description:
+ Internal API to launch a kernel.
 test: none
 end:
 
