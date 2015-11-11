@@ -311,8 +311,8 @@ ClosureCreate {
     param RsScriptKernelID kernelID
     param RsAllocation returnValue
     param RsScriptFieldID * fieldIDs
-    param uintptr_t * values
-    param int * sizes
+    param const int64_t * values
+    param const int * sizes
     param RsClosure * depClosures
     param RsScriptFieldID * depFieldIDs
     ret RsClosure
@@ -323,7 +323,7 @@ InvokeClosureCreate {
     param RsScriptInvokeID invokeID
     param const void * params
     param const RsScriptFieldID * fieldIDs
-    param const uintptr_t * values
+    param const int64_t * values
     param const int * sizes
     ret RsClosure
 }
@@ -332,14 +332,14 @@ ClosureSetArg {
   param RsClosure closureID
   param uint32_t index
   param uintptr_t value
-  param size_t valueSize
+  param int valueSize
 }
 
 ClosureSetGlobal {
   param RsClosure closureID
   param RsScriptFieldID fieldID
-  param uintptr_t value
-  param size_t valueSize
+  param int64_t value
+  param int valueSize
 }
 
 SamplerCreate {
