@@ -239,7 +239,7 @@ static void writeFunctionPermutation(GeneratedFile* file, const FunctionSpecific
         if (p->isOutParameter) {
             ps << "*";
         }
-        if (!p->specName.empty()) {
+        if (!p->specName.empty() && p->rsType != "...") {
             ps << " " << p->specName;
         }
         const string s = ps.str();
