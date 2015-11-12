@@ -64,7 +64,7 @@
  *   near: Near plane.
  *   far: Far plane.
  */
-static inline void __attribute__((always_inline, overloadable))
+static inline void __attribute__((overloadable))
     rsExtractFrustumPlanes(const rs_matrix4x4* viewProj, float4* left, float4* right, float4* top,
                            float4* bottom, float4* near, float4* far) {
     // x y z w = a b c d in the plane equation
@@ -126,7 +126,7 @@ static inline void __attribute__((always_inline, overloadable))
  *   near: Near plane.
  *   far: Far plane.
  */
-static inline bool __attribute__((always_inline, overloadable))
+static inline bool __attribute__((overloadable))
     rsIsSphereInFrustum(float4* sphere, float4* left, float4* right, float4* top, float4* bottom,
                         float4* near, float4* far) {
     float distToCenter = dot(left->xyz, sphere->xyz) + left->w;
