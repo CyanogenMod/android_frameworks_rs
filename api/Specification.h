@@ -356,6 +356,10 @@ private:
     // The vectors of values with which we'll replace #1, #2, ...
     std::vector<std::vector<std::string> > mReplaceables;
 
+    // i-th entry is true if each entry in mReplaceables[i] has an equivalent
+    // RS numerical type (i.e. present in TYPES global)
+    std::vector<bool> mIsRSTAllowed;
+
     /* The collection of permutations for this specification, i.e. this class instantianted
      * for specific values of #1, #2, etc.  Owned.
      */
@@ -372,14 +376,22 @@ private:
     std::vector<ParameterEntry*> mParameters;  // The parameters.  Owned.
     std::vector<std::string> mInline;          // The inline code to be included in the header
 
-    /* Substitute the placeholders in the strings (e.g. #1, #2, ...) by the corresponding
-     * entries in mReplaceables.  indexOfReplaceable1 selects with value to use for #1,
-     * same for 2, 3, and 4.
+    /* Substitute the placeholders in the strings (e.g. #1, #2, ...) by the
+     * corresponding entries in mReplaceables.  Substitute placeholders for RS
+     * types (#RST_1, #RST_2, ...) by the RS Data type strings (UNSIGNED_8,
+     * FLOAT_32 etc.) of the corresponding types in mReplaceables.
+     * indexOfReplaceable1 selects with value to use for #1, same for 2, 3, and
+     * 4.
      */
     std::string expandString(std::string s, int indexOfReplaceable[MAX_REPLACEABLES]) const;
     void expandStringVector(const std::vector<std::string>& in,
                             int replacementIndexes[MAX_REPLACEABLES],
                             std::vector<std::string>* out) const;
+
+    // Helper function used by expandString to perform #RST_* substitution
+    std::string expandRSTypeInString(const std::string &s,
+                                     const std::string &pattern,
+                                     const std::string &cTypeStr) const;
 
     // Fill the mPermutations field.
     void createPermutations(Function* function, Scanner* scanner);
@@ -422,6 +434,12 @@ public:
     bool isOverloadable() const {
         return mAttribute.empty() || mAttribute[0] != '=';
     }
+
+    /* Check if RST_i is present in 's' and report an error if 'allow' is false
+     * or the i-th replacement list is not a valid candidate for RST_i
+     * replacement
+     */
+    void checkRSTPatternValidity(const std::string &s, bool allow, Scanner *scanner);
 
     // Parse a function specification and add it to specFile.
     static void scanFunctionSpecification(Scanner* scanner, SpecFile* specFile, unsigned int maxApiLevel);
