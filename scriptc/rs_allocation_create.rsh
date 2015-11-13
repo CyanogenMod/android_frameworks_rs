@@ -133,6 +133,13 @@ extern rs_type __attribute__((overloadable))
  *  only supported usage flags for Allocations created from within a RenderScript
  *  Script.
  *
+ *  You can also use rsCreateAllocation_ wrapper functions to directly
+ *  create Allocations of scalar and vector numerical types without creating
+ *  intermediate rs_element or rs_type objects.
+ *
+ *  E.g. rsCreateAllocation_int4() returns an Allocation of int4 data type of
+ *  specified dimensions.
+ *
  * Parameters:
  *   type: Type of the Allocation
  *   usage: Usage flag for the allocation
@@ -145,6 +152,1086 @@ extern rs_allocation __attribute__((overloadable))
 #if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
 extern rs_allocation __attribute__((overloadable))
     rsCreateAllocation(rs_type type);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_float(uint32_t dimX, uint32_t dimY, uint32_t dimZ) {
+     rs_element e = rsCreateElement(RS_TYPE_FLOAT_32);
+     rs_type t = rsCreateType(e, dimX, dimY, dimZ);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_double(uint32_t dimX, uint32_t dimY, uint32_t dimZ) {
+     rs_element e = rsCreateElement(RS_TYPE_FLOAT_64);
+     rs_type t = rsCreateType(e, dimX, dimY, dimZ);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_char(uint32_t dimX, uint32_t dimY, uint32_t dimZ) {
+     rs_element e = rsCreateElement(RS_TYPE_SIGNED_8);
+     rs_type t = rsCreateType(e, dimX, dimY, dimZ);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_uchar(uint32_t dimX, uint32_t dimY, uint32_t dimZ) {
+     rs_element e = rsCreateElement(RS_TYPE_UNSIGNED_8);
+     rs_type t = rsCreateType(e, dimX, dimY, dimZ);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_short(uint32_t dimX, uint32_t dimY, uint32_t dimZ) {
+     rs_element e = rsCreateElement(RS_TYPE_SIGNED_16);
+     rs_type t = rsCreateType(e, dimX, dimY, dimZ);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_ushort(uint32_t dimX, uint32_t dimY, uint32_t dimZ) {
+     rs_element e = rsCreateElement(RS_TYPE_UNSIGNED_16);
+     rs_type t = rsCreateType(e, dimX, dimY, dimZ);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_int(uint32_t dimX, uint32_t dimY, uint32_t dimZ) {
+     rs_element e = rsCreateElement(RS_TYPE_SIGNED_32);
+     rs_type t = rsCreateType(e, dimX, dimY, dimZ);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_uint(uint32_t dimX, uint32_t dimY, uint32_t dimZ) {
+     rs_element e = rsCreateElement(RS_TYPE_UNSIGNED_32);
+     rs_type t = rsCreateType(e, dimX, dimY, dimZ);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_long(uint32_t dimX, uint32_t dimY, uint32_t dimZ) {
+     rs_element e = rsCreateElement(RS_TYPE_SIGNED_64);
+     rs_type t = rsCreateType(e, dimX, dimY, dimZ);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_ulong(uint32_t dimX, uint32_t dimY, uint32_t dimZ) {
+     rs_element e = rsCreateElement(RS_TYPE_UNSIGNED_64);
+     rs_type t = rsCreateType(e, dimX, dimY, dimZ);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_float2(uint32_t dimX, uint32_t dimY, uint32_t dimZ) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_FLOAT_32, 2);
+     rs_type t = rsCreateType(e, dimX, dimY, dimZ);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_float3(uint32_t dimX, uint32_t dimY, uint32_t dimZ) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_FLOAT_32, 3);
+     rs_type t = rsCreateType(e, dimX, dimY, dimZ);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_float4(uint32_t dimX, uint32_t dimY, uint32_t dimZ) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_FLOAT_32, 4);
+     rs_type t = rsCreateType(e, dimX, dimY, dimZ);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_double2(uint32_t dimX, uint32_t dimY, uint32_t dimZ) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_FLOAT_64, 2);
+     rs_type t = rsCreateType(e, dimX, dimY, dimZ);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_double3(uint32_t dimX, uint32_t dimY, uint32_t dimZ) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_FLOAT_64, 3);
+     rs_type t = rsCreateType(e, dimX, dimY, dimZ);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_double4(uint32_t dimX, uint32_t dimY, uint32_t dimZ) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_FLOAT_64, 4);
+     rs_type t = rsCreateType(e, dimX, dimY, dimZ);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_char2(uint32_t dimX, uint32_t dimY, uint32_t dimZ) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_SIGNED_8, 2);
+     rs_type t = rsCreateType(e, dimX, dimY, dimZ);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_char3(uint32_t dimX, uint32_t dimY, uint32_t dimZ) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_SIGNED_8, 3);
+     rs_type t = rsCreateType(e, dimX, dimY, dimZ);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_char4(uint32_t dimX, uint32_t dimY, uint32_t dimZ) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_SIGNED_8, 4);
+     rs_type t = rsCreateType(e, dimX, dimY, dimZ);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_uchar2(uint32_t dimX, uint32_t dimY, uint32_t dimZ) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_UNSIGNED_8, 2);
+     rs_type t = rsCreateType(e, dimX, dimY, dimZ);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_uchar3(uint32_t dimX, uint32_t dimY, uint32_t dimZ) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_UNSIGNED_8, 3);
+     rs_type t = rsCreateType(e, dimX, dimY, dimZ);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_uchar4(uint32_t dimX, uint32_t dimY, uint32_t dimZ) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_UNSIGNED_8, 4);
+     rs_type t = rsCreateType(e, dimX, dimY, dimZ);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_short2(uint32_t dimX, uint32_t dimY, uint32_t dimZ) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_SIGNED_16, 2);
+     rs_type t = rsCreateType(e, dimX, dimY, dimZ);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_short3(uint32_t dimX, uint32_t dimY, uint32_t dimZ) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_SIGNED_16, 3);
+     rs_type t = rsCreateType(e, dimX, dimY, dimZ);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_short4(uint32_t dimX, uint32_t dimY, uint32_t dimZ) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_SIGNED_16, 4);
+     rs_type t = rsCreateType(e, dimX, dimY, dimZ);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_ushort2(uint32_t dimX, uint32_t dimY, uint32_t dimZ) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_UNSIGNED_16, 2);
+     rs_type t = rsCreateType(e, dimX, dimY, dimZ);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_ushort3(uint32_t dimX, uint32_t dimY, uint32_t dimZ) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_UNSIGNED_16, 3);
+     rs_type t = rsCreateType(e, dimX, dimY, dimZ);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_ushort4(uint32_t dimX, uint32_t dimY, uint32_t dimZ) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_UNSIGNED_16, 4);
+     rs_type t = rsCreateType(e, dimX, dimY, dimZ);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_int2(uint32_t dimX, uint32_t dimY, uint32_t dimZ) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_SIGNED_32, 2);
+     rs_type t = rsCreateType(e, dimX, dimY, dimZ);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_int3(uint32_t dimX, uint32_t dimY, uint32_t dimZ) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_SIGNED_32, 3);
+     rs_type t = rsCreateType(e, dimX, dimY, dimZ);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_int4(uint32_t dimX, uint32_t dimY, uint32_t dimZ) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_SIGNED_32, 4);
+     rs_type t = rsCreateType(e, dimX, dimY, dimZ);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_uint2(uint32_t dimX, uint32_t dimY, uint32_t dimZ) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_UNSIGNED_32, 2);
+     rs_type t = rsCreateType(e, dimX, dimY, dimZ);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_uint3(uint32_t dimX, uint32_t dimY, uint32_t dimZ) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_UNSIGNED_32, 3);
+     rs_type t = rsCreateType(e, dimX, dimY, dimZ);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_uint4(uint32_t dimX, uint32_t dimY, uint32_t dimZ) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_UNSIGNED_32, 4);
+     rs_type t = rsCreateType(e, dimX, dimY, dimZ);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_long2(uint32_t dimX, uint32_t dimY, uint32_t dimZ) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_SIGNED_64, 2);
+     rs_type t = rsCreateType(e, dimX, dimY, dimZ);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_long3(uint32_t dimX, uint32_t dimY, uint32_t dimZ) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_SIGNED_64, 3);
+     rs_type t = rsCreateType(e, dimX, dimY, dimZ);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_long4(uint32_t dimX, uint32_t dimY, uint32_t dimZ) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_SIGNED_64, 4);
+     rs_type t = rsCreateType(e, dimX, dimY, dimZ);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_ulong2(uint32_t dimX, uint32_t dimY, uint32_t dimZ) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_UNSIGNED_64, 2);
+     rs_type t = rsCreateType(e, dimX, dimY, dimZ);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_ulong3(uint32_t dimX, uint32_t dimY, uint32_t dimZ) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_UNSIGNED_64, 3);
+     rs_type t = rsCreateType(e, dimX, dimY, dimZ);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_ulong4(uint32_t dimX, uint32_t dimY, uint32_t dimZ) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_UNSIGNED_64, 4);
+     rs_type t = rsCreateType(e, dimX, dimY, dimZ);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_float(uint32_t dimX, uint32_t dimY) {
+     rs_element e = rsCreateElement(RS_TYPE_FLOAT_32);
+     rs_type t = rsCreateType(e, dimX, dimY);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_double(uint32_t dimX, uint32_t dimY) {
+     rs_element e = rsCreateElement(RS_TYPE_FLOAT_64);
+     rs_type t = rsCreateType(e, dimX, dimY);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_char(uint32_t dimX, uint32_t dimY) {
+     rs_element e = rsCreateElement(RS_TYPE_SIGNED_8);
+     rs_type t = rsCreateType(e, dimX, dimY);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_uchar(uint32_t dimX, uint32_t dimY) {
+     rs_element e = rsCreateElement(RS_TYPE_UNSIGNED_8);
+     rs_type t = rsCreateType(e, dimX, dimY);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_short(uint32_t dimX, uint32_t dimY) {
+     rs_element e = rsCreateElement(RS_TYPE_SIGNED_16);
+     rs_type t = rsCreateType(e, dimX, dimY);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_ushort(uint32_t dimX, uint32_t dimY) {
+     rs_element e = rsCreateElement(RS_TYPE_UNSIGNED_16);
+     rs_type t = rsCreateType(e, dimX, dimY);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_int(uint32_t dimX, uint32_t dimY) {
+     rs_element e = rsCreateElement(RS_TYPE_SIGNED_32);
+     rs_type t = rsCreateType(e, dimX, dimY);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_uint(uint32_t dimX, uint32_t dimY) {
+     rs_element e = rsCreateElement(RS_TYPE_UNSIGNED_32);
+     rs_type t = rsCreateType(e, dimX, dimY);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_long(uint32_t dimX, uint32_t dimY) {
+     rs_element e = rsCreateElement(RS_TYPE_SIGNED_64);
+     rs_type t = rsCreateType(e, dimX, dimY);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_ulong(uint32_t dimX, uint32_t dimY) {
+     rs_element e = rsCreateElement(RS_TYPE_UNSIGNED_64);
+     rs_type t = rsCreateType(e, dimX, dimY);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_float2(uint32_t dimX, uint32_t dimY) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_FLOAT_32, 2);
+     rs_type t = rsCreateType(e, dimX, dimY);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_float3(uint32_t dimX, uint32_t dimY) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_FLOAT_32, 3);
+     rs_type t = rsCreateType(e, dimX, dimY);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_float4(uint32_t dimX, uint32_t dimY) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_FLOAT_32, 4);
+     rs_type t = rsCreateType(e, dimX, dimY);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_double2(uint32_t dimX, uint32_t dimY) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_FLOAT_64, 2);
+     rs_type t = rsCreateType(e, dimX, dimY);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_double3(uint32_t dimX, uint32_t dimY) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_FLOAT_64, 3);
+     rs_type t = rsCreateType(e, dimX, dimY);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_double4(uint32_t dimX, uint32_t dimY) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_FLOAT_64, 4);
+     rs_type t = rsCreateType(e, dimX, dimY);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_char2(uint32_t dimX, uint32_t dimY) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_SIGNED_8, 2);
+     rs_type t = rsCreateType(e, dimX, dimY);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_char3(uint32_t dimX, uint32_t dimY) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_SIGNED_8, 3);
+     rs_type t = rsCreateType(e, dimX, dimY);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_char4(uint32_t dimX, uint32_t dimY) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_SIGNED_8, 4);
+     rs_type t = rsCreateType(e, dimX, dimY);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_uchar2(uint32_t dimX, uint32_t dimY) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_UNSIGNED_8, 2);
+     rs_type t = rsCreateType(e, dimX, dimY);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_uchar3(uint32_t dimX, uint32_t dimY) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_UNSIGNED_8, 3);
+     rs_type t = rsCreateType(e, dimX, dimY);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_uchar4(uint32_t dimX, uint32_t dimY) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_UNSIGNED_8, 4);
+     rs_type t = rsCreateType(e, dimX, dimY);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_short2(uint32_t dimX, uint32_t dimY) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_SIGNED_16, 2);
+     rs_type t = rsCreateType(e, dimX, dimY);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_short3(uint32_t dimX, uint32_t dimY) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_SIGNED_16, 3);
+     rs_type t = rsCreateType(e, dimX, dimY);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_short4(uint32_t dimX, uint32_t dimY) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_SIGNED_16, 4);
+     rs_type t = rsCreateType(e, dimX, dimY);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_ushort2(uint32_t dimX, uint32_t dimY) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_UNSIGNED_16, 2);
+     rs_type t = rsCreateType(e, dimX, dimY);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_ushort3(uint32_t dimX, uint32_t dimY) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_UNSIGNED_16, 3);
+     rs_type t = rsCreateType(e, dimX, dimY);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_ushort4(uint32_t dimX, uint32_t dimY) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_UNSIGNED_16, 4);
+     rs_type t = rsCreateType(e, dimX, dimY);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_int2(uint32_t dimX, uint32_t dimY) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_SIGNED_32, 2);
+     rs_type t = rsCreateType(e, dimX, dimY);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_int3(uint32_t dimX, uint32_t dimY) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_SIGNED_32, 3);
+     rs_type t = rsCreateType(e, dimX, dimY);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_int4(uint32_t dimX, uint32_t dimY) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_SIGNED_32, 4);
+     rs_type t = rsCreateType(e, dimX, dimY);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_uint2(uint32_t dimX, uint32_t dimY) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_UNSIGNED_32, 2);
+     rs_type t = rsCreateType(e, dimX, dimY);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_uint3(uint32_t dimX, uint32_t dimY) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_UNSIGNED_32, 3);
+     rs_type t = rsCreateType(e, dimX, dimY);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_uint4(uint32_t dimX, uint32_t dimY) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_UNSIGNED_32, 4);
+     rs_type t = rsCreateType(e, dimX, dimY);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_long2(uint32_t dimX, uint32_t dimY) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_SIGNED_64, 2);
+     rs_type t = rsCreateType(e, dimX, dimY);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_long3(uint32_t dimX, uint32_t dimY) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_SIGNED_64, 3);
+     rs_type t = rsCreateType(e, dimX, dimY);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_long4(uint32_t dimX, uint32_t dimY) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_SIGNED_64, 4);
+     rs_type t = rsCreateType(e, dimX, dimY);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_ulong2(uint32_t dimX, uint32_t dimY) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_UNSIGNED_64, 2);
+     rs_type t = rsCreateType(e, dimX, dimY);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_ulong3(uint32_t dimX, uint32_t dimY) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_UNSIGNED_64, 3);
+     rs_type t = rsCreateType(e, dimX, dimY);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_ulong4(uint32_t dimX, uint32_t dimY) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_UNSIGNED_64, 4);
+     rs_type t = rsCreateType(e, dimX, dimY);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_float(uint32_t dimX) {
+     rs_element e = rsCreateElement(RS_TYPE_FLOAT_32);
+     rs_type t = rsCreateType(e, dimX);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_double(uint32_t dimX) {
+     rs_element e = rsCreateElement(RS_TYPE_FLOAT_64);
+     rs_type t = rsCreateType(e, dimX);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_char(uint32_t dimX) {
+     rs_element e = rsCreateElement(RS_TYPE_SIGNED_8);
+     rs_type t = rsCreateType(e, dimX);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_uchar(uint32_t dimX) {
+     rs_element e = rsCreateElement(RS_TYPE_UNSIGNED_8);
+     rs_type t = rsCreateType(e, dimX);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_short(uint32_t dimX) {
+     rs_element e = rsCreateElement(RS_TYPE_SIGNED_16);
+     rs_type t = rsCreateType(e, dimX);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_ushort(uint32_t dimX) {
+     rs_element e = rsCreateElement(RS_TYPE_UNSIGNED_16);
+     rs_type t = rsCreateType(e, dimX);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_int(uint32_t dimX) {
+     rs_element e = rsCreateElement(RS_TYPE_SIGNED_32);
+     rs_type t = rsCreateType(e, dimX);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_uint(uint32_t dimX) {
+     rs_element e = rsCreateElement(RS_TYPE_UNSIGNED_32);
+     rs_type t = rsCreateType(e, dimX);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_long(uint32_t dimX) {
+     rs_element e = rsCreateElement(RS_TYPE_SIGNED_64);
+     rs_type t = rsCreateType(e, dimX);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_ulong(uint32_t dimX) {
+     rs_element e = rsCreateElement(RS_TYPE_UNSIGNED_64);
+     rs_type t = rsCreateType(e, dimX);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_float2(uint32_t dimX) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_FLOAT_32, 2);
+     rs_type t = rsCreateType(e, dimX);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_float3(uint32_t dimX) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_FLOAT_32, 3);
+     rs_type t = rsCreateType(e, dimX);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_float4(uint32_t dimX) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_FLOAT_32, 4);
+     rs_type t = rsCreateType(e, dimX);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_double2(uint32_t dimX) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_FLOAT_64, 2);
+     rs_type t = rsCreateType(e, dimX);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_double3(uint32_t dimX) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_FLOAT_64, 3);
+     rs_type t = rsCreateType(e, dimX);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_double4(uint32_t dimX) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_FLOAT_64, 4);
+     rs_type t = rsCreateType(e, dimX);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_char2(uint32_t dimX) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_SIGNED_8, 2);
+     rs_type t = rsCreateType(e, dimX);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_char3(uint32_t dimX) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_SIGNED_8, 3);
+     rs_type t = rsCreateType(e, dimX);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_char4(uint32_t dimX) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_SIGNED_8, 4);
+     rs_type t = rsCreateType(e, dimX);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_uchar2(uint32_t dimX) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_UNSIGNED_8, 2);
+     rs_type t = rsCreateType(e, dimX);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_uchar3(uint32_t dimX) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_UNSIGNED_8, 3);
+     rs_type t = rsCreateType(e, dimX);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_uchar4(uint32_t dimX) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_UNSIGNED_8, 4);
+     rs_type t = rsCreateType(e, dimX);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_short2(uint32_t dimX) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_SIGNED_16, 2);
+     rs_type t = rsCreateType(e, dimX);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_short3(uint32_t dimX) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_SIGNED_16, 3);
+     rs_type t = rsCreateType(e, dimX);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_short4(uint32_t dimX) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_SIGNED_16, 4);
+     rs_type t = rsCreateType(e, dimX);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_ushort2(uint32_t dimX) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_UNSIGNED_16, 2);
+     rs_type t = rsCreateType(e, dimX);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_ushort3(uint32_t dimX) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_UNSIGNED_16, 3);
+     rs_type t = rsCreateType(e, dimX);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_ushort4(uint32_t dimX) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_UNSIGNED_16, 4);
+     rs_type t = rsCreateType(e, dimX);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_int2(uint32_t dimX) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_SIGNED_32, 2);
+     rs_type t = rsCreateType(e, dimX);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_int3(uint32_t dimX) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_SIGNED_32, 3);
+     rs_type t = rsCreateType(e, dimX);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_int4(uint32_t dimX) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_SIGNED_32, 4);
+     rs_type t = rsCreateType(e, dimX);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_uint2(uint32_t dimX) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_UNSIGNED_32, 2);
+     rs_type t = rsCreateType(e, dimX);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_uint3(uint32_t dimX) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_UNSIGNED_32, 3);
+     rs_type t = rsCreateType(e, dimX);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_uint4(uint32_t dimX) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_UNSIGNED_32, 4);
+     rs_type t = rsCreateType(e, dimX);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_long2(uint32_t dimX) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_SIGNED_64, 2);
+     rs_type t = rsCreateType(e, dimX);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_long3(uint32_t dimX) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_SIGNED_64, 3);
+     rs_type t = rsCreateType(e, dimX);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_long4(uint32_t dimX) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_SIGNED_64, 4);
+     rs_type t = rsCreateType(e, dimX);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_ulong2(uint32_t dimX) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_UNSIGNED_64, 2);
+     rs_type t = rsCreateType(e, dimX);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_ulong3(uint32_t dimX) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_UNSIGNED_64, 3);
+     rs_type t = rsCreateType(e, dimX);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_ulong4(uint32_t dimX) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_UNSIGNED_64, 4);
+     rs_type t = rsCreateType(e, dimX);
+     return rsCreateAllocation(t);
+}
 #endif
 
 #endif // RENDERSCRIPT_RS_ALLOCATION_CREATE_RSH
