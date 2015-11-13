@@ -509,9 +509,9 @@ void Batch::setGlobalsForBatch() {
         const IDBase* funcID = closure->mFunctionID.get();
         Script* s = funcID->mScript;;
         for (const auto& p : closure->mGlobals) {
-            const void* value = p.second.first;
+            const int64_t value = p.second.first;
             int size = p.second.second;
-            if (value == nullptr && size == 0) {
+            if (value == 0 && size == 0) {
                 // This indicates the current closure depends on another closure for a
                 // global in their shared module (script). In this case we don't need to
                 // copy the value. For example, an invoke intializes a global variable
