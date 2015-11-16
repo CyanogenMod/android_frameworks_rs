@@ -448,6 +448,12 @@ extern float __attribute__((overloadable)) fract(float v, float *iptr) {
 }
 FN_FUNC_FN_PFN(fract)
 
+extern float __attribute__((const, overloadable)) fract(float v) {
+    float unused;
+    return fract(v, &unused);
+}
+FN_FUNC_FN(fract)
+
 extern float __attribute__((overloadable)) frexp(float, int *);
 FN_FUNC_FN_PIN(frexp)
 
