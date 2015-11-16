@@ -29,6 +29,7 @@ public class UT_single_source_alloc extends UnitTest {
     private int dimZ = 5;
     private int start = 23;
 
+    // Bug: 24862914: Add half once the bug is fixed
     // rs_data_type for float, double, char, short, int, long, uchar, ushort, uint, ulong in that
     // order
     private int rsDataTypes[] = {2, 3, 4, 5, 6, 7, 8, 9, 10, 11};
