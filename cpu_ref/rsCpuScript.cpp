@@ -465,6 +465,10 @@ const char* RsdCpuScriptImpl::findCoreLib(const bcinfo::MetadataExtractor& ME, c
         return SYSLIBPATH"/libclcore_debug.bc";
     }
 
+    if (ME.hasDebugInfo()) {
+        return SYSLIBPATH"/libclcore_g.bc";
+    }
+
     // If a callback has been registered to specify a library, use that.
     RSSelectRTCallback selectRTCallback = mCtx->getSelectRTCallback();
     if (selectRTCallback != nullptr) {
