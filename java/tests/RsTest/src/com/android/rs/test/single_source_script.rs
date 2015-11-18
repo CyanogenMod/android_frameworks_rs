@@ -3,12 +3,20 @@
 int dimX;
 int dimY;
 
+rs_allocation gAllocOut;
+
 int __attribute__((kernel)) foo(int a) {
     return a * 2;
 }
 
 int __attribute__((kernel)) goo(int a, int b) {
     return a + b;
+}
+
+void __attribute__((kernel)) bar(int x, int y) {
+  int a = rsGetElementAt_int(gAllocOut, x, y);
+  a++;
+  rsSetElementAt_int(gAllocOut, a, x, y);
 }
 
 static void validate(rs_allocation out) {
@@ -23,7 +31,7 @@ static void validate(rs_allocation out) {
             if (j < dimY / 2) {
                 expected *= 2;
             }
-            expected += (i + j * dimX);
+            expected += (i + j * dimX) + 1;
             if (actual != expected) {
                 failed = true;
                 rsDebug("row     ", j);
@@ -57,6 +65,7 @@ void entrypoint(rs_allocation in, rs_allocation out) {
 
     rsForEach(foo, in, out);
     rsForEach(foo, out, out);
+
     rs_script_call_t opts = {0};
     opts.xStart = 0;
     opts.xEnd = dimX;
@@ -65,6 +74,14 @@ void entrypoint(rs_allocation in, rs_allocation out) {
     rsForEachWithOptions(foo, &opts, out, out);
 
     rsForEach(goo, in, out, out);
+
+    gAllocOut = out;
+    rs_script_call_t opts2 = {0};
+    opts2.xStart = 0;
+    opts2.xEnd = dimX;
+    opts2.yStart = 0;
+    opts2.yEnd = dimY;
+    rsForEachWithOptions(bar, &opts2);
 
     validate(out);
 }
