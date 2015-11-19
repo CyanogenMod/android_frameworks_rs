@@ -43,6 +43,9 @@ clcore_files := \
     $(clcore_base_files) \
     arch/generic.c
 
+clcore_g_files := \
+    rs_abi_debuginfo.c
+
 clcore_files_32 := \
     $(clcore_base_files_32) \
     ll32/math.ll
@@ -145,8 +148,8 @@ include $(CLEAR_VARS)
 LOCAL_MODULE := libclcore_g.bc
 rs_g_runtime := 1
 LOCAL_CFLAGS += $(clcore_cflags)
-LOCAL_CFLAGS += -g
-LOCAL_SRC_FILES := $(clcore_base_files)
+LOCAL_CFLAGS += -g -O0
+LOCAL_SRC_FILES := $(clcore_base_files) $(clcore_g_files)
 LOCAL_SRC_FILES_32 := arch/generic.c
 
 ifeq ($(TARGET_ARCH),$(filter $(TARGET_ARCH),arm64))
