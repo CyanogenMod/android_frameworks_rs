@@ -117,7 +117,7 @@ description:
  Starting in API level *UNRELEASED*, an arbitrary kernel function can be used,
  as specified by the kernel argument. The script argument is removed.
  The kernel must be defined in the current script. In addition, more than one
- inputs can be used.
+ input can be used.
 
  E.g.<code><br/>
  float __attribute__((kernel)) square(float a) {<br/>
@@ -222,7 +222,7 @@ arg: int slot
 arg: rs_script_call_t* options
 arg: int hasOutput, "Indicates whether the kernel generates output"
 arg: int numInputs, "Number of input allocations"
-arg: ..., "Input and output allocations"
+arg: rs_allocation* allocs, "Input and output allocations"
 summary: (Internal API) Launch a kernel in the current Script (with the slot number)
 description:
  Internal API to launch a kernel.

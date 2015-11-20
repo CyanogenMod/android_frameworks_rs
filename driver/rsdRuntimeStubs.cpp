@@ -625,30 +625,24 @@ ELEMENT_AT_OVERLOADS(long, long long)
 // ForEach routines
 //////////////////////////////////////////////////////////////////////////////
 void rsForEachInternal(int slot,
-                       rs_script_call *call,
+                       rs_script_call *options,
                        int hasOutput,
-                       int numIn,
-                       ...) {
+                       int numInputs,
+                       ::rs_allocation* allocs) {
     Context *rsc = RsdCpuReference::getTlsContext();
     Script *s = const_cast<Script*>(RsdCpuReference::getTlsScript());
-    if (numIn > 100) {
-        ALOGE("rsForEachInternal: too many inputs to a kernel.");
+    if (numInputs > RS_KERNEL_MAX_ARGUMENTS) {
+        rsc->setError(RS_ERROR_BAD_SCRIPT,
+                      "rsForEachInternal: too many inputs to a kernel.");
         return;
     }
-    Allocation* inputs[100];
-    Allocation* out = nullptr;
-    va_list argp;
-    va_start(argp, numIn);
-    for (int i = 0; i < numIn; i++) {
-        ::rs_allocation alloc = va_arg(argp, ::rs_allocation);
-        inputs[i] = (Allocation*)alloc.p;
+    Allocation* inputs[RS_KERNEL_MAX_ARGUMENTS];
+    for (int i = 0; i < numInputs; i++) {
+        inputs[i] = (Allocation*)allocs[i].p;
     }
-    if (hasOutput) {
-        ::rs_allocation outAlloc = va_arg(argp, ::rs_allocation);
-        out = (Allocation*)outAlloc.p;
-    }
-    va_end(argp);
-    rsrForEach(rsc, s, slot, numIn, numIn > 0 ? inputs : nullptr, out, nullptr, 0, (RsScriptCall*)call);
+    Allocation* out = hasOutput ? (Allocation*)allocs[numInputs].p : nullptr;
+    rsrForEach(rsc, s, slot, numInputs, numInputs > 0 ? inputs : nullptr, out,
+               nullptr, 0, (RsScriptCall*)options);
 }
 
 void __attribute__((overloadable)) rsForEach(::rs_script script,
