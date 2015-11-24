@@ -221,6 +221,19 @@ void CreateAndTestAlloc(int dataType, int vecSize) {
     _RS_ASSERT(!rsIsObject(rsCreatePixelElement(dt, dk)));                     \
 }
 
+#define TEST_HELPER(suffix) {                                     \
+    _RS_ASSERT(rsIsObject(rsCreateAllocation_##suffix(3)));       \
+    _RS_ASSERT(rsIsObject(rsCreateAllocation_##suffix(3, 4)));    \
+    _RS_ASSERT(rsIsObject(rsCreateAllocation_##suffix(3, 4, 5))); \
+    }
+
+#define TEST_HELPERS(CT) { \
+    TEST_HELPER(CT);       \
+    TEST_HELPER(CT##2);    \
+    TEST_HELPER(CT##3);    \
+    TEST_HELPER(CT##4);    \
+}
+
 void TestAllCases() {
     // vector_width must be at least 2
     rs_element oneElt = rsCreateVectorElement(RS_TYPE_SIGNED_32, 1);
@@ -359,6 +372,18 @@ void TestAllCases() {
                     (uint32_t) RS_ALLOCATION_USAGE_IO_OUTPUT)));
     _RS_ASSERT(!rsIsObject(rsCreateAllocation(I32_3_2D,
                     (uint32_t) RS_ALLOCATION_USAGE_SHARED)));
+
+    // Bug: 24862914: Add half once the bug is fixed
+    TEST_HELPERS(float);
+    TEST_HELPERS(double);
+    TEST_HELPERS(char);
+    TEST_HELPERS(short);
+    TEST_HELPERS(int);
+    TEST_HELPERS(long);
+    TEST_HELPERS(uchar);
+    TEST_HELPERS(ushort);
+    TEST_HELPERS(uint);
+    TEST_HELPERS(ulong);
 }
 
 void single_source_alloc_test() {

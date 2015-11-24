@@ -52,6 +52,11 @@ const int NUM_TYPES = sizeof(TYPES) / sizeof(TYPES[0]);
 
 static const char kTagUnreleased[] = "UNRELEASED";
 
+// Patterns that get substituted with C type or RS Data type names in function
+// names, arguments, return types, and inlines.
+static const string kCTypePatterns[] = {"#1", "#2", "#3", "#4"};
+static const string kRSTypePatterns[] = {"#RST_1", "#RST_2", "#RST_3", "#RST_4"};
+
 // The singleton of the collected information of all the spec files.
 SystemSpecification systemSpecification;
 
@@ -99,6 +104,15 @@ static vector<string> convertToTypeVector(const string& input) {
     }
 
     return result;
+}
+
+// Returns true if each entry in typeVector is an RS numerical type
+static bool isRSTValid(const vector<string> &typeVector) {
+    for (auto type: typeVector) {
+        if (findCType(type) == -1)
+            return false;
+    }
+    return true;
 }
 
 void ParameterDefinition::parseParameterDefinition(const string& type, const string& name,
@@ -431,20 +445,34 @@ FunctionSpecification::~FunctionSpecification() {
     }
 }
 
+string FunctionSpecification::expandRSTypeInString(const string &s,
+                                                   const string &pattern,
+                                                   const string &cTypeStr) const {
+    // Find index of numerical type corresponding to cTypeStr.  The case where
+    // pattern is found in s but cTypeStr is not a numerical type is checked in
+    // checkRSTPatternValidity.
+    int typeIdx = findCType(cTypeStr);
+    if (typeIdx == -1) {
+        return s;
+    }
+    // If index exists, perform replacement.
+    return stringReplace(s, pattern, TYPES[typeIdx].rsDataType);
+}
+
 string FunctionSpecification::expandString(string s,
                                            int replacementIndexes[MAX_REPLACEABLES]) const {
-    if (mReplaceables.size() > 0) {
-        s = stringReplace(s, "#1", mReplaceables[0][replacementIndexes[0]]);
+
+
+    for (unsigned idx = 0; idx < mReplaceables.size(); idx ++) {
+        string toString = mReplaceables[idx][replacementIndexes[idx]];
+
+        // replace #RST_i patterns with RS datatype corresponding to toString
+        s = expandRSTypeInString(s, kRSTypePatterns[idx], toString);
+
+        // replace #i patterns with C type from mReplaceables
+        s = stringReplace(s, kCTypePatterns[idx], toString);
     }
-    if (mReplaceables.size() > 1) {
-        s = stringReplace(s, "#2", mReplaceables[1][replacementIndexes[1]]);
-    }
-    if (mReplaceables.size() > 2) {
-        s = stringReplace(s, "#3", mReplaceables[2][replacementIndexes[2]]);
-    }
-    if (mReplaceables.size() > 3) {
-        s = stringReplace(s, "#4", mReplaceables[3][replacementIndexes[3]]);
-    }
+
     return s;
 }
 
@@ -542,6 +570,24 @@ bool FunctionSpecification::hasTests(unsigned int versionOfTestFiles) const {
     return true;
 }
 
+void FunctionSpecification::checkRSTPatternValidity(const string &inlineStr,  bool allow,
+                                                    Scanner *scanner) {
+    for (int i = 0; i < MAX_REPLACEABLES; i ++) {
+        bool patternFound = inlineStr.find(kRSTypePatterns[i]) != string::npos;
+
+        if (patternFound) {
+            if (!allow) {
+                scanner->error() << "RST_i pattern not allowed here\n";
+            }
+            else if (mIsRSTAllowed[i] == false) {
+                scanner->error() << "Found pattern \"" << kRSTypePatterns[i]
+                    << "\" in spec.  But some entry in the corresponding"
+                    << " parameter list cannot be translated to an RS type\n";
+            }
+        }
+    }
+}
+
 void FunctionSpecification::scanFunctionSpecification(Scanner* scanner, SpecFile* specFile,
                                                       unsigned int maxApiLevel) {
     // Some functions like convert have # part of the name.  Truncate at that point.
@@ -596,21 +642,35 @@ void FunctionSpecification::scanFunctionSpecification(Scanner* scanner, SpecFile
             t.push_back("4");
         }
         spec->mReplaceables.push_back(t);
+        // RST_i pattern not applicable for width.
+        spec->mIsRSTAllowed.push_back(false);
     }
 
     while (scanner->findOptionalTag("t:")) {
         spec->mReplaceables.push_back(convertToTypeVector(scanner->getValue()));
+        spec->mIsRSTAllowed.push_back(isRSTValid(spec->mReplaceables.back()));
     }
+
+    // Disallow RST_* pattern in function name
+    // FIXME the line number for this error would be wrong
+    spec->checkRSTPatternValidity(unexpandedName, false, scanner);
 
     if (scanner->findTag("ret:")) {
         ParameterEntry* p = scanner->parseArgString(true);
         function->addReturn(p, scanner);
         spec->mReturn = p;
+
+        // Disallow RST_* pattern in return type
+        spec->checkRSTPatternValidity(p->type, false, scanner);
     }
     while (scanner->findOptionalTag("arg:")) {
         ParameterEntry* p = scanner->parseArgString(false);
         function->addParameter(p, scanner);
         spec->mParameters.push_back(p);
+
+        // Disallow RST_* pattern in parameter type or testOption
+        spec->checkRSTPatternValidity(p->type, false, scanner);
+        spec->checkRSTPatternValidity(p->testOption, false, scanner);
     }
 
     function->scanDocumentationTags(scanner, created, specFile);
@@ -619,6 +679,9 @@ void FunctionSpecification::scanFunctionSpecification(Scanner* scanner, SpecFile
         scanner->checkNoValue();
         while (scanner->findOptionalTag("")) {
             spec->mInline.push_back(scanner->getValue());
+
+            // Allow RST_* pattern in inline definitions
+            spec->checkRSTPatternValidity(spec->mInline.back(), true, scanner);
         }
     }
     if (scanner->findOptionalTag("test:")) {

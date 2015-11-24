@@ -141,6 +141,13 @@ description:
   RS_ALLOCATION_USAGE_SCRIPT and RS_ALLOCATION_USAGE_GRAPHICS_TEXTURE are the
   only supported usage flags for Allocations created from within a RenderScript
   Script.
+
+  You can also use rsCreateAllocation_<type><width> wrapper functions to directly
+  create Allocations of scalar and vector numerical types without creating
+  intermediate rs_element or rs_type objects.
+
+  E.g. rsCreateAllocation_int4() returns an Allocation of int4 data type of
+  specified dimensions.
 test: none
 end:
 
@@ -159,5 +166,87 @@ arg: rs_type type
 arg: rs_allocation_mipmap_control mipmap
 arg: uint32_t usages
 arg: void* ptr
+test: none
+end:
+
+# Bug: 24862914: Add f16 to all functions below once the bug is fixed
+function: rsCreateAllocation_#1
+version: UNRELEASED
+t: u8, u16, u32, u64, i8, i16, i32, i64, f32, f64
+ret: rs_allocation
+arg: uint32_t dimX
+arg: uint32_t dimY
+arg: uint32_t dimZ
+inline:
+  rs_element e = rsCreateElement(RS_TYPE_#RST_1);
+  rs_type t = rsCreateType(e, dimX, dimY, dimZ);
+  return rsCreateAllocation(t);
+test: none
+end:
+
+function: rsCreateAllocation_#2#1
+version: UNRELEASED
+w: 2, 3, 4
+t: u8, u16, u32, u64, i8, i16, i32, i64, f32, f64
+ret: rs_allocation
+arg: uint32_t dimX
+arg: uint32_t dimY
+arg: uint32_t dimZ
+inline:
+  rs_element e = rsCreateVectorElement(RS_TYPE_#RST_2, #1);
+  rs_type t = rsCreateType(e, dimX, dimY, dimZ);
+  return rsCreateAllocation(t);
+test: none
+end:
+
+function: rsCreateAllocation_#1
+version: UNRELEASED
+t: u8, u16, u32, u64, i8, i16, i32, i64, f32, f64
+ret: rs_allocation
+arg: uint32_t dimX
+arg: uint32_t dimY
+inline:
+  rs_element e = rsCreateElement(RS_TYPE_#RST_1);
+  rs_type t = rsCreateType(e, dimX, dimY);
+  return rsCreateAllocation(t);
+test: none
+end:
+
+function: rsCreateAllocation_#2#1
+version: UNRELEASED
+w: 2, 3, 4
+t: u8, u16, u32, u64, i8, i16, i32, i64, f32, f64
+ret: rs_allocation
+arg: uint32_t dimX
+arg: uint32_t dimY
+inline:
+  rs_element e = rsCreateVectorElement(RS_TYPE_#RST_2, #1);
+  rs_type t = rsCreateType(e, dimX, dimY);
+  return rsCreateAllocation(t);
+test: none
+end:
+
+function: rsCreateAllocation_#1
+version: UNRELEASED
+t: u8, u16, u32, u64, i8, i16, i32, i64, f32, f64
+ret: rs_allocation
+arg: uint32_t dimX
+inline:
+  rs_element e = rsCreateElement(RS_TYPE_#RST_1);
+  rs_type t = rsCreateType(e, dimX);
+  return rsCreateAllocation(t);
+test: none
+end:
+
+function: rsCreateAllocation_#2#1
+version: UNRELEASED
+w: 2, 3, 4
+t: u8, u16, u32, u64, i8, i16, i32, i64, f32, f64
+ret: rs_allocation
+arg: uint32_t dimX
+inline:
+  rs_element e = rsCreateVectorElement(RS_TYPE_#RST_2, #1);
+  rs_type t = rsCreateType(e, dimX);
+  return rsCreateAllocation(t);
 test: none
 end:
