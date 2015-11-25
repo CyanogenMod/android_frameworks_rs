@@ -93,7 +93,7 @@ static string findSubstitute(const string& typeName, unsigned int apiLevel, int 
  * the resulting list.  'apiLevel' and 'intSize' specifies the API level and bitness
  * we are currently processing.
  */
-list<string> expandTypedefs(const string type, unsigned int apiLevel, int intSize) {
+list<string> expandTypedefs(const string type, unsigned int apiLevel, int intSize, string& vectorSize) {
     // Split the string in tokens.
     istringstream stream(type);
     list<string> tokens{istream_iterator<string>{stream}, istream_iterator<string>{}};
@@ -106,6 +106,26 @@ list<string> expandTypedefs(const string type, unsigned int apiLevel, int intSiz
         } else {
             // Split the replacement string in tokens.
             istringstream stream(substitute);
+
+            /* Get the new vector size. This is for the case of the type being for example
+             * rs_quaternion* == float4*, where we need the vector size to be 4 for the
+             * purposes of mangling, although the parameter itself is not determined to be
+             * a vector. */
+            string unused;
+            string newVectorSize;
+            getVectorSizeAndBaseType(*i, newVectorSize, unused);
+
+            istringstream vectorSizeBuf(vectorSize);
+            int vectorSizeVal;
+            vectorSizeBuf >> vectorSizeVal;
+
+            istringstream newVectorSizeBuf(newVectorSize);
+            int newVectorSizeVal;
+            newVectorSizeBuf >> newVectorSizeVal;
+
+            if (newVectorSizeVal > vectorSizeVal)
+                vectorSize = newVectorSize;
+
             list<string> newTokens{istream_iterator<string>{stream}, istream_iterator<string>{}};
             // Replace the token with the substitution. Don't advance, as the new substitution
             // might itself be replaced.
@@ -283,12 +303,14 @@ static bool writeParameters(ostringstream* stream, const std::vector<ParameterDe
     vector<string> previousManglings;
     for (ParameterDefinition* p : params) {
         // Expand the typedefs and create a tokenized list.
-        list<string> tokens = expandTypedefs(p->rsType, apiLevel, intSize);
+        string vectorSize = p->mVectorSize;
+        list<string> tokens = expandTypedefs(p->rsType, apiLevel, intSize, vectorSize);
         if (p->isOutParameter) {
             tokens.push_back("*");
         }
         string mangling, compressedMangling;
-        if (!mangleType(p->mVectorSize, &tokens, &previousManglings, &mangling,
+
+        if (!mangleType(vectorSize, &tokens, &previousManglings, &mangling,
                         &compressedMangling)) {
             return false;
         }
