@@ -479,6 +479,10 @@ class Double4 {
         sp<const Element> I64_2;
         sp<const Element> I64_3;
         sp<const Element> I64_4;
+        sp<const Element> F16;
+        sp<const Element> F16_2;
+        sp<const Element> F16_3;
+        sp<const Element> F16_4;
         sp<const Element> F32;
         sp<const Element> F32_2;
         sp<const Element> F32_3;
@@ -1051,6 +1055,12 @@ public:
      */
     static sp<const Element> I64(sp<RS> rs);
     /**
+     * Utility function for returning an Element containing a single half.
+     * @param[in] rs RenderScript context
+     * @return Element
+     */
+    static sp<const Element> F16(sp<RS> rs);
+    /**
      * Utility function for returning an Element containing a single float.
      * @param[in] rs RenderScript context
      * @return Element
@@ -1128,6 +1138,25 @@ public:
      * @return Element
      */
     static sp<const Element> RGBA_8888(sp<RS> rs);
+
+    /**
+     * Utility function for returning an Element containing a half2.
+     * @param[in] rs RenderScript context
+     * @return Element
+     */
+    static sp<const Element> F16_2(sp<RS> rs);
+    /**
+     * Utility function for returning an Element containing a half3.
+     * @param[in] rs RenderScript context
+     * @return Element
+     */
+    static sp<const Element> F16_3(sp<RS> rs);
+    /**
+     * Utility function for returning an Element containing a half4.
+     * @param[in] rs RenderScript context
+     * @return Element
+     */
+    static sp<const Element> F16_4(sp<RS> rs);
 
     /**
      * Utility function for returning an Element containing a float2.
