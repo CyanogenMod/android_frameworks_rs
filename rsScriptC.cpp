@@ -53,18 +53,9 @@ using namespace android::renderscript;
     ScriptC * sc = (ScriptC *) tls->mScript
 
 ScriptC::ScriptC(Context *rsc) : Script(rsc) {
-#if !defined(RS_COMPATIBILITY_LIB) && !defined(ANDROID_RS_SERIALIZE)
-    BT = nullptr;
-#endif
 }
 
 ScriptC::~ScriptC() {
-#if !defined(RS_COMPATIBILITY_LIB) && !defined(ANDROID_RS_SERIALIZE)
-    if (BT) {
-        delete BT;
-        BT = nullptr;
-    }
-#endif
     if (mInitialized) {
         mRSC->mHal.funcs.script.invokeFreeChildren(mRSC, this);
         mRSC->mHal.funcs.script.destroy(mRSC, this);
@@ -353,19 +344,14 @@ bool ScriptC::runCompiler(Context *rsc,
     // Bug 19734267
     mApiLevel = sdkVersion;
 
-    if (BT) {
-        delete BT;
-    }
-    BT = new bcinfo::BitcodeTranslator((const char *)bitcode, bitcodeLen,
-                                       sdkVersion);
-    if (!BT->translate()) {
+    bcinfo::BitcodeTranslator BT((const char *)bitcode, bitcodeLen,
+                                 sdkVersion);
+    if (!BT.translate()) {
         ALOGE("Failed to translate bitcode from version: %u", sdkVersion);
-        delete BT;
-        BT = nullptr;
         return false;
     }
-    bitcode = (const uint8_t *) BT->getTranslatedBitcode();
-    bitcodeLen = BT->getTranslatedBitcodeSize();
+    bitcode = (const uint8_t *) BT.getTranslatedBitcode();
+    bitcodeLen = BT.getTranslatedBitcodeSize();
 
     if (kDebugBitcode) {
         if (!dumpBitcodeFile(cacheDir, resName, "after", bitcode, bitcodeLen)) {

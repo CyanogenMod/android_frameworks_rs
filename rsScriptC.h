@@ -20,10 +20,6 @@
 #include "rsEnv.h"
 #include "rsScript.h"
 
-#if !defined(RS_COMPATIBILITY_LIB) && !defined(ANDROID_RS_SERIALIZE)
-#include "bcinfo/BitcodeTranslator.h"
-#endif
-
 // ---------------------------------------------------------------------------
 namespace android {
 namespace renderscript {
@@ -67,10 +63,6 @@ public:
 
 #if !defined(RS_COMPATIBILITY_LIB)
     static bool createCacheDir(const char *cacheDir);
-#endif
-private:
-#if !defined(RS_COMPATIBILITY_LIB) && !defined(ANDROID_RS_SERIALIZE)
-    bcinfo::BitcodeTranslator *BT;
 #endif
 };
 
