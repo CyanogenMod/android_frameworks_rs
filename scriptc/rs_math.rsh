@@ -2500,7 +2500,7 @@ extern float4 __attribute__((const, overloadable))
  * Returns the integral and fractional components of a number.
  *
  * Both components will have the same sign as x.  For example, for an input of -3.72f,
- * iret will be set to -3.f and .72f will be returned.
+ * *integral_part will be set to -3.f and .72f will be returned.
  *
  * Parameters:
  *   v: Source value.
