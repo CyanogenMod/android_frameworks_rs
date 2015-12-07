@@ -895,14 +895,6 @@ extern float4 __attribute__((overloadable)) step(float edge, float4 v) {
     return r;
 }
 
-extern float __attribute__((overloadable)) smoothstep(float, float, float);
-extern float2 __attribute__((overloadable)) smoothstep(float2, float2, float2);
-extern float3 __attribute__((overloadable)) smoothstep(float3, float3, float3);
-extern float4 __attribute__((overloadable)) smoothstep(float4, float4, float4);
-extern float2 __attribute__((overloadable)) smoothstep(float, float, float2);
-extern float3 __attribute__((overloadable)) smoothstep(float, float, float3);
-extern float4 __attribute__((overloadable)) smoothstep(float, float, float4);
-
 extern float __attribute__((overloadable)) sign(float v) {
     if (v > 0) return 1.f;
     if (v < 0) return -1.f;
