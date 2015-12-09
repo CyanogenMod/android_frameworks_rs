@@ -118,7 +118,7 @@ typedef void* rs_kernel;
  * Starting in API level *UNRELEASED*, an arbitrary kernel function can be used,
  * as specified by the kernel argument. The script argument is removed.
  * The kernel must be defined in the current script. In addition, more than one
- * inputs can be used.
+ * input can be used.
  *
  * E.g.
  * float __attribute__((kernel)) square(float a) {
