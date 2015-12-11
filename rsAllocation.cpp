@@ -778,12 +778,15 @@ void rsi_AllocationResize2D(Context *rsc, RsAllocation va, uint32_t dimX, uint32
 
 RsAllocation rsi_AllocationCreateTyped(Context *rsc, RsType vtype,
                                        RsAllocationMipmapControl mipmaps,
-                                       uint32_t usages, uintptr_t ptr) {
+                                       uint32_t usages, uintptr_t ptr, bool fromJava) {
     Allocation * alloc = Allocation::createAllocation(rsc, static_cast<Type *>(vtype), usages, mipmaps, (void*)ptr);
-    if (!alloc) {
-        return nullptr;
+    if (alloc) {
+        if (fromJava) {
+            alloc->incUserRef();
+        } else {
+            alloc->incSysRef();
+        }
     }
-    alloc->incUserRef();
     return alloc;
 }
 
@@ -802,10 +805,10 @@ RsAllocation rsi_AllocationCreateStrided(Context *rsc, RsType vtype,
 
 RsAllocation rsi_AllocationCreateFromBitmap(Context *rsc, RsType vtype,
                                             RsAllocationMipmapControl mipmaps,
-                                            const void *data, size_t sizeBytes, uint32_t usages) {
+                                            const void *data, size_t sizeBytes, uint32_t usages, bool fromJava) {
     Type *t = static_cast<Type *>(vtype);
 
-    RsAllocation vTexAlloc = rsi_AllocationCreateTyped(rsc, vtype, mipmaps, usages, 0);
+    RsAllocation vTexAlloc = rsi_AllocationCreateTyped(rsc, vtype, mipmaps, usages, 0, fromJava);
     Allocation *texAlloc = static_cast<Allocation *>(vTexAlloc);
     if (texAlloc == nullptr) {
         ALOGE("Memory allocation failure");
@@ -824,13 +827,14 @@ RsAllocation rsi_AllocationCreateFromBitmap(Context *rsc, RsType vtype,
 
 RsAllocation rsi_AllocationCubeCreateFromBitmap(Context *rsc, RsType vtype,
                                                 RsAllocationMipmapControl mipmaps,
-                                                const void *data, size_t sizeBytes, uint32_t usages) {
+                                                const void *data, size_t sizeBytes, uint32_t usages,
+                                                bool fromJava) {
     Type *t = static_cast<Type *>(vtype);
 
     // Cubemap allocation's faces should be Width by Width each.
     // Source data should have 6 * Width by Width pixels
     // Error checking is done in the java layer
-    RsAllocation vTexAlloc = rsi_AllocationCreateTyped(rsc, vtype, mipmaps, usages, 0);
+    RsAllocation vTexAlloc = rsi_AllocationCreateTyped(rsc, vtype, mipmaps, usages, 0, fromJava);
     Allocation *texAlloc = static_cast<Allocation *>(vTexAlloc);
     if (texAlloc == nullptr) {
         ALOGE("Memory allocation failure");

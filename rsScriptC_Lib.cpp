@@ -273,19 +273,19 @@ void rsrAllocationCopy2DRange(Context *rsc, Allocation *dstAlloc,
 
 RsElement rsrElementCreate(Context *rsc, RsDataType dt, RsDataKind dk,
                            bool norm, uint32_t vecSize) {
-    return rsi_ElementCreate(rsc, dt, dk, norm, vecSize);
+    return rsi_ElementCreate(rsc, dt, dk, norm, vecSize, false);
 }
 
 RsType rsrTypeCreate(Context *rsc, const RsElement element, uint32_t dimX,
                      uint32_t dimY, uint32_t dimZ, bool mipmaps, bool faces,
                      uint32_t yuv) {
-    return rsi_TypeCreate(rsc, element, dimX, dimY, dimZ, mipmaps, faces, yuv);
+    return rsi_TypeCreate(rsc, element, dimX, dimY, dimZ, mipmaps, faces, yuv, false);
 }
 
 RsAllocation rsrAllocationCreateTyped(Context *rsc, const RsType type,
                                       RsAllocationMipmapControl mipmaps,
                                       uint32_t usages, uintptr_t ptr) {
-    return rsi_AllocationCreateTyped(rsc, type, mipmaps, usages, ptr);
+    return rsi_AllocationCreateTyped(rsc, type, mipmaps, usages, ptr, false);
 }
 
 }

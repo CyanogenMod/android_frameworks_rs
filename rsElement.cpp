@@ -139,7 +139,8 @@ Element *Element::createFromStream(Context *rsc, IStream *stream) {
                                           component.getType(),
                                           component.getKind(),
                                           component.getIsNormalized(),
-                                          component.getVectorSize());
+                                          component.getVectorSize(),
+                                          true  /* Java only */);
     }
 
     const Element **subElems = new const Element *[fieldCount];
@@ -155,7 +156,8 @@ Element *Element::createFromStream(Context *rsc, IStream *stream) {
     }
 
     const Element *elem = Element::create(rsc, fieldCount, subElems, subElemNames,
-                                          subElemNamesLengths, arraySizes);
+                                          subElemNamesLengths, arraySizes,
+                                          true /* Java only */);
     for (uint32_t ct = 0; ct < fieldCount; ct ++) {
         delete [] subElemNames[ct];
         subElems[ct]->decUserRef();
@@ -414,8 +416,10 @@ RsElement rsi_ElementCreate(Context *rsc,
                             RsDataType dt,
                             RsDataKind dk,
                             bool norm,
-                            uint32_t vecSize) {
-    return (RsElement)Element::create(rsc, dt, dk, norm, vecSize);
+                            uint32_t vecSize,
+                            bool fromJava) {
+    const Element* ret = Element::create(rsc, dt, dk, norm, vecSize, fromJava);
+    return (RsElement) ret;
 }
 
 
@@ -428,9 +432,10 @@ RsElement rsi_ElementCreate2(Context *rsc,
                              const size_t * nameLengths,
 
                              const uint32_t * arraySizes,
-                             size_t arraySizes_length) {
+                             size_t arraySizes_length,
+                             bool fromJava) {
     return (RsElement)Element::create(rsc, ein_length, (const Element **)ein,
-                                      names, nameLengths, arraySizes);
+                                      names, nameLengths, arraySizes, fromJava);
 }
 
 }

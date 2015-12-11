@@ -115,18 +115,28 @@ public:
                                  RsDataType dt,
                                  RsDataKind dk,
                                  bool isNorm,
-                                 uint32_t vecSize) {
+                                 uint32_t vecSize,
+                                 bool fromJava) {
         ObjectBaseRef<const Element> elem = createRef(rsc, dt, dk, isNorm, vecSize);
-        elem->incUserRef();
+        if (fromJava) {
+            elem->incUserRef();
+        } else {
+            elem->incSysRef();
+        }
         return elem.get();
     }
     static const Element* create(Context *rsc, size_t count,
                                  const Element **ein,
                                  const char **nin,
                                  const size_t * lengths = nullptr,
-                                 const uint32_t *asin = nullptr) {
+                                 const uint32_t *asin = nullptr,
+                                 bool fromJava = true) {
         ObjectBaseRef<const Element> elem = createRef(rsc, count, ein, nin, lengths, asin);
-        elem->incUserRef();
+        if (fromJava) {
+            elem->incUserRef();
+        } else {
+            elem->incSysRef();
+        }
         return elem.get();
     }
 

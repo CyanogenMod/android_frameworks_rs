@@ -112,9 +112,13 @@ public:
                                           const RsTypeCreateParams *params, size_t len);
 
     static Type* getType(Context *rsc, const Element *e,
-                         const RsTypeCreateParams *params, size_t len) {
+                         const RsTypeCreateParams *params, size_t len, bool fromJava) {
         ObjectBaseRef<Type> type = getTypeRef(rsc, e, params, len);
-        type->incUserRef();
+        if (fromJava) {
+            type->incUserRef();
+        } else {
+            type->incSysRef();
+        }
         return type.get();
     }
 
