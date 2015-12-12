@@ -49,6 +49,16 @@ extern float3 __attribute__((const, overloadable))
 extern float4 __attribute__((const, overloadable))
     cross(float4 left_vector, float4 right_vector);
 
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+extern half3 __attribute__((const, overloadable))
+    cross(half3 left_vector, half3 right_vector);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+extern half4 __attribute__((const, overloadable))
+    cross(half4 left_vector, half4 right_vector);
+#endif
+
 /*
  * distance: Distance between two points
  *
@@ -68,6 +78,26 @@ extern float __attribute__((const, overloadable))
 extern float __attribute__((const, overloadable))
     distance(float4 left_vector, float4 right_vector);
 
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+extern half __attribute__((const, overloadable))
+    distance(half left_vector, half right_vector);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+extern half __attribute__((const, overloadable))
+    distance(half2 left_vector, half2 right_vector);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+extern half __attribute__((const, overloadable))
+    distance(half3 left_vector, half3 right_vector);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+extern half __attribute__((const, overloadable))
+    distance(half4 left_vector, half4 right_vector);
+#endif
+
 /*
  * dot: Dot product of two vectors
  *
@@ -84,6 +114,26 @@ extern float __attribute__((const, overloadable))
 
 extern float __attribute__((const, overloadable))
     dot(float4 left_vector, float4 right_vector);
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+extern half __attribute__((const, overloadable))
+    dot(half left_vector, half right_vector);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+extern half __attribute__((const, overloadable))
+    dot(half2 left_vector, half2 right_vector);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+extern half __attribute__((const, overloadable))
+    dot(half3 left_vector, half3 right_vector);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+extern half __attribute__((const, overloadable))
+    dot(half4 left_vector, half4 right_vector);
+#endif
 
 /*
  * fast_distance: Approximate distance between two points
