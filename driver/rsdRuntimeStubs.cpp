@@ -35,6 +35,11 @@
 using namespace android;
 using namespace android::renderscript;
 
+typedef __fp16 half;
+typedef half half2 __attribute__((ext_vector_type(2)));
+typedef half half3 __attribute__((ext_vector_type(3)));
+typedef half half4 __attribute__((ext_vector_type(4)));
+
 typedef float float2 __attribute__((ext_vector_type(2)));
 typedef float float3 __attribute__((ext_vector_type(3)));
 typedef float float4 __attribute__((ext_vector_type(4)));
@@ -558,6 +563,10 @@ ELEMENT_AT(ulong, RS_TYPE_UNSIGNED_64, 1)
 ELEMENT_AT(ulong2, RS_TYPE_UNSIGNED_64, 2)
 ELEMENT_AT(ulong3, RS_TYPE_UNSIGNED_64, 3)
 ELEMENT_AT(ulong4, RS_TYPE_UNSIGNED_64, 4)
+ELEMENT_AT(half, RS_TYPE_FLOAT_16, 1)
+ELEMENT_AT(half2, RS_TYPE_FLOAT_16, 2)
+ELEMENT_AT(half3, RS_TYPE_FLOAT_16, 3)
+ELEMENT_AT(half4, RS_TYPE_FLOAT_16, 4)
 ELEMENT_AT(float, RS_TYPE_FLOAT_32, 1)
 ELEMENT_AT(float2, RS_TYPE_FLOAT_32, 2)
 ELEMENT_AT(float3, RS_TYPE_FLOAT_32, 3)
