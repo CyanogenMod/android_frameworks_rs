@@ -1520,3 +1520,541 @@ float4 __attribute__((overloadable)) native_recip(float4 v) { return ((float4)1.
 #undef IN_FUNC_IN
 #undef XN_FUNC_XN_XN_BODY
 #undef IN_FUNC_IN_IN_BODY
+
+typedef union {
+  half hval;
+  short sval;
+} fp16_shape_type;
+
+/* half h = unsigned short s; */
+#define SET_HALF_WORD(h, s) \
+do {                        \
+  fp16_shape_type fp16_u;   \
+  fp16_u.sval = (s);        \
+  (h) = fp16_u.hval;        \
+} while (0)
+
+static const unsigned short kHalfPositiveInfinity = 0x7c00;
+
+/* Define f16 functions of the form
+ *     HN output = fn(HN input)
+ * where HN is scalar or vector half type
+ */
+#define HN_FUNC_HN(fn)                                                    \
+extern half __attribute__((overloadable)) fn(half h) {                    \
+    return (half) fn((float) h);                                          \
+}                                                                         \
+extern half2 __attribute__((overloadable)) fn(half2 v) {                  \
+  return convert_half2(fn(convert_float2(v)));                            \
+}                                                                         \
+extern half3 __attribute__((overloadable)) fn(half3 v) {                  \
+  return convert_half3(fn(convert_float3(v)));                            \
+}                                                                         \
+extern half4 __attribute__((overloadable)) fn(half4 v) {                  \
+  return convert_half4(fn(convert_float4(v)));                            \
+}
+
+/* Define f16 functions of the form
+ *     HN output = fn(HN input1, HN input2)
+ * where HN is scalar or vector half type
+ */
+#define HN_FUNC_HN_HN(fn)                                                 \
+extern half __attribute__((overloadable)) fn(half h1, half h2) {          \
+    return (half) fn((float) h1, (float) h2);                             \
+}                                                                         \
+extern half2 __attribute__((overloadable)) fn(half2 v1, half2 v2) {       \
+  return convert_half2(fn(convert_float2(v1),                             \
+                          convert_float2(v2)));                           \
+}                                                                         \
+extern half3 __attribute__((overloadable)) fn(half3 v1, half3 v2) {       \
+  return convert_half3(fn(convert_float3(v1),                             \
+                          convert_float3(v2)));                           \
+}                                                                         \
+extern half4 __attribute__((overloadable)) fn(half4 v1, half4 v2) {       \
+  return convert_half4(fn(convert_float4(v1),                             \
+                          convert_float4(v2)));                           \
+}
+
+/* Define f16 functions of the form
+ *     HN output = fn(HN input1, half input2)
+ * where HN is scalar or vector half type
+ */
+#define HN_FUNC_HN_H(fn)                                                  \
+extern half2 __attribute__((overloadable)) fn(half2 v1, half v2) {        \
+  return convert_half2(fn(convert_float2(v1), (float) v2));               \
+}                                                                         \
+extern half3 __attribute__((overloadable)) fn(half3 v1, half v2) {        \
+  return convert_half3(fn(convert_float3(v1), (float) v2));               \
+}                                                                         \
+extern half4 __attribute__((overloadable)) fn(half4 v1, half v2) {        \
+  return convert_half4(fn(convert_float4(v1), (float) v2));               \
+}
+
+/* Define f16 functions of the form
+ *     HN output = fn(HN input1, HN input2, HN input3)
+ * where HN is scalar or vector half type
+ */
+#define HN_FUNC_HN_HN_HN(fn)                                                   \
+extern half __attribute__((overloadable)) fn(half h1, half h2, half h3) {      \
+    return (half) fn((float) h1, (float) h2, (float) h3);                      \
+}                                                                              \
+extern half2 __attribute__((overloadable)) fn(half2 v1, half2 v2, half2 v3) {  \
+  return convert_half2(fn(convert_float2(v1),                                  \
+                          convert_float2(v2),                                  \
+                          convert_float2(v3)));                                \
+}                                                                              \
+extern half3 __attribute__((overloadable)) fn(half3 v1, half3 v2, half3 v3) {  \
+  return convert_half3(fn(convert_float3(v1),                                  \
+                          convert_float3(v2),                                  \
+                          convert_float3(v3)));                                \
+}                                                                              \
+extern half4 __attribute__((overloadable)) fn(half4 v1, half4 v2, half4 v3) {  \
+  return convert_half4(fn(convert_float4(v1),                                  \
+                          convert_float4(v2),                                  \
+                          convert_float4(v3)));                                \
+}
+
+/* Define f16 functions of the form
+ *     HN output = fn(HN input1, IN input2)
+ * where HN is scalar or vector half type and IN the equivalent integer type
+ * of same vector length.
+ */
+#define HN_FUNC_HN_IN(fn)                                                 \
+extern half __attribute__((overloadable)) fn(half h1, int v) {            \
+    return (half) fn((float) h1, v);                                      \
+}                                                                         \
+extern half2 __attribute__((overloadable)) fn(half2 v1, int2 v2) {        \
+  return convert_half2(fn(convert_float2(v1), v2));                       \
+}                                                                         \
+extern half3 __attribute__((overloadable)) fn(half3 v1, int3 v2) {        \
+  return convert_half3(fn(convert_float3(v1), v2));                       \
+}                                                                         \
+extern half4 __attribute__((overloadable)) fn(half4 v1, int4 v2) {        \
+  return convert_half4(fn(convert_float4(v1), v2));                       \
+}
+
+/* Define f16 functions of the form
+ *     half output = fn(HN input1)
+ * where HN is a scalar or vector half type.
+ */
+#define H_FUNC_HN(fn)                                                     \
+extern half __attribute__((overloadable)) fn(half h) {                    \
+    return (half) fn((float) h);                                          \
+}                                                                         \
+extern half __attribute__((overloadable)) fn(half2 v) {                   \
+  return fn(convert_float2(v));                                           \
+}                                                                         \
+extern half __attribute__((overloadable)) fn(half3 v) {                   \
+  return fn(convert_float3(v));                                           \
+}                                                                         \
+extern half __attribute__((overloadable)) fn(half4 v) {                   \
+  return fn(convert_float4(v));                                           \
+}
+
+/* Define f16 functions of the form
+ *     half output = fn(HN input1, HN input2)
+ * where HN is a scalar or vector half type.
+ */
+#define H_FUNC_HN_HN(fn)                                                  \
+extern half __attribute__((overloadable)) fn(half h1, half h2) {          \
+    return (half) fn((float) h1, (float) h2);                             \
+}                                                                         \
+extern half __attribute__((overloadable)) fn(half2 v1, half2 v2) {        \
+  return fn(convert_float2(v1), convert_float2(v2));                      \
+}                                                                         \
+extern half __attribute__((overloadable)) fn(half3 v1, half3 v2) {        \
+  return fn(convert_float3(v1), convert_float3(v2));                      \
+}                                                                         \
+extern half __attribute__((overloadable)) fn(half4 v1, half4 v2) {        \
+  return fn(convert_float4(v1), convert_float4(v2));                      \
+}
+
+/* Define f16 functions of the form
+ *     HN output = fn(HN input1, HN input2)
+ * where HN is a vector half type.  The functions are defined to call the
+ * scalar function of the same name.
+ */
+#define SCALARIZE_HN_FUNC_HN_HN(fn)                                       \
+extern half2 __attribute__((overloadable)) fn(half2 v1, half2 v2) {       \
+  half2 ret;                                                              \
+  ret.x = fn(v1.x, v2.x);                                                 \
+  ret.y = fn(v1.y, v2.y);                                                 \
+  return ret;                                                             \
+}                                                                         \
+extern half3 __attribute__((overloadable)) fn(half3 v1, half3 v2) {       \
+  half3 ret;                                                              \
+  ret.x = fn(v1.x, v2.x);                                                 \
+  ret.y = fn(v1.y, v2.y);                                                 \
+  ret.z = fn(v1.z, v2.z);                                                 \
+  return ret;                                                             \
+}                                                                         \
+extern half4 __attribute__((overloadable)) fn(half4 v1, half4 v2) {       \
+  half4 ret;                                                              \
+  ret.x = fn(v1.x, v2.x);                                                 \
+  ret.y = fn(v1.y, v2.y);                                                 \
+  ret.z = fn(v1.z, v2.z);                                                 \
+  ret.w = fn(v1.w, v2.w);                                                 \
+  return ret;                                                             \
+}                                                                         \
+
+HN_FUNC_HN(acos);
+HN_FUNC_HN(acosh);
+HN_FUNC_HN(acospi);
+HN_FUNC_HN(asin);
+HN_FUNC_HN(asinh);
+HN_FUNC_HN(asinpi);
+HN_FUNC_HN(atan);
+HN_FUNC_HN(atanh);
+HN_FUNC_HN(atanpi);
+HN_FUNC_HN_HN(atan2);
+HN_FUNC_HN_HN(atan2pi);
+
+HN_FUNC_HN(cbrt);
+HN_FUNC_HN(ceil);
+
+// TODO Add copysign
+
+HN_FUNC_HN(cos);
+HN_FUNC_HN(cosh);
+HN_FUNC_HN(cospi);
+
+extern half3 __attribute__((overloadable)) cross(half3 lhs, half3 rhs) {
+    half3 r;
+    r.x = lhs.y * rhs.z  - lhs.z * rhs.y;
+    r.y = lhs.z * rhs.x  - lhs.x * rhs.z;
+    r.z = lhs.x * rhs.y  - lhs.y * rhs.x;
+    return r;
+}
+
+extern half4 __attribute__((overloadable)) cross(half4 lhs, half4 rhs) {
+    half4 r;
+    r.x = lhs.y * rhs.z  - lhs.z * rhs.y;
+    r.y = lhs.z * rhs.x  - lhs.x * rhs.z;
+    r.z = lhs.x * rhs.y  - lhs.y * rhs.x;
+    r.w = 0.f;
+    return r;
+}
+
+HN_FUNC_HN(degrees);
+H_FUNC_HN_HN(distance);
+H_FUNC_HN_HN(dot);
+
+HN_FUNC_HN(erf);
+HN_FUNC_HN(erfc);
+HN_FUNC_HN(exp);
+HN_FUNC_HN(exp10);
+HN_FUNC_HN(exp2);
+HN_FUNC_HN(expm1);
+
+HN_FUNC_HN(fabs);
+HN_FUNC_HN_HN(fdim);
+HN_FUNC_HN(floor);
+HN_FUNC_HN_HN_HN(fma);
+HN_FUNC_HN_HN(fmax);
+HN_FUNC_HN_H(fmax);
+HN_FUNC_HN_HN(fmin);
+HN_FUNC_HN_H(fmin);
+HN_FUNC_HN_HN(fmod);
+
+// TODO Add (both variants) of fract
+// TODO Add frexp
+
+HN_FUNC_HN_HN(hypot);
+
+// TODO Add ilogb
+
+HN_FUNC_HN_IN(ldexp);
+extern half2 __attribute__((overloadable)) ldexp(half2 v, int exponent) {
+    return convert_half2(ldexp(convert_float2(v), exponent));
+}
+extern half3 __attribute__((overloadable)) ldexp(half3 v, int exponent) {
+    return convert_half3(ldexp(convert_float3(v), exponent));
+}
+extern half4 __attribute__((overloadable)) ldexp(half4 v, int exponent) {
+    return convert_half4(ldexp(convert_float4(v), exponent));
+}
+
+H_FUNC_HN(length);
+HN_FUNC_HN(lgamma);
+
+extern half __attribute__((overloadable)) lgamma(half h, int *signp) {
+    return (half) lgamma((float) h, signp);
+}
+extern half2 __attribute__((overloadable)) lgamma(half2 v, int2 *signp) {
+    return convert_half2(lgamma(convert_float2(v), signp));
+}
+extern half3 __attribute__((overloadable)) lgamma(half3 v, int3 *signp) {
+    return convert_half3(lgamma(convert_float3(v), signp));
+}
+extern half4 __attribute__((overloadable)) lgamma(half4 v, int4 *signp) {
+    return convert_half4(lgamma(convert_float4(v), signp));
+}
+
+HN_FUNC_HN(log);
+HN_FUNC_HN(log10);
+HN_FUNC_HN(log1p);
+HN_FUNC_HN(log2);
+HN_FUNC_HN(logb);
+
+HN_FUNC_HN_HN_HN(mad);
+HN_FUNC_HN_HN(max);
+HN_FUNC_HN_H(max); // TODO can this be arch-specific similar to _Z3maxDv2_ff?
+HN_FUNC_HN_HN(min);
+HN_FUNC_HN_H(min); // TODO can this be arch-specific similar to _Z3minDv2_ff?
+
+extern half __attribute__((overloadable)) mix(half start, half stop, half amount) {
+    return start + (stop - start) * amount;
+}
+extern half2 __attribute__((overloadable)) mix(half2 start, half2 stop, half2 amount) {
+    return start + (stop - start) * amount;
+}
+extern half3 __attribute__((overloadable)) mix(half3 start, half3 stop, half3 amount) {
+    return start + (stop - start) * amount;
+}
+extern half4 __attribute__((overloadable)) mix(half4 start, half4 stop, half4 amount) {
+    return start + (stop - start) * amount;
+}
+extern half2 __attribute__((overloadable)) mix(half2 start, half2 stop, half amount) {
+    return start + (stop - start) * amount;
+}
+extern half3 __attribute__((overloadable)) mix(half3 start, half3 stop, half amount) {
+    return start + (stop - start) * amount;
+}
+extern half4 __attribute__((overloadable)) mix(half4 start, half4 stop, half amount) {
+    return start + (stop - start) * amount;
+}
+
+// TODO Define modf.  Does it make sense to delegate to the float?
+
+half __attribute__((overloadable)) nan_half() {
+  unsigned short nan_short = kHalfPositiveInfinity | 0x0200;
+  half nan;
+  SET_HALF_WORD(nan, nan_short);
+  return nan;
+}
+
+// TODO Add nextafter
+
+HN_FUNC_HN(normalize);
+
+HN_FUNC_HN_HN(pow);
+HN_FUNC_HN_IN(pown);
+HN_FUNC_HN_HN(powr);
+HN_FUNC_HN(radians);
+HN_FUNC_HN_HN(remainder);
+
+extern half __attribute__((overloadable)) remquo(half n, half d, int *quo) {
+    return (float) remquo((float) n, (float) d, quo);
+}
+extern half2 __attribute__((overloadable)) remquo(half2 n, half2 d, int2 *quo) {
+    return convert_half2(remquo(convert_float2(d), convert_float2(n), quo));
+}
+extern half3 __attribute__((overloadable)) remquo(half3 n, half3 d, int3 *quo) {
+    return convert_half3(remquo(convert_float3(d), convert_float3(n), quo));
+}
+extern half4 __attribute__((overloadable)) remquo(half4 n, half4 d, int4 *quo) {
+    return convert_half4(remquo(convert_float4(d), convert_float4(n), quo));
+}
+
+HN_FUNC_HN(rint);
+HN_FUNC_HN_IN(rootn);
+HN_FUNC_HN(round);
+HN_FUNC_HN(rsqrt);
+
+extern half __attribute__((overloadable)) sign(half h) {
+    if (h > 0) return (half) 1.f;
+    if (h < 0) return (half) -1.f;
+    return h;
+}
+extern half2 __attribute__((overloadable)) sign(half2 v) {
+    half2 ret;
+    ret.x = sign(v.x);
+    ret.y = sign(v.y);
+    return ret;
+}
+extern half3 __attribute__((overloadable)) sign(half3 v) {
+    half3 ret;
+    ret.x = sign(v.x);
+    ret.y = sign(v.y);
+    ret.z = sign(v.z);
+    return ret;
+}
+extern half4 __attribute__((overloadable)) sign(half4 v) {
+    half4 ret;
+    ret.x = sign(v.x);
+    ret.y = sign(v.y);
+    ret.z = sign(v.z);
+    ret.w = sign(v.w);
+    return ret;
+}
+
+HN_FUNC_HN(sin);
+
+extern half __attribute__((overloadable)) sincos(half v, half *cosptr) {
+    *cosptr = cos(v);
+    return sin(v);
+}
+// TODO verify if LLVM eliminates the duplicate convert_float2
+extern half2 __attribute__((overloadable)) sincos(half2 v, half2 *cosptr) {
+    *cosptr = cos(v);
+    return sin(v);
+}
+extern half3 __attribute__((overloadable)) sincos(half3 v, half3 *cosptr) {
+    *cosptr = cos(v);
+    return sin(v);
+}
+extern half4 __attribute__((overloadable)) sincos(half4 v, half4 *cosptr) {
+    *cosptr = cos(v);
+    return sin(v);
+}
+
+HN_FUNC_HN(sinh);
+HN_FUNC_HN(sinpi);
+HN_FUNC_HN(sqrt);
+
+extern half __attribute__((overloadable)) step(half edge, half v) {
+    return (v < edge) ? 0.f : 1.f;
+}
+extern half2 __attribute__((overloadable)) step(half2 edge, half2 v) {
+    half2 r;
+    r.x = (v.x < edge.x) ? 0.f : 1.f;
+    r.y = (v.y < edge.y) ? 0.f : 1.f;
+    return r;
+}
+extern half3 __attribute__((overloadable)) step(half3 edge, half3 v) {
+    half3 r;
+    r.x = (v.x < edge.x) ? 0.f : 1.f;
+    r.y = (v.y < edge.y) ? 0.f : 1.f;
+    r.z = (v.z < edge.z) ? 0.f : 1.f;
+    return r;
+}
+extern half4 __attribute__((overloadable)) step(half4 edge, half4 v) {
+    half4 r;
+    r.x = (v.x < edge.x) ? 0.f : 1.f;
+    r.y = (v.y < edge.y) ? 0.f : 1.f;
+    r.z = (v.z < edge.z) ? 0.f : 1.f;
+    r.w = (v.w < edge.w) ? 0.f : 1.f;
+    return r;
+}
+extern half2 __attribute__((overloadable)) step(half2 edge, half v) {
+    half2 r;
+    r.x = (v < edge.x) ? 0.f : 1.f;
+    r.y = (v < edge.y) ? 0.f : 1.f;
+    return r;
+}
+extern half3 __attribute__((overloadable)) step(half3 edge, half v) {
+    half3 r;
+    r.x = (v < edge.x) ? 0.f : 1.f;
+    r.y = (v < edge.y) ? 0.f : 1.f;
+    r.z = (v < edge.z) ? 0.f : 1.f;
+    return r;
+}
+extern half4 __attribute__((overloadable)) step(half4 edge, half v) {
+    half4 r;
+    r.x = (v < edge.x) ? 0.f : 1.f;
+    r.y = (v < edge.y) ? 0.f : 1.f;
+    r.z = (v < edge.z) ? 0.f : 1.f;
+    r.w = (v < edge.w) ? 0.f : 1.f;
+    return r;
+}
+extern half2 __attribute__((overloadable)) step(half edge, half2 v) {
+    half2 r;
+    r.x = (v.x < edge) ? 0.f : 1.f;
+    r.y = (v.y < edge) ? 0.f : 1.f;
+    return r;
+}
+extern half3 __attribute__((overloadable)) step(half edge, half3 v) {
+    half3 r;
+    r.x = (v.x < edge) ? 0.f : 1.f;
+    r.y = (v.y < edge) ? 0.f : 1.f;
+    r.z = (v.z < edge) ? 0.f : 1.f;
+    return r;
+}
+extern half4 __attribute__((overloadable)) step(half edge, half4 v) {
+    half4 r;
+    r.x = (v.x < edge) ? 0.f : 1.f;
+    r.y = (v.y < edge) ? 0.f : 1.f;
+    r.z = (v.z < edge) ? 0.f : 1.f;
+    r.w = (v.w < edge) ? 0.f : 1.f;
+    return r;
+}
+
+HN_FUNC_HN(tan);
+HN_FUNC_HN(tanh);
+HN_FUNC_HN(tanpi);
+HN_FUNC_HN(tgamma);
+HN_FUNC_HN(trunc); // TODO: rethink: needs half-specific implementation?
+
+HN_FUNC_HN(native_acos);
+HN_FUNC_HN(native_acosh);
+HN_FUNC_HN(native_acospi);
+HN_FUNC_HN(native_asin);
+HN_FUNC_HN(native_asinh);
+HN_FUNC_HN(native_asinpi);
+HN_FUNC_HN(native_atan);
+HN_FUNC_HN(native_atanh);
+HN_FUNC_HN(native_atanpi);
+HN_FUNC_HN_HN(native_atan2);
+HN_FUNC_HN_HN(native_atan2pi);
+
+HN_FUNC_HN(native_cbrt);
+HN_FUNC_HN(native_cos);
+HN_FUNC_HN(native_cosh);
+HN_FUNC_HN(native_cospi);
+
+H_FUNC_HN_HN(native_distance);
+HN_FUNC_HN_HN(native_divide);
+
+HN_FUNC_HN(native_exp);
+HN_FUNC_HN(native_exp10);
+HN_FUNC_HN(native_exp2);
+HN_FUNC_HN(native_expm1);
+
+HN_FUNC_HN_HN(native_hypot);
+H_FUNC_HN(native_length);
+
+HN_FUNC_HN(native_log);
+HN_FUNC_HN(native_log10);
+HN_FUNC_HN(native_log1p);
+HN_FUNC_HN(native_log2);
+
+HN_FUNC_HN(native_normalize);
+
+HN_FUNC_HN_HN(native_powr); // TODO are parameter limits different for half?
+
+HN_FUNC_HN(native_recip);
+HN_FUNC_HN_IN(native_rootn);
+HN_FUNC_HN(native_rsqrt);
+
+HN_FUNC_HN(native_sin);
+
+extern half __attribute__((overloadable)) native_sincos(half v, half *cosptr) {
+    return sincos(v, cosptr);
+}
+extern half2 __attribute__((overloadable)) native_sincos(half2 v, half2 *cosptr) {
+    return sincos(v, cosptr);
+}
+extern half3 __attribute__((overloadable)) native_sincos(half3 v, half3 *cosptr) {
+    return sincos(v, cosptr);
+}
+extern half4 __attribute__((overloadable)) native_sincos(half4 v, half4 *cosptr) {
+    return sincos(v, cosptr);
+}
+
+HN_FUNC_HN(native_sinh);
+HN_FUNC_HN(native_sinpi);
+HN_FUNC_HN(native_sqrt);
+
+HN_FUNC_HN(native_tan);
+HN_FUNC_HN(native_tanh);
+HN_FUNC_HN(native_tanpi);
+
+#undef HN_FUNC_HN
+#undef HN_FUNC_HN_HN
+#undef HN_FUNC_HN_H
+#undef HN_FUNC_HN_HN_HN
+#undef HN_FUNC_HN_IN
+#undef H_FUNC_HN
+#undef H_FUNC_HN_HN
+#undef SCALARIZE_HN_FUNC_HN_HN
+

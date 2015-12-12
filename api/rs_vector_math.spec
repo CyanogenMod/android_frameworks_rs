@@ -48,6 +48,17 @@ description:
 test: vector
 end:
 
+function: cross
+version: UNRELEASED
+attrib: const
+w: 3, 4
+t: f16
+ret: #2#1
+arg: #2#1 left_vector
+arg: #2#1 right_vector
+test: none
+end:
+
 function: distance
 version: 9
 attrib: const
@@ -64,6 +75,17 @@ description:
 test: vector
 end:
 
+function: distance
+version: UNRELEASED
+attrib: const
+w: 1, 2, 3, 4
+t: f16
+ret: #2
+arg: #2#1 left_vector
+arg: #2#1 right_vector
+test: none
+end:
+
 function: dot
 version: 9
 attrib: const
@@ -76,6 +98,17 @@ summary: Dot product of two vectors
 description:
  Computes the dot product of two vectors.
 test: vector
+end:
+
+function: dot
+version: UNRELEASED
+attrib: const
+w: 1, 2, 3, 4
+t: f16
+ret: #2
+arg: #2#1 left_vector
+arg: #2#1 right_vector
+test: none
 end:
 
 function: fast_distance
@@ -136,6 +169,7 @@ description:
 test: vector
 end:
 
+# TODO Add f16 length
 function: length
 version: 9
 attrib: const
@@ -197,6 +231,7 @@ description:
 test: vector
 end:
 
+# TODO Add f16 normalize
 function: normalize
 version: 9
 attrib: const
