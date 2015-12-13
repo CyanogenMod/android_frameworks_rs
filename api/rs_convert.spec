@@ -73,6 +73,28 @@ ret: #3#1
 arg: #2#1 v, compatible(#3)
 end:
 
+function: convert_#3#1
+version: UNRELEASED
+attrib: const
+w: 2, 3, 4
+t: f16
+t: u8, u16, u32, u64, i8, i16, i32, i64, f32, f64
+ret: #3#1
+arg: #2#1 v, compatible(#3)
+test: none
+end:
+
+function: convert_#3#1
+version: UNRELEASED
+attrib: const
+w: 2, 3, 4
+t: u8, u16, u32, u64, i8, i16, i32, i64, f32, f64
+t: f16
+ret: #3#1
+arg: #2#1 v, compatible(#3)
+test: none
+end:
+
 function: rsPackColorTo8888
 attrib: const
 ret: uchar4
