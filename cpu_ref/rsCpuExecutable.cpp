@@ -268,6 +268,7 @@ void* SharedLibraryUtils::loadSOHelper(const char *origName, const char *cacheDi
 #define EXPORT_FUNC_STR "exportFuncCount: "
 #define EXPORT_FOREACH_STR "exportForEachCount: "
 #define EXPORT_REDUCE_STR "exportReduceCount: "
+#define EXPORT_REDUCE_NEW_STR "exportReduceNewCount: "
 #define OBJECT_SLOT_STR "objectSlotCount: "
 #define PRAGMA_STR "pragmaCount: "
 #define THREADABLE_STR "isThreadable: "
@@ -306,6 +307,7 @@ ScriptExecutable* ScriptExecutable::createFromSharedObject(
     size_t funcCount = 0;
     size_t forEachCount = 0;
     size_t reduceCount = 0;
+    size_t reduceNewCount = 0;
     size_t objectSlotCount = 0;
     size_t pragmaCount = 0;
     bool isThreadable = true;
@@ -448,7 +450,7 @@ ScriptExecutable* ScriptExecutable::createFromSharedObject(
         }
     }
 
-    // Read reduce kernels
+    // Read simple reduce kernels
     if (strgets(line, MAXLINE, &rsInfo) == nullptr) {
         goto error;
     }
@@ -481,6 +483,19 @@ ScriptExecutable* ScriptExecutable::createFromSharedObject(
                   line, dlerror());
             goto error;
         }
+    }
+
+    // Read general reduce kernels (for now, we expect the count to be zero)
+    if (strgets(line, MAXLINE, &rsInfo) == nullptr) {
+        goto error;
+    }
+    if (sscanf(line, EXPORT_REDUCE_NEW_STR "%zu", &reduceNewCount) != 1) {
+        ALOGE("Invalid export reduce new count!: %s", line);
+        goto error;
+    }
+    if (reduceNewCount != 0) {
+        ALOGE("Expected export reduce new count to be zero!: %s", line);
+        goto error;
     }
 
     if (strgets(line, MAXLINE, &rsInfo) == nullptr) {
