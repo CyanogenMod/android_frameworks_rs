@@ -361,10 +361,19 @@ class Double4 {
      * @param[in] name Directory name to be used by this context. This should be equivalent to
      * Context.getCacheDir().
      * @param[in] flags Optional flags for this context.
-     * @param[in] targetApi Optional target RS API level. (Default 0: Using the latest SDK/Platform API).
      * @return true on success
      */
-    bool init(const char * name, uint32_t flags = 0, int targetApi = 0);
+    bool init(const char * name, uint32_t flags = 0);
+
+    /**
+     * Initializes a RenderScript context. A context must be initialized before it can be used.
+     * @param[in] name Directory name to be used by this context. This should be equivalent to
+     * Context.getCacheDir().
+     * @param[in] flags Flags for this context.
+     * @param[in] targetApi Target RS API level.
+     * @return true on success
+     */
+    bool init(const char * name, uint32_t flags, int targetApi);
 
     /**
      * Sets the error handler function for this context. This error handler is
