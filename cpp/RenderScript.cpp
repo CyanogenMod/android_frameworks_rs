@@ -75,6 +75,10 @@ RS::~RS() {
     }
 }
 
+bool RS::init(const char * name, uint32_t flags) {
+    return RS::init(name, flags, 0);
+}
+
 // This will only open API 19+ libRS, because that's when
 // we changed libRS to extern "C" entry points.
 static bool loadSO(const char* filename, int targetApi) {
