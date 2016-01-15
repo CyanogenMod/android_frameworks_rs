@@ -50,6 +50,14 @@ void rsdScriptInvokeReduce(const android::renderscript::Context *rsc,
                            android::renderscript::Allocation *aout,
                            const RsScriptCall *sc);
 
+void rsdScriptInvokeReduceNew(const android::renderscript::Context *rsc,
+                              android::renderscript::Script *s,
+                              uint32_t slot,
+                              const android::renderscript::Allocation ** ains,
+                              size_t inLen,
+                              android::renderscript::Allocation *aout,
+                              const RsScriptCall *sc);
+
 void rsdScriptInvokeForEachMulti(const android::renderscript::Context *rsc,
                                  android::renderscript::Script *s,
                                  uint32_t slot,

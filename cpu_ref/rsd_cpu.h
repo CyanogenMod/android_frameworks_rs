@@ -63,6 +63,11 @@ public:
                                   Allocation *aout,
                                   const RsScriptCall *sc) = 0;
 
+        virtual void invokeReduceNew(uint32_t slot,
+                                     const Allocation ** ains, uint32_t inLen,
+                                     Allocation *aout,
+                                     const RsScriptCall *sc) = 0;
+
         virtual void invokeInit() = 0;
         virtual void invokeFreeChildren() = 0;
 

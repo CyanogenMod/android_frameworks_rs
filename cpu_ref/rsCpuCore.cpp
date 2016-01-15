@@ -342,6 +342,18 @@ static inline void FepPtrSetup(const MTLaunchStructForEach *mtls, RsExpandKernel
     }
 }
 
+// Set up the appropriate input and output pointers to the kernel driver info structure.
+// Inputs:
+//   mtls - The MTLaunchStruct holding information about the kernel launch
+//   redp - The reduce parameters (driver info structure)
+//   x, y, z - The start offsets into each dimension
+static inline void RedpPtrSetup(const MTLaunchStructReduceNew *mtls, RsExpandKernelDriverInfo *redp,
+                                uint32_t x, uint32_t y, uint32_t z) {
+    for (uint32_t i = 0; i < redp->inLen; i++) {
+        redp->inPtr[i] = (const uint8_t *)mtls->ains[i]->getPointerUnchecked(x, y, z);
+    }
+}
+
 static uint32_t sliceInt(uint32_t *p, uint32_t val, uint32_t start, uint32_t end) {
     if (start >= end) {
         *p = start;
@@ -355,16 +367,16 @@ static uint32_t sliceInt(uint32_t *p, uint32_t val, uint32_t start, uint32_t end
     return n;
 }
 
-static bool SelectOuterSlice(const MTLaunchStructForEach *mtls, RsExpandKernelDriverInfo* fep, uint32_t sliceNum) {
+static bool SelectOuterSlice(const MTLaunchStructCommon *mtls, RsExpandKernelDriverInfo* info, uint32_t sliceNum) {
 
     uint32_t r = sliceNum;
-    r = sliceInt(&fep->current.z, r, mtls->start.z, mtls->end.z);
-    r = sliceInt(&fep->current.lod, r, mtls->start.lod, mtls->end.lod);
-    r = sliceInt(&fep->current.face, r, mtls->start.face, mtls->end.face);
-    r = sliceInt(&fep->current.array[0], r, mtls->start.array[0], mtls->end.array[0]);
-    r = sliceInt(&fep->current.array[1], r, mtls->start.array[1], mtls->end.array[1]);
-    r = sliceInt(&fep->current.array[2], r, mtls->start.array[2], mtls->end.array[2]);
-    r = sliceInt(&fep->current.array[3], r, mtls->start.array[3], mtls->end.array[3]);
+    r = sliceInt(&info->current.z, r, mtls->start.z, mtls->end.z);
+    r = sliceInt(&info->current.lod, r, mtls->start.lod, mtls->end.lod);
+    r = sliceInt(&info->current.face, r, mtls->start.face, mtls->end.face);
+    r = sliceInt(&info->current.array[0], r, mtls->start.array[0], mtls->end.array[0]);
+    r = sliceInt(&info->current.array[1], r, mtls->start.array[1], mtls->end.array[1]);
+    r = sliceInt(&info->current.array[2], r, mtls->start.array[2], mtls->end.array[2]);
+    r = sliceInt(&info->current.array[3], r, mtls->start.array[3], mtls->end.array[3]);
     return r == 0;
 }
 
@@ -446,7 +458,7 @@ static void walk_1d(void *usr, uint32_t idx) {
     }
 }
 
-// Launch a reduce-style kernel.
+// Launch a simple reduce-style kernel.
 // Inputs:
 //  ain:  The allocation that contains the input
 //  aout: The allocation that will hold the output
@@ -463,6 +475,50 @@ void RsdCpuReferenceImpl::launchReduce(const Allocation *ain,
 
     const uint32_t startOffset = ain->getType()->getElementSizeBytes() * xStart;
     mtls->kernel(&mtls->inBuf[startOffset], mtls->outBuf, xEnd - xStart);
+}
+
+// Launch a general reduce-style kernel.
+// Inputs:
+//   ains[0..inLen-1]: Array of allocations that contain the inputs
+//   aout:             The allocation that will hold the output
+//   mtls:             Holds launch parameters
+void RsdCpuReferenceImpl::launchReduceNew(const Allocation ** ains,
+                                          uint32_t inLen,
+                                          Allocation * aout,
+                                          MTLaunchStructReduceNew *mtls) {
+  // In the presence of outconverter, we allocate temporary memory for
+  // the accumulator.
+  //
+  // In the absence of outconverter, we use the output allocation as the
+  // accumulator.
+  uint8_t *const accumPtr = (mtls->outFunc
+                             ? static_cast<uint8_t *>(malloc(mtls->accumSize))
+                             : mtls->redp.outPtr[0]);
+
+  // initialize
+  if (mtls->initFunc) {
+    mtls->initFunc(accumPtr);
+  } else {
+    memset(accumPtr, 0, mtls->accumSize);
+  }
+
+  // accumulate
+  const ReduceNewAccumulatorFunc_t fn = mtls->accumFunc;
+  uint32_t slice = 0;
+  while (SelectOuterSlice(mtls, &mtls->redp, slice++)) {
+    for (mtls->redp.current.y = mtls->start.y;
+         mtls->redp.current.y < mtls->end.y;
+         mtls->redp.current.y++) {
+      RedpPtrSetup(mtls, &mtls->redp, mtls->start.x, mtls->redp.current.y, mtls->redp.current.z);
+      fn(&mtls->redp, mtls->start.x, mtls->end.x, accumPtr);
+    }
+  }
+
+  // outconvert
+  if (mtls->outFunc) {
+    mtls->outFunc(mtls->redp.outPtr[0], accumPtr);
+    free(accumPtr);
+  }
 }
 
 void RsdCpuReferenceImpl::launchForEach(const Allocation ** ains,
