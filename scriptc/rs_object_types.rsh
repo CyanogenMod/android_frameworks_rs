@@ -202,7 +202,7 @@ typedef enum {
  *
  *  See android.graphics.ImageFormat for a description of each format.
  */
-#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
 typedef enum {
     RS_YUV_NONE = 0,
     RS_YUV_YV12 = 0x32315659,
