@@ -84,19 +84,19 @@ $(c_bc_files): $(intermediates)/%.bc: $(LOCAL_PATH)/%.c $(bc_clang)
 	$(hide) $(bc_clang) $(addprefix -I, $(PRIVATE_INCLUDES)) $(PRIVATE_CFLAGS) $< -o $@
 	$(call transform-d-to-p-args,$(@:%.bc=%.d),$(@:%.bc=%.P))
 
-$(ll_bc_files): $(intermediates)/%.bc: $(LOCAL_PATH)/%.ll $(LLVM_AS)
+$(ll_bc_files): $(intermediates)/%.bc: $(LOCAL_PATH)/%.ll $(RS_LLVM_AS)
 	@mkdir -p $(dir $@)
-	$(hide) $(LLVM_AS) $< -o $@
+	$(hide) $(RS_LLVM_AS) $< -o $@
 
 -include $(c_bc_files:%.bc=%.P)
 
 $(LOCAL_BUILT_MODULE): PRIVATE_BC_FILES := $(c_bc_files) $(ll_bc_files)
 $(LOCAL_BUILT_MODULE): $(c_bc_files) $(ll_bc_files)
-$(LOCAL_BUILT_MODULE): $(LLVM_LINK) $(clcore_LLVM_LD)
-$(LOCAL_BUILT_MODULE): $(LLVM_AS) $(BCC_STRIP_ATTR)
+$(LOCAL_BUILT_MODULE): $(RS_LLVM_LINK)
+$(LOCAL_BUILT_MODULE): $(RS_LLVM_AS) $(BCC_STRIP_ATTR)
 	@echo "bc lib: $(PRIVATE_MODULE) ($@)"
 	@mkdir -p $(dir $@)
-	$(hide) $(LLVM_LINK) $(PRIVATE_BC_FILES) -o $@.unstripped
+	$(hide) $(RS_LLVM_LINK) $(PRIVATE_BC_FILES) -o $@.unstripped
 	$(hide) $(BCC_STRIP_ATTR) -o $@ $@.unstripped
 
 BCC_RS_TRIPLE :=
