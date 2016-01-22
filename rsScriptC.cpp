@@ -245,7 +245,7 @@ void ScriptC::runReduce(Context *rsc, uint32_t slot, const Allocation *ain,
     ATRACE_CALL();
 
     if (slot >= mHal.info.exportedReduceCount) {
-        rsc->setError(RS_ERROR_BAD_SCRIPT, "The reduce kernel index is out of bounds");
+        rsc->setError(RS_ERROR_BAD_SCRIPT, "The simple reduce kernel index is out of bounds");
         return;
     }
     if (mRSC->hadFatalError()) return;
@@ -257,6 +257,27 @@ void ScriptC::runReduce(Context *rsc, uint32_t slot, const Allocation *ain,
     }
 
     rsc->mHal.funcs.script.invokeReduce(rsc, this, slot, ain, aout, sc);
+}
+
+void ScriptC::runReduceNew(Context *rsc, uint32_t slot,
+                           const Allocation ** ains, size_t inLen,
+                           Allocation *aout, const RsScriptCall *sc) {
+  // TODO: Record the name of the kernel in the tracing information.
+  ATRACE_CALL();
+
+  if (slot >= mHal.info.exportedReduceNewCount) {
+      rsc->setError(RS_ERROR_BAD_SCRIPT, "The general reduce kernel index is out of bounds");
+      return;
+  }
+  if (mRSC->hadFatalError()) return;
+
+  setupScript(rsc);
+
+  if (rsc->props.mLogScripts) {
+      ALOGV("%p ScriptC::runReduceNew invoking slot %i, ptr %p", rsc, slot, this);
+  }
+
+  rsc->mHal.funcs.script.invokeReduceNew(rsc, this, slot, ains, inLen, aout, sc);
 }
 
 void ScriptC::Invoke(Context *rsc, uint32_t slot, const void *data, size_t len) {

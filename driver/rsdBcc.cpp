@@ -133,6 +133,15 @@ void rsdScriptInvokeReduce(const Context *dc, Script *s,
     cs->invokeReduce(slot, ain, aout, sc);
 }
 
+void rsdScriptInvokeReduceNew(const Context *dc, Script *s,
+                              uint32_t slot,
+                              const Allocation ** ains, size_t inLen,
+                              Allocation *aout,
+                              const RsScriptCall *sc) {
+    RsdCpuReference::CpuScript *cs = (RsdCpuReference::CpuScript *)s->mHal.drv;
+    cs->invokeReduceNew(slot, ains, inLen, aout, sc);
+}
+
 void rsdScriptSetGlobalVar(const Context *dc, const Script *s,
                            uint32_t slot, void *data, size_t dataLength) {
     RsdCpuReference::CpuScript *cs = (RsdCpuReference::CpuScript *)s->mHal.drv;

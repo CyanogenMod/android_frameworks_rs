@@ -33,10 +33,20 @@ extern bool gArchUseSIMD;
 
 // Function types found in RenderScript code
 typedef void (*ReduceFunc_t)(const uint8_t *inBuf, uint8_t *outBuf, uint32_t len);
+typedef void (*ReduceNewAccumulatorFunc_t)(const RsExpandKernelDriverInfo *info, uint32_t x1, uint32_t x2, uint8_t *accum);
+typedef void (*ReduceNewInitializerFunc_t)(uint8_t *accum);
+typedef void (*ReduceNewOutConverterFunc_t)(uint8_t *out, const uint8_t *accum);
 typedef void (*ForEachFunc_t)(const RsExpandKernelDriverInfo *info, uint32_t x1, uint32_t x2, uint32_t outStride);
 typedef void (*InvokeFunc_t)(void *params);
 typedef void (*InitOrDtorFunc_t)(void);
 typedef int  (*RootFunc_t)(void);
+
+struct ReduceNewDescription {
+    ReduceNewAccumulatorFunc_t  accumFunc;  // expanded accumulator function
+    ReduceNewInitializerFunc_t  initFunc;   // user initializer function
+    ReduceNewOutConverterFunc_t outFunc;    // user outconverter function
+    size_t                      accumSize;  // accumulator datum size, in bytes
+};
 
 // Internal driver callback used to execute a kernel
 typedef void (*WorkerCallback_t)(void *usr, uint32_t idx);
@@ -72,7 +82,6 @@ struct MTLaunchStructForEach : public MTLaunchStructCommon {
     RsExpandKernelDriverInfo fep;
 
     ForEachFunc_t kernel;
-    uint32_t sig;
     const Allocation *ains[RS_KERNEL_INPUT_LIMIT];
     Allocation *aout[RS_KERNEL_INPUT_LIMIT];
 };
@@ -82,6 +91,19 @@ struct MTLaunchStructReduce : public MTLaunchStructCommon {
     const uint8_t *inBuf;
     uint8_t *outBuf;
     RsLaunchDimensions inputDim;
+};
+
+struct MTLaunchStructReduceNew : public MTLaunchStructCommon {
+    // Driver info structure
+    RsExpandKernelDriverInfo redp;
+
+    const Allocation *ains[RS_KERNEL_INPUT_LIMIT];
+
+    ReduceNewAccumulatorFunc_t accumFunc;
+    ReduceNewInitializerFunc_t initFunc;
+    ReduceNewOutConverterFunc_t outFunc;
+
+    size_t accumSize;  // accumulator datum size in bytes
 };
 
 class RsdCpuReferenceImpl : public RsdCpuReference {
@@ -107,9 +129,13 @@ public:
     void launchForEach(const Allocation **ains, uint32_t inLen, Allocation *aout,
                        const RsScriptCall *sc, MTLaunchStructForEach *mtls);
 
-    // Launch a reduce kernel
+    // Launch a simple reduce kernel
     void launchReduce(const Allocation *ain, Allocation *aout,
                       MTLaunchStructReduce *mtls);
+
+    // Launch a general reduce kernel
+    void launchReduceNew(const Allocation ** ains, uint32_t inLen, Allocation *aout,
+                         MTLaunchStructReduceNew *mtls);
 
     CpuScript * createScript(const ScriptC *s, char const *resName, char const *cacheDir,
                              uint8_t const *bitcode, size_t bitcodeSize, uint32_t flags) override;
