@@ -319,6 +319,7 @@ ScriptExecutable* ScriptExecutable::createFromSharedObject(
     ForEachFunc_t* forEachFunctions = nullptr;
     uint32_t* forEachSignatures = nullptr;
     ReduceFunc_t* reduceFunctions = nullptr;
+    ReduceNewDescription* reduceNewDescriptions = nullptr;
     const char ** pragmaKeys = nullptr;
     const char ** pragmaValues = nullptr;
     uint32_t checksum = 0;
@@ -485,7 +486,7 @@ ScriptExecutable* ScriptExecutable::createFromSharedObject(
         }
     }
 
-    // Read general reduce kernels (for now, we expect the count to be zero)
+    // Read general reduce kernels
     if (strgets(line, MAXLINE, &rsInfo) == nullptr) {
         goto error;
     }
@@ -493,9 +494,89 @@ ScriptExecutable* ScriptExecutable::createFromSharedObject(
         ALOGE("Invalid export reduce new count!: %s", line);
         goto error;
     }
-    if (reduceNewCount != 0) {
-        ALOGE("Expected export reduce new count to be zero!: %s", line);
+
+    reduceNewDescriptions = new ReduceNewDescription[reduceNewCount];
+    if (reduceNewDescriptions == nullptr) {
         goto error;
+    }
+
+    for (size_t i = 0; i < reduceNewCount; ++i) {
+        static const char kNoName[] = ".";
+
+        unsigned int tmpSig = 0;
+        size_t tmpSize = 0;
+        char tmpNameReduce[MAXLINE];
+        char tmpNameInitializer[MAXLINE];
+        char tmpNameAccumulator[MAXLINE];
+        char tmpNameCombiner[MAXLINE];
+        char tmpNameOutConverter[MAXLINE];
+        char tmpNameHalter[MAXLINE];
+
+        if (strgets(line, MAXLINE, &rsInfo) == nullptr) {
+            goto error;
+        }
+#define DELIMNAME " - %" MAKE_STR(MAXLINE) "s"
+        if (sscanf(line, "%u - %zu" DELIMNAME DELIMNAME DELIMNAME DELIMNAME DELIMNAME DELIMNAME,
+                   &tmpSig, &tmpSize, tmpNameReduce, tmpNameInitializer, tmpNameAccumulator,
+                   tmpNameCombiner, tmpNameOutConverter, tmpNameHalter) != 8) {
+            ALOGE("Invalid export reduce new!: %s", line);
+            goto error;
+        }
+#undef DELIMNAME
+
+        // For now, we expect
+        // - Reduce and Accumulator names
+        // - optional Initializer, Combiner, and OutConverter name
+        // - no Halter name
+        if (!strcmp(tmpNameReduce, kNoName) ||
+            !strcmp(tmpNameAccumulator, kNoName)) {
+            ALOGE("Expected reduce and accumulator names!: %s", line);
+            goto error;
+        }
+        if (strcmp(tmpNameHalter, kNoName)) {
+            ALOGE("Did not expect halter name!: %s", line);
+            goto error;
+        }
+
+        // The current implementation does not use the signature,
+        // reduce name, or combiner.
+
+        reduceNewDescriptions[i].accumSize = tmpSize;
+
+        // Process the (optional) initializer.
+        if (strcmp(tmpNameInitializer, kNoName)) {
+          // Lookup the original user-written initializer.
+          if (!(reduceNewDescriptions[i].initFunc =
+                (ReduceNewInitializerFunc_t) dlsym(sharedObj, tmpNameInitializer))) {
+            ALOGE("Failed to find initializer function address for %s(): %s",
+                  tmpNameInitializer, dlerror());
+            goto error;
+          }
+        } else {
+          reduceNewDescriptions[i].initFunc = nullptr;
+        }
+
+        // Lookup the expanded accumulator.
+        strncat(tmpNameAccumulator, ".expand", MAXLINE-1-strlen(tmpNameAccumulator));
+        if (!(reduceNewDescriptions[i].accumFunc =
+              (ReduceNewAccumulatorFunc_t) dlsym(sharedObj, tmpNameAccumulator))) {
+            ALOGE("Failed to find accumulator function address for %s(): %s",
+                  tmpNameAccumulator, dlerror());
+            goto error;
+        }
+
+        // Process the (optional) outconverter.
+        if (strcmp(tmpNameOutConverter, kNoName)) {
+          // Lookup the original user-written outconverter.
+          if (!(reduceNewDescriptions[i].outFunc =
+                (ReduceNewOutConverterFunc_t) dlsym(sharedObj, tmpNameOutConverter))) {
+            ALOGE("Failed to find outconverter function address for %s(): %s",
+                  tmpNameOutConverter, dlerror());
+            goto error;
+          }
+        } else {
+          reduceNewDescriptions[i].outFunc = nullptr;
+        }
     }
 
     if (strgets(line, MAXLINE, &rsInfo) == nullptr) {
@@ -631,6 +712,7 @@ ScriptExecutable* ScriptExecutable::createFromSharedObject(
         invokeFunctions, funcCount,
         forEachFunctions, forEachSignatures, forEachCount,
         reduceFunctions, reduceCount,
+        reduceNewDescriptions, reduceNewCount,
         pragmaKeys, pragmaValues, pragmaCount,
         rsGlobalNames, rsGlobalAddresses, rsGlobalSizes, rsGlobalProperties,
         numEntries, isThreadable, checksum);

@@ -34,21 +34,25 @@ public:
     ScriptC(Context *);
     virtual ~ScriptC();
 
-    virtual void Invoke(Context *rsc, uint32_t slot, const void *data, size_t len);
+    void Invoke(Context *rsc, uint32_t slot, const void *data, size_t len) override;
 
     virtual uint32_t run(Context *);
 
-    virtual void runForEach(Context *rsc,
-                            uint32_t slot,
-                            const Allocation ** ains,
-                            size_t inLen,
-                            Allocation * aout,
-                            const void * usr,
-                            size_t usrBytes,
-                            const RsScriptCall *sc = nullptr);
+    void runForEach(Context *rsc,
+                    uint32_t slot,
+                    const Allocation ** ains,
+                    size_t inLen,
+                    Allocation * aout,
+                    const void * usr,
+                    size_t usrBytes,
+                    const RsScriptCall *sc = nullptr) override;
 
-    virtual void runReduce(Context *rsc, uint32_t slot, const Allocation *ain,
-                           Allocation *aout, const RsScriptCall *sc);
+    void runReduce(Context *rsc, uint32_t slot, const Allocation *ain,
+                   Allocation *aout, const RsScriptCall *sc) override;
+
+    void runReduceNew(Context *rsc, uint32_t slot,
+                      const Allocation ** ains, size_t inLen,
+                      Allocation *aout, const RsScriptCall *sc) override;
 
     virtual void serialize(Context *rsc, OStream *stream) const {    }
     virtual RsA3DClassID getClassId() const { return RS_A3D_CLASS_ID_SCRIPT_C; }

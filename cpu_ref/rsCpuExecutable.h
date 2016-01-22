@@ -69,6 +69,7 @@ public:
                      ForEachFunc_t* forEachFunctions, uint32_t* forEachSignatures,
                      size_t forEachCount,
                      ReduceFunc_t* reduceFunctions, size_t reduceCount,
+                     ReduceNewDescription *reduceNewDescriptions, size_t reduceNewCount,
                      const char** pragmaKeys, const char** pragmaValues,
                      size_t pragmaCount,
                      const char **globalNames, const void **globalAddresses,
@@ -81,6 +82,7 @@ public:
         mForEachFunctions(forEachFunctions), mForEachSignatures(forEachSignatures),
         mForEachCount(forEachCount),
         mReduceFunctions(reduceFunctions), mReduceCount(reduceCount),
+        mReduceNewDescriptions(reduceNewDescriptions), mReduceNewCount(reduceNewCount),
         mPragmaKeys(pragmaKeys), mPragmaValues(pragmaValues),
         mPragmaCount(pragmaCount), mGlobalNames(globalNames),
         mGlobalAddresses(globalAddresses), mGlobalSizes(globalSizes),
@@ -109,6 +111,8 @@ public:
 
         delete[] mReduceFunctions;
 
+        delete[] mReduceNewDescriptions;
+
         delete[] mForEachSignatures;
         delete[] mForEachFunctions;
 
@@ -134,6 +138,7 @@ public:
     size_t getExportedFunctionCount() const { return mFuncCount; }
     size_t getExportedForEachCount() const { return mForEachCount; }
     size_t getExportedReduceCount() const { return mReduceCount; }
+    size_t getExportedReduceNewCount() const { return mReduceNewCount; }
     size_t getPragmaCount() const { return mPragmaCount; }
 
     void* getFieldAddress(int slot) const { return mFieldAddress[slot]; }
@@ -147,6 +152,10 @@ public:
     uint32_t getForEachSignature(int slot) const { return mForEachSignatures[slot]; }
 
     ReduceFunc_t getReduceFunction(int slot) const { return mReduceFunctions[slot]; }
+
+    const ReduceNewDescription* getReduceNewDescription(int slot) const {
+        return &mReduceNewDescriptions[slot];
+    }
 
     const char ** getPragmaKeys() const { return mPragmaKeys; }
     const char ** getPragmaValues() const { return mPragmaValues; }
@@ -202,6 +211,9 @@ private:
 
     ReduceFunc_t* mReduceFunctions;
     size_t mReduceCount;
+
+    ReduceNewDescription* mReduceNewDescriptions;
+    size_t mReduceNewCount;
 
     const char ** mPragmaKeys;
     const char ** mPragmaValues;

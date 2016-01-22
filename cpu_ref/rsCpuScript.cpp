@@ -497,6 +497,7 @@ void RsdCpuScriptImpl::populateScript(Script *script) {
     // Copy info over to runtime
     script->mHal.info.exportedFunctionCount = mScriptExec->getExportedFunctionCount();
     script->mHal.info.exportedReduceCount = mScriptExec->getExportedReduceCount();
+    script->mHal.info.exportedReduceNewCount = mScriptExec->getExportedReduceNewCount();
     script->mHal.info.exportedForEachCount = mScriptExec->getExportedForEachCount();
     script->mHal.info.exportedVariableCount = mScriptExec->getExportedVariableCount();
     script->mHal.info.exportedPragmaCount = mScriptExec->getPragmaCount();;
@@ -553,7 +554,7 @@ bool RsdCpuScriptImpl::setUpMtlsDimensions(MTLaunchStructCommon *mtls,
     return true;
 }
 
-// Preliminary work to prepare a reduce-style kernel for launch.
+// Preliminary work to prepare a simple reduce-style kernel for launch.
 bool RsdCpuScriptImpl::reduceMtlsSetup(const Allocation *ain,
                                        const Allocation *aout,
                                        const RsScriptCall *sc,
@@ -588,6 +589,77 @@ bool RsdCpuScriptImpl::reduceMtlsSetup(const Allocation *ain,
 
     rsAssert(mtls->inBuf && mtls->outBuf);
 
+    return true;
+}
+
+// Preliminary work to prepare a general reduce-style kernel for launch.
+bool RsdCpuScriptImpl::reduceNewMtlsSetup(const Allocation ** ains,
+                                          uint32_t inLen,
+                                          const Allocation * aout,
+                                          const RsScriptCall *sc,
+                                          MTLaunchStructReduceNew *mtls) {
+    rsAssert(ains && (inLen >= 1) && aout);
+    memset(mtls, 0, sizeof(MTLaunchStructReduceNew));
+    mtls->dimPtr = &mtls->redp.dim;
+
+    for (int index = inLen; --index >= 0;) {
+        if (allocationLODIsNull(ains[index])) {
+            mCtx->getContext()->setError(RS_ERROR_BAD_SCRIPT,
+                                         "reduce called with null in allocations");
+            return false;
+        }
+    }
+
+    if (allocationLODIsNull(aout)) {
+        mCtx->getContext()->setError(RS_ERROR_BAD_SCRIPT,
+                                     "reduce called with null out allocation");
+        return false;
+    }
+
+    const Allocation *ain0   = ains[0];
+    const Type       *inType = ain0->getType();
+
+    mtls->redp.dim.x = inType->getDimX();
+    mtls->redp.dim.y = inType->getDimY();
+    mtls->redp.dim.z = inType->getDimZ();
+
+    for (int Index = inLen; --Index >= 1;) {
+        if (!ain0->hasSameDims(ains[Index])) {
+            mCtx->getContext()->setError(RS_ERROR_BAD_SCRIPT,
+                                         "Failed to launch reduction kernel;"
+                                         "dimensions of input allocations do not match.");
+            return false;
+        }
+    }
+
+    if (!setUpMtlsDimensions(mtls, mtls->redp.dim, sc)) {
+        return false;
+    }
+
+    // The X & Y walkers always want 0-1 min even if dim is not present
+    mtls->end.x = rsMax((uint32_t)1, mtls->end.x);
+    mtls->end.y = rsMax((uint32_t)1, mtls->end.y);
+
+    mtls->rs = mCtx;
+
+    // Currently not threaded.
+    mtls->isThreadable = false;
+    mtls->mSliceNum = -1;
+
+    // Set up output,
+    mtls->redp.outLen = 1;
+    mtls->redp.outPtr[0] = (uint8_t *)aout->mHal.drvState.lod[0].mallocPtr;
+    mtls->redp.outStride[0] = aout->getType()->getElementSizeBytes();
+
+    // Set up input.
+    memcpy(mtls->ains, ains, inLen * sizeof(ains[0]));
+    mtls->redp.inLen = inLen;
+    for (int index = inLen; --index >= 0;) {
+        mtls->redp.inPtr[index] = (const uint8_t*)ains[index]->mHal.drvState.lod[0].mallocPtr;
+        mtls->redp.inStride[index] = ains[index]->getType()->getElementSizeBytes();
+    }
+
+    // All validation passed, ok to launch threads
     return true;
 }
 
@@ -626,13 +698,11 @@ bool RsdCpuScriptImpl::forEachMtlsSetup(const Allocation ** ains,
         for (int Index = inLen; --Index >= 1;) {
             if (!ain0->hasSameDims(ains[Index])) {
                 mCtx->getContext()->setError(RS_ERROR_BAD_SCRIPT,
-                  "Failed to launch kernel; dimensions of input and output"
+                  "Failed to launch kernel; dimensions of input"
                   "allocations do not match.");
-
                 return false;
             }
         }
-
     } else if (aout != nullptr) {
         const Type *outType = aout->getType();
 
@@ -729,18 +799,44 @@ void RsdCpuScriptImpl::invokeReduce(uint32_t slot,
     }
 }
 
+void RsdCpuScriptImpl::invokeReduceNew(uint32_t slot,
+                                       const Allocation ** ains, uint32_t inLen,
+                                       Allocation *aout,
+                                       const RsScriptCall *sc) {
+  MTLaunchStructReduceNew mtls;
+
+  if (reduceNewMtlsSetup(ains, inLen, aout, sc, &mtls)) {
+    reduceNewKernelSetup(slot, &mtls);
+    RsdCpuScriptImpl *oldTLS = mCtx->setTLS(this);
+    mCtx->launchReduceNew(ains, inLen, aout, &mtls);
+    mCtx->setTLS(oldTLS);
+  }
+}
+
 void RsdCpuScriptImpl::forEachKernelSetup(uint32_t slot, MTLaunchStructForEach *mtls) {
     mtls->script = this;
     mtls->fep.slot = slot;
     mtls->kernel = mScriptExec->getForEachFunction(slot);
     rsAssert(mtls->kernel != nullptr);
-    mtls->sig = mScriptExec->getForEachSignature(slot);
 }
 
 void RsdCpuScriptImpl::reduceKernelSetup(uint32_t slot, MTLaunchStructReduce *mtls) {
     mtls->script = this;
     mtls->kernel = mScriptExec->getReduceFunction(slot);
     rsAssert(mtls->kernel != nullptr);
+}
+
+void RsdCpuScriptImpl::reduceNewKernelSetup(uint32_t slot, MTLaunchStructReduceNew *mtls) {
+    mtls->script = this;
+    mtls->redp.slot = slot;
+
+    const ReduceNewDescription *desc = mScriptExec->getReduceNewDescription(slot);
+    mtls->accumFunc = desc->accumFunc;
+    mtls->initFunc  = desc->initFunc;   // might legally be nullptr
+    mtls->outFunc   = desc->outFunc;    // might legally be nullptr
+    mtls->accumSize = desc->accumSize;
+
+    rsAssert(mtls->accumFunc != nullptr);
 }
 
 int RsdCpuScriptImpl::invokeRoot() {
