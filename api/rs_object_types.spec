@@ -183,7 +183,7 @@ description:
 end:
 
 type: rs_yuv_format
-version: UNRELEASED
+version: 24
 enum:
 value: RS_YUV_NONE = 0
 value: RS_YUV_YV12 = 0x32315659

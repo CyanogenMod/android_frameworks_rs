@@ -96,7 +96,7 @@ typedef struct rs_script_call {
  *  An opaque type for a function that is defined with the kernel attribute.  A value
  *  of this type can be used in a rsForEach call to launch a kernel.
  */
-#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
 typedef void* rs_kernel;
 #endif
 
@@ -115,7 +115,7 @@ typedef void* rs_kernel;
  *
  * Up to API level 23, the kernel is implicitly specified as the kernel named
  * "root" in the specified script, and only a single input allocation can be used.
- * Starting in API level *UNRELEASED*, an arbitrary kernel function can be used,
+ * Starting in API level 24, an arbitrary kernel function can be used,
  * as specified by the kernel argument. The script argument is removed.
  * The kernel must be defined in the current script. In addition, more than one
  * input can be used.
@@ -168,7 +168,7 @@ extern void __attribute__((overloadable))
     rsForEach(rs_script script, rs_allocation input, rs_allocation output);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
 extern void
     rsForEach(rs_kernel kernel, ...);
 #endif
@@ -198,7 +198,7 @@ extern void
  *   options: Launch options
  *   ...: Input and output allocations
  */
-#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
 extern void
     rsForEachWithOptions(rs_kernel kernel, rs_script_call_t* options, ...);
 #endif

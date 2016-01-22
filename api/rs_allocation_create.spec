@@ -25,7 +25,7 @@ description:
 end:
 
 function: rsCreateElement
-version: UNRELEASED
+version: 24
 ret: rs_element
 arg: rs_data_type data_type, "Data type of the Element"
 summary: Creates an rs_element object of the specified data type
@@ -37,7 +37,7 @@ test: none
 end:
 
 function: rsCreateVectorElement
-version: UNRELEASED
+version: 24
 ret: rs_element
 arg: rs_data_type data_type, "Data type of the Element"
 arg: uint32_t vector_width, "Vector width (either 2, 3, or 4)"
@@ -50,7 +50,7 @@ test: none
 end:
 
 function: rsCreatePixelElement
-version: UNRELEASED
+version: 24
 ret: rs_element
 arg: rs_data_type data_type, "Data type of the Element"
 arg: rs_data_kind data_kind, "Data kind of the Element"
@@ -62,7 +62,7 @@ test: none
 end:
 
 function: rsCreateElement
-version: UNRELEASED
+version: 24
 internal: true
 ret: rs_element
 arg: int32_t data_type
@@ -73,7 +73,7 @@ test: none
 end:
 
 function: rsCreateType
-version: UNRELEASED
+version: 24
 ret: rs_type
 arg: rs_element element, "Element to be associated with the Type"
 arg: uint32_t dimX, "Size along the X dimension"
@@ -103,7 +103,7 @@ test: none
 end:
 
 function: rsCreateType
-version: UNRELEASED
+version: 24
 ret: rs_type
 arg: rs_element element
 arg: uint32_t dimX
@@ -113,7 +113,7 @@ test:none
 end:
 
 function: rsCreateType
-version: UNRELEASED
+version: 24
 ret: rs_type
 arg: rs_element element
 arg: uint32_t dimX
@@ -122,7 +122,7 @@ test:none
 end:
 
 function: rsCreateType
-version: UNRELEASED
+version: 24
 ret: rs_type
 arg: rs_element element
 arg: uint32_t dimX
@@ -130,7 +130,7 @@ test:none
 end:
 
 function: rsCreateAllocation
-version: UNRELEASED
+version: 24
 ret: rs_allocation
 arg: rs_type type, "Type of the Allocation"
 arg: uint32_t usage, "Usage flag for the allocation"
@@ -152,14 +152,14 @@ test: none
 end:
 
 function: rsCreateAllocation
-version: UNRELEASED
+version: 24
 ret: rs_allocation
 arg: rs_type type
 test: none
 end:
 
 function: rsCreateAllocation
-version: UNRELEASED
+version: 24
 internal: true
 ret: rs_allocation
 arg: rs_type type
@@ -171,7 +171,7 @@ end:
 
 # Bug: 24862914: Add f16 to all functions below once the bug is fixed
 function: rsCreateAllocation_#1
-version: UNRELEASED
+version: 24
 t: u8, u16, u32, u64, i8, i16, i32, i64, f32, f64
 ret: rs_allocation
 arg: uint32_t dimX
@@ -185,7 +185,7 @@ test: none
 end:
 
 function: rsCreateAllocation_#2#1
-version: UNRELEASED
+version: 24
 w: 2, 3, 4
 t: u8, u16, u32, u64, i8, i16, i32, i64, f32, f64
 ret: rs_allocation
@@ -200,7 +200,7 @@ test: none
 end:
 
 function: rsCreateAllocation_#1
-version: UNRELEASED
+version: 24
 t: u8, u16, u32, u64, i8, i16, i32, i64, f32, f64
 ret: rs_allocation
 arg: uint32_t dimX
@@ -213,7 +213,7 @@ test: none
 end:
 
 function: rsCreateAllocation_#2#1
-version: UNRELEASED
+version: 24
 w: 2, 3, 4
 t: u8, u16, u32, u64, i8, i16, i32, i64, f32, f64
 ret: rs_allocation
@@ -227,7 +227,7 @@ test: none
 end:
 
 function: rsCreateAllocation_#1
-version: UNRELEASED
+version: 24
 t: u8, u16, u32, u64, i8, i16, i32, i64, f32, f64
 ret: rs_allocation
 arg: uint32_t dimX
@@ -239,7 +239,7 @@ test: none
 end:
 
 function: rsCreateAllocation_#2#1
-version: UNRELEASED
+version: 24
 w: 2, 3, 4
 t: u8, u16, u32, u64, i8, i16, i32, i64, f32, f64
 ret: rs_allocation

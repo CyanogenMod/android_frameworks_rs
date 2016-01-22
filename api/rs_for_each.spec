@@ -84,7 +84,7 @@ description:
 end:
 
 type: rs_kernel
-version: UNRELEASED
+version: 24
 simple: void*
 summary: Handle to a kernel function
 description:
@@ -114,7 +114,7 @@ description:
 
  Up to API level 23, the kernel is implicitly specified as the kernel named
  "root" in the specified script, and only a single input allocation can be used.
- Starting in API level *UNRELEASED*, an arbitrary kernel function can be used,
+ Starting in API level 24, an arbitrary kernel function can be used,
  as specified by the kernel argument. The script argument is removed.
  The kernel must be defined in the current script. In addition, more than one
  input can be used.
@@ -174,7 +174,7 @@ test: none
 end:
 
 function: rsForEach
-version: UNRELEASED
+version: 24
 intrinsic: true
 # Not overloadable
 attrib: =
@@ -185,7 +185,7 @@ test: none
 end:
 
 function: rsForEachWithOptions
-version: UNRELEASED
+version: 24
 intrinsic: true
 # Not overloadable
 attrib: =
@@ -215,7 +215,7 @@ test: none
 end:
 
 function: rsForEachInternal
-version: UNRELEASED
+version: 24
 internal: true
 ret: void
 arg: int slot
