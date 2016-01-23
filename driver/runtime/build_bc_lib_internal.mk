@@ -26,7 +26,7 @@ include $(BUILD_SYSTEM)/base_rules.mk
 
 BCC_STRIP_ATTR := $(BUILD_OUT_EXECUTABLES)/bcc_strip_attr$(BUILD_EXECUTABLE_SUFFIX)
 
-bc_clang := $(CLANG)
+bc_clang := $(RS_CLANG)
 ifdef RS_DRIVER_CLANG_EXE
 bc_clang := $(RS_DRIVER_CLANG_EXE)
 endif
