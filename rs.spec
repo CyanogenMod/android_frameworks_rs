@@ -80,6 +80,18 @@ AllocationCubeCreateFromBitmap {
     ret RsAllocation
 }
 
+AllocationSetupBufferQueue {
+    param RsAllocation alloc
+    param uint32_t numAlloc
+    sync
+}
+
+AllocationShareBufferQueue {
+    param RsAllocation alloc1
+    param RsAllocation alloc2
+    sync
+}
+
 AllocationGetSurface {
     param RsAllocation alloc
     sync
@@ -535,4 +547,5 @@ AllocationIoSend {
 
 AllocationIoReceive {
     param RsAllocation alloc
+    ret int64_t
     }
