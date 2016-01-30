@@ -1,4 +1,4 @@
-package com.android.rs.test;
+package com.android.rs.refocus;
 
 import android.util.Log;
 import java.util.ArrayList;

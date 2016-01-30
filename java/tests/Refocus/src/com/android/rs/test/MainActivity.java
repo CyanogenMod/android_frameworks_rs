@@ -1,4 +1,4 @@
-package com.android.rs.test;
+package com.android.rs.refocus;
 
 import android.app.Activity;
 import android.content.ContentResolver;
