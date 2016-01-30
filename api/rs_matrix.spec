@@ -46,8 +46,6 @@ include:
 end:
 
 function: rsExtractFrustumPlanes
-# TODO Why always_inline?
-attrib: always_inline
 ret: void
 arg: const rs_matrix4x4* viewProj, "Matrix to extract planes from."
 arg: float4* left, "Left plane."
@@ -107,7 +105,6 @@ test: none
 end:
 
 function: rsIsSphereInFrustum
-attrib: always_inline
 ret: bool
 arg: float4* sphere, "float4 representing the sphere."
 arg: float4* left, "Left plane."
