@@ -259,8 +259,7 @@ enum RsContextFlags {
     RS_CONTEXT_SYNCHRONOUS      = 0x0001,
     RS_CONTEXT_LOW_LATENCY      = 0x0002,
     RS_CONTEXT_LOW_POWER        = 0x0004,
-    RS_CONTEXT_WAIT_FOR_ATTACH  = 0x0008,
-    RS_CONTEXT_OPT_LEVEL_0      = 0x0010
+    RS_CONTEXT_WAIT_FOR_ATTACH  = 0x0008
 };
 
 enum RsBlasTranspose {
