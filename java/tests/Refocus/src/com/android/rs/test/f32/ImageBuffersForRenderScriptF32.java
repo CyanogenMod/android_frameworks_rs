@@ -1,4 +1,4 @@
-package com.android.rs.test.f32;
+package com.android.rs.refocus.f32;
 
 import android.graphics.Bitmap;
 import android.support.v8.renderscript.Allocation;
@@ -6,10 +6,10 @@ import android.support.v8.renderscript.Element;
 import android.support.v8.renderscript.RenderScript;
 import android.util.Log;
 
-import com.android.rs.test.renderscript.ScriptC_layered_filter_fast_f32;
+import com.android.rs.refocus.renderscript.ScriptC_layered_filter_fast_f32;
 
-import com.android.rs.test.LayerInfo;
-import com.android.rs.test.ImageBuffersForRenderScript;
+import com.android.rs.refocus.LayerInfo;
+import com.android.rs.refocus.ImageBuffersForRenderScript;
 
 /**
  * A class that manages the image buffers that interface between Java and Render
