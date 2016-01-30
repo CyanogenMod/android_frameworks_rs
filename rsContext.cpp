@@ -497,9 +497,6 @@ Context * Context::createContext(Device *dev, const RsSurfaceConfig *sc,
     if (flags & RS_CONTEXT_SYNCHRONOUS) {
         rsc->mSynchronous = true;
     }
-    if (flags & RS_CONTEXT_OPT_LEVEL_0) {
-        rsc->mOptLevel = 0;
-    }
     rsc->mContextType = ct;
     rsc->mHal.flags = flags;
 
