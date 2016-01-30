@@ -691,7 +691,6 @@ end:
 function: rsgMeshComputeBoundingBox
 version: 9 22
 size: 32
-attrib: always_inline
 ret: void
 arg: rs_mesh mesh
 arg: float3* bBoxMin

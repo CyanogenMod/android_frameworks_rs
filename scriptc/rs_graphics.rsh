@@ -1037,7 +1037,7 @@ extern void __attribute__((overloadable
 
 #ifndef __LP64__
 #if !defined(RS_VERSION) || (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 22)
-static inline void __attribute__((always_inline, overloadable
+static inline void __attribute__((overloadable
 #if (defined(RS_VERSION) && (RS_VERSION >= 22))
 , deprecated
 #endif

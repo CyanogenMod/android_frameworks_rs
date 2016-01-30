@@ -3387,8 +3387,7 @@ test: none
 end:
 
 function: rsClamp
-# TODO Why always_inline?
-attrib: const, always_inline
+attrib: const
 t: i8, i16, i32, u8, u16, u32
 ret: #1
 arg: #1 amount, "Value to clamp."
