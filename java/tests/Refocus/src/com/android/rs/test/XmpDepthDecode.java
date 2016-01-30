@@ -1,4 +1,4 @@
-package com.android.rs.test;
+package com.android.rs.refocus;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -18,8 +18,8 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.android.rs.test.image.RangeInverseDepthTransform;
-import com.android.rs.test.image.RangeLinearDepthTransform;
+import com.android.rs.refocus.image.RangeInverseDepthTransform;
+import com.android.rs.refocus.image.RangeLinearDepthTransform;
 
 
 /**

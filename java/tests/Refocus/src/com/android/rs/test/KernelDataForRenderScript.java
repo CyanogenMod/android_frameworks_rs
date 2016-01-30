@@ -1,10 +1,10 @@
-package com.android.rs.test;
+package com.android.rs.refocus;
 
 import android.support.v8.renderscript.RenderScript;
 import android.support.v8.renderscript.Allocation;
 import android.support.v8.renderscript.Element;
 
-import com.android.rs.test.renderscript.ScriptField_KernelInfo;
+import com.android.rs.refocus.renderscript.ScriptField_KernelInfo;
 
 /**
  * A class that manages the blur kernel matrices of a blending layer that

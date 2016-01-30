@@ -1,5 +1,5 @@
 #pragma version(1)
-#pragma rs java_package_name(com.android.rs.test.renderscript)
+#pragma rs java_package_name(com.android.rs.refocus.renderscript)
 
 // This is a speedup version of layered_filter_f32.rs using summation table.
 // Several kernel functions and global functions for refocus rendering using
