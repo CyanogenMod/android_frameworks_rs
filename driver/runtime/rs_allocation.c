@@ -46,8 +46,9 @@ extern rs_element __attribute__((overloadable))
 }
 
 // TODO: this needs to be optimized, obviously
-static void memcpy(void* dst, void* src, size_t size) {
-    char* dst_c = (char*) dst, *src_c = (char*) src;
+static void memcpy(void* dst, const void* src, size_t size) {
+    char* dst_c = (char*) dst;
+    const char* src_c = (const char*) src;
     for (; size > 0; size--) {
         *dst_c++ = *src_c++;
     }
