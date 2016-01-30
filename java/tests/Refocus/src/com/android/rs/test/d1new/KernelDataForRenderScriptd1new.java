@@ -1,7 +1,7 @@
-package com.android.rs.test.d1new;
+package com.android.rs.refocus.d1new;
 
-import com.android.rs.test.BlurStack;
-import com.android.rs.test.KernelDataForRenderScript;
+import com.android.rs.refocus.BlurStack;
+import com.android.rs.refocus.KernelDataForRenderScript;
 
 import android.support.v8.renderscript.Allocation;
 import android.support.v8.renderscript.Element;

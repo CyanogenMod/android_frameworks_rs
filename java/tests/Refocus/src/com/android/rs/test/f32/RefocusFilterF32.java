@@ -1,13 +1,13 @@
-package com.android.rs.test.f32;
+package com.android.rs.refocus.f32;
 
 
-import com.android.rs.test.BlurStack;
-import com.android.rs.test.KernelDataForRenderScript;
-import com.android.rs.test.LayerInfo;
-import com.android.rs.test.MediaStoreSaver;
-import com.android.rs.test.R;
-import com.android.rs.test.RefocusFilter;
-import com.android.rs.test.renderscript.ScriptC_layered_filter_fast_f32;
+import com.android.rs.refocus.BlurStack;
+import com.android.rs.refocus.KernelDataForRenderScript;
+import com.android.rs.refocus.LayerInfo;
+import com.android.rs.refocus.MediaStoreSaver;
+import com.android.rs.refocus.R;
+import com.android.rs.refocus.RefocusFilter;
+import com.android.rs.refocus.renderscript.ScriptC_layered_filter_fast_f32;
 
 import android.graphics.Bitmap;
 import android.support.v8.renderscript.Allocation;

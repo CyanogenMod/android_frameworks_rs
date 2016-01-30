@@ -1,7 +1,7 @@
-package com.android.rs.test;
+package com.android.rs.refocus;
 
-import com.android.rs.test.d1new.RefocusFilterd1new;
-import com.android.rs.test.f32.RefocusFilterF32;
+import com.android.rs.refocus.d1new.RefocusFilterd1new;
+import com.android.rs.refocus.f32.RefocusFilterF32;
 
 import android.graphics.Bitmap;
 import android.support.v8.renderscript.RenderScript;

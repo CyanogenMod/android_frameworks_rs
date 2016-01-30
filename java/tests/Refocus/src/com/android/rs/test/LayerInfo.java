@@ -1,4 +1,4 @@
-package com.android.rs.test;
+package com.android.rs.refocus;
 
 /**
  * An object that defines a blending layer for refocus rendering, which groups

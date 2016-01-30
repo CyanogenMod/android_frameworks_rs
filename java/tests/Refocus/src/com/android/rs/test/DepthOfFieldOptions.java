@@ -1,4 +1,4 @@
-package com.android.rs.test;
+package com.android.rs.refocus;
 
 /**
  * A struct containing all the data needed to apply a depth-of-field effect.

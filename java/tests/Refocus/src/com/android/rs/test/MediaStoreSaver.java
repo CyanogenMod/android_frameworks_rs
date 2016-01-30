@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.rs.test;
+package com.android.rs.refocus;
 
 import android.content.Context;
 import android.content.Intent;

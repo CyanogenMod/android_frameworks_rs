@@ -1,6 +1,6 @@
-package com.android.rs.test.image;
+package com.android.rs.refocus.image;
 
-import com.android.rs.test.DepthTransform;
+import com.android.rs.refocus.DepthTransform;
 
 /**
  * An implementation of {@code DepthTransform} that uses an inverse
