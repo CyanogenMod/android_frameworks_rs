@@ -22,7 +22,6 @@ LOCAL_SRC_FILES:= \
         rsCpuExecutable.cpp \
         rsCpuScript.cpp \
         rsCpuRuntimeMath.cpp \
-        rsCpuRuntimeMathFuncs.cpp \
         rsCpuScriptGroup.cpp \
         rsCpuScriptGroup2.cpp \
         rsCpuIntrinsic.cpp \
