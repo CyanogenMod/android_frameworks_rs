@@ -3,6 +3,11 @@
 
 #include "rsCpuCoreRuntime.h"
 
+extern float __attribute__((overloadable)) rsFrac(float v) {
+    int i = (int)floor(v);
+    return fmin(v - i, 0x1.fffffep-1f);
+}
+
 /* Function declarations from libRS */
 extern float4 __attribute__((overloadable)) convert_float4(uchar4 c);
 
