@@ -64,6 +64,7 @@
  *   near: Near plane.
  *   far: Far plane.
  */
+#if !defined(RS_VERSION) || (RS_VERSION <= 23)
 static inline void __attribute__((overloadable))
     rsExtractFrustumPlanes(const rs_matrix4x4* viewProj, float4* left, float4* right, float4* top,
                            float4* bottom, float4* near, float4* far) {
@@ -111,6 +112,13 @@ static inline void __attribute__((overloadable))
     len = length(far->xyz);
     *far /= len;
 }
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
+extern void __attribute__((overloadable))
+    rsExtractFrustumPlanes(const rs_matrix4x4* viewProj, float4* left, float4* righ, float4* top,
+                           float4* bottom, float4* near, float4* far);
+#endif
 
 /*
  * rsIsSphereInFrustum: Checks if a sphere is within the frustum planes
@@ -126,7 +134,8 @@ static inline void __attribute__((overloadable))
  *   near: Near plane.
  *   far: Far plane.
  */
-static inline bool __attribute__((overloadable))
+#if !defined(RS_VERSION) || (RS_VERSION <= 23)
+static inline bool __attribute__((always_inline, overloadable))
     rsIsSphereInFrustum(float4* sphere, float4* left, float4* right, float4* top, float4* bottom,
                         float4* near, float4* far) {
     float distToCenter = dot(left->xyz, sphere->xyz) + left->w;
@@ -155,6 +164,13 @@ static inline bool __attribute__((overloadable))
     }
     return true;
 }
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
+extern bool __attribute__((overloadable))
+    rsIsSphereInFrustum(float4* sphere, float4* left, float4* right, float4* top, float4* bottom,
+                        float4* near, float4* far);
+#endif
 
 /*
  * rsMatrixGet: Get one element
