@@ -334,10 +334,16 @@ static bool iszero(float f) {
 }
 
 
-extern float __attribute__((overloadable)) acos(float);
+extern float __attribute__((overloadable)) SC_acosf(float);
+float __attribute__((overloadable)) acos(float v) {
+    return SC_acosf(v);
+}
 FN_FUNC_FN(acos)
 
-extern float __attribute__((overloadable)) acosh(float);
+extern float __attribute__((overloadable)) SC_acoshf(float);
+float __attribute__((overloadable)) acosh(float v) {
+    return SC_acoshf(v);
+}
 FN_FUNC_FN(acosh)
 
 
@@ -346,10 +352,16 @@ extern float __attribute__((overloadable)) acospi(float v) {
 }
 FN_FUNC_FN(acospi)
 
-extern float __attribute__((overloadable)) asin(float);
+extern float __attribute__((overloadable)) SC_asinf(float);
+float __attribute__((overloadable)) asin(float v) {
+    return SC_asinf(v);
+}
 FN_FUNC_FN(asin)
 
-extern float __attribute__((overloadable)) asinh(float);
+extern float __attribute__((overloadable)) SC_asinhf(float);
+float __attribute__((overloadable)) asinh(float v) {
+    return SC_asinhf(v);
+}
 FN_FUNC_FN(asinh)
 
 extern float __attribute__((overloadable)) asinpi(float v) {
@@ -357,13 +369,22 @@ extern float __attribute__((overloadable)) asinpi(float v) {
 }
 FN_FUNC_FN(asinpi)
 
-extern float __attribute__((overloadable)) atan(float);
+extern float __attribute__((overloadable)) SC_atanf(float);
+float __attribute__((overloadable)) atan(float v) {
+    return SC_atanf(v);
+}
 FN_FUNC_FN(atan)
 
-extern float __attribute__((overloadable)) atan2(float, float);
+extern float __attribute__((overloadable)) SC_atan2f(float, float);
+float __attribute__((overloadable)) atan2(float v1, float v2) {
+    return SC_atan2f(v1, v2);
+}
 FN_FUNC_FN_FN(atan2)
 
-extern float __attribute__((overloadable)) atanh(float);
+extern float __attribute__((overloadable)) SC_atanhf(float);
+float __attribute__((overloadable)) atanh(float v) {
+    return SC_atanhf(v);
+}
 FN_FUNC_FN(atanh)
 
 extern float __attribute__((overloadable)) atanpi(float v) {
@@ -377,19 +398,34 @@ extern float __attribute__((overloadable)) atan2pi(float y, float x) {
 }
 FN_FUNC_FN_FN(atan2pi)
 
-extern float __attribute__((overloadable)) cbrt(float);
+extern float __attribute__((overloadable)) SC_cbrtf(float);
+float __attribute__((overloadable)) cbrt(float v) {
+    return SC_cbrtf(v);
+}
 FN_FUNC_FN(cbrt)
 
-extern float __attribute__((overloadable)) ceil(float);
+extern float __attribute__((overloadable)) SC_ceilf(float);
+float __attribute__((overloadable)) ceil(float v) {
+    return SC_ceilf(v);
+}
 FN_FUNC_FN(ceil)
 
-extern float __attribute__((overloadable)) copysign(float, float);
+extern float __attribute__((overloadable)) SC_copysignf(float, float);
+float __attribute__((overloadable)) copysign(float v1, float v2) {
+    return SC_copysignf(v1, v2);
+}
 FN_FUNC_FN_FN(copysign)
 
-extern float __attribute__((overloadable)) cos(float);
+extern float __attribute__((overloadable)) SC_cosf(float);
+float __attribute__((overloadable)) cos(float v) {
+    return SC_cosf(v);
+}
 FN_FUNC_FN(cos)
 
-extern float __attribute__((overloadable)) cosh(float);
+extern float __attribute__((overloadable)) SC_coshf(float);
+float __attribute__((overloadable)) cosh(float v) {
+    return SC_coshf(v);
+}
 FN_FUNC_FN(cosh)
 
 extern float __attribute__((overloadable)) cospi(float v) {
@@ -397,16 +433,28 @@ extern float __attribute__((overloadable)) cospi(float v) {
 }
 FN_FUNC_FN(cospi)
 
-extern float __attribute__((overloadable)) erfc(float);
+extern float __attribute__((overloadable)) SC_erfcf(float);
+float __attribute__((overloadable)) erfc(float v) {
+    return SC_erfcf(v);
+}
 FN_FUNC_FN(erfc)
 
-extern float __attribute__((overloadable)) erf(float);
+extern float __attribute__((overloadable)) SC_erff(float);
+float __attribute__((overloadable)) erf(float v) {
+    return SC_erff(v);
+}
 FN_FUNC_FN(erf)
 
-extern float __attribute__((overloadable)) exp(float);
+extern float __attribute__((overloadable)) SC_expf(float);
+float __attribute__((overloadable)) exp(float v) {
+    return SC_expf(v);
+}
 FN_FUNC_FN(exp)
 
-extern float __attribute__((overloadable)) exp2(float);
+extern float __attribute__((overloadable)) SC_exp2f(float);
+float __attribute__((overloadable)) exp2(float v) {
+    return SC_exp2f(v);
+}
 FN_FUNC_FN(exp2)
 
 extern float __attribute__((overloadable)) pow(float, float);
@@ -416,7 +464,10 @@ extern float __attribute__((overloadable)) exp10(float v) {
 }
 FN_FUNC_FN(exp10)
 
-extern float __attribute__((overloadable)) expm1(float);
+extern float __attribute__((overloadable)) SC_expm1f(float);
+float __attribute__((overloadable)) expm1(float v) {
+    return SC_expm1f(v);
+}
 FN_FUNC_FN(expm1)
 
 extern float __attribute__((overloadable)) fabs(float v) {
@@ -425,18 +476,30 @@ extern float __attribute__((overloadable)) fabs(float v) {
 }
 FN_FUNC_FN(fabs)
 
-extern float __attribute__((overloadable)) fdim(float, float);
+extern float __attribute__((overloadable)) SC_fdimf(float, float);
+float __attribute__((overloadable)) fdim(float v1, float v2) {
+    return SC_fdimf(v1, v2);
+}
 FN_FUNC_FN_FN(fdim)
 
-extern float __attribute__((overloadable)) floor(float);
+extern float __attribute__((overloadable)) SC_floorf(float);
+float __attribute__((overloadable)) floor(float v) {
+    return SC_floorf(v);
+}
 FN_FUNC_FN(floor)
 
-extern float __attribute__((overloadable)) fma(float, float, float);
+extern float __attribute__((overloadable)) SC_fmaf(float, float, float);
+float __attribute__((overloadable)) fma(float v1, float v2, float v3) {
+    return SC_fmaf(v1, v2, v3);
+}
 FN_FUNC_FN_FN_FN(fma)
 
-extern float __attribute__((overloadable)) fmin(float, float);
+extern float __attribute__((overloadable)) SC_fminf(float, float);
 
-extern float __attribute__((overloadable)) fmod(float, float);
+extern float __attribute__((overloadable)) SC_fmodf(float, float);
+float __attribute__((overloadable)) fmod(float v1, float v2) {
+    return SC_fmodf(v1, v2);
+}
 FN_FUNC_FN_FN(fmod)
 
 extern float __attribute__((overloadable)) fract(float v, float *iptr) {
@@ -454,28 +517,52 @@ extern float __attribute__((const, overloadable)) fract(float v) {
 }
 FN_FUNC_FN(fract)
 
-extern float __attribute__((overloadable)) frexp(float, int *);
+extern float __attribute__((overloadable)) SC_frexpf(float, int *);
+float __attribute__((overloadable)) frexp(float v1, int* v2) {
+    return SC_frexpf(v1, v2);
+}
 FN_FUNC_FN_PIN(frexp)
 
-extern float __attribute__((overloadable)) hypot(float, float);
+extern float __attribute__((overloadable)) SC_hypotf(float, float);
+float __attribute__((overloadable)) hypot(float v1, float v2) {
+    return SC_hypotf(v1, v2);
+}
 FN_FUNC_FN_FN(hypot)
 
-extern int __attribute__((overloadable)) ilogb(float);
+extern int __attribute__((overloadable)) SC_ilogbf(float);
+int __attribute__((overloadable)) ilogb(float v) {
+    return SC_ilogbf(v);
+}
 IN_FUNC_FN(ilogb)
 
-extern float __attribute__((overloadable)) ldexp(float, int);
+extern float __attribute__((overloadable)) SC_ldexpf(float, int);
+float __attribute__((overloadable)) ldexp(float v1, int v2) {
+    return SC_ldexpf(v1, v2);
+}
 FN_FUNC_FN_IN(ldexp)
 FN_FUNC_FN_I(ldexp)
 
-extern float __attribute__((overloadable)) lgamma(float);
+extern float __attribute__((overloadable)) SC_lgammaf(float);
+float __attribute__((overloadable)) lgamma(float v) {
+    return SC_lgammaf(v);
+}
 FN_FUNC_FN(lgamma)
-extern float __attribute__((overloadable)) lgamma(float, int*);
+extern float __attribute__((overloadable)) SC_lgammaf_r(float, int*);
+float __attribute__((overloadable)) lgamma(float v, int* ptr) {
+    return SC_lgammaf_r(v, ptr);
+}
 FN_FUNC_FN_PIN(lgamma)
 
-extern float __attribute__((overloadable)) log(float);
+extern float __attribute__((overloadable)) SC_logf(float);
+float __attribute__((overloadable)) log(float v) {
+    return SC_logf(v);
+}
 FN_FUNC_FN(log)
 
-extern float __attribute__((overloadable)) log10(float);
+extern float __attribute__((overloadable)) SC_log10f(float);
+float __attribute__((overloadable)) log10(float v) {
+    return SC_log10f(v);
+}
 FN_FUNC_FN(log10)
 
 
@@ -484,10 +571,16 @@ extern float __attribute__((overloadable)) log2(float v) {
 }
 FN_FUNC_FN(log2)
 
-extern float __attribute__((overloadable)) log1p(float);
+extern float __attribute__((overloadable)) SC_log1pf(float);
+float __attribute__((overloadable)) log1p(float v) {
+    return SC_log1pf(v);
+}
 FN_FUNC_FN(log1p)
 
-extern float __attribute__((overloadable)) logb(float);
+extern float __attribute__((overloadable)) SC_logbf(float);
+float __attribute__((overloadable)) logb(float v) {
+    return SC_logbf(v);
+}
 FN_FUNC_FN(logb)
 
 extern float __attribute__((overloadable)) mad(float a, float b, float c) {
@@ -503,7 +596,10 @@ extern float4 __attribute__((overloadable)) mad(float4 a, float4 b, float4 c) {
     return a * b + c;
 }
 
-extern float __attribute__((overloadable)) modf(float, float *);
+extern float __attribute__((overloadable)) SC_modff(float, float *);
+float __attribute__((overloadable)) modf(float v1, float *v2) {
+    return SC_modff(v1, v2);
+}
 FN_FUNC_FN_PFN(modf);
 
 extern float __attribute__((overloadable)) nan(uint v) {
@@ -513,7 +609,10 @@ extern float __attribute__((overloadable)) nan(uint v) {
     return f[0];
 }
 
-extern float __attribute__((overloadable)) nextafter(float, float);
+extern float __attribute__((overloadable)) SC_nextafterf(float, float);
+float __attribute__((overloadable)) nextafter(float v1, float v2) {
+    return SC_nextafterf(v1, v2);
+}
 FN_FUNC_FN_FN(nextafter)
 
 FN_FUNC_FN_FN(pow)
@@ -543,13 +642,22 @@ extern float4 __attribute__((overloadable)) powr(float4 v, float4 p) {
     return pow(v, p);
 }
 
-extern float __attribute__((overloadable)) remainder(float, float);
+extern float __attribute__((overloadable)) SC_remainderf(float, float);
+float __attribute__((overloadable)) remainder(float v1, float v2) {
+    return SC_remainderf(v1, v2);
+}
 FN_FUNC_FN_FN(remainder)
 
-extern float __attribute__((overloadable)) remquo(float, float, int *);
+extern float __attribute__((overloadable)) SC_remquof(float, float, int *);
+float __attribute__((overloadable)) remquo(float v1, float v2, int *v3) {
+    return SC_remquof(v1, v2, v3);
+}
 FN_FUNC_FN_FN_PIN(remquo)
 
-extern float __attribute__((overloadable)) rint(float);
+extern float __attribute__((overloadable)) SC_rintf(float);
+float __attribute__((overloadable)) rint(float v) {
+    return SC_rintf(v);
+}
 FN_FUNC_FN(rint)
 
 extern float __attribute__((overloadable)) rootn(float v, int r) {
@@ -585,11 +693,18 @@ extern float __attribute__((overloadable)) rootn(float v, int r) {
 }
 FN_FUNC_FN_IN(rootn);
 
-extern float __attribute__((overloadable)) round(float);
+extern float __attribute__((overloadable)) SC_roundf(float);
+float __attribute__((overloadable)) round(float v) {
+    return SC_roundf(v);
+}
 FN_FUNC_FN(round)
 
+extern float __attribute__((overloadable)) SC_randf2(float, float);
+float __attribute__((overloadable)) rsRand(float min, float max) {
+  return SC_randf2(min, max);
+}
 
-extern float __attribute__((overloadable)) sqrt(float);
+
 extern float __attribute__((overloadable)) rsqrt(float v) {
     return 1.f / sqrt(v);
 }
@@ -607,7 +722,10 @@ extern float4 __attribute__((overloadable)) sqrt(float4);
 
 FN_FUNC_FN(rsqrt)
 
-extern float __attribute__((overloadable)) sin(float);
+extern float __attribute__((overloadable)) SC_sinf(float);
+float __attribute__((overloadable)) sin(float v) {
+    return SC_sinf(v);
+}
 FN_FUNC_FN(sin)
 
 extern float __attribute__((overloadable)) sincos(float v, float *cosptr) {
@@ -627,7 +745,10 @@ extern float4 __attribute__((overloadable)) sincos(float4 v, float4 *cosptr) {
     return sin(v);
 }
 
-extern float __attribute__((overloadable)) sinh(float);
+extern float __attribute__((overloadable)) SC_sinhf(float);
+float __attribute__((overloadable)) sinh(float v) {
+    return SC_sinhf(v);
+}
 FN_FUNC_FN(sinh)
 
 extern float __attribute__((overloadable)) sinpi(float v) {
@@ -635,10 +756,16 @@ extern float __attribute__((overloadable)) sinpi(float v) {
 }
 FN_FUNC_FN(sinpi)
 
-extern float __attribute__((overloadable)) tan(float);
+extern float __attribute__((overloadable)) SC_tanf(float);
+float __attribute__((overloadable)) tan(float v) {
+    return SC_tanf(v);
+}
 FN_FUNC_FN(tan)
 
-extern float __attribute__((overloadable)) tanh(float);
+extern float __attribute__((overloadable)) SC_tanhf(float);
+float __attribute__((overloadable)) tanh(float v) {
+    return SC_tanhf(v);
+}
 FN_FUNC_FN(tanh)
 
 extern float __attribute__((overloadable)) tanpi(float v) {
@@ -647,10 +774,16 @@ extern float __attribute__((overloadable)) tanpi(float v) {
 FN_FUNC_FN(tanpi)
 
 
-extern float __attribute__((overloadable)) tgamma(float);
+extern float __attribute__((overloadable)) SC_tgammaf(float);
+float __attribute__((overloadable)) tgamma(float v) {
+    return SC_tgammaf(v);
+}
 FN_FUNC_FN(tgamma)
 
-extern float __attribute__((overloadable)) trunc(float);
+extern float __attribute__((overloadable)) SC_truncf(float);
+float __attribute__((overloadable)) trunc(float v) {
+    return SC_truncf(v);
+}
 FN_FUNC_FN(trunc)
 
 // Int ops (partial), 6.11.3
@@ -2064,3 +2197,21 @@ HN_FUNC_HN(native_tanpi);
 #undef H_FUNC_HN_HN
 #undef SCALARIZE_HN_FUNC_HN_HN
 
+// exports unavailable mathlib functions to compat lib
+
+#ifdef RS_COMPATIBILITY_LIB
+
+// !!! DANGER !!!
+// These functions are potentially missing on older Android versions.
+// Work around the issue by supplying our own variants.
+// !!! DANGER !!!
+
+// The logbl() implementation is taken from the latest bionic/, since
+// double == long double on Android.
+extern "C" long double logbl(long double x) { return logb(x); }
+
+// __aeabi_idiv0 is a missing function in libcompiler_rt.so, so we just
+// pick the simplest implementation based on the ARM EABI doc.
+extern "C" int __aeabi_idiv0(int v) { return v; }
+
+#endif // compatibility lib
