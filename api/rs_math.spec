@@ -1079,7 +1079,7 @@ description:
 end:
 
 function: fract
-version: 9
+version: 9 23
 attrib: const
 w: 1, 2, 3, 4
 t: f32
@@ -1088,6 +1088,14 @@ arg: #2#1 v
 inline:
  #2#1 unused;
  return fract(v, &unused);
+end:
+
+function: fract
+version: 24
+w: 1, 2, 3, 4
+t: f32
+ret: #2#1
+arg: #2#1 v
 end:
 
 # TODO Add f16 frexp
