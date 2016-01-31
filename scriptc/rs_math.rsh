@@ -1910,29 +1910,57 @@ extern float3 __attribute__((overloadable))
 extern float4 __attribute__((overloadable))
     fract(float4 v, float4* floor);
 
+#if !defined(RS_VERSION) || (RS_VERSION <= 23)
 static inline float __attribute__((const, overloadable))
     fract(float v) {
     float unused;
     return fract(v, &unused);
 }
+#endif
 
+#if !defined(RS_VERSION) || (RS_VERSION <= 23)
 static inline float2 __attribute__((const, overloadable))
     fract(float2 v) {
     float2 unused;
     return fract(v, &unused);
 }
+#endif
 
+#if !defined(RS_VERSION) || (RS_VERSION <= 23)
 static inline float3 __attribute__((const, overloadable))
     fract(float3 v) {
     float3 unused;
     return fract(v, &unused);
 }
+#endif
 
+#if !defined(RS_VERSION) || (RS_VERSION <= 23)
 static inline float4 __attribute__((const, overloadable))
     fract(float4 v) {
     float4 unused;
     return fract(v, &unused);
 }
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
+extern float __attribute__((overloadable))
+    fract(float v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
+extern float2 __attribute__((overloadable))
+    fract(float2 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
+extern float3 __attribute__((overloadable))
+    fract(float3 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
+extern float4 __attribute__((overloadable))
+    fract(float4 v);
+#endif
 
 /*
  * frexp: Binary mantissa and exponent
