@@ -36,10 +36,10 @@
  */
 static inline void __attribute__((overloadable))
     rsQuaternionAdd(rs_quaternion* q, const rs_quaternion* rhs) {
-    q->w *= rhs->w;
-    q->x *= rhs->x;
-    q->y *= rhs->y;
-    q->z *= rhs->z;
+    q->w += rhs->w;
+    q->x += rhs->x;
+    q->y += rhs->y;
+    q->z += rhs->z;
 }
 
 /*
