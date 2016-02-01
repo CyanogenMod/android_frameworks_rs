@@ -28,10 +28,10 @@ summary: Add two quaternions
 description:
  Adds two quaternions, i.e. <code>*q += *rhs;</code>
 inline:
- q->w *= rhs->w;
- q->x *= rhs->x;
- q->y *= rhs->y;
- q->z *= rhs->z;
+ q->w += rhs->w;
+ q->x += rhs->x;
+ q->y += rhs->y;
+ q->z += rhs->z;
 test: none
 end:
 
