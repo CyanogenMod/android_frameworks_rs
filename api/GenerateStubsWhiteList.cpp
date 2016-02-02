@@ -432,9 +432,12 @@ static void generateTestCall(GeneratedFile* file, ostringstream* calls,
     const char* separator = "";
     for (auto p : permutation.getParams()) {
         *calls << separator;
-        // Special case for the kernel context, as it has a special existence.
         if (p->rsType == "rs_kernel_context") {
+            // Special case for the kernel context, as it has a special existence.
             *calls << "context";
+        } else if (p->rsType == "...") {
+            // Special case for varargs. No need for casting.
+            *calls << addVariable(file, variableNumber);
         } else if (p->isOutParameter) {
             *calls << "(" << p->rsType << "*) " << addVariable(file, variableNumber);
         } else {
