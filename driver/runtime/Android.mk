@@ -22,6 +22,7 @@ clcore_base_files := \
     rs_cl.c \
     rs_core.c \
     rs_element.c \
+    rs_f16_math.c \
     rs_mesh.c \
     rs_matrix.c \
     rs_program.c \
