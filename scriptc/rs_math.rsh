@@ -1173,6 +1173,26 @@ extern float3 __attribute__((const, overloadable))
 extern float4 __attribute__((const, overloadable))
     copysign(float4 magnitude_value, float4 sign_value);
 
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+extern half __attribute__((const, overloadable))
+    copysign(half magnitude_value, half sign_value);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+extern half2 __attribute__((const, overloadable))
+    copysign(half2 magnitude_value, half2 sign_value);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+extern half3 __attribute__((const, overloadable))
+    copysign(half3 magnitude_value, half3 sign_value);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+extern half4 __attribute__((const, overloadable))
+    copysign(half4 magnitude_value, half4 sign_value);
+#endif
+
 /*
  * cos: Cosine
  *
@@ -2136,6 +2156,26 @@ extern int3 __attribute__((const, overloadable))
 
 extern int4 __attribute__((const, overloadable))
     ilogb(float4 v);
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+extern int __attribute__((const, overloadable))
+    ilogb(half v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+extern int2 __attribute__((const, overloadable))
+    ilogb(half2 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+extern int3 __attribute__((const, overloadable))
+    ilogb(half3 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+extern int4 __attribute__((const, overloadable))
+    ilogb(half4 v);
+#endif
 
 /*
  * ldexp: Creates a floating point from mantissa and exponent
@@ -5364,6 +5404,26 @@ extern float3 __attribute__((const, overloadable))
 
 extern float4 __attribute__((const, overloadable))
     nextafter(float4 v, float4 target);
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+extern half __attribute__((const, overloadable))
+    nextafter(half v, half target);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+extern half2 __attribute__((const, overloadable))
+    nextafter(half2 v, half2 target);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+extern half3 __attribute__((const, overloadable))
+    nextafter(half3 v, half3 target);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+extern half4 __attribute__((const, overloadable))
+    nextafter(half4 v, half4 target);
+#endif
 
 /*
  * pow: Base raised to an exponent
