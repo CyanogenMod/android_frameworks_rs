@@ -99,7 +99,7 @@ static bool testAPI() {
 
     TEST_HN_FUNC_HN(cbrt);
     TEST_HN_FUNC_HN(ceil);
-    // TODO add copysign test once function is added
+    TEST_HN_FUNC_HN_HN(copysign);
 
     TEST_HN_FUNC_HN(cos);
     TEST_HN_FUNC_HN(cosh);
@@ -125,7 +125,7 @@ static bool testAPI() {
     TEST_HN_FUNC_HN_HN(fmod);
 
     TEST_HN_FUNC_HN_HN(hypot);
-    // TODO add ilogb test once function is added
+    TEST_IN_FUNC_HN(ilogb);
     TEST_HN_FUNC_HN_IN(ldexp);
     TEST_HN_FUNC_HN_I(ldexp);
     TEST_HN_FUNC_HN(lgamma);
@@ -196,6 +196,10 @@ static bool testAPI() {
     // The vector variant of nextafter causes an LLVM crash due to a known
     // issue that has since been fixed upstream.  Enable the test after the fix
     // is pulled into AOSP.
+    //
+    // PS: It is the vector variant of nextafter that fail.  testNextAfter()
+    // below is fine as it only calls the scalar variant.
+    //
     // TEST_HN_FUNC_HN_HN(nextafter);
     TEST_HN_FUNC_HN_HN(pow);
     TEST_HN_FUNC_HN_IN(pown);
@@ -237,60 +241,126 @@ static bool testAPI() {
     return true;
 }
 
-// TODO enable nextafter and ilogb tests once added to API
-/*
+typedef union {
+  half hval;
+  short sval;
+} fp16_shape_type;
+
+/* half h = unsigned short s; */
+#define SET_HALF_WORD(h, s) \
+do {                        \
+  fp16_shape_type fp16_u;   \
+  fp16_u.sval = (s);        \
+  (h) = fp16_u.hval;        \
+} while (0)
+
 static bool testNextAfter() {
-    // Number of non-NaN fp16 values:
-    //     2^11 - 2 (= 2046) different NaNs (10 mantisa bits, minus 1 for all
-    //     zero, times two for the signs.
-    //
-    //     +0 and -0 are equivalent (i.e. nextafter(-0, +inf) skips +0 and
-    //     returns the minium positive subnormal.
-    //
-    // So, number of distinct values when calling nextafter in a loop is
-    //     2^16 - 2046 - 1 = 63489
-    //
 
-    const unsigned int numDistinctExpected = 63489;
-    const unsigned int maxSteps = 65536;
+    half zero, minSubNormal, maxSubNormal, minNormal, infinity;
+    half negativeZero, negativeInfinity;
+    half negativeMinSubNormal, negativeMaxSubNormal, negativeMinNormal;
 
-    half posinf, neginf;
-    (*(short *) &posinf) = 0x7c00;
-    (*(short *) &neginf) = 0xfc00;
+    // TODO Define these constants so the SET_HALF_WORD macro is unnecessary.
+    SET_HALF_WORD(zero, 0x0000);
+    SET_HALF_WORD(minSubNormal, 0x0001);
+    SET_HALF_WORD(maxSubNormal, 0x03ff);
+    SET_HALF_WORD(minNormal, 0x0400);
+    SET_HALF_WORD(infinity, 0x7c00);
+
+    SET_HALF_WORD(negativeZero, 0x7000);
+    SET_HALF_WORD(negativeMinSubNormal, 0x8001);
+    SET_HALF_WORD(negativeMaxSubNormal, 0x83ff);
+    SET_HALF_WORD(negativeMinNormal, 0x8400);
+    SET_HALF_WORD(negativeInfinity, 0xfc00);
+
+    // Number of normal fp16 values:
+    //   All-zero exponent is for zero and subnormals.  All-one exponent is for
+    //   Infinity and NaN.  Hence number of possible values for exponent = 30
+    //
+    //   No. of possible values for mantissa = 2 ^ 10 = 1024
+    //
+    //   Number of positive, non-zero and normal fp16 values = 30 * 1024 = 30720
+    //   Number of negative, non-zero and normal fp16 values = 30 * 1024 = 30720
+    //
+    //   The following tests call nextafter in a loop starting at infinity
+    //   towards the smallest normal and vice versa (for +ve and -ve) and verify
+    //   that the number of loop iterations is 30720.
+
+    const unsigned int numDistinctExpected = 30720;
+    const unsigned int maxSteps = 31000;
 
     unsigned int numDistinct;
     half h, toward;
 
-    h = neginf;
-    toward = posinf;
-    numDistinct = 1; // h is the first distinct value
-    while (numDistinct < maxSteps && h != toward) {
+    for (h = minNormal, toward = infinity, numDistinct = 0;
+            numDistinct < maxSteps && h != toward; numDistinct ++) {
         h = nextafter(h, toward);
-        numDistinct ++;
     }
-    // TODO we are not expected to handle subnormals.  This test needs to be
-    // revised to test only the normal values in f16.
-    if (numDistinct != numDistinctExpected) {
+    if (numDistinct != numDistinctExpected)
         return false;
-    }
 
-    h = posinf;
-    toward = neginf;
-    numDistinct = 1; // h is the first distinct value
-    while (numDistinct < maxSteps && h != toward) {
+    for (h = infinity, toward = minNormal, numDistinct = 0;
+            numDistinct < maxSteps && h != toward; numDistinct ++) {
         h = nextafter(h, toward);
-        numDistinct ++;
     }
-    if (numDistinct != numDistinctExpected) {
+    if (numDistinct != numDistinctExpected)
         return false;
+
+    for (h = negativeMinNormal, toward = negativeInfinity, numDistinct = 0;
+            numDistinct < maxSteps && h != toward; numDistinct ++) {
+        h = nextafter(h, toward);
     }
+    if (numDistinct != numDistinctExpected)
+        return false;
+
+    for (h = negativeInfinity, toward = negativeMinNormal, numDistinct = 0;
+            numDistinct < maxSteps && h != toward; numDistinct ++) {
+        h = nextafter(h, toward);
+    }
+    if (numDistinct != numDistinctExpected)
+        return false;
+
+    // Test nextafter at the boundary of subnormal numbers.  Since RenderScript
+    // doesn't require implementations to handle FP16 subnormals correctly,
+    // allow nextafter to return a valid normal number that satisfies the
+    // constraints of nextafter.
+
+    // nextafter(0, infinity) = minnormal or minsubnormal
+    h = nextafter(zero, infinity);
+    if (h != minSubNormal && h != minNormal)
+        return false;
+    h = nextafter(zero, negativeInfinity);
+    if (h != negativeMinSubNormal && h != negativeMinNormal)
+        return false;
+
+    // nextafter(minNormal, negativeInfinity) = maxSubNormal or zero
+    h = nextafter(minNormal, negativeInfinity);
+    if (h != maxSubNormal && h != zero)
+        return false;
+    h = nextafter(negativeMinNormal, infinity);
+    if (h != negativeMaxSubNormal && h != negativeZero)
+        return false;
+
     return true;
 }
 
 static bool testIlogb() {
     bool failed = false;
 
+    // Test ilogb for 0, +/- infininty and NaN
+    half infinity, negativeInfinity;
+    SET_HALF_WORD(infinity, 0x7c00);
+    SET_HALF_WORD(negativeInfinity, 0xfc00);
+
+    _RS_ASSERT_EQU(ilogb((half) 0), 0x80000000);
+    _RS_ASSERT_EQU(ilogb((half) -0), 0x80000000);
+    _RS_ASSERT_EQU(ilogb(infinity), 0x7fffffff);
+    _RS_ASSERT_EQU(ilogb(negativeInfinity), 0x7fffffff);
+    _RS_ASSERT_EQU(ilogb(nan_half()), 0x7fffffff);
+
     // ilogb(2^n) = n.  Test at the boundary on either side of 2^n.
+    // Don't test subnormal numbers as implementations are not expected to
+    // handle them.
     _RS_ASSERT_EQU(ilogb((half) 0.24), -3);
     _RS_ASSERT_EQU(ilogb((half) 0.26), -2);
     _RS_ASSERT_EQU(ilogb((half) 0.49), -2);
@@ -299,7 +369,8 @@ static bool testIlogb() {
     _RS_ASSERT_EQU(ilogb((half) 1.01), 0);
     _RS_ASSERT_EQU(ilogb((half) 1.99), 0);
     _RS_ASSERT_EQU(ilogb((half) 2.01), 1);
-    // _RS_ASSERT_EQU(ilogb((half) 0.00000005960), -24); // min subnormal = 2^-24
+    _RS_ASSERT_EQU(ilogb((half) 1023), 9);
+    _RS_ASSERT_EQU(ilogb((half) 1025), 10);
 
     // Result is same irrespective of sign.
     _RS_ASSERT_EQU(ilogb((half) -0.24), -3);
@@ -310,21 +381,18 @@ static bool testIlogb() {
     _RS_ASSERT_EQU(ilogb((half) -1.01), 0);
     _RS_ASSERT_EQU(ilogb((half) -1.99), 0);
     _RS_ASSERT_EQU(ilogb((half) -2.01), 1);
-    // _RS_ASSERT_EQU(ilogb((half) -0.00000005960), -24);
+    _RS_ASSERT_EQU(ilogb((half) -1023), 9);
+    _RS_ASSERT_EQU(ilogb((half) -1025), 10);
 
     return !failed;
 }
-*/
 
 void testFp16Math() {
     bool success = true;
 
     success &= testAPI();
-    // TODO enable nextafter and ilogb tests once added to API
-    /*
     success &= testNextAfter();
     success &= testIlogb();
-    */
 
     if (success) {
         rsDebug("PASSED", 0);

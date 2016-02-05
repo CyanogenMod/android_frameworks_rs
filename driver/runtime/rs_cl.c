@@ -1,4 +1,5 @@
 #include "rs_core.rsh"
+#include "rs_f16_util.h"
 
 extern float2 __attribute__((overloadable)) convert_float2(int2 c);
 extern float3 __attribute__((overloadable)) convert_float3(int3 c);
@@ -1660,19 +1661,6 @@ float4 __attribute__((overloadable)) native_recip(float4 v) { return ((float4)1.
 #undef XN_FUNC_XN_XN_BODY
 #undef IN_FUNC_IN_IN_BODY
 
-typedef union {
-  half hval;
-  short sval;
-} fp16_shape_type;
-
-/* half h = unsigned short s; */
-#define SET_HALF_WORD(h, s) \
-do {                        \
-  fp16_shape_type fp16_u;   \
-  fp16_u.sval = (s);        \
-  (h) = fp16_u.hval;        \
-} while (0)
-
 static const unsigned short kHalfPositiveInfinity = 0x7c00;
 
 /* Define f16 functions of the form
@@ -1851,7 +1839,8 @@ HN_FUNC_HN_HN(atan2pi);
 HN_FUNC_HN(cbrt);
 HN_FUNC_HN(ceil);
 
-// TODO Add copysign
+extern half __attribute__((overloadable)) copysign(half x, half y);
+SCALARIZE_HN_FUNC_HN_HN(copysign);
 
 HN_FUNC_HN(cos);
 HN_FUNC_HN(cosh);
@@ -1900,7 +1889,29 @@ HN_FUNC_HN_HN(fmod);
 
 HN_FUNC_HN_HN(hypot);
 
-// TODO Add ilogb
+extern int __attribute__((overloadable)) ilogb(half x);
+
+extern int2 __attribute__((overloadable)) ilogb(half2 v) {
+    int2 ret;
+    ret.x = ilogb(v.x);
+    ret.y = ilogb(v.y);
+    return ret;
+}
+extern int3 __attribute__((overloadable)) ilogb(half3 v) {
+    int3 ret;
+    ret.x = ilogb(v.x);
+    ret.y = ilogb(v.y);
+    ret.z = ilogb(v.z);
+    return ret;
+}
+extern int4 __attribute__((overloadable)) ilogb(half4 v) {
+    int4 ret;
+    ret.x = ilogb(v.x);
+    ret.y = ilogb(v.y);
+    ret.z = ilogb(v.z);
+    ret.w = ilogb(v.w);
+    return ret;
+}
 
 HN_FUNC_HN_IN(ldexp);
 extern half2 __attribute__((overloadable)) ldexp(half2 v, int exponent) {
@@ -1972,9 +1983,10 @@ half __attribute__((overloadable)) nan_half() {
   return nan;
 }
 
-// TODO Add nextafter
-
 HN_FUNC_HN(normalize);
+
+extern half __attribute__((overloadable)) nextafter(half x, half y);
+SCALARIZE_HN_FUNC_HN_HN(nextafter);
 
 HN_FUNC_HN_HN(pow);
 HN_FUNC_HN_IN(pown);
