@@ -580,7 +580,6 @@ description:
  For example, <code>clz((char)0x03)</code> returns 6.
 end:
 
-# TODO add f16 copysign
 function: copysign
 version: 9
 attrib: const
@@ -596,6 +595,17 @@ description:
  The value returned is either magnitude_value or -magnitude_value.
 
  For example, <code>copysign(4.0f, -2.7f)</code> returns -4.0f and <code>copysign(-4.0f, 2.7f)</code> returns 4.0f.
+end:
+
+function: copysign
+version: UNRELEASED
+attrib: const
+w: 1, 2, 3, 4
+t: f16
+ret: #2#1
+arg: #2#1 magnitude_value
+arg: #2#1 sign_value
+test: none
 end:
 
 function: cos
@@ -1189,7 +1199,6 @@ arg: #2#1 b
 test: none
 end:
 
-# TODO Add f16 ilogb.  Should its return be short?
 function: ilogb
 version: 9
 attrib: const
@@ -1208,6 +1217,16 @@ description:
 
  @logb() is similar but returns a float.
 test: custom
+end:
+
+function: ilogb
+version: UNRELEASED
+attrib: const
+w: 1, 2, 3, 4
+t: f16
+ret: int#1
+arg: half#1 v
+test: none
 end:
 
 function: ldexp
@@ -2759,7 +2778,6 @@ arg: #2#1 v
 test: none
 end:
 
-# TODO add f16 nextafter
 function: nextafter
 version: 9
 attrib: const
@@ -2774,6 +2792,17 @@ description:
 
  In rs_fp_relaxed mode, a denormalized input value may not yield the next denormalized
  value, as support of denormalized values is optional in relaxed mode.
+end:
+
+function: nextafter
+version: UNRELEASED
+attrib: const
+w: 1, 2, 3, 4
+t: f16
+ret: #2#1
+arg: #2#1 v
+arg: #2#1 target
+test: none
 end:
 
 function: pow
