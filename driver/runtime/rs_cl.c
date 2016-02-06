@@ -1796,6 +1796,41 @@ extern half __attribute__((overloadable)) fn(half4 v1, half4 v2) {        \
   return fn(convert_float4(v1), convert_float4(v2));                      \
 }
 
+#define SCALARIZE_HN_FUNC_HN_PHN(fnc)                                 \
+extern half2 __attribute__((overloadable)) fnc(half2 v1, half2 *v2) { \
+    half2 ret;                                                        \
+    half t[2];                                                        \
+    ret.x = fnc(v1.x, &t[0]);                                         \
+    ret.y = fnc(v1.y, &t[1]);                                         \
+    v2->x = t[0];                                                     \
+    v2->y = t[1];                                                     \
+    return ret;                                                       \
+}                                                                     \
+extern half3 __attribute__((overloadable)) fnc(half3 v1, half3 *v2) { \
+    half3 ret;                                                        \
+    half t[3];                                                        \
+    ret.x = fnc(v1.x, &t[0]);                                         \
+    ret.y = fnc(v1.y, &t[1]);                                         \
+    ret.z = fnc(v1.z, &t[2]);                                         \
+    v2->x = t[0];                                                     \
+    v2->y = t[1];                                                     \
+    v2->z = t[2];                                                     \
+    return ret;                                                       \
+}                                                                     \
+extern half4 __attribute__((overloadable)) fnc(half4 v1, half4 *v2) { \
+    half4 ret;                                                        \
+    half t[4];                                                        \
+    ret.x = fnc(v1.x, &t[0]);                                         \
+    ret.y = fnc(v1.y, &t[1]);                                         \
+    ret.z = fnc(v1.z, &t[2]);                                         \
+    ret.w = fnc(v1.w, &t[3]);                                         \
+    v2->x = t[0];                                                     \
+    v2->y = t[1];                                                     \
+    v2->z = t[2];                                                     \
+    v2->w = t[3];                                                     \
+    return ret;                                                       \
+}
+
 /* Define f16 functions of the form
  *     HN output = fn(HN input1, HN input2)
  * where HN is a vector half type.  The functions are defined to call the
@@ -1884,8 +1919,78 @@ HN_FUNC_HN_HN(fmin);
 HN_FUNC_HN_H(fmin);
 HN_FUNC_HN_HN(fmod);
 
-// TODO Add (both variants) of fract
-// TODO Add frexp
+extern half __attribute__((overloadable)) fract(half v, half *iptr) {
+    // maxLessThanOne = 0.99951171875, the largest value < 1.0
+    half maxLessThanOne;
+    SET_HALF_WORD(maxLessThanOne, 0x3bff);
+
+    int i = (int) floor(v);
+    if (iptr) {
+        *iptr = i;
+    }
+    // return v - floor(v), if strictly less than one
+    return fmin(v - i, maxLessThanOne);
+}
+
+SCALARIZE_HN_FUNC_HN_PHN(fract);
+
+extern half __attribute__((const, overloadable)) fract(half v) {
+    half unused;
+    return fract(v, &unused);
+}
+
+extern half2 __attribute__((const, overloadable)) fract(half2 v) {
+    half2 unused;
+    return fract(v, &unused);
+}
+
+extern half3 __attribute__((const, overloadable)) fract(half3 v) {
+    half3 unused;
+    return fract(v, &unused);
+}
+
+extern half4 __attribute__((const, overloadable)) fract(half4 v) {
+    half4 unused;
+    return fract(v, &unused);
+}
+
+extern half __attribute__((overloadable)) frexp(half x, int *eptr);
+
+extern half2 __attribute__((overloadable)) frexp(half2 v1, int2 *eptr) {
+    half2 ret;
+    int e[2];
+    ret.x = frexp(v1.x, &e[0]);
+    ret.y = frexp(v1.y, &e[1]);
+    eptr->x = e[0];
+    eptr->y = e[1];
+    return ret;
+}
+
+extern half3 __attribute__((overloadable)) frexp(half3 v1, int3 *eptr) {
+    half3 ret;
+    int e[3];
+    ret.x = frexp(v1.x, &e[0]);
+    ret.y = frexp(v1.y, &e[1]);
+    ret.z = frexp(v1.z, &e[2]);
+    eptr->x = e[0];
+    eptr->y = e[1];
+    eptr->z = e[2];
+    return ret;
+}
+
+extern half4 __attribute__((overloadable)) frexp(half4 v1, int4 *eptr) {
+    half4 ret;
+    int e[4];
+    ret.x = frexp(v1.x, &e[0]);
+    ret.y = frexp(v1.y, &e[1]);
+    ret.z = frexp(v1.z, &e[2]);
+    ret.w = frexp(v1.w, &e[3]);
+    eptr->x = e[0];
+    eptr->y = e[1];
+    eptr->z = e[2];
+    eptr->w = e[3];
+    return ret;
+}
 
 HN_FUNC_HN_HN(hypot);
 
@@ -1974,7 +2079,8 @@ extern half4 __attribute__((overloadable)) mix(half4 start, half4 stop, half amo
     return start + (stop - start) * amount;
 }
 
-// TODO Define modf.  Does it make sense to delegate to the float?
+extern half __attribute__((overloadable)) modf(half x, half *iptr);
+SCALARIZE_HN_FUNC_HN_PHN(modf);
 
 half __attribute__((overloadable)) nan_half() {
   unsigned short nan_short = kHalfPositiveInfinity | 0x0200;
