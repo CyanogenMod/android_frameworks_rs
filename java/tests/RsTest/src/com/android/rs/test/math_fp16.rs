@@ -124,6 +124,15 @@ static bool testAPI() {
     TEST_HN_FUNC_HN_H(fmin);
     TEST_HN_FUNC_HN_HN(fmod);
 
+    // Bug: https://b.corp.google.com/issues/26099914
+    // This test is broken due to an LLVM issue that has since been fixed.
+    // Enable this test once on-device LLVM and RenderScript prebuilts get
+    // udpated.
+    //
+    // TEST_HN_FUNC_HN(fract);
+    TEST_HN_FUNC_HN_PHN(fract);
+    TEST_HN_FUNC_HN_PIN(frexp);
+
     TEST_HN_FUNC_HN_HN(hypot);
     TEST_IN_FUNC_HN(ilogb);
     TEST_HN_FUNC_HN_IN(ldexp);
@@ -144,6 +153,7 @@ static bool testAPI() {
     TEST_HN_FUNC_HN_H(min);
     TEST_HN_FUNC_HN_HN_HN(mix);
     TEST_HN_FUNC_HN_HN_H(mix);
+    TEST_HN_FUNC_HN_PHN(modf);
 
     h1 = nan_half();
 
@@ -254,8 +264,56 @@ do {                        \
   (h) = fp16_u.hval;        \
 } while (0)
 
-static bool testNextAfter() {
+#define VALIDATE_FREXP_HALF(inp, ref, refExp)  \
+do {                                           \
+    int exp;                                   \
+    half out = frexp(((half) inp), &exp);      \
+    _RS_ASSERT_EQU(out, ((half) ref));         \
+    _RS_ASSERT_EQU(exp, (refExp));             \
+} while (0);
 
+static bool testFrexp() {
+    bool failed= false;
+
+    VALIDATE_FREXP_HALF(0, 0, 0);
+    VALIDATE_FREXP_HALF(-0, -0, 0);
+    VALIDATE_FREXP_HALF(1, 0.5, 1);
+    VALIDATE_FREXP_HALF(0.25, 0.5, -1);
+    VALIDATE_FREXP_HALF(1.5, 0.75, 1);
+    VALIDATE_FREXP_HALF(1.99, 0.995, 1);
+
+    return !failed;
+}
+
+// Place sentinel values around the *intPart paramter to modf to ensure that
+// the call writes to just the 2 bytes pointed-to by the paramter.
+#define VALIDATE_MODF_HALF(inp, ref, refIntPart)     \
+do {                                                 \
+    half intPart[3];                                 \
+    intPart[0] = (half) 42.0f;                       \
+    intPart[2] = (half) 3.14f;                       \
+    half out = modf(((half) inp), &intPart[1]);      \
+    _RS_ASSERT_EQU(out, ((half) ref));               \
+    _RS_ASSERT_EQU(intPart[1], ((half) refIntPart)); \
+    _RS_ASSERT_EQU(intPart[0], (half) 42.0f);        \
+    _RS_ASSERT_EQU(intPart[2], (half) 3.14f);        \
+} while (0);
+
+static bool testModf() {
+    bool failed = false;
+
+    VALIDATE_MODF_HALF(0.5, 0.5, 0.0);
+    VALIDATE_MODF_HALF(1.5, 0.5, 1.0);
+    VALIDATE_MODF_HALF(100.5625, 0.5625, 100.0);
+
+    VALIDATE_MODF_HALF(-0.5, -0.5, -0.0);
+    VALIDATE_MODF_HALF(-1.5, -0.5, -1.0);
+    VALIDATE_MODF_HALF(-100.5625, -0.5625, -100.0);
+
+    return !failed;
+}
+
+static bool testNextAfter() {
     half zero, minSubNormal, maxSubNormal, minNormal, infinity;
     half negativeZero, negativeInfinity;
     half negativeMinSubNormal, negativeMaxSubNormal, negativeMinNormal;
@@ -391,6 +449,8 @@ void testFp16Math() {
     bool success = true;
 
     success &= testAPI();
+    success &= testFrexp();
+    success &= testModf();
     success &= testNextAfter();
     success &= testIlogb();
 
