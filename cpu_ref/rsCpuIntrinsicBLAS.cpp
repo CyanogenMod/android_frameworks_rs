@@ -714,8 +714,8 @@ void RsdCpuScriptIntrinsicBLAS::kernelBNNM(size_t m, size_t n, size_t k,
 #endif
 
     // Using gemmlowp to calculate the low precision 8 bit GEMM.
-    bool transpose_a = false;
-    bool transpose_b = true;
+    bool transpose_a = true;
+    bool transpose_b = false;
     bool transpose_c = true;
     gemmlowp::eight_bit_int_gemm::EightBitIntGemm(transpose_a, transpose_b, transpose_c,
                                                   m, n, k, a, -a_offset, lda,
