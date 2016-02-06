@@ -1108,6 +1108,25 @@ ret: #2#1
 arg: #2#1 v
 end:
 
+function: fract
+version: UNRELEASED
+w: 1, 2, 3, 4
+t: f16
+ret: #2#1
+arg: #2#1 v
+arg: #2#1* floor
+test: none
+end:
+
+function: fract
+version: UNRELEASED
+w: 1, 2, 3, 4
+t: f16
+ret: #2#1
+arg: #2#1 v
+test: none
+end:
+
 # TODO Add f16 frexp
 function: frexp
 version: 9
@@ -1123,6 +1142,16 @@ description:
  The mantissa is always between 0.5 (inclusive) and 1.0 (exclusive).
 
  See @ldexp() for the reverse operation.  See also @logb() and @ilogb().
+end:
+
+function: frexp
+version: UNRELEASED
+w: 1, 2, 3, 4
+t: f16
+ret: #2#1
+arg: #2#1 v
+arg: int#1* exponent
+test: none
 end:
 
 function: half_recip
@@ -1244,7 +1273,6 @@ description:
  See @frexp() for the reverse operation.
 end:
 
-# TODO Should this parameter be a short?
 function: ldexp
 version: UNRELEASED
 attrib: const
@@ -1757,7 +1785,6 @@ arg: #2 fraction
 test: none
 end:
 
-# TODO Add f16 modf
 function: modf
 version: 9
 w: 1, 2, 3, 4
@@ -1771,6 +1798,16 @@ description:
 
  Both components will have the same sign as x.  For example, for an input of -3.72f,
  *integral_part will be set to -3.f and .72f will be returned.
+end:
+
+function: modf
+version: UNRELEASED
+w: 1, 2, 3, 4
+t: f16
+ret: #2#1
+arg: #2#1 v
+arg: #2#1* integral_part
+test: none
 end:
 
 function: nan
