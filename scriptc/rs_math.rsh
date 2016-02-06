@@ -1982,6 +1982,46 @@ extern float4 __attribute__((overloadable))
     fract(float4 v);
 #endif
 
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+extern half __attribute__((overloadable))
+    fract(half v, half* floor);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+extern half2 __attribute__((overloadable))
+    fract(half2 v, half2* floor);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+extern half3 __attribute__((overloadable))
+    fract(half3 v, half3* floor);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+extern half4 __attribute__((overloadable))
+    fract(half4 v, half4* floor);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+extern half __attribute__((overloadable))
+    fract(half v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+extern half2 __attribute__((overloadable))
+    fract(half2 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+extern half3 __attribute__((overloadable))
+    fract(half3 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+extern half4 __attribute__((overloadable))
+    fract(half4 v);
+#endif
+
 /*
  * frexp: Binary mantissa and exponent
  *
@@ -2006,6 +2046,26 @@ extern float3 __attribute__((overloadable))
 
 extern float4 __attribute__((overloadable))
     frexp(float4 v, int4* exponent);
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+extern half __attribute__((overloadable))
+    frexp(half v, int* exponent);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+extern half2 __attribute__((overloadable))
+    frexp(half2 v, int2* exponent);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+extern half3 __attribute__((overloadable))
+    frexp(half3 v, int3* exponent);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+extern half4 __attribute__((overloadable))
+    frexp(half4 v, int4* exponent);
+#endif
 
 /*
  * half_recip: Reciprocal computed to 16 bit precision
@@ -3572,6 +3632,26 @@ extern float3 __attribute__((overloadable))
 
 extern float4 __attribute__((overloadable))
     modf(float4 v, float4* integral_part);
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+extern half __attribute__((overloadable))
+    modf(half v, half* integral_part);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+extern half2 __attribute__((overloadable))
+    modf(half2 v, half2* integral_part);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+extern half3 __attribute__((overloadable))
+    modf(half3 v, half3* integral_part);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+extern half4 __attribute__((overloadable))
+    modf(half4 v, half4* integral_part);
+#endif
 
 /*
  * nan: Not a Number
