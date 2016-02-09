@@ -1,23 +1,19 @@
 #include "shared.rsh"
 
-// Same as reduce_backward.rs, except this test case places the
-// pragmas before the functions (forward reference), and the other
-// test case places the pragmas after the functions (backward
-// reference).
+// Same as reduce.rs, except this test case places the pragmas after
+// the functions (backward reference), and the other test case places
+// the pragmas before the functions (forward reference).
 
 float negInf, posInf;
 
 /////////////////////////////////////////////////////////////////////////
 
+static void aiAccum(int *accum, int val) { *accum += val; }
+
 #pragma rs reduce(addint) \
   accumulator(aiAccum)
 
-static void aiAccum(int *accum, int val) { *accum += val; }
-
 /////////////////////////////////////////////////////////////////////////
-
-#pragma rs reduce(dp) \
-  accumulator(dpAccum) combiner(dpSum)
 
 static void dpAccum(float *accum, float in1, float in2) {
   *accum += in1*in2;
@@ -26,11 +22,10 @@ static void dpAccum(float *accum, float in1, float in2) {
 // combiner function
 static void dpSum(float *accum, const float *val) { *accum += *val; }
 
-/////////////////////////////////////////////////////////////////////////
+#pragma rs reduce(dp) \
+  accumulator(dpAccum) combiner(dpSum)
 
-#pragma rs reduce(findMinAndMax) \
-  initializer(fMMInit) accumulator(fMMAccumulator) \
-  combiner(fMMCombiner) outconverter(fMMOutConverter)
+/////////////////////////////////////////////////////////////////////////
 
 typedef struct {
   float val;
@@ -71,11 +66,11 @@ static void fMMOutConverter(int2 *result,
   result->y = val->max.idx;
 }
 
-/////////////////////////////////////////////////////////////////////////
+#pragma rs reduce(findMinAndMax) \
+  initializer(fMMInit) accumulator(fMMAccumulator) \
+  combiner(fMMCombiner) outconverter(fMMOutConverter)
 
-#pragma rs reduce(fz) \
-  initializer(fzInit) \
-  accumulator(fzAccum) combiner(fzCombine)
+/////////////////////////////////////////////////////////////////////////
 
 static void fzInit(int *accumIdx) { *accumIdx = -1; }
 
@@ -88,11 +83,11 @@ static void fzCombine(int *accumIdx, const int *accumIdx2) {
   if (*accumIdx2 >= 0) *accumIdx = *accumIdx2;
 }
 
-/////////////////////////////////////////////////////////////////////////
+#pragma rs reduce(fz) \
+  initializer(fzInit) \
+  accumulator(fzAccum) combiner(fzCombine)
 
-#pragma rs reduce(fz2) \
-  initializer(fz2Init) \
-  accumulator(fz2Accum) combiner(fz2Combine)
+/////////////////////////////////////////////////////////////////////////
 
 static void fz2Init(int2 *accum) { accum->x = accum->y = -1; }
 
@@ -110,11 +105,11 @@ static void fz2Combine(int2 *accum, const int2 *accum2) {
   if (accum2->x >= 0) *accum = *accum2;
 }
 
-/////////////////////////////////////////////////////////////////////////
+#pragma rs reduce(fz2) \
+  initializer(fz2Init) \
+  accumulator(fz2Accum) combiner(fz2Combine)
 
-#pragma rs reduce(fz3) \
-  initializer(fz3Init) \
-  accumulator(fz3Accum) combiner(fz3Combine)
+/////////////////////////////////////////////////////////////////////////
 
 static void fz3Init(int3 *accum) { accum->x = accum->y = accum->z = -1; }
 
@@ -134,10 +129,11 @@ static void fz3Combine(int3 *accum, const int3 *accum2) {
   if (accum->x >= 0) *accum = *accum2;
 }
 
-/////////////////////////////////////////////////////////////////////////
+#pragma rs reduce(fz3) \
+  initializer(fz3Init) \
+  accumulator(fz3Accum) combiner(fz3Combine)
 
-#pragma rs reduce(histogram) \
-  accumulator(hsgAccum) combiner(hsgCombine)
+/////////////////////////////////////////////////////////////////////////
 
 #define BUCKETS 256
 typedef uint32_t Histogram[BUCKETS];
@@ -149,9 +145,8 @@ static void hsgCombine(Histogram *accum, const Histogram *addend) {
     (*accum)[i] += (*addend)[i];
 }
 
-#pragma rs reduce(mode) \
-  accumulator(hsgAccum) combiner(hsgCombine) \
-  outconverter(modeOutConvert)
+#pragma rs reduce(histogram) \
+  accumulator(hsgAccum) combiner(hsgCombine)
 
 static void modeOutConvert(int2 *result, const Histogram *h) {
   uint32_t mode = 0;
@@ -160,3 +155,7 @@ static void modeOutConvert(int2 *result, const Histogram *h) {
   result->x = mode;
   result->y = (*h)[mode];
 }
+
+#pragma rs reduce(mode) \
+  accumulator(hsgAccum) combiner(hsgCombine) \
+  outconverter(modeOutConvert)

@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-/* Same as UT_reduce_backward.java, except this test case exercises
- * pragmas before the functions (forward reference), and the other
- * test case exercises the pragmas after the functions (backward
+/* Same as UT_reduce.java, except this test case exercises
+ * pragmas after the functions (backward reference), and the other
+ * test case exercises the pragmas before the functions (forward
  * reference).
  */
 
@@ -29,11 +29,11 @@ import android.util.Log;
 import java.lang.Float;
 import java.util.Random;
 
-public class UT_reduce extends UnitTest {
-    private static final String TAG = "reduce";
+public class UT_reduce_backward extends UnitTest {
+    private static final String TAG = "reduce_backward";
 
-    protected UT_reduce(RSTestCore rstc, Resources res, Context ctx) {
-        super(rstc, "reduce", ctx);
+    protected UT_reduce_backward(RSTestCore rstc, Resources res, Context ctx) {
+        super(rstc, "reduce_backward", ctx);
     }
 
     private byte[] createInputArrayByte(int len, int seed) {
@@ -93,7 +93,7 @@ public class UT_reduce extends UnitTest {
         return rslt;
     }
 
-    private boolean addint1D(RenderScript RS, ScriptC_reduce s) {
+    private boolean addint1D(RenderScript RS, ScriptC_reduce_backward s) {
         final int[] input = createInputArrayInt(100000, 0, 1 << 13);
 
         final int javaRslt = addint(input);
@@ -102,7 +102,7 @@ public class UT_reduce extends UnitTest {
         return result("addint1D", javaRslt, rsRslt);
     }
 
-    private boolean addint2D(RenderScript RS, ScriptC_reduce s) {
+    private boolean addint2D(RenderScript RS, ScriptC_reduce_backward s) {
         final int dimX = 450, dimY = 225;
 
         final int[] inputArray = createInputArrayInt(dimX * dimY, 1, 1 << 13);
@@ -128,7 +128,7 @@ public class UT_reduce extends UnitTest {
         return rslt;
     }
 
-    private boolean dp(RenderScript RS, ScriptC_reduce s) {
+    private boolean dp(RenderScript RS, ScriptC_reduce_backward s) {
         final float[] input1 = createInputArrayFloat(100000, 2);
         final float[] input2 = createInputArrayFloat(100000, 3);
 
@@ -172,7 +172,7 @@ public class UT_reduce extends UnitTest {
         return new Int2(minIdx, maxIdx);
     }
 
-    private boolean findMinAndMax(RenderScript RS, ScriptC_reduce s) {
+    private boolean findMinAndMax(RenderScript RS, ScriptC_reduce_backward s) {
         final float[] input = createInputArrayFloat(100000, 4);
 
         final Int2 javaRslt = findMinAndMax(input);
@@ -183,7 +183,7 @@ public class UT_reduce extends UnitTest {
 
     ///////////////////////////////////////////////////////////////////
 
-    private boolean fz(RenderScript RS, ScriptC_reduce s) {
+    private boolean fz(RenderScript RS, ScriptC_reduce_backward s) {
         final int inputLen = 100000;
         int[] input = createInputArrayInt(inputLen, 5);
         // just in case we got unlucky
@@ -200,7 +200,7 @@ public class UT_reduce extends UnitTest {
 
     ///////////////////////////////////////////////////////////////////
 
-    private boolean fz2(RenderScript RS, ScriptC_reduce s) {
+    private boolean fz2(RenderScript RS, ScriptC_reduce_backward s) {
         final int dimX = 225, dimY = 450;
         final int inputLen = dimX * dimY;
 
@@ -225,7 +225,7 @@ public class UT_reduce extends UnitTest {
 
     ///////////////////////////////////////////////////////////////////
 
-    private boolean fz3(RenderScript RS, ScriptC_reduce s) {
+    private boolean fz3(RenderScript RS, ScriptC_reduce_backward s) {
         final int dimX = 59, dimY = 48, dimZ = 37;
         final int inputLen = dimX * dimY * dimZ;
 
@@ -271,7 +271,7 @@ public class UT_reduce extends UnitTest {
         return outputArray;
     }
 
-    private boolean histogram(RenderScript RS, ScriptC_reduce s) {
+    private boolean histogram(RenderScript RS, ScriptC_reduce_backward s) {
         final byte[] inputArray = createInputArrayByte(100000, 11);
 
         final long[] javaRslt = histogram(RS, inputArray);
@@ -302,7 +302,7 @@ public class UT_reduce extends UnitTest {
         return new Int2(modeIdx, (int)hsg[modeIdx]);
     }
 
-    private boolean mode(RenderScript RS, ScriptC_reduce s) {
+    private boolean mode(RenderScript RS, ScriptC_reduce_backward s) {
         final byte[] inputArray = createInputArrayByte(100000, 12);
 
         final Int2 javaRslt = mode(RS, inputArray);
@@ -315,7 +315,7 @@ public class UT_reduce extends UnitTest {
 
     public void run() {
         RenderScript pRS = RenderScript.create(mCtx);
-        ScriptC_reduce s = new ScriptC_reduce(pRS);
+        ScriptC_reduce_backward s = new ScriptC_reduce_backward(pRS);
         s.set_negInf(Float.NEGATIVE_INFINITY);
         s.set_posInf(Float.POSITIVE_INFINITY);
 
