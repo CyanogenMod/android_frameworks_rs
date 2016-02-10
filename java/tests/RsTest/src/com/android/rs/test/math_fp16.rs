@@ -131,7 +131,12 @@ static bool testAPI() {
     //
     // TEST_HN_FUNC_HN(fract);
     TEST_HN_FUNC_HN_PHN(fract);
-    TEST_HN_FUNC_HN_PIN(frexp);
+    // Bug: https://b.corp.google.com/issues/26099914
+    // This test is broken due to an LLVM issue that has since been fixed.
+    // Enable this test once on-device LLVM and RenderScript prebuilts get
+    // udpated.
+    //
+    // TEST_HN_FUNC_HN_PIN(frexp);
 
     TEST_HN_FUNC_HN_HN(hypot);
     TEST_IN_FUNC_HN(ilogb);
@@ -153,7 +158,12 @@ static bool testAPI() {
     TEST_HN_FUNC_HN_H(min);
     TEST_HN_FUNC_HN_HN_HN(mix);
     TEST_HN_FUNC_HN_HN_H(mix);
-    TEST_HN_FUNC_HN_PHN(modf);
+    // Bug: https://b.corp.google.com/issues/26099914
+    // This test is broken due to an LLVM issue that has since been fixed.
+    // Enable this test once on-device LLVM and RenderScript prebuilts get
+    // udpated.
+    //
+    // TEST_HN_FUNC_HN_PHN(modf);
 
     h1 = nan_half();
 
