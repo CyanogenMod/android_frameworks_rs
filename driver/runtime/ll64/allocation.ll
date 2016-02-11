@@ -700,11 +700,12 @@ define <2 x half> @rsGetElementAtImpl_half2(%struct.rs_allocation* nocapture rea
 }
 
 !63 = !{!"half3", !15}
-define void @rsSetElementAtImpl_half3(%struct.rs_allocation* nocapture readonly %a.coerce, <3 x half> %val, i32 %x, i32 %y, i32 %z) #1 {
+define void @rsSetElementAtImpl_half3(%struct.rs_allocation* nocapture readonly %a.coerce, <2 x i32> %val, i32 %x, i32 %y, i32 %z) #1 {
   %1 = tail call i8* @rsOffset(%struct.rs_allocation* %a.coerce, i32 8, i32 %x, i32 %y, i32 %z) #2
-  %2 = shufflevector <3 x half> %val, <3 x half> undef, <4 x i32> <i32 0, i32 1, i32 2, i32 undef>
-  %3 = bitcast i8* %1 to <4 x half>*
-  store <4 x half> %2, <4 x half>* %3, align 8, !tbaa !63
+  %2 = bitcast <2 x i32> %val to <4 x half>
+  %3 = shufflevector <4 x half> %2, <4 x half> undef, <4 x i32> <i32 0, i32 1, i32 2, i32 undef>
+  %4 = bitcast i8* %1 to <4 x half>*
+  store <4 x half> %3, <4 x half>* %4, align 8, !tbaa !63
   ret void
 }
 
