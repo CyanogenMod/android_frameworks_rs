@@ -52,7 +52,7 @@ define void @rsSetElementAtImpl_char2(%struct.rs_allocation* nocapture readonly 
   %1 = tail call i8* @rsOffset(%struct.rs_allocation* %a, i32 2, i32 %x, i32 %y, i32 %z) #2
   %2 = bitcast i8* %1 to <2 x i8>*
   %3 = bitcast i16 %val to <2 x i8>
-  store <2 x i8> %3, <2 x i8>* %2, align 2, !tbaa !26
+  store <2 x i8> %3, <2 x i8>* %2, align 2, !tbaa !22
   ret void
 }
 
@@ -69,7 +69,7 @@ define void @rsSetElementAtImpl_char3(%struct.rs_allocation* nocapture readonly 
   %2 = bitcast i32 %val to <4 x i8>
   %3 = shufflevector <4 x i8> %2, <4 x i8> undef, <4 x i32> <i32 0, i32 1, i32 2, i32 undef>
   %4 = bitcast i8* %1 to <4 x i8>*
-  store <4 x i8> %3, <4 x i8>* %4, align 4, !tbaa !27
+  store <4 x i8> %3, <4 x i8>* %4, align 4, !tbaa !23
   ret void
 }
 
@@ -257,7 +257,7 @@ define void @rsSetElementAtImpl_ushort3(%struct.rs_allocation* nocapture readonl
   %2 = bitcast <2 x i32> %val to <4 x i16>
   %3 = shufflevector <4 x i16> %2, <4 x i16> undef, <4 x i32> <i32 0, i32 1, i32 2, i32 undef>
   %4 = bitcast i8* %1 to <4 x i16>*
-  store <4 x i16> %3, <4 x i16>* %4, align 8, !tbaa !31
+  store <4 x i16> %3, <4 x i16>* %4, align 8, !tbaa !35
   ret void
 }
 
@@ -510,7 +510,7 @@ define void @rsSetElementAtImpl_ulong3(%struct.rs_allocation* nocapture readonly
   %2 = load <3 x i64>, <3 x i64>* %val
   %3 = shufflevector <3 x i64> %2, <3 x i64> undef, <4 x i32> <i32 0, i32 1, i32 2, i32 undef>
   %4 = bitcast i8* %1 to <4 x i64>*
-  store <4 x i64> %3, <4 x i64>* %4, align 32, !tbaa !47
+  store <4 x i64> %3, <4 x i64>* %4, align 32, !tbaa !51
   ret void
 }
 
@@ -639,7 +639,7 @@ define void @rsSetElementAtImpl_double3(%struct.rs_allocation* nocapture readonl
   %2 = load <3 x double>, <3 x double>* %val
   %3 = shufflevector <3 x double> %2, <3 x double> undef, <4 x i32> <i32 0, i32 1, i32 2, i32 undef>
   %4 = bitcast i8* %1 to <4 x double>*
-  store <4 x double> %3, <4 x double>* %4, align 32, !tbaa !47
+  store <4 x double> %3, <4 x double>* %4, align 32, !tbaa !59
   ret void
 }
 
