@@ -612,4 +612,10 @@ extern SystemSpecification systemSpecification;
 extern const NumericalType TYPES[];
 extern const int NUM_TYPES;
 
+/* Given a renderscript type (string) calculate the vector size and base type. If the type
+ * is not a vector the vector size is 1 and baseType is just the type itself.
+ */
+void getVectorSizeAndBaseType(const std::string& type, std::string& vectorSize,
+                              std::string& baseType);
+
 #endif  // ANDROID_RS_API_GENERATOR_SPECIFICATION_H

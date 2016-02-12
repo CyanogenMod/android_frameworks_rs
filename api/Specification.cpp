@@ -115,6 +115,27 @@ static bool isRSTValid(const vector<string> &typeVector) {
     return true;
 }
 
+void getVectorSizeAndBaseType(const string& type, string& vectorSize, string& baseType) {
+    vectorSize = "1";
+    baseType = type;
+
+    /* If it's a vector type, we need to split the base type from the size.
+     * We know that's it's a vector type if the last character is a digit and
+     * the rest is an actual base type.   We used to only verify the first part,
+     * which created a problem with rs_matrix2x2.
+     */
+    const int last = type.size() - 1;
+    const char lastChar = type[last];
+    if (lastChar >= '0' && lastChar <= '9') {
+        const string trimmed = type.substr(0, last);
+        int i = findCType(trimmed);
+        if (i >= 0) {
+            baseType = trimmed;
+            vectorSize = lastChar;
+        }
+    }
+}
+
 void ParameterDefinition::parseParameterDefinition(const string& type, const string& name,
                                                    const string& testOption, int lineNumber,
                                                    bool isReturn, Scanner* scanner) {
@@ -124,23 +145,7 @@ void ParameterDefinition::parseParameterDefinition(const string& type, const str
     // Determine if this is an output.
     isOutParameter = isReturn || charRemoved('*', &rsType);
 
-    rsBaseType = rsType;
-    mVectorSize = "1";
-    /* If it's a vector type, we need to split the base type from the size.
-     * We know that's it's a vector type if the last character is a digit and
-     * the rest is an actual base type.   We used to only verify the first part,
-     * which created a problem with rs_matrix2x2.
-     */
-    const int last = rsType.size() - 1;
-    const char lastChar = rsType[last];
-    if (lastChar >= '0' && lastChar <= '9') {
-        const string trimmed = rsType.substr(0, last);
-        int i = findCType(trimmed);
-        if (i >= 0) {
-            rsBaseType = trimmed;
-            mVectorSize = lastChar;
-        }
-    }
+    getVectorSizeAndBaseType(rsType, mVectorSize, rsBaseType);
     typeIndex = findCType(rsBaseType);
 
     if (mVectorSize == "3") {
