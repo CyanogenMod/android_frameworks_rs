@@ -28,7 +28,8 @@ clcore_base_files := \
     rs_program.c \
     rs_sample.c \
     rs_sampler.c \
-    rs_convert.c
+    rs_convert.c \
+    rs_quaternion.c
 
 clcore_cflags := -Iframeworks/rs/cpu_ref -DRS_DECLARE_EXPIRED_APIS
 
