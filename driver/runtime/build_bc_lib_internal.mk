@@ -104,7 +104,7 @@ $(LOCAL_BUILT_MODULE): $(RS_LLVM_LINK)
 $(LOCAL_BUILT_MODULE): $(RS_LLVM_AS) $(BCC_STRIP_ATTR)
 	@echo "bc lib: $(PRIVATE_MODULE) ($@)"
 	@mkdir -p $(dir $@)
-	$(hide) $(RS_LLVM_LINK) $(PRIVATE_BC_FILES) -o $@.unstripped
+	$(hide) $(RS_LLVM_LINK) $(PRIVATE_BC_FILES) -o $@.unstripped 2> >(grep -o -v "modules of different" >&2)
 	$(hide) $(BCC_STRIP_ATTR) -o $@ $@.unstripped
 
 BCC_RS_TRIPLE :=
