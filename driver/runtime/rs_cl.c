@@ -624,7 +624,7 @@ extern float __attribute__((overloadable)) SC_powf(float, float);
 float __attribute__((overloadable)) pow(float v1, float v2) {
     return SC_powf(v1, v2);
 }
-#endif defined(RS_G_RUNTIME)
+#endif // defined(RS_G_RUNTIME)
 FN_FUNC_FN_FN(pow)
 
 extern float __attribute__((overloadable)) pown(float v, int p) {
@@ -728,7 +728,7 @@ extern float __attribute__((overloadable)) SC_sqrtf(float);
 float __attribute__((overloadable)) sqrt(float v) {
     return SC_sqrtf(v);
 }
-#endif defined(RS_G_RUNTIME)
+#endif // defined(RS_G_RUNTIME)
 
 FN_FUNC_FN(sqrt)
 #else

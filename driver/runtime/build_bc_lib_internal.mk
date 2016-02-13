@@ -43,6 +43,9 @@ bc_translated_clang_cc1_cflags := $(addprefix -Xclang , $(bc_clang_cc1_cflags))
 # Bug: 25435756 - must be switched back to the proper API level
 bc_RS_VERSION := -DRS_VERSION=4294967295
 
+# Disable deprecated warnings, because we have to support even legacy APIs.
+bc_warning_flags := -Wno-deprecated -Werror
+
 bc_cflags := -MD \
              $(bc_RS_VERSION) \
              -std=c99 \
@@ -53,6 +56,7 @@ bc_cflags := -MD \
              -target $(BCC_RS_TRIPLE) \
              -fsigned-char \
              $($(LOCAL_2ND_ARCH_VAR_PREFIX)RS_TRIPLE_CFLAGS) \
+             $(bc_warning_flags) \
              $(LOCAL_CFLAGS) \
              $(bc_translated_clang_cc1_cflags) \
              $(LOCAL_CFLAGS_$(my_32_64_bit_suffix))

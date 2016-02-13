@@ -619,6 +619,8 @@ rs_element __attribute__((overloadable)) rsCreatePixelElement(
         case RS_KIND_PIXEL_DEPTH:
             vector_width = 2;
             break;
+        default:
+            break;
     }
 
     return rsCreateElement(data_type, data_kind, true, vector_width);
