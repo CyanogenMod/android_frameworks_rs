@@ -311,62 +311,62 @@ static inline void __attribute__((overloadable))
 }
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
 extern void __attribute__((overloadable))
     rsQuaternionAdd(rs_quaternion* q, const rs_quaternion* rhs);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
 extern void __attribute__((overloadable))
     rsQuaternionConjugate(rs_quaternion* q);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
 extern float __attribute__((overloadable))
     rsQuaternionDot(const rs_quaternion* q0, const rs_quaternion* q1);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
 extern void __attribute__((overloadable))
     rsQuaternionGetMatrixUnit(rs_matrix4x4* m, const rs_quaternion* q);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
 extern void __attribute__((overloadable))
     rsQuaternionLoadRotateUnit(rs_quaternion* q, float rot, float x, float y, float z);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
 extern void __attribute__((overloadable))
     rsQuaternionSet(rs_quaternion* q, float w, float x, float y, float z);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
 extern void __attribute__((overloadable))
     rsQuaternionSet(rs_quaternion* q, const rs_quaternion* rhs);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
 extern void __attribute__((overloadable))
     rsQuaternionLoadRotate(rs_quaternion* q, float rot, float x, float y, float z);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
 extern void __attribute__((overloadable))
     rsQuaternionNormalize(rs_quaternion* q);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
 extern void __attribute__((overloadable))
     rsQuaternionMultiply(rs_quaternion* q, float scalar);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
 extern void __attribute__((overloadable))
     rsQuaternionMultiply(rs_quaternion* q, const rs_quaternion* rhs);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (defined(RS_DECLARE_EXPIRED_APIS) || RS_VERSION <= 4294967295))
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
 extern void __attribute__((overloadable))
     rsQuaternionSlerp(rs_quaternion* q, const rs_quaternion* q0, const rs_quaternion* q1, float t);
 #endif

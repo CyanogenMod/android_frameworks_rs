@@ -285,7 +285,7 @@ end:
 
 # New versions. Same signatures but don't contain a body.
 function: rsQuaternionAdd
-version: UNRELEASED
+version: 24
 ret: void
 arg: rs_quaternion* q
 arg: const rs_quaternion* rhs
@@ -293,14 +293,14 @@ test: none
 end:
 
 function: rsQuaternionConjugate
-version: UNRELEASED
+version: 24
 ret: void
 arg: rs_quaternion* q
 test: none
 end:
 
 function: rsQuaternionDot
-version: UNRELEASED
+version: 24
 ret: float
 arg: const rs_quaternion* q0
 arg: const rs_quaternion* q1
@@ -308,7 +308,7 @@ test: none
 end:
 
 function: rsQuaternionGetMatrixUnit
-version: UNRELEASED
+version: 24
 ret: void
 arg: rs_matrix4x4* m
 arg: const rs_quaternion* q
@@ -316,7 +316,7 @@ test: none
 end:
 
 function: rsQuaternionLoadRotateUnit
-version: UNRELEASED
+version: 24
 ret: void
 arg: rs_quaternion* q
 arg: float rot
@@ -327,7 +327,7 @@ test: none
 end:
 
 function: rsQuaternionSet
-version: UNRELEASED
+version: 24
 ret: void
 arg: rs_quaternion* q
 arg: float w
@@ -338,7 +338,7 @@ test: none
 end:
 
 function: rsQuaternionSet
-version: UNRELEASED
+version: 24
 ret: void
 arg: rs_quaternion* q
 arg: const rs_quaternion* rhs
@@ -349,7 +349,7 @@ end:
 # for the compilation to work.
 
 function: rsQuaternionLoadRotate
-version: UNRELEASED
+version: 24
 ret: void
 arg: rs_quaternion* q
 arg: float rot
@@ -360,14 +360,14 @@ test: none
 end:
 
 function: rsQuaternionNormalize
-version: UNRELEASED
+version: 24
 ret: void
 arg: rs_quaternion* q
 test: none
 end:
 
 function: rsQuaternionMultiply
-version: UNRELEASED
+version: 24
 ret: void
 arg: rs_quaternion* q
 arg: float scalar
@@ -375,7 +375,7 @@ test: none
 end:
 
 function: rsQuaternionMultiply
-version: UNRELEASED
+version: 24
 ret: void
 arg: rs_quaternion* q
 arg: const rs_quaternion* rhs
@@ -383,7 +383,7 @@ test: none
 end:
 
 function: rsQuaternionSlerp
-version: UNRELEASED
+version: 24
 ret: void
 arg: rs_quaternion* q
 arg: const rs_quaternion* q0
