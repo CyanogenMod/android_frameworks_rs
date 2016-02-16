@@ -89,12 +89,12 @@ $(c_bc_files): PRIVATE_CFLAGS := $(bc_cflags)
 $(c_bc_files): $(intermediates)/%.bc: $(LOCAL_PATH)/%.c $(bc_clang)
 	@echo "bc: $(PRIVATE_MODULE) <= $<"
 	@mkdir -p $(dir $@)
-	$(hide) $(bc_clang) $(addprefix -I, $(PRIVATE_INCLUDES)) $(PRIVATE_CFLAGS) $< -o $@
+	$(hide) $(RELATIVE_PWD) $(bc_clang) $(addprefix -I, $(PRIVATE_INCLUDES)) $(PRIVATE_CFLAGS) $< -o $@
 	$(call transform-d-to-p-args,$(@:%.bc=%.d),$(@:%.bc=%.P))
 
 $(ll_bc_files): $(intermediates)/%.bc: $(LOCAL_PATH)/%.ll $(RS_LLVM_AS)
 	@mkdir -p $(dir $@)
-	$(hide) $(RS_LLVM_AS) $< -o $@
+	$(hide) $(RELATIVE_PWD) $(RS_LLVM_AS) $< -o $@
 
 -include $(c_bc_files:%.bc=%.P)
 
@@ -104,7 +104,7 @@ $(LOCAL_BUILT_MODULE): $(RS_LLVM_LINK)
 $(LOCAL_BUILT_MODULE): $(RS_LLVM_AS) $(BCC_STRIP_ATTR)
 	@echo "bc lib: $(PRIVATE_MODULE) ($@)"
 	@mkdir -p $(dir $@)
-	$(hide) $(RS_LLVM_LINK) $(PRIVATE_BC_FILES) -o $@.unstripped 2> >(grep -o -v "modules of different" >&2)
-	$(hide) $(BCC_STRIP_ATTR) -o $@ $@.unstripped
+	$(hide) $(RELATIVE_PWD) $(RS_LLVM_LINK) $(PRIVATE_BC_FILES) -o $@.unstripped 2> >(grep -o -v "modules of different" >&2)
+	$(hide) $(RELATIVE_PWD) $(BCC_STRIP_ATTR) -o $@ $@.unstripped
 
 BCC_RS_TRIPLE :=
