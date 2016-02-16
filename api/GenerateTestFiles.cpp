@@ -128,6 +128,9 @@ private:
      */
     void writeJavaVerifyVectorMethod() const;
 
+    // Generate the line that creates the Target.
+    void writeJavaCreateTarget() const;
+
     // Generate the method header of the verify function.
     void writeJavaVerifyMethodHeader() const;
 
@@ -430,7 +433,7 @@ void PermutationWriter::writeJavaVerifyScalarMethod(bool verifierValidates) cons
         }
         mJava->indent() << "// Ask the CoreMathVerifier to validate.\n";
         if (hasFloat) {
-            mJava->indent() << "Target target = new Target(relaxed);\n";
+            writeJavaCreateTarget();
         }
         mJava->indent() << "String errorMessage = CoreMathVerifier."
                         << mJavaVerifierVerifyMethodName << "(args";
@@ -442,7 +445,7 @@ void PermutationWriter::writeJavaVerifyScalarMethod(bool verifierValidates) cons
     } else {
         mJava->indent() << "// Figure out what the outputs should have been.\n";
         if (hasFloat) {
-            mJava->indent() << "Target target = new Target(relaxed);\n";
+            writeJavaCreateTarget();
         }
         mJava->indent() << "CoreMathVerifier." << mJavaVerifierComputeMethodName << "(args";
         if (hasFloat) {
@@ -539,7 +542,7 @@ void PermutationWriter::writeJavaVerifyVectorMethod() const {
             }
         }
     }
-    mJava->indent() << "Target target = new Target(relaxed);\n";
+    writeJavaCreateTarget();
     mJava->indent() << "CoreMathVerifier." << mJavaVerifierComputeMethodName
                     << "(args, target);\n\n";
 
@@ -580,6 +583,39 @@ void PermutationWriter::writeJavaVerifyVectorMethod() const {
 
     mJava->endBlock();
     *mJava << "\n";
+}
+
+
+void PermutationWriter::writeJavaCreateTarget() const {
+    string name = mPermutation.getName();
+
+    const char* functionType = "NORMAL";
+    size_t end = name.find('_');
+    if (end != string::npos) {
+        if (name.compare(0, end, "native") == 0) {
+            functionType = "NATIVE";
+        } else if (name.compare(0, end, "half") == 0) {
+            functionType = "HALF";
+        } else if (name.compare(0, end, "fast") == 0) {
+            functionType = "FAST";
+        }
+    }
+
+    string floatType = mReturnParam->specType;
+    const char* precisionStr = "";
+    if (floatType.compare("f16") == 0) {
+        precisionStr = "HALF";
+    } else if (floatType.compare("f32") == 0) {
+        precisionStr = "FLOAT";
+    } else if (floatType.compare("f64") == 0) {
+        precisionStr = "DOUBLE";
+    } else {
+        cerr << "Error. Unreachable.  Return type is not floating point\n";
+    }
+
+    mJava->indent() << "Target target = new Target(Target.FunctionType." <<
+                    functionType << ", Target.ReturnType." << precisionStr <<
+                    ", relaxed);\n";
 }
 
 void PermutationWriter::writeJavaVerifyMethodHeader() const {
@@ -903,7 +939,8 @@ static bool startJavaFile(GeneratedFile* file, const Function& function, const s
 
     *file << "import android.renderscript.Allocation;\n";
     *file << "import android.renderscript.RSRuntimeException;\n";
-    *file << "import android.renderscript.Element;\n\n";
+    *file << "import android.renderscript.Element;\n";
+    *file << "import android.renderscript.cts.Target;\n\n";
     *file << "import java.util.Arrays;\n\n";
 
     *file << "public class " << testName << " extends RSBaseCompute";
