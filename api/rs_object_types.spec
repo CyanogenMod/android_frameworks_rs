@@ -119,7 +119,8 @@ type: rs_data_type
 version: 16
 enum:
 value: RS_TYPE_NONE = 0, "Element is a complex type, i.e. a struct."
-value: RS_TYPE_FLOAT_32 = 2, "A 32 bit float point value."
+value: RS_TYPE_FLOAT_16 = 1, "A 16 bit floating point value."
+value: RS_TYPE_FLOAT_32 = 2, "A 32 bit floating point value."
 value: RS_TYPE_FLOAT_64 = 3, "A 64 bit floating point value."
 value: RS_TYPE_SIGNED_8 = 4, "An 8 bit signed integer."
 value: RS_TYPE_SIGNED_16 = 5, "A 16 bit signed integer."
