@@ -169,7 +169,6 @@ description:
 test: vector
 end:
 
-# TODO Add f16 length
 function: length
 version: 9
 attrib: const
@@ -183,6 +182,16 @@ description:
 
  See also @fast_length(), @native_length().
 test: vector
+end:
+
+function: length
+version: UNRELEASED
+attrib: const
+w: 1, 2, 3, 4
+t: f16
+ret: #2
+arg: #2#1 v
+test: none
 end:
 
 function: native_distance
@@ -216,6 +225,16 @@ description:
 test: vector
 end:
 
+function: native_length
+version: UNRELEASED
+attrib: const
+w: 1, 2, 3, 4
+t: f16
+ret: #2
+arg: #2#1 v
+test: none
+end:
+
 function: native_normalize
 version: 21
 attrib: const
@@ -231,7 +250,16 @@ description:
 test: vector
 end:
 
-# TODO Add f16 normalize
+function: native_normalize
+version: UNRELEASED
+attrib: const
+w: 1, 2, 3, 4
+t: f16
+ret: #2#1
+arg: #2#1 v
+test: none
+end:
+
 function: normalize
 version: 9
 attrib: const
@@ -248,4 +276,14 @@ description:
 
  See also @fast_normalize(), @native_normalize().
 test: vector
+end:
+
+function: normalize
+version: UNRELEASED
+attrib: const
+w: 1, 2, 3, 4
+t: f16
+ret: #2#1
+arg: #2#1 v
+test: none
 end:
