@@ -178,7 +178,7 @@ description:
 end:
 
 function: acos
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -202,7 +202,7 @@ description:
 end:
 
 function: acosh
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -228,7 +228,7 @@ description:
 end:
 
 function: acospi
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -252,7 +252,7 @@ description:
 end:
 
 function: asin
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -276,7 +276,7 @@ description:
 end:
 
 function: asinh
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -302,7 +302,7 @@ description:
 end:
 
 function: asinpi
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -326,7 +326,7 @@ description:
 end:
 
 function: atan
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -351,7 +351,7 @@ description:
 end:
 
 function: atan2
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -379,7 +379,7 @@ description:
 end:
 
 function: atan2pi
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -404,7 +404,7 @@ description:
 end:
 
 function: atanh
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -430,7 +430,7 @@ description:
 end:
 
 function: atanpi
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -454,7 +454,7 @@ description:
 end:
 
 function: cbrt
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -480,7 +480,7 @@ description:
 end:
 
 function: ceil
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -543,7 +543,7 @@ arg: #2 max_value, above(min_value)
 end:
 
 function: clamp
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -555,7 +555,7 @@ test: none
 end:
 
 function: clamp
-version: UNRELEASED
+version: 24
 attrib: const
 w: 2, 3, 4
 t: f16
@@ -598,7 +598,7 @@ description:
 end:
 
 function: copysign
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -623,7 +623,7 @@ description:
 end:
 
 function: cos
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -647,7 +647,7 @@ description:
 end:
 
 function: cosh
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -673,7 +673,7 @@ description:
 end:
 
 function: cospi
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -695,7 +695,7 @@ description:
 end:
 
 function: degrees
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -717,7 +717,7 @@ description:
 end:
 
 function: erf
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -739,7 +739,7 @@ description:
 end:
 
 function: erfc
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -763,7 +763,7 @@ description:
 end:
 
 function: exp
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -787,7 +787,7 @@ description:
 end:
 
 function: exp10
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -811,7 +811,7 @@ description:
 end:
 
 function: exp2
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -835,7 +835,7 @@ description:
 end:
 
 function: expm1
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -859,7 +859,7 @@ description:
 end:
 
 function: fabs
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -884,7 +884,7 @@ description:
 end:
 
 function: fdim
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -911,7 +911,7 @@ description:
 end:
 
 function: floor
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -939,7 +939,7 @@ description:
 end:
 
 function: fma
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -966,7 +966,7 @@ description:
 end:
 
 function: fmax
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -987,7 +987,7 @@ arg: #2 b
 end:
 
 function: fmax
-version: UNRELEASED
+version: 24
 attrib: const
 w: 2, 3, 4
 t: f16
@@ -1013,7 +1013,7 @@ description:
 end:
 
 function: fmin
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -1034,7 +1034,7 @@ arg: #2 b
 end:
 
 function: fmin
-version: UNRELEASED
+version: 24
 attrib: const
 w: 2, 3, 4
 t: f16
@@ -1062,7 +1062,7 @@ description:
 end:
 
 function: fmod
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -1109,7 +1109,7 @@ arg: #2#1 v
 end:
 
 function: fract
-version: UNRELEASED
+version: 24
 w: 1, 2, 3, 4
 t: f16
 ret: #2#1
@@ -1119,7 +1119,7 @@ test: none
 end:
 
 function: fract
-version: UNRELEASED
+version: 24
 w: 1, 2, 3, 4
 t: f16
 ret: #2#1
@@ -1145,7 +1145,7 @@ description:
 end:
 
 function: frexp
-version: UNRELEASED
+version: 24
 w: 1, 2, 3, 4
 t: f16
 ret: #2#1
@@ -1218,7 +1218,7 @@ description:
 end:
 
 function: hypot
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -1249,7 +1249,7 @@ test: custom
 end:
 
 function: ilogb
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -1274,7 +1274,7 @@ description:
 end:
 
 function: ldexp
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 ret: half#1
@@ -1293,7 +1293,7 @@ arg: int exponent
 end:
 
 function: ldexp
-version: UNRELEASED
+version: 24
 attrib: const
 w: 2, 3, 4
 ret: half#1
@@ -1318,7 +1318,7 @@ description:
 end:
 
 function: lgamma
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -1339,7 +1339,7 @@ test: custom
 end:
 
 function: lgamma
-version: UNRELEASED
+version: 24
 w: 1, 2, 3, 4
 t: f16
 ret: #2#1
@@ -1363,7 +1363,7 @@ description:
 end:
 
 function: log
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -1387,7 +1387,7 @@ description:
 end:
 
 function: log10
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -1411,7 +1411,7 @@ description:
 end:
 
 function: log1p
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -1435,7 +1435,7 @@ description:
 end:
 
 function: log2
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -1464,7 +1464,7 @@ description:
 end:
 
 function: logb
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -1492,7 +1492,7 @@ description:
 end:
 
 function: mad
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -1517,7 +1517,7 @@ description:
 end:
 
 function: max
-version:UNRELEASED
+version:24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -1538,7 +1538,7 @@ arg: #2 b
 end:
 
 function: max
-version: UNRELEASED
+version: 24
 attrib: const
 w: 2, 3, 4
 t: f16
@@ -1632,7 +1632,7 @@ description:
 end:
 
 function: min
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -1653,7 +1653,7 @@ arg: #2 b
 end:
 
 function: min
-version: UNRELEASED
+version: 24
 attrib: const
 w: 2, 3, 4
 t: f16
@@ -1751,7 +1751,7 @@ description:
 end:
 
 function: mix
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -1774,7 +1774,7 @@ arg: #2 fraction
 end:
 
 function: mix
-version: UNRELEASED
+version: 24
 attrib: const
 w: 2, 3, 4
 t: f16
@@ -1801,7 +1801,7 @@ description:
 end:
 
 function: modf
-version: UNRELEASED
+version: 24
 w: 1, 2, 3, 4
 t: f16
 ret: #2#1
@@ -1825,7 +1825,7 @@ description:
 end:
 
 function: nan_half
-version: UNRELEASED
+version: 24
 attrib: const
 t: f16
 ret: #1
@@ -1854,7 +1854,7 @@ test: limited(0.0005)
 end:
 
 function: native_acos
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -1881,7 +1881,7 @@ test: limited(0.0005)
 end:
 
 function: native_acosh
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -1911,7 +1911,7 @@ test: limited(0.0005)
 end:
 
 function: native_acospi
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -1940,7 +1940,7 @@ test: limited(0.0005)
 end:
 
 function: native_asin
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -1967,7 +1967,7 @@ test: limited(0.0005)
 end:
 
 function: native_asinh
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -1997,7 +1997,7 @@ test: limited(0.0005)
 end:
 
 function: native_asinpi
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -2024,7 +2024,7 @@ test: limited(0.0005)
 end:
 
 function: native_atan
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -2052,7 +2052,7 @@ test: limited(0.0005)
 end:
 
 function: native_atan2
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -2083,7 +2083,7 @@ test: limited(0.0005)
 end:
 
 function: native_atan2pi
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -2110,7 +2110,7 @@ test: limited(0.0005)
 end:
 
 function: native_atanh
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -2139,7 +2139,7 @@ test: limited(0.0005)
 end:
 
 function: native_atanpi
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -2164,7 +2164,7 @@ description:
 end:
 
 function: native_cbrt
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -2188,7 +2188,7 @@ description:
 end:
 
 function: native_cos
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -2212,7 +2212,7 @@ description:
 end:
 
 function: native_cosh
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -2238,7 +2238,7 @@ description:
 end:
 
 function: native_cospi
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -2261,7 +2261,7 @@ description:
 end:
 
 function: native_divide
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -2290,7 +2290,7 @@ test: limited
 end:
 
 function: native_exp
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -2319,7 +2319,7 @@ test: limited
 end:
 
 function: native_exp10
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -2348,7 +2348,7 @@ test: limited
 end:
 
 function: native_exp2
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -2373,7 +2373,7 @@ description:
 end:
 
 function: native_expm1
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -2398,7 +2398,7 @@ description:
 end:
 
 function: native_hypot
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -2426,7 +2426,7 @@ test: limited
 end:
 
 function: native_log
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -2454,7 +2454,7 @@ test: limited
 end:
 
 function: native_log10
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -2479,7 +2479,7 @@ description:
 end:
 
 function: native_log1p
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -2506,7 +2506,7 @@ test: limited
 end:
 
 function: native_log2
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -2533,7 +2533,7 @@ test: limited
 end:
 
 function: native_powr
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -2560,7 +2560,7 @@ description:
 end:
 
 function: native_recip
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -2585,7 +2585,7 @@ description:
 end:
 
 function: native_rootn
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -2610,7 +2610,7 @@ description:
 end:
 
 function: native_rsqrt
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -2634,7 +2634,7 @@ description:
 end:
 
 function: native_sin
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -2660,7 +2660,7 @@ test: limited(0.0005)
 end:
 
 function: native_sincos
-version: UNRELEASED
+version: 24
 w: 1, 2, 3, 4
 t: f16
 ret: #2#1
@@ -2684,7 +2684,7 @@ description:
 end:
 
 function: native_sinh
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -2710,7 +2710,7 @@ description:
 end:
 
 function: native_sinpi
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -2734,7 +2734,7 @@ description:
 end:
 
 function: native_sqrt
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -2756,7 +2756,7 @@ description:
 end:
 
 function: native_tan
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -2780,7 +2780,7 @@ description:
 end:
 
 function: native_tanh
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -2806,7 +2806,7 @@ description:
 end:
 
 function: native_tanpi
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -2832,7 +2832,7 @@ description:
 end:
 
 function: nextafter
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -2859,7 +2859,7 @@ description:
 end:
 
 function: pow
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -2886,7 +2886,7 @@ description:
 end:
 
 function: pown
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -2915,7 +2915,7 @@ description:
 end:
 
 function: powr
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -2939,7 +2939,7 @@ description:
 end:
 
 function: radians
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -2967,7 +2967,7 @@ description:
 end:
 
 function: remainder
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -3002,7 +3002,7 @@ test: custom
 end:
 
 function: remquo
-version: UNRELEASED
+version: 24
 w: 1, 2, 3, 4
 t: f16
 ret: #2#1
@@ -3031,7 +3031,7 @@ description:
 end:
 
 function: rint
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -3056,7 +3056,7 @@ description:
 end:
 
 function: rootn
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -3085,7 +3085,7 @@ description:
 end:
 
 function: round
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -3109,7 +3109,7 @@ description:
 end:
 
 function: rsqrt
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -3135,7 +3135,7 @@ description:
 end:
 
 function: sign
-version:UNRELEASED
+version:24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -3159,7 +3159,7 @@ description:
 end:
 
 function: sin
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -3183,7 +3183,7 @@ description:
 end:
 
 function: sincos
-version: UNRELEASED
+version: 24
 w: 1, 2, 3, 4
 t: f16
 ret: #2#1
@@ -3207,7 +3207,7 @@ description:
 end:
 
 function: sinh
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -3233,7 +3233,7 @@ description:
 end:
 
 function: sinpi
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -3257,7 +3257,7 @@ description:
 end:
 
 function: sqrt
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -3284,7 +3284,7 @@ description:
 end:
 
 function: step
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -3305,7 +3305,7 @@ arg: #2 v
 end:
 
 function: step
-version: UNRELEASED
+version: 24
 attrib: const
 w: 2, 3, 4
 t: f16
@@ -3326,7 +3326,7 @@ arg: #2#1 v
 end:
 
 function: step
-version: UNRELEASED
+version: 24
 attrib: const
 w: 2, 3, 4
 t: f16
@@ -3351,7 +3351,7 @@ description:
 end:
 
 function: tan
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -3375,7 +3375,7 @@ description:
 end:
 
 function: tanh
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -3401,7 +3401,7 @@ description:
 end:
 
 function: tanpi
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -3425,7 +3425,7 @@ description:
 end:
 
 function: tgamma
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -3451,7 +3451,7 @@ description:
 end:
 
 function: trunc
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
