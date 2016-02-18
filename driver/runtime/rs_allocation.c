@@ -510,8 +510,7 @@ rs_element __attribute__((overloadable)) rsCreateElement(
 
     switch (data_type) {
         case RS_TYPE_BOOLEAN:
-        // Bug: 24862914: Add RS_TYPE_FLOAT_16 once the bug is fixed
-        // case RS_TYPE_FLOAT_16:
+        case RS_TYPE_FLOAT_16:
         case RS_TYPE_FLOAT_32:
         case RS_TYPE_FLOAT_64:
         case RS_TYPE_SIGNED_8:
@@ -544,8 +543,7 @@ rs_element __attribute__((overloadable)) rsCreateVectorElement(
     }
     switch (data_type) {
         case RS_TYPE_BOOLEAN:
-        // Bug: 24862914: Add RS_TYPE_FLOAT_16 once the bug is fixed
-        // case RS_TYPE_FLOAT_16:
+        case RS_TYPE_FLOAT_16:
         case RS_TYPE_FLOAT_32:
         case RS_TYPE_FLOAT_64:
         case RS_TYPE_SIGNED_8:
