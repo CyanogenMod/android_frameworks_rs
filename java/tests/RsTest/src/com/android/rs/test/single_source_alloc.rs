@@ -46,6 +46,7 @@ static bool failed = false;
         return in;                                                             \
     }                                                                          \
 
+VERIFY_KERNEL(half)
 VERIFY_KERNEL(float)
 VERIFY_KERNEL(double)
 VERIFY_KERNEL(char)
@@ -159,6 +160,7 @@ void CreateAndTestAlloc(int dataType, int vecSize) {
                 // Store to a cell based on the type, vector size and
                 // dimensionality
                 switch (dt) {
+                    STORE_TO_ALLOC(RS_TYPE_FLOAT_16, half);
                     STORE_TO_ALLOC(RS_TYPE_FLOAT_32, float);
                     STORE_TO_ALLOC(RS_TYPE_FLOAT_64, double);
                     STORE_TO_ALLOC(RS_TYPE_SIGNED_8, char);
@@ -180,6 +182,7 @@ void CreateAndTestAlloc(int dataType, int vecSize) {
 
     // Launch the appropriate verify_ kernel
     switch (dt) {
+        LAUNCH_VERIFY_KERNEL(RS_TYPE_FLOAT_16, half);
         LAUNCH_VERIFY_KERNEL(RS_TYPE_FLOAT_32, float);
         LAUNCH_VERIFY_KERNEL(RS_TYPE_FLOAT_64, double);
         LAUNCH_VERIFY_KERNEL(RS_TYPE_SIGNED_8, char);
@@ -373,7 +376,7 @@ void TestAllCases() {
     _RS_ASSERT(!rsIsObject(rsCreateAllocation(I32_3_2D,
                     (uint32_t) RS_ALLOCATION_USAGE_SHARED)));
 
-    // Bug: 24862914: Add half once the bug is fixed
+    TEST_HELPER(half);
     TEST_HELPERS(float);
     TEST_HELPERS(double);
     TEST_HELPERS(char);
