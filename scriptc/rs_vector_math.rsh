@@ -247,6 +247,26 @@ extern float __attribute__((const, overloadable))
 extern float __attribute__((const, overloadable))
     length(float4 v);
 
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+extern half __attribute__((const, overloadable))
+    length(half v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+extern half __attribute__((const, overloadable))
+    length(half2 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+extern half __attribute__((const, overloadable))
+    length(half3 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+extern half __attribute__((const, overloadable))
+    length(half4 v);
+#endif
+
 /*
  * native_distance: Approximate distance between two points
  *
@@ -301,6 +321,26 @@ extern float __attribute__((const, overloadable))
     native_length(float4 v);
 #endif
 
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+extern half __attribute__((const, overloadable))
+    native_length(half v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+extern half __attribute__((const, overloadable))
+    native_length(half2 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+extern half __attribute__((const, overloadable))
+    native_length(half3 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+extern half __attribute__((const, overloadable))
+    native_length(half4 v);
+#endif
+
 /*
  * native_normalize: Approximately normalize a vector
  *
@@ -328,6 +368,26 @@ extern float4 __attribute__((const, overloadable))
     native_normalize(float4 v);
 #endif
 
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+extern half __attribute__((const, overloadable))
+    native_normalize(half v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+extern half2 __attribute__((const, overloadable))
+    native_normalize(half2 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+extern half3 __attribute__((const, overloadable))
+    native_normalize(half3 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+extern half4 __attribute__((const, overloadable))
+    native_normalize(half4 v);
+#endif
+
 /*
  * normalize: Normalize a vector
  *
@@ -349,5 +409,25 @@ extern float3 __attribute__((const, overloadable))
 
 extern float4 __attribute__((const, overloadable))
     normalize(float4 v);
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+extern half __attribute__((const, overloadable))
+    normalize(half v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+extern half2 __attribute__((const, overloadable))
+    normalize(half2 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+extern half3 __attribute__((const, overloadable))
+    normalize(half3 v);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+extern half4 __attribute__((const, overloadable))
+    normalize(half4 v);
+#endif
 
 #endif // RENDERSCRIPT_RS_VECTOR_MATH_RSH
