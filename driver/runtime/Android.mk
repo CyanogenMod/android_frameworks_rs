@@ -69,7 +69,8 @@ clcore_x86_files := \
     $(clcore_base_files) \
     arch/generic.c \
     arch/x86_sse2.ll \
-    arch/x86_sse3.ll
+    arch/x86_sse3.ll \
+    arch/x86_trunc.ll
 
 # Grab the current value for $(RS_VERSION_DEFINE)
 include frameworks/compile/slang/rs_version.mk
@@ -150,6 +151,7 @@ rs_g_runtime := 1
 LOCAL_CFLAGS += $(clcore_cflags)
 LOCAL_CFLAGS += -g -O0
 LOCAL_SRC_FILES := $(clcore_base_files) $(clcore_g_files)
+LOCAL_SRC_FILES_x86 := arch/x86_trunc.ll
 LOCAL_SRC_FILES_32 := arch/generic.c
 
 ifeq ($(TARGET_ARCH),$(filter $(TARGET_ARCH),arm64))

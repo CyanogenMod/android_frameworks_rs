@@ -105,12 +105,3 @@ define float @_Z3powff(float %v1, float %v2) nounwind readnone alwaysinline {
   %1 = tail call float @llvm.pow.f32(float  %v1, float %v2)
   ret float %1
 }
-
-; http://b/26165616 - As a WAR for this bug, define __truncxfhf2.  Note that
-; this exhibits the double-rounding problem.  This WAR will be removed once
-; a proper implementation is added to compiler-rt.
-define half @__truncxfhf2(x86_fp80 %v1) nounwind readnone alwaysinline {
-  %1 = fptrunc x86_fp80 %v1 to float
-  %2 = fptrunc float %1 to half
-  ret half %2
-}
