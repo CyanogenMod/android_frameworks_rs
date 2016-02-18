@@ -1246,302 +1246,302 @@ extern ulong4 __attribute__((const, overloadable))
     convert_ulong4(uint4 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
 extern float2 __attribute__((const, overloadable))
     convert_float2(half2 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
 extern float3 __attribute__((const, overloadable))
     convert_float3(half3 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
 extern float4 __attribute__((const, overloadable))
     convert_float4(half4 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
 extern double2 __attribute__((const, overloadable))
     convert_double2(half2 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
 extern double3 __attribute__((const, overloadable))
     convert_double3(half3 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
 extern double4 __attribute__((const, overloadable))
     convert_double4(half4 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
 extern char2 __attribute__((const, overloadable))
     convert_char2(half2 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
 extern char3 __attribute__((const, overloadable))
     convert_char3(half3 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
 extern char4 __attribute__((const, overloadable))
     convert_char4(half4 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
 extern uchar2 __attribute__((const, overloadable))
     convert_uchar2(half2 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
 extern uchar3 __attribute__((const, overloadable))
     convert_uchar3(half3 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
 extern uchar4 __attribute__((const, overloadable))
     convert_uchar4(half4 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
 extern short2 __attribute__((const, overloadable))
     convert_short2(half2 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
 extern short3 __attribute__((const, overloadable))
     convert_short3(half3 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
 extern short4 __attribute__((const, overloadable))
     convert_short4(half4 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
 extern ushort2 __attribute__((const, overloadable))
     convert_ushort2(half2 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
 extern ushort3 __attribute__((const, overloadable))
     convert_ushort3(half3 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
 extern ushort4 __attribute__((const, overloadable))
     convert_ushort4(half4 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
 extern int2 __attribute__((const, overloadable))
     convert_int2(half2 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
 extern int3 __attribute__((const, overloadable))
     convert_int3(half3 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
 extern int4 __attribute__((const, overloadable))
     convert_int4(half4 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
 extern uint2 __attribute__((const, overloadable))
     convert_uint2(half2 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
 extern uint3 __attribute__((const, overloadable))
     convert_uint3(half3 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
 extern uint4 __attribute__((const, overloadable))
     convert_uint4(half4 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
 extern long2 __attribute__((const, overloadable))
     convert_long2(half2 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
 extern long3 __attribute__((const, overloadable))
     convert_long3(half3 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
 extern long4 __attribute__((const, overloadable))
     convert_long4(half4 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
 extern ulong2 __attribute__((const, overloadable))
     convert_ulong2(half2 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
 extern ulong3 __attribute__((const, overloadable))
     convert_ulong3(half3 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
 extern ulong4 __attribute__((const, overloadable))
     convert_ulong4(half4 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
 extern half2 __attribute__((const, overloadable))
     convert_half2(float2 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
 extern half3 __attribute__((const, overloadable))
     convert_half3(float3 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
 extern half4 __attribute__((const, overloadable))
     convert_half4(float4 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
 extern half2 __attribute__((const, overloadable))
     convert_half2(double2 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
 extern half3 __attribute__((const, overloadable))
     convert_half3(double3 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
 extern half4 __attribute__((const, overloadable))
     convert_half4(double4 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
 extern half2 __attribute__((const, overloadable))
     convert_half2(char2 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
 extern half3 __attribute__((const, overloadable))
     convert_half3(char3 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
 extern half4 __attribute__((const, overloadable))
     convert_half4(char4 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
 extern half2 __attribute__((const, overloadable))
     convert_half2(uchar2 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
 extern half3 __attribute__((const, overloadable))
     convert_half3(uchar3 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
 extern half4 __attribute__((const, overloadable))
     convert_half4(uchar4 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
 extern half2 __attribute__((const, overloadable))
     convert_half2(short2 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
 extern half3 __attribute__((const, overloadable))
     convert_half3(short3 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
 extern half4 __attribute__((const, overloadable))
     convert_half4(short4 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
 extern half2 __attribute__((const, overloadable))
     convert_half2(ushort2 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
 extern half3 __attribute__((const, overloadable))
     convert_half3(ushort3 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
 extern half4 __attribute__((const, overloadable))
     convert_half4(ushort4 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
 extern half2 __attribute__((const, overloadable))
     convert_half2(int2 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
 extern half3 __attribute__((const, overloadable))
     convert_half3(int3 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
 extern half4 __attribute__((const, overloadable))
     convert_half4(int4 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
 extern half2 __attribute__((const, overloadable))
     convert_half2(uint2 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
 extern half3 __attribute__((const, overloadable))
     convert_half3(uint3 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
 extern half4 __attribute__((const, overloadable))
     convert_half4(uint4 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
 extern half2 __attribute__((const, overloadable))
     convert_half2(long2 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
 extern half3 __attribute__((const, overloadable))
     convert_half3(long3 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
 extern half4 __attribute__((const, overloadable))
     convert_half4(long4 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
 extern half2 __attribute__((const, overloadable))
     convert_half2(ulong2 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
 extern half3 __attribute__((const, overloadable))
     convert_half3(ulong3 v);
 #endif
 
-#if (defined(RS_VERSION) && (RS_VERSION >= 4294967295) && (RS_VERSION <= 4294967295))
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
 extern half4 __attribute__((const, overloadable))
     convert_half4(ulong4 v);
 #endif
