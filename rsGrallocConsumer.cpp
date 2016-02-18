@@ -162,16 +162,73 @@ status_t GrallocConsumer::lockNextBuffer(uint32_t idx) {
     //mAlloc->scalingMode = b.mScalingMode;
     //mAlloc->frameNumber = b.mFrameNumber;
 
+    // For YUV Allocations, we need to populate the drvState with details of how
+    // the data is layed out.
+    // RenderScript requests a buffer in the YCbCr_420_888 format.
+    // The Camera HAL can return a buffer of YCbCr_420_888 or YV12, regardless
+    // of the requested format.
+    // mHal.state.yuv contains the requested format,
+    // mGraphicBuffer->getPixelFormat() is the returned format.
     if (mAlloc[idx]->mHal.state.yuv == HAL_PIXEL_FORMAT_YCbCr_420_888) {
-        mAlloc[idx]->mHal.drvState.lod[1].mallocPtr = ycbcr.cb;
-        mAlloc[idx]->mHal.drvState.lod[2].mallocPtr = ycbcr.cr;
+        const int yWidth = mAlloc[idx]->mHal.drvState.lod[0].dimX;
+        const int yHeight = mAlloc[idx]->mHal.drvState.lod[0].dimY;
 
-        mAlloc[idx]->mHal.drvState.lod[0].stride = ycbcr.ystride;
-        mAlloc[idx]->mHal.drvState.lod[1].stride = ycbcr.cstride;
-        mAlloc[idx]->mHal.drvState.lod[2].stride = ycbcr.cstride;
+        if (mSlots[slot].mGraphicBuffer->getPixelFormat() ==
+                HAL_PIXEL_FORMAT_YCbCr_420_888) {
+            const int cWidth = yWidth / 2;
+            const int cHeight = yHeight / 2;
 
-        mAlloc[idx]->mHal.drvState.yuv.shift = 1;
-        mAlloc[idx]->mHal.drvState.yuv.step = ycbcr.chroma_step;
+            mAlloc[idx]->mHal.drvState.lod[1].dimX = cWidth;
+            mAlloc[idx]->mHal.drvState.lod[1].dimY = cHeight;
+            mAlloc[idx]->mHal.drvState.lod[2].dimX = cWidth;
+            mAlloc[idx]->mHal.drvState.lod[2].dimY = cHeight;
+
+            mAlloc[idx]->mHal.drvState.lod[0].mallocPtr = ycbcr.y;
+            mAlloc[idx]->mHal.drvState.lod[1].mallocPtr = ycbcr.cb;
+            mAlloc[idx]->mHal.drvState.lod[2].mallocPtr = ycbcr.cr;
+
+            mAlloc[idx]->mHal.drvState.lod[0].stride = ycbcr.ystride;
+            mAlloc[idx]->mHal.drvState.lod[1].stride = ycbcr.cstride;
+            mAlloc[idx]->mHal.drvState.lod[2].stride = ycbcr.cstride;
+
+            mAlloc[idx]->mHal.drvState.yuv.shift = 1;
+            mAlloc[idx]->mHal.drvState.yuv.step = ycbcr.chroma_step;
+            mAlloc[idx]->mHal.drvState.lodCount = 3;
+        } else if (mSlots[slot].mGraphicBuffer->getPixelFormat() ==
+                       HAL_PIXEL_FORMAT_YV12) {
+            // For YV12, the data layout is Y, followed by Cr, followed by Cb;
+            // for YCbCr_420_888, it's Y, followed by Cb, followed by Cr.
+            // RenderScript assumes lod[0] is Y, lod[1] is Cb, and lod[2] is Cr.
+            const int cWidth = yWidth / 2;
+            const int cHeight = yHeight / 2;
+
+            mAlloc[idx]->mHal.drvState.lod[1].dimX = cWidth;
+            mAlloc[idx]->mHal.drvState.lod[1].dimY = cHeight;
+            mAlloc[idx]->mHal.drvState.lod[2].dimX = cWidth;
+            mAlloc[idx]->mHal.drvState.lod[2].dimY = cHeight;
+
+            size_t yStride = rsRound(yWidth *
+                 mAlloc[idx]->mHal.state.type->getElementSizeBytes(), 16);
+            size_t cStride = rsRound(yStride >> 1, 16);
+
+            uint8_t *yPtr = (uint8_t *)mAlloc[idx]->mHal.drvState.lod[0].mallocPtr;
+            uint8_t *crPtr = yPtr + yStride * yHeight;
+            uint8_t *cbPtr = crPtr + cStride * cHeight;
+
+            mAlloc[idx]->mHal.drvState.lod[1].mallocPtr = cbPtr;
+            mAlloc[idx]->mHal.drvState.lod[2].mallocPtr = crPtr;
+
+            mAlloc[idx]->mHal.drvState.lod[0].stride = yStride;
+            mAlloc[idx]->mHal.drvState.lod[1].stride = cStride;
+            mAlloc[idx]->mHal.drvState.lod[2].stride = cStride;
+
+            mAlloc[idx]->mHal.drvState.yuv.shift = 1;
+            mAlloc[idx]->mHal.drvState.yuv.step = 1;
+            mAlloc[idx]->mHal.drvState.lodCount = 3;
+        } else {
+            ALOGD("Unrecognized format: %d",
+               mSlots[slot].mGraphicBuffer->getPixelFormat());
+        }
     }
 
     return OK;
