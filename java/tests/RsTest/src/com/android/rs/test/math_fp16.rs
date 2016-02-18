@@ -82,6 +82,12 @@ static volatile int4 i4;
     h3 = fn(h3, h3, (int3 *) &i3); \
     h4 = fn(h4, h4, (int4 *) &i4);
 
+#define TEST_H_FUNC_HN(fn)  \
+    h1 = fn(h1);            \
+    h1 = fn(h2);            \
+    h1 = fn(h3);            \
+    h1 = fn(h4);
+
 static bool testAPI() {
     TEST_HN_FUNC_HN(acos);
     TEST_HN_FUNC_HN(acosh);
@@ -142,6 +148,7 @@ static bool testAPI() {
     TEST_IN_FUNC_HN(ilogb);
     TEST_HN_FUNC_HN_IN(ldexp);
     TEST_HN_FUNC_HN_I(ldexp);
+    TEST_H_FUNC_HN(length);
     TEST_HN_FUNC_HN(lgamma);
     TEST_HN_FUNC_HN_PIN(lgamma);
 
@@ -193,11 +200,13 @@ static bool testAPI() {
     TEST_HN_FUNC_HN(native_expm1);
 
     TEST_HN_FUNC_HN_HN(native_hypot);
+    TEST_H_FUNC_HN(native_length);
     TEST_HN_FUNC_HN(native_log);
     TEST_HN_FUNC_HN(native_log10);
     TEST_HN_FUNC_HN(native_log1p);
     TEST_HN_FUNC_HN(native_log2);
 
+    TEST_HN_FUNC_HN(native_normalize);
     TEST_HN_FUNC_HN_HN(native_powr);
     TEST_HN_FUNC_HN(native_recip);
     TEST_HN_FUNC_HN_IN(native_rootn);
@@ -221,6 +230,7 @@ static bool testAPI() {
     // below is fine as it only calls the scalar variant.
     //
     // TEST_HN_FUNC_HN_HN(nextafter);
+    TEST_HN_FUNC_HN(normalize);
     TEST_HN_FUNC_HN_HN(pow);
     TEST_HN_FUNC_HN_IN(pown);
     TEST_HN_FUNC_HN_HN(powr);
