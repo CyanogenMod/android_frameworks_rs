@@ -156,6 +156,15 @@ extern rs_allocation __attribute__((overloadable))
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 24))
 static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_half(uint32_t dimX, uint32_t dimY, uint32_t dimZ) {
+     rs_element e = rsCreateElement(RS_TYPE_FLOAT_16);
+     rs_type t = rsCreateType(e, dimX, dimY, dimZ);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
+static inline rs_allocation __attribute__((overloadable))
     rsCreateAllocation_float(uint32_t dimX, uint32_t dimY, uint32_t dimZ) {
      rs_element e = rsCreateElement(RS_TYPE_FLOAT_32);
      rs_type t = rsCreateType(e, dimX, dimY, dimZ);
@@ -239,6 +248,33 @@ static inline rs_allocation __attribute__((overloadable))
 static inline rs_allocation __attribute__((overloadable))
     rsCreateAllocation_ulong(uint32_t dimX, uint32_t dimY, uint32_t dimZ) {
      rs_element e = rsCreateElement(RS_TYPE_UNSIGNED_64);
+     rs_type t = rsCreateType(e, dimX, dimY, dimZ);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_half2(uint32_t dimX, uint32_t dimY, uint32_t dimZ) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_FLOAT_16, 2);
+     rs_type t = rsCreateType(e, dimX, dimY, dimZ);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_half3(uint32_t dimX, uint32_t dimY, uint32_t dimZ) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_FLOAT_16, 3);
+     rs_type t = rsCreateType(e, dimX, dimY, dimZ);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_half4(uint32_t dimX, uint32_t dimY, uint32_t dimZ) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_FLOAT_16, 4);
      rs_type t = rsCreateType(e, dimX, dimY, dimZ);
      return rsCreateAllocation(t);
 }
@@ -516,6 +552,15 @@ static inline rs_allocation __attribute__((overloadable))
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 24))
 static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_half(uint32_t dimX, uint32_t dimY) {
+     rs_element e = rsCreateElement(RS_TYPE_FLOAT_16);
+     rs_type t = rsCreateType(e, dimX, dimY);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
+static inline rs_allocation __attribute__((overloadable))
     rsCreateAllocation_float(uint32_t dimX, uint32_t dimY) {
      rs_element e = rsCreateElement(RS_TYPE_FLOAT_32);
      rs_type t = rsCreateType(e, dimX, dimY);
@@ -599,6 +644,33 @@ static inline rs_allocation __attribute__((overloadable))
 static inline rs_allocation __attribute__((overloadable))
     rsCreateAllocation_ulong(uint32_t dimX, uint32_t dimY) {
      rs_element e = rsCreateElement(RS_TYPE_UNSIGNED_64);
+     rs_type t = rsCreateType(e, dimX, dimY);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_half2(uint32_t dimX, uint32_t dimY) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_FLOAT_16, 2);
+     rs_type t = rsCreateType(e, dimX, dimY);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_half3(uint32_t dimX, uint32_t dimY) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_FLOAT_16, 3);
+     rs_type t = rsCreateType(e, dimX, dimY);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_half4(uint32_t dimX, uint32_t dimY) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_FLOAT_16, 4);
      rs_type t = rsCreateType(e, dimX, dimY);
      return rsCreateAllocation(t);
 }
@@ -876,6 +948,15 @@ static inline rs_allocation __attribute__((overloadable))
 
 #if (defined(RS_VERSION) && (RS_VERSION >= 24))
 static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_half(uint32_t dimX) {
+     rs_element e = rsCreateElement(RS_TYPE_FLOAT_16);
+     rs_type t = rsCreateType(e, dimX);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
+static inline rs_allocation __attribute__((overloadable))
     rsCreateAllocation_float(uint32_t dimX) {
      rs_element e = rsCreateElement(RS_TYPE_FLOAT_32);
      rs_type t = rsCreateType(e, dimX);
@@ -959,6 +1040,33 @@ static inline rs_allocation __attribute__((overloadable))
 static inline rs_allocation __attribute__((overloadable))
     rsCreateAllocation_ulong(uint32_t dimX) {
      rs_element e = rsCreateElement(RS_TYPE_UNSIGNED_64);
+     rs_type t = rsCreateType(e, dimX);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_half2(uint32_t dimX) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_FLOAT_16, 2);
+     rs_type t = rsCreateType(e, dimX);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_half3(uint32_t dimX) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_FLOAT_16, 3);
+     rs_type t = rsCreateType(e, dimX);
+     return rsCreateAllocation(t);
+}
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
+static inline rs_allocation __attribute__((overloadable))
+    rsCreateAllocation_half4(uint32_t dimX) {
+     rs_element e = rsCreateVectorElement(RS_TYPE_FLOAT_16, 4);
      rs_type t = rsCreateType(e, dimX);
      return rsCreateAllocation(t);
 }
