@@ -49,7 +49,7 @@ test: vector
 end:
 
 function: cross
-version: UNRELEASED
+version: 24
 attrib: const
 w: 3, 4
 t: f16
@@ -76,7 +76,7 @@ test: vector
 end:
 
 function: distance
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -101,7 +101,7 @@ test: vector
 end:
 
 function: dot
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -185,7 +185,7 @@ test: vector
 end:
 
 function: length
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -226,7 +226,7 @@ test: vector
 end:
 
 function: native_length
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -251,7 +251,7 @@ test: vector
 end:
 
 function: native_normalize
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
@@ -279,7 +279,7 @@ test: vector
 end:
 
 function: normalize
-version: UNRELEASED
+version: 24
 attrib: const
 w: 1, 2, 3, 4
 t: f16
