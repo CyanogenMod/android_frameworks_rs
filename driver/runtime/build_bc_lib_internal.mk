@@ -19,8 +19,7 @@ BCC_RS_TRIPLE := $($(LOCAL_2ND_ARCH_VAR_PREFIX)RS_TRIPLE)
 endif
 
 # Set these values always by default
-LOCAL_MODULE_TAGS := optional
-LOCAL_MODULE_CLASS := SHARED_LIBRARIES
+LOCAL_MODULE_CLASS := RENDERSCRIPT_BITCODE
 
 include $(BUILD_SYSTEM)/base_rules.mk
 
