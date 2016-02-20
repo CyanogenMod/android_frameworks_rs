@@ -118,7 +118,7 @@ namespace android {
         }
 
         const T* array() {
-            return (const T*)(this->begin());
+            return this->data();
         }
 
     };

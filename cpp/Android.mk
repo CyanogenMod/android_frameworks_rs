@@ -7,13 +7,15 @@ LOCAL_SRC_FILES:= \
 LOCAL_C_INCLUDES += \
 	frameworks/rs
 
-LOCAL_CFLAGS += -Wno-unused-parameter
+LOCAL_CFLAGS += -Wno-unused-parameter -std=c++11
 
 LOCAL_MODULE:= libRSDispatch
+LOCAL_SDK_VERSION := 8
 LOCAL_MODULE_TAGS := optional
 LOCAL_LDFLAGS += -ldl
 # Used in librsjni, which is built as NDK code => no ASan.
 LOCAL_SANITIZE := never
+LOCAL_NDK_STL_VARIANT := none
 
 include $(BUILD_STATIC_LIBRARY)
 
@@ -90,7 +92,7 @@ LOCAL_MODULE_TAGS := optional
 LOCAL_C_INCLUDES += frameworks/rs
 LOCAL_C_INCLUDES += $(intermediates)
 
-LOCAL_LDFLAGS := -llog -lz -ldl
-LOCAL_NDK_STL_VARIANT := stlport_static
+LOCAL_LDFLAGS := -llog -lz -ldl -Wl,--exclude-libs,libc++_static.a
+LOCAL_NDK_STL_VARIANT := c++_static
 
 include $(BUILD_STATIC_LIBRARY)
