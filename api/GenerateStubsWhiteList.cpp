@@ -520,6 +520,9 @@ static bool generateApiTesterFile(const string& slangTestDirectory, unsigned int
                 calls << "#ifdef __LP64__\n";
             }
             for (auto permutation : spec->getPermutations()) {
+                // http://b/27358969 Do not test rsForEach in the all-api test.
+                if (apiLevel >= 24 && permutation->getName().compare(0, 9, "rsForEach") == 0)
+                  continue;
                 generateTestCall(&file, &calls, &variableNumber, *function, *permutation);
             }
             if (info.intSize != 0) {
