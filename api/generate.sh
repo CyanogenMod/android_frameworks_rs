@@ -46,10 +46,8 @@ rmdir scriptc
 rm -f ../../base/docs/html/guide/topics/renderscript/reference/*.jd
 mv docs/*.jd ../../base/docs/html/guide/topics/renderscript/reference/
 
-# Copy the script file with all the latest runtime APIs to rs CTS folder.
 # Current API level : 24
 RS_API_LEVEL=24
-cp slangtest/all$RS_API_LEVEL.rs ../../../cts/tests/tests/renderscript/src/android/renderscript/cts/all_api.rs
 
 for ((i=11; i<=RS_API_LEVEL; i++))
   do
