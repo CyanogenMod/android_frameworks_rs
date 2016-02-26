@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.android.rs.test_compat">
   <uses-sdk android:minSdkVersion="8" />
-  <uses-sdk android:targetSdkVersion="8" />
+  <uses-sdk android:targetSdkVersion="24" />
     <application
         android:label="_RS_Test_Compat"
         android:icon="@drawable/test_pattern">

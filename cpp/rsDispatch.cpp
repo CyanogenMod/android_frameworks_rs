@@ -22,6 +22,7 @@
 
 #define LOG_ERR(...) __android_log_print(ANDROID_LOG_ERROR, "RS Dispatch", __VA_ARGS__);
 #define REDUCE_API_LEVEL INT_MAX
+#define REDUCE_NEW_API_LEVEL 24
 
 bool loadSymbols(void* handle, dispatchTable& dispatchTab, int targetApiLevel) {
 #ifdef __LP64__
@@ -100,6 +101,7 @@ bool loadSymbols(void* handle, dispatchTable& dispatchTab, int targetApiLevel) {
     dispatchTab.ScriptInvokeV = (ScriptInvokeVFnPtr)dlsym(handle, "rsScriptInvokeV");
     dispatchTab.ScriptKernelIDCreate = (ScriptKernelIDCreateFnPtr)dlsym(handle, "rsScriptKernelIDCreate");
     dispatchTab.ScriptReduce = (ScriptReduceFnPtr)dlsym(handle, "rsScriptReduce");
+    dispatchTab.ScriptReduceNew = (ScriptReduceNewFnPtr)dlsym(handle, "rsScriptReduceNew");
     dispatchTab.ScriptSetTimeZone = (ScriptSetTimeZoneFnPtr)dlsym(handle, "rsScriptSetTimeZone");
     dispatchTab.ScriptSetVarD = (ScriptSetVarDFnPtr)dlsym(handle, "rsScriptSetVarD");
     dispatchTab.ScriptSetVarF = (ScriptSetVarFFnPtr)dlsym(handle, "rsScriptSetVarF");
@@ -429,6 +431,13 @@ bool loadSymbols(void* handle, dispatchTable& dispatchTab, int targetApiLevel) {
     if (targetApiLevel >= REDUCE_API_LEVEL) {
         if (dispatchTab.ScriptReduce == nullptr) {
             LOG_ERR("Couldn't initialize dispatchTab.ScriptReduce");
+            return false;
+        }
+    }
+
+    if (targetApiLevel >= REDUCE_NEW_API_LEVEL) {
+        if (dispatchTab.ScriptReduceNew == nullptr) {
+            LOG_ERR("Couldn't initialize dispatchTab.ScriptReduceNew");
             return false;
         }
     }
