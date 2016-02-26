@@ -138,7 +138,7 @@ static bool failIfInKernel(Context *rsc, const char *funcName) {
 
     if (impl->getInForEach()) {
         char buf[256];
-        sprintf(buf, "Error: Call to unsupported function %s "
+        snprintf(buf, sizeof(buf), "Error: Call to unsupported function %s "
                          "in kernel", funcName);
         rsc->setError(RS_ERROR_FATAL_DRIVER, buf);
         return true;
@@ -441,32 +441,32 @@ static void * ElementAt(Allocation *a, RsDataType dt, uint32_t vecSize,
 
     char buf[256];
     if (x && (x >= t->getLODDimX(0))) {
-        sprintf(buf, "Out range ElementAt X %i of %i", x, t->getLODDimX(0));
+        snprintf(buf, sizeof(buf), "Out range ElementAt X %i of %i", x, t->getLODDimX(0));
         rsc->setError(RS_ERROR_FATAL_DEBUG, buf);
         return nullptr;
     }
 
     if (y && (y >= t->getLODDimY(0))) {
-        sprintf(buf, "Out range ElementAt Y %i of %i", y, t->getLODDimY(0));
+        snprintf(buf, sizeof(buf), "Out range ElementAt Y %i of %i", y, t->getLODDimY(0));
         rsc->setError(RS_ERROR_FATAL_DEBUG, buf);
         return nullptr;
     }
 
     if (z && (z >= t->getLODDimZ(0))) {
-        sprintf(buf, "Out range ElementAt Z %i of %i", z, t->getLODDimZ(0));
+        snprintf(buf, sizeof(buf), "Out range ElementAt Z %i of %i", z, t->getLODDimZ(0));
         rsc->setError(RS_ERROR_FATAL_DEBUG, buf);
         return nullptr;
     }
 
     if (vecSize > 0) {
         if (vecSize != e->getVectorSize()) {
-            sprintf(buf, "Vector size mismatch for ElementAt %i of %i", vecSize, e->getVectorSize());
+            snprintf(buf, sizeof(buf), "Vector size mismatch for ElementAt %i of %i", vecSize, e->getVectorSize());
             rsc->setError(RS_ERROR_FATAL_DEBUG, buf);
             return nullptr;
         }
 
         if (dt != e->getType()) {
-            sprintf(buf, "Data type mismatch for ElementAt %i of %i", dt, e->getType());
+            snprintf(buf, sizeof(buf), "Data type mismatch for ElementAt %i of %i", dt, e->getType());
             rsc->setError(RS_ERROR_FATAL_DEBUG, buf);
             return nullptr;
         }

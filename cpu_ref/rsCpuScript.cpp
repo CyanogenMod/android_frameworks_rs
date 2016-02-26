@@ -674,6 +674,12 @@ bool RsdCpuScriptImpl::forEachMtlsSetup(const Allocation ** ains,
                                         const void * usr, uint32_t usrLen,
                                         const RsScriptCall *sc,
                                         MTLaunchStructForEach *mtls) {
+    if (ains == nullptr && inLen != 0) {
+        mCtx->getContext()->setError(RS_ERROR_BAD_SCRIPT,
+          "rsForEach called with none-zero inLen with null in allocations");
+        return false;
+    }
+
     memset(mtls, 0, sizeof(MTLaunchStructForEach));
     mtls->dimPtr = &mtls->fep.dim;
 
