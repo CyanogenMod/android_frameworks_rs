@@ -4,7 +4,7 @@
 MY_ANDROID_DIR=$PWD/../../
 cd $MY_ANDROID_DIR
 
-if [ $OSTYPE == 'darwin13' ] || [ $OSTYPE == 'darwin14' ];
+if [[ $OSTYPE == darwin* ]];
 then
 
   DARWIN=1
