@@ -96,6 +96,8 @@ struct ParameterDefinition {
     std::string rsAllocName;    // e.g. gAllocInX
     std::string javaAllocName;  // e.g. inX
     std::string javaArrayName;  // e.g. arrayInX
+    std::string doubleVariableName; // e.g. inXDouble, used in .java for storing Float16 parameters
+                                    // in double.
 
     // If non empty, the mininum and maximum values to be used when generating the test data.
     std::string minValue;
@@ -117,6 +119,8 @@ struct ParameterDefinition {
     void parseParameterDefinition(const std::string& type, const std::string& name,
                                   const std::string& testOption, int lineNumber, bool isReturn,
                                   Scanner* scanner);
+
+    bool isFloat16Parameter() const { return specType.compare("f16") == 0; }
 };
 
 struct VersionInfo {

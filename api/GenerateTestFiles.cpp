@@ -251,16 +251,29 @@ void PermutationWriter::writeJavaArgumentClass(bool scalar,
         mJava->startBlock();
 
         for (auto p : mAllInputsAndOutputs) {
+            bool isFieldArray = !scalar && p->mVectorSize != "1";
+            bool isFloatyField = p->isOutParameter && p->isFloatType && mPermutation.getTest() != "custom";
+
             mJava->indent() << "public ";
-            if (p->isOutParameter && p->isFloatType && mPermutation.getTest() != "custom") {
+            if (isFloatyField) {
                 *mJava << "Target.Floaty";
             } else {
                 *mJava << p->javaBaseType;
             }
-            if (!scalar && p->mVectorSize != "1") {
+            if (isFieldArray) {
                 *mJava << "[]";
             }
             *mJava << " " << p->variableName << ";\n";
+
+            // For Float16 parameters, add an extra 'double' field in the class
+            // to hold the Double value converted from the input.
+            if (p->isFloat16Parameter() && !isFloatyField) {
+                mJava->indent() << "public double";
+                if (isFieldArray) {
+                    *mJava << "[]";
+                }
+                *mJava << " " + p->variableName << "Double;\n";
+            }
         }
         mJava->endBlock();
         *mJava << "\n";
@@ -420,6 +433,14 @@ void PermutationWriter::writeJavaVerifyScalarMethod(bool verifierValidates) cons
                 *mJava << " * " << p->vectorWidth << " + j";
             }
             *mJava << "];\n";
+
+            // Convert the Float16 parameter to double and store it in the appropriate field in the
+            // Arguments class.
+            if (p->isFloat16Parameter()) {
+                mJava->indent() << "args." << p->doubleVariableName
+                                << " = Float16Utils.convertFloat16ToDouble(args."
+                                << p->variableName << ");\n";
+            }
         }
     }
     const bool hasFloat = mPermutation.hasFloatAnswers();
@@ -523,6 +544,10 @@ void PermutationWriter::writeJavaVerifyVectorMethod() const {
             }
             mJava->indent() << "args." << p->variableName << " = new " << type << "["
                             << p->mVectorSize << "];\n";
+            if (p->isFloat16Parameter() && !p->isOutParameter) {
+                mJava->indent() << "args." << p->variableName << "Double = new double["
+                                << p->mVectorSize << "];\n";
+            }
         }
     }
 
@@ -538,6 +563,14 @@ void PermutationWriter::writeJavaVerifyVectorMethod() const {
                 mJava->indent() << "args." << p->variableName << "[j] = "
                                 << p->javaArrayName << "[i * " << p->vectorWidth << " + j]"
                                 << ";\n";
+
+                // Convert the Float16 parameter to double and store it in the appropriate field in
+                // the Arguments class.
+                if (p->isFloat16Parameter()) {
+                    mJava->indent() << "args." << p->doubleVariableName << "[j] = "
+                                    << "Float16Utils.convertFloat16ToDouble(args."
+                                    << p->variableName << "[j]);\n";
+                }
                 mJava->endBlock();
             }
         }
@@ -653,10 +686,17 @@ void PermutationWriter::writeJavaTestAndSetValid(const ParameterDefinition& p,
 
 void PermutationWriter::writeJavaTestOneValue(const ParameterDefinition& p, const string& argsIndex,
                                               const string& actualIndex) const {
+    string actualOut;
+    if (p.isFloat16Parameter()) {
+        // For Float16 values, the output needs to be converted to Double.
+        actualOut = "Float16Utils.convertFloat16ToDouble(" + p.javaArrayName + actualIndex + ")";
+    } else {
+        actualOut = p.javaArrayName + actualIndex;
+    }
+
     mJava->indent() << "if (";
     if (p.isFloatType) {
-        *mJava << "!args." << p.variableName << argsIndex << ".couldBe(" << p.javaArrayName
-               << actualIndex;
+        *mJava << "!args." << p.variableName << argsIndex << ".couldBe(" << actualOut;
         const string s = mPermutation.getPrecisionLimit();
         if (!s.empty()) {
             *mJava << ", " << s;
@@ -702,6 +742,14 @@ void PermutationWriter::writeJavaAppendOutputToMessage(const ParameterDefinition
         mJava->indent() << "message.append(\"Actual   output " << p.variableName << ": \");\n";
         mJava->indent() << "appendVariableToMessage(message, " << p.javaArrayName << actualIndex
                         << ");\n";
+
+        if (p.isFloat16Parameter()) {
+            writeJavaAppendNewLineToMessage();
+            mJava->indent() << "message.append(\"Actual   output " << p.variableName
+                            << " (in double): \");\n";
+            mJava->indent() << "appendVariableToMessage(message, Float16Utils.convertFloat16ToDouble("
+                            << p.javaArrayName << actualIndex << "));\n";
+        }
 
         writeJavaTestOneValue(p, argsIndex, actualIndex);
         mJava->startBlock();
