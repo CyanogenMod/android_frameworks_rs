@@ -629,7 +629,6 @@ w: 1, 2, 3, 4
 t: f16
 ret: #2#1
 arg: #2#1 v
-test: none
 end:
 
 function: cosh
@@ -917,7 +916,6 @@ w: 1, 2, 3, 4
 t: f16
 ret: #2#1
 arg: #2#1 v
-test: none
 end:
 
 function: fma
@@ -3115,7 +3113,6 @@ w: 1, 2, 3, 4
 t: f16
 ret: #2#1
 arg: #2#1 v
-test: none
 end:
 
 function: sign
