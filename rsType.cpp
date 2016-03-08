@@ -198,8 +198,7 @@ Type *Type::createFromStream(Context *rsc, IStream *stream) {
     p.dimZ = stream->loadU32();
     p.mipmaps = stream->loadU8();
     p.faces = stream->loadU8();
-    Type *type = Type::getType(rsc, elem, &p, sizeof(p),
-                               true  /*createFromStream is currently only supported in Java API */);
+    Type *type = Type::getType(rsc, elem, &p, sizeof(p));
     elem->decUserRef();
 
     delete [] name;
@@ -363,8 +362,7 @@ namespace android {
 namespace renderscript {
 
 RsType rsi_TypeCreate(Context *rsc, RsElement _e, uint32_t dimX,
-                      uint32_t dimY, uint32_t dimZ, bool mipmaps, bool faces, uint32_t yuv,
-                      bool fromJava) {
+                     uint32_t dimY, uint32_t dimZ, bool mipmaps, bool faces, uint32_t yuv) {
     Element *e = static_cast<Element *>(_e);
 
     RsTypeCreateParams p;
@@ -375,12 +373,12 @@ RsType rsi_TypeCreate(Context *rsc, RsElement _e, uint32_t dimX,
     p.mipmaps = mipmaps;
     p.faces = faces;
     p.yuv = yuv;
-    return Type::getType(rsc, e, &p, sizeof(p), fromJava);
+    return Type::getType(rsc, e, &p, sizeof(p));
 }
 
-RsType rsi_TypeCreate2(Context *rsc, const RsTypeCreateParams *p, size_t len, bool fromJava) {
+RsType rsi_TypeCreate2(Context *rsc, const RsTypeCreateParams *p, size_t len) {
     Element *e = static_cast<Element *>(p->e);
-    return Type::getType(rsc, e, p, len, fromJava);
+    return Type::getType(rsc, e, p, len);
 }
 
 }
