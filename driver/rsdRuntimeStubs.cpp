@@ -233,6 +233,12 @@ static android::renderscript::rs_element CreateElement(RsDataType dt,
     if (element == nullptr)
         return obj;
     element->callUpdateCacheObject(rsc, &obj);
+
+    // Any new rsObject created from inside a script should have the usrRefCount
+    // initialized to 0 and the sysRefCount initialized to 1.
+    element->incSysRef();
+    element->decUserRef();
+
     return obj;
 }
 
@@ -302,6 +308,12 @@ static android::renderscript::rs_type CreateType(RsElement element,
     if (type == nullptr)
         return obj;
     type->callUpdateCacheObject(rsc, &obj);
+
+    // Any new rsObject created from inside a script should have the usrRefCount
+    // initialized to 0 and the sysRefCount initialized to 1.
+    type->incSysRef();
+    type->decUserRef();
+
     return obj;
 }
 
@@ -330,6 +342,11 @@ static android::renderscript::rs_allocation CreateAllocation(
     if (alloc == nullptr)
         return obj;
     alloc->callUpdateCacheObject(rsc, &obj);
+
+    // Any new rsObject created from inside a script should have the usrRefCount
+    // initialized to 0 and the sysRefCount initialized to 1.
+    alloc->incSysRef();
+    alloc->decUserRef();
 
     return obj;
 }
