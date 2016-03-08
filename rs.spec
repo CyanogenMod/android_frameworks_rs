@@ -44,14 +44,12 @@ TypeCreate {
     param bool mipmaps
     param bool faces
     param uint32_t yuv
-    param bool fromJava
     ret RsType
 }
 
 TypeCreate2 {
     direct
     param const RsTypeCreateParams *dat
-    param bool fromJava
     ret RsType
 }
 
@@ -61,7 +59,6 @@ AllocationCreateTyped {
     param RsAllocationMipmapControl mipmaps
     param uint32_t usages
     param uintptr_t ptr
-    param bool fromJava
     ret RsAllocation
 }
 
@@ -71,7 +68,6 @@ AllocationCreateFromBitmap {
     param RsAllocationMipmapControl mipmaps
     param const void *data
     param uint32_t usages
-    param bool fromJava
     ret RsAllocation
 }
 
@@ -81,7 +77,6 @@ AllocationCubeCreateFromBitmap {
     param RsAllocationMipmapControl mipmaps
     param const void *data
     param uint32_t usages
-    param bool fromJava
     ret RsAllocation
 }
 
@@ -153,7 +148,6 @@ ElementCreate {
     param RsDataKind mKind
     param bool mNormalized
     param uint32_t mVectorSize
-    param bool fromJava
     ret RsElement
     }
 
@@ -162,7 +156,6 @@ ElementCreate2 {
     param const RsElement * elements
     param const char ** names
     param const uint32_t * arraySize
-    param bool fromJava
     ret RsElement
     }
 
