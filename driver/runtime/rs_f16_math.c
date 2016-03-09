@@ -23,7 +23,7 @@ extern half __attribute__((overloadable)) copysign(half x, half y) {
     GET_HALF_WORD(hx, x);
     GET_HALF_WORD(hy, y);
 
-    SET_HALF_WORD(hx, (hx & 0x7fff) | (hy & 0x8000));
+    SET_HALF_WORD(x, (hx & 0x7fff) | (hy & 0x8000));
     return x;
 }
 
