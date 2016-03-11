@@ -107,10 +107,10 @@ static void setCompileArguments(std::vector<const char*>* args,
     args->push_back("-O");
 
     switch (optLevel) {
-    case (0):
+    case 0:
         args->push_back("0");
         break;
-    case (3):
+    case 3:
         args->push_back("3");
         break;
     default:

@@ -75,10 +75,15 @@ void groupRoot(const RsExpandKernelDriverInfo *kinfo, uint32_t xstart,
         rsAssert(kinfo->outLen <= 1);
         mutable_kinfo->outPtr[0] = const_cast<uint8_t*>(ptr);
 
+        // The implementation of an intrinsic relies on kinfo->usr being
+        // the "this" pointer to the intrinsic (an RsdCpuScriptIntrinsic object)
+        mutable_kinfo->usr = cpuClosure->mSi;
+
         cpuClosure->mFunc(kinfo, xstart, xend, ostep);
     }
 
     mutable_kinfo->inLen = oldInLen;
+    mutable_kinfo->usr = &closures;
     memcpy(&mutable_kinfo->inStride, &oldInStride, sizeof(oldInStride));
 }
 
@@ -283,7 +288,18 @@ void setupCompileArguments(
     args->push_back(outputDir);
 
     args->push_back("-O");
-    args->push_back(std::to_string(optLevel).c_str());
+    switch (optLevel) {
+    case 0:
+        args->push_back("0");
+        break;
+    case 3:
+        args->push_back("3");
+        break;
+    default:
+        ALOGW("Expected optimization level of 0 or 3. Received %d", optLevel);
+        args->push_back("3");
+        break;
+    }
 
     // The output filename has to be the last, in case we need to pop it out and
     // replace with a different name.
@@ -520,6 +536,7 @@ void Batch::setGlobalsForBatch() {
             }
             rsAssert(p.first != nullptr);
             Script* script = p.first->mScript;
+            rsAssert(script == s);
             RsdCpuReferenceImpl* ctxt = mGroup->getCpuRefImpl();
             const RsdCpuScriptImpl *cpuScript =
                     (const RsdCpuScriptImpl *)ctxt->lookupScript(script);
