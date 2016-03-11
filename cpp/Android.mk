@@ -10,7 +10,7 @@ LOCAL_C_INCLUDES += \
 LOCAL_CFLAGS += -Wno-unused-parameter -std=c++11
 
 LOCAL_MODULE:= libRSDispatch
-LOCAL_SDK_VERSION := 8
+LOCAL_SDK_VERSION := 9
 LOCAL_MODULE_TAGS := optional
 LOCAL_LDFLAGS += -ldl
 # Used in librsjni, which is built as NDK code => no ASan.
@@ -71,7 +71,7 @@ LOCAL_CLANG := true
 LOCAL_CFLAGS += $(local_cflags_for_rs_cpp)
 
 ifeq ($(my_32_64_bit_suffix),32)
-LOCAL_SDK_VERSION := 8
+LOCAL_SDK_VERSION := 9
 else
 LOCAL_SDK_VERSION := 21
 endif
