@@ -53,6 +53,10 @@ description:
 
  This function should only be called between 1D allocations.  Calling it
  on other allocations is undefined.
+
+ This function should not be called from inside a kernel, or from any function
+ that may be called directly or indirectly from a kernel. Doing so would cause a
+ runtime error.
 test: none
 end:
 
@@ -84,6 +88,10 @@ description:
 
  This function should only be called between 2D allocations.  Calling it
  on other allocations is undefined.
+
+ This function should not be called from inside a kernel, or from any function
+ that may be called directly or indirectly from a kernel. Doing so would cause a
+ runtime error.
 test: none
 end:
 

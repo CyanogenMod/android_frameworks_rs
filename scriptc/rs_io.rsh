@@ -32,6 +32,10 @@
  *
  * Receive a new set of contents from the queue.
  *
+ * This function should not be called from inside a kernel, or from any function
+ * that may be called directly or indirectly from a kernel. Doing so would cause a
+ * runtime error.
+ *
  * Parameters:
  *   a: Allocation to work on.
  */
@@ -44,6 +48,10 @@ extern void __attribute__((overloadable))
  * rsAllocationIoSend: Send new content to the queue
  *
  * Send the contents of the Allocation to the queue.
+ *
+ * This function should not be called from inside a kernel, or from any function
+ * that may be called directly or indirectly from a kernel. Doing so would cause a
+ * runtime error.
  *
  * Parameters:
  *   a: Allocation to work on.
