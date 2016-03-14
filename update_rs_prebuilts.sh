@@ -34,6 +34,9 @@ echo "Using $NUM_CORES cores"
 export ANDROID_USE_BUILDCACHE=false
 export FORCE_BUILD_LLVM_COMPONENTS=true
 
+# Skip building LLVM and compiler-rt tests while updating prebuilts
+export SKIP_LLVM_TESTS=true
+
 # Ensure that we have constructed the latest "bcc" for the host. Without
 # this variable, we don't build the .so files, hence we never construct the
 # actual required compiler pieces.

@@ -172,7 +172,7 @@ include $(CLEAR_VARS)
 # FIXME for 64-bit
 LOCAL_32_BIT_ONLY := true
 
-BCC_RS_TRIPLE := armv7-none-linux-gnueabi
+BCC_RS_TRIPLE := armv7-linux-androideabi
 RS_TRIPLE_CFLAGS :=
 LOCAL_MODULE := librsrt_arm.bc
 LOCAL_IS_HOST_MODULE := true
@@ -186,7 +186,7 @@ include $(CLEAR_VARS)
 # FIXME for 64-bit
 LOCAL_32_BIT_ONLY := true
 
-BCC_RS_TRIPLE := armv7-none-linux-gnueabi
+BCC_RS_TRIPLE := armv7-linux-androideabi
 RS_TRIPLE_CFLAGS :=
 LOCAL_MODULE := librsrt_mips.bc
 LOCAL_IS_HOST_MODULE := true
@@ -200,7 +200,7 @@ include $(CLEAR_VARS)
 # FIXME for 64-bit
 LOCAL_32_BIT_ONLY := true
 
-BCC_RS_TRIPLE := armv7-none-linux-gnueabi
+BCC_RS_TRIPLE := armv7-linux-androideabi
 RS_TRIPLE_CFLAGS := -D__i386__
 LOCAL_MODULE := librsrt_x86.bc
 LOCAL_IS_HOST_MODULE := true

@@ -31,7 +31,7 @@ bc_clang := $(RS_DRIVER_CLANG_EXE)
 endif
 
 bc_clang_cc1_cflags := -fnative-half-type -fallow-half-arguments-and-returns
-ifeq ($(BCC_RS_TRIPLE),armv7-none-linux-gnueabi)
+ifeq ($(BCC_RS_TRIPLE),armv7-linux-androideabi)
 # We need to pass the +long64 flag to the underlying version of Clang, since
 # we are generating a library for use with Renderscript (64-bit long type,
 # not 32-bit).
