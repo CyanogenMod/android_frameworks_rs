@@ -114,10 +114,7 @@ public class UT_fp16 extends UnitTest {
         for (int nDims = 1; nDims <= 3; nDims ++) {
             TestHalf(pRS, s, nDims);
             TestHalf2(pRS, s, nDims);
-            // Bug: https://b.corp.google.com/issues/25819476
-            // Upstream bug: https://llvm.org/bugs/show_bug.cgi?id=25492 for ARM
-            // Enable half3 tests once upstream LLVM bug is fixed and rebased to AOSP
-            // TestHalf3(pRS, s, nDims);
+            TestHalf3(pRS, s, nDims);
             TestHalf4(pRS, s, nDims);
         }
 
