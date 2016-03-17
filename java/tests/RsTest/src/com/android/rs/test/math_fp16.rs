@@ -130,19 +130,9 @@ static bool testAPI() {
     TEST_HN_FUNC_HN_H(fmin);
     TEST_HN_FUNC_HN_HN(fmod);
 
-    // Bug: https://b.corp.google.com/issues/26099914
-    // This test is broken due to an LLVM issue that has since been fixed.
-    // Enable this test once on-device LLVM and RenderScript prebuilts get
-    // udpated.
-    //
-    // TEST_HN_FUNC_HN(fract);
+    TEST_HN_FUNC_HN(fract);
     TEST_HN_FUNC_HN_PHN(fract);
-    // Bug: https://b.corp.google.com/issues/26099914
-    // This test is broken due to an LLVM issue that has since been fixed.
-    // Enable this test once on-device LLVM and RenderScript prebuilts get
-    // udpated.
-    //
-    // TEST_HN_FUNC_HN_PIN(frexp);
+    TEST_HN_FUNC_HN_PIN(frexp);
 
     TEST_HN_FUNC_HN_HN(hypot);
     TEST_IN_FUNC_HN(ilogb);
@@ -165,12 +155,7 @@ static bool testAPI() {
     TEST_HN_FUNC_HN_H(min);
     TEST_HN_FUNC_HN_HN_HN(mix);
     TEST_HN_FUNC_HN_HN_H(mix);
-    // Bug: https://b.corp.google.com/issues/26099914
-    // This test is broken due to an LLVM issue that has since been fixed.
-    // Enable this test once on-device LLVM and RenderScript prebuilts get
-    // udpated.
-    //
-    // TEST_HN_FUNC_HN_PHN(modf);
+    TEST_HN_FUNC_HN_PHN(modf);
 
     h1 = nan_half();
 
@@ -221,15 +206,7 @@ static bool testAPI() {
     TEST_HN_FUNC_HN(native_tanh);
     TEST_HN_FUNC_HN(native_tanpi);
 
-    // Bug: https://b.corp.google.com/issues/26099914
-    // The vector variant of nextafter causes an LLVM crash due to a known
-    // issue that has since been fixed upstream.  Enable the test after the fix
-    // is pulled into AOSP.
-    //
-    // PS: It is the vector variant of nextafter that fail.  testNextAfter()
-    // below is fine as it only calls the scalar variant.
-    //
-    // TEST_HN_FUNC_HN_HN(nextafter);
+    TEST_HN_FUNC_HN_HN(nextafter);
     TEST_HN_FUNC_HN(normalize);
     TEST_HN_FUNC_HN_HN(pow);
     TEST_HN_FUNC_HN_IN(pown);
@@ -250,13 +227,9 @@ static bool testAPI() {
     TEST_HN_FUNC_HN(sinpi);
     TEST_HN_FUNC_HN(sqrt);
 
-    // Bug: https://b.corp.google.com/issues/26099914
-    // Some variants of the step functions cause LLVM crash due to a known
-    // issue that has since been fixed upstream.  Enable the test after the fix
-    // is pulled into AOSP.
-    // TEST_HN_FUNC_HN_HN(step);
-    // TEST_HN_FUNC_HN_H(step);
-    // TEST_HN_FUNC_H_HN(step);
+    TEST_HN_FUNC_HN_HN(step);
+    TEST_HN_FUNC_HN_H(step);
+    TEST_HN_FUNC_H_HN(step);
 
     TEST_HN_FUNC_HN(tan);
     TEST_HN_FUNC_HN(tanh);
