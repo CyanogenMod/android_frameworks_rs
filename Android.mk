@@ -45,7 +45,7 @@ LOCAL_SRC_FILES:= \
 	driver/rsdVertexArray.cpp
 
 
-LOCAL_SHARED_LIBRARIES += libRS libRSCpuRef
+LOCAL_SHARED_LIBRARIES += libRS_internal libRSCpuRef
 LOCAL_SHARED_LIBRARIES += liblog libcutils libutils libEGL libGLESv1_CM libGLESv2
 LOCAL_SHARED_LIBRARIES += libui libgui libsync
 
@@ -88,7 +88,7 @@ RSG_GENERATOR:=$(LOCAL_BUILT_MODULE)
 
 include $(CLEAR_VARS)
 LOCAL_CLANG := true
-LOCAL_MODULE := libRS
+LOCAL_MODULE := libRS_internal
 LOCAL_MODULE_TARGET_ARCH_WARN := arm mips mips64 x86 x86_64 arm64
 
 LOCAL_MODULE_CLASS := SHARED_LIBRARIES
@@ -114,7 +114,6 @@ LOCAL_GENERATED_SOURCES += $(GEN)
 # Generate custom source files
 
 GEN := $(addprefix $(generated_sources)/, \
-            rsgApi.cpp \
             rsgApiReplay.cpp \
         )
 
@@ -185,6 +184,73 @@ LOCAL_CFLAGS += $(rs_base_CFLAGS)
 LOCAL_CFLAGS += -Wno-deprecated-register
 
 LOCAL_CPPFLAGS += -fno-exceptions
+
+LOCAL_MODULE_TAGS := optional
+
+include $(BUILD_SHARED_LIBRARY)
+
+include $(CLEAR_VARS)
+LOCAL_CLANG := true
+LOCAL_MODULE := libRS
+LOCAL_MODULE_TARGET_ARCH_WARN := arm mips mips64 x86 x86_64 arm64
+
+LOCAL_MODULE_CLASS := SHARED_LIBRARIES
+generated_sources:= $(local-generated-sources-dir)
+
+# Generate custom headers
+
+GEN := $(addprefix $(generated_sources)/, \
+            rsgApiStructs.h \
+            rsgApiFuncDecl.h \
+        )
+
+$(GEN) : PRIVATE_PATH := $(LOCAL_PATH)
+$(GEN) : PRIVATE_CUSTOM_TOOL = cat $(PRIVATE_PATH)/rs.spec $(PRIVATE_PATH)/rsg.spec | $(RSG_GENERATOR) $< $@
+$(GEN) : $(RSG_GENERATOR) $(LOCAL_PATH)/rs.spec $(LOCAL_PATH)/rsg.spec
+$(GEN): $(generated_sources)/%.h : $(LOCAL_PATH)/%.h.rsg
+	$(transform-generated-source)
+
+# used in jni/Android.mk
+rs_generated_source += $(GEN)
+LOCAL_GENERATED_SOURCES += $(GEN)
+
+# Generate custom source files
+
+GEN := $(addprefix $(generated_sources)/, \
+            rsgApi.cpp \
+        )
+
+$(GEN) : PRIVATE_PATH := $(LOCAL_PATH)
+$(GEN) : PRIVATE_CUSTOM_TOOL = cat $(PRIVATE_PATH)/rs.spec $(PRIVATE_PATH)/rsg.spec | $(RSG_GENERATOR) $< $@
+$(GEN) : $(RSG_GENERATOR) $(LOCAL_PATH)/rs.spec $(LOCAL_PATH)/rsg.spec
+$(GEN): $(generated_sources)/%.cpp : $(LOCAL_PATH)/%.cpp.rsg
+	$(transform-generated-source)
+
+# used in jni/Android.mk
+rs_generated_source += $(GEN)
+
+LOCAL_GENERATED_SOURCES += $(GEN)
+
+LOCAL_SRC_FILES:= \
+	rsApiAllocation.cpp \
+	rsApiContext.cpp \
+	rsApiDevice.cpp \
+	rsApiElement.cpp \
+	rsApiFileA3D.cpp \
+	rsApiMesh.cpp \
+	rsApiType.cpp \
+
+LOCAL_SHARED_LIBRARIES += libRS_internal
+LOCAL_SHARED_LIBRARIES += liblog
+
+LOCAL_CFLAGS += $(rs_base_CFLAGS)
+# TODO: external/freetype still uses the register keyword
+# Bug: 17163086
+LOCAL_CFLAGS += -Wno-deprecated-register
+
+LOCAL_CPPFLAGS += -fno-exceptions
+
+LOCAL_LDFLAGS += -Wl,--version-script,${LOCAL_PATH}/libRS.map
 
 LOCAL_MODULE_TAGS := optional
 

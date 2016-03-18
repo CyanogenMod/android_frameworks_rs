@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 The Android Open Source Project
+ * Copyright (C) 2016 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,28 +14,15 @@
  * limitations under the License.
  */
 
-#include "rsDevice.h"
 #include "rsContext.h"
+#include "rsAllocation.h"
 
 using namespace android;
 using namespace android::renderscript;
 
-Device::Device() {
-    mForceSW = false;
-}
+extern "C" const void * rsaAllocationGetType(RsContext con, RsAllocation va) {
+    Allocation *a = static_cast<Allocation *>(va);
+    a->getType()->incUserRef();
 
-Device::~Device() {
-}
-
-void Device::addContext(Context *rsc) {
-    mContexts.push(rsc);
-}
-
-void Device::removeContext(Context *rsc) {
-    for (size_t idx=0; idx < mContexts.size(); idx++) {
-        if (mContexts[idx] == rsc) {
-            mContexts.removeAt(idx);
-            break;
-        }
-    }
+    return a->getType();
 }

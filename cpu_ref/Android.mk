@@ -76,7 +76,7 @@ ifeq ($(ARCH_X86_HAVE_SSSE3),true)
     rsCpuIntrinsics_x86.cpp
 endif
 
-LOCAL_SHARED_LIBRARIES += libRS libcutils libutils liblog libsync libc++ libdl libz
+LOCAL_SHARED_LIBRARIES += libRS_internal libcutils libutils liblog libsync libc++ libdl libz
 
 LOCAL_SHARED_LIBRARIES += libbcinfo libblas
 LOCAL_STATIC_LIBRARIES := libbnnmlowp
