@@ -145,8 +145,8 @@ double maxDoubleForInteger(int numberOfIntegerBits, int mantissaSize) {
      * to create smaller values to avoid a round up.  Same for floats and halfs.
      */
     int lowZeroBits = max(0, numberOfIntegerBits - mantissaSize);
-    unsigned long l = (0xffffffffffffffff >> (64 - numberOfIntegerBits + lowZeroBits))
-                      << lowZeroBits;
+    uint64_t l = (0xffffffffffffffff >> (64 - numberOfIntegerBits + lowZeroBits))
+                 << lowZeroBits;
     return (double)l;
 }
 
