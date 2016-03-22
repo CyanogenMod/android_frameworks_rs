@@ -83,7 +83,7 @@ t: f16
 ret: #2
 arg: #2#1 left_vector
 arg: #2#1 right_vector
-test: none
+test: vector
 end:
 
 function: dot
@@ -108,7 +108,7 @@ t: f16
 ret: #2
 arg: #2#1 left_vector
 arg: #2#1 right_vector
-test: none
+test: vector
 end:
 
 function: fast_distance
@@ -191,7 +191,7 @@ w: 1, 2, 3, 4
 t: f16
 ret: #2
 arg: #2#1 v
-test: none
+test: vector
 end:
 
 function: native_distance
@@ -232,7 +232,7 @@ w: 1, 2, 3, 4
 t: f16
 ret: #2
 arg: #2#1 v
-test: none
+test: vector
 end:
 
 function: native_normalize
@@ -257,7 +257,7 @@ w: 1, 2, 3, 4
 t: f16
 ret: #2#1
 arg: #2#1 v
-test: none
+test: vector
 end:
 
 function: normalize
@@ -285,5 +285,5 @@ w: 1, 2, 3, 4
 t: f16
 ret: #2#1
 arg: #2#1 v
-test: none
+test: vector
 end:
