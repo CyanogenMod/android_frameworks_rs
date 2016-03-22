@@ -557,6 +557,13 @@ void PermutationWriter::writeJavaVerifyVectorMethod() const {
             if (p->mVectorSize == "1") {
                 mJava->indent() << "args." << p->variableName << " = " << p->javaArrayName << "[i]"
                                 << ";\n";
+                // Convert the Float16 parameter to double and store it in the appropriate field in
+                // the Arguments class.
+                if (p->isFloat16Parameter()) {
+                    mJava->indent() << "args." << p->doubleVariableName << " = "
+                                    << "Float16Utils.convertFloat16ToDouble(args."
+                                    << p->variableName << ");\n";
+                }
             } else {
                 mJava->indent() << "for (int j = 0; j < " << p->mVectorSize << " ; j++)";
                 mJava->startBlock();
