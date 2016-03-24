@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 The Android Open Source Project
+ * Copyright (C) 2016 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,26 +16,29 @@
 
 #include "rsDevice.h"
 #include "rsContext.h"
+#include "rsThreadIO.h"
+#include "rsgApiStructs.h"
+#include "rsgApiFuncDecl.h"
+#include "rsFifo.h"
 
 using namespace android;
 using namespace android::renderscript;
 
-Device::Device() {
-    mForceSW = false;
+extern "C" RsDevice rsDeviceCreate() {
+    Device * d = new Device();
+    return d;
 }
 
-Device::~Device() {
+extern "C" void rsDeviceDestroy(RsDevice dev) {
+    Device * d = static_cast<Device *>(dev);
+    delete d;
 }
 
-void Device::addContext(Context *rsc) {
-    mContexts.push(rsc);
-}
-
-void Device::removeContext(Context *rsc) {
-    for (size_t idx=0; idx < mContexts.size(); idx++) {
-        if (mContexts[idx] == rsc) {
-            mContexts.removeAt(idx);
-            break;
-        }
+extern "C" void rsDeviceSetConfig(RsDevice dev, RsDeviceParam p, int32_t value) {
+    Device * d = static_cast<Device *>(dev);
+    if (p == RS_DEVICE_PARAM_FORCE_SOFTWARE_GL) {
+        d->mForceSW = value != 0;
+        return;
     }
+    rsAssert(0);
 }

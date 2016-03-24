@@ -981,10 +981,3 @@ void rsi_AllocationAdapterOffset(Context *rsc, RsAllocation va, const uint32_t *
 
 }
 }
-
-extern "C" const void * rsaAllocationGetType(RsContext con, RsAllocation va) {
-    Allocation *a = static_cast<Allocation *>(va);
-    a->getType()->incUserRef();
-
-    return a->getType();
-}

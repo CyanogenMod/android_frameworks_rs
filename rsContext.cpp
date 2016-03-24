@@ -875,7 +875,7 @@ void rsi_ContextDestroyWorker(Context *rsc) {
 
 void rsi_ContextDestroy(Context *rsc) {
     //ALOGE("%p rsContextDestroy", rsc);
-    rsContextDestroyWorker(rsc);
+    rsc->destroyWorkerThreadResources();
     delete rsc;
     //ALOGV("%p rsContextDestroy done", rsc);
 }
@@ -933,45 +933,4 @@ void LF_ObjDestroy_handcode(const Context *rsc, RsAsyncVoidPtr objPtr) {
 }
 
 }
-}
-
-extern "C" RsContext rsContextCreate(RsDevice vdev, uint32_t version, uint32_t sdkVersion,
-                                     RsContextType ct, uint32_t flags) {
-    //ALOGV("rsContextCreate dev=%p", vdev);
-    Device * dev = static_cast<Device *>(vdev);
-    Context *rsc = Context::createContext(dev, nullptr, ct, flags);
-    if (rsc) {
-        rsc->setTargetSdkVersion(sdkVersion);
-    }
-    return rsc;
-}
-
-extern "C" void rsaContextSetNativeLibDir(RsContext con, char *libDir, size_t length) {
-#ifdef RS_COMPATIBILITY_LIB
-    Context *rsc = static_cast<Context *>(con);
-    rsc->setNativeLibDir(libDir, length);
-#endif
-}
-
-#ifndef RS_COMPATIBILITY_LIB
-RsContext rsContextCreateGL(RsDevice vdev, uint32_t version,
-                            uint32_t sdkVersion, RsSurfaceConfig sc,
-                            uint32_t dpi) {
-    //ALOGV("rsContextCreateGL dev=%p", vdev);
-    Device * dev = static_cast<Device *>(vdev);
-    Context *rsc = Context::createContext(dev, &sc);
-    if (rsc) {
-        rsc->setTargetSdkVersion(sdkVersion);
-        rsc->setDPI(dpi);
-    }
-    //ALOGV("%p rsContextCreateGL ret", rsc);
-    return rsc;
-}
-#endif
-
-// Only to be called at a3d load time, before object is visible to user
-// not thread safe
-void rsaGetName(RsContext con, void * obj, const char **name) {
-    ObjectBase *ob = static_cast<ObjectBase *>(obj);
-    (*name) = ob->getName();
 }
