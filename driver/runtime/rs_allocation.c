@@ -42,7 +42,9 @@ extern rs_element __attribute__((overloadable))
     }
     Type_t *type = (Type_t *)alloc->mHal.state.type;
     rs_element returnElem = {type->mHal.state.element};
-    return returnElem;
+    rs_element rs_retval = {0};
+    rsSetObject(&rs_retval, returnElem);
+    return rs_retval;
 }
 
 // TODO: this needs to be optimized, obviously
