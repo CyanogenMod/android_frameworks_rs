@@ -1836,7 +1836,6 @@ w: 1, 2, 3, 4
 t: f16
 ret: #2#1
 arg: #2#1 v
-test: none
 end:
 
 function: native_acospi
@@ -1922,7 +1921,6 @@ w: 1, 2, 3, 4
 t: f16
 ret: #2#1
 arg: #2#1 v
-test: none
 end:
 
 function: native_asinpi
@@ -1978,9 +1976,7 @@ attrib: const
 w: 1, 2, 3, 4
 t: f16
 ret: #2#1
-# TODO Need range(-1,1) here similar to the float version?
-arg: #2#1 v
-test: none
+arg: #2#1 v, range(-1, 1)
 end:
 
 function: native_atan2
@@ -2008,7 +2004,6 @@ t: f16
 ret: #2#1
 arg: #2#1 numerator
 arg: #2#1 denominator
-test: none
 end:
 
 function: native_atan2pi
@@ -2039,7 +2034,6 @@ t: f16
 ret: #2#1
 arg: #2#1 numerator
 arg: #2#1 denominator
-test: none
 end:
 
 function: native_atanh
@@ -2064,9 +2058,7 @@ attrib: const
 w: 1, 2, 3, 4
 t: f16
 ret: #2#1
-# TODO Need range(-1,1) here similar to the float version?
-arg: #2#1 v
-test: none
+arg: #2#1 v, range(-1,1)
 end:
 
 function: native_atanpi
@@ -2093,9 +2085,7 @@ attrib: const
 w: 1, 2, 3, 4
 t: f16
 ret: #2#1
-# TODO Need range(-1,1) here similar to the float version?
-arg: #2#1 v
-test: none
+arg: #2#1 v, range(-1,1)
 end:
 
 function: native_cbrt
@@ -2119,7 +2109,6 @@ w: 1, 2, 3, 4
 t: f16
 ret: #2#1
 arg: #2#1 v
-test: none
 end:
 
 function: native_cos
@@ -2167,7 +2156,6 @@ w: 1, 2, 3, 4
 t: f16
 ret: #2#1
 arg: #2#1 v
-test: none
 end:
 
 function: native_cospi
@@ -2217,7 +2205,6 @@ t: f16
 ret: #2#1
 arg: #2#1 left_vector
 arg: #2#1 right_vector
-test: none
 end:
 
 function: native_exp
@@ -2244,9 +2231,7 @@ attrib: const
 w: 1, 2, 3, 4
 t: f16
 ret: #2#1
-# TODO Need range(-86, 86) here similar to the float version?
-arg: #2#1 v
-test: none
+arg: #2#1 v, range(-86,86)
 end:
 
 function: native_exp10
@@ -2273,9 +2258,7 @@ attrib: const
 w: 1, 2, 3, 4
 t: f16
 ret: #2#1
-# TODO Need range(-37, 37) here similar to the float version?
-arg: #2#1 v
-test: none
+arg: #2#1 v, range(-37,37)
 end:
 
 function: native_exp2
@@ -2302,9 +2285,7 @@ attrib: const
 w: 1, 2, 3, 4
 t: f16
 ret: #2#1
-# TODO Need range(-125, 125) here similar to the float version?
-arg: #2#1 v
-test: none
+arg: #2#1 v, range(-125,125)
 end:
 
 function: native_expm1
@@ -2354,7 +2335,6 @@ t: f16
 ret: #2#1
 arg: #2#1 a
 arg: #2#1 b
-test: none
 end:
 
 function: native_log
@@ -2380,9 +2360,7 @@ attrib: const
 w: 1, 2, 3, 4
 t: f16
 ret: #2#1
-# TODO Need range(10e-10,10e10) here similar to the float version?
-arg: #2#1 v
-test: none
+arg: #2#1 v, range(10e-5,65504)
 end:
 
 function: native_log10
@@ -2408,9 +2386,7 @@ attrib: const
 w: 1, 2, 3, 4
 t: f16
 ret: #2#1
-# TODO Need range(10e-10,10e10) here similar to the float version?
-arg: #2#1 v
-test: none
+arg: #2#1 v, range(10e-5,65504)
 end:
 
 function: native_log1p
@@ -2434,7 +2410,6 @@ w: 1, 2, 3, 4
 t: f16
 ret: #2#1
 arg: #2#1 v
-test: none
 end:
 
 function: native_log2
@@ -2460,9 +2435,7 @@ attrib: const
 w: 1, 2, 3, 4
 t: f16
 ret: #2#1
-# TODO Need range(10e-10,10e10) here similar to the float version?
-arg: #2#1 v
-test: none
+arg: #2#1 v, range(10e-5,65504)
 end:
 
 function: native_powr
@@ -2487,11 +2460,8 @@ attrib: const
 w: 1, 2, 3, 4
 t: f16
 ret: #2#1
-# TODO Need range(0, 256) here similar to the float version?
-arg: #2#1 base
-# TODO Need range(-15,15) here similar to the float version?
-arg: #2#1 exponent
-test: none
+arg: #2#1 base, range(0,256)
+arg: #2#1 exponent, range(-15,15)
 end:
 
 function: native_recip
@@ -2515,7 +2485,6 @@ w: 1, 2, 3, 4
 t: f16
 ret: #2#1
 arg: #2#1 v
-test: none
 end:
 
 function: native_rootn
@@ -2565,7 +2534,6 @@ w: 1, 2, 3, 4
 t: f16
 ret: #2#1
 arg: #2#1 v
-test: none
 end:
 
 function: native_sin
@@ -2639,7 +2607,6 @@ w: 1, 2, 3, 4
 t: f16
 ret: #2#1
 arg: #2#1 v
-test: none
 end:
 
 function: native_sinpi
@@ -2689,7 +2656,6 @@ w: 1, 2, 3, 4
 t: f16
 ret: #2#1
 arg: #2#1 v
-test: none
 end:
 
 function: native_tan
@@ -2735,7 +2701,6 @@ w: 1, 2, 3, 4
 t: f16
 ret: #2#1
 arg: #2#1 v
-test: none
 end:
 
 function: native_tanpi
