@@ -294,6 +294,26 @@ extern float __attribute__((const, overloadable))
     native_distance(float4 left_vector, float4 right_vector);
 #endif
 
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
+extern half __attribute__((const, overloadable))
+    native_distance(half left_vector, half right_vector);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
+extern half __attribute__((const, overloadable))
+    native_distance(half2 left_vector, half2 right_vector);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
+extern half __attribute__((const, overloadable))
+    native_distance(half3 left_vector, half3 right_vector);
+#endif
+
+#if (defined(RS_VERSION) && (RS_VERSION >= 24))
+extern half __attribute__((const, overloadable))
+    native_distance(half4 left_vector, half4 right_vector);
+#endif
+
 /*
  * native_length: Approximate length of a vector
  *

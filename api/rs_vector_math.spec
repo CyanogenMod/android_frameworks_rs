@@ -210,6 +210,17 @@ description:
 test: vector
 end:
 
+function: native_distance
+version: 24
+attrib: const
+w: 1, 2, 3, 4
+t: f16
+ret: #2
+arg: #2#1 left_vector
+arg: #2#1 right_vector
+test: none
+end:
+
 function: native_length
 version: 21
 attrib: const
