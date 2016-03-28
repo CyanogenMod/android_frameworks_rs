@@ -1,6 +1,7 @@
 libRS {
   global:
     rsaAllocationGetType;
+    rsaContextSetNativeLibDir;
     rsaElementGetNativeData;
     rsaElementGetSubElements;
     rsaGetName;
