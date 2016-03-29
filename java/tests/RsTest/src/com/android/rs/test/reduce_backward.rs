@@ -15,18 +15,6 @@ static void aiAccum(int *accum, int val) { *accum += val; }
 
 /////////////////////////////////////////////////////////////////////////
 
-static void dpAccum(float *accum, float in1, float in2) {
-  *accum += in1*in2;
-}
-
-// combiner function
-static void dpSum(float *accum, const float *val) { *accum += *val; }
-
-#pragma rs reduce(dp) \
-  accumulator(dpAccum) combiner(dpSum)
-
-/////////////////////////////////////////////////////////////////////////
-
 typedef struct {
   float val;
   int idx;
@@ -56,8 +44,10 @@ static void fMMAccumulator(MinAndMax *accum, float in, int x) {
 
 static void fMMCombiner(MinAndMax *accum,
                         const MinAndMax *val) {
-  fMMAccumulator(accum, val->min.val, val->min.idx);
-  fMMAccumulator(accum, val->max.val, val->max.idx);
+  if (val->min.val < accum->min.val)
+    accum->min = val->min;
+  if (val->max.val > accum->max.val)
+    accum->max = val->max;
 }
 
 static void fMMOutConverter(int2 *result,

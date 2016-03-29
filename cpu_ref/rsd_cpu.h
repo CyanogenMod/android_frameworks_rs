@@ -131,7 +131,7 @@ public:
                                      uint32_t flags) = 0;
     virtual CpuScript * createIntrinsic(const Script *s, RsScriptIntrinsicID iid, Element *e) = 0;
     virtual void* createScriptGroup(const ScriptGroupBase *sg) = 0;
-    virtual bool getInForEach() = 0;
+    virtual bool getInKernel() = 0;  // Is a parallel kernel execution underway?
 
     // Set to true if we should embed global variable information in the code.
     virtual void setEmbedGlobalInfo(bool v) = 0;

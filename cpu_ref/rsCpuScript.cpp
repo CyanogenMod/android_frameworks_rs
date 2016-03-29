@@ -646,9 +646,9 @@ bool RsdCpuScriptImpl::reduceNewMtlsSetup(const Allocation ** ains,
 
     mtls->rs = mCtx;
 
-    // Currently not threaded.
-    mtls->isThreadable = false;
-    mtls->mSliceNum = -1;
+    mtls->mSliceNum    = 0;
+    mtls->mSliceSize   = 1;
+    mtls->isThreadable = mIsThreadable;
 
     // Set up output,
     mtls->redp.outLen = 1;
@@ -843,6 +843,7 @@ void RsdCpuScriptImpl::reduceNewKernelSetup(uint32_t slot, MTLaunchStructReduceN
     const ReduceNewDescription *desc = mScriptExec->getReduceNewDescription(slot);
     mtls->accumFunc = desc->accumFunc;
     mtls->initFunc  = desc->initFunc;   // might legally be nullptr
+    mtls->combFunc  = desc->combFunc;   // might legally be nullptr
     mtls->outFunc   = desc->outFunc;    // might legally be nullptr
     mtls->accumSize = desc->accumSize;
 
