@@ -102,7 +102,7 @@ type: rs_allocation_usage_type
 version: 14
 enum:
 value: RS_ALLOCATION_USAGE_SCRIPT = 0x0001, "Allocation is bound to and accessed by scripts."
-value: RS_ALLOCATION_USAGE_GRAPHICS_TEXTURE = 0x0002, "Deprecated."
+value: RS_ALLOCATION_USAGE_GRAPHICS_TEXTURE = 0x0002, "Allocation is used as a texture source."
 value: RS_ALLOCATION_USAGE_GRAPHICS_VERTEX = 0x0004, "Deprecated."
 value: RS_ALLOCATION_USAGE_GRAPHICS_CONSTANTS = 0x0008, "Deprecated."
 value: RS_ALLOCATION_USAGE_GRAPHICS_RENDER_TARGET = 0x0010, "Deprecated."
