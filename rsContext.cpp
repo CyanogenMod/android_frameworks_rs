@@ -259,6 +259,8 @@ void * Context::threadProc(void *vrsc) {
     rsc->props.mLogShadersAttr = getProp("debug.rs.shader.attributes") != 0;
     rsc->props.mLogShadersUniforms = getProp("debug.rs.shader.uniforms") != 0;
     rsc->props.mLogVisual = getProp("debug.rs.visual") != 0;
+    rsc->props.mLogReduceAccum = getProp("debug.rs.reduce-accum") != 0;
+    rsc->props.mDebugReduceSplitAccum = getProp("debug.rs.reduce-split-accum") != 0;
     rsc->props.mDebugMaxThreads = getProp("debug.rs.max-threads");
 
     if (getProp("debug.rs.debug") != 0) {

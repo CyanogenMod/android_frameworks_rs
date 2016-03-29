@@ -34,6 +34,7 @@ extern bool gArchUseSIMD;
 // Function types found in RenderScript code
 typedef void (*ReduceFunc_t)(const uint8_t *inBuf, uint8_t *outBuf, uint32_t len);
 typedef void (*ReduceNewAccumulatorFunc_t)(const RsExpandKernelDriverInfo *info, uint32_t x1, uint32_t x2, uint8_t *accum);
+typedef void (*ReduceNewCombinerFunc_t)(uint8_t *accum, const uint8_t *other);
 typedef void (*ReduceNewInitializerFunc_t)(uint8_t *accum);
 typedef void (*ReduceNewOutConverterFunc_t)(uint8_t *out, const uint8_t *accum);
 typedef void (*ForEachFunc_t)(const RsExpandKernelDriverInfo *info, uint32_t x1, uint32_t x2, uint32_t outStride);
@@ -44,6 +45,7 @@ typedef int  (*RootFunc_t)(void);
 struct ReduceNewDescription {
     ReduceNewAccumulatorFunc_t  accumFunc;  // expanded accumulator function
     ReduceNewInitializerFunc_t  initFunc;   // user initializer function
+    ReduceNewCombinerFunc_t     combFunc;   // user combiner function
     ReduceNewOutConverterFunc_t outFunc;    // user outconverter function
     size_t                      accumSize;  // accumulator datum size, in bytes
 };
@@ -73,7 +75,8 @@ struct MTLaunchStructCommon {
     RsLaunchDimensions start;
     RsLaunchDimensions end;
     // Points to MTLaunchStructForEach::fep::dim or
-    // MTLaunchStructReduce::inputDim.
+    // MTLaunchStructReduce::inputDim or
+    // MTLaunchStructReduceNew::redp::dim.
     RsLaunchDimensions *dimPtr;
 };
 
@@ -101,9 +104,51 @@ struct MTLaunchStructReduceNew : public MTLaunchStructCommon {
 
     ReduceNewAccumulatorFunc_t accumFunc;
     ReduceNewInitializerFunc_t initFunc;
+    ReduceNewCombinerFunc_t combFunc;
     ReduceNewOutConverterFunc_t outFunc;
 
     size_t accumSize;  // accumulator datum size in bytes
+
+    size_t accumStride;  // stride between accumulators in accumAlloc (below)
+
+    // These fields are used for managing accumulator data items in a
+    // multithreaded execution.
+    //
+    // Let the number of threads be N.
+    // Let Outc be true iff there is an outconverter.
+    //
+    // accumAlloc is a pointer to a single allocation of (N - !Outc)
+    // accumulators.  (If there is no outconverter, then the output
+    // allocation acts as an accumulator.)  It is created at kernel
+    // launch time.  Within that allocation, the distance between the
+    // start of adjacent accumulators is accumStride bytes -- this
+    // might be the same as accumSize, or it might be larger, if we
+    // are attempting to avoid false sharing.
+    //
+    // accumCount is an atomic counter of how many accumulators have
+    // been grabbed by threads.  It is initialized to zero at kernel
+    // launch time.  See accumPtr for further description.
+    //
+    // accumPtr is pointer to an array of N pointers to accumulators.
+    // The array is created at kernel launch time, and each element is
+    // initialized to nullptr.  When a particular thread goes to work,
+    // that thread obtains its accumulator from its entry in this
+    // array.  If the entry is nullptr, that thread needs to obtain an
+    // accumulator, and initialize its entry in the array accordingly.
+    // It does so via atomic access (fetch-and-add) to accumCount.
+    // - If Outc, then the fetched value is used as an index into
+    //   accumAlloc.
+    // - If !Outc, then
+    //   - If the fetched value is zero, then this thread gets the
+    //     output allocation for its accumulator.
+    //   - If the fetched value is nonzero, then (fetched value - 1)
+    //     is used as an index into accumAlloc.
+    uint8_t *accumAlloc;
+    uint8_t **accumPtr;
+    uint32_t accumCount;
+
+    // Logging control
+    bool logReduceAccum;
 };
 
 class RsdCpuReferenceImpl : public RsdCpuReference {
@@ -161,7 +206,7 @@ public:
     virtual const char *getBccPluginName() const {
         return mBccPluginName.string();
     }
-    bool getInForEach() override { return mInForEach; }
+    bool getInKernel() override { return mInKernel; }
 
     // Set to true if we should embed global variable information in the code.
     void setEmbedGlobalInfo(bool v) override {
@@ -190,7 +235,7 @@ protected:
     uint32_t version_major;
     uint32_t version_minor;
     //bool mHasGraphics;
-    bool mInForEach;
+    bool mInKernel;  // Is a parallel kernel execution underway?
 
     struct Workers {
         volatile int mRunningCount;
@@ -222,6 +267,14 @@ protected:
     // when potentially embedding information about globals.
     // Defaults to true.
     bool mEmbedGlobalInfoSkipConstant;
+
+    long mPageSize;
+
+    // Launch a general reduce kernel
+    void launchReduceNewSerial(const Allocation ** ains, uint32_t inLen, Allocation *aout,
+                               MTLaunchStructReduceNew *mtls);
+    void launchReduceNewParallel(const Allocation ** ains, uint32_t inLen, Allocation *aout,
+                                 MTLaunchStructReduceNew *mtls);
 };
 
 

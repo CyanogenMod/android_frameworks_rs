@@ -538,8 +538,8 @@ ScriptExecutable* ScriptExecutable::createFromSharedObject(
             goto error;
         }
 
-        // The current implementation does not use the signature,
-        // reduce name, or combiner.
+        // The current implementation does not use the signature
+        // or reduce name.
 
         reduceNewDescriptions[i].accumSize = tmpSize;
 
@@ -563,6 +563,19 @@ ScriptExecutable* ScriptExecutable::createFromSharedObject(
             ALOGE("Failed to find accumulator function address for %s(): %s",
                   tmpNameAccumulator, dlerror());
             goto error;
+        }
+
+        // Process the (optional) combiner.
+        if (strcmp(tmpNameCombiner, kNoName)) {
+          // Lookup the original user-written combiner.
+          if (!(reduceNewDescriptions[i].combFunc =
+                (ReduceNewCombinerFunc_t) dlsym(sharedObj, tmpNameCombiner))) {
+            ALOGE("Failed to find combiner function address for %s(): %s",
+                  tmpNameCombiner, dlerror());
+            goto error;
+          }
+        } else {
+          reduceNewDescriptions[i].combFunc = nullptr;
         }
 
         // Process the (optional) outconverter.

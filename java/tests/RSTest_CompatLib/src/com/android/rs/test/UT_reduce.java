@@ -119,39 +119,6 @@ public class UT_reduce extends UnitTest {
 
     ///////////////////////////////////////////////////////////////////
 
-    private float dp(float[] input1, float[] input2) {
-        _RS_ASSERT("dp input length mismatch", input1.length == input2.length);
-
-        float rslt = 0;
-        for (int idx = 0; idx < input1.length; ++idx)
-            rslt += input1[idx] * input2[idx];
-        return rslt;
-    }
-
-    private boolean dp(RenderScript RS, ScriptC_reduce s) {
-        final float[] input1 = createInputArrayFloat(100000, 2);
-        final float[] input2 = createInputArrayFloat(100000, 3);
-
-        final float javaRslt = dp(input1, input2);
-        final float rsRslt = s.reduce_dp(input1, input2).get();
-
-        // NOTE: Using a floating point equality check to test for
-        // correctness -- as we do below -- is a bad idea.  It's only
-        // reliable if the Java and RenderScript implementation of dp
-        // use the same algorithm.  Equality could be broken by
-        // different optimizations between the two, or running the
-        // RenderScript algorithm multithreaded, or running the
-        // RenderScript algorithm on a GPU rather than the CPU.
-        //
-        // Should we be checking instead that the results are
-        // "sufficiently close"?  Cooking the input set to try to
-        // ensure a deterministic result?  Changing to integers
-        // instead?
-        return result("dp", javaRslt, rsRslt);
-    }
-
-    ///////////////////////////////////////////////////////////////////
-
     private Int2 findMinAndMax(float[] input) {
         float minVal = Float.POSITIVE_INFINITY;
         int minIdx = -1;
@@ -322,7 +289,6 @@ public class UT_reduce extends UnitTest {
         boolean pass = true;
         pass &= addint1D(pRS, s);
         pass &= addint2D(pRS, s);
-        pass &= dp(pRS, s);
         pass &= findMinAndMax(pRS, s);
         pass &= fz(pRS, s);
         pass &= fz2(pRS, s);

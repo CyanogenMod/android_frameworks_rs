@@ -16,18 +16,6 @@ static void aiAccum(int *accum, int val) { *accum += val; }
 
 /////////////////////////////////////////////////////////////////////////
 
-#pragma rs reduce(dp) \
-  accumulator(dpAccum) combiner(dpSum)
-
-static void dpAccum(float *accum, float in1, float in2) {
-  *accum += in1*in2;
-}
-
-// combiner function
-static void dpSum(float *accum, const float *val) { *accum += *val; }
-
-/////////////////////////////////////////////////////////////////////////
-
 #pragma rs reduce(findMinAndMax) \
   initializer(fMMInit) accumulator(fMMAccumulator) \
   combiner(fMMCombiner) outconverter(fMMOutConverter)
@@ -61,8 +49,10 @@ static void fMMAccumulator(MinAndMax *accum, float in, int x) {
 
 static void fMMCombiner(MinAndMax *accum,
                         const MinAndMax *val) {
-  fMMAccumulator(accum, val->min.val, val->min.idx);
-  fMMAccumulator(accum, val->max.val, val->max.idx);
+  if (val->min.val < accum->min.val)
+    accum->min = val->min;
+  if (val->max.val > accum->max.val)
+    accum->max = val->max;
 }
 
 static void fMMOutConverter(int2 *result,
@@ -160,3 +150,24 @@ static void modeOutConvert(int2 *result, const Histogram *h) {
   result->x = mode;
   result->y = (*h)[mode];
 }
+
+/////////////////////////////////////////////////////////////////////////
+
+#pragma rs reduce(sumgcd) accumulator(sgAccum) combiner(sgCombine)
+
+static int gcd(int a, int b) {
+  while (b != 0) {
+    const int aNew = b;
+    const int bNew = a % b;
+
+    a = aNew;
+    b = bNew;
+  }
+  return a;
+}
+
+static void sgAccum(long *accum, int a, int b) {
+  *accum += gcd(a, b);
+}
+
+static void sgCombine(long *accum, const long *other) { *accum += *other; }

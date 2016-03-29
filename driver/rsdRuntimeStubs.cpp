@@ -136,7 +136,7 @@ static bool failIfInKernel(Context *rsc, const char *funcName) {
     RsdHal *dc = (RsdHal *)rsc->mHal.drv;
     RsdCpuReference *impl = (RsdCpuReference *) dc->mCpuRef;
 
-    if (impl->getInForEach()) {
+    if (impl->getInKernel()) {
         char buf[256];
         snprintf(buf, sizeof(buf), "Error: Call to unsupported function %s "
                          "in kernel", funcName);

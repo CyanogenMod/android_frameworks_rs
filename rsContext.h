@@ -227,6 +227,8 @@ public:
         bool mLogShadersAttr;
         bool mLogShadersUniforms;
         bool mLogVisual;
+        bool mLogReduceAccum;
+        bool mDebugReduceSplitAccum;
         uint32_t mDebugMaxThreads;
     } props;
 

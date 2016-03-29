@@ -45,6 +45,8 @@ static pid_t gettid() {
 using namespace android;
 using namespace android::renderscript;
 
+#define REDUCE_NEW_ALOGV(...) /* ALOGV(__VA_ARGS__) */
+
 static pthread_key_t gThreadTLSKey = 0;
 static uint32_t gThreadTLSKeyCount = 0;
 static pthread_mutex_t gInitMutex = PTHREAD_MUTEX_INITIALIZER;
@@ -98,7 +100,7 @@ RsdCpuReferenceImpl::RsdCpuReferenceImpl(Context *rsc) {
 
     version_major = 0;
     version_minor = 0;
-    mInForEach = false;
+    mInKernel = false;
     memset(&mWorkers, 0, sizeof(mWorkers));
     memset(&mTlsStruct, 0, sizeof(mTlsStruct));
     mExit = false;
@@ -238,6 +240,9 @@ bool RsdCpuReferenceImpl::init(uint32_t version_major, uint32_t version_minor,
     if (status) {
         ALOGE("pthread_setspecific %i", status);
     }
+
+    mPageSize = sysconf(_SC_PAGE_SIZE);
+    REDUCE_NEW_ALOGV("page size = %ld", mPageSize);
 
     GetCpuInfo();
 
@@ -435,7 +440,7 @@ static void walk_2d(void *usr, uint32_t idx) {
     }
 }
 
-static void walk_1d(void *usr, uint32_t idx) {
+static void walk_1d_foreach(void *usr, uint32_t idx) {
     MTLaunchStructForEach *mtls = (MTLaunchStructForEach *)usr;
     RsExpandKernelDriverInfo fep = mtls->fep;
     fep.lid = idx;
@@ -456,6 +461,103 @@ static void walk_1d(void *usr, uint32_t idx) {
 
         fn(&fep, xStart, xEnd, fep.outStride[0]);
     }
+}
+
+// The function format_bytes() is an auxiliary function to assist in logging.
+//
+// Bytes are read from an input (inBuf) and written (as pairs of hex digits)
+// to an output (outBuf).
+//
+// Output format:
+// - starts with ": "
+// - each input byte is translated to a pair of hex digits
+// - bytes are separated by "." except that every fourth separator is "|"
+// - if the input is sufficiently long, the output is truncated and terminated with "..."
+//
+// Arguments:
+// - outBuf  -- Pointer to buffer of type "FormatBuf" into which output is written
+// - inBuf   -- Pointer to bytes which are to be formatted into outBuf
+// - inBytes -- Number of bytes in inBuf
+//
+// Constant:
+// - kFormatInBytesMax -- Only min(kFormatInBytesMax, inBytes) bytes will be read
+//                        from inBuf
+//
+// Return value:
+// - pointer (const char *) to output (which is part of outBuf)
+//
+static const int kFormatInBytesMax = 16;
+// ": " + 2 digits per byte + 1 separator between bytes + "..." + null
+typedef char FormatBuf[2 + kFormatInBytesMax*2 + (kFormatInBytesMax - 1) + 3 + 1];
+static const char *format_bytes(FormatBuf *outBuf, const uint8_t *inBuf, const int inBytes) {
+  strcpy(*outBuf, ": ");
+  int pos = 2;
+  const int lim = std::min(kFormatInBytesMax, inBytes);
+  for (int i = 0; i < lim; ++i) {
+    if (i) {
+      sprintf(*outBuf + pos, (i % 4 ? "." : "|"));
+      ++pos;
+    }
+    sprintf(*outBuf + pos, "%02x", inBuf[i]);
+    pos += 2;
+  }
+  if (kFormatInBytesMax < inBytes)
+    strcpy(*outBuf + pos, "...");
+  return *outBuf;
+}
+
+static void walk_1d_reduce_new(void *usr, uint32_t idx) {
+  const MTLaunchStructReduceNew *mtls = (const MTLaunchStructReduceNew *)usr;
+  RsExpandKernelDriverInfo redp = mtls->redp;
+
+  // find accumulator
+  uint8_t *&accumPtr = mtls->accumPtr[idx];
+  if (!accumPtr) {
+    uint32_t accumIdx = (uint32_t)__sync_fetch_and_add(&mtls->accumCount, 1);
+    if (mtls->outFunc) {
+      accumPtr = mtls->accumAlloc + mtls->accumStride * accumIdx;
+    } else {
+      if (accumIdx == 0) {
+        accumPtr = mtls->redp.outPtr[0];
+      } else {
+        accumPtr = mtls->accumAlloc + mtls->accumStride * (accumIdx - 1);
+      }
+    }
+    REDUCE_NEW_ALOGV("walk_1d_reduce_new(%p): idx = %u got accumCount %u and accumPtr %p",
+                     mtls->accumFunc, idx, accumIdx, accumPtr);
+    // initialize accumulator
+    if (mtls->initFunc) {
+      mtls->initFunc(accumPtr);
+    } else {
+      memset(accumPtr, 0, mtls->accumSize);
+    }
+  }
+
+  // accumulate
+  const ReduceNewAccumulatorFunc_t fn = mtls->accumFunc;
+  while (1) {
+    uint32_t slice  = (uint32_t)__sync_fetch_and_add(&mtls->mSliceNum, 1);
+    uint32_t xStart = mtls->start.x + slice * mtls->mSliceSize;
+    uint32_t xEnd   = xStart + mtls->mSliceSize;
+
+    xEnd = rsMin(xEnd, mtls->end.x);
+
+    if (xEnd <= xStart) {
+      return;
+    }
+
+    RedpPtrSetup(mtls, &redp, xStart, 0, 0);
+    fn(&redp, xStart, xEnd, accumPtr);
+
+    FormatBuf fmt;
+    if (mtls->logReduceAccum) {
+      format_bytes(&fmt, accumPtr, mtls->accumSize);
+    } else {
+      fmt[0] = 0;
+    }
+    REDUCE_NEW_ALOGV("walk_1d_reduce_new(%p): idx = %u [%u, %u)%s",
+                     mtls->accumFunc, idx, xStart, xEnd, fmt);
+  }
 }
 
 // Launch a simple reduce-style kernel.
@@ -486,6 +588,25 @@ void RsdCpuReferenceImpl::launchReduceNew(const Allocation ** ains,
                                           uint32_t inLen,
                                           Allocation * aout,
                                           MTLaunchStructReduceNew *mtls) {
+  mtls->logReduceAccum = mRSC->props.mLogReduceAccum;
+  if ((mWorkers.mCount >= 1) && mtls->isThreadable && !mInKernel) {
+    launchReduceNewParallel(ains, inLen, aout, mtls);
+  } else {
+    launchReduceNewSerial(ains, inLen, aout, mtls);
+  }
+}
+
+// Launch a general reduce-style kernel, single-threaded.
+// Inputs:
+//   ains[0..inLen-1]: Array of allocations that contain the inputs
+//   aout:             The allocation that will hold the output
+//   mtls:             Holds launch parameters
+void RsdCpuReferenceImpl::launchReduceNewSerial(const Allocation ** ains,
+                                                uint32_t inLen,
+                                                Allocation * aout,
+                                                MTLaunchStructReduceNew *mtls) {
+  ALOGV("launchReduceNewSerial(%p)", mtls->accumFunc);
+
   // In the presence of outconverter, we allocate temporary memory for
   // the accumulator.
   //
@@ -521,6 +642,112 @@ void RsdCpuReferenceImpl::launchReduceNew(const Allocation ** ains,
   }
 }
 
+// Launch a general reduce-style kernel, multi-threaded.
+// Inputs:
+//   ains[0..inLen-1]: Array of allocations that contain the inputs
+//   aout:             The allocation that will hold the output
+//   mtls:             Holds launch parameters
+void RsdCpuReferenceImpl::launchReduceNewParallel(const Allocation ** ains,
+                                                  uint32_t inLen,
+                                                  Allocation * aout,
+                                                  MTLaunchStructReduceNew *mtls) {
+  // For now, we don't know how to go parallel beyond 1D, or in the absence of a combiner.
+  if ((mtls->redp.dim.y > 1) || (mtls->redp.dim.z > 1) || !mtls->combFunc) {
+    launchReduceNewSerial(ains, inLen, aout, mtls);
+    return;
+  }
+
+  // Number of threads = "main thread" + number of other (worker) threads
+  const uint32_t numThreads = mWorkers.mCount + 1;
+
+  // In the absence of outconverter, we use the output allocation as
+  // an accumulator, and therefore need to allocate one fewer accumulator.
+  const uint32_t numAllocAccum = numThreads - (mtls->outFunc == nullptr);
+
+  // If mDebugReduceSplitAccum, then we want each accumulator to start
+  // on a page boundary.  (TODO: Would some unit smaller than a page
+  // be sufficient to avoid false sharing?)
+  if (mRSC->props.mDebugReduceSplitAccum) {
+    // Round up accumulator size to an integral number of pages
+    mtls->accumStride =
+        (unsigned(mtls->accumSize) + unsigned(mPageSize)-1) &
+        ~(unsigned(mPageSize)-1);
+    // Each accumulator gets its own page.  Alternatively, if we just
+    // wanted to make sure no two accumulators are on the same page,
+    // we could instead do
+    //   allocSize = mtls->accumStride * (numAllocation - 1) + mtls->accumSize
+    const size_t allocSize = mtls->accumStride * numAllocAccum;
+    mtls->accumAlloc = static_cast<uint8_t *>(memalign(mPageSize, allocSize));
+  } else {
+    mtls->accumStride = mtls->accumSize;
+    mtls->accumAlloc = static_cast<uint8_t *>(malloc(mtls->accumStride * numAllocAccum));
+  }
+
+  const size_t accumPtrArrayBytes = sizeof(uint8_t *) * numThreads;
+  mtls->accumPtr = static_cast<uint8_t **>(malloc(accumPtrArrayBytes));
+  memset(mtls->accumPtr, 0, accumPtrArrayBytes);
+
+  mtls->accumCount = 0;
+
+  rsAssert(!mInKernel);
+  mInKernel = true;
+  mtls->mSliceSize = rsMax(1U, mtls->redp.dim.x / (numThreads * 4));
+  ALOGV("launchReduceNewParallel(%p): %u threads, accumAlloc = %p",
+        mtls->accumFunc, numThreads, mtls->accumAlloc);
+  launchThreads(walk_1d_reduce_new, mtls);
+  mInKernel = false;
+
+  // Combine accumulators and identify final accumulator
+  uint8_t *finalAccumPtr = (mtls->outFunc ? nullptr : mtls->redp.outPtr[0]);
+  //   Loop over accumulators, combining into finalAccumPtr.  If finalAccumPtr
+  //   is null, then the first accumulator I find becomes finalAccumPtr.
+  for (unsigned idx = 0; idx < mtls->accumCount; ++idx) {
+    uint8_t *const thisAccumPtr = mtls->accumPtr[idx];
+    if (finalAccumPtr) {
+      if (finalAccumPtr != thisAccumPtr) {
+        if (mtls->combFunc) {
+          if (mtls->logReduceAccum) {
+            FormatBuf fmt;
+            REDUCE_NEW_ALOGV("launchReduceNewParallel(%p): accumulating into%s",
+                             mtls->accumFunc,
+                             format_bytes(&fmt, finalAccumPtr, mtls->accumSize));
+            REDUCE_NEW_ALOGV("launchReduceNewParallel(%p):    accumulator[%d]%s",
+                             mtls->accumFunc, idx,
+                             format_bytes(&fmt, thisAccumPtr, mtls->accumSize));
+          }
+          mtls->combFunc(finalAccumPtr, thisAccumPtr);
+        } else {
+          rsAssert(!"expected combiner");
+        }
+      }
+    } else {
+      finalAccumPtr = thisAccumPtr;
+    }
+  }
+  rsAssert(finalAccumPtr != nullptr);
+  if (mtls->logReduceAccum) {
+    FormatBuf fmt;
+    REDUCE_NEW_ALOGV("launchReduceNewParallel(%p): final accumulator%s",
+                     mtls->accumFunc, format_bytes(&fmt, finalAccumPtr, mtls->accumSize));
+  }
+
+  // Outconvert
+  if (mtls->outFunc) {
+    mtls->outFunc(mtls->redp.outPtr[0], finalAccumPtr);
+    if (mtls->logReduceAccum) {
+      FormatBuf fmt;
+      REDUCE_NEW_ALOGV("launchReduceNewParallel(%p): final outconverted result%s",
+                       mtls->accumFunc,
+                       format_bytes(&fmt, mtls->redp.outPtr[0], mtls->redp.outStride[0]));
+    }
+  }
+
+  // Clean up
+  free(mtls->accumPtr);
+  free(mtls->accumAlloc);
+}
+
+
 void RsdCpuReferenceImpl::launchForEach(const Allocation ** ains,
                                         uint32_t inLen,
                                         Allocation* aout,
@@ -537,9 +764,9 @@ void RsdCpuReferenceImpl::launchForEach(const Allocation ** ains,
                      (mtls->start.array[2] != mtls->end.array[2]) ||
                      (mtls->start.array[3] != mtls->end.array[3]);
 
-    if ((mWorkers.mCount >= 1) && mtls->isThreadable && !mInForEach) {
+    if ((mWorkers.mCount >= 1) && mtls->isThreadable && !mInKernel) {
         const size_t targetByteChunk = 16 * 1024;
-        mInForEach = true;
+        mInKernel = true;  // NOTE: The guard immediately above ensures this was !mInKernel
 
         if (outerDims) {
             // No fancy logic for chunk size
@@ -588,9 +815,9 @@ void RsdCpuReferenceImpl::launchForEach(const Allocation ** ains,
                 mtls->mSliceSize = 1;
             }
 
-            launchThreads(walk_1d, mtls);
+            launchThreads(walk_1d_foreach, mtls);
         }
-        mInForEach = false;
+        mInKernel = false;
 
     } else {
         ForEachFunc_t fn = mtls->kernel;
