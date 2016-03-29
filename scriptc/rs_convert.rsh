@@ -19,7 +19,7 @@
 /*
  * rs_convert.rsh: Conversion Functions
  *
- * The functions below convert from a numerical vector type to another, of from one color
+ * The functions below convert from a numerical vector type to another, or from one color
  * representation to another.
  */
 
