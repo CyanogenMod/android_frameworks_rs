@@ -264,14 +264,16 @@ public class MainActivity extends Activity {
         folder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
         mImagePath = folder.getPath();
         File[] files = folder.listFiles();
-        Log.v(TAG, "files" + files.length);
-        for (int i = 0; i < files.length; i++) {
-            Log.v(TAG, "[" + i + "]=" + files[i].getAbsolutePath());
-            if (files[i].getName().toLowerCase().endsWith(".jpg")) {
-                mDisplayedImage = BitmapFactory.decodeFile(files[i].getAbsolutePath());
-                mImagePath = files[i].getParentFile().getAbsolutePath();
-                mImageName = files[i].getName();
-                return;
+        if (files != null) {
+            Log.v(TAG, "files" + files.length);
+            for (int i = 0; i < files.length; i++) {
+                Log.v(TAG, "[" + i + "]=" + files[i].getAbsolutePath());
+                if (files[i].getName().toLowerCase().endsWith(".jpg")) {
+                    mDisplayedImage = BitmapFactory.decodeFile(files[i].getAbsolutePath());
+                    mImagePath = files[i].getParentFile().getAbsolutePath();
+                    mImageName = files[i].getName();
+                    return;
+                }
             }
         }
 

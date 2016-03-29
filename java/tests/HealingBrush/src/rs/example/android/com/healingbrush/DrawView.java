@@ -42,6 +42,8 @@ public class DrawView extends View {
     Paint mPaint1;
     Paint mPaint2;
     private boolean mDone;
+    private boolean mUseDefaultRegion = true;
+
     ArrayList<Drawable> drawList = new ArrayList<Drawable>();
 
     private void setup(Context context) {
@@ -94,8 +96,16 @@ public class DrawView extends View {
     }
 
     public Region getRegion(Bitmap img) {
-        Region ret = new Region(Arrays.copyOf(path, len), img);
-
+        Region ret;
+        if (mUseDefaultRegion) {
+            float[] defaultPath = {10.0f, 110.0f,
+                                   110.0f, 10.0f,
+                                   210.0f, 110.0f,
+                                   110.0f, 210.0f};
+            ret = new Region(Arrays.copyOf(defaultPath, defaultPath.length), img);
+        } else {
+            ret = new Region(Arrays.copyOf(path, len), img);
+        }
         invalidate();
         return ret;
     }
@@ -108,6 +118,7 @@ public class DrawView extends View {
         mPoints_backup.addPath(mPoints);
         mPoints.reset();
         mPoints.moveTo(imgPoint[0], imgPoint[1]);
+        mUseDefaultRegion = false;
     }
 
     public void undo() {
