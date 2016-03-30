@@ -21,8 +21,8 @@ else
   SHORT_OSNAME=linux
   SONAME=so
   # Target architectures and their system library names.
-  TARGETS=(arm mips x86 arm64)
-  SYS_NAMES=(generic generic_mips generic_x86 generic_arm64)
+  TARGETS=(arm mips x86 arm64 x86_64)
+  SYS_NAMES=(generic generic_mips generic_x86 generic_arm64 generic_x86_64)
   NUM_CORES=`cat /proc/cpuinfo | grep processor | tail -n 1 | cut -f 2 -d :`
   NUM_CORES=$(($NUM_CORES+1))
 
