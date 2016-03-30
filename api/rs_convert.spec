@@ -17,7 +17,7 @@
 header:
 summary: Conversion Functions
 description:
- The functions below convert from a numerical vector type to another, of from one color
+ The functions below convert from a numerical vector type to another, or from one color
  representation to another.
 end:
 
