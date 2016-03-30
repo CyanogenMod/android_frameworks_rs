@@ -114,7 +114,7 @@ typedef enum {
 #if (defined(RS_VERSION) && (RS_VERSION >= 14))
 typedef enum {
     RS_ALLOCATION_USAGE_SCRIPT = 0x0001, // Allocation is bound to and accessed by scripts.
-    RS_ALLOCATION_USAGE_GRAPHICS_TEXTURE = 0x0002, // Deprecated.
+    RS_ALLOCATION_USAGE_GRAPHICS_TEXTURE = 0x0002, // Allocation is used as a texture source.
     RS_ALLOCATION_USAGE_GRAPHICS_VERTEX = 0x0004, // Deprecated.
     RS_ALLOCATION_USAGE_GRAPHICS_CONSTANTS = 0x0008, // Deprecated.
     RS_ALLOCATION_USAGE_GRAPHICS_RENDER_TARGET = 0x0010, // Deprecated.
