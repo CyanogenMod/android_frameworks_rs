@@ -92,7 +92,7 @@ $(ll_bc_files): $(intermediates)/%.bc: $(LOCAL_PATH)/%.ll $(RS_LLVM_AS)
 	@mkdir -p $(dir $@)
 	$(hide) $(RELATIVE_PWD) $(RS_LLVM_AS) $< -o $@
 
--include $(c_bc_files:%.bc=%.P)
+$(foreach f,$(c_bc_files),$(call include-depfile,$(f:%.bc=%.P),$(f)))
 
 $(LOCAL_BUILT_MODULE): PRIVATE_BC_FILES := $(c_bc_files) $(ll_bc_files)
 $(LOCAL_BUILT_MODULE): $(c_bc_files) $(ll_bc_files)
