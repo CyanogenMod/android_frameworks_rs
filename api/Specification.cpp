@@ -164,6 +164,7 @@ void ParameterDefinition::parseParameterDefinition(const string& type, const str
         } else if (!isReturn) {
             scanner->error(lineNumber) << "Should have a name.\n";
         }
+        doubleVariableName = variableName + "Double";
     } else {
         variableName = "in";
         if (specName.empty()) {

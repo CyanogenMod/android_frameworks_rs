@@ -450,6 +450,11 @@ void PermutationWriter::writeJavaVerifyScalarMethod(bool verifierValidates) cons
             if (p->isOutParameter) {
                 mJava->indent() << "args." << p->variableName << " = " << p->javaArrayName
                                 << "[i * " << p->vectorWidth << " + j];\n";
+                if (p->isFloat16Parameter()) {
+                    mJava->indent() << "args." << p->doubleVariableName
+                                    << " = Float16Utils.convertFloat16ToDouble(args."
+                                    << p->variableName << ");\n";
+                }
             }
         }
         mJava->indent() << "// Ask the CoreMathVerifier to validate.\n";
@@ -740,6 +745,14 @@ void PermutationWriter::writeJavaAppendOutputToMessage(const ParameterDefinition
         mJava->indent() << "appendVariableToMessage(message, args." << p.variableName << argsIndex
                         << ");\n";
         writeJavaAppendNewLineToMessage();
+        if (p.isFloat16Parameter()) {
+            writeJavaAppendNewLineToMessage();
+            mJava->indent() << "message.append(\"Output " << p.variableName
+                            << " (in double): \");\n";
+            mJava->indent() << "appendVariableToMessage(message, args." << p.doubleVariableName
+                            << ");\n";
+            writeJavaAppendNewLineToMessage();
+        }
     } else {
         mJava->indent() << "message.append(\"Expected output " << p.variableName << ": \");\n";
         mJava->indent() << "appendVariableToMessage(message, args." << p.variableName << argsIndex
