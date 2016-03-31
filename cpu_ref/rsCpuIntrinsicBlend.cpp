@@ -120,7 +120,7 @@ void RsdCpuScriptIntrinsicBlend::kernel(const RsExpandKernelDriverInfo *info,
     uint32_t x1 = xstart;
     uint32_t x2 = xend;
 
-#if defined(ARCH_ARM_USE_INTRINSICS) && !defined(ARCH_ARM64_USE_INTRINSICS)
+#if defined(ARCH_ARM_USE_INTRINSICS)
     // Bug: 22047392 - Skip optimized version for BLEND_DST_ATOP until this
     // been fixed.
     if (gArchUseSIMD && info->slot != BLEND_DST_ATOP) {
