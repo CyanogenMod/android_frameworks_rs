@@ -215,3 +215,14 @@ LOCAL_IS_HOST_MODULE := true
 LOCAL_CFLAGS += $(clcore_cflags)
 LOCAL_SRC_FILES := $(clcore_files) $(clcore_files_64)
 include $(LOCAL_PATH)/build_bc_lib.mk
+
+# Build the x86_64 version of the library
+include $(CLEAR_VARS)
+
+BCC_RS_TRIPLE := aarch64-linux-android
+RS_TRIPLE_CFLAGS := -D__x86_64__
+LOCAL_MODULE := librsrt_x86_64.bc
+LOCAL_IS_HOST_MODULE := true
+LOCAL_CFLAGS += $(clcore_cflags) -DARCH_X86_HAVE_SSSE3
+LOCAL_SRC_FILES := $(clcore_x86_files) $(clcore_base_files_64)
+include $(LOCAL_PATH)/build_bc_lib.mk
