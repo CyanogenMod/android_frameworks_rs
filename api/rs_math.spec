@@ -2309,7 +2309,7 @@ w: 1, 2, 3, 4
 t: f16
 ret: #2#1
 arg: #2#1 v
-test: none
+test: custom
 end:
 
 function: native_hypot
@@ -2679,8 +2679,8 @@ attrib: const
 w: 1, 2, 3, 4
 t: f16
 ret: #2#1
-arg: #2#1 v
-test: none
+arg: #2#1 v, range(-314,314)
+test: custom
 end:
 
 function: native_tanh
@@ -2728,8 +2728,8 @@ attrib: const
 w: 1, 2, 3, 4
 t: f16
 ret: #2#1
-arg: #2#1 v
-test: none
+arg: #2#1 v, range(-100,100)
+test: custom
 end:
 
 function: nextafter
