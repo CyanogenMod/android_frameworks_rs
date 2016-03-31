@@ -538,7 +538,6 @@ ret: #2#1
 arg: #2#1 value
 arg: #2#1 min_value
 arg: #2#1 max_value, above(min_value)
-test: none
 end:
 
 function: clamp
@@ -550,7 +549,6 @@ ret: #2#1
 arg: #2#1 value
 arg: #2 min_value
 arg: #2 max_value, above(min_value)
-test: none
 end:
 
 function: clz
