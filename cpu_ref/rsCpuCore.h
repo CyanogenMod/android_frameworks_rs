@@ -148,7 +148,7 @@ struct MTLaunchStructReduceNew : public MTLaunchStructCommon {
     uint32_t accumCount;
 
     // Logging control
-    bool logReduceAccum;
+    uint32_t logReduce;
 };
 
 class RsdCpuReferenceImpl : public RsdCpuReference {
