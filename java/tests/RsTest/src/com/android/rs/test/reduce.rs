@@ -121,7 +121,7 @@ static void fz3Accum(int3 *accum,
 }
 
 static void fz3Combine(int3 *accum, const int3 *accum2) {
-  if (accum->x >= 0) *accum = *accum2;
+  if (accum2->x >= 0) *accum = *accum2;
 }
 
 /////////////////////////////////////////////////////////////////////////
