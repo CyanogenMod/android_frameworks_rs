@@ -98,6 +98,7 @@ extern float4 __attribute__((overloadable)) clamp(float4 amount, float low, floa
 
 #endif // !defined(ARCH_X86_HAVE_SSSE3) || defined(RS_DEBUG_RUNTIME) || defined(RS_G_RUNTIME)
 
+_CLAMP(half);
 _CLAMP(double);
 _CLAMP(char);
 _CLAMP(uchar);
