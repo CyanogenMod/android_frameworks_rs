@@ -45,7 +45,7 @@ static pid_t gettid() {
 using namespace android;
 using namespace android::renderscript;
 
-#define REDUCE_NEW_ALOGV(...) /* ALOGV(__VA_ARGS__) */
+#define REDUCE_NEW_ALOGV(mtls, level, ...) do { if ((mtls)->logReduce >= (level)) ALOGV(__VA_ARGS__); } while(0)
 
 static pthread_key_t gThreadTLSKey = 0;
 static uint32_t gThreadTLSKeyCount = 0;
@@ -242,7 +242,7 @@ bool RsdCpuReferenceImpl::init(uint32_t version_major, uint32_t version_minor,
     }
 
     mPageSize = sysconf(_SC_PAGE_SIZE);
-    REDUCE_NEW_ALOGV("page size = %ld", mPageSize);
+    // ALOGV("page size = %ld", mPageSize);
 
     GetCpuInfo();
 
@@ -523,7 +523,7 @@ static void walk_1d_reduce_new(void *usr, uint32_t idx) {
         accumPtr = mtls->accumAlloc + mtls->accumStride * (accumIdx - 1);
       }
     }
-    REDUCE_NEW_ALOGV("walk_1d_reduce_new(%p): idx = %u got accumCount %u and accumPtr %p",
+    REDUCE_NEW_ALOGV(mtls, 2, "walk_1d_reduce_new(%p): idx = %u got accumCount %u and accumPtr %p",
                      mtls->accumFunc, idx, accumIdx, accumPtr);
     // initialize accumulator
     if (mtls->initFunc) {
@@ -550,12 +550,12 @@ static void walk_1d_reduce_new(void *usr, uint32_t idx) {
     fn(&redp, xStart, xEnd, accumPtr);
 
     FormatBuf fmt;
-    if (mtls->logReduceAccum) {
+    if (mtls->logReduce >= 3) {
       format_bytes(&fmt, accumPtr, mtls->accumSize);
     } else {
       fmt[0] = 0;
     }
-    REDUCE_NEW_ALOGV("walk_1d_reduce_new(%p): idx = %u [%u, %u)%s",
+    REDUCE_NEW_ALOGV(mtls, 2, "walk_1d_reduce_new(%p): idx = %u [%u, %u)%s",
                      mtls->accumFunc, idx, xStart, xEnd, fmt);
   }
 }
@@ -588,7 +588,7 @@ void RsdCpuReferenceImpl::launchReduceNew(const Allocation ** ains,
                                           uint32_t inLen,
                                           Allocation * aout,
                                           MTLaunchStructReduceNew *mtls) {
-  mtls->logReduceAccum = mRSC->props.mLogReduceAccum;
+  mtls->logReduce = mRSC->props.mLogReduce;
   if ((mWorkers.mCount >= 1) && mtls->isThreadable && !mInKernel) {
     launchReduceNewParallel(ains, inLen, aout, mtls);
   } else {
@@ -605,7 +605,8 @@ void RsdCpuReferenceImpl::launchReduceNewSerial(const Allocation ** ains,
                                                 uint32_t inLen,
                                                 Allocation * aout,
                                                 MTLaunchStructReduceNew *mtls) {
-  ALOGV("launchReduceNewSerial(%p)", mtls->accumFunc);
+  REDUCE_NEW_ALOGV(mtls, 1, "launchReduceNewSerial(%p): %u x %u x %u", mtls->accumFunc,
+                   mtls->redp.dim.x, mtls->redp.dim.y, mtls->redp.dim.z);
 
   // In the presence of outconverter, we allocate temporary memory for
   // the accumulator.
@@ -692,8 +693,10 @@ void RsdCpuReferenceImpl::launchReduceNewParallel(const Allocation ** ains,
   rsAssert(!mInKernel);
   mInKernel = true;
   mtls->mSliceSize = rsMax(1U, mtls->redp.dim.x / (numThreads * 4));
-  ALOGV("launchReduceNewParallel(%p): %u threads, accumAlloc = %p",
-        mtls->accumFunc, numThreads, mtls->accumAlloc);
+  REDUCE_NEW_ALOGV(mtls, 1, "launchReduceNewParallel(%p): %u x %u x %u, %u threads, accumAlloc = %p",
+                   mtls->accumFunc,
+                   mtls->redp.dim.x, mtls->redp.dim.y, mtls->redp.dim.z,
+                   numThreads, mtls->accumAlloc);
   launchThreads(walk_1d_reduce_new, mtls);
   mInKernel = false;
 
@@ -706,12 +709,12 @@ void RsdCpuReferenceImpl::launchReduceNewParallel(const Allocation ** ains,
     if (finalAccumPtr) {
       if (finalAccumPtr != thisAccumPtr) {
         if (mtls->combFunc) {
-          if (mtls->logReduceAccum) {
+          if (mtls->logReduce >= 3) {
             FormatBuf fmt;
-            REDUCE_NEW_ALOGV("launchReduceNewParallel(%p): accumulating into%s",
+            REDUCE_NEW_ALOGV(mtls, 3, "launchReduceNewParallel(%p): accumulating into%s",
                              mtls->accumFunc,
                              format_bytes(&fmt, finalAccumPtr, mtls->accumSize));
-            REDUCE_NEW_ALOGV("launchReduceNewParallel(%p):    accumulator[%d]%s",
+            REDUCE_NEW_ALOGV(mtls, 3, "launchReduceNewParallel(%p):    accumulator[%d]%s",
                              mtls->accumFunc, idx,
                              format_bytes(&fmt, thisAccumPtr, mtls->accumSize));
           }
@@ -725,18 +728,18 @@ void RsdCpuReferenceImpl::launchReduceNewParallel(const Allocation ** ains,
     }
   }
   rsAssert(finalAccumPtr != nullptr);
-  if (mtls->logReduceAccum) {
+  if (mtls->logReduce >= 3) {
     FormatBuf fmt;
-    REDUCE_NEW_ALOGV("launchReduceNewParallel(%p): final accumulator%s",
+    REDUCE_NEW_ALOGV(mtls, 3, "launchReduceNewParallel(%p): final accumulator%s",
                      mtls->accumFunc, format_bytes(&fmt, finalAccumPtr, mtls->accumSize));
   }
 
   // Outconvert
   if (mtls->outFunc) {
     mtls->outFunc(mtls->redp.outPtr[0], finalAccumPtr);
-    if (mtls->logReduceAccum) {
+    if (mtls->logReduce >= 3) {
       FormatBuf fmt;
-      REDUCE_NEW_ALOGV("launchReduceNewParallel(%p): final outconverted result%s",
+      REDUCE_NEW_ALOGV(mtls, 3, "launchReduceNewParallel(%p): final outconverted result%s",
                        mtls->accumFunc,
                        format_bytes(&fmt, mtls->redp.outPtr[0], mtls->redp.outStride[0]));
     }
