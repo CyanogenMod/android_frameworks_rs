@@ -30,8 +30,10 @@ extern "C" RsDevice rsDeviceCreate() {
 }
 
 extern "C" void rsDeviceDestroy(RsDevice dev) {
-    Device * d = static_cast<Device *>(dev);
-    delete d;
+    // A Device should be destroyed in the destructor of the associated Context.
+    // Keep this empty function here even after calls to nDeviceDestroy() in
+    // RenderScript.helpDestroy() have been removed. This is necessary to keep
+    // existing apps running.
 }
 
 extern "C" void rsDeviceSetConfig(RsDevice dev, RsDeviceParam p, int32_t value) {

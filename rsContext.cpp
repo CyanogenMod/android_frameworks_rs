@@ -582,8 +582,6 @@ bool Context::initContext(Device *dev, const RsSurfaceConfig *sc) {
 }
 
 Context::~Context() {
-    //ALOGV("%p Context::~Context", this);
-
     if (!mIsContextLite) {
         mPaused = false;
         void *res;
@@ -602,11 +600,11 @@ Context::~Context() {
         pthread_mutex_lock(&gInitMutex);
         if (mDev) {
             mDev->removeContext(this);
-            mDev = nullptr;
         }
         pthread_mutex_unlock(&gInitMutex);
     }
-    //ALOGV("%p Context::~Context done", this);
+
+    delete mDev;
 }
 
 #ifndef RS_COMPATIBILITY_LIB
