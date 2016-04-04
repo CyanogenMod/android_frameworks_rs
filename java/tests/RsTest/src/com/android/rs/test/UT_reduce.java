@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-/* Same as UT_reduce_backward.java, except this test case exercises
- * pragmas before the functions (forward reference), and the other
- * test case exercises the pragmas after the functions (backward
- * reference).
+/* UT_reduce_backward.java is a much simpler version of this test
+ * case that exercises pragmas after the functions (backward
+ * reference), whereas this test case exercises the pragmas before
+ * the functions (forward reference).
  */
 
 package com.android.rs.test;
@@ -27,8 +27,11 @@ import android.content.res.Resources;
 import android.renderscript.*;
 import android.util.Log;
 import java.lang.Float;
+import java.lang.Math;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
+import static junit.framework.Assert.*;
 
 public class UT_reduce extends UnitTest {
     private static final String TAG = "reduce";
@@ -236,10 +239,13 @@ public class UT_reduce extends UnitTest {
         final int rsRslt = s.reduce_addint(inputAllocation).get();
         final long rsTimeEnd = java.lang.System.currentTimeMillis();
 
-        return result("addint1D",
-                new timing(javaTimeStart, javaTimeEnd, rsTimeStart,
-                           copyTimeStart, kernelTimeStart, rsTimeEnd, inputAllocation),
-                javaRslt, rsRslt);
+        final boolean success =
+                result("addint1D",
+                        new timing(javaTimeStart, javaTimeEnd, rsTimeStart,
+                                   copyTimeStart, kernelTimeStart, rsTimeEnd, inputAllocation),
+                        javaRslt, rsRslt);
+        inputAllocation.destroy();
+        return success;
     }
 
     private boolean addint2D(RenderScript RS, ScriptC_reduce s, int seed, int[] size) {
@@ -266,10 +272,47 @@ public class UT_reduce extends UnitTest {
         final int rsRslt = s.reduce_addint(inputAllocation).get();
         final long rsTimeEnd = java.lang.System.currentTimeMillis();
 
-        return result("addint2D",
-                new timing(javaTimeStart, javaTimeEnd, rsTimeStart,
-                           copyTimeStart, kernelTimeStart, rsTimeEnd, inputAllocation),
-                javaRslt, rsRslt);
+        final boolean success =
+                result("addint2D",
+                        new timing(javaTimeStart, javaTimeEnd, rsTimeStart,
+                                   copyTimeStart, kernelTimeStart, rsTimeEnd, inputAllocation),
+                        javaRslt, rsRslt);
+        inputAllocation.destroy();
+        return success;
+    }
+
+    private boolean addint3D(RenderScript RS, ScriptC_reduce s, int seed, int[] size) {
+        final int dimX = size[0];
+        final int dimY = size[1];
+        final int dimZ = size[2];
+
+        final int[] inputArray = createInputArrayInt(dimX * dimY * dimZ, seed, Integer.MAX_VALUE / (dimX * dimY * dimZ));
+
+        final long javaTimeStart = java.lang.System.currentTimeMillis();
+        final int javaRslt = addint(inputArray);
+        final long javaTimeEnd = java.lang.System.currentTimeMillis();
+
+        final long rsTimeStart = java.lang.System.currentTimeMillis();
+
+        Type.Builder typeBuilder = new Type.Builder(RS, Element.I32(RS));
+        typeBuilder.setX(dimX).setY(dimY).setZ(dimZ);
+        Allocation inputAllocation = Allocation.createTyped(RS, typeBuilder.create());
+
+        final long copyTimeStart = java.lang.System.currentTimeMillis();
+
+        inputAllocation.copy3DRangeFrom(0, 0, 0, dimX, dimY, dimZ, inputArray);
+
+        final long kernelTimeStart = java.lang.System.currentTimeMillis();
+        final int rsRslt = s.reduce_addint(inputAllocation).get();
+        final long rsTimeEnd = java.lang.System.currentTimeMillis();
+
+        final boolean success =
+                result("addint3D",
+                        new timing(javaTimeStart, javaTimeEnd, rsTimeStart,
+                                   copyTimeStart, kernelTimeStart, rsTimeEnd, inputAllocation),
+                        javaRslt, rsRslt);
+        inputAllocation.destroy();
+        return success;
     }
 
     ///////////////////////////////////////////////////////////////////
@@ -334,10 +377,13 @@ public class UT_reduce extends UnitTest {
         final Float2 javaVal = new Float2(inputArray[javaRslt.x], inputArray[javaRslt.y]);
         final Float2 rsVal = new Float2(inputArray[rsRslt.x], inputArray[rsRslt.y]);
 
-        return result("findMinAndMax",
-                new timing(javaTimeStart, javaTimeEnd, rsTimeStart,
-                           copyTimeStart, kernelTimeStart, rsTimeEnd, inputAllocation),
-                javaVal, rsVal);
+        final boolean success =
+                result("findMinAndMax",
+                        new timing(javaTimeStart, javaTimeEnd, rsTimeStart,
+                                   copyTimeStart, kernelTimeStart, rsTimeEnd, inputAllocation),
+                        javaVal, rsVal);
+        inputAllocation.destroy();
+        return success;
     }
 
     ///////////////////////////////////////////////////////////////////
@@ -394,6 +440,7 @@ public class UT_reduce extends UnitTest {
         Log.i(TAG,
                 "fz: java input[" + javaRslt + "] == " + inputArray[javaRslt] +
                 ", rs input[" + rsRslt + "] == " + inputArray[javaRslt] + ": " + status);
+        inputAllocation.destroy();
         return success;
     }
 
@@ -437,6 +484,7 @@ public class UT_reduce extends UnitTest {
         Log.i(TAG,
                 "fz2: java input[" + javaRslt.x + ", " + javaRslt.y + "] == " + javaCellVal +
                 ", rs input[" + rsRslt.x + ", " + rsRslt.y + "] == " + rsCellVal + ": " + status);
+        inputAllocation.destroy();
         return success;
     }
 
@@ -483,6 +531,7 @@ public class UT_reduce extends UnitTest {
         Log.i(TAG,
                 "fz3: java input[" + javaRslt.x + ", " + javaRslt.y + ", " + javaRslt.z + "] == " + javaCellVal +
                 ", rs input[" + rsRslt.x + ", " + rsRslt.y + ", " + rsRslt.z + "] == " + rsCellVal + ": " + status);
+        inputAllocation.destroy();
         return success;
     }
 
@@ -506,6 +555,10 @@ public class UT_reduce extends UnitTest {
         long[] outputArray = new long[histogramBucketCount];
         for (int i = 0; i < histogramBucketCount; ++i)
             outputArray[i] = outputArrayMistyped[i] & (long)0xffffffff;
+
+        inputAllocation.destroy();
+        outputAllocation.destroy();
+
         return outputArray;
     }
 
@@ -513,9 +566,9 @@ public class UT_reduce extends UnitTest {
         final byte[] inputArray = createInputArrayByte(size[0], seed);
 
         final long[] javaRslt = histogram(RS, inputArray);
-        _RS_ASSERT("javaRslt unexpected length: " + javaRslt.length, javaRslt.length == histogramBucketCount);
+        assertEquals("javaRslt length", histogramBucketCount, javaRslt.length);
         final long[] rsRslt = s.reduce_histogram(inputArray).get();
-        _RS_ASSERT("rsRslt unexpected length: " + rsRslt.length, rsRslt.length == histogramBucketCount);
+        assertEquals("rsRslt length", histogramBucketCount, rsRslt.length);
 
         return result("histogram_array", new timing(size[0]), javaRslt, rsRslt);
     }
@@ -526,7 +579,7 @@ public class UT_reduce extends UnitTest {
         final long javaTimeStart = java.lang.System.currentTimeMillis();
         final long[] javaRslt = histogram(RS, inputArray);
         final long javaTimeEnd = java.lang.System.currentTimeMillis();
-        _RS_ASSERT("javaRslt unexpected length: " + javaRslt.length, javaRslt.length == histogramBucketCount);
+        assertEquals("javaRslt length", histogramBucketCount, javaRslt.length);
 
         final long rsTimeStart = java.lang.System.currentTimeMillis();
 
@@ -539,13 +592,16 @@ public class UT_reduce extends UnitTest {
         final long kernelTimeStart = java.lang.System.currentTimeMillis();
         final long[] rsRslt = s.reduce_histogram(inputAllocation).get();
         final long rsTimeEnd = java.lang.System.currentTimeMillis();
-        _RS_ASSERT("rsRslt unexpected length: " + rsRslt.length, rsRslt.length == histogramBucketCount);
+        assertEquals("rsRslt length", histogramBucketCount, rsRslt.length);
 
         // NOTE: The "java time" is actually for the RenderScript histogram intrinsic
-        return result("histogram",
-                new timing(javaTimeStart, javaTimeEnd, rsTimeStart,
-                           copyTimeStart, kernelTimeStart, rsTimeEnd, inputAllocation),
-                javaRslt, rsRslt);
+        final boolean success =
+                result("histogram",
+                        new timing(javaTimeStart, javaTimeEnd, rsTimeStart,
+                                   copyTimeStart, kernelTimeStart, rsTimeEnd, inputAllocation),
+                        javaRslt, rsRslt);
+        inputAllocation.destroy();
+        return success;
     }
 
     //-----------------------------------------------------------------
@@ -571,7 +627,7 @@ public class UT_reduce extends UnitTest {
     ///////////////////////////////////////////////////////////////////
 
     private long sumgcd(final int in1[], final int in2[]) {
-        _RS_ASSERT("sumgcd input length mismatch", in1.length == in2.length);
+        assertEquals("sumgcd input lengths", in1.length, in2.length);
 
         long sum = 0;
         for (int i = 0; i < in1.length; ++i) {
@@ -614,15 +670,43 @@ public class UT_reduce extends UnitTest {
         final long rsRslt = s.reduce_sumgcd(inputAllocationA, inputAllocationB).get();
         final long rsTimeEnd = java.lang.System.currentTimeMillis();
 
-        return result("sumgcd",
-                new timing(javaTimeStart, javaTimeEnd, rsTimeStart, copyTimeStart, kernelTimeStart, rsTimeEnd,
-                        inputAllocationA, inputAllocationB),
-                javaRslt, rsRslt);
+        final boolean success =
+                result("sumgcd",
+                        new timing(javaTimeStart, javaTimeEnd, rsTimeStart, copyTimeStart, kernelTimeStart, rsTimeEnd,
+                                   inputAllocationA, inputAllocationB),
+                        javaRslt, rsRslt);
+        inputAllocationA.destroy();
+        inputAllocationB.destroy();
+        return success;
     }
 
     ///////////////////////////////////////////////////////////////////
 
-    public static final int maxSeedsPerTest = 10;
+    // Return an array of sparse integer values from 0 to maxVal inclusive.
+    // The array consists of all values k*sparseness (k a nonnegative integer)
+    // that are less than maxVal, and maxVal itself.  For example, if maxVal
+    // is 20 and sparseness is 6, then the result is { 0, 6, 12, 18, 20 };
+    // and if maxVal is 20 and sparseness is 10, then the result is { 0, 10, 20 }.
+    //
+    // The elements of the array are sorted in increasing order.
+    //
+    // maxVal     -- must be nonnegative
+    // sparseness -- must be positive
+    private static int[] computeSizePoints(int maxVal, int sparseness) {
+        assertTrue((maxVal >= 0) && (sparseness > 0));
+
+        final boolean maxValIsExtra = ((maxVal % sparseness) != 0);
+        int[] result = new int[1 + maxVal/sparseness + (maxValIsExtra ? 1 : 0)];
+
+        for (int i = 0; i * sparseness <= maxVal; ++i)
+            result[i] = i * sparseness;
+        if (maxValIsExtra)
+            result[result.length - 1] = maxVal;
+
+        return result;
+    }
+
+    private static final int maxSeedsPerTest = 10;
 
     static interface Test {
         // A test execution is characterized by two properties: A seed
@@ -641,12 +725,23 @@ public class UT_reduce extends UnitTest {
     };
 
     static class TestDescription {
-        public TestDescription(String myTestName, Test myTest, int mySeed, int[] myDefSize, int[] myLog2MaxSize) {
+        public TestDescription(String myTestName, Test myTest, int mySeed, int[] myDefSize,
+                               int myLog2MaxSize, int mySparseness) {
+            testName     = myTestName;
+            test         = myTest;
+            seed         = mySeed;
+            defSize      = myDefSize;
+            log2MaxSize  = myLog2MaxSize;
+            sparseness   = mySparseness;
+        };
+
+        public TestDescription(String myTestName, Test myTest, int mySeed, int[] myDefSize, int myLog2MaxSize) {
             testName    = myTestName;
             test        = myTest;
             seed        = mySeed;
             defSize     = myDefSize;
             log2MaxSize = myLog2MaxSize;
+            sparseness  = 1;
         };
 
         public TestDescription(String myTestName, Test myTest, int mySeed, int[] myDefSize) {
@@ -654,7 +749,8 @@ public class UT_reduce extends UnitTest {
             test        = myTest;
             seed        = mySeed;
             defSize     = myDefSize;
-            log2MaxSize = null;
+            log2MaxSize = -1;
+            sparseness  = 1;
         };
 
         public final String testName;
@@ -665,12 +761,21 @@ public class UT_reduce extends UnitTest {
         public final int seed;
 
         // If we're only going to run the test once, what size should
-        // we use?
+        // we use?  The length of the array is the number of
+        // dimensions of the input data.
         public final int[] defSize;
 
         // If we're going to run the test over a range of sizes, what
-        // is the maximum size to use?
-        public final int[] log2MaxSize;
+        // is the maximum size to use?  (This constrains the number of
+        // cells of the input data, not the number of cells ALONG A
+        // PARTICULAR DIMENSION of the input data.)
+        public final int log2MaxSize;
+
+        // If we're going to run the test "exhaustively" over a range
+        // of sizes, what is the size of a step through the range?
+        //
+        // For 1D, must be 1.
+        public final int sparseness;
     };
 
     private boolean run(TestDescription td, RenderScript RS, ScriptC_reduce s, int seed, int[] size) {
@@ -688,20 +793,21 @@ public class UT_reduce extends UnitTest {
         // alloc and array variants of the same test will use the same
         // seed, in case results need to be compared.
 
-        new TestDescription("addint1D", this::addint1D, 0, new int[]{100000}, new int[]{20}),
-        new TestDescription("addint1D_array", this::addint1D_array, 0, new int[]{100000}, new int[]{20}),
-        new TestDescription("addint2D", this::addint2D, 1, new int[]{450, 225}),
-        new TestDescription("findMinAndMax", this::findMinAndMax, 3, new int[]{100000}, new int[]{20}),
-        new TestDescription("findMinAndMaxArray", this::findMinAndMax_array, 3, new int[]{100000}, new int[]{20}),
-        new TestDescription("fz", this::fz, 4, new int[]{100000}, new int[]{20}),
-        new TestDescription("fz_array", this::fz_array, 4, new int[]{100000}, new int[]{20}),
-        new TestDescription("fz2", this::fz2, 5, new int[]{225, 450}),
-        new TestDescription("fz3", this::fz3, 6, new int[]{59, 48, 37}),
-        new TestDescription("histogram", this::histogram, 7, new int[]{100000}, new int[]{20}),
-        new TestDescription("histogram_array", this::histogram_array, 7, new int[]{100000}, new int[]{20}),
-        // might want to add: new TestDescription("mode", this::mode, 8, new int[]{100000}, new int[]{20}),
-        new TestDescription("mode_array", this::mode_array, 8, new int[]{100000}, new int[]{20}),
-        new TestDescription("sumgcd", this::sumgcd, 9, new int[]{1 << 16}, new int[]{20})
+        new TestDescription("addint1D", this::addint1D, 0, new int[]{100000}, 20),
+        new TestDescription("addint1D_array", this::addint1D_array, 0, new int[]{100000}, 20),
+        new TestDescription("addint2D", this::addint2D, 1, new int[]{450, 225}, 20, 3),
+        new TestDescription("addint3D", this::addint3D, 2, new int[]{37, 48, 49}, 20, 5),
+        new TestDescription("findMinAndMax", this::findMinAndMax, 3, new int[]{100000}, 20),
+        new TestDescription("findMinAndMaxArray", this::findMinAndMax_array, 3, new int[]{100000}, 20),
+        new TestDescription("fz", this::fz, 4, new int[]{100000}, 20),
+        new TestDescription("fz_array", this::fz_array, 4, new int[]{100000}, 20),
+        new TestDescription("fz2", this::fz2, 5, new int[]{225, 450}, 20, 3),
+        new TestDescription("fz3", this::fz3, 6, new int[]{59, 48, 37}, 20, 5),
+        new TestDescription("histogram", this::histogram, 7, new int[]{100000}, 20),
+        new TestDescription("histogram_array", this::histogram_array, 7, new int[]{100000}, 20),
+        // might want to add: new TestDescription("mode", this::mode, 8, new int[]{100000}, 20),
+        new TestDescription("mode_array", this::mode_array, 8, new int[]{100000}, 20),
+        new TestDescription("sumgcd", this::sumgcd, 9, new int[]{1 << 16}, 20)
     };
 
     private boolean runCorrectnessQuick(RenderScript RS, ScriptC_reduce s) {
@@ -714,67 +820,281 @@ public class UT_reduce extends UnitTest {
         return pass;
     }
 
+    // NOTE: Each test execution gets maxSeedsPerTest, and there are
+    // up to 3 + 5*log2MaxSize test executions in the full (as opposed
+    // to quick) correctness run of a particular test description, and
+    // we need an additional seed for pseudorandom size generation.
+    // Assuming log2MaxSize does not exceed 32, then it should be
+    // sufficient to reserve 1 + (3+5*32)*maxSeedsPerTest seeds per
+    // TestDescription.
+    //
+    // See runCorrectness1D().
+    private static final int seedsPerTestDescriptionCorrectness1D = 1 + (3+5*32)*maxSeedsPerTest;
+
+    // NOTE: Each test execution gets maxSeedsPerTest, and there are
+    // about 11*((log2MaxSize+1)**2) test executions in the full (as
+    // opposed to quick) correctness run of a particular test
+    // description, and we need a seed for pseudorandom size
+    // generation.  Assuming log2MaxSize does not exceed 32, then it
+    // should be sufficient to reserve 1 + 11*1089*maxSeedsPerTest
+    // seeds per TestDescription.
+    //
+    // See runCorrectness2D().
+    private static final int seedsPerTestDescriptionCorrectness2D = 1 + (11*1089)*maxSeedsPerTest;
+
+    // NOTE: Each test execution gets maxSeedsPerTest, and there are
+    // about 27*((log2MaxSize+1)**3) + 6*((log2MaxSize+1)**2) test
+    // executions in the full (as opposed to quick) correctness run of
+    // a particular test description, and we need a seed for (c).
+    // Assuming log2MaxSize does not exceed 32, then it should
+    // be sufficient to reserve 1 + (27*(33**3) + 6*(33**2))*maxSeedsPerTest
+    // seeds per TestDescription, which can be simplified upwards to
+    // 1 + (28*(33**3))*maxSeedsPerTest seeds per TestDescription.
+    private static final int seedsPerTestDescriptionCorrectness3D = 1 + (28*35937)*maxSeedsPerTest;
+
+    // Each test execution gets a certain number of seeds, and a full
+    // (as opposed to quick) correctness run of a particular
+    // TestDescription consists of some number of executions (each of
+    // which needs up to maxSeedsPerTest) and may require some
+    // additional seeds.
+    private static final int seedsPerTestDescriptionCorrectness =
+            Math.max(seedsPerTestDescriptionCorrectness1D,
+                     Math.max(seedsPerTestDescriptionCorrectness2D,
+                              seedsPerTestDescriptionCorrectness3D));
+
     private boolean runCorrectness(RenderScript RS, ScriptC_reduce s) {
         boolean pass = true;
 
         for (TestDescription td : correctnessTests) {
-            if (td.log2MaxSize == null)  // TODO: Eventually this should never happen?
-                continue;
+            switch (td.defSize.length) {
+                case 1:
+                    pass &= runCorrectness1D(td, RS, s);
+                    break;
+                case 2:
+                    pass &= runCorrectness2D(td, RS, s);
+                    break;
+                case 3:
+                    pass &= runCorrectness3D(td, RS, s);
+                    break;
+                default:
+                    assertTrue("unexpected defSize.length " + td.defSize.length, false);
+                    pass &= false;
+                    break;
+            }
+        }
 
-            if (td.log2MaxSize.length == 1) {
-                final int log2MaxSize = td.log2MaxSize[0];
-                // We will execute the test with the following sizes:
-                // (a) Each power of 2 from zero (2**0) up to log2MaxSize (2**log2MaxSize)
-                // (b) Each size from (a) +/-1
-                // (c) 2 random sizes between adjacent points in (a)
-                int[] testSizes = new int[
-                    /* a */ (1 + log2MaxSize) +
-                    /* b */ 2*(1 + log2MaxSize) +
-                    /* c */ 2*log2MaxSize];
+        return pass;
+    }
 
-                // NOTE: Each test execution gets maxSeedsPerTest, and
-                // there are up to 3 + 5*log2MaxSize test executions
-                // of a test, and we need a seed for (c).  Assuming
-                // log2MaxSize does not exceed 32, then it should be
-                // sufficient to reserve 1 + 5*32*maxSeedsPerTest seeds
-                // per TestDescription.
-                final int seedForPickingTestSizes = td.seed * (1 + 5*32*maxSeedsPerTest);
+    private boolean runCorrectness1D(TestDescription td, RenderScript RS, ScriptC_reduce s) {
+        assertEquals(1, td.sparseness);
+        final int log2MaxSize = td.log2MaxSize;
+        assertTrue(log2MaxSize >= 0);
 
-                int nextTestIdx = 0;
+        boolean pass = true;
 
-                // Fill in (a) and (b)
-                for (int i = 0; i <= log2MaxSize; ++i) {
-                    final int pwrOf2 = 1 << i;
-                    testSizes[nextTestIdx++] = pwrOf2;      /* a */
-                    testSizes[nextTestIdx++] = pwrOf2 - 1;  /* b */
-                    testSizes[nextTestIdx++] = pwrOf2 + 1;  /* b */
+        // We will execute the test with the following sizes:
+        // (a) Each power of 2 from zero (2**0) up to log2MaxSize (2**log2MaxSize)
+        // (b) Each size from (a) +/-1
+        // (c) 2 random sizes between each pair of adjacent points in (a)
+        int[] testSizes = new int[
+            /* a */ (1 + log2MaxSize) +
+            /* b */ 2*(1 + log2MaxSize) +
+            /* c */ 2*log2MaxSize];
+        // See seedsPerTestDescriptionCorrectness1D
+
+        final int seedForPickingTestSizes = td.seed * seedsPerTestDescriptionCorrectness;
+
+        int nextTestIdx = 0;
+
+        // Fill in (a) and (b)
+        for (int i = 0; i <= log2MaxSize; ++i) {
+            final int pwrOf2 = 1 << i;
+            testSizes[nextTestIdx++] = pwrOf2;      /* a */
+            testSizes[nextTestIdx++] = pwrOf2 - 1;  /* b */
+            testSizes[nextTestIdx++] = pwrOf2 + 1;  /* b */
+        }
+
+        // Fill in (c)
+        Random r = new Random(seedForPickingTestSizes);
+        for (int i = 0; i < log2MaxSize; ++i) {
+            final int lo = (1 << i) + 1;
+            final int hi = 1 << (i + 1);
+
+            if (lo < hi) {
+                for (int j = 0; j < 2; ++j) {
+                    testSizes[nextTestIdx++] = r.nextInt(hi - lo) + lo;
                 }
+            }
+        }
 
-                // Fill in (c)
-                Random r = new Random(seedForPickingTestSizes);
-                for (int i = 0; i < log2MaxSize; ++i) {
-                    final int lo = (1 << i) + 1;
-                    final int hi = 1 << (i + 1);
+        Arrays.sort(testSizes);
 
-                    if (lo < hi) {
-                        for (int j = 0; j < 2; ++j) {
-                            testSizes[nextTestIdx++] = r.nextInt(hi - lo) + lo;
-                        }
-                    }
-                }
+        int[] lastTestSizeArg = new int[]{-1};
+        for (int i = 0; i < testSizes.length; ++i) {
+            if ((testSizes[i] > 0) && (testSizes[i] != lastTestSizeArg[0])) {
+                lastTestSizeArg[0] = testSizes[i];
+                final int seedForTestExecution = seedForPickingTestSizes + 1 + i*maxSeedsPerTest;
+                pass &= run(td, RS, s, seedForTestExecution, lastTestSizeArg);
+            }
+        }
 
-                Arrays.sort(testSizes);
+        return pass;
+    }
 
-                int[] lastTestSizeArg = new int[]{-1};
-                for (int i = 0; i < testSizes.length; ++i) {
-                    if ((testSizes[i] > 0) && (testSizes[i] != lastTestSizeArg[0])) {
-                        lastTestSizeArg[0] = testSizes[i];
-                        final int seedForTestExecution = seedForPickingTestSizes + 1 + i*maxSeedsPerTest;
-                        pass &= run(td, RS, s, seedForTestExecution, lastTestSizeArg);
+    private boolean runCorrectness2D(TestDescription td, RenderScript RS, ScriptC_reduce s) {
+        final int log2MaxSize = td.log2MaxSize, maxSize = 1 << log2MaxSize, sparseness = td.sparseness;
+        assertTrue((log2MaxSize >= 0) && (sparseness >= 1));
+
+        boolean pass = true;
+
+        final int[] sizePoints = computeSizePoints(log2MaxSize, sparseness);
+
+        // We will execute the test with the following sizes:
+        // (a) Each dimension at a power of 2 from sizePoints[]
+        ///    such that the sum of the exponents does not exceed
+        //     log2MaxSize
+        // (b) Each size from (a) with one or both dimensions +/-1,
+        //     except where this would exceed 2**log2MaxSize
+        // (c) Approximately 2*(sizePoints.length**2) random sizes
+        ArrayList<int[]> testSizesList = new ArrayList<int[]>();
+        // See seedsPerTestDescriptionCorrectness2D
+
+        final int seedForPickingTestSizes = td.seed * seedsPerTestDescriptionCorrectness;
+
+        // Fill in (a) and (b)
+        for (int i : sizePoints) {
+            final int iPwrOf2 = 1 << i;
+            for (int iDelta = -1; iDelta <= 1; ++iDelta) {
+                final int iSize = iPwrOf2 + iDelta;
+                for (int j : sizePoints) {
+                    final int jPwrOf2 = 1 << j;
+                    for (int jDelta = -1; jDelta <= 1; ++jDelta) {
+                        final int jSize = jPwrOf2 + jDelta;
+                        if ((long)iSize * (long)jSize <= maxSize)
+                            testSizesList.add(new int[]{iSize, jSize});
                     }
                 }
             }
-            // TODO: lengths 2 and 3, and assert otherwise
+        }
+
+        // Fill in (c)
+        Random r = new Random(seedForPickingTestSizes);
+        for (int i : sizePoints) {
+            for (int j : sizePoints) {
+                final int size0 = 1 + r.nextInt(1 << i);
+                final int size1 = 1 + r.nextInt(maxSize / size0);
+
+                testSizesList.add(new int[]{size0, size1});
+                testSizesList.add(new int[]{size1, size0});
+            }
+        }
+
+        int[][] testSizes = testSizesList.toArray(new int[0][]);
+        Arrays.sort(testSizes,
+                (a, b) -> {
+                    final int comp0 = ((Integer)a[0]).compareTo(b[0]);
+                    return (comp0 != 0 ? comp0 : ((Integer)a[1]).compareTo(b[1]));
+                });
+
+        int[] lastTestSizeArg = null;
+        for (int i = 0; i < testSizes.length; ++i) {
+            if ((testSizes[i][0] <= 0) || (testSizes[i][1] <= 0))
+                continue;
+            if ((lastTestSizeArg != null) &&
+                (testSizes[i][0] == lastTestSizeArg[0]) &&
+                (testSizes[i][1] == lastTestSizeArg[1]))
+                continue;
+            lastTestSizeArg = testSizes[i];
+            final int seedForTestExecution = seedForPickingTestSizes + 1 + i*maxSeedsPerTest;
+            pass &= run(td, RS, s, seedForTestExecution, lastTestSizeArg);
+        }
+
+        return pass;
+    }
+
+    private boolean runCorrectness3D(TestDescription td, RenderScript RS, ScriptC_reduce s) {
+        final int log2MaxSize = td.log2MaxSize, maxSize = 1 << log2MaxSize, sparseness = td.sparseness;
+        assertTrue((log2MaxSize >= 0) && (sparseness >= 1));
+
+        boolean pass = true;
+
+        final int[] sizePoints = computeSizePoints(log2MaxSize, sparseness);
+
+        // We will execute the test with the following sizes:
+        // (a) Each dimension at a power of 2 from sizePoints[]
+        ///    such that the sum of the exponents does not exceed
+        //     log2MaxSize
+        // (b) Each size from (a) with one or both dimensions +/-1,
+        //     except where this would exceed 2**log2MaxSize
+        // (c) Approximately 6*(sizePoints.length**2) random sizes
+        ArrayList<int[]> testSizesList = new ArrayList<int[]>();
+        // See seedsPerTestDescriptionCorrectness3D
+
+        final int seedForPickingTestSizes = td.seed * seedsPerTestDescriptionCorrectness;
+
+        // Fill in (a) and (b)
+        for (int i : sizePoints) {
+            final int iPwrOf2 = 1 << i;
+            for (int iDelta = -1; iDelta <= 1; ++iDelta) {
+                final int iSize = iPwrOf2 + iDelta;
+                for (int j : sizePoints) {
+                    final int jPwrOf2 = 1 << j;
+                    for (int jDelta = -1; jDelta <= 1; ++jDelta) {
+                        final int jSize = jPwrOf2 + jDelta;
+                        for (int k : sizePoints) {
+                            final int kPwrOf2 = 1 << k;
+                            for (int kDelta = -1; kDelta <= 1; ++kDelta) {
+                                final int kSize = kPwrOf2 + kDelta;
+                                if ((long)iSize * (long)jSize * (long)kSize <= maxSize)
+                                    testSizesList.add(new int[]{iSize, jSize, kSize});
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // Fill in (c)
+        Random r = new Random(seedForPickingTestSizes);
+        for (int i : sizePoints) {
+            for (int j : sizePoints) {
+                final int size0 = 1 + r.nextInt(1 << i);
+                final int size1 = 1 + r.nextInt(Math.min(1 << j, maxSize / size0));
+                final int size2 = 1 + r.nextInt(maxSize / (size0*size1));
+
+                testSizesList.add(new int[]{size0, size1, size2});
+                testSizesList.add(new int[]{size0, size2, size1});
+                testSizesList.add(new int[]{size1, size0, size2});
+                testSizesList.add(new int[]{size1, size2, size0});
+                testSizesList.add(new int[]{size2, size0, size1});
+                testSizesList.add(new int[]{size2, size1, size0});
+            }
+        }
+
+        int[][] testSizes = testSizesList.toArray(new int[0][]);
+        Arrays.sort(testSizes,
+                (a, b) -> {
+                    int comp = ((Integer)a[0]).compareTo(b[0]);
+                    if (comp == 0)
+                        comp = ((Integer)a[1]).compareTo(b[1]);
+                    if (comp == 0)
+                        comp = ((Integer)a[2]).compareTo(b[2]);
+                    return comp;
+                });
+
+        int[] lastTestSizeArg = null;
+        for (int i = 0; i < testSizes.length; ++i) {
+            if ((testSizes[i][0] <= 0) || (testSizes[i][1] <= 0) || (testSizes[i][2] <= 0))
+                continue;
+            if ((lastTestSizeArg != null) &&
+                (testSizes[i][0] == lastTestSizeArg[0]) &&
+                (testSizes[i][1] == lastTestSizeArg[1]) &&
+                (testSizes[i][2] == lastTestSizeArg[2]))
+                continue;
+            lastTestSizeArg = testSizes[i];
+            final int seedForTestExecution = seedForPickingTestSizes + 1 + i*maxSeedsPerTest;
+            pass &= run(td, RS, s, seedForTestExecution, lastTestSizeArg);
         }
 
         return pass;
@@ -783,6 +1103,7 @@ public class UT_reduce extends UnitTest {
     private final TestDescription[] performanceTests = {
         new TestDescription("addint1D", this::addint1D, 0, new int[]{100000 << 10}),
         new TestDescription("addint2D", this::addint2D, 1, new int[]{450 << 5, 225 << 5}),
+        new TestDescription("addint3D", this::addint3D, 2, new int[]{37 << 3, 48 << 3, 49 << 3}),
         new TestDescription("findMinAndMax", this::findMinAndMax, 3, new int[]{100000 << 9}),
         new TestDescription("fz", this::fz, 4, new int[]{100000 << 10}),
         new TestDescription("fz2", this::fz2, 5, new int[]{225 << 5, 450 << 5}),
@@ -825,3 +1146,5 @@ public class UT_reduce extends UnitTest {
             failTest();
     }
 }
+
+// TODO: Add machinery for easily running fuller (i.e., non-sparse) testing.

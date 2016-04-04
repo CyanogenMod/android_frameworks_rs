@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-/* Same as UT_reduce.java, except this test case exercises
- * pragmas after the functions (backward reference), and the other
- * test case exercises the pragmas before the functions (forward
- * reference).
+/* This is a much simpler version of UT_reduce.java that
+ * exercises pragmas after the functions (backward reference),
+ * whereas the other test case exercises the pragmas before the
+ * functions (forward reference).
  */
 
 package com.android.rs.test;
@@ -71,6 +71,16 @@ public class UT_reduce_backward extends UnitTest {
         Log.i(TAG,
                 testName + ": java " + javaRslt + ", rs " + rsRslt + ": " +
                 (success ? "PASSED" : "FAILED"));
+        return success;
+    }
+
+    private boolean result(String testName, Float2 javaRslt, Float2 rsRslt) {
+        final boolean success = (javaRslt.x == rsRslt.x) && (javaRslt.y == rsRslt.y);
+        Log.i(TAG,
+                testName +
+                ": java (" + javaRslt.x + ", " + javaRslt.y + ")" +
+                ", rs (" + rsRslt.x + ", " + rsRslt.y + ")" +
+                ": " + (success ? "PASSED" : "FAILED"));
         return success;
     }
 
@@ -145,7 +155,13 @@ public class UT_reduce_backward extends UnitTest {
         final Int2 javaRslt = findMinAndMax(input);
         final Int2 rsRslt = s.reduce_findMinAndMax(input).get();
 
-        return result("findMinAndMax", javaRslt, rsRslt);
+        // Note that the Java and RenderScript algorithms are not
+        // guaranteed to find the same cells -- but they should
+        // find cells of the same value.
+        final Float2 javaVal = new Float2(input[javaRslt.x], input[javaRslt.y]);
+        final Float2 rsVal = new Float2(input[rsRslt.x], input[rsRslt.y]);
+
+        return result("findMinAndMax", javaVal, rsVal);
     }
 
     ///////////////////////////////////////////////////////////////////
