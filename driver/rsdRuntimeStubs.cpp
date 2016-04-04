@@ -1122,6 +1122,33 @@ void rsDebug(const char *s, const float4 *f4) {
     ALOGD("%s {%f, %f, %f, %f}", s, f.x, f.y, f.z, f.w);
 }
 
+// Accept a half value converted to float.  This eliminates the need in the
+// driver to properly support the half datatype (either by adding compiler flags
+// for half or link against compiler_rt).
+void rsDebug(const char *s, float f, ushort us) {
+    ALOGD("%s {%f} {0x%hx}", s, f, us);
+}
+
+void rsDebug(const char *s, const float2 *f2, const ushort2 *us2) {
+    float2 f = *f2;
+    ushort2 us = *us2;
+    ALOGD("%s {%f %f} {0x%hx 0x%hx}", s, f.x, f.y, us.x, us.y);
+}
+
+void rsDebug(const char *s, const float3 *f3, const ushort3 *us3) {
+    float3 f = *f3;
+    ushort3 us = *us3;
+    ALOGD("%s {%f %f %f} {0x%hx 0x%hx 0x%hx}", s, f.x, f.y, f.z, us.x, us.y,
+          us.z);
+}
+
+void rsDebug(const char *s, const float4 *f4, const ushort4 *us4) {
+    float4 f = *f4;
+    ushort4 us = *us4;
+    ALOGD("%s {%f %f %f %f} {0x%hx 0x%hx 0x%hx 0x%hx}", s, f.x, f.y, f.z, f.w,
+          us.x, us.y, us.z, us.w);
+}
+
 void rsDebug(const char *s, double d) {
     ALOGD("%s %f, 0x%08llx", s, d, *((long long *) (&d)));
 }
