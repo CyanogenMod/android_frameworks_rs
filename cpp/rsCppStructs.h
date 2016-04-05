@@ -435,7 +435,6 @@ class Double4 {
     pid_t mNativeMessageThreadId;
     bool mMessageRun;
 
-    RsDevice mDev;
     RsContext mContext;
     RSError mCurrentError;
 

@@ -42,7 +42,6 @@ dispatchTable* RS::dispatch = nullptr;
 static int gInitError = 0;
 
 RS::RS() {
-    mDev = nullptr;
     mContext = nullptr;
     mErrorFunc = nullptr;
     mMessageFunc = nullptr;
@@ -67,10 +66,6 @@ RS::~RS() {
 
             RS::dispatch->ContextDestroy(mContext);
             mContext = nullptr;
-        }
-        if (mDev) {
-            RS::dispatch->DeviceDestroy(mDev);
-            mDev = nullptr;
         }
     }
 }
@@ -164,8 +159,8 @@ bool RS::init(const char * name, uint32_t flags, int targetApi) {
     mCacheDir[nameLen] = 0;
     mCacheDirLen = nameLen + 1;
 
-    mDev = RS::dispatch->DeviceCreate();
-    if (mDev == 0) {
+    RsDevice device = RS::dispatch->DeviceCreate();
+    if (device == 0) {
         ALOGE("Device creation failed");
         return false;
     }
@@ -176,7 +171,7 @@ bool RS::init(const char * name, uint32_t flags, int targetApi) {
         return false;
     }
 
-    mContext = RS::dispatch->ContextCreate(mDev, 0, targetApi, RS_CONTEXT_TYPE_NORMAL, flags);
+    mContext = RS::dispatch->ContextCreate(device, 0, targetApi, RS_CONTEXT_TYPE_NORMAL, flags);
     if (mContext == 0) {
         ALOGE("Context creation failed");
         return false;
