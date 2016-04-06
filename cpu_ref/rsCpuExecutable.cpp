@@ -300,7 +300,7 @@ static char* strgets(char *s, int size, const char **ppstr) {
 }
 
 ScriptExecutable* ScriptExecutable::createFromSharedObject(
-    Context* RSContext, void* sharedObj, uint32_t expectedChecksum) {
+    void* sharedObj, uint32_t expectedChecksum) {
     char line[MAXLINE];
 
     size_t varCount = 0;
@@ -721,7 +721,7 @@ ScriptExecutable* ScriptExecutable::createFromSharedObject(
     }
 
     return new ScriptExecutable(
-        RSContext, fieldAddress, fieldIsObject, fieldName, varCount,
+        fieldAddress, fieldIsObject, fieldName, varCount,
         invokeFunctions, funcCount,
         forEachFunctions, forEachSignatures, forEachCount,
         reduceFunctions, reduceCount,

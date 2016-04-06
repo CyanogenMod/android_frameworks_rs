@@ -154,7 +154,7 @@ void rsrClearObject(const Context *rsc, void *dst) {
     *odst = nullptr;
 }
 
-void rsrClearObject(const Context *rsc, rs_object_base *dst) {
+void rsrClearObject(rs_object_base *dst) {
     if (ObjectBase::gDebugReferences) {
         ALOGE("rsrClearObject  %p,%p", dst, dst->p);
     }

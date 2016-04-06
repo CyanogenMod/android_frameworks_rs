@@ -140,7 +140,7 @@ uint32_t rsrToClientBlocking(Context *, int cmdID, const void *data, int len);
 //////////////////////////////////////////////////////////////////////////////
 
 void rsrSetObject(const Context *, rs_object_base *dst, const ObjectBase *src);
-void rsrClearObject(const Context *, rs_object_base *dst);
+void rsrClearObject(rs_object_base *dst);
 
 bool rsrIsObject(const Context *, rs_object_base src);
 bool rsrIsObject(const Context *, ObjectBase* src);

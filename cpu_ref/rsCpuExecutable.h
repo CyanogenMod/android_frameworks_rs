@@ -62,8 +62,7 @@ private:
 
 class ScriptExecutable {
 public:
-    ScriptExecutable(Context* RSContext,
-                     void** fieldAddress, bool* fieldIsObject,
+    ScriptExecutable(void** fieldAddress, bool* fieldIsObject,
                      const char* const * fieldName, size_t varCount,
                      InvokeFunc_t* invokeFunctions, size_t funcCount,
                      ForEachFunc_t* forEachFunctions, uint32_t* forEachSignatures,
@@ -87,8 +86,7 @@ public:
         mPragmaCount(pragmaCount), mGlobalNames(globalNames),
         mGlobalAddresses(globalAddresses), mGlobalSizes(globalSizes),
         mGlobalProperties(globalProperties), mGlobalEntries(globalEntries),
-        mIsThreadable(isThreadable), mBuildChecksum(buildChecksum),
-        mRS(RSContext) {
+        mIsThreadable(isThreadable), mBuildChecksum(buildChecksum) {
     }
 
     ~ScriptExecutable() {
@@ -97,7 +95,7 @@ public:
                 if (mFieldAddress[i] != nullptr) {
                     rs_object_base *obj_addr =
                             reinterpret_cast<rs_object_base *>(mFieldAddress[i]);
-                    rsrClearObject(mRS, obj_addr);
+                    rsrClearObject(obj_addr);
                 }
             }
         }
@@ -131,7 +129,7 @@ public:
     // embedded in the shared object. A mismatch will cause a failure.
     // If succeeded, returns the new object. Otherwise, returns nullptr.
     static ScriptExecutable*
-            createFromSharedObject(Context* RSContext, void* sharedObj,
+            createFromSharedObject(void* sharedObj,
                                    uint32_t expectedChecksum = 0);
 
     size_t getExportedVariableCount() const { return mExportedVarCount; }
@@ -227,8 +225,6 @@ private:
 
     bool mIsThreadable;
     uint32_t mBuildChecksum;
-
-    Context* mRS;
 };
 
 }  // namespace renderscript

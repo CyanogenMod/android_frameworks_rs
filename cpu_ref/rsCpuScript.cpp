@@ -273,8 +273,7 @@ bool RsdCpuScriptImpl::storeRSInfoFromSO() {
     // The shared object may have an invalid build checksum.
     // Validate and fail early.
     mScriptExec = ScriptExecutable::createFromSharedObject(
-            mCtx->getContext(), mScriptSO,
-            mChecksumNeeded ? mBuildChecksum : 0);
+            mScriptSO, mChecksumNeeded ? mBuildChecksum : 0);
 
     if (mScriptExec == nullptr) {
         return false;

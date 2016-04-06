@@ -432,7 +432,7 @@ void CpuScriptGroup2Impl::compile(const char* cacheDir) {
         // cacheDir, and loaded with the handle stored in mScriptObj.
 
         mExecutable = ScriptExecutable::createFromSharedObject(
-            getCpuRefImpl()->getContext(), mScriptObj, checksum);
+            mScriptObj, checksum);
 
         if (mExecutable != nullptr) {
             // The loaded shared library in mScriptObj has a matching checksum.
@@ -505,9 +505,7 @@ void CpuScriptGroup2Impl::compile(const char* cacheDir) {
         unlink(cloneFilePath.c_str());
     }
 
-    mExecutable = ScriptExecutable::createFromSharedObject(
-        getCpuRefImpl()->getContext(),
-        mScriptObj);
+    mExecutable = ScriptExecutable::createFromSharedObject(mScriptObj);
 
 #endif  // RS_COMPATIBILITY_LIB
 }

@@ -1,4 +1,5 @@
 ContextDestroy {
+    direct
 }
 
 ContextGetMessage {
