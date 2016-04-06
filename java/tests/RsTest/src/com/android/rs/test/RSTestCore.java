@@ -99,6 +99,7 @@ public class RSTestCore {
         unitTests.add(new UT_math_agree(this, mRes, mCtx));
         unitTests.add(new UT_fp16(this, mRes, mCtx));
         unitTests.add(new UT_math_fp16(this, mRes, mCtx));
+        unitTests.add(new UT_fp16_globals(this, mRes, mCtx));
         unitTests.add(new UT_min(this, mRes, mCtx));
         unitTests.add(new UT_int4(this, mRes, mCtx));
         unitTests.add(new UT_element(this, mRes, mCtx));
