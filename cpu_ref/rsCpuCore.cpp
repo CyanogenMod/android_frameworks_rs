@@ -373,7 +373,6 @@ static uint32_t sliceInt(uint32_t *p, uint32_t val, uint32_t start, uint32_t end
 }
 
 static bool SelectOuterSlice(const MTLaunchStructCommon *mtls, RsExpandKernelDriverInfo* info, uint32_t sliceNum) {
-
     uint32_t r = sliceNum;
     r = sliceInt(&info->current.z, r, mtls->start.z, mtls->end.z);
     r = sliceInt(&info->current.lod, r, mtls->start.lod, mtls->end.lod);
@@ -385,13 +384,15 @@ static bool SelectOuterSlice(const MTLaunchStructCommon *mtls, RsExpandKernelDri
     return r == 0;
 }
 
+static bool SelectZSlice(const MTLaunchStructCommon *mtls, RsExpandKernelDriverInfo* info, uint32_t sliceNum) {
+    return sliceInt(&info->current.z, sliceNum, mtls->start.z, mtls->end.z) == 0;
+}
 
-static void walk_general(void *usr, uint32_t idx) {
+static void walk_general_foreach(void *usr, uint32_t idx) {
     MTLaunchStructForEach *mtls = (MTLaunchStructForEach *)usr;
     RsExpandKernelDriverInfo fep = mtls->fep;
     fep.lid = idx;
     ForEachFunc_t fn = mtls->kernel;
-
 
     while(1) {
         uint32_t slice = (uint32_t)__sync_fetch_and_add(&mtls->mSliceNum, 1);
@@ -412,10 +413,9 @@ static void walk_general(void *usr, uint32_t idx) {
             fn(&fep, mtls->start.x, mtls->end.x, mtls->fep.outStride[0]);
         }
     }
-
 }
 
-static void walk_2d(void *usr, uint32_t idx) {
+static void walk_2d_foreach(void *usr, uint32_t idx) {
     MTLaunchStructForEach *mtls = (MTLaunchStructForEach *)usr;
     RsExpandKernelDriverInfo fep = mtls->fep;
     fep.lid = idx;
@@ -506,6 +506,30 @@ static const char *format_bytes(FormatBuf *outBuf, const uint8_t *inBuf, const i
   return *outBuf;
 }
 
+static void reduce_new_get_accumulator(uint8_t *&accumPtr, const MTLaunchStructReduceNew *mtls,
+                                       const char *walkerName, uint32_t threadIdx) {
+  rsAssert(!accumPtr);
+
+  uint32_t accumIdx = (uint32_t)__sync_fetch_and_add(&mtls->accumCount, 1);
+  if (mtls->outFunc) {
+    accumPtr = mtls->accumAlloc + mtls->accumStride * accumIdx;
+  } else {
+    if (accumIdx == 0) {
+      accumPtr = mtls->redp.outPtr[0];
+    } else {
+      accumPtr = mtls->accumAlloc + mtls->accumStride * (accumIdx - 1);
+    }
+  }
+  REDUCE_NEW_ALOGV(mtls, 2, "%s(%p): idx = %u got accumCount %u and accumPtr %p",
+                   walkerName, mtls->accumFunc, threadIdx, accumIdx, accumPtr);
+  // initialize accumulator
+  if (mtls->initFunc) {
+    mtls->initFunc(accumPtr);
+  } else {
+    memset(accumPtr, 0, mtls->accumSize);
+  }
+}
+
 static void walk_1d_reduce_new(void *usr, uint32_t idx) {
   const MTLaunchStructReduceNew *mtls = (const MTLaunchStructReduceNew *)usr;
   RsExpandKernelDriverInfo redp = mtls->redp;
@@ -513,24 +537,7 @@ static void walk_1d_reduce_new(void *usr, uint32_t idx) {
   // find accumulator
   uint8_t *&accumPtr = mtls->accumPtr[idx];
   if (!accumPtr) {
-    uint32_t accumIdx = (uint32_t)__sync_fetch_and_add(&mtls->accumCount, 1);
-    if (mtls->outFunc) {
-      accumPtr = mtls->accumAlloc + mtls->accumStride * accumIdx;
-    } else {
-      if (accumIdx == 0) {
-        accumPtr = mtls->redp.outPtr[0];
-      } else {
-        accumPtr = mtls->accumAlloc + mtls->accumStride * (accumIdx - 1);
-      }
-    }
-    REDUCE_NEW_ALOGV(mtls, 2, "walk_1d_reduce_new(%p): idx = %u got accumCount %u and accumPtr %p",
-                     mtls->accumFunc, idx, accumIdx, accumPtr);
-    // initialize accumulator
-    if (mtls->initFunc) {
-      mtls->initFunc(accumPtr);
-    } else {
-      memset(accumPtr, 0, mtls->accumSize);
-    }
+    reduce_new_get_accumulator(accumPtr, mtls, __func__, idx);
   }
 
   // accumulate
@@ -549,14 +556,90 @@ static void walk_1d_reduce_new(void *usr, uint32_t idx) {
     RedpPtrSetup(mtls, &redp, xStart, 0, 0);
     fn(&redp, xStart, xEnd, accumPtr);
 
+    // Emit log line after slice has been run, so that we can include
+    // the results of the run on that line.
     FormatBuf fmt;
     if (mtls->logReduce >= 3) {
       format_bytes(&fmt, accumPtr, mtls->accumSize);
     } else {
       fmt[0] = 0;
     }
-    REDUCE_NEW_ALOGV(mtls, 2, "walk_1d_reduce_new(%p): idx = %u [%u, %u)%s",
+    REDUCE_NEW_ALOGV(mtls, 2, "walk_1d_reduce_new(%p): idx = %u, x in [%u, %u)%s",
                      mtls->accumFunc, idx, xStart, xEnd, fmt);
+  }
+}
+
+static void walk_2d_reduce_new(void *usr, uint32_t idx) {
+  const MTLaunchStructReduceNew *mtls = (const MTLaunchStructReduceNew *)usr;
+  RsExpandKernelDriverInfo redp = mtls->redp;
+
+  // find accumulator
+  uint8_t *&accumPtr = mtls->accumPtr[idx];
+  if (!accumPtr) {
+    reduce_new_get_accumulator(accumPtr, mtls, __func__, idx);
+  }
+
+  // accumulate
+  const ReduceNewAccumulatorFunc_t fn = mtls->accumFunc;
+  while (1) {
+    uint32_t slice  = (uint32_t)__sync_fetch_and_add(&mtls->mSliceNum, 1);
+    uint32_t yStart = mtls->start.y + slice * mtls->mSliceSize;
+    uint32_t yEnd   = yStart + mtls->mSliceSize;
+
+    yEnd = rsMin(yEnd, mtls->end.y);
+
+    if (yEnd <= yStart) {
+      return;
+    }
+
+    for (redp.current.y = yStart; redp.current.y < yEnd; redp.current.y++) {
+      RedpPtrSetup(mtls, &redp, mtls->start.x, redp.current.y, 0);
+      fn(&redp, mtls->start.x, mtls->end.x, accumPtr);
+    }
+
+    FormatBuf fmt;
+    if (mtls->logReduce >= 3) {
+      format_bytes(&fmt, accumPtr, mtls->accumSize);
+    } else {
+      fmt[0] = 0;
+    }
+    REDUCE_NEW_ALOGV(mtls, 2, "walk_2d_reduce_new(%p): idx = %u, y in [%u, %u)%s",
+                     mtls->accumFunc, idx, yStart, yEnd, fmt);
+  }
+}
+
+static void walk_3d_reduce_new(void *usr, uint32_t idx) {
+  const MTLaunchStructReduceNew *mtls = (const MTLaunchStructReduceNew *)usr;
+  RsExpandKernelDriverInfo redp = mtls->redp;
+
+  // find accumulator
+  uint8_t *&accumPtr = mtls->accumPtr[idx];
+  if (!accumPtr) {
+    reduce_new_get_accumulator(accumPtr, mtls, __func__, idx);
+  }
+
+  // accumulate
+  const ReduceNewAccumulatorFunc_t fn = mtls->accumFunc;
+  while (1) {
+    uint32_t slice  = (uint32_t)__sync_fetch_and_add(&mtls->mSliceNum, 1);
+
+    if (!SelectZSlice(mtls, &redp, slice)) {
+      return;
+    }
+
+    for (redp.current.y = mtls->start.y; redp.current.y < mtls->end.y; redp.current.y++) {
+      RedpPtrSetup(mtls, &redp, mtls->start.x, redp.current.y, redp.current.z);
+      fn(&redp, mtls->start.x, mtls->end.x, accumPtr);
+    }
+
+    FormatBuf fmt;
+    if (mtls->logReduce >= 3) {
+      format_bytes(&fmt, accumPtr, mtls->accumSize);
+    } else {
+      fmt[0] = 0;
+    }
+    REDUCE_NEW_ALOGV(mtls, 2, "walk_3d_reduce_new(%p): idx = %u, z = %u%s",
+                     mtls->accumFunc, idx, redp.current.z, fmt);
   }
 }
 
@@ -652,8 +735,8 @@ void RsdCpuReferenceImpl::launchReduceNewParallel(const Allocation ** ains,
                                                   uint32_t inLen,
                                                   Allocation * aout,
                                                   MTLaunchStructReduceNew *mtls) {
-  // For now, we don't know how to go parallel beyond 1D, or in the absence of a combiner.
-  if ((mtls->redp.dim.y > 1) || (mtls->redp.dim.z > 1) || !mtls->combFunc) {
+  // For now, we don't know how to go parallel in the absence of a combiner.
+  if (!mtls->combFunc) {
     launchReduceNewSerial(ains, inLen, aout, mtls);
     return;
   }
@@ -692,12 +775,20 @@ void RsdCpuReferenceImpl::launchReduceNewParallel(const Allocation ** ains,
 
   rsAssert(!mInKernel);
   mInKernel = true;
-  mtls->mSliceSize = rsMax(1U, mtls->redp.dim.x / (numThreads * 4));
   REDUCE_NEW_ALOGV(mtls, 1, "launchReduceNewParallel(%p): %u x %u x %u, %u threads, accumAlloc = %p",
                    mtls->accumFunc,
                    mtls->redp.dim.x, mtls->redp.dim.y, mtls->redp.dim.z,
                    numThreads, mtls->accumAlloc);
-  launchThreads(walk_1d_reduce_new, mtls);
+  if (mtls->redp.dim.z > 1) {
+    mtls->mSliceSize = 1;
+    launchThreads(walk_3d_reduce_new, mtls);
+  } else if (mtls->redp.dim.y > 1) {
+    mtls->mSliceSize = rsMax(1U, mtls->redp.dim.y / (numThreads * 4));
+    launchThreads(walk_2d_reduce_new, mtls);
+  } else {
+    mtls->mSliceSize = rsMax(1U, mtls->redp.dim.x / (numThreads * 4));
+    launchThreads(walk_1d_reduce_new, mtls);
+  }
   mInKernel = false;
 
   // Combine accumulators and identify final accumulator
@@ -774,7 +865,7 @@ void RsdCpuReferenceImpl::launchForEach(const Allocation ** ains,
         if (outerDims) {
             // No fancy logic for chunk size
             mtls->mSliceSize = 1;
-            launchThreads(walk_general, mtls);
+            launchThreads(walk_general_foreach, mtls);
         } else if (mtls->fep.dim.y > 1) {
             uint32_t s1 = mtls->fep.dim.y / ((mWorkers.mCount + 1) * 4);
             uint32_t s2 = 0;
@@ -796,7 +887,7 @@ void RsdCpuReferenceImpl::launchForEach(const Allocation ** ains,
                 mtls->mSliceSize = 1;
             }
 
-            launchThreads(walk_2d, mtls);
+            launchThreads(walk_2d_foreach, mtls);
         } else {
             uint32_t s1 = mtls->fep.dim.x / ((mWorkers.mCount + 1) * 4);
             uint32_t s2 = 0;
