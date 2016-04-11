@@ -315,6 +315,33 @@ public class UT_reduce extends UnitTest {
         return success;
     }
 
+    private boolean patternInterleavedReduce(RenderScript RS, ScriptC_reduce s) {
+        // Run two reduce operations without forcing completion between them.
+        // We want to ensure that the driver can handle this, and that
+        // temporary Allocations created to run the reduce operations survive
+        // until get().
+
+        boolean pass = true;
+
+        final int inputSize = (1 << 18);
+
+        final int[] input1 = createInputArrayInt(123, Integer.MAX_VALUE / inputSize);
+        final int[] input2 = createInputArrayInt(456, Integer.MAX_VALUE / inputSize);
+
+        final int javaRslt1 = addint(input1);
+        final int javaRslt2 = addint(input2);
+
+        final ScriptC_reduce.result_int rsRsltFuture1 = s.reduce_addint(input1);
+        final ScriptC_reduce.result_int rsRsltFuture2 = s.reduce_addint(input2);
+
+        pass &= result("patternInterleavedReduce (1)", new timing(inputSize),
+                javaRslt1, rsRsltFuture1.get());
+        pass &= result("patternInterleavedReduce (2)", new timing(inputSize),
+                javaRslt2, rsRsltFuture2.get());
+
+        return pass;
+    }
+
     ///////////////////////////////////////////////////////////////////
 
     private Int2 findMinAndMax(float[] input) {
@@ -602,6 +629,33 @@ public class UT_reduce extends UnitTest {
                         javaRslt, rsRslt);
         inputAllocation.destroy();
         return success;
+    }
+
+    private boolean patternRedundantGet(RenderScript RS, ScriptC_reduce s) {
+        // Ensure that get() can be called multiple times on the same
+        // result, and returns the same object each time.
+
+        boolean pass = true;
+
+        final int inputLength = 1 << 18;
+        final byte[] inputArray = createInputArrayByte(inputLength, 789);
+
+        final long[] javaRslt = histogram(RS, inputArray);
+        assertEquals("javaRslt length", histogramBucketCount, javaRslt.length);
+
+        final ScriptC_reduce.resultArray256_uint rsRsltFuture = s.reduce_histogram(inputArray);
+        final long[] rsRslt1 = rsRsltFuture.get();
+        assertEquals("rsRslt1 length", histogramBucketCount, rsRslt1.length);
+        pass &= result("patternRedundantGet (1)", new timing(inputLength), javaRslt, rsRslt1);
+
+        final long[] rsRslt2 = rsRsltFuture.get();
+        pass &= result("patternRedundantGet (2)", new timing(inputLength), javaRslt, rsRslt2);
+
+        final boolean success = (rsRslt1 == rsRslt2);
+        Log.i(TAG, "patternRedundantGet (object equality): " + (success ? "PASSED" : "FAILED"));
+        pass &= success;
+
+        return pass;
     }
 
     //-----------------------------------------------------------------
@@ -1123,6 +1177,15 @@ public class UT_reduce extends UnitTest {
         return pass;
     }
 
+    private boolean runCorrectnessPatterns(RenderScript RS, ScriptC_reduce s) {
+        // Test some very specific usage patterns.
+        boolean pass = true;
+
+        pass &= patternInterleavedReduce(RS, s);
+        pass &= patternRedundantGet(RS, s);
+
+        return pass;
+    }
 
     public void run() {
         RenderScript pRS = RenderScript.create(mCtx);
@@ -1132,6 +1195,7 @@ public class UT_reduce extends UnitTest {
 
         boolean pass = true;
 
+        pass &= runCorrectnessPatterns(pRS, s);
         pass &= runCorrectnessQuick(pRS, s);
         pass &= runCorrectness(pRS, s);
         // pass &= runPerformanceQuick(pRS, s);
