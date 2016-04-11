@@ -145,6 +145,15 @@ public class UT_reduce extends UnitTest {
         return array;
     }
 
+    private long[] intArrayToLong(final int[] input) {
+        final long[] output = new long[input.length];
+
+        for (int i = 0; i < input.length; ++i)
+            output[i] = input[i];
+
+        return output;
+    }
+
     private <T extends Number> boolean result(String testName, final timing t,
                                               T javaRslt, T rsRslt) {
         final boolean success = javaRslt.equals(rsRslt);
@@ -174,6 +183,11 @@ public class UT_reduce extends UnitTest {
             status += " " + t.string();
         Log.i(TAG, testName + ": " + status);
         return true;
+    }
+
+    private boolean result(String testName, final timing t,
+                           final int[] javaRslt, final int[] rsRslt) {
+        return result(testName, t, intArrayToLong(javaRslt), intArrayToLong(rsRslt));
     }
 
     private boolean result(String testName, final timing t, Int2 javaRslt, Int2 rsRslt) {
@@ -315,6 +329,8 @@ public class UT_reduce extends UnitTest {
         return success;
     }
 
+    //-----------------------------------------------------------------
+
     private boolean patternInterleavedReduce(RenderScript RS, ScriptC_reduce s) {
         // Run two reduce operations without forcing completion between them.
         // We want to ensure that the driver can handle this, and that
@@ -338,6 +354,45 @@ public class UT_reduce extends UnitTest {
                 javaRslt1, rsRsltFuture1.get());
         pass &= result("patternInterleavedReduce (2)", new timing(inputSize),
                 javaRslt2, rsRsltFuture2.get());
+
+        return pass;
+    }
+
+    //-----------------------------------------------------------------
+
+    private int[] sillySumIntoDecArray(final int[] input) {
+        final int resultScalar = addint(input);
+        final int[] result = new int[4];
+        for (int i = 0; i < 4; ++i)
+            result[i] = resultScalar/(i+1);
+        return result;
+    }
+
+    private int[] sillySumIntoIncArray(final int[] input) {
+        final int resultScalar = addint(input);
+        final int[] result = new int[4];
+        for (int i = 0; i < 4; ++i)
+            result[i] = resultScalar/(4-i);
+        return result;
+    }
+
+    private boolean patternDuplicateAnonymousResult(RenderScript RS, ScriptC_reduce s) {
+        // Ensure that we can have two kernels with the same anonymous result type.
+
+        boolean pass = true;
+
+        final int inputSize = 1000;
+        final int[] input = createInputArrayInt(149, Integer.MAX_VALUE / inputSize);
+
+        final int[] javaRsltDec = sillySumIntoDecArray(input);
+        final int[] rsRsltDec = s.reduce_sillySumIntoDecArray(input).get();
+        pass &= result("patternDuplicateAnonymousResult (Dec)", new timing(inputSize),
+                javaRsltDec, rsRsltDec);
+
+        final int[] javaRsltInc = sillySumIntoIncArray(input);
+        final int[] rsRsltInc = s.reduce_sillySumIntoIncArray(input).get();
+        pass &= result("patternDuplicateAnonymousResult (Inc)", new timing(inputSize),
+                javaRsltInc, rsRsltInc);
 
         return pass;
     }
@@ -630,6 +685,8 @@ public class UT_reduce extends UnitTest {
         inputAllocation.destroy();
         return success;
     }
+
+    //-----------------------------------------------------------------
 
     private boolean patternRedundantGet(RenderScript RS, ScriptC_reduce s) {
         // Ensure that get() can be called multiple times on the same
@@ -1181,6 +1238,7 @@ public class UT_reduce extends UnitTest {
         // Test some very specific usage patterns.
         boolean pass = true;
 
+        pass &= patternDuplicateAnonymousResult(RS, s);
         pass &= patternInterleavedReduce(RS, s);
         pass &= patternRedundantGet(RS, s);
 
