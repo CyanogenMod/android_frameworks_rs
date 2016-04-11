@@ -166,6 +166,11 @@ void rsrClearObject(rs_object_base *dst) {
 }
 
 // Legacy, remove when drivers are updated
+void rsrClearObject(const Context *rsc, rs_object_base *dst) {
+    rsrClearObject(dst);
+}
+
+// Legacy, remove when drivers are updated
 void rsrSetObject(const Context *rsc, void *dst, ObjectBase *src) {
     if (src == nullptr) {
         rsrClearObject(rsc, dst);
