@@ -1,6 +1,7 @@
 #include "shared.rsh"
 
-// Same as reduce_backward.rs, except this test case places the
+// Kernels are the same as in reduce_backward.rs, except that this
+// test case has more kernels; however, this test case places the
 // pragmas before the functions (forward reference), and the other
 // test case places the pragmas after the functions (backward
 // reference).
@@ -171,3 +172,22 @@ static void sgAccum(long *accum, int a, int b) {
 }
 
 static void sgCombine(long *accum, const long *other) { *accum += *other; }
+
+/////////////////////////////////////////////////////////////////////////
+
+// These two kernels have anonymous result types that are equivalent.
+// slang doesn't common them (i.e., each gets its own RSExportType);
+// so Java reflection must guard against this to avoid creating two
+// copies of the text that defines the reflected class resultArray4_int.
+
+#pragma rs reduce(sillySumIntoDecArray) accumulator(aiAccum) outconverter(outSillySumIntoDecArray)
+static void outSillySumIntoDecArray(int (*out)[4], const int *accumDatum) {
+  for (int i = 0; i < 4; ++i)
+    (*out)[i] = (*accumDatum)/(i+1);
+}
+
+#pragma rs reduce(sillySumIntoIncArray) accumulator(aiAccum) outconverter(outSillySumIntoIncArray)
+static void outSillySumIntoIncArray(int (*out)[4], const int *accumDatum) {
+  for (int i = 0; i < 4; ++i)
+    (*out)[i] = (*accumDatum)/(4-i);
+}

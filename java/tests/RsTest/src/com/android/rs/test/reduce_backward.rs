@@ -1,6 +1,7 @@
 #include "shared.rsh"
 
-// Same as reduce.rs, except this test case places the pragmas after
+// Kernels are the same as in reduce.rs, except that this test case
+// has fewer kernels; however, this test case places the pragmas after
 // the functions (backward reference), and the other test case places
 // the pragmas before the functions (forward reference).
 
