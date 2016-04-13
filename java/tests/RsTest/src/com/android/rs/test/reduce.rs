@@ -1,10 +1,10 @@
 #include "shared.rsh"
 
-// Kernels are the same as in reduce_backward.rs, except that this
-// test case has more kernels; however, this test case places the
-// pragmas before the functions (forward reference), and the other
-// test case places the pragmas after the functions (backward
-// reference).
+// Has the same kernels as reduce_backward.rs, plus some others.
+//
+// This test case places the pragmas before the functions (forward
+// reference), and the other test case places the pragmas after the
+// functions (backward reference).
 
 float negInf, posInf;
 
@@ -190,4 +190,73 @@ static void outSillySumIntoDecArray(int (*out)[4], const int *accumDatum) {
 static void outSillySumIntoIncArray(int (*out)[4], const int *accumDatum) {
   for (int i = 0; i < 4; ++i)
     (*out)[i] = (*accumDatum)/(4-i);
+}
+
+/////////////////////////////////////////////////////////////////////////
+
+// finds min values (not their locations) from matrix input
+
+// tests matrix input and matrix accumulator
+
+// also tests calling conventions for two different composite types
+// rs_matrix2x2: 32-bit coerces this to an int array
+//               64-bit coerces this to float array
+// rs_matrix4x4: 64-bit passes this by reference
+
+//.......................................................................
+
+#pragma rs reduce(findMinMat2) \
+  initializer(fMinMat2Init) accumulator(fMinMat2Accumulator) \
+  outconverter(fMinMat2OutConverter)
+
+static void fMinMat2Init(rs_matrix2x2 *accum) {
+  for (int i = 0; i < 2; ++i)
+    for (int j = 0; j < 2; ++j)
+      rsMatrixSet(accum, i, j, posInf);
+}
+
+static void fMinMat2Accumulator(rs_matrix2x2 *accum, rs_matrix2x2 val) {
+  for (int i = 0; i < 2; ++i) {
+    for (int j = 0; j < 2; ++j) {
+      const float accumElt = rsMatrixGet(accum, i, j);
+      const float valElt = rsMatrixGet(&val, i, j);
+      if (valElt < accumElt)
+        rsMatrixSet(accum, i, j, valElt);
+    }
+  }
+}
+
+// reduction does not support matrix result, so use array instead
+static void fMinMat2OutConverter(float (*result)[4],  const rs_matrix2x2 *accum) {
+  for (int i = 0; i < 4; ++i)
+    (*result)[i] = accum->m[i];
+}
+
+//.......................................................................
+
+#pragma rs reduce(findMinMat4) \
+  initializer(fMinMat4Init) accumulator(fMinMat4Accumulator) \
+  outconverter(fMinMat4OutConverter)
+
+static void fMinMat4Init(rs_matrix4x4 *accum) {
+  for (int i = 0; i < 4; ++i)
+    for (int j = 0; j < 4; ++j)
+      rsMatrixSet(accum, i, j, posInf);
+}
+
+static void fMinMat4Accumulator(rs_matrix4x4 *accum, rs_matrix4x4 val) {
+  for (int i = 0; i < 4; ++i) {
+    for (int j = 0; j < 4; ++j) {
+      const float accumElt = rsMatrixGet(accum, i, j);
+      const float valElt = rsMatrixGet(&val, i, j);
+      if (valElt < accumElt)
+        rsMatrixSet(accum, i, j, valElt);
+    }
+  }
+}
+
+// reduction does not support matrix result, so use array instead
+static void fMinMat4OutConverter(float (*result)[16],  const rs_matrix4x4 *accum) {
+  for (int i = 0; i < 16; ++i)
+    (*result)[i] = accum->m[i];
 }

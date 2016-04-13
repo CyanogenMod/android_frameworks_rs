@@ -1,9 +1,10 @@
 #include "shared.rsh"
 
-// Kernels are the same as in reduce.rs, except that this test case
-// has fewer kernels; however, this test case places the pragmas after
-// the functions (backward reference), and the other test case places
-// the pragmas before the functions (forward reference).
+// Has a subset of the kernels from reduce.rs.
+//
+// This test case places the pragmas after the functions (backward
+// reference), and the other test case places the pragmas before the
+// functions (forward reference).
 
 float negInf, posInf;
 

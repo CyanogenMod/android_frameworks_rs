@@ -165,6 +165,27 @@ public class UT_reduce extends UnitTest {
     }
 
     private boolean result(String testName, final timing t,
+                           final float[] javaRslt, final float[] rsRslt) {
+        if (javaRslt.length != rsRslt.length) {
+            Log.i(TAG, testName + ": java length " + javaRslt.length +
+                       ", rs length " + rsRslt.length + ": FAILED");
+            return false;
+        }
+        for (int i = 0; i < javaRslt.length; ++i) {
+            if (javaRslt[i] != rsRslt[i]) {
+                Log.i(TAG, testName + "[" + i + "]: java " + javaRslt[i] +
+                           ", rs " + rsRslt[i] + ": FAILED");
+                return false;
+            }
+        }
+        String status = "PASSED";
+        if (t != null)
+            status += " " + t.string();
+        Log.i(TAG, testName + ": " + status);
+        return true;
+    }
+
+    private boolean result(String testName, final timing t,
                            final long[] javaRslt, final long[] rsRslt) {
         if (javaRslt.length != rsRslt.length) {
             Log.i(TAG, testName + ": java length " + javaRslt.length +
@@ -466,6 +487,68 @@ public class UT_reduce extends UnitTest {
                         javaVal, rsVal);
         inputAllocation.destroy();
         return success;
+    }
+
+    ///////////////////////////////////////////////////////////////////
+
+    // Both the input and the result are linearized representations of matSize*matSize matrices.
+    private float[] findMinMat(final float[] inputArray, final int matSize) {
+        final int matSizeSquared = matSize*matSize;
+
+        float[] result = new float[matSizeSquared];
+        for (int i = 0; i < matSizeSquared; ++i)
+            result[i] = Float.POSITIVE_INFINITY;
+
+        for (int i = 0; i < inputArray.length; ++i)
+            result[i % matSizeSquared] = Math.min(result[i % matSizeSquared], inputArray[i]);
+
+        return result;
+    }
+
+    static interface ReduceFindMinMat {
+        float[] run(Allocation input);
+    };
+
+    private boolean findMinMat(RenderScript RS, int seed, int[] inputSize,
+            int matSize, Element matElement, ReduceFindMinMat reduction) {
+        final int length = inputSize[0];
+        final int matSizeSquared = matSize*matSize;
+
+        final float[] inputArray = createInputArrayFloat(matSizeSquared * length, seed);
+
+        final long javaTimeStart = java.lang.System.currentTimeMillis();
+        final float[] javaRslt = findMinMat(inputArray, matSize);
+        final long javaTimeEnd = java.lang.System.currentTimeMillis();
+
+        final long rsTimeStart = java.lang.System.currentTimeMillis();
+
+        Allocation inputAllocation = Allocation.createSized(RS, matElement, length);
+
+        final long copyTimeStart = java.lang.System.currentTimeMillis();
+
+        inputAllocation.copyFromUnchecked(inputArray);
+
+        final long kernelTimeStart = java.lang.System.currentTimeMillis();
+        final float[] rsRslt = reduction.run(inputAllocation);
+        final long rsTimeEnd = java.lang.System.currentTimeMillis();
+
+        final boolean success =
+                result("findMinMat" + matSize,
+                        new timing(javaTimeStart, javaTimeEnd, rsTimeStart,
+                                   copyTimeStart, kernelTimeStart, rsTimeEnd, inputAllocation),
+                        javaRslt, rsRslt);
+        inputAllocation.destroy();
+        return success;
+    }
+
+    private boolean findMinMat2(RenderScript RS, ScriptC_reduce s, int seed, int[] size) {
+        return findMinMat(RS, seed, size, 2, Element.MATRIX_2X2(RS),
+                (Allocation input) -> s.reduce_findMinMat2(input).get());
+    }
+
+    private boolean findMinMat4(RenderScript RS, ScriptC_reduce s, int seed, int[] size) {
+        return findMinMat(RS, seed, size, 4, Element.MATRIX_4X4(RS),
+                (Allocation input) -> s.reduce_findMinMat4(input).get());
     }
 
     ///////////////////////////////////////////////////////////////////
@@ -909,16 +992,18 @@ public class UT_reduce extends UnitTest {
         new TestDescription("addint2D", this::addint2D, 1, new int[]{450, 225}, 20, 5),
         new TestDescription("addint3D", this::addint3D, 2, new int[]{37, 48, 49}, 20, 7),
         new TestDescription("findMinAndMax", this::findMinAndMax, 3, new int[]{100000}, 20),
-        new TestDescription("findMinAndMaxArray", this::findMinAndMax_array, 3, new int[]{100000}, 20),
-        new TestDescription("fz", this::fz, 4, new int[]{100000}, 20),
-        new TestDescription("fz_array", this::fz_array, 4, new int[]{100000}, 20),
-        new TestDescription("fz2", this::fz2, 5, new int[]{225, 450}, 20, 5),
-        new TestDescription("fz3", this::fz3, 6, new int[]{59, 48, 37}, 20, 7),
-        new TestDescription("histogram", this::histogram, 7, new int[]{100000}, 20),
-        new TestDescription("histogram_array", this::histogram_array, 7, new int[]{100000}, 20),
-        // might want to add: new TestDescription("mode", this::mode, 8, new int[]{100000}, 20),
-        new TestDescription("mode_array", this::mode_array, 8, new int[]{100000}, 20),
-        new TestDescription("sumgcd", this::sumgcd, 9, new int[]{1 << 16}, 20)
+        new TestDescription("findMinAndMax_array", this::findMinAndMax_array, 3, new int[]{100000}, 20),
+        new TestDescription("findMinMat2", this::findMinMat2, 4, new int[]{25000}, 17),
+        new TestDescription("findMinMat4", this::findMinMat4, 5, new int[]{10000}, 15),
+        new TestDescription("fz", this::fz, 6, new int[]{100000}, 20),
+        new TestDescription("fz_array", this::fz_array, 6, new int[]{100000}, 20),
+        new TestDescription("fz2", this::fz2, 7, new int[]{225, 450}, 20, 5),
+        new TestDescription("fz3", this::fz3, 8, new int[]{59, 48, 37}, 20, 7),
+        new TestDescription("histogram", this::histogram, 9, new int[]{100000}, 20),
+        new TestDescription("histogram_array", this::histogram_array, 9, new int[]{100000}, 20),
+        // might want to add: new TestDescription("mode", this::mode, 10, new int[]{100000}, 20),
+        new TestDescription("mode_array", this::mode_array, 10, new int[]{100000}, 20),
+        new TestDescription("sumgcd", this::sumgcd, 11, new int[]{1 << 16}, 20)
     };
 
     private boolean runCorrectnessQuick(RenderScript RS, ScriptC_reduce s) {
