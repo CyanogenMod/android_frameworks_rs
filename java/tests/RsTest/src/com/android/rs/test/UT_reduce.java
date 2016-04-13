@@ -906,14 +906,14 @@ public class UT_reduce extends UnitTest {
 
         new TestDescription("addint1D", this::addint1D, 0, new int[]{100000}, 20),
         new TestDescription("addint1D_array", this::addint1D_array, 0, new int[]{100000}, 20),
-        new TestDescription("addint2D", this::addint2D, 1, new int[]{450, 225}, 20, 3),
-        new TestDescription("addint3D", this::addint3D, 2, new int[]{37, 48, 49}, 20, 5),
+        new TestDescription("addint2D", this::addint2D, 1, new int[]{450, 225}, 20, 5),
+        new TestDescription("addint3D", this::addint3D, 2, new int[]{37, 48, 49}, 20, 7),
         new TestDescription("findMinAndMax", this::findMinAndMax, 3, new int[]{100000}, 20),
         new TestDescription("findMinAndMaxArray", this::findMinAndMax_array, 3, new int[]{100000}, 20),
         new TestDescription("fz", this::fz, 4, new int[]{100000}, 20),
         new TestDescription("fz_array", this::fz_array, 4, new int[]{100000}, 20),
-        new TestDescription("fz2", this::fz2, 5, new int[]{225, 450}, 20, 3),
-        new TestDescription("fz3", this::fz3, 6, new int[]{59, 48, 37}, 20, 5),
+        new TestDescription("fz2", this::fz2, 5, new int[]{225, 450}, 20, 5),
+        new TestDescription("fz3", this::fz3, 6, new int[]{59, 48, 37}, 20, 7),
         new TestDescription("histogram", this::histogram, 7, new int[]{100000}, 20),
         new TestDescription("histogram_array", this::histogram_array, 7, new int[]{100000}, 20),
         // might want to add: new TestDescription("mode", this::mode, 8, new int[]{100000}, 20),
@@ -1203,6 +1203,16 @@ public class UT_reduce extends UnitTest {
                 (testSizes[i][1] == lastTestSizeArg[1]) &&
                 (testSizes[i][2] == lastTestSizeArg[2]))
                 continue;
+
+            // Apply Z-dimension limiting.
+            //
+            // The Z dimension is always handled specially by GPU
+            // drivers, and a high value for this dimension can have
+            // serious performance implications.  For example, Cuda
+            // and OpenCL encourage Z to be the smallest dimension.
+            if (testSizes[i][2] > 1024)
+                continue;
+
             lastTestSizeArg = testSizes[i];
             final int seedForTestExecution = seedForPickingTestSizes + 1 + i*maxSeedsPerTest;
             pass &= run(td, RS, s, seedForTestExecution, lastTestSizeArg);
