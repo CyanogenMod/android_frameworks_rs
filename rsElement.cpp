@@ -222,6 +222,8 @@ void Element::compute() {
         ctNoPadding ++;
     }
 
+    mBits = bits;
+    mBitsUnpadded = bitsUnpadded;
     mHal.state.elementSizeBytes = getSizeBytes();
 }
 
