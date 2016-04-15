@@ -37,9 +37,4 @@ LOCAL_RENDERSCRIPT_INCLUDES_OVERRIDE := \
 LOCAL_RENDERSCRIPT_FLAGS := -rs-package-name=android.support.v8.renderscript
 LOCAL_JNI_SHARED_LIBRARIES := librsjni
 
-# Disable JACK when RSTest_Compatlib is used for updating RS prebuilts.
-ifneq (,$(UPDATE_RS_PREBUILTS_DISABLE_JACK))
-LOCAL_JACK_ENABLED := disabled
-endif
-
 include $(BUILD_PACKAGE)
