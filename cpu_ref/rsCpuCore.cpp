@@ -258,7 +258,9 @@ bool RsdCpuReferenceImpl::init(uint32_t version_major, uint32_t version_minor,
     // Subtract one from the cpu count because we also use the command thread as a worker.
     mWorkers.mCount = (uint32_t)(cpu - 1);
 
-    ALOGV("%p Launching thread(s), CPUs %i", mRSC, mWorkers.mCount + 1);
+    if (mRSC->props.mLogScripts) {
+      ALOGV("%p Launching thread(s), CPUs %i", mRSC, mWorkers.mCount + 1);
+    }
 
     mWorkers.mThreadId = (pthread_t *) calloc(mWorkers.mCount, sizeof(pthread_t));
     mWorkers.mNativeThreadId = (pid_t *) calloc(mWorkers.mCount, sizeof(pid_t));

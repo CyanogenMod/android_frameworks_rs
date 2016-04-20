@@ -716,8 +716,6 @@ ScriptExecutable* ScriptExecutable::createFromSharedObject(
             rsAssert(rsGlobalSizes);
             rsAssert(rsGlobalProperties);
         }
-    } else {
-        ALOGD("Missing .rs.global_entries from shared object");
     }
 
     return new ScriptExecutable(
