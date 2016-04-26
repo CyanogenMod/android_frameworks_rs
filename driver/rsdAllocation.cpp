@@ -934,7 +934,9 @@ void rsdAllocationData2D(const Context *rsc, const Allocation *alloc,
 
                 for (uint32_t line=(yoff >> 1); line < ((yoff+h)>>1); line++) {
                     memcpy(dst, src, clineSize);
-                    src += alloc->mHal.drvState.lod[lod].stride;
+                    // When copying from an array to an Allocation, the src pointer
+                    // to the array should just move by the number of bytes copied.
+                    src += clineSize;
                     dst += alloc->mHal.drvState.lod[lod].stride;
                 }
                 lod++;
