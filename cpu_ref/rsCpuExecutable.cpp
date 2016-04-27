@@ -261,7 +261,11 @@ void* SharedLibraryUtils::loadSOHelper(const char *origName, const char *cacheDi
     return loaded;
 }
 
-#define MAXLINE 500
+// MAXLINESTR must be compatible with operator '#' in C macro.
+#define MAXLINESTR 499
+// MAXLINE must be (MAXLINESTR + 1), representing the size of a C string
+// containing MAXLINESTR non-null chars plus a null.
+#define MAXLINE (MAXLINESTR + 1)
 #define MAKE_STR_HELPER(S) #S
 #define MAKE_STR(S) MAKE_STR_HELPER(S)
 #define EXPORT_VAR_STR "exportVarCount: "
@@ -430,14 +434,14 @@ ScriptExecutable* ScriptExecutable::createFromSharedObject(
         if (strgets(line, MAXLINE, &rsInfo) == nullptr) {
             goto error;
         }
-        if (sscanf(line, "%u - %" MAKE_STR(MAXLINE) "s",
+        if (sscanf(line, "%u - %" MAKE_STR(MAXLINESTR) "s",
                    &tmpSig, tmpName) != 2) {
           ALOGE("Invalid export forEach!: %s", line);
           goto error;
         }
 
         // Lookup the expanded ForEach kernel.
-        strncat(tmpName, ".expand", MAXLINE-1-strlen(tmpName));
+        strncat(tmpName, ".expand", MAXLINESTR-strlen(tmpName));
         forEachSignatures[i] = tmpSig;
         forEachFunctions[i] =
             (ForEachFunc_t) dlsym(sharedObj, tmpName);
@@ -475,7 +479,7 @@ ScriptExecutable* ScriptExecutable::createFromSharedObject(
         }
 
         // Lookup the expanded reduce kernel.
-        strncat(line, ".expand", MAXLINE-1-strlen(line));
+        strncat(line, ".expand", MAXLINESTR-strlen(line));
 
         reduceFunctions[i] =
             reinterpret_cast<ReduceFunc_t>(dlsym(sharedObj, line));
@@ -515,7 +519,7 @@ ScriptExecutable* ScriptExecutable::createFromSharedObject(
         if (strgets(line, MAXLINE, &rsInfo) == nullptr) {
             goto error;
         }
-#define DELIMNAME " - %" MAKE_STR(MAXLINE) "s"
+#define DELIMNAME " - %" MAKE_STR(MAXLINESTR) "s"
         if (sscanf(line, "%u - %zu" DELIMNAME DELIMNAME DELIMNAME DELIMNAME DELIMNAME DELIMNAME,
                    &tmpSig, &tmpSize, tmpNameReduce, tmpNameInitializer, tmpNameAccumulator,
                    tmpNameCombiner, tmpNameOutConverter, tmpNameHalter) != 8) {
@@ -557,7 +561,7 @@ ScriptExecutable* ScriptExecutable::createFromSharedObject(
         }
 
         // Lookup the expanded accumulator.
-        strncat(tmpNameAccumulator, ".expand", MAXLINE-1-strlen(tmpNameAccumulator));
+        strncat(tmpNameAccumulator, ".expand", MAXLINESTR-strlen(tmpNameAccumulator));
         if (!(reduceNewDescriptions[i].accumFunc =
               (ReduceNewAccumulatorFunc_t) dlsym(sharedObj, tmpNameAccumulator))) {
             ALOGE("Failed to find accumulator function address for %s(): %s",
@@ -651,7 +655,7 @@ ScriptExecutable* ScriptExecutable::createFromSharedObject(
 
         // pragmas can just have a key and no value.  Only check to make sure
         // that the key is not empty
-        if (sscanf(line, "%" MAKE_STR(MAXLINE) "s - %" MAKE_STR(MAXLINE) "s",
+        if (sscanf(line, "%" MAKE_STR(MAXLINESTR) "s - %" MAKE_STR(MAXLINESTR) "s",
                    key, value) == 0 ||
             strlen(key) == 0)
         {
@@ -675,7 +679,7 @@ ScriptExecutable* ScriptExecutable::createFromSharedObject(
     }
 
     char tmpFlag[4];
-    if (sscanf(line, THREADABLE_STR "%4s", tmpFlag) != 1) {
+    if (sscanf(line, THREADABLE_STR "%3s", tmpFlag) != 1) {
         ALOGE("Invalid threadable flag!: %s", line);
         goto error;
     }
