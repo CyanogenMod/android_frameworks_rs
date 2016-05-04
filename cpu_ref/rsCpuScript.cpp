@@ -548,10 +548,8 @@ bool RsdCpuScriptImpl::setUpMtlsDimensions(MTLaunchStructCommon *mtls,
     SET_UP_DIMENSION(x, x);
     SET_UP_DIMENSION(y, y);
     SET_UP_DIMENSION(z, z);
-    SET_UP_DIMENSION(array[0], array);
-    SET_UP_DIMENSION(array[1], array2);
-    SET_UP_DIMENSION(array[2], array3);
-    SET_UP_DIMENSION(array[3], array4);
+    // Checks and setup of fields other than x, y, z are ignored, since those
+    // fields are not used in the runtime and are not visible in the Java API.
 #undef SET_UP_DIMENSION
 
     return true;
