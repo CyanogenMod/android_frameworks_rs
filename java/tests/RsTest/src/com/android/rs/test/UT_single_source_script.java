@@ -47,6 +47,9 @@ public class UT_single_source_script extends UnitTest {
         initializeGlobals(pRS, s);
 
         s.invoke_entrypoint(testAllocation1, testAllocation2);
+        s.forEach_oldFoo(testAllocation2, testAllocation2);
+        s.forEach_oldGoo(testAllocation2, testAllocation2);
+        s.invoke_validate(testAllocation2);
 
         pRS.finish();
         waitForMessage();
