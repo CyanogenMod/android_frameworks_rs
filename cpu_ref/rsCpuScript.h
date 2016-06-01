@@ -61,14 +61,9 @@ public:
                        const RsScriptCall* sc) override;
 
     void invokeReduce(uint32_t slot,
-                      const Allocation* ain,
+                      const Allocation ** ains, uint32_t inLen,
                       Allocation* aout,
                       const RsScriptCall* sc) override;
-
-    void invokeReduceNew(uint32_t slot,
-                         const Allocation ** ains, uint32_t inLen,
-                         Allocation* aout,
-                         const RsScriptCall* sc) override;
 
     void invokeInit() override;
     void invokeFreeChildren() override;
@@ -94,17 +89,11 @@ public:
 
     virtual void forEachKernelSetup(uint32_t slot, MTLaunchStructForEach *mtls);
 
-    // Build an MTLaunchStruct suitable for launching a simple reduce-style kernel.
-    bool reduceMtlsSetup(const Allocation *ain, const Allocation *aout,
-                         const RsScriptCall *sc, MTLaunchStructReduce *mtls);
-    // Finalize an MTLaunchStruct for launching a simple reduce-style kernel.
-    virtual void reduceKernelSetup(uint32_t slot, MTLaunchStructReduce *mtls);
-
     // Build an MTLaunchStruct suitable for launching a general reduce-style kernel.
-    bool reduceNewMtlsSetup(const Allocation ** ains, uint32_t inLen, const Allocation *aout,
-                            const RsScriptCall *sc, MTLaunchStructReduceNew *mtls);
+    bool reduceMtlsSetup(const Allocation ** ains, uint32_t inLen, const Allocation *aout,
+                         const RsScriptCall *sc, MTLaunchStructReduce *mtls);
     // Finalize an MTLaunchStruct for launching a general reduce-style kernel.
-    virtual void reduceNewKernelSetup(uint32_t slot, MTLaunchStructReduceNew *mtls);
+    virtual void reduceKernelSetup(uint32_t slot, MTLaunchStructReduce *mtls);
 
     const RsdCpuReference::CpuSymbol * lookupSymbolMath(const char *sym);
     static void * lookupRuntimeStub(void* pContext, char const* name);

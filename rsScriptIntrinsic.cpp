@@ -68,13 +68,9 @@ void ScriptIntrinsic::runForEach(Context* rsc,
                                               aout, usr, usrBytes, sc);
 }
 
-void ScriptIntrinsic::runReduce(Context *rsc, uint32_t slot, const Allocation *ain,
+void ScriptIntrinsic::runReduce(Context *rsc, uint32_t slot,
+                                const Allocation ** ains, size_t inLen,
                                 Allocation *aout, const RsScriptCall *sc) {
-}
-
-void ScriptIntrinsic::runReduceNew(Context *rsc, uint32_t slot,
-                                   const Allocation ** ains, size_t inLen,
-                                   Allocation *aout, const RsScriptCall *sc) {
 }
 
 void ScriptIntrinsic::Invoke(Context *rsc, uint32_t slot, const void *data, size_t len) {

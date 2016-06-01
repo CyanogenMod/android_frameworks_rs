@@ -500,7 +500,6 @@ void RsdCpuScriptImpl::populateScript(Script *script) {
     // Copy info over to runtime
     script->mHal.info.exportedFunctionCount = mScriptExec->getExportedFunctionCount();
     script->mHal.info.exportedReduceCount = mScriptExec->getExportedReduceCount();
-    script->mHal.info.exportedReduceNewCount = mScriptExec->getExportedReduceNewCount();
     script->mHal.info.exportedForEachCount = mScriptExec->getExportedForEachCount();
     script->mHal.info.exportedVariableCount = mScriptExec->getExportedVariableCount();
     script->mHal.info.exportedPragmaCount = mScriptExec->getPragmaCount();;
@@ -555,52 +554,14 @@ bool RsdCpuScriptImpl::setUpMtlsDimensions(MTLaunchStructCommon *mtls,
     return true;
 }
 
-// Preliminary work to prepare a simple reduce-style kernel for launch.
-bool RsdCpuScriptImpl::reduceMtlsSetup(const Allocation *ain,
-                                       const Allocation *aout,
+// Preliminary work to prepare a general reduce-style kernel for launch.
+bool RsdCpuScriptImpl::reduceMtlsSetup(const Allocation ** ains,
+                                       uint32_t inLen,
+                                       const Allocation * aout,
                                        const RsScriptCall *sc,
                                        MTLaunchStructReduce *mtls) {
-    rsAssert(ain && aout);
-    memset(mtls, 0, sizeof(MTLaunchStructReduce));
-    mtls->dimPtr = &mtls->inputDim;
-
-    if (allocationLODIsNull(ain) || allocationLODIsNull(aout)) {
-        mCtx->getContext()->setError(RS_ERROR_BAD_SCRIPT,
-                                     "reduce called with a null allocation");
-        return false;
-    }
-
-    // Set up the dimensions of the input.
-    const Type *inType = ain->getType();
-    mtls->inputDim.x = inType->getDimX();
-    rsAssert(inType->getDimY() == 0);
-
-    if (!setUpMtlsDimensions(mtls, mtls->inputDim, sc)) {
-        return false;
-    }
-
-    mtls->rs = mCtx;
-    // Currently not threaded.
-    mtls->isThreadable = false;
-    mtls->mSliceNum = -1;
-
-    // Set up input and output.
-    mtls->inBuf = static_cast<uint8_t *>(ain->getPointerUnchecked(0, 0));
-    mtls->outBuf = static_cast<uint8_t *>(aout->getPointerUnchecked(0, 0));
-
-    rsAssert(mtls->inBuf && mtls->outBuf);
-
-    return true;
-}
-
-// Preliminary work to prepare a general reduce-style kernel for launch.
-bool RsdCpuScriptImpl::reduceNewMtlsSetup(const Allocation ** ains,
-                                          uint32_t inLen,
-                                          const Allocation * aout,
-                                          const RsScriptCall *sc,
-                                          MTLaunchStructReduceNew *mtls) {
     rsAssert(ains && (inLen >= 1) && aout);
-    memset(mtls, 0, sizeof(MTLaunchStructReduceNew));
+    memset(mtls, 0, sizeof(MTLaunchStructReduce));
     mtls->dimPtr = &mtls->redp.dim;
 
     for (int index = inLen; --index >= 0;) {
@@ -793,29 +754,15 @@ void RsdCpuScriptImpl::invokeForEach(uint32_t slot,
 }
 
 void RsdCpuScriptImpl::invokeReduce(uint32_t slot,
-                                    const Allocation *ain,
+                                    const Allocation ** ains, uint32_t inLen,
                                     Allocation *aout,
                                     const RsScriptCall *sc) {
-    MTLaunchStructReduce mtls;
+  MTLaunchStructReduce mtls;
 
-    if (reduceMtlsSetup(ain, aout, sc, &mtls)) {
-        reduceKernelSetup(slot, &mtls);
-        RsdCpuScriptImpl *oldTLS = mCtx->setTLS(this);
-        mCtx->launchReduce(ain, aout, &mtls);
-        mCtx->setTLS(oldTLS);
-    }
-}
-
-void RsdCpuScriptImpl::invokeReduceNew(uint32_t slot,
-                                       const Allocation ** ains, uint32_t inLen,
-                                       Allocation *aout,
-                                       const RsScriptCall *sc) {
-  MTLaunchStructReduceNew mtls;
-
-  if (reduceNewMtlsSetup(ains, inLen, aout, sc, &mtls)) {
-    reduceNewKernelSetup(slot, &mtls);
+  if (reduceMtlsSetup(ains, inLen, aout, sc, &mtls)) {
+    reduceKernelSetup(slot, &mtls);
     RsdCpuScriptImpl *oldTLS = mCtx->setTLS(this);
-    mCtx->launchReduceNew(ains, inLen, aout, &mtls);
+    mCtx->launchReduce(ains, inLen, aout, &mtls);
     mCtx->setTLS(oldTLS);
   }
 }
@@ -829,15 +776,9 @@ void RsdCpuScriptImpl::forEachKernelSetup(uint32_t slot, MTLaunchStructForEach *
 
 void RsdCpuScriptImpl::reduceKernelSetup(uint32_t slot, MTLaunchStructReduce *mtls) {
     mtls->script = this;
-    mtls->kernel = mScriptExec->getReduceFunction(slot);
-    rsAssert(mtls->kernel != nullptr);
-}
-
-void RsdCpuScriptImpl::reduceNewKernelSetup(uint32_t slot, MTLaunchStructReduceNew *mtls) {
-    mtls->script = this;
     mtls->redp.slot = slot;
 
-    const ReduceNewDescription *desc = mScriptExec->getReduceNewDescription(slot);
+    const ReduceDescription *desc = mScriptExec->getReduceDescription(slot);
     mtls->accumFunc = desc->accumFunc;
     mtls->initFunc  = desc->initFunc;   // might legally be nullptr
     mtls->combFunc  = desc->combFunc;   // might legally be nullptr

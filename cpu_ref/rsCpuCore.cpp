@@ -45,7 +45,7 @@ static pid_t gettid() {
 using namespace android;
 using namespace android::renderscript;
 
-#define REDUCE_NEW_ALOGV(mtls, level, ...) do { if ((mtls)->logReduce >= (level)) ALOGV(__VA_ARGS__); } while(0)
+#define REDUCE_ALOGV(mtls, level, ...) do { if ((mtls)->logReduce >= (level)) ALOGV(__VA_ARGS__); } while(0)
 
 static pthread_key_t gThreadTLSKey = 0;
 static uint32_t gThreadTLSKeyCount = 0;
@@ -354,7 +354,7 @@ static inline void FepPtrSetup(const MTLaunchStructForEach *mtls, RsExpandKernel
 //   mtls - The MTLaunchStruct holding information about the kernel launch
 //   redp - The reduce parameters (driver info structure)
 //   x, y, z - The start offsets into each dimension
-static inline void RedpPtrSetup(const MTLaunchStructReduceNew *mtls, RsExpandKernelDriverInfo *redp,
+static inline void RedpPtrSetup(const MTLaunchStructReduce *mtls, RsExpandKernelDriverInfo *redp,
                                 uint32_t x, uint32_t y, uint32_t z) {
     for (uint32_t i = 0; i < redp->inLen; i++) {
         redp->inPtr[i] = (const uint8_t *)mtls->ains[i]->getPointerUnchecked(x, y, z);
@@ -508,8 +508,8 @@ static const char *format_bytes(FormatBuf *outBuf, const uint8_t *inBuf, const i
   return *outBuf;
 }
 
-static void reduce_new_get_accumulator(uint8_t *&accumPtr, const MTLaunchStructReduceNew *mtls,
-                                       const char *walkerName, uint32_t threadIdx) {
+static void reduce_get_accumulator(uint8_t *&accumPtr, const MTLaunchStructReduce *mtls,
+                                   const char *walkerName, uint32_t threadIdx) {
   rsAssert(!accumPtr);
 
   uint32_t accumIdx = (uint32_t)__sync_fetch_and_add(&mtls->accumCount, 1);
@@ -522,8 +522,8 @@ static void reduce_new_get_accumulator(uint8_t *&accumPtr, const MTLaunchStructR
       accumPtr = mtls->accumAlloc + mtls->accumStride * (accumIdx - 1);
     }
   }
-  REDUCE_NEW_ALOGV(mtls, 2, "%s(%p): idx = %u got accumCount %u and accumPtr %p",
-                   walkerName, mtls->accumFunc, threadIdx, accumIdx, accumPtr);
+  REDUCE_ALOGV(mtls, 2, "%s(%p): idx = %u got accumCount %u and accumPtr %p",
+               walkerName, mtls->accumFunc, threadIdx, accumIdx, accumPtr);
   // initialize accumulator
   if (mtls->initFunc) {
     mtls->initFunc(accumPtr);
@@ -532,18 +532,18 @@ static void reduce_new_get_accumulator(uint8_t *&accumPtr, const MTLaunchStructR
   }
 }
 
-static void walk_1d_reduce_new(void *usr, uint32_t idx) {
-  const MTLaunchStructReduceNew *mtls = (const MTLaunchStructReduceNew *)usr;
+static void walk_1d_reduce(void *usr, uint32_t idx) {
+  const MTLaunchStructReduce *mtls = (const MTLaunchStructReduce *)usr;
   RsExpandKernelDriverInfo redp = mtls->redp;
 
   // find accumulator
   uint8_t *&accumPtr = mtls->accumPtr[idx];
   if (!accumPtr) {
-    reduce_new_get_accumulator(accumPtr, mtls, __func__, idx);
+    reduce_get_accumulator(accumPtr, mtls, __func__, idx);
   }
 
   // accumulate
-  const ReduceNewAccumulatorFunc_t fn = mtls->accumFunc;
+  const ReduceAccumulatorFunc_t fn = mtls->accumFunc;
   while (1) {
     uint32_t slice  = (uint32_t)__sync_fetch_and_add(&mtls->mSliceNum, 1);
     uint32_t xStart = mtls->start.x + slice * mtls->mSliceSize;
@@ -566,23 +566,23 @@ static void walk_1d_reduce_new(void *usr, uint32_t idx) {
     } else {
       fmt[0] = 0;
     }
-    REDUCE_NEW_ALOGV(mtls, 2, "walk_1d_reduce_new(%p): idx = %u, x in [%u, %u)%s",
-                     mtls->accumFunc, idx, xStart, xEnd, fmt);
+    REDUCE_ALOGV(mtls, 2, "walk_1d_reduce(%p): idx = %u, x in [%u, %u)%s",
+                 mtls->accumFunc, idx, xStart, xEnd, fmt);
   }
 }
 
-static void walk_2d_reduce_new(void *usr, uint32_t idx) {
-  const MTLaunchStructReduceNew *mtls = (const MTLaunchStructReduceNew *)usr;
+static void walk_2d_reduce(void *usr, uint32_t idx) {
+  const MTLaunchStructReduce *mtls = (const MTLaunchStructReduce *)usr;
   RsExpandKernelDriverInfo redp = mtls->redp;
 
   // find accumulator
   uint8_t *&accumPtr = mtls->accumPtr[idx];
   if (!accumPtr) {
-    reduce_new_get_accumulator(accumPtr, mtls, __func__, idx);
+    reduce_get_accumulator(accumPtr, mtls, __func__, idx);
   }
 
   // accumulate
-  const ReduceNewAccumulatorFunc_t fn = mtls->accumFunc;
+  const ReduceAccumulatorFunc_t fn = mtls->accumFunc;
   while (1) {
     uint32_t slice  = (uint32_t)__sync_fetch_and_add(&mtls->mSliceNum, 1);
     uint32_t yStart = mtls->start.y + slice * mtls->mSliceSize;
@@ -605,23 +605,23 @@ static void walk_2d_reduce_new(void *usr, uint32_t idx) {
     } else {
       fmt[0] = 0;
     }
-    REDUCE_NEW_ALOGV(mtls, 2, "walk_2d_reduce_new(%p): idx = %u, y in [%u, %u)%s",
-                     mtls->accumFunc, idx, yStart, yEnd, fmt);
+    REDUCE_ALOGV(mtls, 2, "walk_2d_reduce(%p): idx = %u, y in [%u, %u)%s",
+                 mtls->accumFunc, idx, yStart, yEnd, fmt);
   }
 }
 
-static void walk_3d_reduce_new(void *usr, uint32_t idx) {
-  const MTLaunchStructReduceNew *mtls = (const MTLaunchStructReduceNew *)usr;
+static void walk_3d_reduce(void *usr, uint32_t idx) {
+  const MTLaunchStructReduce *mtls = (const MTLaunchStructReduce *)usr;
   RsExpandKernelDriverInfo redp = mtls->redp;
 
   // find accumulator
   uint8_t *&accumPtr = mtls->accumPtr[idx];
   if (!accumPtr) {
-    reduce_new_get_accumulator(accumPtr, mtls, __func__, idx);
+    reduce_get_accumulator(accumPtr, mtls, __func__, idx);
   }
 
   // accumulate
-  const ReduceNewAccumulatorFunc_t fn = mtls->accumFunc;
+  const ReduceAccumulatorFunc_t fn = mtls->accumFunc;
   while (1) {
     uint32_t slice  = (uint32_t)__sync_fetch_and_add(&mtls->mSliceNum, 1);
 
@@ -640,28 +640,9 @@ static void walk_3d_reduce_new(void *usr, uint32_t idx) {
     } else {
       fmt[0] = 0;
     }
-    REDUCE_NEW_ALOGV(mtls, 2, "walk_3d_reduce_new(%p): idx = %u, z = %u%s",
-                     mtls->accumFunc, idx, redp.current.z, fmt);
+    REDUCE_ALOGV(mtls, 2, "walk_3d_reduce(%p): idx = %u, z = %u%s",
+                 mtls->accumFunc, idx, redp.current.z, fmt);
   }
-}
-
-// Launch a simple reduce-style kernel.
-// Inputs:
-//  ain:  The allocation that contains the input
-//  aout: The allocation that will hold the output
-//  mtls: Holds launch parameters
-void RsdCpuReferenceImpl::launchReduce(const Allocation *ain,
-                                       Allocation *aout,
-                                       MTLaunchStructReduce *mtls) {
-    const uint32_t xStart = mtls->start.x;
-    const uint32_t xEnd = mtls->end.x;
-
-    if (xStart >= xEnd) {
-      return;
-    }
-
-    const uint32_t startOffset = ain->getType()->getElementSizeBytes() * xStart;
-    mtls->kernel(&mtls->inBuf[startOffset], mtls->outBuf, xEnd - xStart);
 }
 
 // Launch a general reduce-style kernel.
@@ -669,15 +650,15 @@ void RsdCpuReferenceImpl::launchReduce(const Allocation *ain,
 //   ains[0..inLen-1]: Array of allocations that contain the inputs
 //   aout:             The allocation that will hold the output
 //   mtls:             Holds launch parameters
-void RsdCpuReferenceImpl::launchReduceNew(const Allocation ** ains,
-                                          uint32_t inLen,
-                                          Allocation * aout,
-                                          MTLaunchStructReduceNew *mtls) {
+void RsdCpuReferenceImpl::launchReduce(const Allocation ** ains,
+                                       uint32_t inLen,
+                                       Allocation * aout,
+                                       MTLaunchStructReduce *mtls) {
   mtls->logReduce = mRSC->props.mLogReduce;
   if ((mWorkers.mCount >= 1) && mtls->isThreadable && !mInKernel) {
-    launchReduceNewParallel(ains, inLen, aout, mtls);
+    launchReduceParallel(ains, inLen, aout, mtls);
   } else {
-    launchReduceNewSerial(ains, inLen, aout, mtls);
+    launchReduceSerial(ains, inLen, aout, mtls);
   }
 }
 
@@ -686,12 +667,12 @@ void RsdCpuReferenceImpl::launchReduceNew(const Allocation ** ains,
 //   ains[0..inLen-1]: Array of allocations that contain the inputs
 //   aout:             The allocation that will hold the output
 //   mtls:             Holds launch parameters
-void RsdCpuReferenceImpl::launchReduceNewSerial(const Allocation ** ains,
-                                                uint32_t inLen,
-                                                Allocation * aout,
-                                                MTLaunchStructReduceNew *mtls) {
-  REDUCE_NEW_ALOGV(mtls, 1, "launchReduceNewSerial(%p): %u x %u x %u", mtls->accumFunc,
-                   mtls->redp.dim.x, mtls->redp.dim.y, mtls->redp.dim.z);
+void RsdCpuReferenceImpl::launchReduceSerial(const Allocation ** ains,
+                                             uint32_t inLen,
+                                             Allocation * aout,
+                                             MTLaunchStructReduce *mtls) {
+  REDUCE_ALOGV(mtls, 1, "launchReduceSerial(%p): %u x %u x %u", mtls->accumFunc,
+               mtls->redp.dim.x, mtls->redp.dim.y, mtls->redp.dim.z);
 
   // In the presence of outconverter, we allocate temporary memory for
   // the accumulator.
@@ -710,7 +691,7 @@ void RsdCpuReferenceImpl::launchReduceNewSerial(const Allocation ** ains,
   }
 
   // accumulate
-  const ReduceNewAccumulatorFunc_t fn = mtls->accumFunc;
+  const ReduceAccumulatorFunc_t fn = mtls->accumFunc;
   uint32_t slice = 0;
   while (SelectOuterSlice(mtls, &mtls->redp, slice++)) {
     for (mtls->redp.current.y = mtls->start.y;
@@ -733,13 +714,13 @@ void RsdCpuReferenceImpl::launchReduceNewSerial(const Allocation ** ains,
 //   ains[0..inLen-1]: Array of allocations that contain the inputs
 //   aout:             The allocation that will hold the output
 //   mtls:             Holds launch parameters
-void RsdCpuReferenceImpl::launchReduceNewParallel(const Allocation ** ains,
-                                                  uint32_t inLen,
-                                                  Allocation * aout,
-                                                  MTLaunchStructReduceNew *mtls) {
+void RsdCpuReferenceImpl::launchReduceParallel(const Allocation ** ains,
+                                               uint32_t inLen,
+                                               Allocation * aout,
+                                               MTLaunchStructReduce *mtls) {
   // For now, we don't know how to go parallel in the absence of a combiner.
   if (!mtls->combFunc) {
-    launchReduceNewSerial(ains, inLen, aout, mtls);
+    launchReduceSerial(ains, inLen, aout, mtls);
     return;
   }
 
@@ -777,19 +758,19 @@ void RsdCpuReferenceImpl::launchReduceNewParallel(const Allocation ** ains,
 
   rsAssert(!mInKernel);
   mInKernel = true;
-  REDUCE_NEW_ALOGV(mtls, 1, "launchReduceNewParallel(%p): %u x %u x %u, %u threads, accumAlloc = %p",
-                   mtls->accumFunc,
-                   mtls->redp.dim.x, mtls->redp.dim.y, mtls->redp.dim.z,
-                   numThreads, mtls->accumAlloc);
+  REDUCE_ALOGV(mtls, 1, "launchReduceParallel(%p): %u x %u x %u, %u threads, accumAlloc = %p",
+               mtls->accumFunc,
+               mtls->redp.dim.x, mtls->redp.dim.y, mtls->redp.dim.z,
+               numThreads, mtls->accumAlloc);
   if (mtls->redp.dim.z > 1) {
     mtls->mSliceSize = 1;
-    launchThreads(walk_3d_reduce_new, mtls);
+    launchThreads(walk_3d_reduce, mtls);
   } else if (mtls->redp.dim.y > 1) {
     mtls->mSliceSize = rsMax(1U, mtls->redp.dim.y / (numThreads * 4));
-    launchThreads(walk_2d_reduce_new, mtls);
+    launchThreads(walk_2d_reduce, mtls);
   } else {
     mtls->mSliceSize = rsMax(1U, mtls->redp.dim.x / (numThreads * 4));
-    launchThreads(walk_1d_reduce_new, mtls);
+    launchThreads(walk_1d_reduce, mtls);
   }
   mInKernel = false;
 
@@ -804,12 +785,12 @@ void RsdCpuReferenceImpl::launchReduceNewParallel(const Allocation ** ains,
         if (mtls->combFunc) {
           if (mtls->logReduce >= 3) {
             FormatBuf fmt;
-            REDUCE_NEW_ALOGV(mtls, 3, "launchReduceNewParallel(%p): accumulating into%s",
-                             mtls->accumFunc,
-                             format_bytes(&fmt, finalAccumPtr, mtls->accumSize));
-            REDUCE_NEW_ALOGV(mtls, 3, "launchReduceNewParallel(%p):    accumulator[%d]%s",
-                             mtls->accumFunc, idx,
-                             format_bytes(&fmt, thisAccumPtr, mtls->accumSize));
+            REDUCE_ALOGV(mtls, 3, "launchReduceParallel(%p): accumulating into%s",
+                         mtls->accumFunc,
+                         format_bytes(&fmt, finalAccumPtr, mtls->accumSize));
+            REDUCE_ALOGV(mtls, 3, "launchReduceParallel(%p):    accumulator[%d]%s",
+                         mtls->accumFunc, idx,
+                         format_bytes(&fmt, thisAccumPtr, mtls->accumSize));
           }
           mtls->combFunc(finalAccumPtr, thisAccumPtr);
         } else {
@@ -823,8 +804,8 @@ void RsdCpuReferenceImpl::launchReduceNewParallel(const Allocation ** ains,
   rsAssert(finalAccumPtr != nullptr);
   if (mtls->logReduce >= 3) {
     FormatBuf fmt;
-    REDUCE_NEW_ALOGV(mtls, 3, "launchReduceNewParallel(%p): final accumulator%s",
-                     mtls->accumFunc, format_bytes(&fmt, finalAccumPtr, mtls->accumSize));
+    REDUCE_ALOGV(mtls, 3, "launchReduceParallel(%p): final accumulator%s",
+                 mtls->accumFunc, format_bytes(&fmt, finalAccumPtr, mtls->accumSize));
   }
 
   // Outconvert
@@ -832,9 +813,9 @@ void RsdCpuReferenceImpl::launchReduceNewParallel(const Allocation ** ains,
     mtls->outFunc(mtls->redp.outPtr[0], finalAccumPtr);
     if (mtls->logReduce >= 3) {
       FormatBuf fmt;
-      REDUCE_NEW_ALOGV(mtls, 3, "launchReduceNewParallel(%p): final outconverted result%s",
-                       mtls->accumFunc,
-                       format_bytes(&fmt, mtls->redp.outPtr[0], mtls->redp.outStride[0]));
+      REDUCE_ALOGV(mtls, 3, "launchReduceParallel(%p): final outconverted result%s",
+                   mtls->accumFunc,
+                   format_bytes(&fmt, mtls->redp.outPtr[0], mtls->redp.outStride[0]));
     }
   }
 

@@ -272,7 +272,6 @@ void* SharedLibraryUtils::loadSOHelper(const char *origName, const char *cacheDi
 #define EXPORT_FUNC_STR "exportFuncCount: "
 #define EXPORT_FOREACH_STR "exportForEachCount: "
 #define EXPORT_REDUCE_STR "exportReduceCount: "
-#define EXPORT_REDUCE_NEW_STR "exportReduceNewCount: "
 #define OBJECT_SLOT_STR "objectSlotCount: "
 #define PRAGMA_STR "pragmaCount: "
 #define THREADABLE_STR "isThreadable: "
@@ -311,7 +310,6 @@ ScriptExecutable* ScriptExecutable::createFromSharedObject(
     size_t funcCount = 0;
     size_t forEachCount = 0;
     size_t reduceCount = 0;
-    size_t reduceNewCount = 0;
     size_t objectSlotCount = 0;
     size_t pragmaCount = 0;
     bool isThreadable = true;
@@ -322,8 +320,7 @@ ScriptExecutable* ScriptExecutable::createFromSharedObject(
     InvokeFunc_t* invokeFunctions = nullptr;
     ForEachFunc_t* forEachFunctions = nullptr;
     uint32_t* forEachSignatures = nullptr;
-    ReduceFunc_t* reduceFunctions = nullptr;
-    ReduceNewDescription* reduceNewDescriptions = nullptr;
+    ReduceDescription* reduceDescriptions = nullptr;
     const char ** pragmaKeys = nullptr;
     const char ** pragmaValues = nullptr;
     uint32_t checksum = 0;
@@ -455,56 +452,21 @@ ScriptExecutable* ScriptExecutable::createFromSharedObject(
         }
     }
 
-    // Read simple reduce kernels
-    if (strgets(line, MAXLINE, &rsInfo) == nullptr) {
-        goto error;
-    }
-    if (sscanf(line, EXPORT_REDUCE_STR "%zu", &reduceCount) != 1) {
-        ALOGE("Invalid export reduce count!: %s", line);
-        goto error;
-    }
-
-    reduceFunctions = new ReduceFunc_t[reduceCount];
-    if (reduceFunctions == nullptr) {
-        goto error;
-    }
-
-    for (size_t i = 0; i < reduceCount; ++i) {
-        if (strgets(line, MAXLINE, &rsInfo) == nullptr) {
-            goto error;
-        }
-        char *c = strrchr(line, '\n');
-        if (c) {
-            *c = '\0';
-        }
-
-        // Lookup the expanded reduce kernel.
-        strncat(line, ".expand", MAXLINESTR-strlen(line));
-
-        reduceFunctions[i] =
-            reinterpret_cast<ReduceFunc_t>(dlsym(sharedObj, line));
-        if (reduceFunctions[i] == nullptr) {
-            ALOGE("Failed to get function address for %s(): %s",
-                  line, dlerror());
-            goto error;
-        }
-    }
-
     // Read general reduce kernels
     if (strgets(line, MAXLINE, &rsInfo) == nullptr) {
         goto error;
     }
-    if (sscanf(line, EXPORT_REDUCE_NEW_STR "%zu", &reduceNewCount) != 1) {
+    if (sscanf(line, EXPORT_REDUCE_STR "%zu", &reduceCount) != 1) {
         ALOGE("Invalid export reduce new count!: %s", line);
         goto error;
     }
 
-    reduceNewDescriptions = new ReduceNewDescription[reduceNewCount];
-    if (reduceNewDescriptions == nullptr) {
+    reduceDescriptions = new ReduceDescription[reduceCount];
+    if (reduceDescriptions == nullptr) {
         goto error;
     }
 
-    for (size_t i = 0; i < reduceNewCount; ++i) {
+    for (size_t i = 0; i < reduceCount; ++i) {
         static const char kNoName[] = ".";
 
         unsigned int tmpSig = 0;
@@ -545,25 +507,25 @@ ScriptExecutable* ScriptExecutable::createFromSharedObject(
         // The current implementation does not use the signature
         // or reduce name.
 
-        reduceNewDescriptions[i].accumSize = tmpSize;
+        reduceDescriptions[i].accumSize = tmpSize;
 
         // Process the (optional) initializer.
         if (strcmp(tmpNameInitializer, kNoName)) {
           // Lookup the original user-written initializer.
-          if (!(reduceNewDescriptions[i].initFunc =
-                (ReduceNewInitializerFunc_t) dlsym(sharedObj, tmpNameInitializer))) {
+          if (!(reduceDescriptions[i].initFunc =
+                (ReduceInitializerFunc_t) dlsym(sharedObj, tmpNameInitializer))) {
             ALOGE("Failed to find initializer function address for %s(): %s",
                   tmpNameInitializer, dlerror());
             goto error;
           }
         } else {
-          reduceNewDescriptions[i].initFunc = nullptr;
+          reduceDescriptions[i].initFunc = nullptr;
         }
 
         // Lookup the expanded accumulator.
         strncat(tmpNameAccumulator, ".expand", MAXLINESTR-strlen(tmpNameAccumulator));
-        if (!(reduceNewDescriptions[i].accumFunc =
-              (ReduceNewAccumulatorFunc_t) dlsym(sharedObj, tmpNameAccumulator))) {
+        if (!(reduceDescriptions[i].accumFunc =
+              (ReduceAccumulatorFunc_t) dlsym(sharedObj, tmpNameAccumulator))) {
             ALOGE("Failed to find accumulator function address for %s(): %s",
                   tmpNameAccumulator, dlerror());
             goto error;
@@ -572,27 +534,27 @@ ScriptExecutable* ScriptExecutable::createFromSharedObject(
         // Process the (optional) combiner.
         if (strcmp(tmpNameCombiner, kNoName)) {
           // Lookup the original user-written combiner.
-          if (!(reduceNewDescriptions[i].combFunc =
-                (ReduceNewCombinerFunc_t) dlsym(sharedObj, tmpNameCombiner))) {
+          if (!(reduceDescriptions[i].combFunc =
+                (ReduceCombinerFunc_t) dlsym(sharedObj, tmpNameCombiner))) {
             ALOGE("Failed to find combiner function address for %s(): %s",
                   tmpNameCombiner, dlerror());
             goto error;
           }
         } else {
-          reduceNewDescriptions[i].combFunc = nullptr;
+          reduceDescriptions[i].combFunc = nullptr;
         }
 
         // Process the (optional) outconverter.
         if (strcmp(tmpNameOutConverter, kNoName)) {
           // Lookup the original user-written outconverter.
-          if (!(reduceNewDescriptions[i].outFunc =
-                (ReduceNewOutConverterFunc_t) dlsym(sharedObj, tmpNameOutConverter))) {
+          if (!(reduceDescriptions[i].outFunc =
+                (ReduceOutConverterFunc_t) dlsym(sharedObj, tmpNameOutConverter))) {
             ALOGE("Failed to find outconverter function address for %s(): %s",
                   tmpNameOutConverter, dlerror());
             goto error;
           }
         } else {
-          reduceNewDescriptions[i].outFunc = nullptr;
+          reduceDescriptions[i].outFunc = nullptr;
         }
     }
 
@@ -726,8 +688,7 @@ ScriptExecutable* ScriptExecutable::createFromSharedObject(
         fieldAddress, fieldIsObject, fieldName, varCount,
         invokeFunctions, funcCount,
         forEachFunctions, forEachSignatures, forEachCount,
-        reduceFunctions, reduceCount,
-        reduceNewDescriptions, reduceNewCount,
+        reduceDescriptions, reduceCount,
         pragmaKeys, pragmaValues, pragmaCount,
         rsGlobalNames, rsGlobalAddresses, rsGlobalSizes, rsGlobalProperties,
         numEntries, isThreadable, checksum);
@@ -744,8 +705,6 @@ error:
     delete[] pragmaValues;
     delete[] pragmaKeys;
 #endif  // RS_COMPATIBILITY_LIB
-
-    delete[] reduceFunctions;
 
     delete[] forEachSignatures;
     delete[] forEachFunctions;

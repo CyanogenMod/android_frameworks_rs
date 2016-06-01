@@ -86,7 +86,6 @@ public:
             size_t exportedVariableCount;
             size_t exportedForEachCount;
             size_t exportedReduceCount;
-            size_t exportedReduceNewCount;
             size_t exportedFunctionCount;
             size_t exportedPragmaCount;
             char const **exportedPragmaKeyList;
@@ -133,12 +132,9 @@ public:
                             size_t usrBytes,
                             const RsScriptCall *sc = nullptr) = 0;
 
-    virtual void runReduce(Context *rsc, uint32_t slot, const Allocation *ain,
+    virtual void runReduce(Context *rsc, uint32_t slot,
+                           const Allocation **ains, size_t inLen,
                            Allocation *aout, const RsScriptCall *sc) = 0;
-
-    virtual void runReduceNew(Context *rsc, uint32_t slot,
-                              const Allocation **ains, size_t inLen,
-                              Allocation *aout, const RsScriptCall *sc) = 0;
 
     virtual void Invoke(Context *rsc, uint32_t slot, const void *data, size_t len) = 0;
     virtual void setupScript(Context *rsc) = 0;

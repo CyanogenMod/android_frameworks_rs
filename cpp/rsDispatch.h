@@ -77,8 +77,7 @@ typedef void (*ScriptInvokeFnPtr) (RsContext, RsScript, uint32_t);
 typedef void (*ScriptInvokeVFnPtr) (RsContext, RsScript, uint32_t, const void*, size_t);
 typedef void (*ScriptForEachFnPtr) (RsContext, RsScript, uint32_t, RsAllocation, RsAllocation, const void*, size_t, const RsScriptCall*, size_t);
 typedef void (*ScriptForEachMultiFnPtr) (RsContext, RsScript, uint32_t, RsAllocation*, size_t, RsAllocation, const void*, size_t, const RsScriptCall*, size_t);
-typedef void (*ScriptReduceFnPtr) (RsContext, RsScript, uint32_t, RsAllocation, RsAllocation, const RsScriptCall*, size_t);
-typedef void (*ScriptReduceNewFnPtr) (RsContext, RsScript, uint32_t, RsAllocation*, size_t, RsAllocation, const RsScriptCall*, size_t);
+typedef void (*ScriptReduceFnPtr) (RsContext, RsScript, uint32_t, RsAllocation*, size_t, RsAllocation, const RsScriptCall*, size_t);
 typedef void (*ScriptSetVarIFnPtr) (RsContext, RsScript, uint32_t, int);
 typedef void (*ScriptSetVarObjFnPtr) (RsContext, RsScript, uint32_t, RsObjectBase);
 typedef void (*ScriptSetVarJFnPtr) (RsContext, RsScript, uint32_t, int64_t);
@@ -173,7 +172,6 @@ struct dispatchTable {
     ScriptInvokeVFnPtr ScriptInvokeV;
     ScriptKernelIDCreateFnPtr ScriptKernelIDCreate;
     ScriptReduceFnPtr ScriptReduce;
-    ScriptReduceNewFnPtr ScriptReduceNew;
     ScriptSetTimeZoneFnPtr ScriptSetTimeZone;
     ScriptSetVarDFnPtr ScriptSetVarD;
     ScriptSetVarFFnPtr ScriptSetVarF;

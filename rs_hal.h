@@ -172,14 +172,10 @@ typedef struct {
                               size_t usrLen,
                               const RsScriptCall *sc);
         void (*invokeReduce)(const Context *rsc, Script *s,
-                             uint32_t slot, const Allocation *ain,
+                             uint32_t slot,
+                             const Allocation ** ains, size_t inLen,
                              Allocation *aout,
                              const RsScriptCall *sc);
-        void (*invokeReduceNew)(const Context *rsc, Script *s,
-                                uint32_t slot,
-                                const Allocation ** ains, size_t inLen,
-                                Allocation *aout,
-                                const RsScriptCall *sc);
         void (*invokeInit)(const Context *rsc, Script *s);
         void (*invokeFreeChildren)(const Context *rsc, Script *s);
 
@@ -412,7 +408,6 @@ enum RsHalInitEnums {
     RS_HAL_SCRIPT_INVOKE_FOR_EACH_MULTI                     = 1013,
     RS_HAL_SCRIPT_UPDATE_CACHED_OBJECT                      = 1014,
     RS_HAL_SCRIPT_INVOKE_REDUCE                             = 1015,
-    RS_HAL_SCRIPT_INVOKE_REDUCE_NEW                         = 1016,
 
     RS_HAL_ALLOCATION_INIT                                  = 2000,
     RS_HAL_ALLOCATION_INIT_ADAPTER                          = 2001,

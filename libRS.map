@@ -94,7 +94,6 @@ libRS {
     rsScriptInvokeV;
     rsScriptKernelIDCreate;
     rsScriptReduce;
-    rsScriptReduceNew;
     rsScriptSetTimeZone;
     rsScriptSetVarD;
     rsScriptSetVarF;

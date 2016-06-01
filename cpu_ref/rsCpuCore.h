@@ -32,22 +32,21 @@ namespace renderscript {
 extern bool gArchUseSIMD;
 
 // Function types found in RenderScript code
-typedef void (*ReduceFunc_t)(const uint8_t *inBuf, uint8_t *outBuf, uint32_t len);
-typedef void (*ReduceNewAccumulatorFunc_t)(const RsExpandKernelDriverInfo *info, uint32_t x1, uint32_t x2, uint8_t *accum);
-typedef void (*ReduceNewCombinerFunc_t)(uint8_t *accum, const uint8_t *other);
-typedef void (*ReduceNewInitializerFunc_t)(uint8_t *accum);
-typedef void (*ReduceNewOutConverterFunc_t)(uint8_t *out, const uint8_t *accum);
+typedef void (*ReduceAccumulatorFunc_t)(const RsExpandKernelDriverInfo *info, uint32_t x1, uint32_t x2, uint8_t *accum);
+typedef void (*ReduceCombinerFunc_t)(uint8_t *accum, const uint8_t *other);
+typedef void (*ReduceInitializerFunc_t)(uint8_t *accum);
+typedef void (*ReduceOutConverterFunc_t)(uint8_t *out, const uint8_t *accum);
 typedef void (*ForEachFunc_t)(const RsExpandKernelDriverInfo *info, uint32_t x1, uint32_t x2, uint32_t outStride);
 typedef void (*InvokeFunc_t)(void *params);
 typedef void (*InitOrDtorFunc_t)(void);
 typedef int  (*RootFunc_t)(void);
 
-struct ReduceNewDescription {
-    ReduceNewAccumulatorFunc_t  accumFunc;  // expanded accumulator function
-    ReduceNewInitializerFunc_t  initFunc;   // user initializer function
-    ReduceNewCombinerFunc_t     combFunc;   // user combiner function
-    ReduceNewOutConverterFunc_t outFunc;    // user outconverter function
-    size_t                      accumSize;  // accumulator datum size, in bytes
+struct ReduceDescription {
+    ReduceAccumulatorFunc_t  accumFunc;  // expanded accumulator function
+    ReduceInitializerFunc_t  initFunc;   // user initializer function
+    ReduceCombinerFunc_t     combFunc;   // user combiner function
+    ReduceOutConverterFunc_t outFunc;    // user outconverter function
+    size_t                   accumSize;  // accumulator datum size, in bytes
 };
 
 // Internal driver callback used to execute a kernel
@@ -75,8 +74,7 @@ struct MTLaunchStructCommon {
     RsLaunchDimensions start;
     RsLaunchDimensions end;
     // Points to MTLaunchStructForEach::fep::dim or
-    // MTLaunchStructReduce::inputDim or
-    // MTLaunchStructReduceNew::redp::dim.
+    // MTLaunchStructReduce::redp::dim.
     RsLaunchDimensions *dimPtr;
 };
 
@@ -90,22 +88,15 @@ struct MTLaunchStructForEach : public MTLaunchStructCommon {
 };
 
 struct MTLaunchStructReduce : public MTLaunchStructCommon {
-    ReduceFunc_t kernel;
-    const uint8_t *inBuf;
-    uint8_t *outBuf;
-    RsLaunchDimensions inputDim;
-};
-
-struct MTLaunchStructReduceNew : public MTLaunchStructCommon {
     // Driver info structure
     RsExpandKernelDriverInfo redp;
 
     const Allocation *ains[RS_KERNEL_INPUT_LIMIT];
 
-    ReduceNewAccumulatorFunc_t accumFunc;
-    ReduceNewInitializerFunc_t initFunc;
-    ReduceNewCombinerFunc_t combFunc;
-    ReduceNewOutConverterFunc_t outFunc;
+    ReduceAccumulatorFunc_t accumFunc;
+    ReduceInitializerFunc_t initFunc;
+    ReduceCombinerFunc_t combFunc;
+    ReduceOutConverterFunc_t outFunc;
 
     size_t accumSize;  // accumulator datum size in bytes
 
@@ -174,13 +165,9 @@ public:
     void launchForEach(const Allocation **ains, uint32_t inLen, Allocation *aout,
                        const RsScriptCall *sc, MTLaunchStructForEach *mtls);
 
-    // Launch a simple reduce kernel
-    void launchReduce(const Allocation *ain, Allocation *aout,
-                      MTLaunchStructReduce *mtls);
-
     // Launch a general reduce kernel
-    void launchReduceNew(const Allocation ** ains, uint32_t inLen, Allocation *aout,
-                         MTLaunchStructReduceNew *mtls);
+    void launchReduce(const Allocation ** ains, uint32_t inLen, Allocation *aout,
+                      MTLaunchStructReduce *mtls);
 
     CpuScript * createScript(const ScriptC *s, char const *resName, char const *cacheDir,
                              uint8_t const *bitcode, size_t bitcodeSize, uint32_t flags) override;
@@ -271,10 +258,10 @@ protected:
     long mPageSize;
 
     // Launch a general reduce kernel
-    void launchReduceNewSerial(const Allocation ** ains, uint32_t inLen, Allocation *aout,
-                               MTLaunchStructReduceNew *mtls);
-    void launchReduceNewParallel(const Allocation ** ains, uint32_t inLen, Allocation *aout,
-                                 MTLaunchStructReduceNew *mtls);
+    void launchReduceSerial(const Allocation ** ains, uint32_t inLen, Allocation *aout,
+                            MTLaunchStructReduce *mtls);
+    void launchReduceParallel(const Allocation ** ains, uint32_t inLen, Allocation *aout,
+                              MTLaunchStructReduce *mtls);
 };
 
 

@@ -36,21 +36,6 @@ void Script::forEach(uint32_t slot, sp<const Allocation> ain, sp<const Allocatio
     tryDispatch(mRS, RS::dispatch->ScriptForEach(mRS->getContext(), getID(), slot, in_id, out_id, usr, usrLen, nullptr, 0));
 }
 
-void Script::reduce(uint32_t slot, sp<const Allocation> ain, sp<const Allocation> aout,
-                    const RsScriptCall *sc) const {
-    if (RS::dispatch->ScriptReduce == nullptr) {
-        mRS->throwError(RS_ERROR_RUNTIME_ERROR, "Reduce is not supported at the current API level");
-        return;
-    }
-    if (ain == nullptr || aout == nullptr) {
-        mRS->throwError(RS_ERROR_INVALID_PARAMETER, "Both ain and aout are required to be non-null.");
-        return;
-    }
-    void *in_id = BaseObj::getObjID(ain);
-    void *out_id = BaseObj::getObjID(aout);
-    tryDispatch(mRS, RS::dispatch->ScriptReduce(mRS->getContext(), getID(), slot, in_id, out_id, sc, sc == nullptr ? 0 : sizeof(*sc)));
-}
-
 Script::Script(void *id, sp<RS> rs) : BaseObj(id, rs) {
 }
 
@@ -71,4 +56,3 @@ void Script::setVar(uint32_t index, const void *v, size_t len) const {
 void Script::FieldBase::init(sp<RS> rs, uint32_t dimx, uint32_t usages) {
     mAllocation = Allocation::createSized(rs, mElement, dimx, RS_ALLOCATION_USAGE_SCRIPT | usages);
 }
-
