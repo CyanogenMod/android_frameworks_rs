@@ -19,13 +19,34 @@
 
 #include <rsInternalDefines.h>
 
+/*
+ * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+ * !! Major version number of the driver.  This is used to ensure that
+ * !! the driver (e.g., libRSDriver) is compatible with the shell
+ * !! (i.e., libRS_internal) responsible for loading the driver.
+ * !! There is no notion of backwards compatibility -- the driver and
+ * !! the shell must agree on the major version number.
+ * !!
+ * !! The version number must change whenever there is a semantic change
+ * !! to the HAL such as adding or removing an entry point or changing
+ * !! the meaning of an entry point.  By convention it is monotonically
+ * !! increasing across all branches (e.g., aosp/master and all internal
+ * !! branches).
+ * !!
+ * !! Be very careful when merging or cherry picking between branches!
+ * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+ */
+#define RS_HAL_VERSION 100
+
 /**
  * The interface for loading RenderScript drivers
  *
  * The startup sequence is
  *
  * 1: dlopen driver
- * 2: Query driver version with rsdHalQueryVersion()
+ * 2: Query driver version with rsdHalQueryVersion() and verify
+ *    that the driver (e.g., libRSDriver) is compatible with the shell
+ *    (i.e., libRS_internal) responsible for loading the driver
  * 3: Fill in HAL pointer table with calls to rsdHalQueryHAL()
  * 4: Initialize the context with rsdHalInit()
  *
@@ -479,9 +500,15 @@ extern "C" {
 
 /**
  * Get the major version number of the driver.  The major
- * version should be the API version number
+ * version should be the RS_HAL_VERSION against which the
+ * driver was built
  *
  * The Minor version number is vendor specific
+ *
+ * The caller should ensure that *version_major is the same as
+ * RS_HAL_VERSION -- i.e., that the driver (e.g., libRSDriver)
+ * is compatible with the shell (i.e., libRS_internal) responsible
+ * for loading the driver
  *
  * return: False will abort loading the driver, true indicates
  * success

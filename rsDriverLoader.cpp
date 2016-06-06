@@ -201,6 +201,12 @@ bool Context::loadRuntime(const char* filename) {
         goto error;
     }
 
+    if (version_major != RS_HAL_VERSION) {
+        ALOGE("Mismatched RS HAL versions: %s is version %u but version %u is expected",
+              filename, version_major, RS_HAL_VERSION);
+        goto error;
+    }
+
     if (!LoadHalTable(this, fnQueryHal, mIsGraphicsContext)) {
         ALOGE("Error loading RS HAL table, %s", filename);
         goto error;

@@ -265,7 +265,7 @@ extern "C" void rsdHalAbort(RsContext) {
 
 
 extern "C" bool rsdHalQueryVersion(uint32_t *major, uint32_t *minor) {
-    *major = 23;
+    *major = RS_HAL_VERSION;
     *minor = 0;
     return true;
 }
